@@ -1,0 +1,24 @@
+<li class="relative">
+  <details class="group" <%= 'open' if open %>>
+    <summary class="flex h-8 min-w-0 w-full items-center gap-3 overflow-hidden rounded-md px-2 text-sm transition-colors outline-none cursor-pointer <%= open ? 'text-sidebar-primary font-medium bg-sidebar-primary/10' : 'text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground' %> list-none relative">
+      <%= link_to super_admin_settings_url, class: 'flex items-center gap-3 flex-1 h-full' do %>
+        <span class="i-lucide-settings size-4 shrink-0 <%= open ? 'text-sidebar-primary' : 'text-muted-foreground' %>" aria-hidden="true"></span>
+        <span class="truncate">Settings</span>
+      <% end %>
+      <span class="i-lucide-chevron-down ml-auto size-4 shrink-0 text-muted-foreground transition-transform duration-200 group-open:rotate-180"></span>
+    </summary>
+    
+    <ul class="mt-1 flex flex-col gap-1 pl-6">
+      <% settings_pages.each do |_feature_key, attrs| %>
+        <% url = super_admin_app_config_url(config: attrs['config_key']) %>
+        <li class="relative">
+          <% text_class = current_page?(url) ? 'text-sidebar-primary font-medium bg-sidebar-primary/10' : 'text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground' %>
+          <%= link_to url, class: text_class + ' flex h-8 min-w-0 w-full items-center gap-3 overflow-hidden rounded-md px-2 text-sm transition-colors outline-none' do %>
+            <span class="i-lucide-minus size-3 shrink-0 text-muted-foreground <%= current_page?(url) ? 'text-sidebar-primary' : '' %>" aria-hidden="true"></span>
+            <span class="truncate"><%= attrs['name'] %></span>
+          <% end %>
+        </li>
+      <% end %>
+    </ul>
+  </details>
+</li>

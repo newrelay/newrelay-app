@@ -1,0 +1,15 @@
+<form class="relative" role="search">
+  <span class="i-lucide-search absolute left-2.5 top-1/2 -translate-y-1/2 size-4 text-muted-foreground pointer-events-none" aria-hidden="true"></span>
+  <input
+    class="flex h-9 w-56 rounded-md border border-input bg-background pl-8 pr-8 py-1 text-sm shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+    id="search"
+    type="search"
+    name="search"
+    placeholder="<%= t("administrate.search.label", resource: resource_name) %>"
+    value="<%= search_term %>">
+  <% if search_term.present? %>
+    <%= link_to clear_search_params, class: "absolute right-2 top-1/2 -translate-y-1/2 inline-flex items-center justify-center size-5 rounded-sm text-muted-foreground hover:text-foreground transition-colors" do %>
+      <span class="i-lucide-x size-3.5" aria-label="<%= t("administrate.search.clear") %>"></span>
+    <% end %>
+  <% end %>
+</form> 

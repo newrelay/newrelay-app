@@ -1,0 +1,16 @@
+<%#
+# New Billing Coupon
+%>
+
+<header class="main-content__header">
+  <h1 class="main-content__page-title">
+    <%= t("administrate.actions.new_resource", name: display_resource_name(page.resource_name, count: 1)) %>
+  </h1>
+  <div>
+    <%= link_to t("administrate.actions.back"), :back, class: "button" %>
+  </div>
+</header>
+
+<section class="main-content__body">
+  <%= render "form", page: page %>
+</section>

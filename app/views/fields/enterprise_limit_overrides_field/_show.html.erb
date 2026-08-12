@@ -1,0 +1,14 @@
+<% if field.data.present? %>
+  <dl class="grid grid-cols-2 gap-4 m-0">
+    <% field.available_limits.each do |key, display_name| %>
+      <div class="bg-slate-50 p-3 rounded-md border border-slate-200">
+        <dt class="text-xs font-semibold text-slate-500 uppercase tracking-wider"><%= display_name %></dt>
+        <dd class="mt-1 text-lg font-medium text-slate-900">
+          <%= field.limit_value(key).present? ? field.limit_value(key) : "Unlimited" %>
+        </dd>
+      </div>
+    <% end %>
+  </dl>
+<% else %>
+  <span class="text-slate-400 italic">No limits explicitly overridden (Unlimited)</span>
+<% end %>

@@ -1,0 +1,95 @@
+<% sub = page.resource.subscription %>
+<% billing_country = page.resource.custom_attributes['billing_country'] %>
+<% stripe_customer_id = page.resource.custom_attributes['stripe_customer_id'] %>
+<% razorpay_customer_id = page.resource.custom_attributes['razorpay_customer_id'] %>
+
+<% if sub.present? || billing_country.present? || stripe_customer_id.present? || razorpay_customer_id.present? %>
+  <section class="main-content__body mt-8 border-t border-slate-200 pt-8">
+    <h2 class="text-base font-semibold text-slate-900 mb-4">Payment gateway</h2>
+
+    <div class="rounded-lg border border-slate-200 bg-white overflow-hidden">
+      <table>
+        <tbody>
+          <% if billing_country.present? %>
+            <tr class="js-table-row">
+              <td class="cell-label w-1/3">Billing country</td>
+              <td class="cell-data"><%= billing_country %></td>
+            </tr>
+          <% end %>
+
+          <% if sub.present? %>
+            <tr class="js-table-row">
+              <td class="cell-label">Payment provider</td>
+              <td class="cell-data font-medium"><%= sub.payment_provider.to_s.capitalize %></td>
+            </tr>
+            <tr class="js-table-row">
+              <td class="cell-label">Subscription status</td>
+              <td class="cell-data"><%= sub.status %></td>
+            </tr>
+            <tr class="js-table-row">
+              <td class="cell-label">Plan</td>
+              <td class="cell-data"><%= sub.plan_name %></td>
+            </tr>
+            <% if sub.current_period_end.present? %>
+              <tr class="js-table-row">
+                <td class="cell-label">Current period end</td>
+                <td class="cell-data"><%= l(sub.current_period_end, format: :long) %></td>
+              </tr>
+            <% end %>
+            <% if sub.payment_provider == 'stripe' %>
+              <tr class="js-table-row">
+                <td class="cell-label">Stripe customer ID</td>
+                <td class="cell-data font-mono text-sm"><%= sub.stripe_customer_id.presence || stripe_customer_id.presence || '—' %></td>
+              </tr>
+              <tr class="js-table-row">
+                <td class="cell-label">Stripe subscription ID</td>
+                <td class="cell-data font-mono text-sm"><%= sub.stripe_subscription_id.presence || '—' %></td>
+              </tr>
+              <tr class="js-table-row">
+                <td class="cell-label">Stripe price ID</td>
+                <td class="cell-data font-mono text-sm"><%= sub.stripe_price_id.presence || '—' %></td>
+              </tr>
+            <% end %>
+            <% if sub.payment_provider == 'razorpay' %>
+              <tr class="js-table-row">
+                <td class="cell-label">Razorpay customer ID</td>
+                <td class="cell-data font-mono text-sm"><%= sub.razorpay_customer_id.presence || razorpay_customer_id.presence || '—' %></td>
+              </tr>
+              <tr class="js-table-row">
+                <td class="cell-label">Razorpay subscription ID</td>
+                <td class="cell-data font-mono text-sm"><%= sub.razorpay_subscription_id.presence || '—' %></td>
+              </tr>
+            <% end %>
+            <tr class="js-table-row">
+              <td class="cell-label">Cancel at period end</td>
+              <td class="cell-data"><%= sub.cancel_at_period_end? ? 'Yes' : 'No' %></td>
+            </tr>
+            <tr class="js-table-row">
+              <td class="cell-label">View subscription</td>
+              <td class="cell-data">
+                <%= link_to "Subscription ##{sub.id}", super_admin_subscription_path(sub), class: 'text-violet-700 hover:underline' %>
+              </td>
+            </tr>
+          <% else %>
+            <tr class="js-table-row">
+              <td class="cell-label">Payment provider</td>
+              <td class="cell-data"><%= page.resource.custom_attributes['payment_provider'].to_s.capitalize.presence || '—' %></td>
+            </tr>
+            <% if stripe_customer_id.present? %>
+              <tr class="js-table-row">
+                <td class="cell-label">Stripe customer ID</td>
+                <td class="cell-data font-mono text-sm"><%= stripe_customer_id %></td>
+              </tr>
+            <% end %>
+            <% if razorpay_customer_id.present? %>
+              <tr class="js-table-row">
+                <td class="cell-label">Razorpay customer ID</td>
+                <td class="cell-data font-mono text-sm"><%= razorpay_customer_id %></td>
+              </tr>
+            <% end %>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  </section>
+<% end %>

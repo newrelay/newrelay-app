@@ -1,0 +1,77 @@
+<%#
+# Index
+
+This view is the template for the index page.
+It is responsible for rendering the search bar, header and pagination.
+It renders the `_table` partial to display details about the resources.
+
+## Local variables:
+
+- `page`:
+  An instance of [Administrate::Page::Collection][1].
+  Contains helper methods to help display a table,
+  and knows which attributes should be displayed in the resource's table.
+- `resources`:
+  An instance of `ActiveRecord::Relation` containing the resources
+  that match the user's search criteria.
+  By default, these resources are passed to the table partial to be displayed.
+- `search_term`:
+  A string containing the term the user has searched for, if any.
+- `show_search_bar`:
+  A boolean that determines if the search bar should be shown.
+
+[1]: http://www.rubydoc.info/gems/administrate/Administrate/Page/Collection
+%>
+
+<% content_for(:title) do %>
+  <%= display_resource_name(page.resource_name) %>
+<% end %>
+
+<header class="flex items-center justify-between w-full pb-4 border-b border-border mb-6" role="banner">
+  <div class="flex items-center justify-between w-full">
+    <h1 class="text-2xl font-bold tracking-tight text-foreground" id="page-title">
+      <%= content_for(:title) %>
+    </h1>
+
+    <div class="flex items-center gap-4">
+      <% if show_search_bar %>
+        <div class="flex items-center gap-3">
+          <%= render("filters", page: page) %>
+          <div class="relative">
+            <%= render(
+              "search",
+              search_term: search_term,
+              resource_name: display_resource_name(page.resource_name)
+            ) %>
+          </div>
+        </div>
+      <% end %>
+
+      <div class="whitespace-nowrap">
+        <%= link_to(
+          [:new, namespace, page.resource_path.to_sym],
+          class: "inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-9 px-4 py-2 gap-2",
+        ) do %>
+          <span class="i-lucide-plus size-4"></span>
+          <%= t(
+            "administrate.actions.new_resource",
+            name: page.resource_name.titleize.downcase
+          ) %>
+        <% end if accessible_action?(new_resource, :new) %>
+      </div>
+    </div>
+  </div>
+</header>
+
+<section class="main-content__body main-content__body--flush">
+  <%= render(
+    "collection",
+    collection_presenter: page,
+    collection_field_name: resource_name,
+    page: page,
+    resources: resources,
+    table_title: "page-title"
+  ) %>
+
+  <%= paginate resources, param_name: '_page'%>
+</section>

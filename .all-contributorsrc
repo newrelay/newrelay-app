@@ -1,0 +1,26 @@
+{
+  "files": [],
+  "imageSize": 48,
+  "commit": false,
+  "contributors": [
+    {
+      "login": "CodeChandresh",
+      "name": "Chandresh Sankhala",
+      "avatar_url": "https://avatars.githubusercontent.com/CodeChandresh",
+      "profile": "https://github.com/CodeChandresh",
+      "contributions": [
+        "bug",
+        "code",
+        "doc",
+        "design",
+        "maintenance",
+        "review"
+      ]
+    }
+  ],
+  "contributorsPerLine": 7,
+  "projectName": "DakshAI",
+  "projectOwner": "chandresh-ship-it",
+  "repoType": "github",
+  "repoHost": "https://github.com"
+}

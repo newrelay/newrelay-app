@@ -1,0 +1,18 @@
+<%#
+# Edit Billing Coupon
+%>
+
+<header class="main-content__header">
+  <h1 class="main-content__page-title">
+    <%= t("administrate.actions.edit_resource", name: page.page_title) %>
+  </h1>
+  <div>
+    <%= link_to t("administrate.actions.show_resource", name: page.page_title),
+                [namespace, page.resource],
+                class: "button" %>
+  </div>
+</header>
+
+<section class="main-content__body">
+  <%= render "form", page: page %>
+</section>

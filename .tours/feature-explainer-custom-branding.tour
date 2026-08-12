@@ -1,0 +1,91 @@
+{
+  "$schema": "https://aka.ms/codetour-schema",
+  "title": "Custom Branding / White-Labeling",
+  "description": "How an account's brand name, logos and colors travel from the settings form to the pixels — through the API, the Account model, server-side render, and the client re-apply. Written for someone who has to change or debug this feature.",
+  "steps": [
+    {
+      "directory": "app/javascript/dashboard/routes/dashboard/settings/branding",
+      "title": "Where branding lives",
+      "description": "Situation: the whole authoring surface is these five files — the page, the preset catalog, the preset switcher, and the AI palette modal.\n\nMechanism: `Index.vue` owns all form state; `brandThemePresets.js` is a generated catalog of 43 themes; the two components under `components/` are leaves.\n\nImplication: everything that *renders* branding lives elsewhere (App.vue, colorHelper.js, and the Rails side). This folder only writes.\n\nGotcha: `brandThemePresets.js` is 3,300 lines of data. Don't read it top to bottom — jump to the exported helpers at the bottom."
+    },
+    {
+      "file": "app/javascript/dashboard/routes/dashboard/settings/branding/branding.routes.js",
+      "line": 8,
+      "title": "Entry point",
+      "description": "Situation: the route that mounts the branding page.\n\nMechanism: `/accounts/:accountId/settings/branding`, gated by `meta.permissions: ['administrator']`.\n\nImplication: this is the only guard on the page. Note what is *not* here.\n\nGotcha: there is no plan/capability check. The server refuses to render branding unless `white_labeling_enabled?` (you'll see that at step 9), but the route and the settings nav don't know that — an admin on a plan without the capability can open this page and save."
+    },
+    {
+      "file": "app/javascript/dashboard/routes/dashboard/settings/branding/Index.vue",
+      "line": 179,
+      "title": "The save path",
+      "description": "Situation: `handleSave` is the spine of the feature — everything upstream is form state, everything downstream is persistence.\n\nMechanism: builds a `FormData` (three optional file uploads plus flattened colors), PATCHes the account, commits the response into Vuex, re-applies colors, then hard-reloads the page after 500ms.\n\nImplication: if a branding change doesn't stick, this is where to start — the whole payload is assembled in one function.\n\nGotcha: the `window.location.reload()` at the end is doing real work. It's how server-rendered branding (step 9) picks up the change. Remove it and the SSR-injected colors go stale until the next full navigation."
+    },
+    {
+      "file": "app/javascript/dashboard/routes/dashboard/settings/branding/Index.vue",
+      "selection": {
+        "start": { "line": 187, "character": 0 },
+        "end": { "line": 224, "character": 0 }
+      },
+      "title": "Flattening the palette",
+      "description": "Situation: the payload shape is decided here, and it constrains the whole backend.\n\nMechanism: when a preset is active, `brandColorsFromPreset` (next step) flattens ~34 theme tokens plus the five swatches into one flat object; the loop then appends each scalar as `brand_colors[key]`.\n\nImplication: `brand_colors` is a flat string-to-string map by contract. Rails permits it as `brand_colors: {}`, which only accepts scalars.\n\nGotcha: line 220's `if (typeof value === 'object') return;` silently drops any nested value. That's why the flattening in `brandColorsFromPreset` matters — nest anything and it vanishes with no error."
+    },
+    {
+      "file": "app/javascript/dashboard/routes/dashboard/settings/branding/brandThemePresets.js",
+      "line": 3298,
+      "title": "Preset to storable colors",
+      "description": "Situation: the adapter between the theme catalog and what gets persisted.\n\nMechanism: spreads `preset.light` (the full token map: sidebar, card, muted, chart-*) over the five swatches, maps new-ui's `foreground` onto the stored `text`, then lets `extras` override.\n\nImplication: a saved account carries the *entire* light token map, not just four colors — which is what lets the server paint a fully themed page before any JS runs.\n\nGotcha: only `preset.light` is persisted. `preset.dark` never reaches the database, so dark mode is reconstructed client-side — see step 12 for why that goes wrong."
+    },
+    {
+      "file": "app/controllers/api/v1/accounts_controller.rb",
+      "line": 46,
+      "title": "The server write",
+      "description": "Situation: the receiving end of that FormData.\n\nMechanism: assigns the scalar columns, merges `brand_colors` into the existing `custom_attributes` jsonb, strips blank keys, then `save!`.\n\nImplication: branding is stored twice — as four real columns (`brand_name`, `brand_logo_url`, `brand_primary_color`, `brand_secondary_color`) and inside the `custom_attributes` jsonb. Two homes for one fact.\n\nGotcha: the blank-strip on line 56 only covers `primary`, `text`, `background`. And because this is a merge, there is no way to *clear* branding through this endpoint — keys only ever get added or overwritten."
+    },
+    {
+      "file": "app/models/account.rb",
+      "line": 385,
+      "title": "The reconciler (and the trap)",
+      "description": "Situation: a `before_validation` callback that keeps the columns in sync with the jsonb.\n\nMechanism: copies `brand_colors['primary']` into `brand_primary_color` and `brand_colors['background']` into `brand_secondary_color`.\n\nImplication: this exists purely because the same fact is stored in two places.\n\nGotcha: each copy is guarded by `if brand_primary_color.blank?`. After the very first save the column is no longer blank, so it never updates again — the columns freeze at whatever was saved first while the jsonb keeps moving. Verified against the dev database: save #1 primary `#ff0000`, save #2 primary `#00ff00`, column still reads `#ff0000`."
+    },
+    {
+      "file": "app/models/account.rb",
+      "line": 259,
+      "title": "Where the stale value wins",
+      "description": "Situation: the single read path every server-rendered surface uses.\n\nMechanism: takes `custom_attributes['brand_colors']` (fresh) and merges the four columns (frozen) *on top*.\n\nImplication: because merge order puts the columns last, the frozen values overwrite the fresh ones. Every SSR surface renders the account's first-ever palette, indefinitely.\n\nGotcha: the SPA reads `custom_attributes.brand_colors` directly and never goes through here — so the client shows the *new* colors while the server-painted page shows the *old* ones. That mismatch presents as a color flash on every load, not as an obviously wrong page."
+    },
+    {
+      "file": "app/controllers/dashboard_controller.rb",
+      "line": 57,
+      "title": "Server-side injection",
+      "description": "Situation: how branding reaches the page before any JavaScript executes.\n\nMechanism: resolves the account from the URL path or the custom domain, then overrides `LOGO`, `LOGO_THUMBNAIL`, `BRAND_COLORS` and `INSTALLATION_NAME` in `@global_config`.\n\nImplication: this is the only branding path that works for logged-out pages — the login screen on a customer's custom domain gets its colors here.\n\nGotcha: line 58's `return unless account.white_labeling_enabled?` is the real plan gate for the whole feature. It has no counterpart on the client (compare step 2 and step 11)."
+    },
+    {
+      "file": "app/views/layouts/vueapp.html.erb",
+      "line": 77,
+      "title": "The injected stylesheet",
+      "description": "Situation: `@brand_colors` from the previous step, rendered into a `<style>` block in the document head.\n\nMechanism: emits CSS custom properties with `!important`, deriving surface shades via `lighten_hex` and RGB triples via `hex_to_rgb_space`.\n\nImplication: first paint is already branded, with no flash of the default theme.\n\nGotcha: line 2 sets `class=\"dark\"` on the `<html>` element from the brand background's luminance — so a dark brand background forces dark mode for everyone on that account, independent of their own theme preference."
+    },
+    {
+      "file": "app/javascript/dashboard/App.vue",
+      "line": 149,
+      "title": "Client re-apply",
+      "description": "Situation: once the SPA boots and the account loads, branding is applied again from Vuex.\n\nMechanism: `applyBrandColors` picks account colors when present, falls back to the server-injected `window.globalConfig.BRAND_COLORS`, and clears custom variables when neither exists.\n\nImplication: two independent sources feed the same CSS variables, and they can disagree (step 8).\n\nGotcha: this path reads `account.custom_attributes.brand_colors` with no `white_labeling` check — the capability gate exists only on the server. On a plan without the capability, colors apply in the SPA and silently vanish on server-rendered pages."
+    },
+    {
+      "file": "app/javascript/dashboard/helper/colorHelper.js",
+      "line": 161,
+      "title": "The dark-mode workaround",
+      "description": "Situation: a filter inside the preset applier, with a comment naming its own cause: \"broken generator\".\n\nMechanism: when a token's dark value equals its light value, only `primary`, `ring` and `chart-*` are allowed through, so structural surfaces fall back to the `.dark` class in `_relay-theme.scss`.\n\nImplication: it exists because 41 of the 43 presets have a `dark` map byte-identical to `light` — without the filter, choosing a theme would paint a white background in dark mode.\n\nGotcha: the workaround makes dark mode *safe*, not *branded*. For those 41 presets, switching themes barely changes dark mode. Fixing the catalog data is what removes both the duplication and this filter."
+    },
+    {
+      "file": "app/javascript/dashboard/routes/dashboard/settings/branding/components/MagicBrandingModal.vue",
+      "line": 113,
+      "title": "AI palette generation",
+      "description": "Situation: an optional side path — generate a palette from a URL, a text prompt, or an uploaded image.\n\nMechanism: POSTs to `/api/v1/accounts/:id/captain/branding`, which runs `Captain::Llm::BrandColorGeneratorService`; the chosen option is emitted back to `Index.vue` and lands in the same refs as manual edits.\n\nImplication: this only fills the form. It never persists — the user still has to hit Save, so everything from step 3 onward applies unchanged.\n\nGotcha: URL mode crawls a user-supplied address server-side, but it goes through `SafeFetch` in `SimplePageCrawlService`, which is what keeps it from being an SSRF hole. Preserve that if you touch the crawl path."
+    },
+    {
+      "title": "What you can do now",
+      "description": "You can trace any branding value from the form field that sets it to the CSS variable that paints it, and you know the three places this feature disagrees with itself: the columns-versus-jsonb double storage (steps 6-8), the server-only capability gate (steps 2, 9, 11), and the duplicated dark maps (step 12).\n\nNext moves, depending on what you came for:\n- Changing what gets saved: `Index.vue:179` and `accounts_controller.rb:46`.\n- Changing what gets painted: `colorHelper.js:211` and `vueapp.html.erb:77`.\n- Adding or regenerating themes: the helpers at the bottom of `brandThemePresets.js`, from line 3254."
+    }
+  ]
+}

@@ -1,0 +1,92 @@
+<div class="field-unit__label">
+  <%= f.label field.attribute %>
+</div>
+<div class="field-unit__field feature-container">
+  <% regular_features, premium_features = SuperAdmin::AccountFeaturesHelper.filtered_features(field.data).partition { |key_array, _val| !SuperAdmin::AccountFeaturesHelper.account_premium_features.include?(key_array.first) } %>
+
+  <!-- Basic Features Header -->
+  <div class="flex items-center justify-between mb-4">
+    <h3 class="text-xs font-semibold uppercase tracking-wider text-slate-500">Basic Features</h3>
+    <button type="button" data-toggle-target="basic" class="text-xs font-medium text-violet-600 hover:text-violet-700 hover:underline focus:outline-none" onclick="toggleAllFeatures('.basic-feature-checkbox', this)">
+      Select All
+    </button>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+    <% regular_features.each do |key_array, val| %>
+      <% feature_key, display_name = key_array %>
+      <div class="flex items-center justify-between p-3 bg-white rounded-lg shadow-sm outline outline-1 outline-n-container">
+        <span class="text-sm text-slate-700"><%= display_name %></span>
+        <span><%= check_box "enabled_features", "feature_#{feature_key}", { checked: val, class: "basic-feature-checkbox h-4 w-4 rounded border-slate-300 text-violet-600 focus:ring-violet-600" }, true, false %></span>
+      </div>
+    <% end %>
+  </div>
+
+  <hr class="my-8 border-t border-n-weak">
+
+  <!-- Premium Features Header -->
+  <div class="flex items-center justify-between mb-4">
+    <div class="flex items-center gap-2">
+      <span class="text-amber-500">
+        <svg class="h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M480 224l-186.828 7.487L401.688 64l-59.247-32L256 208 169.824 32l-59.496 32 108.5 167.487L32 224v64l185.537-10.066L113.65 448l55.969 32L256 304l86.381 176 55.949-32-103.867-170.066L480 288z" fill="currentColor"/></svg>
+      </span>
+      <h3 class="text-xs font-semibold uppercase tracking-wider text-slate-500">Premium Features</h3>
+    </div>
+    <button type="button" data-toggle-target="premium" class="text-xs font-medium text-violet-600 hover:text-violet-700 hover:underline focus:outline-none" onclick="toggleAllFeatures('.premium-feature-checkbox', this)">
+      Select All
+    </button>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+    <% premium_features.each do |key_array, val| %>
+      <% feature_key, display_name = key_array %>
+      <div class="flex items-center justify-between p-3 bg-white rounded-lg shadow-sm outline outline-1 outline-n-container">
+        <div class="flex items-center gap-2">
+          <span class="text-amber-500">
+            <svg class="h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M480 224l-186.828 7.487L401.688 64l-59.247-32L256 208 169.824 32l-59.496 32 108.5 167.487L32 224v64l185.537-10.066L113.65 448l55.969 32L256 304l86.381 176 55.949-32-103.867-170.066L480 288z" fill="currentColor"/></svg>
+          </span>
+          <span class="text-sm text-slate-700"><%= display_name %></span>
+        </div>
+        <% should_disable = ChatwootHub.pricing_plan == 'community' %>
+        <span><%= check_box "enabled_features", "feature_#{feature_key}", { checked: val, disabled: should_disable, class: "premium-feature-checkbox h-4 w-4 rounded border-slate-300 text-violet-600 focus:ring-violet-600" }, true, false %></span>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+<script>
+  (function() {
+    window.toggleAllFeatures = function(selector, button) {
+      const checkboxes = document.querySelectorAll(selector);
+      const anyUnchecked = Array.from(checkboxes).some(cb => !cb.checked && !cb.disabled);
+      checkboxes.forEach(cb => {
+        if (!cb.disabled) {
+          cb.checked = anyUnchecked;
+          cb.dispatchEvent(new Event('change'));
+        }
+      });
+      window.updateToggleButtonText(selector, button);
+    };
+
+    window.updateToggleButtonText = function(selector, button) {
+      const checkboxes = document.querySelectorAll(selector);
+      const anyUnchecked = Array.from(checkboxes).some(cb => !cb.checked && !cb.disabled);
+      button.textContent = anyUnchecked ? 'Select All' : 'Deselect All';
+    };
+
+    const initSection = (btnSelector, checkboxSelector) => {
+      const btn = document.querySelector(btnSelector);
+      if (!btn) return;
+      window.updateToggleButtonText(checkboxSelector, btn);
+
+      document.querySelectorAll(checkboxSelector).forEach(cb => {
+        cb.addEventListener('change', () => {
+          window.updateToggleButtonText(checkboxSelector, btn);
+        });
+      });
+    };
+
+    initSection('[data-toggle-target="basic"]', '.basic-feature-checkbox');
+    initSection('[data-toggle-target="premium"]', '.premium-feature-checkbox');
+  })();
+</script>

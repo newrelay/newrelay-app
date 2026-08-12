@@ -1,0 +1,76 @@
+<% content_for(:title) do %>
+  Account Hierarchy
+<% end %>
+
+<header class="main-content__header" role="banner">
+  <h1 class="main-content__page-title">
+    <%= content_for(:title) %>
+  </h1>
+</header>
+
+<section class="main-content__body">
+  <% if @resellers.empty? %>
+    <div class="rounded-lg border border-slate-100 bg-white p-6 text-sm text-slate-600">
+      No reseller accounts found.
+    </div>
+  <% else %>
+    <div class="space-y-4">
+      <% @resellers.each do |reseller| %>
+        <details class="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
+          <summary class="flex cursor-pointer items-center justify-between text-sm font-semibold text-slate-900">
+            <span class="flex items-center gap-3">
+              <%= reseller.name %>
+              <%= link_to 'View billing',
+                          account_super_admin_account_hierarchy_path(reseller),
+                          class: 'text-xs font-normal text-violet-700 hover:underline',
+                          onclick: 'event.stopPropagation();' %>
+            </span>
+            <span class="text-xs font-normal text-slate-500 bg-slate-100 px-2.5 py-0.5 rounded-full"><%= pluralize(reseller.children.size, 'child account') %></span>
+          </summary>
+
+          <% if reseller.children.empty? %>
+            <p class="mt-4 text-sm text-slate-500">No child accounts linked.</p>
+          <% else %>
+            <div class="mt-4 overflow-x-auto">
+              <table>
+                <thead>
+                  <tr>
+                    <th class="cell-label" scope="col">ID</th>
+                    <th class="cell-label" scope="col">Name</th>
+                    <th class="cell-label" scope="col">Plan</th>
+                    <th class="cell-label" scope="col">Provider</th>
+                    <th class="cell-label" scope="col">Status</th>
+                    <th class="cell-label" scope="col">Created</th>
+                    <th class="cell-label" scope="col">Billing</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% reseller.children.sort_by(&:name).each do |child| %>
+                    <% child_sub = child.subscription %>
+                    <tr class="js-table-row">
+                      <td class="cell-data">#<%= child.id %></td>
+                      <td class="cell-data font-semibold text-slate-800"><%= child.name %></td>
+                      <td class="cell-data">
+                        <%= child_sub&.plan_name.presence || child.custom_attributes['plan_name'].presence || '—' %>
+                      </td>
+                      <td class="cell-data">
+                        <%= child_sub&.payment_provider&.capitalize || '—' %>
+                      </td>
+                      <td class="cell-data"><%= child.status.titleize %></td>
+                      <td class="cell-data"><%= l(child.created_at.to_date, format: :long) %></td>
+                      <td class="cell-data">
+                        <%= link_to 'View details',
+                                    account_super_admin_account_hierarchy_path(child),
+                                    class: 'text-violet-700 hover:underline text-sm font-medium' %>
+                      </td>
+                    </tr>
+                  <% end %>
+                </tbody>
+              </table>
+            </div>
+          <% end %>
+        </details>
+      <% end %>
+    </div>
+  <% end %>
+</section>

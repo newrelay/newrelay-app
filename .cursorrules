@@ -1,0 +1,29 @@
+# DakshAI / NewRelay Development & UI Rules
+
+## Core Principles
+1. **Tailwind Only**: Strictly use Tailwind CSS utility classes. Custom CSS, scoped CSS, and inline styles are explicitly forbidden.
+2. **Dynamic Theme Colors**: NEVER use hardcoded Tailwind colors (e.g., `bg-blue-100`, `text-[#3B82F6]`). Always map colors to semantic variables (`bg-background`, `bg-card`, `bg-primary`, `text-muted-foreground`, `border-border`) to ensure dark mode compatibility.
+3. **AI Naming**: Always use "Relay AI" to refer to the AI system. Translate references to "Captain" to "Relay AI".
+
+## Component Styling Rules
+- **Headings**: Section/Page Headings use `text-base font-medium` (16px, 500w). Empty State Headings strictly use `text-[20px] font-[600]`.
+- **Ghost Buttons**: Always add a subtle gray border to define boundaries (e.g., `border border-border`). On hover, remove it (`hover:border-transparent`).
+- **Modals/Popups**: 
+  - Backdrop: `bg-n-alpha-black2 backdrop-blur-[4px]`.
+  - Header (`woot-modal-header`): `px-8 pt-8 pb-0`. Title is `text-base font-semibold leading-6 text-foreground`.
+  - Content Wrapper (`.modal-content`): `pt-4 pb-8 px-8`.
+- **Forms (in Modals)**:
+  - Spacing: `flex flex-col gap-1.5` between Label and Input.
+  - Labels: `text-[13.5px] font-medium text-foreground`.
+  - Inputs: `text-[14px] shadow-sm rounded-md border-border/80 bg-background focus-visible:ring-1 focus-visible:ring-primary/30`.
+  - Checkboxes: `flex items-center gap-3` (no manual top margins like `mt-0.5`).
+  - Validation: The primary submit action button MUST remain disabled unless all required fields are correctly filled.
+- **Tabs**: 
+  - Container uses `border-b border-border` or `border-b-n-weak`.
+  - Active tab: `border-b-2 border-primary text-primary`.
+  - Inactive tab: `text-muted-foreground hover:text-foreground`.
+- **Dropdowns/Popovers**: 
+  - Wrapper: `bg-popover text-popover-foreground shadow-md rounded-md border border-border`.
+  - Items: `px-2 py-1.5 text-sm hover:bg-accent hover:text-accent-foreground`.
+- **Empty States**: Include a temporary "developer button" at the very bottom to toggle mock data.
+- **Native vs Custom**: NEVER rely on unstyled native HTML elements that trigger browser-default popups (like `<select>`, native date pickers). Build or style them to match the UI system.

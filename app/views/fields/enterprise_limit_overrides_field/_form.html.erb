@@ -1,0 +1,26 @@
+<div class="field-unit" style="grid-column: 1 / -1; display: block; margin-top: 2rem;">
+  <div class="mb-4">
+    <h2 class="text-sm font-semibold uppercase tracking-wider text-slate-500">Resource Limits</h2>
+  </div>
+
+  <div class="mb-8 overflow-x-auto w-full">
+    <table class="w-full text-left border-collapse">
+      <thead>
+        <tr class="border-b border-slate-200">
+          <th class="py-3 pr-4 text-sm font-semibold text-slate-600 w-1/2" scope="col">Resource Limit (Blank = Unlimited)</th>
+          <th class="py-3 px-4 text-sm font-semibold text-slate-600 w-1/2" scope="col">Custom Limit</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% field.available_limits.each do |key, display_name| %>
+          <tr class="border-b border-slate-100 last:border-0">
+            <td class="py-3 pr-4 text-sm font-medium text-slate-800"><%= display_name %></td>
+            <td class="py-3 px-4">
+              <%= number_field_tag "#{f.object_name}[#{field.attribute}][#{key}]", field.limit_value(key), min: 0, class: "block w-full max-w-xs rounded-md border border-slate-300 px-3 py-2 text-sm focus:border-violet-600 focus:ring-violet-600" %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>

@@ -1,0 +1,95 @@
+require "administrate/base_dashboard"
+
+class EnterpriseContractDashboard < Administrate::BaseDashboard
+  # ATTRIBUTE_TYPES
+  # a hash that describes the type of each of the model's fields.
+  #
+  # Each different type represents an Administrate::Field object,
+  # which determines how the attribute is displayed
+  # on pages throughout the dashboard.
+  ATTRIBUTE_TYPES = {
+    id: Field::Number,
+    account: Field::BelongsTo.with_options(scope: -> { Account.where(parent_id: nil) }),
+    auto_renew: Field::Boolean,
+    billing_interval: Field::Select.with_options(collection: %w[monthly annual]),
+    collection_method: Field::Select.with_options(collection: %w[send_invoice charge_automatically]),
+    contract_end_date: Field::Date,
+    contract_start_date: Field::Date,
+    currency: Field::String,
+    negotiated_by_user: Field::BelongsTo,
+    negotiated_limit_overrides: EnterpriseLimitOverridesField,
+    negotiated_features: EnterpriseFeaturesField,
+    negotiated_price: Field::String.with_options(searchable: false),
+    notes: Field::Text,
+    payment_terms_days: Field::Number,
+    created_at: Field::DateTime,
+    updated_at: Field::DateTime,
+  }.freeze
+
+  # COLLECTION_ATTRIBUTES
+  # an array of attributes that will be displayed on the model's index page.
+  #
+  # By default, it's limited to four items to reduce clutter on index pages.
+  # Feel free to add, remove, or rearrange items.
+  COLLECTION_ATTRIBUTES = %i[
+    id
+    account
+    auto_renew
+    billing_interval
+  ].freeze
+
+  # SHOW_PAGE_ATTRIBUTES
+  # an array of attributes that will be displayed on the model's show page.
+  SHOW_PAGE_ATTRIBUTES = %i[
+    id
+    account
+    auto_renew
+    billing_interval
+    collection_method
+    contract_end_date
+    contract_start_date
+    currency
+    negotiated_by_user
+    negotiated_limit_overrides
+    negotiated_features
+    negotiated_price
+    notes
+    payment_terms_days
+    created_at
+    updated_at
+  ].freeze
+
+  # FORM_ATTRIBUTES
+  # an array of attributes that will be displayed
+  # on the model's form (`new` and `edit`) pages.
+  FORM_ATTRIBUTES = %i[
+    account
+    auto_renew
+    billing_interval
+    contract_end_date
+    contract_start_date
+    negotiated_price
+    notes
+    negotiated_limit_overrides
+    negotiated_features
+  ].freeze
+
+  # COLLECTION_FILTERS
+  # a hash that defines filters that can be used while searching via the search
+  # field of the dashboard.
+  #
+  # For example to add an option to search for open resources by typing "open:"
+  # in the search field:
+  #
+  #   COLLECTION_FILTERS = {
+  #     open: ->(resources) { resources.where(open: true) }
+  #   }.freeze
+  COLLECTION_FILTERS = {}.freeze
+
+  # Overwrite this method to customize how enterprise contracts are displayed
+  # across all pages of the admin dashboard.
+  #
+  # def display_resource(enterprise_contract)
+  #   "EnterpriseContract ##{enterprise_contract.id}"
+  # end
+end

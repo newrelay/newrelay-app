@@ -1,0 +1,76 @@
+<%#
+# Show
+
+This view is the template for the show page.
+It renders the attributes of a resource,
+as well as a link to its edit page.
+
+## Local variables:
+
+- `page`:
+  An instance of [Administrate::Page::Show][1].
+  Contains methods for accessing the resource to be displayed on the page,
+  as well as helpers for describing how each attribute of the resource
+  should be displayed.
+
+[1]: http://www.rubydoc.info/gems/administrate/Administrate/Page/Show
+%>
+
+<% content_for(:title) { t("administrate.actions.show_resource", name: page.page_title) } %>
+
+<div class="space-y-6">
+  <header class="flex items-center justify-between pb-4 border-b border-border/40">
+    <h1 class="text-2xl font-semibold tracking-tight text-foreground">
+      <%= content_for(:title) %>
+    </h1>
+
+    <div class="flex items-center gap-2">
+      <%= link_to(
+        [:edit, namespace, page.resource],
+        class: "inline-flex h-9 items-center justify-center whitespace-nowrap rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 gap-2",
+      ) do %>
+        <span class="i-lucide-pen-line size-4"></span>
+        <%= t("administrate.actions.edit") %>
+      <% end if accessible_action?(page.resource, :edit) %>
+
+      <%= link_to(
+        [namespace, page.resource],
+        class: "inline-flex h-9 items-center justify-center whitespace-nowrap rounded-md bg-destructive px-4 py-2 text-sm font-medium text-destructive-foreground shadow-sm transition-colors hover:bg-destructive/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 gap-2",
+        method: :delete,
+        data: { confirm: t("administrate.actions.confirm") }
+      ) do %>
+        <span class="i-lucide-trash-2 size-4"></span>
+        <%= t("administrate.actions.destroy") %>
+      <% end if accessible_action?(page.resource, :destroy) %>
+    </div>
+  </header>
+
+  <section class="rounded-xl border border-border bg-card text-card-foreground shadow-xs overflow-hidden">
+    <div class="divide-y divide-border/50">
+      <% page.attributes.each do |title, attributes| %>
+        <% if title.present? %>
+          <div class="bg-muted/30 px-6 py-3">
+            <h3 class="text-sm font-medium text-muted-foreground uppercase tracking-wider">
+              <%= t "helpers.label.#{page.resource_name}.#{title}", default: title %>
+            </h3>
+          </div>
+        <% end %>
+
+        <% attributes.each do |attribute| %>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4 px-6 py-4 hover:bg-muted/10 transition-colors">
+            <div class="text-sm font-medium text-muted-foreground" id="<%= attribute.name %>">
+              <%= t(
+                "helpers.label.#{resource_name}.#{attribute.name}",
+                default: page.resource.class.human_attribute_name(attribute.name),
+              ) %>
+            </div>
+
+            <div class="text-sm text-foreground md:col-span-2 attribute-data attribute-data--<%=attribute.html_class%> break-words">
+              <%= render_field attribute, page: page %>
+            </div>
+          </div>
+        <% end %>
+      <% end %>
+    </div>
+  </section>
+</div>

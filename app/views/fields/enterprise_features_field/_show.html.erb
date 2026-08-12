@@ -1,0 +1,14 @@
+<% if field.data.present? && field.data.any? %>
+  <div class="flex flex-wrap gap-2">
+    <% field.data.each do |feature_key| %>
+      <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-slate-100 text-slate-700 border border-slate-200">
+        <svg class="mr-1.5 h-3 w-3 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+        </svg>
+        <%= feature_key.titleize %>
+      </span>
+    <% end %>
+  </div>
+<% else %>
+  <span class="text-slate-400 italic">No custom features enabled</span>
+<% end %>

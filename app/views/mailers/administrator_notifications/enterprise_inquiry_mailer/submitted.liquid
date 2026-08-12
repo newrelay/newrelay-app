@@ -1,0 +1,31 @@
+<p>Hello,</p>
+
+<p>An account has requested the Enterprise plan on your newrelay instance.</p>
+
+<p>
+  <strong>Account:</strong> {{ meta.account_name }} (#{{ meta.account_id }})<br>
+  <strong>Requested by:</strong> {{ meta.requested_by_name }} ({{ meta.requested_by_email }})<br>
+  <strong>Company size:</strong> {{ meta.company_size }}<br>
+  <strong>Seats needed:</strong> {{ meta.team_size }}
+</p>
+
+<p>
+  <strong>Features of interest:</strong><br>
+  {% if meta.desired_features.size > 0 %}
+    {% for feature in meta.desired_features %}
+      {{ feature }}{% unless forloop.last %}, {% endunless %}
+    {% endfor %}
+  {% else %}
+    None specified
+  {% endif %}
+</p>
+
+<p>
+  <strong>Additional details:</strong><br>
+  {{ meta.message }}
+</p>
+
+<p>Follow up with a negotiated contract via Super Admin &gt; Enterprise Contracts.</p>
+
+<p>Thank you,<br>
+newrelay System</p>

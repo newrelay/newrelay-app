@@ -1,0 +1,18 @@
+<% content_for(:title) do %>
+  Billing — <%= @account.name %>
+<% end %>
+
+<header class="main-content__header" role="banner">
+  <h1 class="main-content__page-title">
+    <%= content_for(:title) %>
+  </h1>
+  <div class="flex gap-2">
+    <%= link_to 'Back to hierarchy', super_admin_account_hierarchy_path, class: 'button' %>
+    <%= link_to 'Open account', super_admin_account_path(@account), class: 'button' %>
+  </div>
+</header>
+
+<section class="main-content__body">
+  <%= render partial: 'super_admin/shared/account_billing_detail',
+             locals: { account: @account, billing_activity: @billing_activity, plan_name: @plan_name } %>
+</section>

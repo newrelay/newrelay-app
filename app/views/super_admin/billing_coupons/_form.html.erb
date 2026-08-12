@@ -1,0 +1,124 @@
+<%#
+# Billing Coupon Form
+%>
+
+<% resource = page.resource %>
+<% is_amount = resource.discount_type == 'amount' %>
+
+<%= form_for([namespace, resource], html: { class: 'form billing-coupon-form', id: 'billing-coupon-form' }) do |f| %>
+  <% if resource.errors.any? %>
+    <div id="error_explanation">
+      <h2>
+        <%= t(
+          'administrate.form.errors',
+          pluralized_errors: pluralize(resource.errors.count, t('administrate.form.error')),
+          resource_name: display_resource_name(page.resource_name, count: 1)
+        ) %>
+      </h2>
+      <ul>
+        <% resource.errors.full_messages.each do |message| %>
+          <li class="flash-error"><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field-unit field-unit--string">
+    <div class="field-unit__label"><%= f.label :code, 'Code' %></div>
+    <div class="field-unit__field">
+      <%= f.text_field :code %>
+      <p class="text-xs text-slate-500 mt-1 mb-0">
+        Auto-generated. Edit to set a custom code, or clear to regenerate on save.
+      </p>
+    </div>
+  </div>
+
+  <div class="field-unit field-unit--string">
+    <div class="field-unit__label"><%= f.label :name, 'Name' %></div>
+    <div class="field-unit__field"><%= f.text_field :name %></div>
+  </div>
+
+  <div class="field-unit field-unit--select">
+    <div class="field-unit__label"><%= f.label :discount_type, 'Discount type' %></div>
+    <div class="field-unit__field">
+      <%= f.select :discount_type,
+                   options_for_select(
+                     [['Percent off', 'percent'], ['Amount off', 'amount']],
+                     resource.discount_type.presence || 'percent'
+                   ),
+                   {},
+                   {
+                     id: 'billing_coupon_discount_type',
+                     onchange: 'window.toggleBillingCouponDiscountFields && window.toggleBillingCouponDiscountFields(this.value)'
+                   } %>
+    </div>
+  </div>
+
+  <div
+    id="billing-coupon-percent-fields"
+    class="field-unit field-unit--number"
+    style="<%= is_amount ? 'display:none;' : '' %>"
+  >
+    <div class="field-unit__label"><%= f.label :percent_off, 'Percent off' %></div>
+    <div class="field-unit__field">
+      <%= f.number_field :percent_off, step: 0.01, min: 0, max: 100 %>
+    </div>
+  </div>
+
+  <div id="billing-coupon-amount-fields" style="<%= is_amount ? '' : 'display:none;' %>">
+    <div class="field-unit field-unit--number">
+      <div class="field-unit__label"><%= f.label :amount_off, 'Amount off' %></div>
+      <div class="field-unit__field">
+        <%= f.number_field :amount_off, step: 0.01, min: 0 %>
+      </div>
+    </div>
+
+    <div class="field-unit field-unit--string">
+      <div class="field-unit__label"><%= f.label :currency, 'Currency' %></div>
+      <div class="field-unit__field">
+        <%= f.text_field :currency, placeholder: 'usd / inr' %>
+      </div>
+    </div>
+  </div>
+
+  <div class="field-unit field-unit--select">
+    <div class="field-unit__label"><%= f.label :duration, 'Duration' %></div>
+    <div class="field-unit__field">
+      <%= f.select :duration, options_for_select(BillingCoupon::DURATIONS.map { |d| [d.humanize, d] }, resource.duration) %>
+    </div>
+  </div>
+
+  <div class="field-unit field-unit--number">
+    <div class="field-unit__label"><%= f.label :duration_in_months, 'Duration in months' %></div>
+    <div class="field-unit__field">
+      <%= f.number_field :duration_in_months, min: 1 %>
+      <p class="text-xs text-slate-500 mt-1 mb-0">Required only when duration is &quot;repeating&quot;.</p>
+    </div>
+  </div>
+
+  <div class="field-unit field-unit--number">
+    <div class="field-unit__label"><%= f.label :max_redemptions, 'Max redemptions' %></div>
+    <div class="field-unit__field"><%= f.number_field :max_redemptions, min: 1 %></div>
+  </div>
+
+  <div class="field-unit field-unit--date-time">
+    <div class="field-unit__label"><%= f.label :redeem_by, 'Redeem by' %></div>
+    <div class="field-unit__field"><%= f.datetime_local_field :redeem_by %></div>
+  </div>
+
+  <div class="field-unit field-unit--boolean">
+    <div class="field-unit__label"><%= f.label :active, 'Active' %></div>
+    <div class="field-unit__field"><%= f.check_box :active %></div>
+  </div>
+
+  <div class="field-unit field-unit--select">
+    <div class="field-unit__label"><%= f.label :applies_to, 'Applies to' %></div>
+    <div class="field-unit__field">
+      <%= f.select :applies_to, options_for_select(BillingCoupon::APPLIES_TO.map { |v| [v.humanize, v] }, resource.applies_to) %>
+    </div>
+  </div>
+
+  <div class="form-actions">
+    <%= f.submit %>
+  </div>
+<% end %>

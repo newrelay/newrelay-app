@@ -1,0 +1,158 @@
+<% content_for(:title) do %>
+  Plan Management
+<% end %>
+
+<header class="main-content__header" role="banner">
+  <h1 class="main-content__page-title">
+    <%= content_for(:title) %>
+  </h1>
+</header>
+
+<section class="main-content__body">
+  <% if notice.present? %>
+    <div class="mb-4 rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-800">
+      <%= notice %>
+    </div>
+  <% end %>
+
+  <%= form_tag super_admin_plan_management_path, method: :patch do %>
+    <%# Plan pricing cards %>
+    <div class="mb-8 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
+      <% @plans.each do |plan| %>
+        <div class="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+          <div class="flex items-center justify-between mb-4">
+            <h2 class="text-base font-semibold text-slate-900"><%= plan['name'] %></h2>
+            <label class="flex items-center gap-2 text-sm text-slate-600">
+              <%= hidden_field_tag "plans[#{plan['name']}][enabled]", '0' %>
+              <%= check_box_tag "plans[#{plan['name']}][enabled]", '1', plan['enabled'] != false, class: 'rounded border-slate-300 text-violet-600 focus:ring-violet-600' %>
+              Enabled
+            </label>
+          </div>
+          <% if plan['name'].downcase == 'enterprise' %>
+            <div>
+              <span class="block text-sm font-medium text-slate-700 mb-1">Price per agent</span>
+              <span class="block w-full rounded-lg border border-slate-100 bg-slate-50 px-3 py-2 text-sm text-slate-500">Customized per account</span>
+            </div>
+            <p class="mt-2 text-xs text-slate-400">Pricing is negotiated per account - see Enterprise Inquiries and Enterprise Contracts.</p>
+          <% else %>
+            <%
+              gateway_prices = plan['gateway_prices'] || {}
+            %>
+            <% Enterprise::Billing::PaymentGatewayRegistry.definitions.each do |gateway_id, definition| %>
+              <%
+                gw_price = gateway_prices.dig(gateway_id, 'amount') || plan['price_per_agent'] || 0
+                gw_plan_id = gateway_prices.dig(gateway_id, 'price_id') || gateway_prices.dig(gateway_id, 'plan_id')
+                if gateway_id == 'stripe'
+                  gw_plan_id ||= plan['price_ids']&.first
+                elsif gateway_id == 'razorpay'
+                  gw_plan_id ||= plan['razorpay_plan_ids']&.first || plan['razorpay_plan_id']
+                end
+              %>
+              <div class="mt-4 border-t border-slate-100 pt-4">
+                <p class="text-xs font-bold uppercase tracking-wider text-slate-500 mb-2"><%= definition[:label] %></p>
+                <div class="grid grid-cols-2 gap-3">
+                  <div>
+                    <label class="block text-xs font-medium text-slate-700 mb-1">Price (<%= definition[:currency].upcase %>/mo)</label>
+                    <%= number_field_tag "plans[#{plan['name']}][gateway_prices][#{gateway_id}][amount]", gw_price, min: 0, step: 0.01, class: 'block w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-900 focus:border-violet-600 focus:ring-violet-600' %>
+                  </div>
+                  <div>
+                    <label class="block text-xs font-medium text-slate-700 mb-1">Plan/Price ID</label>
+                    <%= text_field_tag "plans[#{plan['name']}][gateway_prices][#{gateway_id}][plan_id]", gw_plan_id, placeholder: 'id_...', class: 'block w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-900 focus:border-violet-600 focus:ring-violet-600' %>
+                  </div>
+                </div>
+              </div>
+            <% end %>
+          <% end %>
+        </div>
+      <% end %>
+    </div>
+
+    <%# Resource Limits Matrix Heading %>
+    <div class="mb-4">
+      <h2 class="text-sm font-semibold uppercase tracking-wider text-slate-500">Resource Limits</h2>
+    </div>
+
+    <%# Resource Limits Table %>
+    <div class="mb-8 overflow-x-auto">
+      <table>
+        <thead>
+          <tr>
+            <th class="cell-label w-1/3" scope="col">Resource Limit (Blank = Unlimited)</th>
+            <% @plans.each do |plan| %>
+              <th class="cell-label text-center" scope="col"><%= plan['name'] %></th>
+            <% end %>
+          </tr>
+        </thead>
+        <tbody>
+          <% @limits.each do |limit| %>
+            <tr class="js-table-row">
+              <td class="cell-data font-medium text-slate-800"><%= limit['display_name'] %></td>
+              <% @plans.each do |plan| %>
+                <td class="cell-data text-center">
+                  <% if plan['name'].downcase == 'enterprise' %>
+                    <span class="text-xs text-slate-400">Custom</span>
+                  <% else %>
+                    <%
+                      pfl = @plan_feature_limits[[plan['name'].downcase, limit['name']]]
+                      limit_val = pfl&.limit_value
+                    %>
+                    <%= number_field_tag "plan_limits[#{plan['name']}][#{limit['name']}]", limit_val, min: 0, class: 'mx-auto block w-24 text-center rounded-lg border border-slate-300 px-2 py-1 text-sm text-slate-900 focus:border-violet-600 focus:ring-violet-600' %>
+                  <% end %>
+                </td>
+              <% end %>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+
+    <%# Feature matrix heading %>
+    <div class="mb-4">
+      <h2 class="text-sm font-semibold uppercase tracking-wider text-slate-500">Feature Matrix</h2>
+    </div>
+
+    <%# Feature matrix table %>
+    <div class="overflow-x-auto">
+      <table>
+        <thead>
+          <tr>
+            <th class="cell-label w-1/3" scope="col">Feature</th>
+            <% @plans.each do |plan| %>
+              <th class="cell-label text-center" scope="col">
+                <%= plan['name'] %>
+                <% if plan['name'].downcase != 'enterprise' %>
+                  <button type="button" class="text-[10px] text-violet-600 hover:text-violet-800 block mx-auto mt-1 font-medium uppercase tracking-wider" onclick="const cbs = document.querySelectorAll('input[id^=feature_<%= plan['name'].parameterize %>_]'); const allChecked = Array.from(cbs).every(cb => cb.checked); cbs.forEach(cb => cb.checked = !allChecked); this.innerText = allChecked ? 'Select All' : 'Deselect All';">Select All</button>
+                <% end %>
+              </th>
+            <% end %>
+          </tr>
+        </thead>
+        <tbody>
+          <% @all_features.each do |feature| %>
+            <tr class="js-table-row">
+              <td class="cell-data text-slate-700"><%= feature['display_name'] %></td>
+              <% @plans.each do |plan| %>
+                <td class="cell-data text-center">
+                  <% if plan['name'].downcase == 'enterprise' %>
+                    <span class="text-xs text-slate-400">Custom</span>
+                  <% else %>
+                    <%
+                      pfl = @plan_feature_limits[[plan['name'].downcase, feature['name']]]
+                      checked = pfl&.enabled || false
+                    %>
+                    <%= hidden_field_tag "plan_features[#{plan['name']}][#{feature['name']}]", '0' %>
+                    <%= check_box_tag "plan_features[#{plan['name']}][#{feature['name']}]", '1', checked, class: 'rounded border-slate-300 text-violet-600 focus:ring-violet-600', id: "feature_#{plan['name'].parameterize}_#{feature['name']}" %>
+                  <% end %>
+                </td>
+              <% end %>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="mt-6 flex justify-end">
+      <%= submit_tag 'Save Plans', class: 'button' %>
+    </div>
+  <% end %>
+</section>

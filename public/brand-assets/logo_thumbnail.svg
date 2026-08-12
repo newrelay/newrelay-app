@@ -1,0 +1,30 @@
+<svg width="580" height="580" viewBox="0 0 580 580" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Left Loop Gradient (Indigo to Royal Blue) -->
+    <linearGradient id="n_grad_left" x1="120" y1="60" x2="320" y2="520" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#4F46E5"/>
+      <stop offset="60%" stop-color="#3B82F6"/>
+      <stop offset="100%" stop-color="#1D4ED8"/>
+    </linearGradient>
+    <!-- Right Loop Gradient (Electric Cyan to Royal Blue) -->
+    <linearGradient id="n_grad_right" x1="280" y1="60" x2="480" y2="520" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#06B6D4"/>
+      <stop offset="50%" stop-color="#3B82F6"/>
+      <stop offset="100%" stop-color="#4F46E5"/>
+    </linearGradient>
+    <filter id="shadow" x="0" y="0" width="580" height="580" filterUnits="userSpaceOnUse">
+      <feDropShadow dx="2" dy="8" stdDeviation="12" flood-color="#000000" flood-opacity="0.25"/>
+    </filter>
+  </defs>
+  <!-- Background Shield/Rounded Canvas -->
+  <rect width="580" height="580" rx="140" fill="#0B0F19"/>
+  <!-- Stylized Ribbon N Graphic -->
+  <g filter="url(#shadow)" transform="translate(45, 45)">
+    <!-- Left Column & Diagonal Loop -->
+    <path d="M120 70C120 42.3858 142.386 20 170 20H200C227.614 20 250 42.3858 250 70V390C250 417.614 227.614 440 200 440H170C142.386 440 120 417.614 120 390V70Z" fill="url(#n_grad_left)"/>
+    <!-- Overlapping Diagonal connecting ribbon -->
+    <path d="M170 20C182.898 20 195.421 24.9669 204.853 33.8525L394.853 212.852C414.07 230.957 425 256.348 425 283V390C425 417.614 402.614 440 375 440H345C317.386 440 295 417.614 295 390V230L145 88.8525C125.783 70.7479 114.853 45.3567 114.853 18.7051L170 20Z" fill="url(#n_grad_right)"/>
+    <!-- Smooth Right Column -->
+    <path d="M295 90C295 62.3858 317.386 40 345 40H375C402.614 40 425 62.3858 425 90V410C425 437.614 402.614 460 375 460H345C317.386 460 295 437.614 295 410V90Z" fill="url(#n_grad_right)"/>
+  </g>
+</svg>

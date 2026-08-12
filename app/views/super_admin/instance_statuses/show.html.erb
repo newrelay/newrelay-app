@@ -1,0 +1,22 @@
+<% content_for(:title) { 'Instance Health' } %>
+
+<div class="space-y-6">
+  <header class="flex items-center justify-between pb-4 border-b border-border/40">
+    <h1 class="text-2xl font-semibold tracking-tight text-foreground">Instance Health</h1>
+  </header>
+
+  <section class="rounded-xl border border-border bg-card text-card-foreground shadow-xs overflow-hidden">
+    <div class="divide-y divide-border/50">
+      <% @metrics.each do |key, value| %>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 px-6 py-4 hover:bg-muted/10 transition-colors">
+          <div class="text-sm font-medium text-muted-foreground capitalize">
+            <%= key.to_s.humanize %>
+          </div>
+          <div class="text-sm text-foreground md:col-span-2 font-mono break-all">
+            <%= value %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </section>
+</div>

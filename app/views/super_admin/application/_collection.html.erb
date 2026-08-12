@@ -1,0 +1,108 @@
+<%#
+# Collection
+# Displays a collection of resources in an HTML table.
+%>
+
+<div class="rounded-xl border border-border bg-card text-card-foreground shadow-xs overflow-hidden">
+  <table class="w-full text-sm" aria-labelledby="<%= table_title %>">
+    <thead>
+      <tr class="border-b border-border bg-muted/40">
+        <% collection_presenter.attribute_types.each do |attr_name, attr_type| %>
+          <th
+            class="px-4 py-3 text-left align-middle text-xs font-semibold text-muted-foreground uppercase tracking-wide whitespace-nowrap"
+            scope="col"
+            role="columnheader"
+            aria-sort="<%= sort_order(collection_presenter.ordered_html_class(attr_name)) %>"
+          >
+            <%= link_to(
+              sanitized_order_params(page, collection_field_name).merge(
+                collection_presenter.order_params_for(attr_name, key: collection_field_name)
+              ),
+              class: "inline-flex items-center gap-1.5 hover:text-foreground transition-colors"
+            ) do %>
+              <%= t(
+                "helpers.label.#{collection_presenter.resource_name}.#{attr_name}",
+                default: attr_name.to_s,
+              ).titleize %>
+              <% if collection_presenter.ordered_by?(attr_name) %>
+                <span class="<%= collection_presenter.ordered_html_class(attr_name) == 'asc' ? 'i-lucide-chevron-up' : 'i-lucide-chevron-down' %> size-3.5 text-foreground shrink-0" aria-hidden="true"></span>
+              <% else %>
+                <span class="i-lucide-chevrons-up-down size-3.5 opacity-30 shrink-0" aria-hidden="true"></span>
+              <% end %>
+            <% end %>
+          </th>
+        <% end %>
+
+        <% has_actions = existing_action?(collection_presenter.resource_name, :edit) || existing_action?(collection_presenter.resource_name, :destroy) %>
+        <% if has_actions %>
+          <th scope="col" class="px-4 py-3 text-right">
+            <span class="sr-only">Actions</span>
+          </th>
+        <% end %>
+      </tr>
+    </thead>
+
+    <tbody class="divide-y divide-border/50">
+      <% resources.each do |resource| %>
+        <tr
+          class="hover:bg-muted/30 transition-colors group"
+          tabindex="0"
+          <% if existing_action?(collection_presenter.resource_name, :show) %>
+            <%= %(role=link data-url=#{polymorphic_path([namespace, resource])}) %>
+          <% end %>
+        >
+          <% collection_presenter.attributes_for(resource).each do |attribute| %>
+            <td class="px-4 py-3.5 align-middle text-sm text-foreground">
+              <% if authorized_action?(resource, :show) %>
+                <a
+                  href="<%= polymorphic_path([namespace, resource]) %>"
+                  class="block hover:text-primary transition-colors"
+                >
+                  <%= render_field attribute %>
+                </a>
+              <% end %>
+            </td>
+          <% end %>
+
+          <% if has_actions %>
+            <td class="px-4 py-3.5 align-middle text-right">
+              <div class="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                <% if existing_action?(collection_presenter.resource_name, :edit) %>
+                  <%= link_to(
+                    [:edit, namespace, resource],
+                    class: "inline-flex items-center justify-center size-8 rounded-md text-muted-foreground hover:text-primary hover:bg-primary/10 transition-colors",
+                    title: t("administrate.actions.edit")
+                  ) do %>
+                    <span class="i-lucide-pen-line size-4" aria-hidden="true"></span>
+                  <% end if authorized_action?(resource, :edit) %>
+                <% end %>
+
+                <% if existing_action?(collection_presenter.resource_name, :destroy) %>
+                  <%= link_to(
+                    [namespace, resource],
+                    class: "inline-flex items-center justify-center size-8 rounded-md text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors",
+                    method: :delete,
+                    data: { confirm: t("administrate.actions.confirm") },
+                    title: t("administrate.actions.destroy")
+                  ) do %>
+                    <span class="i-lucide-trash-2 size-4" aria-hidden="true"></span>
+                  <% end if authorized_action?(resource, :destroy) %>
+                <% end %>
+              </div>
+            </td>
+          <% end %>
+        </tr>
+      <% end %>
+
+      <% if resources.empty? %>
+        <tr>
+          <td colspan="<%= collection_presenter.attribute_types.count + (has_actions ? 1 : 0) %>"
+              class="px-4 py-12 text-center text-sm text-muted-foreground">
+            <span class="i-lucide-inbox size-8 mx-auto mb-2 block opacity-40"></span>
+            No <%= display_resource_name(collection_presenter.resource_name) %> found.
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>

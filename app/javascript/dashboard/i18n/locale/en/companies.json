@@ -1,0 +1,304 @@
+{
+  "COMPANIES": {
+    "HEADER": "Companies",
+    "SUBTITLE": "Organize and manage your B2B accounts.",
+    "SORT_BY": {
+      "LABEL": "Sort by",
+      "OPTIONS": {
+        "NAME": "Name",
+        "DOMAIN": "Domain",
+        "CREATED_AT": "Created at",
+        "LAST_ACTIVITY_AT": "Last activity",
+        "CONTACTS_COUNT": "Contacts count"
+      }
+    },
+    "ORDER": {
+      "LABEL": "Order",
+      "OPTIONS": {
+        "ASCENDING": "Ascending",
+        "DESCENDING": "Descending"
+      }
+    },
+    "SEARCH_PLACEHOLDER": "Search companies, domains...",
+    "LOADING": "Loading companies...",
+    "UNNAMED": "Unnamed Company",
+    "CONTACTS_COUNT": "{n} contact | {n} contacts",
+    "EMPTY_VALUE": "—",
+    "ACTIONS": {
+      "CREATE": "Create Company",
+      "IMPORT": "Import",
+      "COLUMNS": "Columns",
+      "FILTERS": "Filters"
+    },
+    "COLUMNS": {
+      "COMPANY": "Company",
+      "INDUSTRY": "Industry",
+      "CONTACTS": "Contacts",
+      "PHONE": "Phone",
+      "EMAIL": "Email",
+      "WEBSITE": "Website",
+      "OWNER": "Owner",
+      "DOMAIN": "Domain"
+    },
+    "CREATE": {
+      "TITLE": "Add new Company",
+      "SUBTITLE": "Create a new organization account.",
+      "ACTIONS": {
+        "SAVE": "Create Company",
+        "CANCEL": "Cancel",
+        "UPLOAD_LOGO": "Upload Logo"
+      },
+      "LOGO_HINT": "JPG, PNG or SVG. Max size 2MB.",
+      "NAME_REQUIRED": "Company Name is required",
+      "OPTIONAL": "(Optional)",
+      "FIELDS": {
+        "LOGO": "Company Logo",
+        "NAME": "Company Name",
+        "OWNER": "Owner",
+        "OWNER_PLACEHOLDER": "Select an owner",
+        "MEMBERS": "Other Company Member(s)",
+        "MEMBERS_PLACEHOLDER": "Select members",
+        "PHONE": "Phone Number",
+        "PHONE_PLACEHOLDER": "e.g. +1 (555) 123-4567",
+        "EMAIL": "Email",
+        "EMAIL_PLACEHOLDER": "e.g. hello@acme.com",
+        "WEBSITE": "Website",
+        "WEBSITE_PLACEHOLDER": "e.g. https://acme.com",
+        "ADDRESS": "Address",
+        "ADDRESS_PLACEHOLDER": "e.g. 123 Market Street",
+        "STATE": "State",
+        "STATE_PLACEHOLDER": "e.g. California",
+        "CITY": "City",
+        "CITY_PLACEHOLDER": "e.g. San Francisco",
+        "DESCRIPTION": "Description",
+        "DESCRIPTION_PLACEHOLDER": "Add a short description about the company...",
+        "NAME_PLACEHOLDER": "e.g. Acme Inc."
+      },
+      "REQUIRED_MARK": "*",
+      "MESSAGES": {
+        "SUCCESS": "Company created.",
+        "ERROR": "Could not create the company."
+      }
+    },
+    "IMPORT": {
+      "TITLE": "Import Companies",
+      "DESCRIPTION": "Only a CSV file. Upload your CSV file to import companies into your workspace.",
+      "DROPZONE_TITLE": "Click to upload or drag and drop",
+      "DROPZONE_HINT": "CSV up to 10MB",
+      "CANCEL": "Cancel",
+      "UPLOAD": "Upload",
+      "UNAVAILABLE": "Company import is not available yet."
+    },
+    "FILTERS": {
+      "TITLE": "Filter companies",
+      "AND": "AND",
+      "ADD_CONDITION": "Add filter condition",
+      "CLEAR": "Clear filters",
+      "CLEAR_ALL": "Clear all",
+      "APPLY": "Apply filters",
+      "VALUE_REQUIRED": "Value is required",
+      "VALUE_PLACEHOLDER": "Enter value",
+      "OPERATOR_IS": "is",
+      "OPERATOR_IS_NOT": "is not",
+      "OPERATORS": {
+        "EQUAL": "= Equal to",
+        "NOT_EQUAL": "≠ Not equal to"
+      },
+      "PROPERTIES": {
+        "NAME": "Company Name",
+        "INDUSTRY": "Industry",
+        "CONTACTS": "Contacts",
+        "PHONE": "Phone",
+        "EMAIL": "Email",
+        "WEBSITE": "Website",
+        "OWNER": "Owner"
+      }
+    },
+    "DETAIL": {
+      "LOADING": "Loading company details...",
+      "BACK": "Back to Companies",
+      "STATUS_ACTIVE": "Active",
+      "EMPTY_STATE": {
+        "TITLE": "Company not found",
+        "SUBTITLE": "This company may have been removed or is no longer available in this account."
+      },
+      "TABS": {
+        "OVERVIEW": "Overview",
+        "CONTACTS": "Contacts",
+        "CONTACTS_WITH_COUNT": "Contacts ({count})",
+        "HISTORY": "History",
+        "NOTES": "Notes"
+      },
+      "SIDEBAR": {
+        "TABS": {
+          "ATTRIBUTES": "Attributes",
+          "CONTACTS": "Contacts",
+          "HISTORY": "History",
+          "NOTES": "Notes"
+        }
+      },
+      "ABOUT": {
+        "TITLE": "About Company",
+      "FALLBACK": "{name} is focused on building innovative digital products that help businesses scale and grow in the modern world. Their solutions empower organizations to streamline workflows, enhance user experiences, and achieve sustainable growth through cutting-edge technology."
+    },
+    "DETAILS_CARD": {
+        "TITLE": "Company Details",
+        "EDIT": "Edit",
+        "SAVE": "Save",
+        "PHONE": "Phone Number",
+        "EMAIL": "Email",
+        "WEBSITE": "Website",
+        "ADDRESS": "Address",
+        "STATE": "State",
+        "CITY": "City"
+      },
+      "DESCRIPTION": {
+        "TITLE": "Description",
+        "EMPTY": "No description added yet.",
+        "FALLBACK": "A global tech company delivering world-class software, cloud and digital transformation services to enterprises and fast-growing startups."
+      },
+      "SUMMARY": {
+        "TITLE": "Company Summary",
+        "CONTACTS": "Contacts",
+        "DEALS": "Deals",
+        "OPEN_TASKS": "Open Tasks"
+      },
+      "RECENT_CONTACTS": {
+        "TITLE": "Recent Contacts",
+        "VIEW_ALL": "View All",
+        "OWNER": "Owner",
+        "EMPTY": "No contacts are linked to this company yet."
+      },
+      "ACTIVITY": {
+        "TITLE": "Activity Timeline",
+        "VIEW_ALL": "View All",
+        "EMPTY": "No conversations found for this company's contacts yet.",
+        "CONVERSATION": "Conversation #{id}"
+      },
+      "HISTORY": {
+        "EMPTY": "No conversations found for this company's contacts yet."
+      },
+      "NOTES": {
+        "EMPTY": "No notes found for this company's contacts yet."
+      },
+      "ATTRIBUTES": {
+        "SEARCH_PLACEHOLDER": "Search attributes...",
+        "EMPTY_STATE": "There are no company custom attributes configured yet.",
+        "NO_ATTRIBUTES": "No matching attributes found.",
+        "UNUSED_ATTRIBUTES": "{count} unused attribute | {count} unused attributes",
+        "MESSAGES": {
+          "UPDATE_SUCCESS": "Company attribute updated.",
+          "UPDATE_ERROR": "Could not update company attribute.",
+          "DELETE_SUCCESS": "Company attribute removed.",
+          "DELETE_ERROR": "Could not remove company attribute."
+        }
+      },
+      "CONTACTS": {
+        "LOADING": "Loading contacts...",
+        "EMPTY": "No contacts are linked to this company yet.",
+        "UNNAMED_CONTACT": "Unnamed contact",
+        "ACTIONS": {
+          "ADD": "Add contact",
+          "REMOVE": "Remove contact"
+        },
+        "DIALOGS": {
+          "ADD": {
+            "DESCRIPTION": "Search for an existing contact and link it to this company.",
+            "SEARCH_PLACEHOLDER": "Search contacts...",
+            "INITIAL": "Start typing to search contacts.",
+            "EMPTY": "No contacts found.",
+            "CONFIRM_TITLE": "Link contact",
+            "CONFIRM_DESCRIPTION": "Confirm the company and contact before linking them.",
+            "COMPANY_LABEL": "Company",
+            "CONTACT_LABEL": "Contact",
+            "CURRENT_COMPANY": "Currently linked to {companyName}",
+            "ADD": "Link contact",
+            "CANCEL": "Cancel"
+          }
+        },
+        "MESSAGES": {
+          "ADD_SUCCESS": "Contact linked to company.",
+          "ADD_ERROR": "Could not link contact to company.",
+          "REASSIGN_SUCCESS": "Contact reassigned to company.",
+          "REASSIGN_ERROR": "Could not reassign contact to company.",
+          "REMOVE_SUCCESS": "Contact removed from company.",
+          "REMOVE_ERROR": "Could not remove contact from company."
+        }
+      },
+      "AVATAR": {
+        "UPDATING": "Updating company avatar...",
+        "UPLOAD_SUCCESS": "Company avatar updated.",
+        "UPLOAD_ERROR": "Could not update the company avatar.",
+        "DELETE_SUCCESS": "Company avatar removed.",
+        "DELETE_ERROR": "Could not remove the company avatar."
+      },
+      "PROFILE": {
+        "TITLE": "Edit company details",
+        "CREATED_AT": "Created {date}",
+        "LAST_ACTIVE": "Last active {date}",
+        "DESCRIPTION_PLACEHOLDER": "Add a short description for this company",
+        "ACTIONS": {
+          "SAVE": "Update company"
+        },
+        "MESSAGES": {
+          "UPDATE_SUCCESS": "Company updated.",
+          "UPDATE_ERROR": "Could not update the company."
+        },
+        "FIELDS": {
+          "NAME": "Name",
+          "DOMAIN": "Domain"
+        }
+      },
+      "DELETE": {
+        "SECTION_TITLE": "Danger zone",
+        "SECTION_DESCRIPTION": "Delete this company and unlink its contacts. The contacts will remain in the account.",
+        "BUTTON": "Delete company",
+        "TITLE": "Delete company?",
+        "DESCRIPTION": "This will remove the company and unlink all associated contacts. Contacts themselves will be preserved.",
+        "DESCRIPTION_WITH_NAME": "This will remove {companyName} and unlink all associated contacts. Contacts themselves will be preserved.",
+        "CONFIRM": "Delete company",
+        "MESSAGES": {
+          "SUCCESS": "Company deleted.",
+          "ERROR": "Could not delete the company."
+        }
+      }
+    },
+    "EMPTY_STATE": {
+      "TITLE": "No companies yet",
+      "SUBTITLE": "Companies are the core of your CRM. They automatically organize and link your contacts, deals, conversations, and tasks into one unified timeline.",
+      "GETTING_STARTED": "Getting Started",
+      "STEP_BADGE": "2/4 Done",
+      "STEP_WORKSPACE": "Workspace Created",
+      "STEP_CONTACTS": "Contacts Imported",
+      "STEP_CREATE": "Create First Company",
+      "STEP_CREATE_HINT": "Add an organization to group your contacts.",
+      "STEP_DEAL": "Create First Deal",
+      "STEP_DEAL_HINT": "Track revenue connected to a company.",
+      "ADD_ACCOUNTS": "Add your accounts",
+      "OR_IMPORT": "or import",
+      "UPLOAD_CSV": "Upload CSV File",
+      "IMPORT_HUBSPOT": "Import from HubSpot",
+      "IMPORT_SALESFORCE": "Import from Salesforce",
+      "SEARCH_EMPTY_TITLE": "No matches found",
+      "SEARCH_EMPTY_SUBTITLE": "We couldn't find any companies matching your search. Try clearing search or create a new company.",
+      "WHY_TITLE": "Why use Companies?",
+      "WHY": {
+        "ORGANIZE_TITLE": "Organize Contacts",
+        "ORGANIZE_DESC": "Group multiple stakeholders neatly under one account.",
+        "DEALS_TITLE": "Track Deals",
+        "DEALS_DESC": "Monitor all sales pipelines tied directly to an organization.",
+        "REVENUE_TITLE": "Monitor Revenue",
+        "REVENUE_DESC": "See lifetime value, ARR, and financial health per company.",
+        "TIMELINE_TITLE": "View Timeline",
+        "TIMELINE_DESC": "Access a unified history of all emails, calls, and meetings."
+      }
+    }
+  },
+  "COMPANIES_LAYOUT": {
+    "PAGINATION_FOOTER": {
+      "SHOWING": "Showing {startItem} to {endItem} of {totalItems} company | Showing {startItem} to {endItem} of {totalItems} companies",
+      "PREVIOUS": "Previous",
+      "NEXT": "Next"
+    }
+  }
+}

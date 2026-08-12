@@ -1,0 +1,33 @@
+<div class="field-unit" style="grid-column: 1 / -1; display: block; margin-top: 2rem;">
+  <div class="mb-4">
+    <h2 class="text-sm font-semibold uppercase tracking-wider text-slate-500">Feature Matrix</h2>
+  </div>
+
+  <div class="mb-8 overflow-x-auto w-full">
+    <table class="w-full text-left border-collapse">
+      <thead>
+        <tr class="border-b border-slate-200">
+          <th class="py-3 pr-4 text-sm font-semibold text-slate-600 w-1/2" scope="col">Feature</th>
+          <th class="py-3 px-4 text-sm font-semibold text-slate-600 w-1/2 flex items-center justify-between" scope="col">
+            <span>Enabled</span>
+            <button type="button" class="text-[10px] text-violet-600 hover:text-violet-800 font-medium uppercase tracking-wider" onclick="const cbs = document.querySelectorAll('input[id^=feature_]'); const allChecked = Array.from(cbs).every(cb => cb.checked); cbs.forEach(cb => cb.checked = !allChecked); this.innerText = allChecked ? 'Select All' : 'Deselect All';">Select All</button>
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Hidden field to ensure an empty array is sent if all checkboxes are unchecked -->
+        <%= hidden_field_tag "#{f.object_name}[#{field.attribute}][]", "" %>
+        <% field.available_features.each do |feature_key| %>
+          <tr class="border-b border-slate-100 last:border-0 hover:bg-slate-50 transition-colors">
+            <td class="py-3 pr-4 text-sm font-medium text-slate-700">
+              <label for="feature_<%= feature_key %>" class="cursor-pointer block w-full h-full"><%= feature_key.titleize %></label>
+            </td>
+            <td class="py-3 px-4">
+              <%= check_box_tag "#{f.object_name}[#{field.attribute}][]", feature_key, field.enabled?(feature_key), class: "h-4 w-4 rounded border-slate-300 text-violet-600 focus:ring-violet-600 cursor-pointer", id: "feature_#{feature_key}" %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>

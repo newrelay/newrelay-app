@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="<%= I18n.locale %>" class="w-full h-full">
+  <head>
+    <title>Super Admin | newrelay</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="initial-scale=1">
+    <%= vite_client_tag %>
+    <%= vite_javascript_tag 'superadmin' %>
+    <%= csrf_meta_tags %>
+  </head>
+  <body class="antialiased w-full h-full bg-background text-foreground" data-relay="true">
+    <div class="min-h-screen w-full flex items-center justify-center px-4">
+      <div class="w-full max-w-sm">
+        <div class="flex flex-col items-center mb-8 gap-3">
+          <div class="bg-primary text-primary-foreground flex size-10 items-center justify-center rounded-xl font-bold text-lg">
+            N
+          </div>
+          <div class="text-center">
+            <h1 class="text-xl font-semibold text-foreground">Super Admin Console</h1>
+            <p class="text-sm text-muted-foreground mt-1">Sign in to manage your instance</p>
+          </div>
+        </div>
+
+        <div class="rounded-xl border border-border bg-card p-6 shadow-sm space-y-4">
+          <%= form_for(resource, as: resource_name, url: '/super_admin/sign_in') do |f| %>
+            <% if flash[:error].present? %>
+              <div class="flex items-start gap-2.5 rounded-lg bg-destructive/10 border border-destructive/20 p-3 text-sm text-destructive">
+                <span class="i-lucide-alert-circle size-4 mt-0.5 shrink-0"></span>
+                <%= flash[:error] %>
+              </div>
+            <% end %>
+
+            <div class="space-y-1.5">
+              <label class="block text-sm font-medium text-foreground">Email address</label>
+              <%= f.email_field :email, autofocus: true, autocomplete: "email",
+                  placeholder: "admin@example.com",
+                  class: "flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring" %>
+            </div>
+
+            <div class="space-y-1.5">
+              <label class="block text-sm font-medium text-foreground">Password</label>
+              <%= f.password_field :password, autocomplete: "current-password",
+                  placeholder: "••••••••",
+                  class: "flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring" %>
+            </div>
+
+            <button type="submit" class="inline-flex mt-1 w-full h-9 items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring cursor-pointer">
+              Sign in
+            </button>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

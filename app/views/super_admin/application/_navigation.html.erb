@@ -1,0 +1,69 @@
+<%#
+# Navigation
+
+This partial is used to display the navigation in Administrate.
+By default, the navigation contains navigation links
+for all resources in the admin dashboard,
+as defined by the routes in the `admin/` namespace
+%>
+
+
+<%
+  sidebar_icons = {
+    accounts: 'i-lucide-building',
+    users: 'i-lucide-users',
+    platform_apps: 'i-lucide-layout-grid',
+    agent_bots: 'i-lucide-bot',
+    platform_banners: 'i-lucide-megaphone',
+    subscriptions: 'i-lucide-credit-card',
+    payment_transactions: 'i-lucide-circle-dollar-sign',
+    billing_activity_logs: 'i-lucide-history',
+    billing_coupons: 'i-lucide-ticket',
+    marketplace_plan_prices: 'i-lucide-tag',
+  }
+%>
+
+<div class="border-sidebar-border border-r w-60 bg-sidebar text-sidebar-foreground flex-shrink-0 justify-between h-full flex flex-col" role="navigation">
+  <div>
+    <div class="flex flex-col gap-2 p-2 pb-6 border-b border-sidebar-border mb-4">
+      <%= link_to super_admin_root_url, class: "flex h-12 w-full items-center gap-2 overflow-hidden rounded-md p-2 text-left text-sm transition-colors hover:bg-sidebar-accent" do %>
+        <div class="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-8 shrink-0 items-center justify-center rounded-lg">
+          <span class="text-sm font-bold">N</span>
+        </div>
+        <div class="grid flex-1 text-left text-sm leading-tight">
+          <span class="truncate font-semibold">New Relay</span>
+          <span class="text-muted-foreground/60 truncate text-xs font-normal">Super Admin Console</span>
+        </div>
+      <% end %>
+    </div>
+
+    <ul class="flex w-full min-w-0 flex-col gap-1 px-2">
+      <%= render partial: "nav_item", locals: { icon: 'i-lucide-layout-dashboard', url: super_admin_root_url, label: 'Dashboard' } %>
+      <% Administrate::Namespace.new(namespace).resources.each do |resource| %>
+        <% next if ["account_users", "access_tokens", "installation_configs", "dashboard", "devise/sessions", "app_configs", "instance_statuses", "settings", "push_diagnostics", "account_hierarchy", "plan_management", "payment_gateways", "enterprise_inquiries", "payment_transactions"].include?  resource.resource %>
+        <% next if resource.resource == "platform_banners" && !ChatwootApp.chatwoot_cloud? %>
+        <%= render partial: "nav_item", locals: {
+            icon: sidebar_icons[resource.resource.to_sym] || 'i-lucide-folder',
+            url: resource_index_route(resource),
+            label: display_resource_name(resource),
+          }
+        %>
+
+      <% end %>
+      <%= render partial: "nav_item", locals: { icon: 'i-lucide-network', url: super_admin_account_hierarchy_url, label: 'Account Hierarchy' } %>
+      <%= render partial: "nav_item", locals: { icon: 'i-lucide-settings', url: super_admin_plan_management_url, label: 'Plan Management' } %>
+      <%= render partial: "nav_item", locals: { icon: 'i-lucide-credit-card', url: super_admin_payment_gateways_url, label: 'Payment Gateways' } %>
+      <%= render partial: "nav_item", locals: { icon: 'i-lucide-message-square', url: super_admin_enterprise_inquiries_url, label: 'Enterprise Inquiries' } %>
+      <%= render 'settings_menu', open: settings_open? %>
+    </ul>
+  </div>
+  <div>
+    <ul class="flex w-full min-w-0 flex-col gap-1 px-2 pb-4">
+      <%= render partial: "nav_item", locals: { icon: 'i-lucide-activity', url: sidekiq_web_url, label: 'Sidekiq Dashboard' } %>
+      <%= render partial: "nav_item", locals: { icon: 'i-lucide-heart-pulse', url: super_admin_instance_status_url, label: 'Instance Health' } %>
+      <%= render partial: "nav_item", locals: { icon: 'i-lucide-send', url: super_admin_push_diagnostics_url, label: 'Push Diagnostics' } %>
+      <%= render partial: "nav_item", locals: { icon: 'i-lucide-arrow-left', url: '/', label: 'Agent Dashboard' } %>
+      <%= render partial: "nav_item", locals: { icon: 'i-lucide-log-out', url: super_admin_logout_url, label: 'Logout' } %>
+    </ul>
+  </div>
+</div>

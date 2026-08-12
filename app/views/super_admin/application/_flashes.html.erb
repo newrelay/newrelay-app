@@ -1,0 +1,35 @@
+<%#
+# Flash Partial
+
+This partial renders flash messages on every page.
+
+## Relevant Helpers:
+
+- `flash`:
+  Returns a hash,
+  where the keys are the type of flash (alert, error, notice, etc)
+  and the values are the message to be displayed.
+%>
+
+<% if flash.any? %>
+  <div class="px-6 pt-4 space-y-2">
+    <% flash.each do |key, value| -%>
+      <%
+        color_class = case key.to_s
+          when 'notice' then 'bg-success/10 border-success/20 text-success'
+          when 'error', 'alert' then 'bg-destructive/10 border-destructive/20 text-destructive'
+          else 'bg-primary/10 border-primary/20 text-primary'
+        end
+        icon_class = case key.to_s
+          when 'notice' then 'i-lucide-check-circle'
+          when 'error', 'alert' then 'i-lucide-alert-circle'
+          else 'i-lucide-info'
+        end
+      %>
+      <div class="flex items-start gap-2.5 rounded-lg border p-3 text-sm <%= color_class %>">
+        <span class="<%= icon_class %> size-4 mt-0.5 shrink-0" aria-hidden="true"></span>
+        <%= value.to_s.html_safe %>
+      </div>
+    <% end -%>
+  </div>
+<% end %>

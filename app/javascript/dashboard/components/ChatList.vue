@@ -284,7 +284,7 @@ const activeTeam = computed(() => {
   return {};
 });
 
-const pageTitle = computed(() => t('CHAT_LIST.TAB_HEADING'));
+const pageTitle = computed(() => t('SIDEBAR.CUSTOMER_ENGAGEMENT'));
 
 const pageSubtitle = computed(() => {
   if (hasAppliedFilters.value) {

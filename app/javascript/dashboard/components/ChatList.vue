@@ -1,5 +1,5 @@
 <script setup>
-import { ref, unref, provide, computed, watch, onMounted } from 'vue';
+import { ref, unref, provide, computed, watch, onMounted, nextTick } from 'vue';
 import { useStore } from 'vuex';
 import { useRoute, useRouter } from 'vue-router';
 import {
@@ -287,11 +287,16 @@ const activeTeam = computed(() => {
 const pageTitle = computed(() => t('SIDEBAR.CONVERSATIONS'));
 
 const searchQuery = ref('');
-const showSearchInput = ref(true);
+const showSearchInput = ref(false);
 const searchInputRef = ref(null);
 
 const toggleSearchInput = () => {
   showSearchInput.value = !showSearchInput.value;
+  if (showSearchInput.value) {
+    nextTick(() => {
+      searchInputRef.value?.focus();
+    });
+  }
 };
 
 const filteredConversationList = computed(() => {
@@ -1001,26 +1006,41 @@ watch(conversationFilters, (newVal, oldVal) => {
       </RelayTabs>
     </div>
 
-    <!-- Search Input -->
-    <div class="px-4 py-2 shrink-0 border-b border-border/60">
-      <div class="relative flex items-center">
-        <span class="i-lucide-search absolute left-2.5 size-4 text-muted-foreground" />
-        <input
-          v-model="searchQuery"
-          type="text"
-          :placeholder="t('CHAT_LIST.SEARCH.INPUT')"
-          class="w-full h-8 pl-8 pr-7 text-xs rounded-md bg-muted/50 border border-input focus:outline-none focus:ring-1 focus:ring-primary text-foreground placeholder:text-muted-foreground transition-colors"
-        />
-        <button
-          v-if="searchQuery"
-          type="button"
-          class="absolute right-2 text-muted-foreground hover:text-foreground p-0.5"
-          @click="searchQuery = ''"
-        >
-          <span class="i-lucide-x size-3.5" />
-        </button>
+    <!-- Search Input (Slide & Fade in/out) -->
+    <transition
+      enter-active-class="transition-all duration-200 ease-out"
+      enter-from-class="opacity-0 -translate-y-2 max-h-0"
+      enter-to-class="opacity-100 translate-y-0 max-h-12"
+      leave-active-class="transition-all duration-150 ease-in"
+      leave-from-class="opacity-100 translate-y-0 max-h-12"
+      leave-to-class="opacity-0 -translate-y-2 max-h-0"
+    >
+      <div
+        v-if="showSearchInput"
+        class="px-4 py-2 shrink-0 border-b border-border/60 overflow-hidden"
+      >
+        <div class="relative flex items-center">
+          <span
+            class="i-lucide-search absolute left-2.5 size-4 text-muted-foreground"
+          />
+          <input
+            ref="searchInputRef"
+            v-model="searchQuery"
+            type="text"
+            :placeholder="t('CHAT_LIST.SEARCH.INPUT')"
+            class="w-full h-8 pl-8 pr-7 text-xs rounded-md bg-muted/50 border border-input focus:outline-none focus:ring-1 focus:ring-primary text-foreground placeholder:text-muted-foreground transition-colors"
+          />
+          <button
+            v-if="searchQuery"
+            type="button"
+            class="absolute right-2 text-muted-foreground hover:text-foreground p-0.5"
+            @click="searchQuery = ''"
+          >
+            <span class="i-lucide-x size-3.5" />
+          </button>
+        </div>
       </div>
-    </div>
+    </transition>
 
     <TeleportWithDirection
       v-if="showAddFoldersModal"

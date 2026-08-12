@@ -136,14 +136,9 @@ onMounted(() => {
     <div
       class="flex items-center justify-between pb-2 border-b border-border/60 shrink-0"
     >
-      <div class="flex items-center gap-1.5 min-w-0">
-        <span class="i-lucide-user size-3.5 text-primary shrink-0" />
-        <span
-          class="text-xs font-semibold uppercase tracking-wider text-muted-foreground truncate"
-        >
-          Overview
-        </span>
-      </div>
+      <h3 class="text-base font-medium text-foreground tracking-tight">
+        Overview
+      </h3>
     </div>
 
     <ContactInfo

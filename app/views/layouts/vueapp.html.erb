@@ -76,7 +76,8 @@
     </script>
     <% end %>
     <%= vite_client_tag %>
-    <%= vite_javascript_tag @application_pack %>
+    <% vite_tags = vite_javascript_tag(@application_pack) %>
+    <%= vite_tags.gsub('rel="stylesheet"', 'rel="stylesheet" media="print" onload="this.media=\'all\'"').html_safe %>
     <% if @brand_colors.present? %>
     <style id="brand-colors">
       /* Brand colors injected server-side for custom domain: <%= request.host %> */

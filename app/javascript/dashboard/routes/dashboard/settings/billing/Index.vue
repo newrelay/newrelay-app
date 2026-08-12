@@ -63,7 +63,7 @@ const hasActiveSubscription = computed(
 );
 const lockedPaymentProvider = computed(() => {
   const sub = accountSubscription.value;
-  if (!sub) return null;
+  if (!sub || !hasActiveSubscription.value) return null;
 
   return (
     sub.payment_provider ||
@@ -576,7 +576,7 @@ const onClickBillingPortal = () => {
 };
 
 const onClickCaptainUpgrade = () => {
-  if (usesStripePortal.value) {
+  if (hasActiveSubscription.value && usesStripePortal.value) {
     onClickBillingPortal();
     return;
   }
@@ -857,7 +857,7 @@ onMounted(() => {
         </section>
         <section class="grid gap-6">
           <BillingCard
-            v-if="!hasResellerParent && (!planName || showPlanPicker)"
+            v-if="!hasResellerParent && (!planName || !hasActiveSubscription || showPlanPicker)"
             :title="$t('BILLING_SETTINGS.SELECT_PLAN.TITLE')"
             :description="$t('BILLING_SETTINGS.SELECT_PLAN.DESCRIPTION')"
           >

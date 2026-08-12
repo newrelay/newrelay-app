@@ -307,7 +307,7 @@ export default {
             size="icon"
             class="size-8 rounded-md border border-border text-muted-foreground hover:border-transparent hover:bg-muted hover:text-foreground"
           >
-            <span class="i-ph-chat-circle-dots size-4" />
+            <span class="i-lucide-message-square size-4" />
           </RelayButton>
         </template>
       </ComposeConversation>
@@ -326,7 +326,7 @@ export default {
         class="size-8 rounded-md border border-border text-muted-foreground hover:border-transparent hover:bg-muted hover:text-foreground"
         @click="toggleEditModal"
       >
-        <span class="i-ph-pencil-simple size-4" />
+        <span class="i-lucide-pen-line size-4" />
       </RelayButton>
       <ContactMergeModal :primary-contact="contact">
         <template #trigger>
@@ -337,7 +337,7 @@ export default {
             class="size-8 rounded-md border border-border text-muted-foreground hover:border-transparent hover:bg-muted hover:text-foreground"
             :disabled="uiFlags.isMerging"
           >
-            <span class="i-ph-arrows-merge size-4" />
+            <span class="i-lucide-git-merge size-4" />
           </RelayButton>
         </template>
       </ContactMergeModal>
@@ -354,7 +354,7 @@ export default {
             class="size-8 rounded-md border border-border text-muted-foreground hover:border-transparent hover:bg-destructive/10 hover:text-destructive"
             :disabled="uiFlags.isDeleting"
           >
-            <span class="i-ph-trash size-4" />
+            <span class="i-lucide-trash-2 size-4" />
           </RelayButton>
         </template>
       </ContactDeleteModal>

@@ -132,15 +132,6 @@ onMounted(() => {
 
 <template>
   <div class="w-full p-4 flex flex-col gap-4 bg-muted/30">
-    <!-- Overview Section Header -->
-    <div
-      class="flex items-center justify-between pb-2 border-b border-border/60 shrink-0"
-    >
-      <h3 class="text-base font-medium text-foreground tracking-tight">
-        Overview
-      </h3>
-    </div>
-
     <ContactInfo
       :contact="contact"
       :channel-type="channelType"

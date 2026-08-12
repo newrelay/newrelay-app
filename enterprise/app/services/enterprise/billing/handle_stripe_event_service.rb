@@ -491,9 +491,13 @@ class Enterprise::Billing::HandleStripeEventService
   end
 
   def get_plan_credits(plan_name)
-    config = InstallationConfig.find_by(name: CAPTAIN_CLOUD_PLAN_LIMITS).value
+    return {} if plan_name.blank?
+
+    config = InstallationConfig.find_by(name: CAPTAIN_CLOUD_PLAN_LIMITS)&.value
+    return {} if config.blank?
+
     config = JSON.parse(config) if config.is_a?(String)
-    config[plan_name.downcase]&.symbolize_keys
+    config[plan_name.to_s.downcase]&.symbolize_keys || {}
   end
 
   # Starts a PAST_DUE_GRACE_PERIOD grace window the first time a subscription goes

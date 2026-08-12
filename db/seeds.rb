@@ -95,8 +95,8 @@ unless Rails.env.production?
   Seeders::MessageSeeder.create_sample_form_message conversation
   # articles
   Seeders::MessageSeeder.create_sample_articles_message conversation
-  # csat
-  Seeders::MessageSeeder.create_sample_csat_collect_message conversation
+  # voice call messages
+  Seeders::MessageSeeder.create_sample_voice_call_messages conversation
 
   CannedResponse.create!(account: account, short_code: 'start', content: 'Hello welcome to chatwoot.')
 

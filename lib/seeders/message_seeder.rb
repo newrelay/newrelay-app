@@ -120,4 +120,68 @@ module Seeders::MessageSeeder
       }
     )
   end
+
+  def self.create_sample_voice_call_messages(conversation)
+    # 1. Outbound Completed Call
+    Message.create!(
+      account: conversation.account,
+      inbox: conversation.inbox,
+      conversation: conversation,
+      message_type: :outgoing,
+      content: 'Outbound Call ended • 00:18',
+      content_type: 'voice_call',
+      content_attributes: {
+        data: {
+          call: {
+            status: 'completed',
+            direction: 'outgoing',
+            duration_seconds: 18,
+            provider: 'exotel'
+          }
+        }
+      }
+    )
+
+    # 2. Inbound Missed Call
+    Message.create!(
+      account: conversation.account,
+      inbox: conversation.inbox,
+      conversation: conversation,
+      message_type: :incoming,
+      sender: conversation.contact,
+      content: 'Missed incoming call',
+      content_type: 'voice_call',
+      content_attributes: {
+        data: {
+          call: {
+            status: 'no_answer',
+            direction: 'incoming',
+            duration_seconds: 0,
+            provider: 'twilio'
+          }
+        }
+      }
+    )
+
+    # 3. Inbound Completed Call
+    Message.create!(
+      account: conversation.account,
+      inbox: conversation.inbox,
+      conversation: conversation,
+      message_type: :incoming,
+      sender: conversation.contact,
+      content: 'Incoming Call ended • 01:42',
+      content_type: 'voice_call',
+      content_attributes: {
+        data: {
+          call: {
+            status: 'completed',
+            direction: 'incoming',
+            duration_seconds: 102,
+            provider: 'exotel'
+          }
+        }
+      }
+    )
+  end
 end

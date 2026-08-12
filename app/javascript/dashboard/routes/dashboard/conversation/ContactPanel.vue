@@ -15,6 +15,7 @@ import ConversationParticipant from './ConversationParticipant.vue';
 import ContactInfo from './contact/ContactInfo.vue';
 import ContactNotes from './contact/ContactNotes.vue';
 import ConversationInfo from './ConversationInfo.vue';
+import ConversationAction from './ConversationAction.vue';
 import CustomAttributes from './customAttributes/CustomAttributes.vue';
 import SharedFiles from './SharedFiles.vue';
 import Draggable from 'vuedraggable';
@@ -162,7 +163,21 @@ onMounted(() => {
         @end="onDragEnd"
       >
         <template #item="{ element }">
-          <div v-if="element.name === 'conversation_actions'" class="hidden" />
+          <div v-if="element.name === 'conversation_actions'">
+            <AccordionItem
+              :title="$t('CONVERSATION_SIDEBAR.ACCORDION.CONVERSATION_ACTIONS')"
+              :is-open="isContactSidebarItemOpen('is_conv_actions_open', true)"
+              compact
+              @toggle="
+                value => toggleSidebarUIState('is_conv_actions_open', value)
+              "
+            >
+              <ConversationAction
+                :conversation-id="conversationId"
+                :inbox-id="inboxId"
+              />
+            </AccordionItem>
+          </div>
           <div
             v-else-if="element.name === 'conversation_participants'"
             class="conversation--actions"

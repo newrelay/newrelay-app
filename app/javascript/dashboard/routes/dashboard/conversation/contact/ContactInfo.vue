@@ -360,34 +360,6 @@ export default {
       </ContactDeleteModal>
     </div>
 
-    <!-- Conversation Management -->
-    <div
-      v-if="conversationId"
-      class="border-t border-border/60 pt-4 mt-6"
-    >
-      <button
-        type="button"
-        class="flex items-center justify-between w-full text-left"
-        @click="isConvMgmtOpen = !isConvMgmtOpen"
-      >
-        <span class="text-[13px] font-medium text-foreground">
-          {{ $t('CONVERSATION_SIDEBAR.ACCORDION.CONVERSATION_ACTIONS') }}
-        </span>
-        <span
-          class="size-4 text-muted-foreground shrink-0"
-          :class="
-            isConvMgmtOpen ? 'i-lucide-chevron-up' : 'i-lucide-chevron-down'
-          "
-        />
-      </button>
-      <div v-if="isConvMgmtOpen" class="mt-4">
-        <ConversationAction
-          :conversation-id="conversationId"
-          :inbox-id="inboxId"
-        />
-      </div>
-    </div>
-
     <AddContactDrawer ref="editContactDrawer" @update="onContactUpdate" />
   </div>
 </template>

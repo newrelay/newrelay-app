@@ -114,15 +114,15 @@ const applySort = value => {
     </template>
     <div v-else class="relative">
       <RelayButton
-        v-if="false"
         id="toggleConversationFilterButton"
-        variant="outline"
+        v-tooltip.top-end="$t('FILTER.TITLE')"
+        variant="ghost"
         size="icon"
-        class="h-8 w-8 shrink-0"
+        class="h-8 w-8 text-muted-foreground hover:text-foreground shrink-0"
         :aria-label="$t('FILTER.TOOLTIP_LABEL')"
         @click="showFilterMenu = !showFilterMenu"
       >
-        <span class="i-lucide-list-filter size-4" />
+        <span class="i-lucide-sliders-horizontal size-4" />
       </RelayButton>
       <div
         v-if="showFilterMenu"

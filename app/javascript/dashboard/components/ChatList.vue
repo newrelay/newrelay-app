@@ -980,6 +980,26 @@ watch(conversationFilters, (newVal, oldVal) => {
       </div>
     </div>
 
+    <!-- Conversations Management Section Header -->
+    <div
+      class="flex items-center justify-between px-4 py-2 border-b border-border/60 bg-muted/20 shrink-0"
+    >
+      <div class="flex items-center gap-1.5 min-w-0">
+        <span class="i-lucide-message-square size-3.5 text-primary shrink-0" />
+        <span
+          class="text-xs font-semibold uppercase tracking-wider text-muted-foreground truncate"
+        >
+          {{ t('SIDEBAR.CONVERSATIONS') }} Management
+        </span>
+      </div>
+      <span
+        v-if="conversationList.length"
+        class="text-[11px] font-medium px-2 py-0.5 rounded-full bg-primary/10 text-primary shrink-0"
+      >
+        {{ conversationList.length }}
+      </span>
+    </div>
+
     <div
       v-if="!hasAppliedFiltersOrActiveFolders"
       class="px-4 pt-1 pb-0 shrink-0"

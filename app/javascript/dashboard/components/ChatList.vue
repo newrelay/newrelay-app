@@ -287,6 +287,12 @@ const activeTeam = computed(() => {
 const pageTitle = computed(() => t('SIDEBAR.CONVERSATIONS'));
 
 const searchQuery = ref('');
+const showSearchInput = ref(true);
+const searchInputRef = ref(null);
+
+const toggleSearchInput = () => {
+  showSearchInput.value = !showSearchInput.value;
+};
 
 const filteredConversationList = computed(() => {
   if (!searchQuery.value.trim()) return conversationList.value;
@@ -964,6 +970,7 @@ watch(conversationFilters, (newVal, oldVal) => {
           @reset-filters="resetAndFetchData"
           @basic-filter-change="onBasicFilterChange"
           @status-change="onStatusTabChange"
+          @toggle-search="toggleSearchInput"
         />
       </div>
     </div>

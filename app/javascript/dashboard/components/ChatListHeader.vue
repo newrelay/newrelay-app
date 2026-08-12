@@ -23,6 +23,7 @@ const emit = defineEmits([
   'basicFilterChange',
   'filtersModal',
   'statusChange',
+  'toggleSearch',
 ]);
 
 const { t } = useI18n();
@@ -112,18 +113,30 @@ const applySort = value => {
         <span class="i-lucide-trash-2 size-4" />
       </RelayButton>
     </template>
-    <div v-else class="relative">
+    <div v-else class="flex items-center gap-0.5">
       <RelayButton
-        id="toggleConversationFilterButton"
-        v-tooltip.top-end="$t('FILTER.TITLE')"
+        v-tooltip.top-end="$t('CHAT_LIST.SEARCH.INPUT')"
         variant="ghost"
         size="icon"
         class="h-8 w-8 text-muted-foreground hover:text-foreground shrink-0"
-        :aria-label="$t('FILTER.TOOLTIP_LABEL')"
-        @click="showFilterMenu = !showFilterMenu"
+        @click="emit('toggleSearch')"
       >
-        <span class="i-lucide-sliders-horizontal size-4" />
+        <span class="i-lucide-search size-4" />
       </RelayButton>
+
+      <div class="relative">
+        <RelayButton
+          id="toggleConversationFilterButton"
+          v-tooltip.top-end="$t('FILTER.TITLE')"
+          variant="ghost"
+          size="icon"
+          class="h-8 w-8 text-muted-foreground hover:text-foreground shrink-0"
+          :aria-label="$t('FILTER.TOOLTIP_LABEL')"
+          @click="showFilterMenu = !showFilterMenu"
+        >
+          <span class="i-lucide-sliders-horizontal size-4" />
+        </RelayButton>
+      </div>
       <div
         v-if="showFilterMenu"
         v-on-click-outside="() => (showFilterMenu = false)"

@@ -172,10 +172,10 @@ const handleContactSelect = contactId => {
   <div class="flex flex-col gap-6 px-6 pb-8">
     <div v-if="!selectedContact" class="flex flex-col gap-4">
       <div class="flex flex-col gap-2">
-        <label class="text-base text-n-slate-12">
+        <label class="text-base text-foreground">
           {{ t('COMPANIES.DETAIL.CONTACTS.ACTIONS.ADD') }}
         </label>
-        <span class="text-sm text-n-slate-11">
+        <span class="text-sm text-muted-foreground">
           {{ t('COMPANIES.DETAIL.CONTACTS.DIALOGS.ADD.DESCRIPTION') }}
         </span>
       </div>
@@ -189,7 +189,7 @@ const handleContactSelect = contactId => {
           t('COMPANIES.DETAIL.CONTACTS.DIALOGS.ADD.SEARCH_PLACEHOLDER')
         "
         :placeholder="t('COMPANIES.DETAIL.CONTACTS.ACTIONS.ADD')"
-        class="[&>div>button]:bg-n-alpha-black2"
+        class="[&>div>button]:bg-black/10"
         @search="handleSearch"
         @update:model-value="handleContactSelect"
       />
@@ -197,10 +197,10 @@ const handleContactSelect = contactId => {
 
     <div v-else class="flex flex-col gap-4">
       <div class="flex flex-col gap-2">
-        <label class="text-base text-n-slate-12">
+        <label class="text-base text-foreground">
           {{ t('COMPANIES.DETAIL.CONTACTS.DIALOGS.ADD.CONFIRM_TITLE') }}
         </label>
-        <span class="text-sm text-n-slate-11">
+        <span class="text-sm text-muted-foreground">
           {{ t('COMPANIES.DETAIL.CONTACTS.DIALOGS.ADD.CONFIRM_DESCRIPTION') }}
         </span>
       </div>
@@ -212,19 +212,19 @@ const handleContactSelect = contactId => {
           class="flex flex-col gap-2"
         >
           <div class="flex items-center justify-between h-5 gap-2">
-            <label class="text-sm text-n-slate-12">
+            <label class="text-sm text-foreground">
               {{ row.label }}
             </label>
             <span
               v-if="row.badge"
-              class="px-2 py-0.5 text-xs rounded-md text-n-amber-11 bg-n-alpha-2"
+              class="px-2 py-0.5 text-xs rounded-md text-warning bg-accent"
             >
               {{ row.badge }}
             </span>
           </div>
 
           <div
-            class="border border-n-strong h-[60px] gap-2 flex items-center rounded-xl p-3"
+            class="border border-border h-[60px] gap-2 flex items-center rounded-xl p-3"
           >
             <Avatar
               :name="row.avatarName"
@@ -235,13 +235,13 @@ const handleContactSelect = contactId => {
             />
             <div class="flex flex-col w-full min-w-0 gap-1">
               <span
-                class="text-sm leading-4 font-medium truncate text-n-slate-12"
+                class="text-sm leading-4 font-medium truncate text-foreground"
               >
                 {{ row.primary }}
               </span>
               <span
                 v-if="row.secondary"
-                class="text-sm leading-4 truncate text-n-slate-11"
+                class="text-sm leading-4 truncate text-muted-foreground"
               >
                 {{ row.secondary }}
               </span>
@@ -255,7 +255,7 @@ const handleContactSelect = contactId => {
           variant="faded"
           color="slate"
           :label="t('COMPANIES.DETAIL.CONTACTS.DIALOGS.ADD.CANCEL')"
-          class="w-full bg-n-alpha-2 text-n-blue-11 hover:bg-n-alpha-3"
+          class="w-full bg-accent text-primary hover:bg-accent"
           :disabled="isBusy"
           @click="emit('cancelContactSelection')"
         />
@@ -271,29 +271,32 @@ const handleContactSelect = contactId => {
 
     <div class="flex flex-col gap-3">
       <div class="flex items-center justify-between gap-3">
-        <h4 class="text-sm font-medium text-n-slate-12">
+        <h4 class="text-sm font-medium text-foreground">
           {{ t('COMPANIES.DETAIL.SIDEBAR.TABS.CONTACTS') }}
         </h4>
-        <span v-if="hasContacts" class="text-xs tabular-nums text-n-slate-11">
+        <span
+          v-if="hasContacts"
+          class="text-xs tabular-nums text-muted-foreground"
+        >
           {{ t('COMPANIES.CONTACTS_COUNT', { n: totalContacts }) }}
         </span>
       </div>
 
       <div
         v-if="isLoading && !hasContacts"
-        class="py-8 text-sm text-center rounded-xl border border-dashed border-n-weak text-n-slate-11"
+        class="py-8 text-sm text-center rounded-xl border border-dashed border-border text-muted-foreground"
       >
         {{ t('COMPANIES.DETAIL.CONTACTS.LOADING') }}
       </div>
 
       <div
         v-else-if="!hasContacts"
-        class="py-8 px-4 text-sm text-center rounded-xl border border-dashed border-n-strong text-n-slate-11"
+        class="py-8 px-4 text-sm text-center rounded-xl border border-dashed border-border text-muted-foreground"
       >
         {{ t('COMPANIES.DETAIL.CONTACTS.EMPTY') }}
       </div>
 
-      <div v-else class="flex flex-col divide-y divide-n-weak">
+      <div v-else class="flex flex-col divide-y divide-border">
         <div
           v-for="contact in contacts"
           :key="contact.id"
@@ -301,7 +304,7 @@ const handleContactSelect = contactId => {
         >
           <button
             type="button"
-            class="flex items-center flex-1 min-w-0 !p-0 gap-3 text-start rounded-lg transition-colors text-n-slate-12 hover:text-n-blue-11 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-n-brand focus-visible:ring-offset-2 focus-visible:ring-offset-n-background"
+            class="flex items-center flex-1 min-w-0 !p-0 gap-3 text-start rounded-lg transition-colors text-foreground hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background"
             @click="openContact(contact.id)"
           >
             <Avatar
@@ -313,13 +316,13 @@ const handleContactSelect = contactId => {
             />
             <div class="min-w-0 space-y-0.5">
               <span
-                class="text-sm font-medium leading-5 truncate text-n-slate-12"
+                class="text-sm font-medium leading-5 truncate text-foreground"
               >
                 {{ contactName(contact) }}
               </span>
               <p
                 v-if="contactMeta(contact)"
-                class="text-sm leading-5 truncate text-n-slate-11"
+                class="text-sm leading-5 truncate text-muted-foreground"
               >
                 {{ contactMeta(contact) }}
               </p>

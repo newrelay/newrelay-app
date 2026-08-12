@@ -99,7 +99,7 @@ defineExpose({ show, hide, toggle });
     <div
       v-if="isActive && isMobile"
       data-popover-backdrop
-      class="fixed inset-0 z-[9999] flex items-start pt-[clamp(3rem,15vh,12rem)] justify-center bg-n-alpha-black1"
+      class="fixed inset-0 z-[9999] flex items-start pt-[clamp(3rem,15vh,12rem)] justify-center bg-black/5"
     >
       <div
         ref="mobileContentRef"
@@ -108,7 +108,7 @@ defineExpose({ show, hide, toggle });
           { ignore: clickOutsideIgnore },
         ]"
         data-popover-content
-        class="relative flex flex-col w-full max-w-lg max-h-[calc(100vh-4rem)] mx-4 bg-n-alpha-3 backdrop-blur-[100px] shadow-xl rounded-xl"
+        class="relative flex flex-col w-full max-w-lg max-h-[calc(100vh-4rem)] mx-4 bg-accent backdrop-blur-[100px] shadow-xl rounded-xl"
       >
         <div
           class="flex-1 min-h-0 overflow-y-auto overscroll-contain rounded-xl"
@@ -126,11 +126,11 @@ defineExpose({ show, hide, toggle });
       data-popover-content
       :class="fixedPosition.class"
       :style="fixedPosition.style"
-      class="flex flex-col bg-n-alpha-3 backdrop-blur-[100px] shadow-xl rounded-xl"
+      class="flex flex-col bg-accent backdrop-blur-[100px] shadow-xl rounded-xl"
     >
       <div
         class="flex-1 min-h-0 overflow-y-auto overscroll-contain rounded-xl"
-        :class="{ 'border border-n-strong': showContentBorder }"
+        :class="{ 'border border-border': showContentBorder }"
       >
         <slot name="content" :hide="hide" />
       </div>

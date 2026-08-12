@@ -200,11 +200,11 @@ const displayTime = attachment => {
     <section v-if="mediaAttachments.length" class="flex flex-col gap-2.5">
       <header class="flex items-center justify-between px-0.5">
         <h4
-          class="text-xs font-semibold tracking-wider uppercase text-n-slate-11"
+          class="text-xs font-semibold tracking-wider uppercase text-muted-foreground"
         >
           {{ t('CONVERSATION_SIDEBAR.SHARED_FILES.MEDIA_HEADING') }}
           <span
-            class="ms-1 font-medium tracking-normal normal-case text-n-slate-10"
+            class="ms-1 font-medium tracking-normal normal-case text-muted-foreground"
           >
             {{ mediaAttachments.length }}
           </span>
@@ -232,7 +232,7 @@ const displayTime = attachment => {
           :key="attachment.id"
           role="button"
           tabindex="0"
-          class="relative w-full overflow-hidden transition-all duration-200 rounded-lg cursor-pointer aspect-square bg-n-slate-3 shadow-sm hover:shadow-md hover:-translate-y-px group focus:outline-none focus-visible:ring-2 focus-visible:ring-n-blue-9"
+          class="relative w-full overflow-hidden transition-all duration-200 rounded-lg cursor-pointer aspect-square bg-muted shadow-sm hover:shadow-md hover:-translate-y-px group focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
           @click="onTileActivate(attachment, index)"
           @keydown.enter="onTileActivate(attachment, index)"
           @keydown.space.prevent="onTileActivate(attachment, index)"
@@ -258,11 +258,11 @@ const displayTime = attachment => {
             />
             <div
               v-else
-              class="flex items-center justify-center w-full h-full bg-gradient-to-br from-n-slate-3 to-n-slate-4"
+              class="flex items-center justify-center w-full h-full bg-gradient-to-br from-muted to-muted"
             >
               <Icon
                 :icon="fallbackIcon(attachment.file_type)"
-                class="size-6 text-n-slate-11"
+                class="size-6 text-muted-foreground"
               />
             </div>
 
@@ -285,10 +285,7 @@ const displayTime = attachment => {
               <div
                 class="flex items-center justify-center rounded-full size-7 bg-white/95 shadow-md"
               >
-                <Icon
-                  icon="i-lucide-play"
-                  class="ms-0.5 size-3.5 text-n-black"
-                />
+                <Icon icon="i-lucide-play" class="ms-0.5 size-3.5 text-black" />
               </div>
             </div>
 
@@ -318,15 +315,15 @@ const displayTime = attachment => {
               @keydown.enter.stop
               @keydown.space.stop
             >
-              <Icon icon="i-lucide-download" class="size-3 text-n-black" />
+              <Icon icon="i-lucide-download" class="size-3 text-black" />
             </button>
           </template>
 
           <div
             v-if="isOverflowTile(index)"
-            class="absolute inset-0 flex items-center justify-center bg-n-slate-5"
+            class="absolute inset-0 flex items-center justify-center bg-accent"
           >
-            <span class="text-base font-semibold text-n-slate-12">
+            <span class="text-base font-semibold text-foreground">
               {{
                 t('CONVERSATION_SIDEBAR.SHARED_FILES.MORE_COUNT', {
                   count: mediaOverflow,
@@ -341,11 +338,11 @@ const displayTime = attachment => {
     <section v-if="fileAttachments.length" class="flex flex-col gap-2.5">
       <header class="flex items-center justify-between px-0.5">
         <h4
-          class="text-xs font-semibold tracking-wider uppercase text-n-slate-11"
+          class="text-xs font-semibold tracking-wider uppercase text-muted-foreground"
         >
           {{ t('CONVERSATION_SIDEBAR.SHARED_FILES.FILES_HEADING') }}
           <span
-            class="ms-1 font-medium tracking-normal normal-case text-n-slate-10"
+            class="ms-1 font-medium tracking-normal normal-case text-muted-foreground"
           >
             {{ fileAttachments.length }}
           </span>
@@ -371,14 +368,14 @@ const displayTime = attachment => {
         <li
           v-for="attachment in visibleFiles"
           :key="attachment.id"
-          class="flex items-center gap-3 px-2 py-2 transition-colors rounded-lg hover:bg-n-slate-3 group"
+          class="flex items-center gap-3 px-2 py-2 transition-colors rounded-lg hover:bg-muted group"
         >
           <div
-            class="flex items-center justify-center rounded-lg size-9 shrink-0 bg-gradient-to-br from-n-slate-3 to-n-slate-4 ring-1 ring-inset ring-n-slate-4/40"
+            class="flex items-center justify-center rounded-lg size-9 shrink-0 bg-gradient-to-br from-muted to-muted ring-1 ring-inset ring-muted/40"
           >
             <FileIcon
               :file-type="attachment.extension?.toLowerCase() || ''"
-              class="size-4 text-n-slate-11"
+              class="size-4 text-muted-foreground"
             />
           </div>
           <a
@@ -388,10 +385,10 @@ const displayTime = attachment => {
             class="flex-1 min-w-0"
             :title="displayName(attachment)"
           >
-            <p class="text-sm font-medium truncate text-n-slate-12 mb-1">
+            <p class="text-sm font-medium truncate text-foreground mb-1">
               {{ displayName(attachment) }}
             </p>
-            <p class="text-xs text-n-slate-11">
+            <p class="text-xs text-muted-foreground">
               {{ displaySize(attachment) }}
               <template v-if="displayTime(attachment)">
                 · {{ displayTime(attachment) }}

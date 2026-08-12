@@ -17,32 +17,32 @@ defineProps({
           height="5"
           viewBox="0 0 6 5"
           fill="none"
-          class="text-n-slate-5"
+          class="text-accent"
         >
           <path d="M3 0L6 5H0L3 0Z" fill="currentColor" />
         </svg>
         <div
-          class="flex items-center justify-center w-8 h-8 rounded-lg bg-n-solid-1 border border-n-weak"
+          class="flex items-center justify-center w-8 h-8 rounded-lg bg-card border border-border"
         >
-          <Icon :icon="icon" class="size-4 text-n-slate-11" />
+          <Icon :icon="icon" class="size-4 text-muted-foreground" />
         </div>
         <svg
           width="6"
           height="5"
           viewBox="0 0 6 5"
           fill="none"
-          class="text-n-slate-5"
+          class="text-accent"
         >
           <path d="M3 5L0 0H6L3 5Z" fill="currentColor" />
         </svg>
       </div>
-      <span class="text-heading-3 text-n-slate-12">
+      <span class="text-heading-3 text-foreground">
         {{ title }}
       </span>
     </div>
 
     <!-- Card -->
-    <div class="border border-n-weak rounded-xl overflow-hidden bg-n-surface-1">
+    <div class="border border-border rounded-xl overflow-hidden bg-muted">
       <slot />
     </div>
   </div>

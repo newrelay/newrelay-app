@@ -132,16 +132,16 @@ defineExpose({ dialogRef });
         :placeholder="
           t('HELP_CENTER.LOCALES_PAGE.ADD_LOCALE_DIALOG.COMBOBOX.PLACEHOLDER')
         "
-        class="[&>div>button:not(.focused)]:!outline-n-slate-5 [&>div>button:not(.focused)]:dark:!outline-n-slate-5"
+        class="[&>div>button:not(.focused)]:!outline-accent [&>div>button:not(.focused)]:dark:!outline-accent"
       />
       <div class="flex flex-col gap-2">
-        <span class="text-sm font-medium text-n-slate-12">
+        <span class="text-sm font-medium text-foreground">
           {{ t('HELP_CENTER.LOCALES_PAGE.ADD_LOCALE_DIALOG.STATUS.LABEL') }}
         </span>
         <ComboBox
           v-model="localeStatus"
           :options="statusOptions"
-          class="[&>div>button:not(.focused)]:!outline-n-slate-5 [&>div>button:not(.focused)]:dark:!outline-n-slate-5"
+          class="[&>div>button:not(.focused)]:!outline-accent [&>div>button:not(.focused)]:dark:!outline-accent"
         />
       </div>
     </div>

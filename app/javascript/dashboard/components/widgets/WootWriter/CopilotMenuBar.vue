@@ -206,7 +206,7 @@ const handleSubMenuItemClick = (parentItem, subItem) => {
           slate
           link
           sm
-          class="hover:!no-underline text-n-slate-12 font-normal text-xs w-full !justify-start"
+          class="hover:!no-underline text-foreground font-normal text-xs w-full !justify-start"
           @click="handleMenuItemClick(item)"
         >
           <template v-if="item.subMenuItems" #default>
@@ -214,7 +214,7 @@ const handleSubMenuItemClick = (parentItem, subItem) => {
               <span class="min-w-0 truncate">{{ item.label }}</span>
               <Icon
                 icon="i-lucide-chevron-right"
-                class="text-n-slate-10 size-3"
+                class="text-muted-foreground size-3"
               />
             </div>
           </template>
@@ -223,7 +223,7 @@ const handleSubMenuItemClick = (parentItem, subItem) => {
         <!-- Hover Submenu -->
         <DropdownBody
           v-if="item.subMenuItems"
-          class="group-hover/submenu:block hidden [&>ul]:gap-2 [&>ul]:px-3 [&>ul]:py-2.5 [&>ul]:dark:!border-n-strong max-h-[15rem] min-w-32 z-10 top-0"
+          class="group-hover/submenu:block hidden [&>ul]:gap-2 [&>ul]:px-3 [&>ul]:py-2.5 [&>ul]:dark:!border-border max-h-[15rem] min-w-32 z-10 top-0"
           :class="submenuPosition"
         >
           <Button
@@ -233,14 +233,14 @@ const handleSubMenuItemClick = (parentItem, subItem) => {
             slate
             link
             sm
-            class="hover:!no-underline text-n-slate-12 font-normal text-xs w-full !justify-start mb-1"
+            class="hover:!no-underline text-foreground font-normal text-xs w-full !justify-start mb-1"
             @click="handleSubMenuItemClick(item, subItem)"
           />
         </DropdownBody>
       </div>
     </div>
 
-    <div v-if="menuItems.length > 0" class="h-px w-full bg-n-strong" />
+    <div v-if="menuItems.length > 0" class="h-px w-full bg-border" />
 
     <div class="flex flex-col items-start gap-3">
       <Button
@@ -251,7 +251,7 @@ const handleSubMenuItemClick = (parentItem, subItem) => {
         slate
         link
         sm
-        class="hover:!no-underline text-n-slate-12 font-normal text-xs w-full !justify-start"
+        class="hover:!no-underline text-foreground font-normal text-xs w-full !justify-start"
         @click="handleMenuItemClick(item)"
       />
     </div>

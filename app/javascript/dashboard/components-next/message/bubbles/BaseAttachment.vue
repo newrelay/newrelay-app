@@ -7,7 +7,7 @@ import { useMessageContext } from '../provider.js';
 
 defineProps({
   icon: { type: [String, Object], required: true },
-  iconBgColor: { type: String, default: 'bg-n-alpha-3' },
+  iconBgColor: { type: String, default: 'bg-accent' },
   senderTranslationKey: { type: String, required: true },
   content: { type: String, required: true },
   title: { type: String, default: '' }, // Title can be any name, description, etc

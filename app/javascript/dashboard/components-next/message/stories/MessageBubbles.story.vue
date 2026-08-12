@@ -156,24 +156,24 @@ const email = computed(() =>
     :layout="{ type: 'grid', width: '800px' }"
   >
     <Variant title="Text">
-      <div class="p-4 bg-n-background rounded-lg w-full min-w-5xl grid">
+      <div class="p-4 bg-background rounded-lg w-full min-w-5xl grid">
         <Message :current-user-id="1" v-bind="simpleText" />
       </div>
     </Variant>
     <Variant title="Activity">
-      <div class="p-4 bg-n-background rounded-lg w-full min-w-5xl grid">
+      <div class="p-4 bg-background rounded-lg w-full min-w-5xl grid">
         <Message :current-user-id="1" v-bind="activityMessage" />
       </div>
     </Variant>
     <Variant title="Private Message">
-      <div class="p-4 bg-n-background rounded-lg w-full min-w-5xl grid">
+      <div class="p-4 bg-background rounded-lg w-full min-w-5xl grid">
         <Message :current-user-id="1" v-bind="privateText" />
       </div>
     </Variant>
 
     <!-- Platform Specific -->
     <Variant title="Email">
-      <div class="p-4 bg-n-background rounded-lg w-full min-w-5xl grid">
+      <div class="p-4 bg-background rounded-lg w-full min-w-5xl grid">
         <Message :current-user-id="1" is-email-inbox v-bind="email" />
       </div>
     </Variant>

@@ -120,37 +120,37 @@ export default {
 <style lang="scss" scoped>
 .banner {
   &.primary {
-    @apply bg-n-brand;
+    @apply bg-primary;
   }
 
   &.secondary {
-    @apply bg-n-slate-3 dark:bg-n-solid-3 text-n-slate-12;
+    @apply bg-muted dark:bg-accent text-foreground;
     a {
-      @apply text-n-slate-12;
+      @apply text-foreground;
     }
   }
 
   &.alert {
-    @apply bg-n-ruby-3 text-n-ruby-12;
+    @apply bg-destructive/10 text-destructive;
 
     a {
-      @apply text-n-ruby-12;
+      @apply text-destructive;
     }
   }
 
   &.warning {
-    @apply bg-n-amber-5 text-n-amber-12;
+    @apply bg-warning/20 text-warning;
     a {
-      @apply text-n-amber-12;
+      @apply text-warning;
     }
   }
 
   &.gray {
-    @apply text-n-gray-10 dark:text-n-gray-10;
+    @apply text-muted-foreground dark:text-muted-foreground;
   }
 
   a {
-    @apply ml-1 underline text-n-amber-12 text-xs;
+    @apply ml-1 underline text-warning text-xs;
   }
 
   .banner-message {

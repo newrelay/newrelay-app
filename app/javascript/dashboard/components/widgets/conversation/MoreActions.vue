@@ -114,7 +114,7 @@ const handleActionClick = ({ action }) => {
         variant="ghost"
         color="slate"
         icon="i-lucide-more-horizontal"
-        class="rounded-md group-hover:bg-n-alpha-2"
+        class="rounded-md group-hover:bg-accent"
         @click="toggleDropdown()"
       />
       <DropdownMenu

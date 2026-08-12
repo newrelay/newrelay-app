@@ -125,7 +125,7 @@ watch(
         v-model="state.name"
         :placeholder="t('CAPTAIN.ASSISTANTS.FORM.NAME.PLACEHOLDER')"
       />
-      <p v-if="formErrors.name" class="text-xs text-n-ruby-11">
+      <p v-if="formErrors.name" class="text-xs text-destructive">
         {{ formErrors.name }}
       </p>
     </div>
@@ -147,13 +147,13 @@ watch(
         v-model="state.productName"
         :placeholder="t('CAPTAIN.ASSISTANTS.FORM.PRODUCT_NAME.PLACEHOLDER')"
       />
-      <p v-if="formErrors.productName" class="text-xs text-n-ruby-11">
+      <p v-if="formErrors.productName" class="text-xs text-destructive">
         {{ formErrors.productName }}
       </p>
     </div>
 
     <fieldset class="flex flex-col gap-2.5">
-      <legend class="mb-3 text-sm font-medium text-n-slate-12">
+      <legend class="mb-3 text-sm font-medium text-foreground">
         {{ t('CAPTAIN.ASSISTANTS.FORM.FEATURES.TITLE') }}
       </legend>
 

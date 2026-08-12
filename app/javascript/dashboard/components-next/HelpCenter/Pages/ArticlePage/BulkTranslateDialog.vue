@@ -176,7 +176,7 @@ defineExpose({ dialogRef });
   >
     <div class="flex flex-col gap-6">
       <div class="flex flex-col gap-2">
-        <span class="text-sm font-medium text-n-slate-12">
+        <span class="text-sm font-medium text-foreground">
           {{ t('HELP_CENTER.ARTICLES_PAGE.BULK_TRANSLATE.LOCALE_LABEL') }}
         </span>
         <ComboBox
@@ -185,13 +185,13 @@ defineExpose({ dialogRef });
           :placeholder="
             t('HELP_CENTER.ARTICLES_PAGE.BULK_TRANSLATE.LOCALE_PLACEHOLDER')
           "
-          class="[&>div>button:not(.focused)]:!outline-n-slate-5 [&>div>button:not(.focused)]:dark:!outline-n-slate-5"
+          class="[&>div>button:not(.focused)]:!outline-accent [&>div>button:not(.focused)]:dark:!outline-accent"
         />
       </div>
       <div class="flex flex-col gap-2">
-        <span class="text-sm font-medium text-n-slate-12">
+        <span class="text-sm font-medium text-foreground">
           {{ t('HELP_CENTER.ARTICLES_PAGE.BULK_TRANSLATE.CATEGORY_LABEL') }}
-          <span class="text-n-slate-10 font-normal">
+          <span class="text-muted-foreground font-normal">
             {{ t('HELP_CENTER.ARTICLES_PAGE.BULK_TRANSLATE.OPTIONAL') }}
           </span>
         </span>
@@ -202,19 +202,19 @@ defineExpose({ dialogRef });
           :placeholder="
             t('HELP_CENTER.ARTICLES_PAGE.BULK_TRANSLATE.CATEGORY_PLACEHOLDER')
           "
-          class="[&>div>button:not(.focused)]:!outline-n-slate-5 [&>div>button:not(.focused)]:dark:!outline-n-slate-5"
+          class="[&>div>button:not(.focused)]:!outline-accent [&>div>button:not(.focused)]:dark:!outline-accent"
         />
       </div>
       <div
         v-if="hasDuplicates"
-        class="flex gap-3 p-3 rounded-xl bg-n-amber-2 border border-n-amber-5"
+        class="flex gap-3 p-3 rounded-xl bg-warning/10 border border-warning/20"
       >
         <Icon
           icon="i-lucide-triangle-alert"
-          class="size-4 mt-0.5 text-n-amber-11 shrink-0"
+          class="size-4 mt-0.5 text-warning shrink-0"
         />
         <div class="flex flex-col gap-2 min-w-0">
-          <p class="text-sm text-n-amber-12 m-0">
+          <p class="text-sm text-warning m-0">
             {{
               t(
                 'HELP_CENTER.ARTICLES_PAGE.BULK_TRANSLATE.DUPLICATE_WARNING',
@@ -229,13 +229,13 @@ defineExpose({ dialogRef });
               :href="articleEditUrl(article.id)"
               target="_blank"
               rel="noopener noreferrer"
-              class="inline-flex items-center gap-1 text-sm text-n-amber-12 underline underline-offset-2 hover:text-n-amber-11 truncate"
+              class="inline-flex items-center gap-1 text-sm text-warning underline underline-offset-2 hover:text-warning truncate"
             >
               {{ article.title }}
               <Icon icon="i-lucide-external-link" class="size-3 shrink-0" />
             </a>
           </div>
-          <p class="text-xs text-n-amber-11 m-0">
+          <p class="text-xs text-warning m-0">
             {{
               t(
                 'HELP_CENTER.ARTICLES_PAGE.BULK_TRANSLATE.DUPLICATE_CONFIRM_HINT'

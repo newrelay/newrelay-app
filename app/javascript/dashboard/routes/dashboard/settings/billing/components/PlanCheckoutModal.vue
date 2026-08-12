@@ -311,7 +311,7 @@ defineExpose({
   >
     <div class="flex flex-col gap-4">
       <div v-if="showCountrySelect">
-        <label class="block text-sm font-medium text-n-slate-12 mb-1">
+        <label class="block text-sm font-medium text-foreground mb-1">
           {{ $t('BILLING_SETTINGS.SELECT_PLAN.COUNTRY_LABEL') }}
         </label>
         <ComboBox
@@ -325,7 +325,7 @@ defineExpose({
         />
       </div>
 
-      <p v-else class="text-sm text-n-slate-11">
+      <p v-else class="text-sm text-muted-foreground">
         {{
           $t('BILLING_SETTINGS.SELECT_PLAN.PROVIDER_LOCKED_HINT', {
             provider: paymentProviderLabel,
@@ -335,7 +335,7 @@ defineExpose({
 
       <p
         v-if="effectiveCountry && isCountrySupported"
-        class="text-xs text-n-slate-11"
+        class="text-xs text-muted-foreground"
       >
         {{
           $t('BILLING_SETTINGS.SELECT_PLAN.PROVIDER_HINT', {
@@ -346,7 +346,7 @@ defineExpose({
 
       <p
         v-else-if="effectiveCountry && !isCountrySupported"
-        class="text-xs text-n-ruby-11"
+        class="text-xs text-destructive"
       >
         {{ $t('BILLING_SETTINGS.SELECT_PLAN.UNSUPPORTED_COUNTRY') }}
       </p>
@@ -378,30 +378,30 @@ defineExpose({
             @click="handleRemoveCoupon"
           />
         </div>
-        <p v-if="couponError" class="text-xs text-n-ruby-10">
+        <p v-if="couponError" class="text-xs text-destructive">
           {{ couponError }}
         </p>
-        <p v-else class="text-xs text-n-slate-11">
+        <p v-else class="text-xs text-muted-foreground">
           {{ $t('BILLING_SETTINGS.PLAN_CHECKOUT.COUPON_OPTIONAL_HINT') }}
         </p>
       </div>
 
-      <p v-if="pricingError" class="text-xs text-n-ruby-11">
+      <p v-if="pricingError" class="text-xs text-destructive">
         {{ pricingError }}
       </p>
-      <p v-else-if="isLoadingPricing" class="text-xs text-n-slate-11">
+      <p v-else-if="isLoadingPricing" class="text-xs text-muted-foreground">
         {{ $t('BILLING_SETTINGS.PLAN_CHECKOUT.LOADING_PRICING') }}
       </p>
 
       <div
         v-if="pricing"
-        class="rounded-lg border border-n-weak bg-n-solid-1 p-4 space-y-3"
+        class="rounded-lg border border-border bg-card p-4 space-y-3"
       >
         <div class="flex items-center justify-between text-sm">
-          <span class="text-n-slate-11">
+          <span class="text-muted-foreground">
             {{ $t('BILLING_SETTINGS.PLAN_CHECKOUT.ORIGINAL_PRICE') }}
           </span>
-          <span class="text-n-slate-12">
+          <span class="text-foreground">
             {{ formatMoney(pricing.original_amount, pricing.currency) }}/{{
               $t('BILLING_SETTINGS.PLAN_CHECKOUT.PER_MONTH')
             }}
@@ -412,11 +412,11 @@ defineExpose({
           v-if="hasDiscount && pricing.coupon"
           class="flex items-center justify-between text-sm"
         >
-          <span class="text-n-slate-11">
+          <span class="text-muted-foreground">
             {{ $t('BILLING_SETTINGS.PLAN_CHECKOUT.DISCOUNT') }}
             ({{ pricing.coupon.discount_label }})
           </span>
-          <span class="text-n-teal-10">
+          <span class="text-success">
             -{{
               formatMoney(
                 pricing.original_amount - pricing.discounted_amount,
@@ -428,21 +428,21 @@ defineExpose({
 
         <div
           v-if="pricing.coupon"
-          class="text-xs text-n-slate-11 border-t border-n-weak pt-3"
+          class="text-xs text-muted-foreground border-t border-border pt-3"
         >
-          <p class="font-medium text-n-slate-12 mb-1">
+          <p class="font-medium text-foreground mb-1">
             {{ $t('BILLING_SETTINGS.PLAN_CHECKOUT.COUPON_APPLIED') }}
           </p>
           <p>{{ pricing.coupon.code }} — {{ pricing.coupon.name }}</p>
         </div>
 
         <div
-          class="flex items-center justify-between text-base font-semibold border-t border-n-weak pt-3"
+          class="flex items-center justify-between text-base font-semibold border-t border-border pt-3"
         >
-          <span class="text-n-slate-12">
+          <span class="text-foreground">
             {{ $t('BILLING_SETTINGS.PLAN_CHECKOUT.TOTAL') }}
           </span>
-          <span class="text-n-slate-12">
+          <span class="text-foreground">
             {{ formatMoney(pricing.discounted_amount, pricing.currency) }}/{{
               $t('BILLING_SETTINGS.PLAN_CHECKOUT.PER_MONTH')
             }}

@@ -194,7 +194,7 @@ const handleTest = async () => {
         v-model="state.title"
         :placeholder="t('CAPTAIN.CUSTOM_TOOLS.FORM.TITLE.PLACEHOLDER')"
       />
-      <p v-if="formErrors.title" class="text-xs text-n-ruby-11">
+      <p v-if="formErrors.title" class="text-xs text-destructive">
         {{ formErrors.title }}
       </p>
     </div>
@@ -214,7 +214,7 @@ const handleTest = async () => {
         <ComboBox
           v-model="state.http_method"
           :options="httpMethodOptions"
-          class="[&>div>button]:bg-n-alpha-black2 [&_li]:font-mono [&_button]:font-mono [&>div>button]:outline-offset-[-1px]"
+          class="[&>div>button]:bg-black/10 [&_li]:font-mono [&_button]:font-mono [&>div>button]:outline-offset-[-1px]"
         />
       </div>
       <div class="flex flex-1 flex-col gap-2">
@@ -226,7 +226,7 @@ const handleTest = async () => {
           v-model="state.endpoint_url"
           :placeholder="t('CAPTAIN.CUSTOM_TOOLS.FORM.ENDPOINT_URL.PLACEHOLDER')"
         />
-        <p v-if="formErrors.endpoint_url" class="text-xs text-n-ruby-11">
+        <p v-if="formErrors.endpoint_url" class="text-xs text-destructive">
           {{ formErrors.endpoint_url }}
         </p>
       </div>
@@ -239,7 +239,7 @@ const handleTest = async () => {
       <ComboBox
         v-model="state.auth_type"
         :options="authTypeOptions"
-        class="[&>div>button]:bg-n-alpha-black2"
+        class="[&>div>button]:bg-black/10"
       />
     </div>
 
@@ -249,10 +249,10 @@ const handleTest = async () => {
     />
 
     <div class="flex flex-col gap-2">
-      <label class="text-sm font-medium text-n-slate-12">
+      <label class="text-sm font-medium text-foreground">
         {{ t('CAPTAIN.CUSTOM_TOOLS.FORM.PARAMETERS.LABEL') }}
       </label>
-      <p class="text-xs text-n-slate-11 -mt-1">
+      <p class="text-xs text-muted-foreground -mt-1">
         {{ t('CAPTAIN.CUSTOM_TOOLS.FORM.PARAMETERS.HELP_TEXT') }}
       </p>
       <ul v-if="state.param_schema.length > 0" class="grid gap-2 list-none">
@@ -271,7 +271,7 @@ const handleTest = async () => {
         type="button"
         variant="ghost"
         size="sm"
-        class="text-n-brand hover:bg-transparent hover:text-n-brand/80"
+        class="text-primary hover:bg-transparent hover:text-primary/80"
         @click="addParam"
       >
         <span class="i-lucide-plus size-4" />
@@ -313,7 +313,7 @@ const handleTest = async () => {
         <span v-else class="i-lucide-play size-3.5" />
         {{ t('CAPTAIN.CUSTOM_TOOLS.TEST.BUTTON') }}
       </RelayButton>
-      <p v-if="isTestDisabled" class="text-xs text-n-slate-11">
+      <p v-if="isTestDisabled" class="text-xs text-muted-foreground">
         {{ t('CAPTAIN.CUSTOM_TOOLS.TEST.DISABLED_HINT') }}
       </p>
       <div
@@ -321,8 +321,8 @@ const handleTest = async () => {
         class="flex items-center gap-2 rounded-lg px-3 py-2 text-xs"
         :class="
           testResult.success
-            ? 'bg-n-teal-2 text-n-teal-11'
-            : 'bg-n-ruby-2 text-n-ruby-11'
+            ? 'bg-success/10 text-success'
+            : 'bg-destructive/10 text-destructive'
         "
       >
         <span

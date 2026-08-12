@@ -159,7 +159,7 @@ const handleSeeOriginal = () => {
         </template>
         <button
           v-if="hasQuotedMessage"
-          class="text-n-slate-11 px-1 leading-none text-sm bg-n-alpha-black2 text-center flex items-center gap-1 mt-2"
+          class="text-muted-foreground px-1 leading-none text-sm bg-black/10 text-center flex items-center gap-1 mt-2"
           @click="showQuotedMessage = !showQuotedMessage"
         >
           <template v-if="showQuotedMessage">
@@ -199,10 +199,10 @@ const handleSeeOriginal = () => {
 
 .letter-render [class*='gmail_drive_chip'] {
   box-sizing: initial;
-  @apply bg-n-slate-4 border-n-slate-6 rounded-md !important;
+  @apply bg-muted border-border rounded-md !important;
 
   a {
-    @apply text-n-slate-12 !important;
+    @apply text-foreground !important;
 
     img {
       display: inline-block;

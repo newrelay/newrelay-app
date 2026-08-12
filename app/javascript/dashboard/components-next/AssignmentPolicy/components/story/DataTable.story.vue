@@ -48,7 +48,7 @@ const handleDelete = itemId => {
     :layout="{ type: 'grid', width: '800px' }"
   >
     <Variant title="With Data">
-      <div class="p-8 bg-n-background">
+      <div class="p-8 bg-background">
         <DataTable
           :items="mockItems"
           :is-fetching="false"
@@ -58,7 +58,7 @@ const handleDelete = itemId => {
     </Variant>
 
     <Variant title="With Agents">
-      <div class="p-8 bg-n-background">
+      <div class="p-8 bg-background">
         <DataTable
           :items="mockAgentList"
           :is-fetching="false"
@@ -68,13 +68,13 @@ const handleDelete = itemId => {
     </Variant>
 
     <Variant title="Loading State">
-      <div class="p-8 bg-n-background">
+      <div class="p-8 bg-background">
         <DataTable :items="[]" is-fetching @delete="handleDelete" />
       </div>
     </Variant>
 
     <Variant title="Empty State">
-      <div class="p-8 bg-n-background">
+      <div class="p-8 bg-background">
         <DataTable
           :items="[]"
           :is-fetching="false"

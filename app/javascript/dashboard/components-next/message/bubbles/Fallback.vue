@@ -29,11 +29,11 @@ const title = computed(
       :href="url"
       target="_blank"
       rel="noopener noreferrer"
-      class="block max-w-[320px] truncate text-sm text-n-brand underline"
+      class="block max-w-[320px] truncate text-sm text-primary underline"
     >
       {{ title }}
     </a>
-    <span v-else class="text-sm text-n-slate-11">
+    <span v-else class="text-sm text-muted-foreground">
       {{ title }}
     </span>
   </BaseBubble>

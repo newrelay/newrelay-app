@@ -90,7 +90,7 @@ const submit = () => {
 <template>
   <div
     v-if="variant === 'composer'"
-    class="fixed inset-0 z-[100] flex items-center justify-center bg-n-alpha-black2 p-4 backdrop-blur-[4px] animate-in fade-in duration-200"
+    class="fixed inset-0 z-[100] flex items-center justify-center bg-black/10 p-4 backdrop-blur-[4px] animate-in fade-in duration-200"
     @click.self="emit('close')"
   >
     <div
@@ -163,7 +163,7 @@ const submit = () => {
   </div>
   <div
     v-else
-    class="fixed inset-0 z-[60] flex items-center justify-center bg-n-alpha-black2 p-4 backdrop-blur-[4px]"
+    class="fixed inset-0 z-[60] flex items-center justify-center bg-black/10 p-4 backdrop-blur-[4px]"
     @click.self="emit('close')"
   >
     <div

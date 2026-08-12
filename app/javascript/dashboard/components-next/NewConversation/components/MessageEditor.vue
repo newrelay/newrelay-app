@@ -86,7 +86,7 @@ const executeCopilotAction = (action, data) => {
           class="h-full [&>div]:!border-transparent [&>div]:!bg-transparent [&>div]:px-0 [&>div]:py-0 [&_.ProseMirror-menubar]:!pt-0 [&_.ProseMirror-woot-style]:!min-h-[12rem] [&_.ProseMirror-woot-style]:!max-h-[18rem] [&_.mention--box]:-top-[7.5rem] [&_.mention--box]:bottom-[unset]"
           :class="
             hasErrors
-              ? '[&_.empty-node]:before:!text-n-ruby-9 [&_.empty-node]:dark:before:!text-n-ruby-9'
+              ? '[&_.empty-node]:before:!text-destructive [&_.empty-node]:dark:before:!text-destructive'
               : ''
           "
           enable-variables

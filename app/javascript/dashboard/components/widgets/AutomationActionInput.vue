@@ -192,10 +192,10 @@ export default {
         rows="4"
         enable-variables
         :placeholder="$t('AUTOMATION.ACTION.TEAM_MESSAGE_INPUT_PLACEHOLDER')"
-        class="[&_.ProseMirror-menubar]:hidden px-3 py-1 bg-n-alpha-1 rounded-lg outline outline-1 outline-n-weak dark:outline-n-strong"
+        class="[&_.ProseMirror-menubar]:hidden px-3 py-1 bg-muted rounded-lg outline outline-1 outline-border dark:outline-border"
       />
     </div>
-    <span v-if="errorMessage" class="text-sm text-n-ruby-11">
+    <span v-if="errorMessage" class="text-sm text-destructive">
       {{ errorMessage }}
     </span>
   </div>

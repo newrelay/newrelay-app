@@ -35,7 +35,7 @@ const slaEvents = computed(() => props.chat?.sla_events);
 const hasSlaThreshold = computed(() => slaStatus.value?.threshold);
 const isSlaMissed = computed(() => slaStatus.value?.isSlaMissed);
 const slaTextStyles = computed(() =>
-  isSlaMissed.value ? 'text-n-ruby-11' : 'text-n-amber-11'
+  isSlaMissed.value ? 'text-destructive' : 'text-warning'
 );
 
 const slaStatusText = computed(() => {
@@ -53,8 +53,8 @@ const showSlaPopoverCard = computed(
 
 const groupClass = computed(() => {
   return props.showExtendedInfo
-    ? 'h-[26px] rounded-lg bg-n-alpha-1'
-    : 'rounded h-5  border border-n-strong';
+    ? 'h-[26px] rounded-lg bg-muted'
+    : 'rounded h-5  border border-border';
 });
 
 const updateSlaStatus = () => {
@@ -80,7 +80,7 @@ watch(
 
 const slaPopoverClass = computed(() => {
   return props.showExtendedInfo
-    ? 'ltr:pr-1.5 rtl:pl-1.5 ltr:border-r rtl:border-l border-n-strong'
+    ? 'ltr:pr-1.5 rtl:pl-1.5 ltr:border-r rtl:border-l border-border'
     : '';
 });
 

@@ -139,7 +139,7 @@ const handleSubmit = async () => {
         id="documentType"
         v-model="state.documentType"
         :options="documentTypeOptions"
-        class="[&>div>button]:bg-n-alpha-black2"
+        class="[&>div>button]:bg-black/10"
       />
     </div>
 
@@ -152,7 +152,7 @@ const handleSubmit = async () => {
         v-model="state.url"
         :placeholder="t('CAPTAIN.DOCUMENTS.FORM.URL.PLACEHOLDER')"
       />
-      <p v-if="formErrors.url" class="text-xs text-n-ruby-11">
+      <p v-if="formErrors.url" class="text-xs text-destructive">
         {{ formErrors.url }}
       </p>
     </div>
@@ -177,19 +177,19 @@ const handleSubmit = async () => {
         >
           <div class="flex items-center gap-2">
             <div
-              class="flex size-10 items-center justify-center rounded-lg bg-n-slate-3"
+              class="flex size-10 items-center justify-center rounded-lg bg-muted"
             >
-              <span class="i-ph-file-pdf text-xl text-n-slate-11" />
+              <span class="i-ph-file-pdf text-xl text-muted-foreground" />
             </div>
             <div class="flex flex-1 flex-col items-start gap-1">
-              <p class="m-0 text-sm font-medium text-n-slate-12">
+              <p class="m-0 text-sm font-medium text-foreground">
                 {{
                   state.pdfFile
                     ? state.pdfFile.name
                     : t('CAPTAIN.DOCUMENTS.FORM.PDF_FILE.CHOOSE_FILE')
                 }}
               </p>
-              <p class="m-0 text-xs text-n-slate-11">
+              <p class="m-0 text-xs text-muted-foreground">
                 {{
                   state.pdfFile
                     ? `${(state.pdfFile.size / 1024 / 1024).toFixed(2)} MB`
@@ -198,10 +198,10 @@ const handleSubmit = async () => {
               </p>
             </div>
           </div>
-          <span class="i-lucide-upload text-n-slate-11" />
+          <span class="i-lucide-upload text-muted-foreground" />
         </RelayButton>
       </div>
-      <p v-if="formErrors.pdfFile" class="text-xs text-n-ruby-9">
+      <p v-if="formErrors.pdfFile" class="text-xs text-destructive">
         {{ formErrors.pdfFile }}
       </p>
     </div>

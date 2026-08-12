@@ -213,7 +213,7 @@ const initials = name => {
     <!-- Preview merge modal -->
     <div
       v-if="isPreviewOpen"
-      class="fixed inset-0 z-[60] flex items-center justify-center bg-n-alpha-black2 p-4 backdrop-blur-[4px]"
+      class="fixed inset-0 z-[60] flex items-center justify-center bg-black/10 p-4 backdrop-blur-[4px]"
       @click.self="isPreviewOpen = false"
     >
       <div

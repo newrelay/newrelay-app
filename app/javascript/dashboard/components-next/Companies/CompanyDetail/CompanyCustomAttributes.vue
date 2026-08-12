@@ -92,15 +92,15 @@ onMounted(() => {
     </div>
 
     <div v-if="!hasNoUnusedAttributes" class="flex items-center gap-3">
-      <div class="flex-1 h-px bg-n-slate-5" />
-      <span class="text-sm font-medium text-n-slate-10">
+      <div class="flex-1 h-px bg-accent" />
+      <span class="text-sm font-medium text-muted-foreground">
         {{
           t('COMPANIES.DETAIL.ATTRIBUTES.UNUSED_ATTRIBUTES', {
             count: unusedAttributesCount,
           })
         }}
       </span>
-      <div class="flex-1 h-px bg-n-slate-5" />
+      <div class="flex-1 h-px bg-accent" />
     </div>
 
     <div class="flex flex-col gap-3">
@@ -112,7 +112,7 @@ onMounted(() => {
           v-model="searchQuery"
           type="search"
           :placeholder="t('COMPANIES.DETAIL.ATTRIBUTES.SEARCH_PLACEHOLDER')"
-          class="w-full h-8 py-2 pl-10 pr-2 text-sm reset-base outline-none border-none rounded-lg bg-n-alpha-black2 dark:bg-n-solid-1 text-n-slate-12"
+          class="w-full h-8 py-2 pl-10 pr-2 text-sm reset-base outline-none border-none rounded-lg bg-black/10 dark:bg-card text-foreground"
         />
       </div>
 
@@ -120,7 +120,7 @@ onMounted(() => {
         v-if="filteredUnusedAttributes.length === 0 && !hasNoUnusedAttributes"
         class="flex items-center justify-start h-11"
       >
-        <p class="text-sm text-n-slate-11">
+        <p class="text-sm text-muted-foreground">
           {{ t('COMPANIES.DETAIL.ATTRIBUTES.NO_ATTRIBUTES') }}
         </p>
       </div>
@@ -136,7 +136,10 @@ onMounted(() => {
     </div>
   </div>
 
-  <p v-else class="px-6 py-10 text-sm leading-6 text-center text-n-slate-11">
+  <p
+    v-else
+    class="px-6 py-10 text-sm leading-6 text-center text-muted-foreground"
+  >
     {{ t('COMPANIES.DETAIL.ATTRIBUTES.EMPTY_STATE') }}
   </p>
 </template>

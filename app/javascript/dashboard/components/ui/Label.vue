@@ -113,7 +113,7 @@ export default {
 
 <style scoped lang="scss">
 .label {
-  @apply items-center font-medium text-xs rounded-[4px] gap-1 p-1 bg-n-slate-3 text-n-slate-12 border border-solid border-n-strong h-6;
+  @apply items-center font-medium text-xs rounded-[4px] gap-1 p-1 bg-muted text-foreground border border-solid border-border h-6;
 
   &.small {
     @apply text-xs py-0.5 px-1 leading-tight h-5;
@@ -133,70 +133,70 @@ export default {
 
   /* Color Schemes */
   &.primary {
-    @apply bg-n-blue-5 text-n-blue-12 border border-solid border-n-blue-7;
+    @apply bg-primary/20 text-primary border border-solid border-primary/40;
 
     a {
-      @apply text-n-blue-12;
+      @apply text-primary;
     }
     .label-color-dot {
-      @apply bg-n-blue-9;
+      @apply bg-primary;
     }
   }
   &.secondary {
-    @apply bg-n-slate-5 text-n-slate-12 border border-solid border-n-slate-7;
+    @apply bg-accent text-foreground border border-solid border-border;
 
     a {
-      @apply text-n-slate-12;
+      @apply text-foreground;
     }
     .label-color-dot {
-      @apply bg-n-slate-9;
+      @apply bg-muted-foreground;
     }
   }
   &.success {
-    @apply bg-n-teal-5 text-n-teal-12 border border-solid border-n-teal-7;
+    @apply bg-success/20 text-success border border-solid border-success/40;
 
     a {
-      @apply text-n-teal-12;
+      @apply text-success;
     }
     .label-color-dot {
-      @apply bg-n-teal-9;
+      @apply bg-success;
     }
   }
   &.alert {
-    @apply bg-n-ruby-5 text-n-ruby-12 border border-solid border-n-ruby-7;
+    @apply bg-destructive/20 text-destructive border border-solid border-destructive/40;
 
     a {
-      @apply text-n-ruby-12;
+      @apply text-destructive;
     }
     .label-color-dot {
-      @apply bg-n-ruby-9;
+      @apply bg-destructive;
     }
   }
   &.warning {
-    @apply bg-n-amber-5 text-n-amber-12 border border-solid border-n-amber-7;
+    @apply bg-warning/20 text-warning border border-solid border-warning/40;
 
     a {
-      @apply text-n-amber-12;
+      @apply text-warning;
     }
     .label-color-dot {
-      @apply bg-n-amber-9;
+      @apply bg-warning;
     }
   }
 
   &.smooth {
-    @apply bg-transparent text-n-slate-11 dark:text-n-slate-12 border border-solid border-n-strong;
+    @apply bg-transparent text-muted-foreground dark:text-foreground border border-solid border-border;
   }
 
   &.dashed {
-    @apply bg-transparent text-n-slate-11 dark:text-n-slate-12 border border-dashed border-n-strong;
+    @apply bg-transparent text-muted-foreground dark:text-foreground border border-dashed border-border;
   }
 }
 
 .label-close--button {
-  @apply text-n-slate-11 -mb-0.5 rounded-sm cursor-pointer flex items-center justify-center hover:bg-n-slate-3;
+  @apply text-muted-foreground -mb-0.5 rounded-sm cursor-pointer flex items-center justify-center hover:bg-muted;
 
   svg {
-    @apply text-n-slate-11;
+    @apply text-muted-foreground;
   }
 }
 

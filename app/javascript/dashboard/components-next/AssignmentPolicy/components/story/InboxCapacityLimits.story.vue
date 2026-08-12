@@ -52,7 +52,7 @@ const handleDelete = id => {
     :layout="{ type: 'grid', width: '900px' }"
   >
     <Variant title="Empty State">
-      <div class="p-8 bg-n-background">
+      <div class="p-8 bg-background">
         <InboxCapacityLimits
           v-model:inbox-capacity-limits="inboxCapacityLimitsEmpty"
           :inbox-list="mockInboxList"
@@ -64,7 +64,7 @@ const handleDelete = id => {
     </Variant>
 
     <Variant title="Loading State">
-      <div class="p-8 bg-n-background">
+      <div class="p-8 bg-background">
         <InboxCapacityLimits
           v-model:inbox-capacity-limits="inboxCapacityLimitsEmpty"
           :inbox-list="mockInboxList"
@@ -76,7 +76,7 @@ const handleDelete = id => {
     </Variant>
 
     <Variant title="With New Row and existing data">
-      <div class="p-8 bg-n-background">
+      <div class="p-8 bg-background">
         <InboxCapacityLimits
           v-model:inbox-capacity-limits="inboxCapacityLimitsNew"
           :inbox-list="mockInboxList"
@@ -88,7 +88,7 @@ const handleDelete = id => {
     </Variant>
 
     <Variant title="Interactive Demo">
-      <div class="p-8 bg-n-background">
+      <div class="p-8 bg-background">
         <InboxCapacityLimits
           v-model:inbox-capacity-limits="inboxCapacityLimitsEmpty"
           :inbox-list="mockInboxList"
@@ -96,7 +96,7 @@ const handleDelete = id => {
           :is-updating="false"
           @delete="handleDelete"
         />
-        <div class="mt-4 p-4 bg-n-alpha-2 rounded-lg">
+        <div class="mt-4 p-4 bg-accent rounded-lg">
           <h4 class="text-sm font-medium mb-2">Current Limits:</h4>
           <pre class="text-xs">{{
             JSON.stringify(inboxCapacityLimitsEmpty, null, 2)

@@ -48,7 +48,7 @@ const starRatingValue = computed(() => {
     <FormattedContent v-if="content" :content="content" />
     <h4 v-else>{{ t('CONVERSATION.CSAT_REPLY_MESSAGE') }}</h4>
     <dl v-if="isRatingSubmitted" class="mt-4">
-      <dt class="text-n-slate-11 italic">
+      <dt class="text-muted-foreground italic">
         {{ t('CONVERSATION.RATING_TITLE') }}
       </dt>
       <dd v-if="!isStarRating">
@@ -59,14 +59,17 @@ const starRatingValue = computed(() => {
           <i
             :class="[
               n <= starRatingValue
-                ? 'i-ri-star-fill text-n-amber-9'
-                : 'i-ri-star-line text-n-slate-10',
+                ? 'i-ri-star-fill text-warning'
+                : 'i-ri-star-line text-muted-foreground',
             ]"
           />
         </span>
       </dd>
 
-      <dt v-if="response.feedbackMessage" class="text-n-slate-11 italic mt-2">
+      <dt
+        v-if="response.feedbackMessage"
+        class="text-muted-foreground italic mt-2"
+      >
         {{ t('CONVERSATION.FEEDBACK_TITLE') }}
       </dt>
       <dd>{{ response.feedbackMessage }}</dd>

@@ -34,10 +34,7 @@ export default {
     <h3 class="text-lg font-medium text-foreground">
       {{ message }}
     </h3>
-    <p
-      v-if="description"
-      class="text-sm text-muted-foreground max-w-sm mt-1"
-    >
+    <p v-if="description" class="text-sm text-muted-foreground max-w-sm mt-1">
       {{ description }}
     </p>
   </div>
@@ -53,7 +50,7 @@ export default {
       src="dashboard/assets/images/no-chat.svg"
       alt="No Chat"
     />
-    <span class="text-sm text-n-slate-12 font-medium text-center">
+    <span class="text-sm text-foreground font-medium text-center">
       {{ message }}
       <br />
     </span>

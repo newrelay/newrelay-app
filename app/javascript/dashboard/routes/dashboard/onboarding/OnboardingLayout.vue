@@ -14,7 +14,7 @@ defineEmits(['continue']);
 
 <template>
   <div
-    class="relative flex text-body-main items-start justify-center w-full min-h-screen bg-n-surface-2 py-12 px-4 overflow-hidden"
+    class="relative flex text-body-main items-start justify-center w-full min-h-screen bg-card py-12 px-4 overflow-hidden"
   >
     <!-- Grid background with corner fade -->
     <div
@@ -24,7 +24,7 @@ defineEmits(['continue']);
       <div class="relative ps-12">
         <!-- Timeline dotted line -->
         <svg
-          class="absolute start-[16px] top-10 bottom-20 overflow-visible text-n-slate-5"
+          class="absolute start-[16px] top-10 bottom-20 overflow-visible text-accent"
           width="1"
           height="100%"
           preserveAspectRatio="none"
@@ -46,14 +46,14 @@ defineEmits(['continue']);
             class="flex items-center justify-center w-8 h-8 z-10 flex-shrink-0"
           >
             <slot name="greeting-icon">
-              <span class="i-woot-onboarding-greeting size-4 text-n-slate-7" />
+              <span class="i-woot-onboarding-greeting size-4 text-border" />
             </slot>
           </div>
           <div>
-            <h1 class="text-heading-1 text-n-slate-12">
+            <h1 class="text-heading-1 text-foreground">
               {{ greeting }}
             </h1>
-            <p v-if="subtitle" class="text-sm text-n-slate-11">
+            <p v-if="subtitle" class="text-sm text-muted-foreground">
               {{ subtitle }}
             </p>
           </div>

@@ -51,17 +51,17 @@ const handleChange = () => {
 <template>
   <label
     :for="id"
-    class="rounded-xl outline outline-1 p-4 transition-all duration-200 bg-n-solid-1 py-4 ltr:pl-4 rtl:pr-4 ltr:pr-6 rtl:pl-6 focus-within:has-[:focus-visible]:ring-2 focus-within:has-[:focus-visible]:ring-n-strong"
+    class="rounded-xl outline outline-1 p-4 transition-all duration-200 bg-card py-4 ltr:pl-4 rtl:pr-4 ltr:pr-6 rtl:pl-6 focus-within:has-[:focus-visible]:ring-2 focus-within:has-[:focus-visible]:ring-border"
     :class="[
       disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer',
-      isActive ? 'outline-n-blue-9' : 'outline-n-weak',
-      !disabled && !isActive ? 'hover:outline-n-strong' : '',
+      isActive ? 'outline-primary' : 'outline-border',
+      !disabled && !isActive ? 'hover:outline-border' : '',
     ]"
   >
     <div class="flex flex-col gap-2 items-start">
       <div class="flex items-center justify-between w-full gap-3">
         <div class="flex items-center gap-2">
-          <h3 class="text-heading-3 text-n-slate-12">
+          <h3 class="text-heading-3 text-foreground">
             {{ label }}
           </h3>
           <Label v-if="disabled" :label="disabledLabel" color="amber" compact />
@@ -74,11 +74,11 @@ const handleChange = () => {
           :name="id"
           :disabled="disabled"
           type="radio"
-          class="shadow cursor-pointer grid place-items-center border-2 border-n-strong appearance-none rounded-full w-5 h-5 checked:bg-n-brand before:content-[''] before:bg-n-brand before:border-4 before:rounded-full before:border-n-strong checked:before:w-[18px] checked:before:h-[18px] checked:border checked:border-n-brand"
+          class="shadow cursor-pointer grid place-items-center border-2 border-border appearance-none rounded-full w-5 h-5 checked:bg-primary before:content-[''] before:bg-primary before:border-4 before:rounded-full before:border-border checked:before:w-[18px] checked:before:h-[18px] checked:border checked:border-primary"
           @change="handleChange"
         />
       </div>
-      <p class="text-body-main text-n-slate-11">
+      <p class="text-body-main text-muted-foreground">
         {{ disabled && disabledMessage ? disabledMessage : description }}
       </p>
       <slot />

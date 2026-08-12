@@ -266,17 +266,17 @@ export default {
         hide-toggle
       >
         <template #editor>
-          <p class="mb-1 text-sm font-medium text-n-slate-12">
+          <p class="mb-1 text-sm font-medium text-foreground">
             {{ $t('INBOX_MGMT.SETTINGS_POPUP.IDENTITY_VALIDATION.SECRET_KEY') }}
           </p>
           <woot-code :script="inbox.hmac_token" />
-          <p class="mt-1.5 text-label-small text-n-slate-11">
+          <p class="mt-1.5 text-label-small text-muted-foreground">
             {{ $t('INBOX_MGMT.SETTINGS_POPUP.HMAC_DESCRIPTION') }}
             <a
               target="_blank"
               rel="noopener noreferrer"
               href="https://www.newrelay.com/docs/product/channels/live-chat/sdk/identity-validation/"
-              class="text-n-blue-11 hover:underline text-label-small"
+              class="text-primary hover:underline text-label-small"
             >
               {{
                 $t('INBOX_MGMT.SETTINGS_POPUP.IDENTITY_VALIDATION.VIEW_DOCS')
@@ -324,7 +324,7 @@ export default {
           type="checkbox"
           @change="handleHmacFlag"
         />
-        <label for="hmacMandatory" class="text-body-main text-n-slate-12">
+        <label for="hmacMandatory" class="text-body-main text-foreground">
           {{ $t('INBOX_MGMT.EDIT.ENABLE_HMAC.LABEL') }}
         </label>
       </div>
@@ -346,7 +346,7 @@ export default {
         />
         <div
           v-else
-          class="py-2 px-3 bg-n-amber-3 outline-n-amber-4 text-n-amber-11 outline outline-1 -outline-offset-1 rounded-xl"
+          class="py-2 px-3 bg-warning/10 outline-warning/20 text-warning outline outline-1 -outline-offset-1 rounded-xl"
         >
           <p class="text-body-para mb-0">
             {{ $t('INBOX_MGMT.SETTINGS_POPUP.FORWARD_EMAIL_NOT_CONFIGURED') }}

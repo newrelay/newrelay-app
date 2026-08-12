@@ -11,22 +11,22 @@ import Settings from './Settings.vue';
     :layout="{ type: 'grid', width: '300px' }"
   >
     <Variant title="Guardrails">
-      <div class="p-4 bg-n-background w-full h-full">
+      <div class="p-4 bg-background w-full h-full">
         <Guardrails class="size-60" />
       </div>
     </Variant>
     <Variant title="Scenarios">
-      <div class="p-4 bg-n-background w-full h-full">
+      <div class="p-4 bg-background w-full h-full">
         <Scenarios class="size-60" />
       </div>
     </Variant>
     <Variant title="ResponseGuidelines">
-      <div class="p-4 bg-n-background w-full h-full">
+      <div class="p-4 bg-background w-full h-full">
         <ResponseGuidelines class="size-60" />
       </div>
     </Variant>
     <Variant title="Settings">
-      <div class="p-4 bg-n-background w-full h-full">
+      <div class="p-4 bg-background w-full h-full">
         <Settings class="size-60" />
       </div>
     </Variant>

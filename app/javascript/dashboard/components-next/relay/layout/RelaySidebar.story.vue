@@ -55,7 +55,7 @@ const onNavigate = href => {
 <template>
   <Story title="Relay/Sidebar" :layout="{ type: 'single', iframe: true }">
     <Variant title="Expanded">
-      <div class="flex h-[520px] bg-n-background">
+      <div class="flex h-[520px] bg-background">
         <RelaySidebar
           v-model:collapsed="collapsed"
           brand-name="newrelay"
@@ -64,7 +64,7 @@ const onNavigate = href => {
           @navigate="onNavigate"
         />
         <div
-          class="flex flex-1 items-center justify-center text-sm text-n-slate-11"
+          class="flex flex-1 items-center justify-center text-sm text-muted-foreground"
         >
           Active: {{ activeHref }}
         </div>
@@ -72,7 +72,7 @@ const onNavigate = href => {
     </Variant>
 
     <Variant title="Collapsed">
-      <div class="flex h-[520px] bg-n-background">
+      <div class="flex h-[520px] bg-background">
         <RelaySidebar
           collapsed
           brand-name="newrelay"

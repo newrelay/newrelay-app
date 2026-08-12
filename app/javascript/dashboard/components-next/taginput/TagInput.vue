@@ -215,13 +215,13 @@ const handleBlur = e => emit('blur', e);
     <div
       v-for="(tag, index) in tags"
       :key="index"
-      class="flex items-center justify-center max-w-full gap-1 px-3 py-1 rounded-lg h-7 bg-n-alpha-2"
+      class="flex items-center justify-center max-w-full gap-1 px-3 py-1 rounded-lg h-7 bg-accent"
     >
-      <span class="flex-grow min-w-0 text-sm truncate text-n-slate-12">{{
+      <span class="flex-grow min-w-0 text-sm truncate text-foreground">{{
         tag
       }}</span>
       <span
-        class="flex-shrink-0 cursor-pointer i-lucide-x size-3.5 text-n-slate-11"
+        class="flex-shrink-0 cursor-pointer i-lucide-x size-3.5 text-muted-foreground"
         @click.stop="removeTag(index)"
       />
     </div>
@@ -236,7 +236,7 @@ const handleBlur = e => emit('blur', e);
         :disabled="disabled"
         class="w-full"
         :focus-on-mount="focusOnMount"
-        :custom-input-class="`w-full ${isNewTagInValidType ? '!text-n-ruby-9 dark:!text-n-ruby-9' : ''}`"
+        :custom-input-class="`w-full ${isNewTagInValidType ? '!text-destructive dark:!text-destructive' : ''}`"
         @enter-press="addTag"
         @focus="handleFocus"
         @input="handleInput"
@@ -247,7 +247,7 @@ const handleBlur = e => emit('blur', e);
         v-if="showDropdownMenu"
         :menu-items="filteredMenuItems"
         :is-searching="isLoading"
-        class="ltr:left-0 rtl:right-0 z-[100] top-8 max-h-56 w-[inherit] max-w-md dark:!outline-n-slate-5"
+        class="ltr:left-0 rtl:right-0 z-[100] top-8 max-h-56 w-[inherit] max-w-md dark:!outline-accent"
         @action="handleDropdownAction"
       />
     </div>

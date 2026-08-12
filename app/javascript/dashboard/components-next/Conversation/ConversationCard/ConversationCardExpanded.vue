@@ -69,12 +69,12 @@ const selectedModel = computed({
 
 <template>
   <div
-    class="conversation relative cursor-pointer group grid gap-4 items-center px-3 h-12 border-b border-n-slate-3 hover:border-n-surface-1 hover:z-[1] before:content-[none] before:absolute before:-top-px before:inset-x-0 before:h-px before:bg-n-surface-1 before:pointer-events-none hover:before:content-['']"
+    class="conversation relative cursor-pointer group grid gap-4 items-center px-3 h-12 border-b border-muted hover:border-muted hover:z-[1] before:content-[none] before:absolute before:-top-px before:inset-x-0 before:h-px before:bg-muted before:pointer-events-none hover:before:content-['']"
     :class="{
-      'active animate-card-select bg-n-alpha-1 dark:bg-n-alpha-3 !border-n-surface-1':
+      'active animate-card-select bg-muted dark:bg-accent !border-muted':
         isActiveChat,
-      'selected bg-n-slate-2 dark:bg-n-slate-3 !border-n-surface-1': selected,
-      'hover:bg-n-alpha-1': !isActiveChat && !selected,
+      'selected bg-muted dark:bg-muted !border-muted': selected,
+      'hover:bg-muted': !isActiveChat && !selected,
       'grid-cols-[minmax(0,2fr)_minmax(0,1fr)]': showLabelsSection,
       'grid-cols-[minmax(0,2fr)_max-content]': !showLabelsSection,
     }"
@@ -112,7 +112,7 @@ const selectedModel = computed({
         />
       </button>
 
-      <div class="w-px h-3 bg-n-slate-6 flex-shrink-0" />
+      <div class="w-px h-3 bg-border flex-shrink-0" />
 
       <div class="w-4 flex items-center justify-center flex-shrink-0">
         <CardPriorityIcon :priority="chat.priority" show-empty />
@@ -131,18 +131,14 @@ const selectedModel = computed({
           :status="assignee.availability_status"
           hide-offline-status
         />
-        <Icon
-          v-else
-          icon="i-woot-empty-assignee"
-          class="size-4 text-n-slate-7"
-        />
+        <Icon v-else icon="i-woot-empty-assignee" class="size-4 text-border" />
       </div>
 
       <div class="w-4 flex items-center justify-center flex-shrink-0">
         <CardStatusIcon :status="chat.status" show-empty />
       </div>
 
-      <div class="w-px h-3 bg-n-slate-6 flex-shrink-0" />
+      <div class="w-px h-3 bg-border flex-shrink-0" />
 
       <div v-if="!isInboxView && showInboxName" class="w-20 flex-shrink-0">
         <InboxName v-if="showInboxName" :inbox="inbox" class="min-w-0" />
@@ -150,7 +146,7 @@ const selectedModel = computed({
 
       <div
         v-if="!isInboxView && showInboxName"
-        class="w-px h-3 bg-n-slate-6 flex-shrink-0"
+        class="w-px h-3 bg-border flex-shrink-0"
       />
 
       <div
@@ -162,9 +158,9 @@ const selectedModel = computed({
       >
         <Icon
           icon="i-woot-hash"
-          class="size-3.5 text-n-slate-10 flex-shrink-0"
+          class="size-3.5 text-muted-foreground flex-shrink-0"
         />
-        <span class="text-body-main text-n-slate-11 truncate">
+        <span class="text-body-main text-muted-foreground truncate">
           {{ chat.id }}
         </span>
       </div>
@@ -177,7 +173,7 @@ const selectedModel = computed({
       />
 
       <h4
-        class="text-heading-3 my-0 capitalize truncate text-n-slate-12 font-medium w-32 flex-shrink-0"
+        class="text-heading-3 my-0 capitalize truncate text-foreground font-medium w-32 flex-shrink-0"
       >
         {{ currentContact.name }}
       </h4>
@@ -210,7 +206,7 @@ const selectedModel = computed({
           :conversation-id="chat.id"
           :last-activity-timestamp="chat.timestamp"
           :created-at-timestamp="chat.created_at"
-          class="font-440 !text-xs text-n-slate-11"
+          class="font-440 !text-xs text-muted-foreground"
         />
       </div>
     </div>

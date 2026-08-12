@@ -23,20 +23,20 @@ defineProps({
       key="voice-status-row"
       :status="voiceCallStatus"
       :direction="voiceCallDirection"
-      :class="unreadCount > 0 ? 'text-n-slate-12' : 'text-n-slate-11'"
+      :class="unreadCount > 0 ? 'text-foreground' : 'text-muted-foreground'"
     />
     <MessagePreview
       v-else-if="lastMessage"
       key="message-preview"
       :message="lastMessage"
       :multi-line="showExpandedPreview"
-      :class="unreadCount > 0 ? 'text-n-slate-12' : 'text-n-slate-11'"
+      :class="unreadCount > 0 ? 'text-foreground' : 'text-muted-foreground'"
     />
     <span
       v-else
       key="no-messages"
       class="inline-grid grid-flow-col auto-cols-max items-center gap-1 text-body-main"
-      :class="unreadCount > 0 ? 'text-n-slate-12' : 'text-n-slate-11'"
+      :class="unreadCount > 0 ? 'text-foreground' : 'text-muted-foreground'"
     >
       <Icon icon="i-lucide-info" class="size-3.5" />
       {{ $t(`CHAT_LIST.NO_MESSAGES`) }}

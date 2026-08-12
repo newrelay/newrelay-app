@@ -16,7 +16,7 @@ const handleSelect = value => {
     :layout="{ type: 'grid', width: '600px' }"
   >
     <Variant title="Basic Usage">
-      <div class="p-8 bg-n-background space-y-4">
+      <div class="p-8 bg-background space-y-4">
         <RadioCard
           id="round_robin"
           label="Round Robin"
@@ -35,7 +35,7 @@ const handleSelect = value => {
     </Variant>
 
     <Variant title="Active State">
-      <div class="p-8 bg-n-background">
+      <div class="p-8 bg-background">
         <RadioCard
           id="active_option"
           label="Active Option"
@@ -47,7 +47,7 @@ const handleSelect = value => {
     </Variant>
 
     <Variant title="Inactive State">
-      <div class="p-8 bg-n-background">
+      <div class="p-8 bg-background">
         <RadioCard
           id="inactive_option"
           label="Inactive Option"

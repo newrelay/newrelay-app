@@ -48,11 +48,11 @@ const truncatedContent = computed(() => {
 const statusTextColor = computed(() => {
   switch (props.status) {
     case ARTICLE_STATUSES.ARCHIVED:
-      return 'text-n-slate-12';
+      return 'text-foreground';
     case ARTICLE_STATUSES.DRAFT:
-      return 'text-n-amber-11';
+      return 'text-warning';
     default:
-      return 'text-n-teal-11';
+      return 'text-success';
   }
 });
 </script>
@@ -61,26 +61,26 @@ const statusTextColor = computed(() => {
   <router-link :to="navigateTo">
     <CardLayout
       layout="col"
-      class="[&>div]:justify-start [&>div]:gap-2 [&>div]:px-4 [&>div]:pt-4 [&>div]:pb-5 [&>div]:items-start hover:bg-n-slate-2 dark:hover:bg-n-solid-3"
+      class="[&>div]:justify-start [&>div]:gap-2 [&>div]:px-4 [&>div]:pt-4 [&>div]:pb-5 [&>div]:items-start hover:bg-muted dark:hover:bg-accent"
     >
       <div class="min-w-0 flex-1 flex flex-col items-start gap-2 w-full">
         <div class="flex items-center min-w-0 justify-between gap-2 w-full">
           <div class="flex items-center gap-2">
             <h5
-              class="text-sm font-medium leading-4 truncate min-w-0 text-n-slate-12"
+              class="text-sm font-medium leading-4 truncate min-w-0 text-foreground"
             >
               {{ title }}
             </h5>
-            <div v-if="category" class="w-px h-4 bg-n-strong mx-2" />
+            <div v-if="category" class="w-px h-4 bg-border mx-2" />
             <span
               v-if="category"
-              class="text-xs inline-flex items-center font-medium rounded-md whitespace-nowrap capitalize bg-n-alpha-2 px-1.5 h-6 text-n-slate-12"
+              class="text-xs inline-flex items-center font-medium rounded-md whitespace-nowrap capitalize bg-accent px-1.5 h-6 text-foreground"
             >
               {{ category }}
             </span>
             <span
               v-if="status"
-              class="text-xs inline-flex items-center font-medium rounded-md whitespace-nowrap capitalize bg-n-alpha-2 px-2 h-6"
+              class="text-xs inline-flex items-center font-medium rounded-md whitespace-nowrap capitalize bg-accent px-2 h-6"
               :class="statusTextColor"
             >
               {{ status }}
@@ -88,14 +88,14 @@ const statusTextColor = computed(() => {
           </div>
           <span
             v-if="updatedAtTime"
-            class="text-sm font-normal min-w-0 truncate text-n-slate-11"
+            class="text-sm font-normal min-w-0 truncate text-muted-foreground"
           >
             {{ updatedAtTime }}
           </span>
         </div>
         <p
           v-if="truncatedContent"
-          class="text-sm leading-6 text-n-slate-11 line-clamp-2"
+          class="text-sm leading-6 text-muted-foreground line-clamp-2"
         >
           {{ truncatedContent }}
         </p>

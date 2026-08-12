@@ -19,12 +19,12 @@ const props = defineProps({
 });
 
 const COLOR_CLASSES = {
-  slate: 'bg-n-label-color outline-n-label-border text-n-slate-12',
-  amber: 'bg-n-amber-2 outline-n-amber-4 text-n-amber-11',
-  teal: 'bg-n-teal-2 outline-n-teal-4 text-n-teal-11',
-  ruby: 'bg-n-ruby-2 outline-n-ruby-4 text-n-ruby-11',
-  blue: 'bg-n-blue-2 outline-n-blue-4 text-n-blue-11',
-  iris: 'bg-n-iris-2 outline-n-iris-4 text-n-iris-11',
+  slate: 'bg-foreground outline-border text-foreground',
+  amber: 'bg-warning/10 outline-warning/20 text-warning',
+  teal: 'bg-success/10 outline-success/20 text-success',
+  ruby: 'bg-destructive/10 outline-destructive/20 text-destructive',
+  blue: 'bg-primary/10 outline-primary/20 text-primary',
+  iris: 'bg-primary/10 outline-primary/20 text-primary',
 };
 
 const isStringLabel = computed(() => typeof props.label === 'string');

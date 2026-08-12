@@ -108,7 +108,7 @@ onMounted(() => {
 <template>
   <div class="flex items-center justify-between">
     <div class="flex flex-1 items-center gap-2 justify-between">
-      <p class="text-sm truncate text-n-slate-11 mb-0">
+      <p class="text-sm truncate text-muted-foreground mb-0">
         {{ $t('REPORT.PAGINATION.RESULTS', { start, end, total }) }}
       </p>
       <div class="flex items-center gap-2">
@@ -117,7 +117,7 @@ onMounted(() => {
           v-model="currentPageSize"
           variant="outline"
           hide-icon
-          class="[&>button]:text-n-slate-11 [&>button]:hover:text-n-slate-12 [&>button]:h-6"
+          class="[&>button]:text-muted-foreground [&>button]:hover:text-foreground [&>button]:h-6"
           :options="pageSizeOptions"
         />
         <nav class="isolate inline-flex items-center gap-1.5">
@@ -150,7 +150,7 @@ onMounted(() => {
           >
             <span
               class="text-center"
-              :class="{ 'text-n-brand': page == currentPage }"
+              :class="{ 'text-primary': page == currentPage }"
             >
               {{ page }}
             </span>

@@ -129,7 +129,7 @@ const tooltip = useHeatmapTooltip();
         <div
           v-for="ii in numberOfRows"
           :key="ii"
-          class="w-full rounded-sm bg-n-slate-3 dark:bg-n-slate-1 animate-loader-pulse h-8 min-w-[70px]"
+          class="w-full rounded-sm bg-muted dark:bg-background animate-loader-pulse h-8 min-w-[70px]"
         />
       </div>
       <div class="grid gap-[5px] w-full min-w-[700px]">
@@ -141,13 +141,13 @@ const tooltip = useHeatmapTooltip();
           <div
             v-for="jj in 24"
             :key="jj"
-            class="w-full h-8 rounded-sm bg-n-slate-3 dark:bg-n-slate-1 animate-loader-pulse"
+            class="w-full h-8 rounded-sm bg-muted dark:bg-background animate-loader-pulse"
           />
         </div>
       </div>
       <div />
       <div
-        class="grid grid-cols-[repeat(24,_1fr)] gap-[5px] w-full text-[8px] font-semibold h-5 text-n-slate-11"
+        class="grid grid-cols-[repeat(24,_1fr)] gap-[5px] w-full text-[8px] font-semibold h-5 text-muted-foreground"
       >
         <div
           v-for="ii in 24"
@@ -195,7 +195,7 @@ const tooltip = useHeatmapTooltip();
       </div>
       <div />
       <div
-        class="grid grid-cols-[repeat(24,_1fr)] gap-[5px] w-full text-[8px] font-semibold h-5 text-n-slate-12"
+        class="grid grid-cols-[repeat(24,_1fr)] gap-[5px] w-full text-[8px] font-semibold h-5 text-foreground"
       >
         <div
           v-for="ii in 24"

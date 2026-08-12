@@ -51,14 +51,17 @@ const formattedLastActivityAt = computed(() => {
       />
       <div class="flex flex-col gap-0.5 flex-1 min-w-0">
         <div class="flex flex-wrap items-center gap-x-4 gap-y-1 min-w-0">
-          <span class="text-base font-medium truncate text-n-slate-12">
+          <span class="text-base font-medium truncate text-foreground">
             {{ displayName }}
           </span>
           <span
             v-if="hasContacts"
-            class="inline-flex items-center gap-1.5 text-sm text-n-slate-11 truncate"
+            class="inline-flex items-center gap-1.5 text-sm text-muted-foreground truncate"
           >
-            <Icon icon="i-lucide-contact" size="size-3.5 text-n-slate-11" />
+            <Icon
+              icon="i-lucide-contact"
+              size="size-3.5 text-muted-foreground"
+            />
             {{ contactsCountLabel }}
           </span>
         </div>
@@ -66,16 +69,19 @@ const formattedLastActivityAt = computed(() => {
           <div class="flex items-center min-w-0">
             <span
               v-if="domain"
-              class="inline-flex items-center gap-1.5 text-sm text-n-slate-11 truncate cursor-text"
+              class="inline-flex items-center gap-1.5 text-sm text-muted-foreground truncate cursor-text"
               @click.stop
             >
-              <Icon icon="i-lucide-globe" size="size-3.5 text-n-slate-11" />
+              <Icon
+                icon="i-lucide-globe"
+                size="size-3.5 text-muted-foreground"
+              />
               <span class="truncate">{{ domain }}</span>
             </span>
           </div>
           <span
             v-if="lastActivityAt"
-            class="inline-flex items-center gap-1.5 text-sm text-n-slate-11 flex-shrink-0"
+            class="inline-flex items-center gap-1.5 text-sm text-muted-foreground flex-shrink-0"
           >
             {{ formattedLastActivityAt }}
           </span>

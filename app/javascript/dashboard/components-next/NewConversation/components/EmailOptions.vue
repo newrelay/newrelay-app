@@ -72,7 +72,7 @@ const handleBccUpdate = value => {
 const subjectClass = computed(() => {
   return [
     'h-8 w-full border-none bg-transparent px-0 text-sm font-medium text-foreground shadow-none outline-none placeholder:text-muted-foreground focus-visible:ring-0',
-    props.hasErrors ? 'placeholder:!text-n-ruby-9' : '',
+    props.hasErrors ? 'placeholder:!text-destructive' : '',
   ];
 });
 </script>

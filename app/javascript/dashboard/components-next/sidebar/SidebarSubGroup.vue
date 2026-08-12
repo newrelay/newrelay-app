@@ -72,14 +72,14 @@ useEventListener(scrollableContainer, 'scroll', () => {
     <div
       v-if="isScrollable && isExpanded"
       v-show="!scrollEnd"
-      class="pointer-events-none absolute -bottom-1 flex h-12 w-full animate-fade-in-up items-end justify-end bg-gradient-to-t from-n-solid-1 to-transparent px-2"
+      class="pointer-events-none absolute -bottom-1 flex h-12 w-full animate-fade-in-up items-end justify-end bg-gradient-to-t from-card to-transparent px-2"
     >
       <svg
         width="16"
         height="24"
         viewBox="0 0 16 24"
         fill="none"
-        class="text-n-slate-9 opacity-50 group-hover:opacity-100"
+        class="text-muted-foreground opacity-50 group-hover:opacity-100"
         xmlns="http://www.w3.org/2000/svg"
       >
         <path

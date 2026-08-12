@@ -83,7 +83,7 @@ const handleUpdate = item => {
       slate
       xs
       ghost
-      :class="{ 'bg-n-alpha-2': showDropdown }"
+      :class="{ 'bg-accent': showDropdown }"
       @click="toggleDropdown()"
     />
     <Transition

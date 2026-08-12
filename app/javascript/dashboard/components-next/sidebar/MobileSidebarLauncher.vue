@@ -47,12 +47,12 @@ const toggleSidebar = () => {
     ]"
   >
     <ButtonGroup
-      class="rounded-full bg-n-alpha-2 backdrop-blur-lg p-1 shadow hover:shadow-md"
+      class="rounded-full bg-accent backdrop-blur-lg p-1 shadow hover:shadow-md"
     >
       <Button
         icon="i-lucide-menu"
         no-animation
-        class="!rounded-full !bg-n-solid-3 dark:!bg-n-alpha-2 !text-n-slate-12 text-xl transition-all duration-200 ease-out hover:brightness-110"
+        class="!rounded-full !bg-accent dark:!bg-accent !text-foreground text-xl transition-all duration-200 ease-out hover:brightness-110"
         lg
         @click="toggleSidebar"
       />

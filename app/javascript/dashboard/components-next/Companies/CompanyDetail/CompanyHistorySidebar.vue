@@ -38,14 +38,14 @@ const conversationInbox = conversation =>
 <template>
   <div
     v-if="isLoading"
-    class="flex items-center justify-center py-10 text-n-slate-11"
+    class="flex items-center justify-center py-10 text-muted-foreground"
   >
     <Spinner />
   </div>
 
   <div
     v-else-if="conversations.length > 0"
-    class="px-6 divide-y divide-n-strong [&>*:hover]:!border-y-transparent [&>*:hover+*]:!border-t-transparent"
+    class="px-6 divide-y divide-border [&>*:hover]:!border-y-transparent [&>*:hover+*]:!border-t-transparent"
   >
     <ConversationCard
       v-for="conversation in conversations"
@@ -54,13 +54,13 @@ const conversationInbox = conversation =>
       :contact="conversationContact(conversation)"
       :state-inbox="conversationInbox(conversation)"
       :account-labels="accountLabelsValue"
-      class="rounded-none hover:rounded-xl hover:bg-n-alpha-1 dark:hover:bg-n-alpha-3"
+      class="rounded-none hover:rounded-xl hover:bg-muted dark:hover:bg-accent"
     />
   </div>
 
   <p
     v-else
-    class="py-8 px-4 mx-6 text-sm text-center rounded-xl border border-dashed border-n-strong text-n-slate-11"
+    class="py-8 px-4 mx-6 text-sm text-center rounded-xl border border-dashed border-border text-muted-foreground"
   >
     {{ t('COMPANIES.DETAIL.HISTORY.EMPTY') }}
   </p>

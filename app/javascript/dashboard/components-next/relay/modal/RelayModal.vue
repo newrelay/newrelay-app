@@ -34,7 +34,7 @@ const maxWidthClass = computed(() =>
   <TeleportWithDirection to="body">
     <div
       v-if="show"
-      class="fixed inset-0 z-50 flex items-center justify-center bg-[#00000080] backdrop-blur-[4px]"
+      class="fixed inset-0 z-50 flex items-center justify-center bg-modal-backdrop-light backdrop-blur-[4px] dark:bg-modal-backdrop-dark"
       @click.self="emit('close')"
     >
       <div

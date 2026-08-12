@@ -42,7 +42,7 @@ const copyGitSha = () => {
         })
       }}
     </div>
-    <div class="divide-x divide-n-slate-9">
+    <div class="divide-x divide-muted-foreground">
       <span class="px-2">{{ `v${globalConfig.appVersion}` }}</span>
       <span
         v-tooltip="t('COMPONENTS.CODE.BUTTON_TEXT')"

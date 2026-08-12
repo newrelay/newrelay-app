@@ -70,7 +70,7 @@ const category = {
       <div
         v-for="(article, index) in articles"
         :key="index"
-        class="px-20 py-4 bg-n-background"
+        class="px-20 py-4 bg-background"
       >
         <ArticleCard
           :id="article.id"

@@ -18,19 +18,19 @@ const navigateToMfa = () => {
 </script>
 
 <template>
-  <div class="bg-n-background rounded-xl p-4 border border-n-slate-4">
+  <div class="bg-background rounded-xl p-4 border border-muted">
     <div class="flex flex-col xs:flex-row items-center justify-between gap-4">
       <div class="flex flex-col items-start gap-1.5">
         <div class="flex items-center gap-2">
           <Icon
             icon="i-lucide-lock-keyhole"
-            class="size-4 text-n-slate-10 flex-shrink-0"
+            class="size-4 text-muted-foreground flex-shrink-0"
           />
-          <h5 class="text-heading-3 text-n-slate-12">
+          <h5 class="text-heading-3 text-foreground">
             {{ $t('MFA_SETTINGS.TITLE') }}
           </h5>
         </div>
-        <p class="text-body-para text-n-slate-11">
+        <p class="text-body-para text-muted-foreground">
           {{ $t('MFA_SETTINGS.DESCRIPTION') }}
         </p>
       </div>

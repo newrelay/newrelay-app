@@ -14,7 +14,7 @@ const description = ref(
     :layout="{ type: 'grid', width: '600px' }"
   >
     <Variant title="Basic Usage">
-      <div class="p-8 bg-n-background">
+      <div class="p-8 bg-background">
         <BaseInfo
           v-model:policy-name="policyName"
           v-model:description="description"

@@ -19,12 +19,12 @@ const emit = defineEmits(['action']);
 const bannerClass = computed(() => {
   const classMap = {
     slate:
-      'bg-n-slate-3 border-n-slate-4 text-n-slate-11 [&_.link]:text-n-slate-11',
+      'bg-muted border-muted text-muted-foreground [&_.link]:text-muted-foreground',
     amber:
-      'bg-n-amber-3 border-n-amber-4 text-n-amber-11 [&_.link]:text-n-amber-11',
-    teal: 'bg-n-teal-3 border-n-teal-4 text-n-teal-11 [&_.link]:text-n-teal-11',
-    ruby: 'bg-n-ruby-3 border-n-ruby-4 text-n-ruby-11 [&_.link]:text-n-ruby-11',
-    blue: 'bg-n-blue-3 border-n-blue-4 text-n-blue-11 [&_.link]:text-n-blue-11',
+      'bg-warning/10 border-warning/20 text-warning [&_.link]:text-warning',
+    teal: 'bg-success/10 border-success/20 text-success [&_.link]:text-success',
+    ruby: 'bg-destructive/10 border-destructive/20 text-destructive [&_.link]:text-destructive',
+    blue: 'bg-primary/10 border-primary/20 text-primary [&_.link]:text-primary',
   };
 
   return classMap[props.color];
@@ -32,11 +32,11 @@ const bannerClass = computed(() => {
 
 const buttonClass = computed(() => {
   const classMap = {
-    slate: 'bg-n-slate-4 hover:bg-n-slate-5 text-n-slate-11',
-    amber: 'bg-n-amber-4 hover:bg-n-amber-5 text-n-amber-11',
-    teal: 'bg-n-teal-4 hover:bg-n-teal-5 text-n-teal-11',
-    ruby: 'bg-n-ruby-4 hover:bg-n-ruby-5 text-n-ruby-11',
-    blue: 'bg-n-blue-4 hover:bg-n-blue-5 text-n-blue-11',
+    slate: 'bg-muted hover:bg-accent text-muted-foreground',
+    amber: 'bg-warning/20 hover:bg-warning/20 text-warning',
+    teal: 'bg-success/20 hover:bg-success/20 text-success',
+    ruby: 'bg-destructive/20 hover:bg-destructive/20 text-destructive',
+    blue: 'bg-primary/20 hover:bg-primary/20 text-primary',
   };
 
   return classMap[props.color];

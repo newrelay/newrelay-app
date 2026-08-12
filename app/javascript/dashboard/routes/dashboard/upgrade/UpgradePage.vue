@@ -182,24 +182,24 @@ defineExpose({ shouldShowUpgradePage });
     class="mx-auto h-full pt-[clamp(3rem,15vh,12rem)]"
   >
     <div
-      class="flex flex-col gap-4 max-w-md px-8 py-6 shadow-lg bg-n-solid-1 rounded-xl outline outline-1 outline-n-container"
+      class="flex flex-col gap-4 max-w-md px-8 py-6 shadow-lg bg-card rounded-xl outline outline-1 outline-card"
     >
       <div class="flex flex-col gap-4">
         <div class="flex items-center w-full gap-2">
           <span
-            class="flex items-center justify-center w-6 h-6 rounded-full bg-n-solid-blue"
+            class="flex items-center justify-center w-6 h-6 rounded-full bg-primary"
           >
             <Icon
-              class="flex-shrink-0 text-n-brand size-[14px]"
+              class="flex-shrink-0 text-primary size-[14px]"
               icon="i-lucide-lock-keyhole"
             />
           </span>
-          <span class="text-base font-medium text-n-slate-12">
+          <span class="text-base font-medium text-foreground">
             {{ $t('GENERAL_SETTINGS.UPGRADE') }}
           </span>
         </div>
         <div>
-          <p class="text-sm font-normal text-n-slate-11 mb-3">
+          <p class="text-sm font-normal text-muted-foreground mb-3">
             {{ limitExceededMessage }}
           </p>
           <p v-if="!isAdmin">

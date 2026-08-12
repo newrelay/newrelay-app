@@ -190,15 +190,15 @@ const iconName = computed(() => {
 // Status drives the accent: teal for live, ruby for missed, neutral otherwise.
 const iconContainerClass = computed(() => {
   if (status.value === VOICE_CALL_STATUS.IN_PROGRESS) {
-    return 'bg-n-teal-3 text-n-teal-11';
+    return 'bg-success/10 text-success';
   }
   if (status.value === VOICE_CALL_STATUS.RINGING) {
-    return 'bg-n-teal-3 text-n-teal-11';
+    return 'bg-success/10 text-success';
   }
   if (isMissedInbound.value) {
-    return 'bg-n-alpha-2 text-n-ruby-9';
+    return 'bg-accent text-destructive';
   }
-  return 'bg-n-alpha-2 text-n-slate-12';
+  return 'bg-accent text-foreground';
 });
 
 const callSid = computed(() => call.value?.providerCallId);

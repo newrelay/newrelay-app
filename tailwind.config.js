@@ -240,6 +240,10 @@ const tailwindConfig = {
       'modal-backdrop-dark': 'rgba(0, 0, 0, 0.6)',
       current: 'currentColor',
       ...colors,
+      // Override the unused slate-mapped `black` scale from theme/colors with a
+      // real #000 + DEFAULT so `bg-black`, `text-black`, `bg-black/40`, `ring-black/5`
+      // actually render (they were silently no-ops before).
+      black: '#000',
       amber: tailwindColors.amber,
       emerald: tailwindColors.emerald,
       body: slateDark.slate7,

@@ -111,7 +111,7 @@ export default {
         @update:model-value="handleCallingToggle"
       >
         <template v-if="isTogglingCalling" #hiddenToggle>
-          <Spinner class="size-4 text-n-slate-11" />
+          <Spinner class="size-4 text-muted-foreground" />
         </template>
       </SettingsToggleSection>
     </div>

@@ -104,7 +104,7 @@ export default {
     />
 
     <div v-if="voiceEnabled && needsCredentials" class="flex flex-col gap-4">
-      <p class="text-sm text-n-slate-11">
+      <p class="text-sm text-muted-foreground">
         {{ $t('INBOX_MGMT.VOICE_CONFIGURATION.CREDENTIALS.DESCRIPTION') }}
       </p>
       <NextInput

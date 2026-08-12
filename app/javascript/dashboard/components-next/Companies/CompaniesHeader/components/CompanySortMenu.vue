@@ -89,16 +89,16 @@ const handleOrderChange = value => {
       color="slate"
       size="sm"
       variant="ghost"
-      :class="isMenuOpen ? 'bg-n-alpha-2' : ''"
+      :class="isMenuOpen ? 'bg-accent' : ''"
       @click="isMenuOpen = !isMenuOpen"
     />
     <div
       v-if="isMenuOpen"
       v-on-clickaway="() => (isMenuOpen = false)"
-      class="absolute top-full mt-1 ltr:-right-32 rtl:-left-32 sm:ltr:right-0 sm:rtl:left-0 flex flex-col gap-4 bg-n-alpha-3 backdrop-blur-[100px] border border-n-weak w-72 rounded-xl p-4"
+      class="absolute top-full mt-1 ltr:-right-32 rtl:-left-32 sm:ltr:right-0 sm:rtl:left-0 flex flex-col gap-4 bg-accent backdrop-blur-[100px] border border-border w-72 rounded-xl p-4"
     >
       <div class="flex items-center justify-between gap-2">
-        <span class="text-sm text-n-slate-12">
+        <span class="text-sm text-foreground">
           {{ t('COMPANIES.SORT_BY.LABEL') }}
         </span>
         <SelectMenu
@@ -110,7 +110,7 @@ const handleOrderChange = value => {
         />
       </div>
       <div class="flex items-center justify-between gap-2">
-        <span class="text-sm text-n-slate-12">
+        <span class="text-sm text-foreground">
           {{ t('COMPANIES.ORDER.LABEL') }}
         </span>
         <SelectMenu

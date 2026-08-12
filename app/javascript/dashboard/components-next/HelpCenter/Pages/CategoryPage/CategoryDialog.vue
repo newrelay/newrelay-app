@@ -122,7 +122,7 @@ onMounted(() => {
   <TeleportWithDirection to="body">
     <div
       v-if="isOpen"
-      class="fixed inset-0 z-[100] flex items-center justify-center bg-n-alpha-black1 p-4 backdrop-blur-sm duration-200 animate-in fade-in"
+      class="fixed inset-0 z-[100] flex items-center justify-center bg-black/5 p-4 backdrop-blur-sm duration-200 animate-in fade-in"
       @click="handleClose"
     >
       <div

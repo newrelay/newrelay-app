@@ -117,19 +117,19 @@ const igReel = computed(() =>
     :layout="{ type: 'grid', width: '800px' }"
   >
     <Variant title="Instagram Reel">
-      <div class="p-4 bg-n-background rounded-lg w-full min-w-5xl grid">
+      <div class="p-4 bg-background rounded-lg w-full min-w-5xl grid">
         <Message :current-user-id="1" v-bind="igReel" />
       </div>
     </Variant>
 
     <Variant title="Instagram Story">
-      <div class="p-4 bg-n-background rounded-lg w-full min-w-5xl grid">
+      <div class="p-4 bg-background rounded-lg w-full min-w-5xl grid">
         <Message :current-user-id="1" v-bind="instagramStory" />
       </div>
     </Variant>
 
     <Variant title="Unsupported">
-      <div class="p-4 bg-n-background rounded-lg w-full min-w-5xl grid">
+      <div class="p-4 bg-background rounded-lg w-full min-w-5xl grid">
         <Message :current-user-id="1" v-bind="unsupported" />
       </div>
     </Variant>

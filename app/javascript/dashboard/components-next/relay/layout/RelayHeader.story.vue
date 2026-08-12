@@ -26,7 +26,7 @@ const sections = [
 <template>
   <Story title="Relay/Header" :layout="{ type: 'single', iframe: true }">
     <Variant title="Default">
-      <div class="bg-n-background">
+      <div class="bg-background">
         <RelayHeader
           title="Relay AI"
           @toggle-sidebar="
@@ -39,12 +39,14 @@ const sections = [
             <Badge variant="secondary">Beta</Badge>
           </template>
         </RelayHeader>
-        <p class="p-4 text-sm text-n-slate-11">Last action: {{ lastAction }}</p>
+        <p class="p-4 text-sm text-muted-foreground">
+          Last action: {{ lastAction }}
+        </p>
       </div>
     </Variant>
 
     <Variant title="With sidebar shell">
-      <div class="flex h-[480px] flex-col bg-n-background">
+      <div class="flex h-[480px] flex-col bg-background">
         <RelayHeader title="FAQs" @toggle-sidebar="collapsed = !collapsed" />
         <div class="flex min-h-0 flex-1">
           <RelaySidebar
@@ -54,7 +56,7 @@ const sections = [
             active-href="/ai/faqs"
           />
           <div
-            class="flex flex-1 items-center justify-center text-sm text-n-slate-11"
+            class="flex flex-1 items-center justify-center text-sm text-muted-foreground"
           >
             Page content
           </div>

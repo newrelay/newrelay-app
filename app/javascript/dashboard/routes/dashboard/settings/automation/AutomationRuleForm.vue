@@ -141,7 +141,7 @@ const filterTypes = computed(() => {
         label: t(`FILTER.OPERATOR_LABELS.${op.value}`),
         hasInput: true,
         inputOverride: null,
-        icon: h('span', { class: 'i-ph-equals-bold !text-n-blue-11' }),
+        icon: h('span', { class: 'i-ph-equals-bold !text-primary' }),
       };
     });
 

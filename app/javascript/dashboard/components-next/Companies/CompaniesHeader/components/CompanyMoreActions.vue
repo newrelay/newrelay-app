@@ -32,7 +32,7 @@ const handleAction = ({ action }) => {
       color="slate"
       variant="ghost"
       size="sm"
-      :class="showActionsDropdown ? 'bg-n-alpha-2' : ''"
+      :class="showActionsDropdown ? 'bg-accent' : ''"
       @click="showActionsDropdown = !showActionsDropdown"
     />
     <DropdownMenu

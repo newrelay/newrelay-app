@@ -1,5 +1,5 @@
 <template>
-  <div class="animation-container margin-top-1">
+  <div class="animatiocard margin-top-1">
     <div class="ai-typing--wrap">
       <fluent-icon icon="wand" size="14" class="ai-typing--icon" />
       <label>
@@ -13,7 +13,7 @@
 </template>
 
 <style lang="scss" scoped>
-.animation-container {
+.animatiocard {
   position: relative;
   display: flex;
   .ai-typing--wrap {
@@ -22,15 +22,15 @@
     gap: 4px;
 
     .ai-typing--icon {
-      @apply text-n-iris-11;
+      @apply text-primary;
     }
   }
   label {
-    @apply text-n-iris-11 ltr:mr-1 rtl:ml-1 inline-block;
+    @apply text-primary ltr:mr-1 rtl:ml-1 inline-block;
   }
   .loader {
     animation: bubble-scale 1.2s infinite;
-    @apply bg-n-iris-11 inline-block size-1.5 ltr:mr-1 rtl:ml-1 mt-3 rounded-full;
+    @apply bg-primary inline-block size-1.5 ltr:mr-1 rtl:ml-1 mt-3 rounded-full;
   }
 
   .loader:nth-child(2) {

@@ -13,7 +13,7 @@ const windowUnit = ref('minutes');
     :layout="{ type: 'grid', width: '800px' }"
   >
     <Variant title="Basic Usage">
-      <div class="p-8 bg-n-background">
+      <div class="p-8 bg-background">
         <FairDistribution
           v-model:fair-distribution-limit="fairDistributionLimit"
           v-model:fair-distribution-window="fairDistributionWindow"

@@ -668,11 +668,10 @@ export default {
   >
     <SpinnerLoader :size="28" class="text-primary" />
   </div>
-  <div
-    v-else
-    class="flex h-full min-h-0 flex-col bg-background"
-  >
-    <div class="flex shrink-0 flex-col border-b border-border/40 px-6 pt-6 sm:px-8">
+  <div v-else class="flex h-full min-h-0 flex-col bg-background">
+    <div
+      class="flex shrink-0 flex-col border-b border-border/40 px-6 pt-6 sm:px-8"
+    >
       <router-link
         :to="{ name: 'settings_inbox_list', params: { accountId } }"
         class="group mb-2 flex items-center text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
@@ -761,7 +760,7 @@ export default {
             }"
           >
             <div class="flex flex-col gap-1 items-start mb-4">
-              <label class="text-heading-3 text-n-slate-12">
+              <label class="text-heading-3 text-foreground">
                 {{ $t('INBOX_MGMT.ADD.WEBSITE_CHANNEL.CHANNEL_AVATAR.LABEL') }}
               </label>
               <Avatar
@@ -998,7 +997,7 @@ export default {
               >
                 <div class="flex items-center gap-6">
                   <div class="flex items-center gap-2">
-                    <label class="text-n-slate-11 text-heading-3">
+                    <label class="text-muted-foreground text-heading-3">
                       {{
                         $t(
                           'INBOX_MGMT.WIDGET_BUILDER.WIDGET_OPTIONS.WIDGET_BUBBLE_POSITION_LABEL'
@@ -1024,9 +1023,9 @@ export default {
                       class="[&>select]:!p-0 min-w-16 [&>select]:!outline-none"
                     />
                   </div>
-                  <div class="h-3 w-px bg-n-weak rounded-lg" />
+                  <div class="h-3 w-px bg-border rounded-lg" />
                   <div class="flex items-center gap-2">
-                    <label class="text-n-slate-11 text-heading-3">
+                    <label class="text-muted-foreground text-heading-3">
                       {{
                         $t(
                           'INBOX_MGMT.WIDGET_BUILDER.WIDGET_OPTIONS.WIDGET_BUBBLE_TYPE_LABEL'
@@ -1256,7 +1255,7 @@ export default {
             class="flex-1 sticky top-4 self-start max-w-lg flex-shrink-0 w-full min-w-0"
           >
             <div
-              class="flex flex-col outline -outline-offset-1 outline-1 outline-n-weak w-full px-3 pt-3 pb-8 bg-n-surface-1 rounded-2xl min-h-[45rem] overflow-hidden"
+              class="flex flex-col outline -outline-offset-1 outline-1 outline-border w-full px-3 pt-3 pb-8 bg-muted rounded-2xl min-h-[45rem] overflow-hidden"
             >
               <Widget
                 :welcome-heading="channelWelcomeTitle"

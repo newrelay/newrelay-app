@@ -239,7 +239,7 @@ const addAllExample = () => {
                 @add="addGuardrail"
               />
               <!-- Will enable this feature in future -->
-              <!-- <div class="h-4 w-px bg-n-strong" />
+              <!-- <div class="h-4 w-px bg-border" />
               <Button
                 :label="t('CAPTAIN.ASSISTANTS.GUARDRAILS.ADD.NEW.TEST_ALL')"
                 xs

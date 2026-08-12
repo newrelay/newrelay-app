@@ -250,7 +250,7 @@ defineExpose({ state, isSubmitDisabled, handleSubmit });
           variant="faded"
           color="slate"
           :label="t('HELP_CENTER.CATEGORY_PAGE.CATEGORY_DIALOG.BUTTONS.CANCEL')"
-          class="w-full bg-n-alpha-2 text-n-blue-11 hover:bg-n-alpha-3"
+          class="w-full bg-accent text-primary hover:bg-accent"
           @click="handleCancel"
         />
         <Button

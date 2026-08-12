@@ -210,49 +210,49 @@ const dyte = computed(() => {
   >
     <!-- Media Types -->
     <Variant title="Audio">
-      <div class="p-4 bg-n-background rounded-lg w-full min-w-5xl grid">
+      <div class="p-4 bg-background rounded-lg w-full min-w-5xl grid">
         <Message :current-user-id="1" v-bind="audioMessage" />
       </div>
     </Variant>
     <Variant title="Image">
-      <div class="p-4 bg-n-background rounded-lg w-full min-w-5xl grid">
+      <div class="p-4 bg-background rounded-lg w-full min-w-5xl grid">
         <Message :current-user-id="1" v-bind="imageMessage" />
       </div>
     </Variant>
     <Variant title="Broken Image">
-      <div class="p-4 bg-n-background rounded-lg w-full min-w-5xl grid">
+      <div class="p-4 bg-background rounded-lg w-full min-w-5xl grid">
         <Message :current-user-id="1" v-bind="brokenImageMessage" />
       </div>
     </Variant>
     <Variant title="Video">
-      <div class="p-4 bg-n-background rounded-lg w-full min-w-5xl grid">
+      <div class="p-4 bg-background rounded-lg w-full min-w-5xl grid">
         <Message :current-user-id="1" v-bind="videoMessage" />
       </div>
     </Variant>
 
     <!-- Files and Attachments -->
     <Variant title="Multiple Attachments">
-      <div class="p-4 bg-n-background rounded-lg w-full min-w-5xl grid">
+      <div class="p-4 bg-background rounded-lg w-full min-w-5xl grid">
         <Message :current-user-id="1" v-bind="attachmentsOnly" />
       </div>
     </Variant>
     <Variant title="File">
-      <div class="p-4 bg-n-background rounded-lg w-full min-w-5xl grid">
+      <div class="p-4 bg-background rounded-lg w-full min-w-5xl grid">
         <Message :current-user-id="1" v-bind="singleFile" />
       </div>
     </Variant>
     <Variant title="Contact">
-      <div class="p-4 bg-n-background rounded-lg w-full min-w-5xl grid">
+      <div class="p-4 bg-background rounded-lg w-full min-w-5xl grid">
         <Message :current-user-id="1" v-bind="contact" />
       </div>
     </Variant>
     <Variant title="Location">
-      <div class="p-4 bg-n-background rounded-lg w-full min-w-5xl grid">
+      <div class="p-4 bg-background rounded-lg w-full min-w-5xl grid">
         <Message :current-user-id="1" v-bind="location" />
       </div>
     </Variant>
     <Variant title="Dyte Video">
-      <div class="p-4 bg-n-background rounded-lg w-full min-w-5xl grid">
+      <div class="p-4 bg-background rounded-lg w-full min-w-5xl grid">
         <Message :current-user-id="1" v-bind="dyte" />
       </div>
     </Variant>

@@ -5,7 +5,7 @@ import PortalSettings from './PortalSettings.vue';
 <template>
   <Story title="Pages/HelpCenter/PortalSettings" :layout="{ type: 'single' }">
     <Variant title="Default">
-      <div class="w-[1000px] min-h-screen bg-n-background">
+      <div class="w-[1000px] min-h-screen bg-background">
         <PortalSettings />
       </div>
     </Variant>

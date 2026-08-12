@@ -40,7 +40,7 @@ const brandInboxes = inboxes.filter(inbox => useChannelBrandIcon(inbox).value);
           :key="inbox.name"
           class="flex items-center gap-2"
         >
-          <ChannelIcon :inbox="inbox" class="size-6 text-n-slate-11" />
+          <ChannelIcon :inbox="inbox" class="size-6 text-muted-foreground" />
           <span>{{ inbox.name }}</span>
         </div>
       </div>
@@ -55,7 +55,7 @@ const brandInboxes = inboxes.filter(inbox => useChannelBrandIcon(inbox).value);
           <ChannelIcon
             :inbox="inbox"
             use-brand-icon
-            class="size-6 text-n-slate-11"
+            class="size-6 text-muted-foreground"
           />
           <span>{{ inbox.name }}</span>
         </div>

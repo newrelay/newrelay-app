@@ -68,7 +68,7 @@ const handleAdd = item => {
     :layout="{ type: 'grid', width: '500px' }"
   >
     <Variant title="Basic Usage - Inboxes">
-      <div class="p-8 bg-n-background flex gap-4 h-[400px] items-start">
+      <div class="p-8 bg-background flex gap-4 h-[400px] items-start">
         <AddDataDropdown
           label="Add Inbox"
           search-placeholder="Search inboxes..."
@@ -79,7 +79,7 @@ const handleAdd = item => {
     </Variant>
 
     <Variant title="Basic Usage - Tags">
-      <div class="p-8 bg-n-background flex gap-4 h-[400px] items-start">
+      <div class="p-8 bg-background flex gap-4 h-[400px] items-start">
         <AddDataDropdown
           label="Add Tag"
           search-placeholder="Search tags..."

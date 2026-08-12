@@ -17,9 +17,9 @@ export default {
 <template>
   <div
     v-if="parentContactName"
-    class="my-4 relative p-2.5 border rounded-[4px] text-n-slate-12 border-n-weak bg-n-background"
+    class="my-4 relative p-2.5 border rounded-[4px] text-foreground border-border bg-background"
   >
-    <h5 class="text-base font-medium text-n-slate-12">
+    <h5 class="text-base font-medium text-foreground">
       {{ $t('MERGE_CONTACTS.SUMMARY.TITLE') }}
     </h5>
     <ul class="ml-0 list-none">

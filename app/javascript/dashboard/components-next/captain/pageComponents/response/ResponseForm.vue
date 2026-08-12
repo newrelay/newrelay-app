@@ -107,7 +107,7 @@ watch(
         v-model="state.question"
         :placeholder="t('CAPTAIN.RESPONSES.FORM.QUESTION.PLACEHOLDER')"
       />
-      <p v-if="formErrors.question" class="text-xs text-n-ruby-11">
+      <p v-if="formErrors.question" class="text-xs text-destructive">
         {{ formErrors.question }}
       </p>
     </div>

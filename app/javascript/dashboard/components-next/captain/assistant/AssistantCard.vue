@@ -77,7 +77,7 @@ const handleAction = ({ action, value }) => {
   <CardLayout>
     <div class="flex justify-between w-full gap-1">
       <h6
-        class="text-base font-normal text-n-slate-12 line-clamp-1 hover:underline transition-colors"
+        class="text-base font-normal text-foreground line-clamp-1 hover:underline transition-colors"
       >
         {{ name }}
       </h6>
@@ -89,7 +89,7 @@ const handleAction = ({ action, value }) => {
           <RelayButton
             variant="ghost"
             size="icon"
-            class="size-8 rounded-md text-n-slate-11 hover:bg-n-alpha-2"
+            class="size-8 rounded-md text-muted-foreground hover:bg-accent"
             @click="toggleDropdown()"
           >
             <span class="i-lucide-ellipsis-vertical size-4" />
@@ -104,10 +104,10 @@ const handleAction = ({ action, value }) => {
       </div>
     </div>
     <div class="flex items-center justify-between w-full gap-4">
-      <span class="text-sm truncate text-n-slate-11">
+      <span class="text-sm truncate text-muted-foreground">
         {{ description || 'Description not available' }}
       </span>
-      <span class="text-sm text-n-slate-11 line-clamp-1 shrink-0">
+      <span class="text-sm text-muted-foreground line-clamp-1 shrink-0">
         {{ lastUpdatedAt }}
       </span>
     </div>

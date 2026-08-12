@@ -12,7 +12,7 @@ import { assistantsList } from 'dashboard/components-next/captain/pageComponents
       <div
         v-for="(assistant, index) in assistantsList"
         :key="index"
-        class="px-20 py-4 bg-n-background"
+        class="px-20 py-4 bg-background"
       >
         <AssistantCard
           :id="assistant.id"

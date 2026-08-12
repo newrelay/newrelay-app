@@ -127,8 +127,8 @@ const handleDismiss = () => {
       :size="isTypeContact ? 'sm' : 'xs'"
       ghost
       :class="{
-        'bg-n-alpha-2': showDropdown,
-        '[&>span:nth-child(2)]:hidden md:[&>span:nth-child(2)]:inline w-fit !text-n-blue-11 [&>span]:!text-n-blue-11 !px-2':
+        'bg-accent': showDropdown,
+        '[&>span:nth-child(2)]:hidden md:[&>span:nth-child(2)]:inline w-fit !text-primary [&>span]:!text-primary !px-2':
           isTypeContact,
       }"
       :disabled="disabled || isLoading"
@@ -167,7 +167,7 @@ const handleDismiss = () => {
       >
         <template #thumbnail="{ item }">
           <span
-            class="rounded-md h-3 w-3 flex-shrink-0 border border-solid border-n-weak"
+            class="rounded-md h-3 w-3 flex-shrink-0 border border-solid border-border"
             :style="{ backgroundColor: item.color }"
           />
         </template>
@@ -176,13 +176,13 @@ const handleDismiss = () => {
           <Icon
             v-if="isLabelSelected(item.value)"
             icon="i-lucide-check"
-            class="size-4 text-n-blue-11 flex-shrink-0"
+            class="size-4 text-primary flex-shrink-0"
           />
         </template>
 
         <template #footer>
           <div
-            class="sticky bottom-0 rounded-b-md px-2 py-2 z-20 bg-n-alpha-3 backdrop-blur-[4px]"
+            class="sticky bottom-0 rounded-b-md px-2 py-2 z-20 bg-accent backdrop-blur-[4px]"
           >
             <NextButton
               sm

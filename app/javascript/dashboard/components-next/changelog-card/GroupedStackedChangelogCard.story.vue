@@ -89,7 +89,7 @@ const resetDemo = () => {
     :layout="{ type: 'grid', width: '320px' }"
   >
     <Variant title="Interactive Demo">
-      <div class="p-4 bg-n-solid-2 rounded-md mx-auto w-64 h-[400px]">
+      <div class="p-4 bg-secondary rounded-md mx-auto w-64 h-[400px]">
         <GroupedStackedChangelogCard
           :posts="visibleCards"
           :current-index="currentIndex"
@@ -102,7 +102,7 @@ const resetDemo = () => {
         />
 
         <button
-          class="mt-3 px-3 py-1 text-xs font-medium bg-n-brand text-white rounded hover:bg-n-brand/80 transition"
+          class="mt-3 px-3 py-1 text-xs font-medium bg-primary text-white rounded hover:bg-primary/80 transition"
           @click="resetDemo"
         >
           <!-- eslint-disable-next-line @intlify/vue-i18n/no-raw-text -->

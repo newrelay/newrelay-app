@@ -105,20 +105,20 @@ const handleSendMessage = (template, hide) => {
           v-for="template in filteredTemplates"
           :key="template.content_sid"
           tabindex="0"
-          class="flex flex-col gap-2 p-2 w-full rounded-lg cursor-pointer dark:hover:bg-n-alpha-3 hover:bg-n-alpha-1"
+          class="flex flex-col gap-2 p-2 w-full rounded-lg cursor-pointer dark:hover:bg-accent hover:bg-muted"
           @click="handleTemplateClick(template)"
         >
           <div class="flex justify-between items-center">
-            <span class="text-sm text-n-slate-12">{{
+            <span class="text-sm text-foreground">{{
               template.friendly_name
             }}</span>
           </div>
-          <p class="mb-0 text-xs leading-5 text-n-slate-11 line-clamp-2">
+          <p class="mb-0 text-xs leading-5 text-muted-foreground line-clamp-2">
             {{ template.body || t('CONTENT_TEMPLATES.PICKER.NO_CONTENT') }}
           </p>
         </div>
         <template v-if="filteredTemplates.length === 0">
-          <p class="pt-2 w-full text-sm text-n-slate-11">
+          <p class="pt-2 w-full text-sm text-muted-foreground">
             {{ t('COMPOSE_NEW_CONVERSATION.FORM.TWILIO_OPTIONS.EMPTY_STATE') }}
           </p>
         </template>

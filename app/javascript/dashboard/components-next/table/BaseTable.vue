@@ -28,13 +28,13 @@ const showHeaders = computed(
 
 <template>
   <div class="w-full">
-    <table class="min-w-full table-auto divide-y divide-n-weak">
-      <thead v-if="showHeaders" class="border-t border-n-weak">
+    <table class="min-w-full table-auto divide-y divide-border">
+      <thead v-if="showHeaders" class="border-t border-border">
         <tr>
           <th
             v-for="(header, index) in headers"
             :key="index"
-            class="py-4 ltr:pr-4 rtl:pl-4 text-start text-heading-3 text-n-slate-12 capitalize"
+            class="py-4 ltr:pr-4 rtl:pl-4 text-start text-heading-3 text-foreground capitalize"
           >
             <slot :name="`header-${index}`" :header="header">
               {{ header }}
@@ -42,14 +42,14 @@ const showHeaders = computed(
           </th>
         </tr>
       </thead>
-      <tbody class="divide-y divide-n-weak text-n-slate-11">
+      <tbody class="divide-y divide-border text-muted-foreground">
         <template v-if="items.length">
           <slot name="row" :items="items" />
         </template>
         <tr v-else-if="noDataMessage && !loading">
           <td
             :colspan="headers.length || 1"
-            class="py-20 text-center text-body-main !text-base text-n-slate-11"
+            class="py-20 text-center text-body-main !text-base text-muted-foreground"
           >
             {{ noDataMessage }}
           </td>

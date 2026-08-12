@@ -952,10 +952,10 @@ useEmitter(BUS_EVENTS.INSERT_INTO_RICH_EDITOR, insertContentIntoEditor);
 
   .ProseMirror-menubar {
     min-height: 1.25rem !important;
-    @apply items-center gap-4 flex pb-0 bg-transparent text-n-slate-11 relative ltr:-left-[3px] rtl:-right-[3px];
+    @apply items-center gap-4 flex pb-0 bg-transparent text-muted-foreground relative ltr:-left-[3px] rtl:-right-[3px];
 
     .ProseMirror-menu-active {
-      @apply bg-n-slate-5 dark:bg-n-solid-3 !important;
+      @apply bg-accent dark:bg-accent !important;
     }
 
     .ProseMirror-menuitem {
@@ -970,7 +970,7 @@ useEmitter(BUS_EVENTS.INSERT_INTO_RICH_EDITOR, insertContentIntoEditor);
       }
 
       .ProseMirror-copilot svg {
-        @apply fill-n-violet-9 text-n-violet-9 stroke-none;
+        @apply fill-primary text-primary stroke-none;
       }
     }
   }
@@ -983,7 +983,7 @@ useEmitter(BUS_EVENTS.INSERT_INTO_RICH_EDITOR, insertContentIntoEditor);
   }
 
   > .ProseMirror {
-    @apply p-0 break-words text-n-slate-12;
+    @apply p-0 break-words text-foreground;
 
     h1,
     h2,
@@ -992,14 +992,14 @@ useEmitter(BUS_EVENTS.INSERT_INTO_RICH_EDITOR, insertContentIntoEditor);
     h5,
     h6,
     p {
-      @apply text-n-slate-12;
+      @apply text-foreground;
     }
 
     blockquote {
-      @apply border-n-slate-7;
+      @apply border-border;
 
       p {
-        @apply text-n-slate-11;
+        @apply text-muted-foreground;
       }
     }
   }
@@ -1035,14 +1035,14 @@ useEmitter(BUS_EVENTS.INSERT_INTO_RICH_EDITOR, insertContentIntoEditor);
 }
 
 .ProseMirror-prompt-backdrop::backdrop {
-  @apply bg-n-alpha-black1 backdrop-blur-[4px];
+  @apply bg-black/5 backdrop-blur-[4px];
 }
 
 .ProseMirror-prompt {
-  @apply bg-n-alpha-3 border border-n-strong p-6 shadow-xl rounded-xl w-96 !important;
+  @apply bg-accent border border-border p-6 shadow-xl rounded-xl w-96 !important;
 
   h5 {
-    @apply text-n-slate-12 mb-3;
+    @apply text-foreground mb-3;
   }
 
   .ProseMirror-prompt-buttons {
@@ -1050,11 +1050,11 @@ useEmitter(BUS_EVENTS.INSERT_INTO_RICH_EDITOR, insertContentIntoEditor);
       @apply h-8 px-3;
 
       &[type='submit'] {
-        @apply bg-n-brand text-white hover:bg-n-brand/90;
+        @apply bg-primary text-white hover:bg-primary/90;
       }
 
       &[type='button'] {
-        @apply bg-n-slate-9/10 text-n-slate-12 hover:bg-n-slate-9/20;
+        @apply bg-muted-foreground/10 text-foreground hover:bg-muted-foreground/20;
       }
     }
   }
@@ -1062,22 +1062,22 @@ useEmitter(BUS_EVENTS.INSERT_INTO_RICH_EDITOR, insertContentIntoEditor);
 
 .is-private {
   .prosemirror-mention-node {
-    @apply font-medium bg-n-amber-2/80 dark:bg-n-amber-2/80 text-n-slate-12 py-0 px-1;
+    @apply font-medium bg-warning/10 dark:bg-warning/10 text-foreground py-0 px-1;
   }
 
   .ProseMirror-menubar-wrapper {
     > .ProseMirror {
-      @apply text-n-slate-12;
+      @apply text-foreground;
 
       p {
-        @apply text-n-slate-12;
+        @apply text-foreground;
       }
     }
   }
 }
 
 .prosemirror-tools-node {
-  @apply font-medium text-n-slate-12 py-0;
+  @apply font-medium text-foreground py-0;
 }
 
 .editor-wrap {
@@ -1085,15 +1085,15 @@ useEmitter(BUS_EVENTS.INSERT_INTO_RICH_EDITOR, insertContentIntoEditor);
 }
 
 .message-editor {
-  @apply rounded-lg outline outline-1 outline-n-weak hover:outline-n-slate-6 dark:hover:outline-n-slate-6 bg-n-alpha-black2 py-0 px-1 mb-0;
+  @apply rounded-lg outline outline-1 outline-border hover:outline-border dark:hover:outline-border bg-black/10 py-0 px-1 mb-0;
 }
 
 .editor_warning {
-  @apply outline outline-1 outline-n-ruby-8 dark:outline-n-ruby-8 hover:outline-n-ruby-9 dark:hover:outline-n-ruby-9;
+  @apply outline outline-1 outline-destructive dark:outline-destructive hover:outline-destructive dark:hover:outline-destructive;
 }
 
 .editor-warning__message {
-  @apply text-n-ruby-9 dark:text-n-ruby-9 font-normal text-sm pt-1 pb-0 px-0;
+  @apply text-destructive dark:text-destructive font-normal text-sm pt-1 pb-0 px-0;
 }
 
 // Default copilot menu position (non-popover editors like components-next/Editor)
@@ -1126,7 +1126,7 @@ useEmitter(BUS_EVENTS.INSERT_INTO_RICH_EDITOR, insertContentIntoEditor);
     }
 
     .ProseMirror-menubar {
-      @apply rounded-lg !px-3 !py-1.5 z-50 bg-n-background items-center gap-4 ml-0 mb-0 shadow-md outline outline-1 outline-n-weak;
+      @apply rounded-lg !px-3 !py-1.5 z-50 bg-background items-center gap-4 ml-0 mb-0 shadow-md outline outline-1 outline-border;
       display: flex;
       width: fit-content !important;
       position: absolute !important;
@@ -1149,12 +1149,12 @@ useEmitter(BUS_EVENTS.INSERT_INTO_RICH_EDITOR, insertContentIntoEditor);
         }
 
         .ProseMirror-copilot svg {
-          @apply fill-n-violet-9 text-n-violet-9 stroke-none;
+          @apply fill-primary text-primary stroke-none;
         }
       }
 
       .ProseMirror-menu-active {
-        @apply bg-n-slate-3;
+        @apply bg-muted;
       }
     }
   }

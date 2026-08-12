@@ -15,7 +15,7 @@ const SIZES = ['default', 'sm', 'lg', 'icon'];
 <template>
   <Story title="Relay/Button" :layout="{ type: 'grid', width: '800px' }">
     <Variant title="Variants">
-      <div class="flex flex-wrap gap-2 p-4 bg-n-background">
+      <div class="flex flex-wrap gap-2 p-4 bg-background">
         <Button v-for="variant in VARIANTS" :key="variant" :variant="variant">
           {{ variant }}
         </Button>
@@ -23,7 +23,7 @@ const SIZES = ['default', 'sm', 'lg', 'icon'];
     </Variant>
 
     <Variant title="Sizes">
-      <div class="flex flex-wrap items-center gap-2 p-4 bg-n-background">
+      <div class="flex flex-wrap items-center gap-2 p-4 bg-background">
         <Button v-for="size in SIZES" :key="size" :size="size">
           <template v-if="size === 'icon'">
             <span class="i-lucide-plus size-4" />
@@ -34,7 +34,7 @@ const SIZES = ['default', 'sm', 'lg', 'icon'];
     </Variant>
 
     <Variant title="With icon">
-      <div class="flex flex-wrap gap-2 p-4 bg-n-background">
+      <div class="flex flex-wrap gap-2 p-4 bg-background">
         <Button>
           <span class="i-lucide-plus size-4" />
           Add item
@@ -47,7 +47,7 @@ const SIZES = ['default', 'sm', 'lg', 'icon'];
     </Variant>
 
     <Variant title="Disabled">
-      <div class="flex flex-wrap gap-2 p-4 bg-n-background">
+      <div class="flex flex-wrap gap-2 p-4 bg-background">
         <Button disabled>Disabled</Button>
         <Button variant="outline" disabled>Outline disabled</Button>
       </div>

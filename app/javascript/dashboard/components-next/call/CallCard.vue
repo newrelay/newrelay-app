@@ -75,7 +75,7 @@ const channelIcon = computed(() => {
 
 <template>
   <div
-    class="flex flex-col gap-2 pt-4 bg-n-solid-2/95 rounded-2xl shadow-xl outline outline-1 outline-n-strong backdrop-blur-md"
+    class="flex flex-col gap-2 pt-4 bg-secondary/95 rounded-2xl shadow-xl outline outline-1 outline-border backdrop-blur-md"
     :class="call?.conversationId ? 'pb-2' : 'pb-4'"
   >
     <!-- Top section: status badge + location/inbox + duration -->
@@ -83,8 +83,8 @@ const channelIcon = computed(() => {
       <div class="flex items-center gap-2 px-4">
         <!-- Ongoing: status badge on left -->
         <div v-if="isOngoing" class="flex items-center gap-1.5 shrink-0">
-          <Icon :icon="statusIcon" class="size-3.5 text-n-teal-9 shrink-0" />
-          <span class="text-xs font-medium text-n-teal-9 tracking-tight">
+          <Icon :icon="statusIcon" class="size-3.5 text-success shrink-0" />
+          <span class="text-xs font-medium text-success tracking-tight">
             {{ statusLabel }}
           </span>
         </div>
@@ -100,10 +100,10 @@ const channelIcon = computed(() => {
           <Icon
             v-else-if="!isOngoing"
             :icon="channelIcon"
-            class="size-3.5 text-n-slate-10 shrink-0"
+            class="size-3.5 text-muted-foreground shrink-0"
           />
           <span
-            class="text-xs font-medium text-n-slate-11 tracking-tight truncate"
+            class="text-xs font-medium text-muted-foreground tracking-tight truncate"
           >
             {{ callInfo.location }}
           </span>
@@ -112,14 +112,14 @@ const channelIcon = computed(() => {
         <!-- Ongoing: duration on right -->
         <p
           v-if="isOngoing"
-          class="font-display text-base font-medium text-n-slate-11 shrink-0 mb-0 tabular-nums tracking-tight"
+          class="font-display text-base font-medium text-muted-foreground shrink-0 mb-0 tabular-nums tracking-tight"
         >
           {{ duration }}
         </p>
         <!-- Incoming/Outgoing: status badge on right -->
         <div v-else class="flex items-center gap-1.5 shrink-0">
-          <Icon :icon="statusIcon" class="size-3.5 text-n-teal-9 shrink-0" />
-          <span class="text-xs font-medium text-n-teal-9 tracking-tight">
+          <Icon :icon="statusIcon" class="size-3.5 text-success shrink-0" />
+          <span class="text-xs font-medium text-success tracking-tight">
             {{ statusLabel }}
           </span>
           <!-- Dismiss: removes the notification from the UI without declining.
@@ -149,13 +149,13 @@ const channelIcon = computed(() => {
         </div>
         <div class="flex-1 min-w-0">
           <p
-            class="font-display text-sm font-medium text-n-slate-12 truncate mb-0.5 tracking-tight leading-tight"
+            class="font-display text-sm font-medium text-foreground truncate mb-0.5 tracking-tight leading-tight"
           >
             {{ callInfo.contactName }}
           </p>
           <p
             v-if="callInfo.phoneNumber"
-            class="text-sm text-n-slate-11 truncate mb-0 tracking-tight leading-tight"
+            class="text-sm text-muted-foreground truncate mb-0 tracking-tight leading-tight"
           >
             {{ callInfo.phoneNumber }}
           </p>
@@ -217,23 +217,23 @@ const channelIcon = computed(() => {
     >
       <template #icon>
         <span
-          class="flex items-center gap-1 text-n-slate-11 group-hover:text-n-slate-12"
+          class="flex items-center gap-1 text-muted-foreground group-hover:text-foreground"
         >
           <Icon
             icon="i-ph-chat-circle-text-bold"
-            class="size-3.5 text-n-slate-11 shrink-0"
+            class="size-3.5 text-muted-foreground shrink-0"
           />
           <span class="text-sm tracking-tight tabular-nums">
             #{{ call.conversationId }}
           </span>
           <Icon
             icon="i-ph-caret-right-bold"
-            class="size-3 text-n-slate-11 shrink-0"
+            class="size-3 text-muted-foreground shrink-0"
           />
         </span>
       </template>
       <span
-        class="text-sm text-n-slate-11 tracking-tight group-hover:text-n-slate-12"
+        class="text-sm text-muted-foreground tracking-tight group-hover:text-foreground"
       >
         {{ $t('CONVERSATION.VOICE_WIDGET.GO_TO_CONVERSATION') }}
       </span>

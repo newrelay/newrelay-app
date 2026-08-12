@@ -98,7 +98,7 @@ defineExpose({
       v-if="label"
       :for="id"
       :class="customLabelClass"
-      class="mb-0.5 text-sm font-medium text-n-slate-12"
+      class="mb-0.5 text-sm font-medium text-foreground"
     >
       {{ label }}
     </label>
@@ -113,7 +113,7 @@ defineExpose({
       :disabled="disabled"
       :readonly="readonly"
       :class="customInputClass"
-      class="flex w-full reset-base text-sm h-6 !mb-0 border-0 rounded-none outline-none outline-0 bg-transparent dark:bg-transparent placeholder:text-n-slate-10 dark:placeholder:text-n-slate-10 disabled:cursor-not-allowed disabled:opacity-50 text-n-slate-12 dark:text-n-slate-12 transition-all duration-500 ease-in-out"
+      class="flex w-full reset-base text-sm h-6 !mb-0 border-0 rounded-none outline-none outline-0 bg-transparent dark:bg-transparent placeholder:text-muted-foreground dark:placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50 text-foreground dark:text-foreground transition-all duration-500 ease-in-out"
       @input="handleInput"
       @focus="handleFocus"
       @blur="handleBlur"

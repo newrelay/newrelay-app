@@ -39,11 +39,11 @@ const characterCount = computed(() => props.modelValue.length);
 const messageClass = computed(() => {
   switch (props.messageType) {
     case 'error':
-      return 'text-n-ruby-9 dark:text-n-ruby-9';
+      return 'text-destructive dark:text-destructive';
     case 'success':
-      return 'text-n-teal-10 dark:text-n-teal-10';
+      return 'text-success dark:text-success';
     default:
-      return 'text-n-slate-11 dark:text-n-slate-11';
+      return 'text-muted-foreground dark:text-muted-foreground';
   }
 });
 
@@ -79,19 +79,19 @@ watch(
 
 <template>
   <div class="flex flex-col min-w-0 gap-1">
-    <label v-if="label" class="mb-0.5 text-sm font-medium text-n-slate-12">
+    <label v-if="label" class="mb-0.5 text-sm font-medium text-foreground">
       {{ label }}
     </label>
     <div
-      class="flex flex-col w-full gap-2 px-3 py-3 transition-all duration-500 ease-in-out border rounded-lg editor-wrapper bg-n-alpha-black2"
+      class="flex flex-col w-full gap-2 px-3 py-3 transition-all duration-500 ease-in-out border rounded-lg editor-wrapper bg-black/10"
       :class="[
         {
-          'cursor-not-allowed opacity-50 pointer-events-none !bg-n-alpha-black2 disabled:border-n-weak dark:disabled:border-n-weak':
+          'cursor-not-allowed opacity-50 pointer-events-none !bg-black/10 disabled:border-border dark:disabled:border-border':
             disabled,
-          'border-n-brand dark:border-n-brand': isFocused,
-          'hover:border-n-slate-6 dark:hover:border-n-slate-6 border-n-weak dark:border-n-weak':
+          'border-primary dark:border-primary': isFocused,
+          'hover:border-border dark:hover:border-border border-border dark:border-border':
             !isFocused && messageType !== 'error',
-          'border-n-ruby-8 dark:border-n-ruby-8 hover:border-n-ruby-9 dark:hover:border-n-ruby-9':
+          'border-destructive dark:border-destructive hover:border-destructive dark:hover:border-destructive':
             messageType === 'error' && !isFocused,
         },
       ]"
@@ -123,7 +123,7 @@ watch(
       >
         <span
           v-if="showCharacterCount && !slots.actions"
-          class="text-xs tabular-nums text-n-slate-10"
+          class="text-xs tabular-nums text-muted-foreground"
         >
           {{ characterCount }} / {{ maxLength }}
         </span>
@@ -152,7 +152,7 @@ watch(
         @apply m-0 !important;
 
         &::before {
-          @apply text-n-slate-11 dark:text-n-slate-11;
+          @apply text-muted-foreground dark:text-muted-foreground;
         }
       }
     }

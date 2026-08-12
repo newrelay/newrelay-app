@@ -285,7 +285,7 @@ const handleSubmit = async () => {
       >
         <div class="flex items-center gap-2 px-3 py-3">
           <Avatar :name="userName" :size="16" rounded-full />
-          <span class="text-sm font-medium text-n-slate-12">
+          <span class="text-sm font-medium text-foreground">
             {{ userName }}
           </span>
         </div>
@@ -294,11 +294,11 @@ const handleSubmit = async () => {
           icon="i-lucide-mail"
         >
           <div class="flex items-center justify-end gap-1.5">
-            <span class="text-sm text-n-slate-12">{{ userEmail }}</span>
+            <span class="text-sm text-foreground">{{ userEmail }}</span>
             <Icon
               v-tooltip="t('ONBOARDING_NEXT.EMAIL_VERIFIED')"
               icon="i-lucide-circle-check"
-              class="size-4 text-n-teal-11 flex-shrink-0"
+              class="size-4 text-success flex-shrink-0"
             />
           </div>
         </OnboardingFormRow>
@@ -323,8 +323,8 @@ const handleSubmit = async () => {
           v-if="isEnriching"
           class="flex items-center justify-center gap-3 py-8"
         >
-          <Spinner :size="16" class="text-n-blue-10" />
-          <span class="text-sm text-n-slate-11">
+          <Spinner :size="16" class="text-primary" />
+          <span class="text-sm text-muted-foreground">
             {{ t('ONBOARDING_NEXT.SETTING_UP') }}
           </span>
         </div>
@@ -336,7 +336,7 @@ const handleSubmit = async () => {
               :alt="accountName"
               class="size-4 object-contain"
             />
-            <span class="text-sm font-medium text-n-slate-12">
+            <span class="text-sm font-medium text-foreground">
               {{ accountName }}
             </span>
           </div>
@@ -351,7 +351,7 @@ const handleSubmit = async () => {
                 :readonly="!isEditingWebsite"
                 :placeholder="t('ONBOARDING_NEXT.PLACEHOLDERS.ENTER_WEBSITE')"
                 :custom-input-class="[
-                  'w-auto text-end px-1 py-0.5 -my-0.5 mx-0 placeholder:text-n-slate-9 rounded',
+                  'w-auto text-end px-1 py-0.5 -my-0.5 mx-0 placeholder:text-muted-foreground rounded',
                   { 'animate-shake': showErrorOnFields && v$.website.$error },
                 ]"
                 @enter-press="handleWebsiteEnter"

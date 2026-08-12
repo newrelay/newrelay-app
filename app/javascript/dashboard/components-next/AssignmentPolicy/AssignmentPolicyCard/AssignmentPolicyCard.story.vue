@@ -74,7 +74,7 @@ const onFetch = () => console.log('Fetch inboxes');
     :layout="{ type: 'grid', width: '1200px' }"
   >
     <Variant title="Three Cards (Two with inboxes, One empty)">
-      <div class="p-4 bg-n-background">
+      <div class="p-4 bg-background">
         <div class="grid grid-cols-1 gap-4">
           <AssignmentPolicyCard
             v-bind="policyA"

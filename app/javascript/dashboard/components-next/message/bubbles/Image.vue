@@ -55,8 +55,8 @@ const handleImageError = () => {
     @click="showGallery = true"
   >
     <div v-if="hasError" class="flex items-center gap-1 text-center rounded-lg">
-      <Icon icon="i-lucide-circle-off" class="text-n-slate-11" />
-      <p class="mb-0 text-n-slate-11">
+      <Icon icon="i-lucide-circle-off" class="text-muted-foreground" />
+      <p class="mb-0 text-muted-foreground">
         {{ $t('COMPONENTS.MEDIA.IMAGE_UNAVAILABLE') }}
       </p>
     </div>
@@ -68,7 +68,7 @@ const handleImageError = () => {
         :height="attachment.height"
       />
       <div
-        class="inset-0 p-2 pointer-events-none absolute bg-gradient-to-tl from-n-slate-12/30 dark:from-n-slate-1/50 via-transparent to-transparent hidden group-hover:flex"
+        class="inset-0 p-2 pointer-events-none absolute bg-gradient-to-tl from-foreground/30 dark:from-background/50 via-transparent to-transparent hidden group-hover:flex"
       />
       <div class="absolute right-2 bottom-2 hidden group-hover:flex gap-2">
         <Button xs solid slate icon="i-lucide-expand" class="opacity-60" />

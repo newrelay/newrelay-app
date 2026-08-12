@@ -166,15 +166,15 @@ watch(
     <div
       class="flex flex-col gap-5 mt-4 overflow-y-auto max-h-[65vh] pr-2 -mr-2"
     >
-      <div class="flex items-center gap-1 p-1 bg-n-surface-2 rounded-lg">
+      <div class="flex items-center gap-1 p-1 bg-card rounded-lg">
         <button
           v-for="tab in tabs"
           :key="tab.id"
           class="flex-1 flex items-center justify-center gap-2 py-1.5 text-xs font-medium rounded-md transition-colors"
           :class="[
             activeTab === tab.id
-              ? 'bg-n-surface-1 text-n-slate-12 shadow-sm border border-n-strong'
-              : 'text-n-slate-11 hover:text-n-slate-12 hover:bg-n-alpha-black2',
+              ? 'bg-muted text-foreground shadow-sm border border-border'
+              : 'text-muted-foreground hover:text-foreground hover:bg-black/10',
           ]"
           @click="activeTab = tab.id"
         >
@@ -197,13 +197,13 @@ watch(
           <textarea
             v-model="promptInput"
             :placeholder="t('BRANDING_SETTINGS.MAGIC_AI.PROMPT_PLACEHOLDER')"
-            class="w-full min-h-[100px] p-3 text-sm rounded-lg bg-n-alpha-black2 border-none outline outline-1 outline-n-weak outline-offset-[-1px] focus:outline-n-brand text-n-slate-12 placeholder:text-n-slate-10"
+            class="w-full min-h-[100px] p-3 text-sm rounded-lg bg-black/10 border-none outline outline-1 outline-border outline-offset-[-1px] focus:outline-primary text-foreground placeholder:text-muted-foreground"
           />
         </template>
 
         <template v-else-if="activeTab === 'image'">
           <div
-            class="flex flex-col items-center justify-center p-6 border border-dashed border-n-strong rounded-xl bg-n-surface-2 text-center"
+            class="flex flex-col items-center justify-center p-6 border border-dashed border-border rounded-xl bg-card text-center"
           >
             <img
               v-if="imagePreview"
@@ -212,9 +212,9 @@ watch(
             />
             <div
               v-else
-              class="w-16 h-16 rounded-full bg-n-surface-1 border border-n-strong flex items-center justify-center mb-4"
+              class="w-16 h-16 rounded-full bg-muted border border-border flex items-center justify-center mb-4"
             >
-              <span class="i-lucide-image text-n-slate-11 size-6" />
+              <span class="i-lucide-image text-muted-foreground size-6" />
             </div>
             <input
               ref="fileInputRef"
@@ -251,9 +251,9 @@ watch(
 
       <div
         v-if="options.length > 0"
-        class="flex flex-col gap-3 mt-2 pt-5 border-t border-n-strong"
+        class="flex flex-col gap-3 mt-2 pt-5 border-t border-border"
       >
-        <h4 class="text-sm font-semibold text-n-slate-12">
+        <h4 class="text-sm font-semibold text-foreground">
           {{ t('BRANDING_SETTINGS.MAGIC_AI.RESULTS') }}
         </h4>
         <div class="grid grid-cols-1 gap-3">
@@ -263,38 +263,39 @@ watch(
             class="flex items-center justify-between p-3 rounded-xl border cursor-pointer transition-all"
             :class="[
               selectedOption === option
-                ? 'border-n-brand bg-n-brand/5 ring-1 ring-n-brand/20'
-                : 'border-n-strong bg-n-surface-1 hover:border-n-slate-8',
+                ? 'border-primary bg-primary/5 ring-1 ring-primary/20'
+                : 'border-border bg-muted hover:border-border',
             ]"
             @click="selectedOption = option"
           >
             <div class="flex items-center gap-4">
               <div class="flex -space-x-2">
                 <div
-                  class="w-8 h-8 rounded-full border-2 border-n-surface-1 shadow-sm"
+                  class="w-8 h-8 rounded-full border-2 border-muted shadow-sm"
                   :style="{ backgroundColor: option.primary }"
                 />
                 <div
-                  class="w-8 h-8 rounded-full border-2 border-n-surface-1 shadow-sm"
+                  class="w-8 h-8 rounded-full border-2 border-muted shadow-sm"
                   :style="{ backgroundColor: option.background }"
                 />
                 <div
-                  class="w-8 h-8 rounded-full border-2 border-n-surface-1 shadow-sm"
+                  class="w-8 h-8 rounded-full border-2 border-muted shadow-sm"
                   :style="{ backgroundColor: option.text }"
                 />
               </div>
               <div class="flex flex-col">
-                <span class="text-sm font-medium text-n-slate-12">{{
+                <span class="text-sm font-medium text-foreground">{{
                   option.name
                 }}</span>
-                <span class="text-xs text-n-slate-11 uppercase font-mono">{{
-                  option.primary
-                }}</span>
+                <span
+                  class="text-xs text-muted-foreground uppercase font-mono"
+                  >{{ option.primary }}</span
+                >
               </div>
             </div>
             <span
               v-if="selectedOption === option"
-              class="i-lucide-check-circle-2 text-n-brand size-5"
+              class="i-lucide-check-circle-2 text-primary size-5"
             />
           </div>
         </div>

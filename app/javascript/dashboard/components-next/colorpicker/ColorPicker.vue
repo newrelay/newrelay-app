@@ -81,7 +81,7 @@ const pickerRef = ref(null);
 
 <style scoped lang="scss">
 .colorpicker--chrome.vc-chrome {
-  @apply shadow-lg absolute bg-n-background z-[9999] border border-n-weak dark:border-n-weak rounded-[8px];
+  @apply shadow-lg absolute bg-background z-[9999] border border-border dark:border-border rounded-[8px];
 
   :deep() {
     .vc-chrome-saturation-wrap {
@@ -93,25 +93,25 @@ const pickerRef = ref(null);
     }
 
     .vc-chrome-body {
-      @apply rounded-b-[7px] bg-n-alpha-3;
+      @apply rounded-b-[7px] bg-accent;
 
       .vc-chrome-toggle-btn {
         .vc-chrome-toggle-icon svg {
-          @apply [&>path]:fill-n-slate-10 dark:[&>path]:fill-n-slate-10 left-3 relative;
+          @apply [&>path]:fill-muted-foreground dark:[&>path]:fill-muted-foreground left-3 relative;
         }
         .vc-chrome-toggle-icon-highlight {
-          @apply bg-n-background;
+          @apply bg-background;
         }
       }
     }
 
     input,
     .vc-input__input {
-      @apply bg-n-background text-n-slate-12 rounded-md shadow-none;
+      @apply bg-background text-foreground rounded-md shadow-none;
     }
 
     .vc-input__label {
-      @apply text-n-slate-11 dark:text-n-slate-11;
+      @apply text-muted-foreground dark:text-muted-foreground;
     }
   }
 }

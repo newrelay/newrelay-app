@@ -23,11 +23,11 @@ const ICON_MAP = {
 };
 
 const COLOR_MAP = {
-  [VOICE_CALL_STATUS.IN_PROGRESS]: 'text-n-teal-9',
-  [VOICE_CALL_STATUS.RINGING]: 'text-n-teal-9',
-  [VOICE_CALL_STATUS.COMPLETED]: 'text-n-slate-11',
-  [VOICE_CALL_STATUS.NO_ANSWER]: 'text-n-ruby-9',
-  [VOICE_CALL_STATUS.FAILED]: 'text-n-ruby-9',
+  [VOICE_CALL_STATUS.IN_PROGRESS]: 'text-success',
+  [VOICE_CALL_STATUS.RINGING]: 'text-success',
+  [VOICE_CALL_STATUS.COMPLETED]: 'text-muted-foreground',
+  [VOICE_CALL_STATUS.NO_ANSWER]: 'text-destructive',
+  [VOICE_CALL_STATUS.FAILED]: 'text-destructive',
 };
 
 const isOutbound = computed(
@@ -55,7 +55,7 @@ const iconName = computed(() => {
 });
 
 const statusColor = computed(
-  () => COLOR_MAP[props.status] || 'text-n-slate-11'
+  () => COLOR_MAP[props.status] || 'text-muted-foreground'
 );
 </script>
 

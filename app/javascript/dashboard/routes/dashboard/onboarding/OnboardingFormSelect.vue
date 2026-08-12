@@ -17,7 +17,7 @@ defineEmits(['update:modelValue']);
       :value="modelValue"
       class="!h-auto !w-auto !py-0 !ps-0 !pe-[17px] !m-0 !rounded-none !bg-transparent !bg-none !outline-none text-sm text-end border-0 cursor-pointer appearance-none focus:outline-none focus:ring-0"
       :class="[
-        modelValue ? 'text-n-slate-12' : 'text-n-slate-9',
+        modelValue ? 'text-foreground' : 'text-muted-foreground',
         { 'animate-shake': hasError },
       ]"
       @change="$emit('update:modelValue', $event.target.value)"
@@ -31,7 +31,7 @@ defineEmits(['update:modelValue']);
     </select>
     <Icon
       icon="i-lucide-chevron-down"
-      class="pointer-events-none absolute end-0 top-1/2 -translate-y-1/2 text-n-slate-9"
+      class="pointer-events-none absolute end-0 top-1/2 -translate-y-1/2 text-muted-foreground"
     />
   </div>
 </template>

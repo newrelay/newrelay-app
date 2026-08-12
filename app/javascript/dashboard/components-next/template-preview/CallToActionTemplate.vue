@@ -10,8 +10,8 @@ defineProps({
 </script>
 
 <template>
-  <div class="flex flex-col gap-2.5 text-n-slate-12 max-w-80">
-    <div class="p-3 rounded-xl bg-n-alpha-2">
+  <div class="flex flex-col gap-2.5 text-foreground max-w-80">
+    <div class="p-3 rounded-xl bg-accent">
       <span
         v-dompurify-html="message.content"
         class="text-sm font-medium prose prose-bubble"
@@ -26,7 +26,7 @@ defineProps({
         :key="index"
         :label="button.text || button.title || 'Button'"
         slate
-        class="!text-n-blue-11 w-full"
+        class="!text-primary w-full"
       />
     </div>
   </div>

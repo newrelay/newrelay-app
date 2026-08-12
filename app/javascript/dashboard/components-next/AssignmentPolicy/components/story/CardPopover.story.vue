@@ -64,7 +64,7 @@ const mockUsers = [
     :layout="{ type: 'grid', width: '800px' }"
   >
     <Variant title="Basic Usage">
-      <div class="p-8 bg-n-background flex gap-4 h-96 items-start">
+      <div class="p-8 bg-background flex gap-4 h-96 items-start">
         <CardPopover
           :count="3"
           title="Added Inboxes"
@@ -75,7 +75,7 @@ const mockUsers = [
       </div>
     </Variant>
     <Variant title="Basic Usage">
-      <div class="p-8 bg-n-background flex gap-4 h-96 items-start">
+      <div class="p-8 bg-background flex gap-4 h-96 items-start">
         <CardPopover
           :count="3"
           title="Added Agents"

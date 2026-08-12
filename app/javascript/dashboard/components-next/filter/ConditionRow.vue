@@ -90,12 +90,12 @@ const queryOperatorOptions = computed(() => {
     {
       label: t(`FILTER.QUERY_DROPDOWN_LABELS.AND`),
       value: 'and',
-      icon: h('span', { class: 'i-lucide-ampersands !text-n-blue-11' }),
+      icon: h('span', { class: 'i-lucide-ampersands !text-primary' }),
     },
     {
       label: t(`FILTER.QUERY_DROPDOWN_LABELS.OR`),
       value: 'or',
-      icon: h('span', { class: 'i-woot-logic-or !text-n-blue-11' }),
+      icon: h('span', { class: 'i-woot-logic-or !text-primary' }),
     },
   ];
 });
@@ -340,7 +340,7 @@ defineExpose({ validate, resetValidation });
     </div>
     <span
       v-if="!stacked && showErrors && validationError"
-      class="text-sm text-n-ruby-11"
+      class="text-sm text-destructive"
     >
       {{ t(`FILTER.ERRORS.${validationError}`) }}
     </span>

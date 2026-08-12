@@ -58,7 +58,7 @@ const handleSeeOriginal = () => {
       <template v-if="isTemplate">
         <div
           v-if="contentAttributes.submittedEmail"
-          class="px-2 py-1 rounded-lg bg-n-alpha-3"
+          class="px-2 py-1 rounded-lg bg-accent"
         >
           {{ contentAttributes.submittedEmail }}
         </div>

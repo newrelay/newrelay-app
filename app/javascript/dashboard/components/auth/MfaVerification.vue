@@ -306,7 +306,7 @@ const handleTryAnotherMethod = () => {
       ref="helpModalRef"
       :title="$t('MFA_VERIFICATION.HELP_MODAL.TITLE')"
       :show-confirm-button="false"
-      class="[&>dialog>div]:bg-n-alpha-3 [&>dialog>div]:rounded-lg"
+      class="[&>dialog>div]:bg-accent [&>dialog>div]:rounded-lg"
       @confirm="helpModalRef?.close()"
     >
       <div class="space-y-4 text-sm text-muted-foreground">

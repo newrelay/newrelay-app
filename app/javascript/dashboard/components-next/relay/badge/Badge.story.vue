@@ -7,7 +7,7 @@ const VARIANTS = ['default', 'secondary', 'destructive', 'outline'];
 <template>
   <Story title="Relay/Badge" :layout="{ type: 'grid', width: '480px' }">
     <Variant title="Variants">
-      <div class="flex flex-wrap gap-2 p-4 bg-n-background">
+      <div class="flex flex-wrap gap-2 p-4 bg-background">
         <Badge v-for="variant in VARIANTS" :key="variant" :variant="variant">
           {{ variant }}
         </Badge>

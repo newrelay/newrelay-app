@@ -58,7 +58,7 @@ const agentHeaders = ['Agent', 'Role', 'Verification', 'Actions'];
   <Story title="Components/Table" :layout="{ type: 'grid', width: '100%' }">
     <!-- Basic Table -->
     <Variant title="Basic Table">
-      <div class="p-4 bg-n-surface-1">
+      <div class="p-4 bg-muted">
         <BaseTable :headers="headers" :items="automationData">
           <template #row="{ items }">
             <BaseTableRow
@@ -70,13 +70,13 @@ const agentHeaders = ['Agent', 'Role', 'Verification', 'Actions'];
                 <BaseTableCell>
                   <div class="flex items-center gap-2 min-w-0 max-w-full">
                     <span
-                      class="text-body-main text-n-slate-12 truncate min-w-0 flex-1"
+                      class="text-body-main text-foreground truncate min-w-0 flex-1"
                     >
                       {{ automation.name }}
                     </span>
-                    <div class="w-px h-3 rounded-lg bg-n-weak flex-shrink-0" />
+                    <div class="w-px h-3 rounded-lg bg-border flex-shrink-0" />
                     <span
-                      class="text-body-main text-n-slate-11 truncate min-w-0 flex-1"
+                      class="text-body-main text-muted-foreground truncate min-w-0 flex-1"
                     >
                       {{ automation.description }}
                     </span>
@@ -91,7 +91,7 @@ const agentHeaders = ['Agent', 'Role', 'Verification', 'Actions'];
 
                 <BaseTableCell>
                   <span
-                    class="text-body-main text-n-slate-12 whitespace-nowrap"
+                    class="text-body-main text-foreground whitespace-nowrap"
                   >
                     {{ automation.createdOn }}
                   </span>
@@ -113,7 +113,7 @@ const agentHeaders = ['Agent', 'Role', 'Verification', 'Actions'];
 
     <!-- Table with Avatars -->
     <Variant title="Table with Avatars">
-      <div class="p-4 bg-n-surface-1">
+      <div class="p-4 bg-muted">
         <BaseTable :headers="agentHeaders" :items="agentData">
           <template #row="{ items }">
             <BaseTableRow v-for="agent in items" :key="agent.id" :item="agent">
@@ -122,10 +122,12 @@ const agentHeaders = ['Agent', 'Role', 'Verification', 'Actions'];
                   <div class="flex items-center gap-3 min-w-0">
                     <Avatar :user="agent" :size="40" class="flex-shrink-0" />
                     <div class="flex flex-col min-w-0">
-                      <span class="text-body-main text-n-slate-12 truncate">
+                      <span class="text-body-main text-foreground truncate">
                         {{ agent.name }}
                       </span>
-                      <span class="text-body-main text-n-slate-11 truncate">
+                      <span
+                        class="text-body-main text-muted-foreground truncate"
+                      >
                         {{ agent.email }}
                       </span>
                     </div>
@@ -134,7 +136,7 @@ const agentHeaders = ['Agent', 'Role', 'Verification', 'Actions'];
 
                 <BaseTableCell>
                   <span
-                    class="text-body-main text-n-slate-12 whitespace-nowrap"
+                    class="text-body-main text-foreground whitespace-nowrap"
                   >
                     {{ agent.role }}
                   </span>
@@ -142,7 +144,7 @@ const agentHeaders = ['Agent', 'Role', 'Verification', 'Actions'];
 
                 <BaseTableCell>
                   <span
-                    class="text-body-main text-n-slate-12 whitespace-nowrap"
+                    class="text-body-main text-foreground whitespace-nowrap"
                   >
                     {{ agent.verified ? 'Verified' : 'Pending' }}
                   </span>
@@ -163,7 +165,7 @@ const agentHeaders = ['Agent', 'Role', 'Verification', 'Actions'];
 
     <!-- Empty State -->
     <Variant title="Empty State">
-      <div class="p-4 bg-n-surface-1">
+      <div class="p-4 bg-muted">
         <BaseTable
           :headers="headers"
           :items="emptyData"

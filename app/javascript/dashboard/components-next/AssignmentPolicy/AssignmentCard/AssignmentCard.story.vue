@@ -49,7 +49,7 @@ const agentAssignments = [
     :layout="{ type: 'grid', width: '1000px' }"
   >
     <Variant title="Assignment Card">
-      <div class="px-4 py-4 bg-n-background flex gap-6 justify-between">
+      <div class="px-4 py-4 bg-background flex gap-6 justify-between">
         <AssignmentCard
           v-for="(item, index) in agentAssignments"
           :key="index"

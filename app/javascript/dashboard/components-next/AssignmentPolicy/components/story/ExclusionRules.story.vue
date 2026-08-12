@@ -55,7 +55,7 @@ const excludeOlderThanHoursBasic = ref(10);
     :layout="{ type: 'grid', width: '1200px' }"
   >
     <Variant title="Basic Usage">
-      <div class="p-8 bg-n-background h-[600px]">
+      <div class="p-8 bg-background h-[600px]">
         <ExclusionRules
           v-model:excluded-labels="excludedLabelsBasic"
           v-model:exclude-older-than-minutes="excludeOlderThanHoursBasic"

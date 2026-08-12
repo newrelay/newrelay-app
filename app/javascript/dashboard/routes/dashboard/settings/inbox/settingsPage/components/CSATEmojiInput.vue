@@ -13,8 +13,8 @@ const emit = defineEmits(['update']);
 
 const selectionClass = computed(() => {
   return props.selected
-    ? 'outline-n-brand bg-n-brand/5'
-    : 'outline-n-weak bg-n-alpha-black2';
+    ? 'outline-primary bg-primary/5'
+    : 'outline-border bg-black/10';
 });
 
 const emojis = CSAT_RATINGS;

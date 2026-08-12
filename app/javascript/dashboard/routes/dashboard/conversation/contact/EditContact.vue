@@ -43,16 +43,16 @@ useKeyboardEvents({
   >
     <div
       v-if="show"
-      class="fixed inset-y-0 ltr:right-0 rtl:left-0 z-50 flex flex-col w-[30rem] max-w-full h-full bg-n-surface-2 ltr:border-l rtl:border-r border-n-weak shadow-lg overflow-auto"
+      class="fixed inset-y-0 ltr:right-0 rtl:left-0 z-50 flex flex-col w-[30rem] max-w-full h-full bg-card ltr:border-l rtl:border-r border-border shadow-lg overflow-auto"
     >
       <div class="flex items-center justify-between px-8 pt-8 pb-2">
         <div>
-          <h2 class="text-lg font-medium text-n-slate-12 mb-1">
+          <h2 class="text-lg font-medium text-foreground mb-1">
             {{
               `${$t('EDIT_CONTACT.TITLE')} - ${contact.name || contact.email}`
             }}
           </h2>
-          <p class="text-sm text-n-slate-11 mb-0">
+          <p class="text-sm text-muted-foreground mb-0">
             {{ $t('EDIT_CONTACT.DESC') }}
           </p>
         </div>

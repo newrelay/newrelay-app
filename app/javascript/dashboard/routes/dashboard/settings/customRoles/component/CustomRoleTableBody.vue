@@ -35,19 +35,19 @@ const getFormattedPermissions = role => {
   >
     <template #default>
       <BaseTableCell>
-        <span class="text-body-main text-n-slate-12 truncate block">
+        <span class="text-body-main text-foreground truncate block">
           {{ customRole.name }}
         </span>
       </BaseTableCell>
 
       <BaseTableCell>
-        <span class="text-body-main text-n-slate-11 truncate block">
+        <span class="text-body-main text-muted-foreground truncate block">
           {{ customRole.description }}
         </span>
       </BaseTableCell>
 
       <BaseTableCell>
-        <span class="text-body-main text-n-slate-11 block">
+        <span class="text-body-main text-muted-foreground block">
           {{ getFormattedPermissions(customRole) }}
         </span>
       </BaseTableCell>
@@ -66,7 +66,7 @@ const getFormattedPermissions = role => {
             icon="i-woot-bin"
             slate
             sm
-            class="hover:enabled:text-n-ruby-11 hover:enabled:bg-n-ruby-2"
+            class="hover:enabled:text-destructive hover:enabled:bg-destructive/10"
             :is-loading="loading[customRole.id]"
             @click="emit('delete', customRole)"
           />

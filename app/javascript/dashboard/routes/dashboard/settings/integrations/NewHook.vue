@@ -188,7 +188,7 @@ export default {
 }
 
 .formkit-form .formkit-help {
-  @apply text-n-slate-10 text-sm font-normal mt-2 w-full;
+  @apply text-muted-foreground text-sm font-normal mt-2 w-full;
 }
 
 /* equivalent of .reset-base */
@@ -197,7 +197,7 @@ export default {
 }
 
 [data-invalid] .formkit-message {
-  @apply text-n-ruby-9 block text-xs font-normal my-1 w-full;
+  @apply text-destructive block text-xs font-normal my-1 w-full;
 }
 
 .formkit-outer[data-type='checkbox'] .formkit-wrapper {

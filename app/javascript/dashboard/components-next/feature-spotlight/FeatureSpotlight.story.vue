@@ -8,7 +8,7 @@ import FeatureSpotlight from './FeatureSpotlight.vue';
     :layout="{ type: 'grid', width: '1000px' }"
   >
     <Variant title="Default with learn more URL">
-      <div class="p-6 bg-n-background">
+      <div class="p-6 bg-background">
         <FeatureSpotlight
           title="Captain Assistant"
           note="Captain Assistant engages directly with customers, learns from your help docs and past conversations, and delivers instant, accurate responses. It handles the initial queries, providing quick resolutions before transferring to an agent when needed."
@@ -22,7 +22,7 @@ import FeatureSpotlight from './FeatureSpotlight.vue';
     </Variant>
 
     <Variant title="With Video URL and Thumbnail">
-      <div class="p-6 bg-n-background">
+      <div class="p-6 bg-background">
         <FeatureSpotlight
           title="Captain Assistant"
           note="Captain Assistant engages directly with customers, learns from your help docs and past conversations, and delivers instant, accurate responses. It handles the initial queries, providing quick resolutions before transferring to an agent when needed."

@@ -26,7 +26,7 @@ defineProps({
       </div>
 
       <div
-        class="shadow rounded-[1.25rem] rounded-bl-[0.25rem] px-4 py-3 inline-block text-sm text-n-slate-12 bg-n-background dark:bg-n-solid-3"
+        class="shadow rounded-[1.25rem] rounded-bl-[0.25rem] px-4 py-3 inline-block text-sm text-foreground bg-background dark:bg-accent"
       >
         <div>
           <p class="m-0">

@@ -95,22 +95,22 @@ const handleSendMessage = (template, hide) => {
                 'COMPOSE_NEW_CONVERSATION.FORM.WHATSAPP_OPTIONS.SEARCH_PLACEHOLDER'
               )
             "
-            class="w-full h-8 py-2 ltr:pl-10 rtl:pr-10 ltr:pr-2 rtl:pl-2 text-sm reset-base outline-none border-none rounded-lg bg-n-alpha-black2 dark:bg-n-solid-1 text-n-slate-12"
+            class="w-full h-8 py-2 ltr:pl-10 rtl:pr-10 ltr:pr-2 rtl:pl-2 text-sm reset-base outline-none border-none rounded-lg bg-black/10 dark:bg-card text-foreground"
           />
         </div>
         <div
           v-for="template in filteredTemplates"
           :key="template.id"
-          class="flex flex-col gap-2 p-2 w-full rounded-lg cursor-pointer dark:hover:bg-n-alpha-3 hover:bg-n-alpha-1"
+          class="flex flex-col gap-2 p-2 w-full rounded-lg cursor-pointer dark:hover:bg-accent hover:bg-muted"
           @click="handleTemplateClick(template)"
         >
-          <span class="text-sm text-n-slate-12">{{ template.name }}</span>
-          <p class="mb-0 text-xs leading-5 text-n-slate-11 line-clamp-2">
+          <span class="text-sm text-foreground">{{ template.name }}</span>
+          <p class="mb-0 text-xs leading-5 text-muted-foreground line-clamp-2">
             {{ getTemplateBody(template) }}
           </p>
         </div>
         <template v-if="filteredTemplates.length === 0">
-          <p class="pt-2 w-full text-sm text-n-slate-11">
+          <p class="pt-2 w-full text-sm text-muted-foreground">
             {{
               t('COMPOSE_NEW_CONVERSATION.FORM.WHATSAPP_OPTIONS.EMPTY_STATE')
             }}

@@ -33,7 +33,7 @@ const fileType = computed(() => {
 
 <template>
   <div
-    class="flex flex-col gap-2.5 p-3 rounded-xl bg-n-alpha-2 text-n-slate-12 max-w-80"
+    class="flex flex-col gap-2.5 p-3 rounded-xl bg-accent text-foreground max-w-80"
   >
     <img
       v-if="mediaType === 'image'"
@@ -55,7 +55,7 @@ const fileType = computed(() => {
     </div>
 
     <div v-else-if="mediaType === 'document'" class="flex items-center">
-      <FileIcon :file-type="fileType" class="text-2xl text-n-slate-12" />
+      <FileIcon :file-type="fileType" class="text-2xl text-foreground" />
     </div>
 
     <span

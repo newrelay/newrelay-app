@@ -83,7 +83,7 @@ const onFetchUsers = id => console.log('Fetch users for policy:', id);
     :layout="{ type: 'grid', width: '1200px' }"
   >
     <Variant title="Multiple Cards (Various States)">
-      <div class="p-4 bg-n-background">
+      <div class="p-4 bg-background">
         <div class="grid grid-cols-1 gap-4">
           <AgentCapacityPolicyCard
             v-bind="policyA"

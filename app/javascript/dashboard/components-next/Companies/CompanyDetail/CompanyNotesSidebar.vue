@@ -51,7 +51,7 @@ const openContact = contactId => {
 
 <template>
   <div v-if="hasNotes" class="flex flex-col px-6">
-    <div class="flex flex-col divide-y divide-n-strong">
+    <div class="flex flex-col divide-y divide-border">
       <div
         v-for="note in notes"
         :key="note.id"
@@ -66,24 +66,24 @@ const openContact = contactId => {
             hide-offline-status
           />
           <div
-            class="flex items-center justify-between min-w-0 gap-1 w-full text-sm text-n-slate-11"
+            class="flex items-center justify-between min-w-0 gap-1 w-full text-sm text-muted-foreground"
           >
             <button
               type="button"
-              class="min-w-0 font-medium truncate text-start text-n-slate-12 hover:text-n-blue-11 p-0"
+              class="min-w-0 font-medium truncate text-start text-foreground hover:text-primary p-0"
               @click="openContact(note.contact.id)"
             >
               {{ contactName(note.contact) }}
             </button>
             <div class="min-w-0 truncate">
               <span
-                class="inline-flex items-center gap-1 text-sm text-n-slate-10"
+                class="inline-flex items-center gap-1 text-sm text-muted-foreground"
               >
-                <span class="font-medium text-n-slate-11">
+                <span class="font-medium text-muted-foreground">
                   {{ getWrittenBy(note) }}
                 </span>
                 {{ t('CONTACTS_LAYOUT.SIDEBAR.NOTES.WROTE') }}
-                <span class="font-medium text-n-slate-11">
+                <span class="font-medium text-muted-foreground">
                   {{ dynamicTime(note.createdAt) }}
                 </span>
               </span>
@@ -92,7 +92,7 @@ const openContact = contactId => {
         </div>
         <p
           v-dompurify-html="formatMessage(note.content || '')"
-          class="mb-0 prose-sm prose-p:text-sm prose-p:leading-relaxed prose-p:mb-1 prose-p:mt-0 prose-ul:mb-1 prose-ul:mt-0 text-n-slate-12"
+          class="mb-0 prose-sm prose-p:text-sm prose-p:leading-relaxed prose-p:mb-1 prose-p:mt-0 prose-ul:mb-1 prose-ul:mt-0 text-foreground"
         />
       </div>
     </div>
@@ -100,14 +100,14 @@ const openContact = contactId => {
 
   <div
     v-else-if="isLoading"
-    class="flex items-center justify-center py-10 text-n-slate-11"
+    class="flex items-center justify-center py-10 text-muted-foreground"
   >
     <Spinner />
   </div>
 
   <p
     v-else
-    class="py-8 mx-6 px-4 text-sm text-center rounded-xl border border-dashed border-n-strong text-n-slate-11"
+    class="py-8 mx-6 px-4 text-sm text-center rounded-xl border border-dashed border-border text-muted-foreground"
   >
     {{ t('COMPANIES.DETAIL.NOTES.EMPTY') }}
   </p>

@@ -30,7 +30,7 @@ const openLink = link => {
   <section class="custom-dashed-border rounded-2xl py-5 px-6">
     <div class="flex flex-col md:flex-row items-start md:items-center gap-6">
       <div
-        class="flex-shrink-0 bg-gray-800 w-[7.5rem] h-[6.5rem] rounded-lg flex items-center justify-center overflow-hidden"
+        class="flex-shrink-0 bg-muted w-[7.5rem] h-[6.5rem] rounded-lg flex items-center justify-center overflow-hidden"
       >
         <img
           v-if="!imageError && thumbnail"
@@ -64,10 +64,10 @@ const openLink = link => {
       </div>
 
       <div class="flex flex-col flex-1 gap-3 ltr:pr-8 rtl:pl-8">
-        <h3 v-if="title" class="mb-0 text-base font-medium text-n-slate-12">
+        <h3 v-if="title" class="mb-0 text-base font-medium text-foreground">
           {{ title }}
         </h3>
-        <p v-if="note" class="mb-0 text-sm text-n-slate-12">{{ note }}</p>
+        <p v-if="note" class="mb-0 text-sm text-foreground">{{ note }}</p>
 
         <div v-if="!hideActions" class="flex gap-3">
           <slot name="actions">

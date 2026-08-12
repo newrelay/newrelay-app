@@ -11,7 +11,7 @@ const tab = ref('account');
 <template>
   <Story title="Relay/Tabs" :layout="{ type: 'grid', width: '560px' }">
     <Variant title="Default">
-      <div class="p-4 bg-n-background">
+      <div class="p-4 bg-background">
         <Tabs v-model="tab">
           <TabsList>
             <TabsTrigger value="account">Account</TabsTrigger>
@@ -19,13 +19,15 @@ const tab = ref('account');
             <TabsTrigger value="team">Team</TabsTrigger>
           </TabsList>
           <TabsContent value="account">
-            <p class="text-sm text-n-slate-11">Account settings panel.</p>
+            <p class="text-sm text-muted-foreground">Account settings panel.</p>
           </TabsContent>
           <TabsContent value="password">
-            <p class="text-sm text-n-slate-11">Password settings panel.</p>
+            <p class="text-sm text-muted-foreground">
+              Password settings panel.
+            </p>
           </TabsContent>
           <TabsContent value="team">
-            <p class="text-sm text-n-slate-11">Team settings panel.</p>
+            <p class="text-sm text-muted-foreground">Team settings panel.</p>
           </TabsContent>
         </Tabs>
       </div>

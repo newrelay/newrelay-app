@@ -23,7 +23,7 @@ const handleSelect = value => {
 
 <template>
   <div
-    class="flex gap-4 items-center px-4 py-2.5 w-full rounded-lg divide-x transition-colors bg-n-solid-1 outline outline-1 outline-n-weak hover:outline-n-slate-6 focus-within:outline-n-brand divide-n-weak"
+    class="flex gap-4 items-center px-4 py-2.5 w-full rounded-lg divide-x transition-colors bg-card outline outline-1 outline-border hover:outline-border focus-within:outline-primary divide-border"
   >
     <div
       v-for="option in options"
@@ -35,10 +35,10 @@ const handleSelect = value => {
           type="radio"
           :value="option.value"
           :checked="modelValue === option.value"
-          class="size-4 accent-n-blue-9 text-n-blue-9"
+          class="size-4 accent-primary text-primary"
           @change="handleSelect(option.value)"
         />
-        <span class="text-sm text-n-slate-12">{{ option.label }}</span>
+        <span class="text-sm text-foreground">{{ option.label }}</span>
       </label>
     </div>
   </div>

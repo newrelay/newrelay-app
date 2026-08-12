@@ -55,7 +55,7 @@ const formValues = computed(() => {
     <span v-dompurify-html="content" :title="content" />
     <dl v-if="formValues.length" class="mt-4">
       <template v-for="item in formValues" :key="item.title">
-        <dt class="text-n-slate-11 italic mt-2">
+        <dt class="text-muted-foreground italic mt-2">
           {{ item.label || t('CONVERSATION.RESPONSE') }}
         </dt>
         <dd>{{ item.title }}</dd>

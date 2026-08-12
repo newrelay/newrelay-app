@@ -11,14 +11,14 @@ const disabledChecked = ref(true);
 <template>
   <Story title="Relay/Checkbox" :layout="{ type: 'grid', width: '400px' }">
     <Variant title="Default">
-      <div class="flex items-center gap-3 p-4 bg-n-background">
+      <div class="flex items-center gap-3 p-4 bg-background">
         <Checkbox id="relay-check" v-model="checked" />
         <Label html-for="relay-check">Accept terms</Label>
       </div>
     </Variant>
 
     <Variant title="Indeterminate">
-      <div class="flex items-center gap-3 p-4 bg-n-background">
+      <div class="flex items-center gap-3 p-4 bg-background">
         <Checkbox v-model="indeterminate" />
         <span class="text-[13.5px] font-medium text-foreground">
           Partial selection
@@ -27,7 +27,7 @@ const disabledChecked = ref(true);
     </Variant>
 
     <Variant title="Disabled">
-      <div class="flex items-center gap-3 p-4 bg-n-background">
+      <div class="flex items-center gap-3 p-4 bg-background">
         <Checkbox v-model="disabledChecked" disabled />
         <span class="text-[13.5px] font-medium text-muted-foreground">
           Disabled checked

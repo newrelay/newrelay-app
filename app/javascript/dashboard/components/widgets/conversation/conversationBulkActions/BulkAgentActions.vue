@@ -118,7 +118,7 @@ const handleToggleDropdown = () => {
       slate
       xs
       ghost
-      :class="{ 'bg-n-alpha-2': showDropdown }"
+      :class="{ 'bg-accent': showDropdown }"
       @click="handleToggleDropdown"
     />
     <Transition
@@ -141,23 +141,23 @@ const handleToggleDropdown = () => {
       >
         <template v-if="selectedAgent" #footer>
           <div
-            class="pt-2 pb-2 px-2 border-t border-n-weak sticky bottom-0 rounded-b-md z-20 bg-n-alpha-3 backdrop-blur-[4px]"
+            class="pt-2 pb-2 px-2 border-t border-border sticky bottom-0 rounded-b-md z-20 bg-accent backdrop-blur-[4px]"
           >
             <div class="flex flex-col gap-2">
               <I18nT
                 v-if="selectedAgent.id"
                 keypath="BULK_ACTION.ASSIGN_AGENT_CONFIRMATION_LABEL"
                 tag="p"
-                class="text-xs text-n-slate-11 px-1 mb-0"
+                class="text-xs text-muted-foreground px-1 mb-0"
                 :plural="props.conversationCount"
               >
                 <template #n>
-                  <strong class="text-n-slate-12">
+                  <strong class="text-foreground">
                     {{ props.conversationCount }}
                   </strong>
                 </template>
                 <template #agentName>
-                  <strong class="text-n-slate-12">
+                  <strong class="text-foreground">
                     {{ selectedAgent.name }}
                   </strong>
                 </template>
@@ -166,11 +166,11 @@ const handleToggleDropdown = () => {
                 v-else
                 keypath="BULK_ACTION.UNASSIGN_AGENT_CONFIRMATION_LABEL"
                 tag="p"
-                class="text-xs text-n-slate-11 px-1 mb-0"
+                class="text-xs text-muted-foreground px-1 mb-0"
                 :plural="props.conversationCount"
               >
                 <template #n>
-                  <strong class="text-n-slate-12">
+                  <strong class="text-foreground">
                     {{ props.conversationCount }}
                   </strong>
                 </template>

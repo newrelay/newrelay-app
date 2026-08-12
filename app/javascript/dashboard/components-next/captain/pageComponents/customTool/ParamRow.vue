@@ -65,9 +65,9 @@ defineExpose({ validate });
 <template>
   <li class="list-none">
     <div
-      class="flex items-start gap-2 rounded-lg border border-n-weak bg-n-alpha-2 p-3"
+      class="flex items-start gap-2 rounded-lg border border-border bg-accent p-3"
       :class="{
-        'animate-wiggle border-n-ruby-9': showErrors && validationError,
+        'animate-wiggle border-destructive': showErrors && validationError,
       }"
     >
       <div class="flex flex-1 flex-col gap-3">
@@ -81,7 +81,7 @@ defineExpose({ validate });
             v-model="type"
             :options="paramTypeOptions"
             :placeholder="t('CAPTAIN.CUSTOM_TOOLS.FORM.PARAM_TYPE.PLACEHOLDER')"
-            class="[&>div>button]:bg-n-alpha-black2"
+            class="[&>div>button]:bg-black/10"
           />
         </div>
         <RelayInput
@@ -100,7 +100,7 @@ defineExpose({ validate });
       <RelayButton
         variant="ghost"
         size="icon"
-        class="size-9 shrink-0 text-n-slate-11 hover:text-n-ruby-9"
+        class="size-9 shrink-0 text-muted-foreground hover:text-destructive"
         @click.stop="emit('remove')"
       >
         <span class="i-lucide-trash size-3.5" />
@@ -108,7 +108,7 @@ defineExpose({ validate });
     </div>
     <span
       v-if="showErrors && validationError"
-      class="mt-1 block text-sm text-n-ruby-11"
+      class="mt-1 block text-sm text-destructive"
     >
       {{ t(`CAPTAIN.CUSTOM_TOOLS.FORM.ERRORS.${validationError}`) }}
     </span>

@@ -284,7 +284,27 @@ const activeTeam = computed(() => {
   return {};
 });
 
-const pageTitle = computed(() => t('SIDEBAR.CUSTOMER_ENGAGEMENT'));
+const pageTitle = computed(() => t('SIDEBAR.CONVERSATIONS'));
+
+const searchQuery = ref('');
+
+const filteredConversationList = computed(() => {
+  if (!searchQuery.value.trim()) return conversationList.value;
+  const query = searchQuery.value.toLowerCase().trim();
+  return conversationList.value.filter(c => {
+    const name = c.meta?.sender?.name?.toLowerCase() || '';
+    const email = c.meta?.sender?.email?.toLowerCase() || '';
+    const phone = c.meta?.sender?.phone_number || '';
+    const lastMsg =
+      c.messages?.[c.messages.length - 1]?.content?.toLowerCase() || '';
+    return (
+      name.includes(query) ||
+      email.includes(query) ||
+      phone.includes(query) ||
+      lastMsg.includes(query)
+    );
+  });
+});
 
 const pageSubtitle = computed(() => {
   if (hasAppliedFilters.value) {
@@ -974,6 +994,27 @@ watch(conversationFilters, (newVal, oldVal) => {
       </RelayTabs>
     </div>
 
+    <!-- Search Input -->
+    <div class="px-4 py-2 shrink-0 border-b border-border/60">
+      <div class="relative flex items-center">
+        <span class="i-lucide-search absolute left-2.5 size-4 text-muted-foreground" />
+        <input
+          v-model="searchQuery"
+          type="text"
+          :placeholder="t('CHAT_LIST.SEARCH.INPUT')"
+          class="w-full h-8 pl-8 pr-7 text-xs rounded-md bg-muted/50 border border-input focus:outline-none focus:ring-1 focus:ring-primary text-foreground placeholder:text-muted-foreground transition-colors"
+        />
+        <button
+          v-if="searchQuery"
+          type="button"
+          class="absolute right-2 text-muted-foreground hover:text-foreground p-0.5"
+          @click="searchQuery = ''"
+        >
+          <span class="i-lucide-x size-3.5" />
+        </button>
+      </div>
+    </div>
+
     <TeleportWithDirection
       v-if="showAddFoldersModal"
       to="#saveFilterTeleportTarget"
@@ -996,24 +1037,13 @@ watch(conversationFilters, (newVal, oldVal) => {
     />
 
     <p
-      v-if="!chatListLoading && !conversationList.length"
+      v-if="!chatListLoading && !filteredConversationList.length"
       class="flex overflow-auto justify-center items-center p-4 text-sm text-muted-foreground"
     >
       {{ $t('CHAT_LIST.LIST.404') }}
     </p>
-    <ConversationBulkActions
-      v-if="false"
-      :conversations="selectedConversations"
-      :all-conversations-selected="allConversationsSelected"
-      :selected-inboxes="uniqueInboxes"
-      :show-open-action="allSelectedConversationsStatus('open')"
-      :show-resolved-action="allSelectedConversationsStatus('resolved')"
-      :show-snoozed-action="allSelectedConversationsStatus('snoozed')"
-      :class="isOnExpandedLayout && 'sm:!w-[24rem] !w-full'"
-      @select-all-conversations="toggleSelectAll"
-    />
     <ConversationList
-      :conversation-list="conversationList"
+      :conversation-list="filteredConversationList"
       :is-loading="chatListLoading"
       :show-end-of-list-message="showEndOfListMessage"
       :label="label"

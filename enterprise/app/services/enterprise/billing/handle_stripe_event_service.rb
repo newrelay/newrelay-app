@@ -440,7 +440,7 @@ class Enterprise::Billing::HandleStripeEventService
   end
 
   def capture_previous_usage
-    { responses: account.custom_attributes['captain_responses_usage'].to_i, monthly: current_plan_credits[:responses] }
+    { responses: account.custom_attributes['captain_responses_usage'].to_i, monthly: current_plan_credits[:responses].to_i }
   end
 
   def current_plan_credits
@@ -464,15 +464,19 @@ class Enterprise::Billing::HandleStripeEventService
   end
 
   def handle_subscription_credits(plan, previous_usage)
-    adjust_captain_credits(previous_usage, new_plan_credits: get_plan_credits(plan['name'])[:responses])
+    new_credits = get_plan_credits(plan['name'])[:responses].to_i
+    adjust_captain_credits(previous_usage, new_plan_credits: new_credits)
   end
 
   def adjust_captain_credits(previous_usage, new_plan_credits:)
     current_limits = account.limits || {}
     current_credits = current_limits['captain_responses'].to_i
+    prev_responses = previous_usage[:responses].to_i
+    prev_monthly = previous_usage[:monthly].to_i
+    new_credits = new_plan_credits.to_i
 
-    consumed_topup_credits = [previous_usage[:responses] - previous_usage[:monthly], 0].max
-    updated_credits = [current_credits - consumed_topup_credits - previous_usage[:monthly] + new_plan_credits, 0].max
+    consumed_topup_credits = [prev_responses - prev_monthly, 0].max
+    updated_credits = [current_credits - consumed_topup_credits - prev_monthly + new_credits, 0].max
 
     Rails.logger.info("Updating captain credits for account #{account.id}: #{current_credits} -> #{updated_credits}")
     account.update!(limits: current_limits.merge('captain_responses' => updated_credits))
@@ -482,8 +486,8 @@ class Enterprise::Billing::HandleStripeEventService
     current_limits = account.limits || {}
     current_credits = current_limits['captain_responses'].to_i
 
-    previous_plan_credits = previous_usage[:monthly]
-    new_plan_credits = get_plan_credits(new_plan['name'])[:responses]
+    previous_plan_credits = previous_usage[:monthly].to_i
+    new_plan_credits = get_plan_credits(new_plan['name'])[:responses].to_i
 
     updated_credits = current_credits - previous_plan_credits + new_plan_credits
 

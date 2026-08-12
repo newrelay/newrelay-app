@@ -38,7 +38,9 @@ class Enterprise::Billing::PlanCheckoutService
   # live (past_due) subscription object that a new Checkout session would duplicate.
   def already_on_real_stripe_subscription?
     sub = account.subscription
-    sub.present? && sub.relationship_type == 'platform' && sub.stripe_subscription_id.present? && sub.status != 'canceled'
+    return false if sub.blank? || sub.relationship_type != 'platform' || sub.stripe_subscription_id.blank?
+
+    %w[active trialing past_due unpaid].include?(sub.status)
   end
 
   def billing_portal_url

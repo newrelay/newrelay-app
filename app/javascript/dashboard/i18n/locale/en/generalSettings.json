@@ -192,12 +192,12 @@
   },
   "NETWORK": {
     "NOTIFICATION": {
-      "OFFLINE": "Offline",
+      "OFFLINE": "You are offline",
       "RECONNECTING": "Reconnecting...",
-      "RECONNECT_SUCCESS": "Reconnected"
+      "RECONNECT_SUCCESS": "Back online"
     },
     "BUTTON": {
-      "REFRESH": "Refresh"
+      "REFRESH": "Retry"
     }
   },
   "COMMAND_BAR": {

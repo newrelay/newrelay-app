@@ -7,6 +7,7 @@ const {
   iconsPlugin,
   getIconCollections,
 } = require('@egoist/tailwindcss-icons');
+const tailwindPlugin = require('tailwindcss/plugin');
 
 const withAlpha = variable => `rgb(var(${variable}) / <alpha-value>)`;
 
@@ -380,6 +381,24 @@ const tailwindConfig = {
           'fluent',
         ]),
       },
+      extraProperties: {
+        'flex-shrink': '0',
+      },
+    }),
+    tailwindPlugin(({ addUtilities, theme }) => {
+      const spacing = theme('spacing');
+      const iconSizes = ['2', '2.5', '3', '3.5', '4', '5', '6', '8', '10', '16'];
+      const utilities = {};
+      iconSizes.forEach(key => {
+        const value = spacing[key];
+        if (!value) return;
+        const escapedKey = key.replace('.', '\\.');
+        utilities[`[class*='i-lucide-'].size-${escapedKey}`] = {
+          width: value,
+          height: value,
+        };
+      });
+      addUtilities(utilities);
     }),
   ],
 };

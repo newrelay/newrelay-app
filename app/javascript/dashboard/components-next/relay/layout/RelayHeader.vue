@@ -45,7 +45,7 @@ const toggleTheme = () => {
         class="inline-flex size-8 shrink-0 items-center justify-center rounded-md text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring md:hidden"
         @click="$emit('toggleSidebar')"
       >
-        <span class="i-lucide-panel-left size-4" />
+        <span class="i-lucide-panel-left size-4 shrink-0" />
         <span class="sr-only">{{ t('SIDEBAR.TOGGLE_SIDEBAR') }}</span>
       </button>
       <button
@@ -54,7 +54,7 @@ const toggleTheme = () => {
         class="hidden size-8 shrink-0 items-center justify-center rounded-md text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring md:inline-flex"
         @click="$emit('toggleCollapse')"
       >
-        <span class="i-lucide-panel-left size-4" />
+        <span class="i-lucide-panel-left size-4 shrink-0" />
         <span class="sr-only">{{ t('SIDEBAR.COLLAPSE_SIDEBAR') }}</span>
       </button>
       <h1 class="truncate text-base font-medium text-foreground">

@@ -6,15 +6,11 @@ import { useAlert } from 'dashboard/composables';
 import { useStoreGetters, useStore } from 'dashboard/composables/store';
 import { useMessageFormatter } from 'shared/composables/useMessageFormatter';
 
-import AddCanned from './AddCanned.vue';
-import EditCanned from './EditCanned.vue';
+import CannedModal from './component/CannedModal.vue';
 import BaseSettingsHeader from '../components/BaseSettingsHeader.vue';
 import SettingsLayout from '../SettingsLayout.vue';
-import SettingsListCard from '../components/SettingsListCard.vue';
-import SettingsListRow from '../components/SettingsListRow.vue';
 import {
   RelayButton,
-  RelayModal,
   RelayConfirmModal,
 } from 'dashboard/components-next/relay';
 import Icon from 'dashboard/components-next/icon/Icon.vue';
@@ -28,12 +24,11 @@ const store = useStore();
 const { t } = useI18n();
 const { getPlainText } = useMessageFormatter();
 
-const showAddPopup = ref(false);
 const loading = ref({});
-const showEditPopup = ref(false);
+const showCannedModal = ref(false);
+const cannedModalMode = ref('add');
 const showDeleteConfirmationPopup = ref(false);
-const activeResponse = ref({});
-const cannedResponseAPI = ref({ message: '' });
+const selectedResponse = ref({});
 
 const sortOrder = ref('asc');
 const searchQuery = ref('');
@@ -55,16 +50,16 @@ const uiFlags = computed(() => getters.getUIFlags.value);
 
 const deleteConfirmText = computed(
   () =>
-    `${t('CANNED_MGMT.DELETE.CONFIRM.YES')} ${activeResponse.value.short_code}`
+    `${t('CANNED_MGMT.DELETE.CONFIRM.YES')} ${selectedResponse.value.short_code}`
 );
 
 const deleteRejectText = computed(
   () =>
-    `${t('CANNED_MGMT.DELETE.CONFIRM.NO')} ${activeResponse.value.short_code}`
+    `${t('CANNED_MGMT.DELETE.CONFIRM.NO')} ${selectedResponse.value.short_code}`
 );
 
 const deleteMessage = computed(() => {
-  return ` ${activeResponse.value.short_code} ? `;
+  return ` ${selectedResponse.value.short_code} ? `;
 });
 
 const toggleSort = () => {
@@ -83,31 +78,25 @@ onMounted(() => {
   fetchCannedResponses();
 });
 
-const showAlertMessage = message => {
-  loading.value[activeResponse.value.id] = false;
-  activeResponse.value = {};
-  cannedResponseAPI.value.message = message;
-  useAlert(message);
+const openAddPopup = () => {
+  cannedModalMode.value = 'add';
+  selectedResponse.value = {};
+  showCannedModal.value = true;
 };
 
-const openAddPopup = () => {
-  showAddPopup.value = true;
-};
-const hideAddPopup = () => {
-  showAddPopup.value = false;
+const hideCannedModal = () => {
+  showCannedModal.value = false;
 };
 
 const openEditPopup = response => {
-  showEditPopup.value = true;
-  activeResponse.value = response;
-};
-const hideEditPopup = () => {
-  showEditPopup.value = false;
+  cannedModalMode.value = 'edit';
+  selectedResponse.value = response;
+  showCannedModal.value = true;
 };
 
 const openDeletePopup = response => {
   showDeleteConfirmationPopup.value = true;
-  activeResponse.value = response;
+  selectedResponse.value = response;
 };
 
 const closeDeletePopup = () => {
@@ -117,18 +106,20 @@ const closeDeletePopup = () => {
 const deleteCannedResponse = async id => {
   try {
     await store.dispatch('deleteCannedResponse', id);
-    showAlertMessage(t('CANNED_MGMT.DELETE.API.SUCCESS_MESSAGE'));
+    useAlert(t('CANNED_MGMT.DELETE.API.SUCCESS_MESSAGE'));
   } catch (error) {
     const errorMessage =
       error?.message || t('CANNED_MGMT.DELETE.API.ERROR_MESSAGE');
-    showAlertMessage(errorMessage);
+    useAlert(errorMessage);
+  } finally {
+    loading.value[selectedResponse.value.id] = false;
   }
 };
 
 const confirmDeletion = () => {
-  loading.value[activeResponse.value.id] = true;
+  loading.value[selectedResponse.value.id] = true;
   closeDeletePopup();
-  deleteCannedResponse(activeResponse.value.id);
+  deleteCannedResponse(selectedResponse.value.id);
 };
 </script>
 
@@ -136,7 +127,8 @@ const confirmDeletion = () => {
   <SettingsLayout
     :is-loading="uiFlags.fetchingList"
     :loading-message="$t('CANNED_MGMT.LOADING')"
-    :no-records-found="false"
+    :no-records-found="!records.length"
+    :no-records-message="$t('CANNED_MGMT.LIST.404')"
   >
     <template #header>
       <BaseSettingsHeader
@@ -146,22 +138,12 @@ const confirmDeletion = () => {
         :search-placeholder="$t('CANNED_MGMT.SEARCH_PLACEHOLDER')"
         feature-name="canned_responses"
       >
-        <template #count>
+        <template v-if="records?.length" #count>
           <span class="text-sm text-muted-foreground">
-            {{ filteredRecords.length }}
-            {{ $t('CANNED_MGMT.COUNT_SUFFIX') }}
+            {{ $t('CANNED_MGMT.COUNT', { n: filteredRecords.length }) }}
           </span>
         </template>
         <template #actions>
-          <RelayButton
-            v-tooltip.top="$t('CANNED_MGMT.LIST.TABLE_HEADER.SHORT_CODE')"
-            variant="ghost"
-            size="icon"
-            class="size-9 border border-border text-muted-foreground shadow-xs hover:border-transparent hover:bg-muted/50 hover:text-foreground"
-            @click="toggleSort"
-          >
-            <Icon icon="i-lucide-arrow-up-down" class="size-4" />
-          </RelayButton>
           <RelayButton size="sm" @click="openAddPopup">
             {{ $t('CANNED_MGMT.HEADER_BTN_TXT') }}
           </RelayButton>
@@ -170,100 +152,119 @@ const confirmDeletion = () => {
     </template>
 
     <template #body>
-      <SettingsListCard
-        :details-label="$t('CANNED_MGMT.LIST.TABLE_HEADER.CONTENT')"
-        :actions-label="$t('CANNED_MGMT.LIST.TABLE_HEADER.ACTIONS')"
-        :show-column-headers="!!filteredRecords.length"
+      <div
+        class="overflow-hidden rounded-xl border border-border/60 bg-card shadow-xs"
       >
-        <template v-if="!filteredRecords.length" #empty>
-          <div
-            v-if="searchQuery"
-            class="px-6 text-center text-sm text-muted-foreground"
-          >
+        <div v-if="!filteredRecords.length && searchQuery" class="py-20">
+          <p class="text-center text-sm text-muted-foreground">
             {{ $t('CANNED_MGMT.NO_RESULTS') }}
-          </div>
-          <div
-            v-else
-            class="flex flex-col items-center justify-center bg-muted/10 px-6 py-4"
-          >
-            <div
-              class="mb-5 flex size-16 items-center justify-center rounded-full border border-border bg-muted/50"
-            >
-              <Icon
-                icon="i-lucide-message-square-off"
-                class="size-6 text-muted-foreground/70"
-              />
-            </div>
-            <h3 class="mb-1.5 text-base font-semibold text-foreground">
-              {{ $t('CANNED_MGMT.LIST.404') }}
-            </h3>
-          </div>
-        </template>
-
-        <SettingsListRow
-          v-for="cannedItem in filteredRecords"
-          :key="cannedItem.id || cannedItem.short_code"
-        >
-          <template #leading>
-            <div
-              class="inline-flex items-center gap-1.5 rounded-lg border border-primary/20 bg-primary/10 px-2.5 py-1 font-mono text-xs font-medium text-primary"
-            >
-              <Icon icon="i-lucide-terminal" class="size-3.5 text-muted-foreground" />
-              {{ cannedItem.short_code }}
-            </div>
-          </template>
-          <p class="line-clamp-3 text-sm text-foreground">
-            {{ getPlainText(cannedItem.content) }}
           </p>
-          <template #actions>
-            <RelayButton
-              v-tooltip.top="$t('CANNED_MGMT.EDIT.BUTTON_TEXT')"
-              variant="ghost"
-              size="icon"
-              class="size-8 border border-transparent text-muted-foreground shadow-xs hover:border-border hover:bg-background hover:text-foreground"
-              @click="openEditPopup(cannedItem)"
-            >
-              <Icon icon="i-lucide-pencil" class="size-3.5" />
-            </RelayButton>
-            <RelayButton
-              v-tooltip.top="$t('CANNED_MGMT.DELETE.BUTTON_TEXT')"
-              variant="ghost"
-              size="icon"
-              class="size-8 border border-transparent text-muted-foreground shadow-xs hover:border-destructive/20 hover:bg-destructive/10 hover:text-destructive"
-              :disabled="loading[cannedItem.id]"
-              @click="openDeletePopup(cannedItem)"
-            >
-              <Icon icon="i-lucide-trash-2" class="size-3.5" />
-            </RelayButton>
-          </template>
-        </SettingsListRow>
-      </SettingsListCard>
+        </div>
+        <div
+          v-else-if="!filteredRecords.length"
+          class="flex flex-col items-center justify-center py-20"
+        >
+          <div
+            class="mb-5 flex size-16 items-center justify-center rounded-full border border-border bg-muted/50"
+          >
+            <Icon
+              icon="i-lucide-message-square"
+              class="size-6 text-muted-foreground/70"
+            />
+          </div>
+          <h3 class="text-base font-semibold text-foreground">
+            {{ $t('CANNED_MGMT.LIST.404') }}
+          </h3>
+        </div>
+        <div v-else class="overflow-x-auto">
+          <table class="w-full border-collapse text-left">
+            <thead>
+              <tr class="border-b border-border/40 bg-background">
+                <th
+                  class="w-52 px-6 py-3.5 text-[13px] font-medium text-muted-foreground"
+                >
+                  <button
+                    type="button"
+                    class="inline-flex items-center gap-1.5 hover:text-foreground"
+                    @click="toggleSort"
+                  >
+                    {{ $t('CANNED_MGMT.LIST.TABLE_HEADER.SHORT_CODE') }}
+                    <Icon icon="i-lucide-arrow-up-down" class="size-3.5" />
+                  </button>
+                </th>
+                <th
+                  class="px-6 py-3.5 text-[13px] font-medium text-muted-foreground"
+                >
+                  {{ $t('CANNED_MGMT.LIST.TABLE_HEADER.CONTENT') }}
+                </th>
+                <th
+                  class="w-32 px-6 py-3.5 text-[13px] font-medium text-muted-foreground"
+                >
+                  {{ $t('CANNED_MGMT.LIST.TABLE_HEADER.ACTIONS') }}
+                </th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-border/40">
+              <tr
+                v-for="cannedItem in filteredRecords"
+                :key="cannedItem.id || cannedItem.short_code"
+                class="group bg-card transition-colors hover:bg-muted/10"
+              >
+                <td class="px-6 py-4">
+                  <div
+                    class="inline-flex items-center gap-1.5 rounded-lg border border-primary/20 bg-primary/10 px-2.5 py-1 font-mono text-xs font-medium text-primary"
+                  >
+                    <Icon
+                      icon="i-lucide-terminal-square"
+                      class="size-3.5 text-muted-foreground"
+                    />
+                    {{ cannedItem.short_code }}
+                  </div>
+                </td>
+                <td class="px-6 py-4">
+                  <p class="line-clamp-2 text-[14px] text-foreground">
+                    {{ getPlainText(cannedItem.content) }}
+                  </p>
+                </td>
+                <td class="px-6 py-4">
+                  <div
+                    class="flex items-center gap-1.5 opacity-0 transition-opacity group-hover:opacity-100"
+                  >
+                    <RelayButton
+                      v-tooltip.top="$t('CANNED_MGMT.EDIT.BUTTON_TEXT')"
+                      variant="ghost"
+                      size="icon"
+                      class="size-8 border border-transparent text-muted-foreground shadow-xs hover:border-border hover:bg-background hover:text-foreground"
+                      :disabled="loading[cannedItem.id]"
+                      @click="openEditPopup(cannedItem)"
+                    >
+                      <Icon icon="i-lucide-pencil" class="size-3.5" />
+                    </RelayButton>
+                    <RelayButton
+                      v-tooltip.top="$t('CANNED_MGMT.DELETE.BUTTON_TEXT')"
+                      variant="ghost"
+                      size="icon"
+                      class="size-8 border border-transparent text-muted-foreground shadow-xs hover:border-destructive/20 hover:bg-destructive/10 hover:text-destructive"
+                      :disabled="loading[cannedItem.id]"
+                      @click="openDeletePopup(cannedItem)"
+                    >
+                      <Icon icon="i-lucide-trash-2" class="size-3.5" />
+                    </RelayButton>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
     </template>
 
-    <RelayModal
-      :show="showAddPopup"
-      :title="$t('CANNED_MGMT.ADD.TITLE')"
-      :description="$t('CANNED_MGMT.ADD.DESC')"
-      size="lg"
-      @close="hideAddPopup"
-    >
-      <AddCanned :on-close="hideAddPopup" />
-    </RelayModal>
-
-    <RelayModal
-      :show="showEditPopup"
-      :title="`${$t('CANNED_MGMT.EDIT.TITLE')} - ${activeResponse.short_code}`"
-      size="lg"
-      @close="hideEditPopup"
-    >
-      <EditCanned
-        v-if="showEditPopup"
-        :id="activeResponse.id"
-        :edshort-code="activeResponse.short_code"
-        :edcontent="activeResponse.content"
-        :on-close="hideEditPopup"
-      />
-    </RelayModal>
+    <CannedModal
+      :show="showCannedModal"
+      :mode="cannedModalMode"
+      :selected-response="selectedResponse"
+      @close="hideCannedModal"
+    />
 
     <RelayConfirmModal
       :show="showDeleteConfirmationPopup"

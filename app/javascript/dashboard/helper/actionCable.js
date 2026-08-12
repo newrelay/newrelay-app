@@ -346,6 +346,8 @@ class ActionCableConnector extends BaseActionCableConnector {
 
 export default {
   init(store, pubsubToken) {
-    return new ActionCableConnector({ $store: store }, pubsubToken);
+    const connector = new ActionCableConnector({ $store: store }, pubsubToken);
+    window.actionCable = connector;
+    return connector;
   },
 };

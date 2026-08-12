@@ -11,12 +11,13 @@ import VideoCallButton from '../VideoCallButton.vue';
 import { INBOX_TYPES } from 'dashboard/helper/inbox';
 import { mapGetters } from 'vuex';
 import { RelayButton } from 'dashboard/components-next/relay';
+import CannedResponsesDropdown from '../conversation/CannedResponsesDropdown.vue';
 import EmojiInput from 'shared/components/emoji/EmojiInput.vue';
 import { vOnClickOutside } from '@vueuse/components';
 
 export default {
   name: 'ReplyBottomPanel',
-  components: { RelayButton, FileUpload, VideoCallButton, EmojiInput },
+  components: { RelayButton, FileUpload, VideoCallButton, EmojiInput, CannedResponsesDropdown },
   directives: { OnClickOutside: vOnClickOutside },
   mixins: [inboxMixin],
   props: {
@@ -147,7 +148,7 @@ export default {
     'selectContentTemplate',
     'toggleQuotedReply',
     'togglePrivateNote',
-    'openCannedResponses',
+    'selectCannedResponse',
     'openLogCall',
     'openMeeting',
   ],
@@ -323,9 +324,7 @@ export default {
     togglePrivateNote() {
       this.$emit('togglePrivateNote');
     },
-    openCannedResponses() {
-      this.$emit('openCannedResponses');
-    },
+
   },
 };
 </script>
@@ -407,15 +406,11 @@ export default {
       </RelayButton>
 
       <!-- Canned Responses -->
-      <RelayButton
+      <CannedResponsesDropdown
         v-if="showCannedResponsesButton"
-        v-tooltip.top-end="$t('CONVERSATION.REPLYBOX.TIP_CANNED_ICON')"
-        variant="ghost"
-        :class="toolbarIconButtonClass"
-        @click="openCannedResponses"
-      >
-        <span class="i-lucide-file-text size-4 shrink-0" />
-      </RelayButton>
+        :button-class="toolbarIconButtonClass"
+        @select="$emit('selectCannedResponse', $event)"
+      />
 
       <!-- Log Call -->
       <RelayButton

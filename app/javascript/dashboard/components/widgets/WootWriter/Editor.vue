@@ -11,7 +11,6 @@ import {
   nextTick,
 } from 'vue';
 
-import CannedResponse from '../conversation/CannedResponse.vue';
 import KeyboardEmojiSelector from './keyboardEmojiSelector.vue';
 import TagAgents from '../conversation/TagAgents.vue';
 import VariableList from '../conversation/VariableList.vue';
@@ -102,7 +101,6 @@ const emit = defineEmits([
   'typingOn',
   'typingOff',
   'toggleUserMention',
-  'toggleCannedMenu',
   'toggleVariablesMenu',
   'toggleToolsMenu',
   'clearSelection',
@@ -193,13 +191,11 @@ let editorView = null;
 let state = null;
 
 const showUserMentions = ref(false);
-const showCannedMenu = ref(false);
 const showVariables = ref(false);
 const showEmojiMenu = ref(false);
 const showToolsMenu = ref(false);
 const mentionSearchKey = ref('');
 const toolSearchKey = ref('');
-const cannedSearchTerm = ref('');
 const variableSearchTerm = ref('');
 const emojiSearchTerm = ref('');
 const range = ref(null);
@@ -237,12 +233,6 @@ const contentFromEditor = () => {
 
 const shouldShowVariables = computed(() => {
   return props.enableVariables && showVariables.value && !props.isPrivate;
-});
-
-const shouldShowCannedResponses = computed(() => {
-  return (
-    props.enableCannedResponses && showCannedMenu.value && !props.isPrivate
-  );
 });
 
 function createSuggestionPlugin({
@@ -299,12 +289,6 @@ const plugins = computed(() => {
       isAllowed: () => props.isPrivate || !props.enableCaptainTools,
     }),
     createSuggestionPlugin({
-      trigger: '/',
-      showMenu: showCannedMenu,
-      searchTerm: cannedSearchTerm,
-      isAllowed: () => !props.isPrivate,
-    }),
-    createSuggestionPlugin({
       trigger: '{{',
       showMenu: showVariables,
       searchTerm: variableSearchTerm,
@@ -336,9 +320,6 @@ const sendWithSignature = computed(() => {
 
 watch(showUserMentions, updatedValue => {
   emit('toggleUserMention', props.isPrivate && updatedValue);
-});
-watch(showCannedMenu, updatedValue => {
-  emit('toggleCannedMenu', !props.isPrivate && updatedValue);
 });
 watch(showVariables, updatedValue => {
   emit('toggleVariablesMenu', !props.isPrivate && updatedValue);
@@ -795,10 +776,8 @@ watch(
 watch(
   computed(() => props.editorId),
   () => {
-    showCannedMenu.value = false;
     showEmojiMenu.value = false;
     showVariables.value = false;
-    cannedSearchTerm.value = '';
     reloadState(props.modelValue);
   }
 );
@@ -859,12 +838,10 @@ onMounted(() => {
   }
 });
 
-function openCannedResponsesMenu() {
-  if (props.isPrivate) return;
-  showCannedMenu.value = true;
-  cannedSearchTerm.value = '';
-  focusEditorInputField();
+function insertCannedResponse(content) {
+  insertSpecialContent('cannedResponse', content);
 }
+
 
 function toggleEditorMark(markName) {
   if (!editorView) return;
@@ -876,7 +853,7 @@ function toggleEditorMark(markName) {
 
 defineExpose({
   focusEditorInputField,
-  openCannedResponsesMenu,
+  insertCannedResponse,
   toggleEditorMark,
 });
 
@@ -899,11 +876,6 @@ useEmitter(BUS_EVENTS.INSERT_INTO_RICH_EDITOR, insertContentIntoEditor);
       v-if="showUserMentions && isPrivate"
       :search-key="mentionSearchKey"
       @select-agent="content => insertSpecialContent('mention', content)"
-    />
-    <CannedResponse
-      v-if="shouldShowCannedResponses"
-      :search-key="cannedSearchTerm"
-      @replace="content => insertSpecialContent('cannedResponse', content)"
     />
     <VariableList
       v-if="shouldShowVariables"

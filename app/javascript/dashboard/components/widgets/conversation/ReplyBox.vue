@@ -139,7 +139,6 @@ export default {
       undefinedVariableMessage: '',
       showMentions: false,
       showUserMentions: false,
-      showCannedMenu: false,
       showVariablesMenu: false,
       newConversationModalActive: false,
       showArticleSearchPopover: false,
@@ -232,7 +231,7 @@ export default {
       }
       return this.isPrivate
         ? this.$t('CONVERSATION.FOOTER.PRIVATE_MSG_INPUT')
-        : "Shift + enter for new line. Start with '/' to select a Canned Response.";
+        : this.$t('CONVERSATION.FOOTER.MSG_INPUT');
     },
     isMessageLengthReachingThreshold() {
       return this.message.length > this.maxLength - 50;
@@ -728,7 +727,6 @@ export default {
       return (
         !this.showUserMentions &&
         !this.showMentions &&
-        !this.showCannedMenu &&
         !this.showVariablesMenu &&
         this.isFocused &&
         this.isEditorHotKeyEnabled(selectedKey)
@@ -771,9 +769,6 @@ export default {
     },
     toggleUserMention(currentMentionState) {
       this.showUserMentions = currentMentionState;
-    },
-    toggleCannedMenu(value) {
-      this.showCannedMenu = value;
     },
     toggleVariablesMenu(value) {
       this.showVariablesMenu = value;
@@ -1307,13 +1302,13 @@ export default {
         this.setReplyMode(REPLY_EDITOR_MODES.NOTE);
       }
     },
-    openCannedResponsesFromFooter() {
+    insertCannedResponseFromFooter(content) {
       if (this.copilot.isActive.value) {
         this.copilot.reset();
         this.setReplyMode(REPLY_EDITOR_MODES.REPLY);
       }
       this.$nextTick(() => {
-        this.messageEditor?.openCannedResponsesMenu?.();
+        this.messageEditor?.insertCannedResponse?.(content);
       });
     },
     onSubmitCopilotReply() {
@@ -1462,7 +1457,6 @@ export default {
             @focus="onFocus"
             @blur="onBlur"
             @toggle-user-mention="toggleUserMention"
-            @toggle-canned-menu="toggleCannedMenu"
             @toggle-variables-menu="toggleVariablesMenu"
             @clear-selection="clearEditorSelection"
             @execute-copilot-action="executeCopilotAction"
@@ -1539,7 +1533,7 @@ export default {
       @select-content-template="openContentTemplateModal"
       @toggle-insert-article="toggleInsertArticle"
       @toggle-quoted-reply="toggleQuotedReply"
-      @open-canned-responses="openCannedResponsesFromFooter"
+      @select-canned-response="insertCannedResponseFromFooter"
       @toggle-copilot="toggleInboxCopilot"
     />
     <ReplyBottomPanel
@@ -1579,7 +1573,7 @@ export default {
       @toggle-insert-article="toggleInsertArticle"
       @toggle-quoted-reply="toggleQuotedReply"
       @toggle-private-note="togglePrivateNoteFromFooter"
-      @open-canned-responses="openCannedResponsesFromFooter"
+      @select-canned-response="insertCannedResponseFromFooter"
       @open-log-call="showLogCallModal = true"
       @open-meeting="showMeetingModal = true"
     />

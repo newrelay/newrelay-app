@@ -4,6 +4,7 @@ import { useI18n } from 'vue-i18n';
 import { useRoute } from 'vue-router';
 import { useEmitter } from 'dashboard/composables/emitter';
 import { BUS_EVENTS } from 'shared/constants/busEvents';
+import { emitter } from 'shared/helpers/mitt';
 import {
   isAConversationRoute,
   isAInboxViewRoute,
@@ -15,6 +16,8 @@ const { t } = useI18n();
 const route = useRoute();
 
 const RECONNECTED_BANNER_TIMEOUT = 2000;
+const ONLINE_WAIT_TIMEOUT = 15000;
+const RECONNECT_WAIT_TIMEOUT = 15000;
 
 const showNotification = ref(!navigator.onLine);
 const isDisconnected = ref(false);
@@ -32,8 +35,66 @@ const canRefresh = computed(
   () => !isReconnecting.value && !isReconnected.value
 );
 
-const refreshPage = () => {
-  window.location.reload();
+const waitForOnline = () =>
+  new Promise(resolve => {
+    if (navigator.onLine) {
+      resolve(true);
+      return;
+    }
+
+    const timeout = setTimeout(() => {
+      window.removeEventListener('online', onOnline);
+      resolve(false);
+    }, ONLINE_WAIT_TIMEOUT);
+
+    const onOnline = () => {
+      clearTimeout(timeout);
+      window.removeEventListener('online', onOnline);
+      resolve(true);
+    };
+
+    window.addEventListener('online', onOnline);
+  });
+
+const waitForReconnectCompleted = () =>
+  new Promise(resolve => {
+    const timeout = setTimeout(() => {
+      emitter.off(BUS_EVENTS.WEBSOCKET_RECONNECT_COMPLETED, onCompleted);
+      resolve(false);
+    }, RECONNECT_WAIT_TIMEOUT);
+
+    const onCompleted = () => {
+      clearTimeout(timeout);
+      emitter.off(BUS_EVENTS.WEBSOCKET_RECONNECT_COMPLETED, onCompleted);
+      resolve(true);
+    };
+
+    emitter.on(BUS_EVENTS.WEBSOCKET_RECONNECT_COMPLETED, onCompleted);
+  });
+
+const retryConnection = async () => {
+  isReconnecting.value = true;
+  isReconnected.value = false;
+  showNotification.value = true;
+  clearTimeout(reconnectTimeout);
+
+  const isOnline = await waitForOnline();
+  if (!isOnline) {
+    isReconnecting.value = false;
+    return;
+  }
+
+  if (isDisconnected.value) {
+    const reconnectPromise = waitForReconnectCompleted();
+    window.actionCable?.checkConnection();
+    const reconnected = await reconnectPromise;
+    if (!reconnected) {
+      isReconnecting.value = false;
+    }
+    return;
+  }
+
+  handleReconnectionCompleted();
 };
 
 const closeNotification = () => {
@@ -76,6 +137,9 @@ const handleReconnecting = () => {
 const updateOnlineStatus = event => {
   if (event.type === 'offline') {
     showNotification.value = true;
+    isReconnecting.value = false;
+    isReconnected.value = false;
+    clearTimeout(reconnectTimeout);
   } else if (event.type === 'online' && !isDisconnected.value) {
     handleReconnectionCompleted();
   }
@@ -121,13 +185,13 @@ onBeforeUnmount(() => {
         <div class="flex items-center gap-2.5">
           <span
             v-if="isReconnecting"
-            class="i-lucide-loader-2 size-[16px] shrink-0 animate-spin"
+            class="i-lucide-loader-2 size-4 shrink-0 animate-spin"
           />
           <span
             v-else-if="isReconnected"
-            class="i-lucide-wifi size-[16px] shrink-0"
+            class="i-lucide-wifi size-4 shrink-0"
           />
-          <span v-else class="i-lucide-wifi-off size-[16px] shrink-0" />
+          <span v-else class="i-lucide-wifi-off size-4 shrink-0" />
 
           <span
             class="whitespace-nowrap text-[13.5px] font-semibold tracking-tight"
@@ -142,9 +206,9 @@ onBeforeUnmount(() => {
             type="button"
             class="flex size-7 shrink-0 items-center justify-center rounded-full transition-colors hover:bg-destructive/20 hover:text-destructive"
             :title="$t('NETWORK.BUTTON.REFRESH')"
-            @click="refreshPage"
+            @click="retryConnection"
           >
-            <span class="i-lucide-refresh-cw size-[15px]" />
+            <span class="i-lucide-refresh-cw size-4" />
           </button>
 
           <button
@@ -152,7 +216,7 @@ onBeforeUnmount(() => {
             class="flex size-7 shrink-0 items-center justify-center rounded-full transition-colors hover:bg-foreground/10"
             @click="closeNotification"
           >
-            <span class="i-lucide-x size-[15px]" />
+            <span class="i-lucide-x size-4" />
           </button>
         </div>
       </div>

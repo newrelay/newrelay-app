@@ -250,8 +250,6 @@ export default {
         </div>
       </div>
 
-      <div class="h-px bg-border/60 w-full mb-4" />
-
       <!-- Contact Metadata -->
       <div class="flex flex-col gap-2 min-w-0">
         <div v-if="contact.email" class="flex items-center gap-3">

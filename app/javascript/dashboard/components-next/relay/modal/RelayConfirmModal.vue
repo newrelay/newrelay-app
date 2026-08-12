@@ -68,7 +68,7 @@ const handleConfirm = () => {
   <TeleportWithDirection to="body">
     <div
       v-if="show"
-      class="fixed inset-0 z-50 flex items-center justify-center bg-n-alpha-black2 backdrop-blur-[4px]"
+      class="fixed inset-0 z-50 flex items-center justify-center bg-[#00000080] backdrop-blur-[4px]"
       @click.self="emit('close')"
     >
       <div

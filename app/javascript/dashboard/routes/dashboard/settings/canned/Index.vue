@@ -191,7 +191,7 @@ const confirmDeletion = () => {
             >
               <Icon
                 icon="i-lucide-message-square-off"
-                class="size-7 text-muted-foreground/70"
+                class="size-6 text-muted-foreground/70"
               />
             </div>
             <h3 class="mb-1.5 text-base font-semibold text-foreground">
@@ -208,7 +208,7 @@ const confirmDeletion = () => {
             <div
               class="inline-flex items-center gap-1.5 rounded-lg border border-primary/20 bg-primary/10 px-2.5 py-1 font-mono text-xs font-medium text-primary"
             >
-              <Icon icon="i-lucide-terminal" class="size-3 opacity-70" />
+              <Icon icon="i-lucide-terminal" class="size-3.5 text-muted-foreground" />
               {{ cannedItem.short_code }}
             </div>
           </template>
@@ -229,7 +229,7 @@ const confirmDeletion = () => {
               v-tooltip.top="$t('CANNED_MGMT.DELETE.BUTTON_TEXT')"
               variant="ghost"
               size="icon"
-              class="size-8 border border-transparent text-muted-foreground shadow-xs hover:border-red-100 hover:bg-red-50 hover:text-red-600"
+              class="size-8 border border-transparent text-muted-foreground shadow-xs hover:border-destructive/20 hover:bg-destructive/10 hover:text-destructive"
               :disabled="loading[cannedItem.id]"
               @click="openDeletePopup(cannedItem)"
             >

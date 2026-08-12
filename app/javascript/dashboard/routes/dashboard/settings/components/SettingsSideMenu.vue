@@ -96,16 +96,16 @@ const toggleSection = key => {
         @click="toggleSection(section.key)"
       >
         <span class="flex items-center gap-2">
-          <Icon :icon="section.icon" class="size-4 shrink-0" />
+          <Icon
+            :icon="section.icon"
+            class="size-4 shrink-0 text-muted-foreground transition-colors group-hover:text-foreground"
+          />
           {{ section.label }}
         </span>
-        <span
-          class="size-4 shrink-0 opacity-50 transition-opacity group-hover:opacity-100"
-          :class="
-            openSectionKey === section.key
-              ? 'i-lucide-chevron-down'
-              : 'i-lucide-chevron-right'
-          "
+        <Icon
+          icon="i-lucide-chevron-right"
+          class="size-4 shrink-0 text-muted-foreground opacity-50 transition-all group-hover:text-foreground group-hover:opacity-100"
+          :class="openSectionKey === section.key ? 'rotate-90' : ''"
         />
       </button>
 

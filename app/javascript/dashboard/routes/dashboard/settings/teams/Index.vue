@@ -267,7 +267,7 @@ const confirmPlaceHolderText = computed(() =>
             >
               <Icon
                 icon="i-lucide-users-round"
-                class="size-7 text-muted-foreground/70"
+                class="size-6 text-muted-foreground/70"
               />
             </div>
             <h3 class="mb-1.5 text-base font-semibold text-foreground">

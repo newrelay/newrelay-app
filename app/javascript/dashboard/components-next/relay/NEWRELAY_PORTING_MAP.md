@@ -8,12 +8,17 @@ Reference project: `/Users/deependrasankhala/Documents/chandresh/NewRelay-UI`
 (dev server: `http://localhost:5174`). Its tokens live in `src/style.css`; ours are a
 **direct 1:1 port** in `app/javascript/dashboard/assets/scss/_relay-theme.scss`.
 
-Last synced with NewRelay-UI `main`: **2026-08-11** (commit `c704807`). §2 UI components
-to unchanged; since `ba1cbcf`: **settings subpages** restyled with the shared settings shell
-(§3.1), **InboxReplyComposer** ported for inbox reply UX, inbox settings flow mapping (§3.1
-inboxes row), conversations **onboarding empty state** and a restyled **sidebar network
-toaster** (§4). Companies / Contacts / Inbox list views got styling refinements only —
-existing mappings still hold.
+Last synced with NewRelay-UI `main`: **2026-08-12** (commit `df96229`). **Tokens unchanged**
+(`src/style.css` not touched). Since `c704807`: a full **voice-call UI** landed in
+`conversations/ConversationsView.vue` — an active/incoming **call overlay** (states
+`ringing` / `connected` / `incoming` / `ended`, duration timer, mute / speaker / hangup /
+keypad / video controls) → maps to Chatwoot `components-next/call/FloatingCallWidget.vue` +
+`components-next/call/CallCard.vue` (§3 conversations row). Also refined: **InboxSettingsFlow**
+(§3.1 inboxes), support **ArticlesList**, and `ui/Badge` + `ui/DropdownMenu` (§2, minor).
+Earlier (since `ba1cbcf`): **settings subpages** restyled with the shared settings shell
+(§3.1), **InboxReplyComposer** ported for inbox reply UX, conversations **onboarding empty
+state** and a restyled **sidebar network toaster** (§4). Companies / Contacts / Inbox list
+views got styling refinements only — existing mappings still hold.
 
 ---
 
@@ -85,7 +90,7 @@ the matching view; the section recipes (§4) still apply.
 | NewRelay `src/views/…` | Chatwoot location |
 | --- | --- |
 | `reports/ReportsView.vue` | `routes/dashboard/settings/reports/` — Overview=`LiveReports.vue`, wrapper=`components/ReportsWrapper.vue`, tables=`components/SummaryReports.vue`, cards=`components/overview/MetricCard.vue` + `components/overview/{Agent,Team}Table.vue`, heatmap=`components/heatmaps/BaseHeatmap.vue`, CSAT=`CsatResponses.vue`+`components/Csat*` |
-| `conversations/ConversationsView.vue` | `routes/dashboard/conversation/`; list header + Mine/Unassigned/All tabs = `components/ChatList.vue`; rows = `components-next/Conversation/ConversationCard/` |
+| `conversations/ConversationsView.vue` | `routes/dashboard/conversation/`; list header + Mine/Unassigned/All tabs = `components/ChatList.vue`; rows = `components-next/Conversation/ConversationCard/`; **voice-call overlay / incoming-call widget** (ringing/connected/incoming states, duration timer, mute/speaker/hangup/keypad) = `components-next/call/FloatingCallWidget.vue` + `components-next/call/CallCard.vue`, in-card status = `components-next/Conversation/ConversationCard/VoiceCallStatus.vue` |
 | `inbox/InboxView.vue` | `routes/dashboard/inbox/`; inbox rows = `components-next/Inbox/InboxCard.vue`; thread reply composer = `components/widgets/conversation/InboxReplyComposer.vue` (used from conversation/inbox message views) |
 | `companies/CompaniesView.vue` / `contacts/ContactsView.vue` | `routes/dashboard/companies/` / `routes/dashboard/contacts/` |
 | `campaigns/{LiveChat,SMS,WhatsApp}CampaignsView.vue` | `routes/dashboard/campaigns/` |
@@ -250,6 +255,26 @@ Never use `woot-modal` / `woot-modal-header` for new settings modals.
 </RelayModal>
 ```
 
+
+
+### Icons (settings lists & forms)
+
+| Context | Icon size | Color class | Notes |
+| --- | --- | --- | --- |
+| Search input adornment | `size-4` | `text-muted-foreground` | `left-3`, input `pl-9 h-9` |
+| List row action button | `size-8` button | — | `variant="ghost" size="icon"` |
+| Icon inside row action | `size-3.5` | inherits `currentColor` from button | pencil/trash/sliders |
+| Edit action hover | — | `text-muted-foreground` → `hover:text-foreground hover:bg-background hover:border-border` | |
+| Delete action hover | — | `hover:text-destructive hover:bg-destructive/10 hover:border-destructive/20` | **never** `red-50`/`red-600` (breaks dark mode) |
+| Empty state circle icon | `size-6` | `text-muted-foreground` or `/70` | inside `size-16 rounded-full` |
+| Leading avatar/channel icon | `size-4` | `text-muted-foreground` | inside `size-10 rounded-xl` box |
+| Chevron in selects/back | `size-4` | `text-muted-foreground/60` | |
+| Section/card header icon | `size-4` | `text-muted-foreground` or `text-primary` in `bg-primary/10` box | |
+| Settings sidemenu chevron | `size-4` | `text-muted-foreground opacity-50 group-hover:opacity-100` | single `chevron-right` + `rotate-90` when open — do not swap down/right icons |
+| Settings sidemenu section icon | `size-4` | `text-muted-foreground group-hover:text-foreground` | |
+
+Row actions visibility (`SettingsListRow`): `opacity-0 group-hover:opacity-100` on actions container.
+Table rows: add `group` class on `<tr>`, actions div `opacity-0 group-hover:opacity-100` (not `opacity-60`).
 
 ### Live badge (emerald pill)
 ```html

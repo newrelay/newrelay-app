@@ -256,18 +256,18 @@ const confirmDeletion = () => {
                       <div class="flex items-center justify-center gap-2">
                         <RelayButton
                           v-tooltip.top="$t('CUSTOM_ROLE.EDIT.BUTTON_TEXT')"
-                          variant="outline"
+                          variant="ghost"
                           size="icon"
-                          class="size-8 border-border/60 bg-background text-muted-foreground shadow-none hover:bg-muted/50 hover:text-foreground"
+                          class="size-8 border border-transparent text-muted-foreground shadow-xs hover:border-border hover:bg-background hover:text-foreground"
                           @click="openEditModal(role)"
                         >
                           <Icon icon="i-lucide-pencil" class="size-3.5" />
                         </RelayButton>
                         <RelayButton
                           v-tooltip.top="$t('CUSTOM_ROLE.DELETE.BUTTON_TEXT')"
-                          variant="outline"
+                          variant="ghost"
                           size="icon"
-                          class="size-8 border-border/60 bg-background text-muted-foreground shadow-none hover:bg-destructive/10 hover:text-destructive"
+                          class="size-8 border border-transparent text-muted-foreground shadow-xs hover:border-destructive/20 hover:bg-destructive/10 hover:text-destructive"
                           :disabled="loading[role.id]"
                           @click="openDeletePopup(role)"
                         >

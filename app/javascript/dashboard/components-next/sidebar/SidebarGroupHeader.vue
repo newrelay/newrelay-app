@@ -85,7 +85,7 @@ const isHighlighted = computed(() => props.isActive || props.hasActiveChild);
     </div>
     <span
       v-if="expandable"
-      class="i-lucide-chevron-right ml-auto size-4 shrink-0 text-muted-foreground transition-transform duration-200"
+      class="i-lucide-chevron-right ml-auto size-4 shrink-0 text-muted-foreground opacity-50 transition-all group-hover:opacity-100"
       :class="[{ 'rotate-90': isExpanded }]"
       @click.stop="emit('toggle')"
     />

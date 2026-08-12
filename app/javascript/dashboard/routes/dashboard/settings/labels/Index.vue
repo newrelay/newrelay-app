@@ -152,7 +152,7 @@ onBeforeMount(() => {
               <tr
                 v-for="label in filteredRecords"
                 :key="label.title"
-                class="bg-card transition-colors hover:bg-muted/10"
+                class="group bg-card transition-colors hover:bg-muted/10"
               >
                 <td class="px-6 py-4 text-[14px] font-medium text-foreground">
                   {{ label.title }}
@@ -175,13 +175,13 @@ onBeforeMount(() => {
                 </td>
                 <td class="px-6 py-4">
                   <div
-                    class="flex items-center gap-1.5 opacity-60 transition-opacity hover:opacity-100"
+                    class="flex items-center gap-1.5 opacity-0 transition-opacity group-hover:opacity-100"
                   >
                     <RelayButton
                       v-tooltip.top="$t('LABEL_MGMT.FORM.EDIT')"
                       variant="ghost"
                       size="icon"
-                      class="size-7 border border-transparent text-muted-foreground hover:border-border hover:bg-muted/50 hover:text-foreground"
+                      class="size-8 border border-transparent text-muted-foreground shadow-xs hover:border-border hover:bg-background hover:text-foreground"
                       :disabled="loading[label.id]"
                       @click="openEditPopup(label)"
                     >
@@ -191,7 +191,7 @@ onBeforeMount(() => {
                       v-tooltip.top="$t('LABEL_MGMT.FORM.DELETE')"
                       variant="ghost"
                       size="icon"
-                      class="size-7 border border-transparent text-muted-foreground hover:border-red-100 hover:bg-red-50 hover:text-red-600"
+                      class="size-8 border border-transparent text-muted-foreground shadow-xs hover:border-destructive/20 hover:bg-destructive/10 hover:text-destructive"
                       :disabled="loading[label.id]"
                       @click="openDeletePopup(label)"
                     >

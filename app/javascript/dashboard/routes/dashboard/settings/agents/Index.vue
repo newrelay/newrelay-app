@@ -217,7 +217,7 @@ const confirmDeletion = () => {
             >
               <Icon
                 icon="i-lucide-users"
-                class="size-7 text-muted-foreground/70"
+                class="size-6 text-muted-foreground/70"
               />
             </div>
             <h3 class="mb-1.5 text-base font-semibold text-foreground">
@@ -312,7 +312,7 @@ const confirmDeletion = () => {
               v-tooltip.top="$t('AGENT_MGMT.DELETE.BUTTON_TEXT')"
               variant="ghost"
               size="icon"
-              class="size-8 border border-transparent text-muted-foreground shadow-xs hover:border-red-100 hover:bg-red-50 hover:text-red-600"
+              class="size-8 border border-transparent text-muted-foreground shadow-xs hover:border-destructive/20 hover:bg-destructive/10 hover:text-destructive"
               :disabled="loading[agent.id]"
               @click="openDeletePopup(agent, index)"
             >

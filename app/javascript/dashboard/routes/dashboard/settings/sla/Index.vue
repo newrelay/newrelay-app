@@ -244,7 +244,7 @@ export default {
               <tr
                 v-for="sla in filteredRecords"
                 :key="sla.id"
-                class="bg-card transition-colors hover:bg-muted/10"
+                class="group bg-card transition-colors hover:bg-muted/10"
               >
                 <td class="px-6 py-4">
                   <div class="flex min-w-0 flex-col gap-1">
@@ -296,13 +296,13 @@ export default {
                 </td>
                 <td class="px-6 py-4">
                   <div
-                    class="flex items-center justify-end gap-1.5 opacity-60 transition-opacity hover:opacity-100"
+                    class="flex items-center justify-end gap-1.5 opacity-0 transition-opacity group-hover:opacity-100"
                   >
                     <RelayButton
                       v-tooltip.top="$t('SLA.FORM.DELETE')"
                       variant="ghost"
                       size="icon"
-                      class="size-7 border border-transparent text-muted-foreground hover:border-border hover:bg-muted/50 hover:text-destructive"
+                      class="size-8 border border-transparent text-muted-foreground shadow-xs hover:border-destructive/20 hover:bg-destructive/10 hover:text-destructive"
                       :disabled="loading[sla.id]"
                       @click="openDeletePopup(sla)"
                     >

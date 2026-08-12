@@ -14,6 +14,7 @@ import SettingsToggleSection from 'dashboard/components-next/Settings/SettingsTo
 import DropdownMenu from 'dashboard/components-next/dropdown-menu/DropdownMenu.vue';
 import Icon from 'dashboard/components-next/icon/Icon.vue';
 import TagInput from 'dashboard/components-next/taginput/TagInput.vue';
+import { RelayModal } from 'dashboard/components-next/relay';
 import assignmentPoliciesAPI from 'dashboard/api/assignmentPolicies';
 import { useI18n } from 'vue-i18n';
 
@@ -668,32 +669,25 @@ onMounted(() => {
       </SettingsToggleSection>
     </SettingsAccordion>
 
-    <woot-modal
-      v-if="showDeleteConfirmModal"
+    <RelayModal
       :show="showDeleteConfirmModal"
-      :on-close="cancelDeletePolicy"
+      :title="$t('INBOX_MGMT.ASSIGNMENT_POLICY.DELETE_CONFIRM_TITLE')"
+      :description="$t('INBOX_MGMT.ASSIGNMENT_POLICY.DELETE_CONFIRM_MESSAGE')"
+      @close="cancelDeletePolicy"
     >
-      <div class="p-6">
-        <h3 class="text-lg font-medium text-n-slate-12 mb-4">
-          {{ $t('INBOX_MGMT.ASSIGNMENT_POLICY.DELETE_CONFIRM_TITLE') }}
-        </h3>
-        <p class="text-sm text-n-slate-11 mb-6 ml-13">
-          {{ $t('INBOX_MGMT.ASSIGNMENT_POLICY.DELETE_CONFIRM_MESSAGE') }}
-        </p>
-        <div class="flex justify-end gap-2">
-          <NextButton
-            color="slate"
-            :label="$t('INBOX_MGMT.ASSIGNMENT_POLICY.CANCEL')"
-            @click="cancelDeletePolicy"
-          />
-          <NextButton
-            color="ruby"
-            :label="$t('INBOX_MGMT.ASSIGNMENT_POLICY.CONFIRM_DELETE')"
-            :is-loading="isDeletingPolicy"
-            @click="deleteAssignmentPolicy"
-          />
-        </div>
+      <div class="flex justify-end gap-2 px-7 pb-6">
+        <NextButton
+          color="slate"
+          :label="$t('INBOX_MGMT.ASSIGNMENT_POLICY.CANCEL')"
+          @click="cancelDeletePolicy"
+        />
+        <NextButton
+          color="ruby"
+          :label="$t('INBOX_MGMT.ASSIGNMENT_POLICY.CONFIRM_DELETE')"
+          :is-loading="isDeletingPolicy"
+          @click="deleteAssignmentPolicy"
+        />
       </div>
-    </woot-modal>
+    </RelayModal>
   </div>
 </template>

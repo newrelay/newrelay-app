@@ -145,9 +145,11 @@ export default {
         </div>
       </div>
     </template>
-    <woot-modal v-model:show="showAddHookModal" :on-close="hideAddHookModal">
-      <NewHook :integration-id="integrationId" @close="hideAddHookModal" />
-    </woot-modal>
+    <NewHook
+      :show="showAddHookModal"
+      :integration-id="integrationId"
+      @close="hideAddHookModal"
+    />
 
     <woot-delete-modal
       v-model:show="showDeleteConfirmationPopup"

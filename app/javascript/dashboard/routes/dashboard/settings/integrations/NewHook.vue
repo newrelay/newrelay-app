@@ -7,16 +7,22 @@ import { FormKit } from '@formkit/vue';
 import { useBranding } from 'shared/composables/useBranding';
 
 import NextButton from 'dashboard/components-next/button/Button.vue';
+import { RelayModal } from 'dashboard/components-next/relay';
 
 export default {
   components: {
     FormKit,
     NextButton,
+    RelayModal,
   },
   props: {
     integrationId: {
       type: String,
       required: true,
+    },
+    show: {
+      type: Boolean,
+      default: false,
     },
   },
   emits: ['close'],
@@ -123,15 +129,16 @@ export default {
 </script>
 
 <template>
-  <div class="flex flex-col h-auto overflow-auto integration-hooks">
-    <woot-modal-header
-      :header-title="integration.name"
-      :header-content="replaceInstallationName(integration.short_description)"
-    />
+  <RelayModal
+    :show="show"
+    :title="integration.name"
+    :description="replaceInstallationName(integration.short_description)"
+    @close="onClose"
+  >
     <FormKit
       v-model="values"
       type="form"
-      form-class="w-full grid gap-4"
+      form-class="w-full grid gap-4 px-7 pb-2 integration-hooks"
       :submit-attrs="{
         inputClass: 'hidden',
         wrapperClass: 'hidden',
@@ -151,7 +158,9 @@ export default {
         validation="required"
         validation-name="Inbox"
       />
-      <div class="flex flex-row justify-end w-full gap-2 px-0 py-2">
+      <div
+        class="-mx-7 mt-2 flex flex-row justify-end gap-3 border-t border-border/40 px-7 pt-6 pb-6"
+      >
         <NextButton
           faded
           slate
@@ -166,7 +175,7 @@ export default {
         />
       </div>
     </FormKit>
-  </div>
+  </RelayModal>
 </template>
 
 <style lang="css">

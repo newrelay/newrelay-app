@@ -133,7 +133,7 @@ defineExpose({ open, close });
         <form
           ref="dialogContentRef"
           data-relay
-          class="flex h-auto w-full flex-col gap-6 overflow-visible rounded-xl border border-border bg-card p-6 text-start align-middle shadow-xl transition-all duration-300 ease-in-out transform"
+          class="flex h-auto w-full flex-col gap-6 overflow-visible rounded-xl border border-border/40 bg-card p-6 text-start align-middle shadow-xl transition-all duration-300 ease-in-out transform"
           @submit.prevent="confirm"
           @click.stop
         >
@@ -182,7 +182,9 @@ defineExpose({ open, close });
 
 <style scoped>
 dialog::backdrop {
-  @apply bg-n-alpha-black2 backdrop-blur-[4px];
+  background-color: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
 }
 
 .dialog-position-top {

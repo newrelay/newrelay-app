@@ -90,7 +90,7 @@ the matching view; the section recipes (§4) still apply.
 | NewRelay `src/views/…` | Chatwoot location |
 | --- | --- |
 | `reports/ReportsView.vue` | `routes/dashboard/settings/reports/` — Overview=`LiveReports.vue`, wrapper=`components/ReportsWrapper.vue`, tables=`components/SummaryReports.vue`, cards=`components/overview/MetricCard.vue` + `components/overview/{Agent,Team}Table.vue`, heatmap=`components/heatmaps/BaseHeatmap.vue`, CSAT=`CsatResponses.vue`+`components/Csat*` |
-| `conversations/ConversationsView.vue` | `routes/dashboard/conversation/`; list header + Mine/Unassigned/All tabs = `components/ChatList.vue`; rows = `components-next/Conversation/ConversationCard/`; **voice-call overlay / incoming-call widget** (ringing/connected/incoming states, duration timer, mute/speaker/hangup/keypad) = `components-next/call/FloatingCallWidget.vue` + `components-next/call/CallCard.vue`, in-card status = `components-next/Conversation/ConversationCard/VoiceCallStatus.vue` |
+| `conversations/ConversationsView.vue` | `routes/dashboard/conversation/`; list header + Mine/Unassigned/All tabs = `components/ChatList.vue` (overview panel width `w-[240px]`); rows = `components-next/Conversation/ConversationCard/`; **voice-call overlay / incoming-call widget** (ringing/connected/incoming states, duration timer, mute/speaker/hangup/keypad) = `components-next/call/FloatingCallWidget.vue` + `components-next/call/CallCard.vue`, in-card status = `components-next/Conversation/ConversationCard/VoiceCallStatus.vue` |
 | `inbox/InboxView.vue` | `routes/dashboard/inbox/`; inbox rows = `components-next/Inbox/InboxCard.vue`; thread reply composer = `components/widgets/conversation/InboxReplyComposer.vue` (used from conversation/inbox message views) |
 | `companies/CompaniesView.vue` / `contacts/ContactsView.vue` | `routes/dashboard/companies/` / `routes/dashboard/contacts/` |
 | `campaigns/{LiveChat,SMS,WhatsApp}CampaignsView.vue` | `routes/dashboard/campaigns/` |
@@ -258,6 +258,8 @@ Never use `woot-modal` / `woot-modal-header` for new settings modals.
 
 
 ### Icons (settings lists & forms)
+
+Mask icons (`i-lucide-*` classes from `@egoist/tailwindcss-icons`) use a 24×24 viewBox in the SVG data URL — that is normal and not the sizing bug. The plugin sets `width/height: 1em`, which inherits the parent font size (e.g. `text-sm` → 14px) and overrides Tailwind `size-*` utilities. NewRelay uses `lucide-vue-next` SVG components with explicit rem sizing instead. For mask icons, `tailwind.config.js` re-applies rem-based `size-*` dimensions via a custom plugin and sets `flex-shrink: 0` in `extraProperties`.
 
 | Context | Icon size | Color class | Notes |
 | --- | --- | --- | --- |

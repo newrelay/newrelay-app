@@ -932,7 +932,7 @@ watch(conversationFilters, (newVal, oldVal) => {
     class="flex flex-col flex-shrink-0 conversations-list-wrap bg-card relative border-r border-border"
     :class="[
       { hidden: !showConversationList },
-      isOnExpandedLayout ? 'basis-full' : 'w-[300px] lg:w-[320px]',
+      isOnExpandedLayout ? 'basis-full' : 'w-[240px]',
     ]"
   >
     <slot />

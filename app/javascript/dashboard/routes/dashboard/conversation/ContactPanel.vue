@@ -44,6 +44,7 @@ const {
 } = useUISettings();
 
 const dragging = ref(false);
+const hasAiSummary = ref(false);
 const conversationSidebarItems = ref([]);
 
 const shopifyIntegration = useFunctionGetter(
@@ -141,6 +142,7 @@ onMounted(() => {
       @panel-close="closeContactPanel"
     />
     <AccordionItem
+      v-if="hasAiSummary"
       :title="$t('CONVERSATION.AI_SUMMARY.TITLE')"
       icon="i-lucide-sparkles"
       :is-open="isContactSidebarItemOpen('is_ai_summary_open', true)"
@@ -149,6 +151,7 @@ onMounted(() => {
       <ConversationAiSummary
         :conversation-id="conversationId"
         :contact="contact"
+        @update:has-summary="val => hasAiSummary = val"
       />
     </AccordionItem>
     <div class="list-group">

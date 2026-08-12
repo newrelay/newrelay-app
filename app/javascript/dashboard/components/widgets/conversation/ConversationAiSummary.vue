@@ -41,20 +41,28 @@ const contactAttributeTakeaways = computed(() => {
     .map(([key, value]) => `${key}: ${value}`);
 });
 
+const emit = defineEmits(['update:hasSummary']);
+
 const summaryBullets = computed(() => {
-  if (summaryText.value) {
-    return summaryText.value
-      .split(/\n+/)
-      .map(line => line.replace(/^[-•*]\s*/, '').trim())
-      .filter(Boolean)
-      .slice(0, 6);
-  }
-  if (labelTakeaways.value.length) return labelTakeaways.value;
-  if (contactAttributeTakeaways.value.length) {
-    return contactAttributeTakeaways.value;
-  }
-  return [];
+  if (!summaryText.value) return [];
+  return summaryText.value
+    .split(/\n+/)
+    .map(line => line.replace(/^[-•*]\s*/, '').trim())
+    .filter(Boolean)
+    .slice(0, 6);
 });
+
+const hasSummary = computed(() => {
+  return captainTasksEnabled.value && (!!summaryText.value || summaryBullets.value.length > 0);
+});
+
+watch(
+  hasSummary,
+  val => {
+    emit('update:hasSummary', val);
+  },
+  { immediate: true }
+);
 
 const nextBestAction = computed(() => {
   const labels = labelTakeaways.value.map(l => l.toLowerCase());

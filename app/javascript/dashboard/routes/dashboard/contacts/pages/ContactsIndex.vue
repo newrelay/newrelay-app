@@ -235,7 +235,7 @@ const fetchSavedOrAppliedFilteredContact = async (
   page = 1,
   options = {}
 ) => {
-  if (!activeSegmentId.value && !hasAppliedFilters.value) return;
+  if (!payload && !activeSegmentId.value && !hasAppliedFilters.value) return;
 
   const { clearSelection: shouldClearSelection = true } = options;
   if (shouldClearSelection) {

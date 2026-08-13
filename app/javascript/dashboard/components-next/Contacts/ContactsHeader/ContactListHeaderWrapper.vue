@@ -184,6 +184,7 @@ const clearFilters = async () => {
 
 const onApplyFilter = async payload => {
   payload = useSnakeCase(payload);
+  store.dispatch('contacts/setContactFilters', payload);
   segmentsQuery.value = filterQueryGenerator(payload);
   emit('applyFilter', filterQueryGenerator(payload));
   showFiltersModal.value = false;

@@ -49,8 +49,23 @@ export default {
     const { width: windowWidth } = useWindowSize();
     const callsStore = useCallsStore();
     const getAccount = useMapGetter('accounts/getAccount');
-    const globalConfig = useMapGetter('globalConfig/get');
     const { t } = useI18n();
+
+    // Dev testing helper to trigger incoming call UI overlay on screen
+    window.triggerIncomingCall = (options = {}) => {
+      callsStore.addCall({
+        callSid: 'test_incoming_' + Date.now(),
+        conversationId: options.conversationId || 276,
+        inboxId: options.inboxId || 1,
+        callDirection: 'incoming',
+        caller: {
+          name: options.name || 'John Smith',
+          phoneNumber: options.phoneNumber || '+1 (555) 123-4567',
+          avatar: options.avatar || 'https://i.pravatar.cc/150?u=1',
+        },
+      });
+      console.log('🔔 Incoming call UI triggered on screen!');
+    };
 
     const activeLayout = computed(() => {
       if (!accountId.value) return 'classic';

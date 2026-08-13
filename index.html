@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>DakshAI Dashboard (Frontend Standalone)</title>
+    <link rel="icon" type="image/svg+xml" href="/brand-assets/logo_thumbnail.svg" />
+    <script>
+      window.chatwootConfig = {
+        hostURL: window.location.origin,
+        helpCenterURL: '',
+        apiHost: '',
+        signupEnabled: 'true',
+        isEnterprise: 'false',
+        enabledLanguages: [
+          { name: "English", iso_639_1_code: "en" }
+        ],
+        selectedLocale: 'en'
+      };
+      window.globalConfig = {
+        INSTALLATION_NAME: 'DakshAI',
+        LOGO: '/brand-assets/logo.svg',
+        LOGO_THUMBNAIL: '/brand-assets/logo_thumbnail.svg',
+      };
+      window.browserConfig = {
+        browser_name: 'Chrome',
+      };
+    </script>
+  </head>
+  <body class="text-slate-600">
+    <div id="app"></div>
+    <script type="module" src="/app/javascript/entrypoints/dashboard.js"></script>
+  </body>
+</html>

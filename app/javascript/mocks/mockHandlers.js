@@ -2,73 +2,83 @@
 
 export const mockProfile = {
   id: 1,
-  name: "John Doe",
-  email: "john.doe@example.com",
+  name: 'John Doe',
+  email: 'john.doe@example.com',
   account_id: 1,
-  role: "administrator",
-  avatar_url: "https://avatar.iran.liara.run/public/32",
+  role: 'administrator',
+  pubsub_token: 'mock-pubsub-token',
+  avatar_url: 'https://avatar.iran.liara.run/public/32',
+  ui_settings: { locale: 'en' },
   accounts: [
     {
       id: 1,
-      name: "DakshAI Workspace",
-      role: "administrator",
-      status: "active",
-      locale: "en"
-    }
-  ]
+      name: 'DakshAI Workspace',
+      role: 'administrator',
+      status: 'active',
+      locale: 'en',
+      availability: 'online',
+      auto_offline: false,
+    },
+  ],
 };
 
 export const mockAccount = {
   id: 1,
-  name: "DakshAI Workspace",
-  role: "administrator",
-  status: "active",
-  locale: "en",
-  custom_attributes: {}
+  name: 'DakshAI Workspace',
+  role: 'administrator',
+  status: 'active',
+  locale: 'en',
+  created_at: '2026-01-01T00:00:00.000Z',
+  custom_attributes: {},
+  features: {
+    inbound_emails: true,
+    channel_facebook: true,
+    channel_whatsapp: true,
+  },
 };
 
 export const mockInboxes = [
   {
     id: 1,
-    name: "Website Widget",
-    channel_type: "Channel::WebWidget",
-    avatar_url: ""
+    name: 'Website Widget',
+    channel_type: 'Channel::WebWidget',
+    avatar_url: '',
   },
   {
     id: 2,
-    name: "WhatsApp Support",
-    channel_type: "Channel::Whatsapp",
-    avatar_url: ""
+    name: 'WhatsApp Support',
+    channel_type: 'Channel::Whatsapp',
+    avatar_url: '',
   },
   {
     id: 3,
-    name: "Support Email",
-    channel_type: "Channel::Email",
-    avatar_url: ""
-  }
+    name: 'Support Email',
+    channel_type: 'Channel::Email',
+    avatar_url: '',
+  },
 ];
 
 export const mockAgents = [
   {
     id: 1,
-    name: "John Doe",
-    email: "john.doe@example.com",
-    role: "administrator",
-    availability_status: "online"
+    name: 'John Doe',
+    email: 'john.doe@example.com',
+    role: 'administrator',
+    availability_status: 'online',
   },
   {
     id: 2,
-    name: "Sarah Smith",
-    email: "sarah.smith@example.com",
-    role: "agent",
-    availability_status: "online"
-  }
+    name: 'Sarah Smith',
+    email: 'sarah.smith@example.com',
+    role: 'agent',
+    availability_status: 'online',
+  },
 ];
 
 export const mockLabels = [
-  { id: 1, title: "urgent", color: "#EF4444", show_on_sidebar: true },
-  { id: 2, title: "billing", color: "#3B82F6", show_on_sidebar: true },
-  { id: 3, title: "feature_request", color: "#10B981", show_on_sidebar: true }
+  { id: 1, title: 'urgent', color: '#EF4444', show_on_sidebar: true },
+  { id: 2, title: 'billing', color: '#3B82F6', show_on_sidebar: true },
+  { id: 3, title: 'feature_request', color: '#10B981', show_on_sidebar: true },
 ];
 
 export const mockConversations = {
@@ -76,15 +86,15 @@ export const mockConversations = {
     mine_count: 5,
     unassigned_count: 2,
     all_count: 7,
-    assigned_count: 5
+    assigned_count: 5,
   },
   payload: [
     {
       id: 1,
       account_id: 1,
       inbox_id: 1,
-      status: "open",
-      priority: "urgent",
+      status: 'open',
+      priority: 'urgent',
       unread_count: 1,
       agent_last_seen_at: 1723500000,
       user_last_seen_at: 1723500500,
@@ -93,46 +103,47 @@ export const mockConversations = {
       meta: {
         sender: {
           id: 101,
-          name: "Alice Johnson",
-          email: "alice@example.com",
-          thumbnail: "https://avatar.iran.liara.run/public/65"
+          name: 'Alice Johnson',
+          email: 'alice@example.com',
+          thumbnail: 'https://avatar.iran.liara.run/public/65',
         },
         assignee: {
           id: 1,
-          name: "John Doe",
-          email: "john.doe@example.com"
+          name: 'John Doe',
+          email: 'john.doe@example.com',
         },
-        channel: "Channel::WebWidget"
+        channel: 'Channel::WebWidget',
       },
       messages: [
         {
           id: 1001,
-          content: "Hello! I need help with my account billing.",
+          content: 'Hello! I need help with my account billing.',
           message_type: 0,
           created_at: 1723500000,
           sender: {
             id: 101,
-            name: "Alice Johnson",
-            thumbnail: "https://avatar.iran.liara.run/public/65"
-          }
+            name: 'Alice Johnson',
+            thumbnail: 'https://avatar.iran.liara.run/public/65',
+          },
         },
         {
           id: 1002,
-          content: "Hi Alice! I'd be happy to assist you with your billing inquiry.",
+          content:
+            "Hi Alice! I'd be happy to assist you with your billing inquiry.",
           message_type: 1,
           created_at: 1723500500,
           sender: {
             id: 1,
-            name: "John Doe"
-          }
-        }
-      ]
+            name: 'John Doe',
+          },
+        },
+      ],
     },
     {
       id: 2,
       account_id: 1,
       inbox_id: 2,
-      status: "open",
+      status: 'open',
       priority: null,
       unread_count: 0,
       timestamp: 1723490000,
@@ -140,91 +151,122 @@ export const mockConversations = {
       meta: {
         sender: {
           id: 102,
-          name: "Bob Williams",
-          email: "bob@example.com",
-          thumbnail: "https://avatar.iran.liara.run/public/44"
+          name: 'Bob Williams',
+          email: 'bob@example.com',
+          thumbnail: 'https://avatar.iran.liara.run/public/44',
         },
         assignee: null,
-        channel: "Channel::Whatsapp"
+        channel: 'Channel::Whatsapp',
       },
       messages: [
         {
           id: 2001,
-          content: "Is support available over WhatsApp right now?",
+          content: 'Is support available over WhatsApp right now?',
           message_type: 0,
           created_at: 1723490000,
           sender: {
             id: 102,
-            name: "Bob Williams",
-            thumbnail: "https://avatar.iran.liara.run/public/44"
-          }
-        }
-      ]
-    }
-  ]
+            name: 'Bob Williams',
+            thumbnail: 'https://avatar.iran.liara.run/public/44',
+          },
+        },
+      ],
+    },
+  ],
 };
 
 export const handleMockRequest = (reqUrl, method) => {
-  const url = new URL(reqUrl, "http://localhost");
+  const url = new URL(reqUrl, 'http://localhost');
   const path = url.pathname;
 
   // Profile & Auth
-  if (path.includes("/api/v1/profile") || path.includes("/auth/validate_token")) {
-    return { status: 200, data: { payload: { data: mockProfile }, data: mockProfile } };
+  if (
+    path.includes('/api/v1/profile') ||
+    path.includes('/auth/validate_token')
+  ) {
+    return {
+      status: 200,
+      data: { payload: { data: mockProfile }, data: mockProfile },
+    };
   }
 
-  if (path.includes("/auth/sign_in")) {
-    return { status: 200, data: { payload: { data: mockProfile }, data: mockProfile } };
+  if (path.includes('/auth/sign_in')) {
+    return {
+      status: 200,
+      data: { payload: { data: mockProfile }, data: mockProfile },
+    };
   }
 
   // Accounts list or single account details
-  if (path.match(/\/api\/v1\/accounts\/?$/) || path.match(/\/api\/v1\/accounts\/\d+\/?$/)) {
+  if (
+    path.match(/\/api\/v1\/accounts\/?$/) ||
+    path.match(/\/api\/v1\/accounts\/\d+\/?$/)
+  ) {
     return { status: 200, data: [mockAccount] };
   }
 
+  // Conversation meta & unread counts
+  if (path.includes('/conversations/meta')) {
+    return { status: 200, data: mockConversations.meta };
+  }
+  if (path.includes('/conversations/unread_counts')) {
+    return {
+      status: 200,
+      data: { mine_count: 1, unassigned_count: 0, all_count: 1 },
+    };
+  }
+
   // Conversations list
-  if (path.includes("/api/v1/accounts/") && path.includes("/conversations")) {
-    if (method === "GET") {
+  if (path.includes('/api/v1/accounts/') && path.includes('/conversations')) {
+    if (method === 'GET') {
       return { status: 200, data: mockConversations };
     }
   }
 
   // Inboxes
-  if (path.includes("/api/v1/accounts/") && path.includes("/inboxes")) {
+  if (path.includes('/api/v1/accounts/') && path.includes('/inboxes')) {
     return { status: 200, data: { payload: mockInboxes } };
   }
 
   // Agents
-  if (path.includes("/api/v1/accounts/") && path.includes("/agents")) {
+  if (path.includes('/api/v1/accounts/') && path.includes('/agents')) {
     return { status: 200, data: mockAgents };
   }
 
   // Labels
-  if (path.includes("/api/v1/accounts/") && path.includes("/labels")) {
+  if (path.includes('/api/v1/accounts/') && path.includes('/labels')) {
     return { status: 200, data: { payload: mockLabels } };
   }
 
+  // Notifications
+  if (path.includes('/notifications')) {
+    return {
+      status: 200,
+      data: { payload: { notifications: [], meta: { unread_count: 0 } } },
+    };
+  }
+
   // Teams
-  if (path.includes("/api/v1/accounts/") && path.includes("/teams")) {
+  if (path.includes('/teams')) {
     return { status: 200, data: [] };
   }
 
   // Custom attributes, canned responses, campaigns, webhooks, automation rules, etc.
   if (
-    path.includes("/custom_attribute_definitions") ||
-    path.includes("/canned_responses") ||
-    path.includes("/campaigns") ||
-    path.includes("/webhooks") ||
-    path.includes("/automation_rules") ||
-    path.includes("/macros") ||
-    path.includes("/integrations") ||
-    path.includes("/contacts")
+    path.includes('/custom_attribute_definitions') ||
+    path.includes('/canned_responses') ||
+    path.includes('/campaigns') ||
+    path.includes('/webhooks') ||
+    path.includes('/automation_rules') ||
+    path.includes('/macros') ||
+    path.includes('/integrations') ||
+    path.includes('/contacts')
   ) {
     return { status: 200, data: { payload: [] } };
   }
 
   // Generic fallback for any unhandled /api request in mock mode
-  if (path.startsWith("/api")) {
+  if (path.startsWith('/api')) {
     return { status: 200, data: { payload: [], data: [] } };
   }
 

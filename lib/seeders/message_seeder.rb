@@ -136,7 +136,8 @@ module Seeders::MessageSeeder
             status: 'completed',
             direction: 'outgoing',
             duration_seconds: 18,
-            provider: 'exotel'
+            provider: 'exotel',
+            recording_url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3'
           }
         }
       }
@@ -178,7 +179,8 @@ module Seeders::MessageSeeder
             status: 'completed',
             direction: 'incoming',
             duration_seconds: 102,
-            provider: 'exotel'
+            provider: 'exotel',
+            recording_url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3'
           }
         }
       }

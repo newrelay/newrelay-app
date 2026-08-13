@@ -169,9 +169,11 @@ export const actions = {
       commit(types.SET_CONTACT_UI_FLAG, { isImporting: false });
     } catch (error) {
       commit(types.SET_CONTACT_UI_FLAG, { isImporting: false });
-      if (error.response?.data?.message) {
-        throw new ExceptionWithMessage(error.response.data.message);
+      const responseMessage = extractResponseMessage(error);
+      if (responseMessage) {
+        throw new ExceptionWithMessage(responseMessage);
       }
+      throw error;
     }
   },
 

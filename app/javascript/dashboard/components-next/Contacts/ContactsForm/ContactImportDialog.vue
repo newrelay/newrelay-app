@@ -12,8 +12,13 @@ const { t } = useI18n();
 const uiFlags = useMapGetter('contacts/getUIFlags');
 const isImportingContact = computed(() => uiFlags.value.isImporting);
 
-const dialogRef = ref(null);
+const innerDialogRef = ref(null);
 const fileInput = ref(null);
+
+const dialogRef = {
+  open: () => innerDialogRef.value?.open(),
+  close: () => innerDialogRef.value?.close(),
+};
 
 const hasSelectedFile = ref(null);
 const selectedFileName = ref('');
@@ -44,6 +49,14 @@ const handleRemoveFile = () => {
   selectedFileName.value = '';
 };
 
+const handleFileDrop = event => {
+  const file = event.dataTransfer?.files?.[0];
+  if (!file) return;
+
+  hasSelectedFile.value = file;
+  selectedFileName.value = processFileName(file.name);
+};
+
 const uploadFile = async () => {
   if (!hasSelectedFile.value) return;
   emit('import', hasSelectedFile.value);
@@ -54,7 +67,7 @@ defineExpose({ dialogRef });
 
 <template>
   <Dialog
-    ref="dialogRef"
+    ref="innerDialogRef"
     :title="t('CONTACTS_LAYOUT.HEADER.ACTIONS.IMPORT_CONTACT.TITLE')"
     :confirm-button-label="
       t('CONTACTS_LAYOUT.HEADER.ACTIONS.IMPORT_CONTACT.IMPORT')
@@ -73,15 +86,7 @@ defineExpose({ dialogRef });
       class="mt-4 flex flex-col items-center justify-center rounded-xl border-2 border-dashed border-border bg-card p-10 transition-colors hover:bg-muted/50 cursor-pointer"
       @click="handleFileClick"
       @dragover.prevent
-      @drop.prevent="
-        e => {
-          if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
-            hasSelectedFile = e.dataTransfer.files[0];
-            selectedFileName = processFileName(hasSelectedFile.name);
-            if (fileInput) fileInput.value = null;
-          }
-        }
-      "
+      @drop.prevent="handleFileDrop"
     >
       <div
         v-if="!hasSelectedFile"

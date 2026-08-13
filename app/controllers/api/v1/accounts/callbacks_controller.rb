@@ -18,8 +18,8 @@ class Api::V1::Accounts::CallbacksController < Api::V1::Accounts::BaseController
   rescue StandardError => e
     ChatwootExceptionTracker.new(e).capture_exception
     Rails.logger.error "Error in register_facebook_page: #{e.message}"
-    # Additional log statements
     log_additional_info
+    render json: { error: e.message }, status: :unprocessable_entity
   end
 
   def log_additional_info

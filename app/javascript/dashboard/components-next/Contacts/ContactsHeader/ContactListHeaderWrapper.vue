@@ -76,8 +76,10 @@ const onImport = async file => {
     );
   } catch (error) {
     useAlert(
-      error.message ??
-        t('CONTACTS_LAYOUT.HEADER.ACTIONS.IMPORT_CONTACT.ERROR_MESSAGE')
+      error instanceof ExceptionWithMessage
+        ? error.data
+        : error.message ??
+            t('CONTACTS_LAYOUT.HEADER.ACTIONS.IMPORT_CONTACT.ERROR_MESSAGE')
     );
   }
 };

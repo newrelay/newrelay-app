@@ -18,6 +18,15 @@ export const mockProfile = {
       locale: 'en',
       availability: 'online',
       auto_offline: false,
+      permissions: [
+        'administrator',
+        'conversation_manage',
+        'conversation_unassigned_manage',
+        'conversation_participating_manage',
+        'contact_manage',
+        'report_manage',
+        'knowledge_base_manage',
+      ],
     },
   ],
 };
@@ -197,12 +206,18 @@ export const handleMockRequest = (reqUrl, method) => {
     };
   }
 
-  // Accounts list or single account details
-  if (
-    path.match(/\/api\/v1\/accounts\/?$/) ||
-    path.match(/\/api\/v1\/accounts\/\d+\/?$/)
-  ) {
+  // Accounts list
+  if (path.match(/\/api\/v1\/accounts\/?$/)) {
     return { status: 200, data: [mockAccount] };
+  }
+  // Single account details
+  if (path.match(/\/api\/v1\/accounts\/\d+\/?$/)) {
+    return { status: 200, data: mockAccount };
+  }
+
+  // Custom views (custom_filters) — store maps over the raw array
+  if (path.includes('/custom_filters')) {
+    return { status: 200, data: [] };
   }
 
   // Conversation meta & unread counts
@@ -249,6 +264,41 @@ export const handleMockRequest = (reqUrl, method) => {
   // Teams
   if (path.includes('/teams')) {
     return { status: 200, data: [] };
+  }
+
+  // Facebook Callbacks
+  if (path.includes('/callbacks/facebook_pages')) {
+    return {
+      status: 200,
+      data: {
+        data: {
+          user_access_token: 'mock-user-access-token',
+          page_details: [
+            {
+              id: '123456789',
+              name: 'Sample Facebook Page',
+              access_token: 'mock-page-access-token',
+              exists: false,
+            },
+          ],
+        },
+      },
+    };
+  }
+
+  if (path.includes('/callbacks/register_facebook_page')) {
+    return {
+      status: 200,
+      data: {
+        id: 99,
+        channel_id: 99,
+        name: 'Sample Facebook Page',
+        channel_type: 'Channel::FacebookPage',
+        avatar_url: '',
+        page_id: '123456789',
+        enable_auto_assignment: true,
+      },
+    };
   }
 
   // Custom attributes, canned responses, campaigns, webhooks, automation rules, etc.

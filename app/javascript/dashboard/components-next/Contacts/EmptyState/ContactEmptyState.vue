@@ -8,6 +8,7 @@ import ContactImportDialog from 'dashboard/components-next/Contacts/ContactsForm
 import { RelayButton } from 'dashboard/components-next/relay';
 import { useStore } from 'dashboard/composables/store';
 import { useAlert, useTrack } from 'dashboard/composables';
+import { ExceptionWithMessage } from 'shared/helpers/CustomErrors';
 import { CONTACTS_EVENTS } from 'dashboard/helper/AnalyticsHelper/events';
 
 defineProps({
@@ -54,8 +55,10 @@ const onImport = async file => {
     useTrack(CONTACTS_EVENTS.IMPORT_SUCCESS);
   } catch (error) {
     useAlert(
-      error.message ??
-        t('CONTACTS_LAYOUT.HEADER.ACTIONS.IMPORT_CONTACT.ERROR_MESSAGE')
+      error instanceof ExceptionWithMessage
+        ? error.data
+        : error.message ??
+            t('CONTACTS_LAYOUT.HEADER.ACTIONS.IMPORT_CONTACT.ERROR_MESSAGE')
     );
     useTrack(CONTACTS_EVENTS.IMPORT_FAILURE);
   }

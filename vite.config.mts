@@ -207,10 +207,14 @@ export default defineConfig(({ mode }) => {
       compression({ algorithm: 'gzip' }),
       compression({ algorithm: 'brotliCompress', ext: '.br' }),
     ],
-    server: {
-      port: 5173,
-      proxy,
-    },
+    server: isStandaloneUI
+      ? {
+          port: 5173,
+          proxy,
+        }
+      : {
+          // vite-ruby reads port 3036 from config/vite.json for pnpm dev / bin/vite dev
+        },
     css: {
       preprocessorOptions: {
         scss: {

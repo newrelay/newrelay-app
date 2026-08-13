@@ -3,8 +3,14 @@ class ChatwootFbProvider < Facebook::Messenger::Configuration::Providers::Base
   CHANNEL_APP_SECRET_KEYS = %w[app_secret app_secret_key client_secret api_secret].freeze
 
   def valid_verify_token?(verify_token)
-    expected_token = GlobalConfigService.load('FB_VERIFY_TOKEN', '')
-    expected_token.present? && verify_token == expected_token
+    return false if verify_token.blank?
+
+    fb_token = GlobalConfigService.load('FB_VERIFY_TOKEN', '').to_s.strip
+    ig_token = GlobalConfigService.load('IG_VERIFY_TOKEN', '').to_s.strip
+    clean_token = verify_token.to_s.strip.delete_prefix("'").delete_suffix("'")
+
+    (fb_token.present? && clean_token == fb_token.delete_prefix("'").delete_suffix("'")) ||
+      (ig_token.present? && clean_token == ig_token.delete_prefix("'").delete_suffix("'"))
   end
 
   def app_secret_for(page_id)

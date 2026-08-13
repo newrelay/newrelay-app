@@ -61,8 +61,27 @@ class DataImport::ContactManager
   def update_contact_attributes(params, contact)
     contact.name = params[:name] if params[:name].present?
     contact.additional_attributes ||= {}
-    contact.additional_attributes[:company_name] = params[:company_name] if params[:company_name].present?
+    if params[:company_name].present?
+      contact.additional_attributes[:company_name] = params[:company_name]
+      associate_company(contact, params[:company_name])
+    end
     contact.additional_attributes[:city] = params[:city] if params[:city].present?
-    contact.assign_attributes(custom_attributes: contact.custom_attributes.merge(params.except(:identifier, :email, :name, :phone_number)))
+    contact.assign_attributes(
+      custom_attributes: contact.custom_attributes.merge(
+        params.except(:identifier, :email, :name, :phone_number, :company_name, :city)
+      )
+    )
+  end
+
+  def associate_company(contact, company_name)
+    return unless defined?(Company)
+
+    company_name_clean = company_name.to_s.strip
+    return if company_name_clean.blank?
+
+    company = @account.companies.find_or_create_by(name: company_name_clean)
+    contact.company = company if company.present?
+  rescue StandardError => e
+    Rails.logger.error("Failed to associate company during import: #{e.message}")
   end
 end

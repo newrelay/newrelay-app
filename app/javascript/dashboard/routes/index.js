@@ -57,18 +57,37 @@ export const validateAuthenticateRoutePermission = async (to, next) => {
 
   if (to.name === 'no_accounts' || !to.name) {
     const target = needsOnboarding ? 'onboarding' : 'dashboard';
-    return next(frontendURL(`accounts/${routeAccountId}/${target}`));
+    const targetUrl = frontendURL(`accounts/${routeAccountId}/${target}`);
+    if (to.path === targetUrl) {
+      return next();
+    }
+    return next(targetUrl);
   }
 
   if (needsOnboarding && !isOnOnboardingView(to)) {
-    return next(frontendURL(`accounts/${routeAccountId}/onboarding`));
+    const onboardingUrl = frontendURL(`accounts/${routeAccountId}/onboarding`);
+    if (to.path === onboardingUrl) {
+      return next();
+    }
+    return next(onboardingUrl);
   }
   if (!needsOnboarding && isOnOnboardingView(to)) {
-    return next(frontendURL(`accounts/${routeAccountId}/dashboard`));
+    const dashboardUrl = frontendURL(`accounts/${routeAccountId}/dashboard`);
+    if (to.path === dashboardUrl) {
+      return next();
+    }
+    return next(dashboardUrl);
   }
 
   const nextRoute = validateLoggedInRoutes(to, user);
-  return nextRoute ? next(frontendURL(nextRoute)) : next();
+  if (nextRoute) {
+    const targetUrl = frontendURL(nextRoute);
+    if (to.path === targetUrl) {
+      return next();
+    }
+    return next(targetUrl);
+  }
+  return next();
 };
 
 export const initalizeRouter = () => {

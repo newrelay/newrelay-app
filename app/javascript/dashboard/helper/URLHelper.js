@@ -1,6 +1,10 @@
 export const frontendURL = (path, params) => {
   const stringifiedParams = params ? `?${new URLSearchParams(params)}` : '';
-  return `/app/${path}${stringifiedParams}`;
+  if (!path) return `/app/${stringifiedParams}`;
+  if (path.startsWith('/app/')) return `${path}${stringifiedParams}`;
+  if (path.startsWith('app/')) return `/${path}${stringifiedParams}`;
+  const cleanPath = path.startsWith('/') ? path.slice(1) : path;
+  return `/app/${cleanPath}${stringifiedParams}`;
 };
 
 export const conversationUrl = ({

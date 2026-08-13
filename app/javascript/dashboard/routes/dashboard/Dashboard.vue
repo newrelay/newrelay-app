@@ -51,20 +51,61 @@ export default {
     const getAccount = useMapGetter('accounts/getAccount');
     const { t } = useI18n();
 
-    // Dev testing helper to trigger incoming call UI overlay on screen
+    // Dev testing helpers to preview the call UI on screen without a real call.
+    const testCaller = options => ({
+      name: options.name || 'John Smith',
+      phone: options.phone || '+1 (555) 123-4567',
+      avatar: options.avatar || 'https://i.pravatar.cc/150?u=1',
+    });
+
+    // Full-screen incoming overlay (Accept / Decline).
     window.triggerIncomingCall = (options = {}) => {
       callsStore.addCall({
         callSid: 'test_incoming_' + Date.now(),
         conversationId: options.conversationId || 276,
         inboxId: options.inboxId || 1,
         callDirection: 'incoming',
-        caller: {
-          name: options.name || 'John Smith',
-          phoneNumber: options.phoneNumber || '+1 (555) 123-4567',
-          avatar: options.avatar || 'https://i.pravatar.cc/150?u=1',
-        },
+        caller: testCaller(options),
       });
-      console.log('🔔 Incoming call UI triggered on screen!');
+      // eslint-disable-next-line no-console
+      console.log('🔔 Incoming call overlay triggered!');
+    };
+
+    // Full-screen outgoing overlay ("Calling…").
+    window.triggerOutgoingCall = (options = {}) => {
+      callsStore.addCall({
+        callSid: 'test_outgoing_' + Date.now(),
+        conversationId: options.conversationId || 276,
+        inboxId: options.inboxId || 1,
+        callDirection: 'outbound',
+        caller: testCaller(options),
+      });
+      // eslint-disable-next-line no-console
+      console.log('📞 Outgoing call overlay triggered!');
+    };
+
+    // Connected call: ongoing overlay + (when minimized) the in-header banner.
+    window.triggerActiveCall = (options = {}) => {
+      const callSid = 'test_active_' + Date.now();
+      callsStore.addCall({
+        callSid,
+        conversationId: options.conversationId || 276,
+        inboxId: options.inboxId || 1,
+        callDirection: 'outbound',
+        caller: testCaller(options),
+      });
+      callsStore.setCallActive(callSid);
+      // eslint-disable-next-line no-console
+      console.log(
+        '🟢 Ongoing call triggered! Minimize the overlay (↙) to see the in-header banner.'
+      );
+    };
+
+    // Clear any test calls (End buttons need a real Twilio session, so use this).
+    window.endTestCall = () => {
+      callsStore.$reset();
+      // eslint-disable-next-line no-console
+      console.log('⚪ Test calls cleared.');
     };
 
     const activeLayout = computed(() => {

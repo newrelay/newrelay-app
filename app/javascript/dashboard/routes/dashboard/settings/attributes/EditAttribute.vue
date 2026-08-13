@@ -176,130 +176,138 @@ watch(
 </script>
 
 <template>
-  <RelayModal
-    :show="show"
-    :title="pageTitle"
-    size="md"
-    @close="emit('close')"
-  >
+  <RelayModal :show="show" :title="pageTitle" size="md" @close="emit('close')">
     <form @submit.prevent="editAttributes">
       <div class="max-h-[60vh] space-y-5 overflow-y-auto px-7 pb-2">
-      <div class="flex flex-col gap-2.5">
-        <RelayLabel class="text-[13.5px] font-medium text-foreground">
-          {{ t('ATTRIBUTES_MGMT.ADD.FORM.NAME.LABEL') }}
-        </RelayLabel>
-        <RelayInput
-          v-model="displayName"
-          type="text"
-          :placeholder="t('ATTRIBUTES_MGMT.ADD.FORM.NAME.PLACEHOLDER')"
-          class-name="h-10 rounded-md border-border/80 bg-background text-[14px] shadow-sm focus-visible:ring-1 focus-visible:ring-primary/30"
-          @blur="v$.displayName.$touch()"
-        />
-        <p v-if="v$.displayName.$error" class="text-[12.5px] text-destructive">
-          {{ t('ATTRIBUTES_MGMT.ADD.FORM.NAME.ERROR') }}
-        </p>
-      </div>
-
-      <div class="flex flex-col gap-2.5">
-        <RelayLabel class="text-[13.5px] font-medium text-foreground">
-          {{ t('ATTRIBUTES_MGMT.ADD.FORM.KEY.LABEL') }}
-        </RelayLabel>
-        <RelayInput
-          v-model="attributeKey"
-          type="text"
-          disabled
-          :placeholder="t('ATTRIBUTES_MGMT.ADD.FORM.KEY.PLACEHOLDER')"
-          class-name="h-10 rounded-md border-border/80 bg-background text-[14px] shadow-sm focus-visible:ring-1 focus-visible:ring-primary/30"
-        />
-        <p v-if="v$.attributeKey.$error" class="text-[12.5px] text-destructive">
-          {{ keyErrorMessage }}
-        </p>
-      </div>
-
-      <div class="flex flex-col gap-2.5">
-        <RelayLabel class="text-[13.5px] font-medium text-foreground">
-          {{ t('ATTRIBUTES_MGMT.ADD.FORM.DESC.LABEL') }}
-        </RelayLabel>
-        <textarea
-          v-model="description"
-          rows="5"
-          :placeholder="t('ATTRIBUTES_MGMT.ADD.FORM.DESC.PLACEHOLDER')"
-          class="min-h-[80px] w-full resize-y rounded-md border border-border/80 bg-background p-3 text-[14px] text-foreground shadow-sm outline-none focus-visible:ring-1 focus-visible:ring-primary/30"
-          @blur="v$.description.$touch()"
-        />
-        <p v-if="v$.description.$error" class="text-[12.5px] text-destructive">
-          {{ t('ATTRIBUTES_MGMT.ADD.FORM.DESC.ERROR') }}
-        </p>
-      </div>
-
-      <div class="flex flex-col gap-2.5">
-        <RelayLabel class="text-[13.5px] font-medium text-foreground">
-          {{ t('ATTRIBUTES_MGMT.ADD.FORM.TYPE.LABEL') }}
-        </RelayLabel>
-        <div
-          class="flex h-10 w-full items-center justify-between rounded-md border border-border/80 bg-muted/40 px-3 text-left text-[14px] text-muted-foreground shadow-sm"
-        >
-          {{ selectedTypeLabel }}
+        <div class="flex flex-col gap-2.5">
+          <RelayLabel class="text-[13.5px] font-medium text-foreground">
+            {{ t('ATTRIBUTES_MGMT.ADD.FORM.NAME.LABEL') }}
+          </RelayLabel>
+          <RelayInput
+            v-model="displayName"
+            type="text"
+            :placeholder="t('ATTRIBUTES_MGMT.ADD.FORM.NAME.PLACEHOLDER')"
+            class-name="h-10 rounded-md border-border/80 bg-background text-[14px] shadow-sm focus-visible:ring-1 focus-visible:ring-primary/30"
+            @blur="v$.displayName.$touch()"
+          />
+          <p
+            v-if="v$.displayName.$error"
+            class="text-[12.5px] text-destructive"
+          >
+            {{ t('ATTRIBUTES_MGMT.ADD.FORM.NAME.ERROR') }}
+          </p>
         </div>
-      </div>
 
-      <div v-if="isAttributeTypeList" class="flex flex-col gap-2.5">
-        <RelayLabel class="text-[13.5px] font-medium text-foreground">
-          {{ t('ATTRIBUTES_MGMT.EDIT.TYPE.LIST.LABEL') }}
-        </RelayLabel>
+        <div class="flex flex-col gap-2.5">
+          <RelayLabel class="text-[13.5px] font-medium text-foreground">
+            {{ t('ATTRIBUTES_MGMT.ADD.FORM.KEY.LABEL') }}
+          </RelayLabel>
+          <RelayInput
+            v-model="attributeKey"
+            type="text"
+            disabled
+            :placeholder="t('ATTRIBUTES_MGMT.ADD.FORM.KEY.PLACEHOLDER')"
+            class-name="h-10 rounded-md border-border/80 bg-background text-[14px] shadow-sm focus-visible:ring-1 focus-visible:ring-primary/30"
+          />
+          <p
+            v-if="v$.attributeKey.$error"
+            class="text-[12.5px] text-destructive"
+          >
+            {{ keyErrorMessage }}
+          </p>
+        </div>
+
+        <div class="flex flex-col gap-2.5">
+          <RelayLabel class="text-[13.5px] font-medium text-foreground">
+            {{ t('ATTRIBUTES_MGMT.ADD.FORM.DESC.LABEL') }}
+          </RelayLabel>
+          <textarea
+            v-model="description"
+            rows="5"
+            :placeholder="t('ATTRIBUTES_MGMT.ADD.FORM.DESC.PLACEHOLDER')"
+            class="min-h-[80px] w-full resize-y rounded-md border border-border/80 bg-background p-3 text-[14px] text-foreground shadow-sm outline-none focus-visible:ring-1 focus-visible:ring-primary/30"
+            @blur="v$.description.$touch()"
+          />
+          <p
+            v-if="v$.description.$error"
+            class="text-[12.5px] text-destructive"
+          >
+            {{ t('ATTRIBUTES_MGMT.ADD.FORM.DESC.ERROR') }}
+          </p>
+        </div>
+
+        <div class="flex flex-col gap-2.5">
+          <RelayLabel class="text-[13.5px] font-medium text-foreground">
+            {{ t('ATTRIBUTES_MGMT.ADD.FORM.TYPE.LABEL') }}
+          </RelayLabel>
+          <div
+            class="flex h-10 w-full items-center justify-between rounded-md border border-border/80 bg-muted/40 px-3 text-left text-[14px] text-muted-foreground shadow-sm"
+          >
+            {{ selectedTypeLabel }}
+          </div>
+        </div>
+
+        <div v-if="isAttributeTypeList" class="flex flex-col gap-2.5">
+          <RelayLabel class="text-[13.5px] font-medium text-foreground">
+            {{ t('ATTRIBUTES_MGMT.EDIT.TYPE.LIST.LABEL') }}
+          </RelayLabel>
+          <div
+            class="rounded-md border px-3 py-2"
+            :class="
+              isTagInputInvalid ? 'border-destructive' : 'border-border/80'
+            "
+          >
+            <TagInput
+              v-model="values"
+              :placeholder="t('ATTRIBUTES_MGMT.ADD.FORM.TYPE.LIST.PLACEHOLDER')"
+              allow-create
+              @blur="tagInputTouched = true"
+            />
+          </div>
+          <p v-if="isTagInputInvalid" class="text-[12.5px] text-destructive">
+            {{ t('ATTRIBUTES_MGMT.ADD.FORM.TYPE.LIST.ERROR') }}
+          </p>
+        </div>
+
+        <div v-if="isAttributeTypeText" class="flex items-center gap-3 pt-2">
+          <RelayCheckbox v-model="regexEnabled" />
+          <span class="text-[13.5px] font-medium text-foreground">
+            {{ t('ATTRIBUTES_MGMT.ADD.FORM.ENABLE_REGEX.LABEL') }}
+          </span>
+        </div>
+
         <div
-          class="rounded-md border px-3 py-2"
-          :class="isTagInputInvalid ? 'border-destructive' : 'border-border/80'"
+          v-if="isAttributeTypeText && regexEnabled"
+          class="flex flex-col gap-2.5"
         >
-          <TagInput
-            v-model="values"
-            :placeholder="t('ATTRIBUTES_MGMT.ADD.FORM.TYPE.LIST.PLACEHOLDER')"
-            allow-create
-            @blur="tagInputTouched = true"
+          <RelayLabel class="text-[13.5px] font-medium text-foreground">
+            {{ t('ATTRIBUTES_MGMT.ADD.FORM.REGEX_PATTERN.LABEL') }}
+          </RelayLabel>
+          <RelayInput
+            v-model="regexPattern"
+            type="text"
+            :placeholder="
+              t('ATTRIBUTES_MGMT.ADD.FORM.REGEX_PATTERN.PLACEHOLDER')
+            "
+            class-name="h-10 rounded-md border-border/80 bg-background text-[14px] shadow-sm focus-visible:ring-1 focus-visible:ring-primary/30"
           />
         </div>
-        <p v-if="isTagInputInvalid" class="text-[12.5px] text-destructive">
-          {{ t('ATTRIBUTES_MGMT.ADD.FORM.TYPE.LIST.ERROR') }}
-        </p>
-      </div>
 
-      <div v-if="isAttributeTypeText" class="flex items-center gap-3 pt-2">
-        <RelayCheckbox v-model="regexEnabled" />
-        <span class="text-[13.5px] font-medium text-foreground">
-          {{ t('ATTRIBUTES_MGMT.ADD.FORM.ENABLE_REGEX.LABEL') }}
-        </span>
+        <div
+          v-if="isAttributeTypeText && regexEnabled"
+          class="flex flex-col gap-2.5"
+        >
+          <RelayLabel class="text-[13.5px] font-medium text-foreground">
+            {{ t('ATTRIBUTES_MGMT.ADD.FORM.REGEX_CUE.LABEL') }}
+          </RelayLabel>
+          <RelayInput
+            v-model="regexCue"
+            type="text"
+            :placeholder="t('ATTRIBUTES_MGMT.ADD.FORM.REGEX_CUE.PLACEHOLDER')"
+            class-name="h-10 rounded-md border-border/80 bg-background text-[14px] shadow-sm focus-visible:ring-1 focus-visible:ring-primary/30"
+          />
+        </div>
       </div>
-
-      <div
-        v-if="isAttributeTypeText && regexEnabled"
-        class="flex flex-col gap-2.5"
-      >
-        <RelayLabel class="text-[13.5px] font-medium text-foreground">
-          {{ t('ATTRIBUTES_MGMT.ADD.FORM.REGEX_PATTERN.LABEL') }}
-        </RelayLabel>
-        <RelayInput
-          v-model="regexPattern"
-          type="text"
-          :placeholder="t('ATTRIBUTES_MGMT.ADD.FORM.REGEX_PATTERN.PLACEHOLDER')"
-          class-name="h-10 rounded-md border-border/80 bg-background text-[14px] shadow-sm focus-visible:ring-1 focus-visible:ring-primary/30"
-        />
-      </div>
-
-      <div
-        v-if="isAttributeTypeText && regexEnabled"
-        class="flex flex-col gap-2.5"
-      >
-        <RelayLabel class="text-[13.5px] font-medium text-foreground">
-          {{ t('ATTRIBUTES_MGMT.ADD.FORM.REGEX_CUE.LABEL') }}
-        </RelayLabel>
-        <RelayInput
-          v-model="regexCue"
-          type="text"
-          :placeholder="t('ATTRIBUTES_MGMT.ADD.FORM.REGEX_CUE.PLACEHOLDER')"
-          class-name="h-10 rounded-md border-border/80 bg-background text-[14px] shadow-sm focus-visible:ring-1 focus-visible:ring-primary/30"
-        />
-      </div>
-    </div>
 
       <div
         class="flex justify-end gap-3 border-t border-border/40 bg-background/50 px-7 py-6"

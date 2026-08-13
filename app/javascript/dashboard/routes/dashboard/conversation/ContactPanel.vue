@@ -151,7 +151,7 @@ onMounted(() => {
       <ConversationAiSummary
         :conversation-id="conversationId"
         :contact="contact"
-        @update:has-summary="val => hasAiSummary = val"
+        @update:has-summary="val => (hasAiSummary = val)"
       />
     </AccordionItem>
     <div class="list-group">

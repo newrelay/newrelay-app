@@ -15,6 +15,7 @@ const props = defineProps({
   },
 });
 
+const emit = defineEmits(['update:hasSummary']);
 const { t } = useI18n();
 const { captainTasksEnabled, summarizeConversation } = useCaptain();
 const conversationIdRef = computed(() => props.conversationId);
@@ -41,8 +42,6 @@ const contactAttributeTakeaways = computed(() => {
     .map(([key, value]) => `${key}: ${value}`);
 });
 
-const emit = defineEmits(['update:hasSummary']);
-
 const summaryBullets = computed(() => {
   if (!summaryText.value) return [];
   return summaryText.value
@@ -53,7 +52,10 @@ const summaryBullets = computed(() => {
 });
 
 const hasSummary = computed(() => {
-  return captainTasksEnabled.value && (!!summaryText.value || summaryBullets.value.length > 0);
+  return (
+    captainTasksEnabled.value &&
+    (!!summaryText.value || summaryBullets.value.length > 0)
+  );
 });
 
 watch(

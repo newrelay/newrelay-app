@@ -30,7 +30,9 @@ const showSettingsHeader = computed(
 
     <router-view
       v-slot="{ Component }"
-      :class="showSettingsHeader ? 'overflow-hidden px-4' : 'overflow-hidden px-0'"
+      :class="
+        showSettingsHeader ? 'overflow-hidden px-4' : 'overflow-hidden px-0'
+      "
     >
       <component :is="Component" v-if="!keepAlive" :key="$route.fullPath" />
       <keep-alive v-else>

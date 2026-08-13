@@ -86,7 +86,11 @@ export default {
             <button
               type="button"
               class="flex items-center justify-between w-full min-w-0 gap-2 px-2 py-1.5 text-[13px] rounded-md text-left transition-colors hover:bg-accent hover:text-accent-foreground"
-              :class="isActive(option) ? 'bg-accent/50 text-accent-foreground' : 'text-foreground'"
+              :class="
+                isActive(option)
+                  ? 'bg-accent/50 text-accent-foreground'
+                  : 'text-foreground'
+              "
               @click="() => onclick(option)"
             >
               <span

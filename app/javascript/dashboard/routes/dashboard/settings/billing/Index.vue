@@ -857,7 +857,10 @@ onMounted(() => {
         </section>
         <section class="grid gap-6">
           <BillingCard
-            v-if="!hasResellerParent && (!planName || !hasActiveSubscription || showPlanPicker)"
+            v-if="
+              !hasResellerParent &&
+              (!planName || !hasActiveSubscription || showPlanPicker)
+            "
             :title="$t('BILLING_SETTINGS.SELECT_PLAN.TITLE')"
             :description="$t('BILLING_SETTINGS.SELECT_PLAN.DESCRIPTION')"
           >

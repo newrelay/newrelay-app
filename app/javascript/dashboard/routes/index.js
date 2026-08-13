@@ -47,7 +47,8 @@ export const validateAuthenticateRoutePermission = async (to, next) => {
       ? paramAccountId
       : Number(accountId) || accounts[0]?.id;
 
-  const userAccount = accounts.find(a => a.id === routeAccountId) || accounts[0];
+  const userAccount =
+    accounts.find(a => a.id === routeAccountId) || accounts[0];
   const isAdmin = userAccount?.role === 'administrator';
   const isActive = userAccount?.status === 'active';
   const needsOnboarding =

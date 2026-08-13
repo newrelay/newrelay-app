@@ -17,7 +17,13 @@ import { vOnClickOutside } from '@vueuse/components';
 
 export default {
   name: 'ReplyBottomPanel',
-  components: { RelayButton, FileUpload, VideoCallButton, EmojiInput, CannedResponsesDropdown },
+  components: {
+    RelayButton,
+    FileUpload,
+    VideoCallButton,
+    EmojiInput,
+    CannedResponsesDropdown,
+  },
   directives: { OnClickOutside: vOnClickOutside },
   mixins: [inboxMixin],
   props: {
@@ -324,7 +330,6 @@ export default {
     togglePrivateNote() {
       this.$emit('togglePrivateNote');
     },
-
   },
 };
 </script>

@@ -154,7 +154,7 @@ export default {
         !this.isReplyRestricted
       );
     },
-isAiActive() {
+    isAiActive() {
       return this.isCopilotActive;
     },
     charLengthClass() {
@@ -212,7 +212,6 @@ isAiActive() {
         <span class="i-lucide-wand-sparkles size-4" />
         {{ $t('CONVERSATION.REPLYBOX.AI_REPLY') }}
       </button>
-
     </div>
 
     <div class="flex items-center gap-2">

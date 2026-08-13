@@ -164,14 +164,17 @@ export default {
   <SettingsLayout :is-loading="uiFlags.isFetchingItem">
     <template #body>
       <div class="flex w-full max-w-3xl flex-col gap-8 ltr:mr-auto rtl:ml-auto">
-        <form class="flex min-w-0 flex-col gap-8" @submit.prevent="updateAccount">
+        <form
+          class="flex min-w-0 flex-col gap-8"
+          @submit.prevent="updateAccount"
+        >
           <SectionLayout
             :title="$t('GENERAL_SETTINGS.FORM.GENERAL_SECTION.TITLE')"
             :description="$t('GENERAL_SETTINGS.FORM.GENERAL_SECTION.NOTE')"
             as-card
           >
-        <div class="grid gap-8">
-          <div class="grid grid-cols-1 gap-8 md:grid-cols-2">
+            <div class="grid gap-8">
+              <div class="grid grid-cols-1 gap-8 md:grid-cols-2">
                 <div class="flex flex-col gap-2">
                   <RelayLabel html-for="account-name">
                     {{ $t('GENERAL_SETTINGS.FORM.NAME.LABEL') }}
@@ -196,22 +199,30 @@ export default {
                     id="site-language"
                     v-model="locale"
                     :options="languageOptions"
-                    :placeholder="$t('GENERAL_SETTINGS.FORM.LANGUAGE.PLACEHOLDER')"
-                    :search-placeholder="$t('GENERAL_SETTINGS.FORM.LANGUAGE.SEARCH_PLACEHOLDER')"
+                    :placeholder="
+                      $t('GENERAL_SETTINGS.FORM.LANGUAGE.PLACEHOLDER')
+                    "
+                    :search-placeholder="
+                      $t('GENERAL_SETTINGS.FORM.LANGUAGE.SEARCH_PLACEHOLDER')
+                    "
                     :has-error="v$.locale.$error"
                   />
                   <p v-if="v$.locale.$error" class="text-xs text-destructive">
                     {{ $t('GENERAL_SETTINGS.FORM.LANGUAGE.ERROR') }}
                   </p>
                 </div>
-          </div>
-          <div
-            v-if="
-              featureCustomReplyDomainEnabled || featureCustomReplyEmailEnabled
-            "
-            class="grid grid-cols-1 gap-8 md:grid-cols-2"
-          >
-                <div v-if="featureCustomReplyDomainEnabled" class="flex flex-col gap-2">
+              </div>
+              <div
+                v-if="
+                  featureCustomReplyDomainEnabled ||
+                  featureCustomReplyEmailEnabled
+                "
+                class="grid grid-cols-1 gap-8 md:grid-cols-2"
+              >
+                <div
+                  v-if="featureCustomReplyDomainEnabled"
+                  class="flex flex-col gap-2"
+                >
                   <RelayLabel html-for="custom-domain">
                     {{ $t('GENERAL_SETTINGS.FORM.DOMAIN.LABEL') }}
                   </RelayLabel>
@@ -220,16 +231,23 @@ export default {
                     v-model="domain"
                     type="text"
                     class-name="h-10 shadow-xs"
-                    :placeholder="$t('GENERAL_SETTINGS.FORM.DOMAIN.PLACEHOLDER')"
+                    :placeholder="
+                      $t('GENERAL_SETTINGS.FORM.DOMAIN.PLACEHOLDER')
+                    "
                   />
                   <p
                     v-if="featureInboundEmailEnabled"
                     class="text-[13px] leading-relaxed text-muted-foreground"
                   >
-                    {{ $t('GENERAL_SETTINGS.FORM.FEATURES.INBOUND_EMAIL_ENABLED') }}
+                    {{
+                      $t('GENERAL_SETTINGS.FORM.FEATURES.INBOUND_EMAIL_ENABLED')
+                    }}
                   </p>
                 </div>
-                <div v-if="featureCustomReplyEmailEnabled" class="flex flex-col gap-2">
+                <div
+                  v-if="featureCustomReplyEmailEnabled"
+                  class="flex flex-col gap-2"
+                >
                   <RelayLabel html-for="support-email">
                     {{ $t('GENERAL_SETTINGS.FORM.SUPPORT_EMAIL.LABEL') }}
                   </RelayLabel>
@@ -238,33 +256,37 @@ export default {
                     v-model="supportEmail"
                     type="text"
                     class-name="h-10 shadow-xs"
-                    :placeholder="$t('GENERAL_SETTINGS.FORM.SUPPORT_EMAIL.PLACEHOLDER')"
+                    :placeholder="
+                      $t('GENERAL_SETTINGS.FORM.SUPPORT_EMAIL.PLACEHOLDER')
+                    "
                   />
                   <p class="text-[13px] leading-relaxed text-muted-foreground">
                     {{ $t('GENERAL_SETTINGS.FORM.SUPPORT_EMAIL.NOTE') }}
                   </p>
                 </div>
+              </div>
+            </div>
+          </SectionLayout>
+
+          <AudioTranscription v-if="showAudioTranscriptionConfig" />
+          <AccountId />
+          <AccountDelete v-if="isOnChatwootCloud" />
+
+          <div
+            class="flex justify-end gap-3 border-t border-border/40 pb-2 pt-8"
+          >
+            <RelayButton
+              variant="outline"
+              type="button"
+              :disabled="isUpdating"
+              @click="handleCancel"
+            >
+              {{ $t('GENERAL_SETTINGS.CANCEL') }}
+            </RelayButton>
+            <RelayButton :disabled="isUpdating" type="submit" class="shadow-sm">
+              {{ $t('GENERAL_SETTINGS.SUBMIT') }}
+            </RelayButton>
           </div>
-        </div>
-      </SectionLayout>
-
-      <AudioTranscription v-if="showAudioTranscriptionConfig" />
-      <AccountId />
-      <AccountDelete v-if="isOnChatwootCloud" />
-
-      <div class="flex justify-end gap-3 border-t border-border/40 pb-2 pt-8">
-        <RelayButton
-          variant="outline"
-          type="button"
-          :disabled="isUpdating"
-          @click="handleCancel"
-        >
-          {{ $t('GENERAL_SETTINGS.CANCEL') }}
-        </RelayButton>
-        <RelayButton :disabled="isUpdating" type="submit" class="shadow-sm">
-          {{ $t('GENERAL_SETTINGS.SUBMIT') }}
-        </RelayButton>
-      </div>
         </form>
         <BuildInfo />
       </div>

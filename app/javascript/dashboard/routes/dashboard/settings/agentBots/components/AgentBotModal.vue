@@ -197,7 +197,6 @@ const handleSubmit = async () => {
       resetForm();
       emit('close');
     }
-
   } catch (error) {
     useAlert(
       isCreate
@@ -383,7 +382,9 @@ watch(() => props.selectedBot, initializeForm, { deep: true });
             <div class="relative flex-1">
               <input
                 :type="showTokenValue ? 'text' : 'password'"
-                :value="showTokenValue ? accessToken : '••••••••••••••••••••••••'"
+                :value="
+                  showTokenValue ? accessToken : '••••••••••••••••••••••••'
+                "
                 readonly
                 class="h-10 w-full rounded-md border border-border/80 bg-background pl-3 pr-9 font-mono text-[14px] text-foreground shadow-sm focus:outline-none"
               />

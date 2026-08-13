@@ -18,7 +18,13 @@ import { vOnClickOutside } from '@vueuse/components';
 
 export default {
   name: 'InboxReplyBottomPanel',
-  components: { RelayButton, FileUpload, VideoCallButton, EmojiInput, CannedResponsesDropdown },
+  components: {
+    RelayButton,
+    FileUpload,
+    VideoCallButton,
+    EmojiInput,
+    CannedResponsesDropdown,
+  },
   directives: { OnClickOutside: vOnClickOutside },
   mixins: [inboxMixin],
   props: {
@@ -194,7 +200,6 @@ export default {
     toggleMessageSignature() {
       this.setSignatureFlagForInbox(this.channelType, !this.sendWithSignature);
     },
-
   },
 };
 </script>

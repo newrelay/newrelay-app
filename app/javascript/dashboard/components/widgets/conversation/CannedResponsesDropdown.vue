@@ -6,18 +6,16 @@ import { useMapGetter, useStore } from 'dashboard/composables/store';
 import { useMessageFormatter } from 'shared/composables/useMessageFormatter';
 import { RelayButton } from 'dashboard/components-next/relay';
 
-const ROW_HEIGHT_REM = 2.125;
-const MAX_VISIBLE_ROWS = 5;
-const LIST_MAX_HEIGHT = `${MAX_VISIBLE_ROWS * ROW_HEIGHT_REM}rem`;
-
 const props = defineProps({
   buttonClass: {
     type: String,
     default: '',
   },
 });
-
 const emit = defineEmits(['select']);
+const ROW_HEIGHT_REM = 2.125;
+const MAX_VISIBLE_ROWS = 5;
+const LIST_MAX_HEIGHT = `${MAX_VISIBLE_ROWS * ROW_HEIGHT_REM}rem`;
 
 const { t } = useI18n();
 const store = useStore();
@@ -82,7 +80,11 @@ const handleSelect = content => {
 
 <template>
   <div class="relative group flex items-center justify-center">
-    <RelayButton variant="ghost" :class="props.buttonClass" @click="toggleDropdown">
+    <RelayButton
+      variant="ghost"
+      :class="props.buttonClass"
+      @click="toggleDropdown"
+    >
       <span class="i-lucide-file-text size-4 shrink-0" />
     </RelayButton>
     <span

@@ -229,7 +229,10 @@ const handleRemove = async event => {
               <RelayLabel html-for="custom-domain">
                 {{ $t('BRANDING_SETTINGS.CUSTOM_DOMAIN.LABEL') }}
               </RelayLabel>
-              <form class="flex items-center gap-3" @submit.prevent="handleVerify">
+              <form
+                class="flex items-center gap-3"
+                @submit.prevent="handleVerify"
+              >
                 <template v-if="!isVerified">
                   <RelayInput
                     id="custom-domain"
@@ -269,7 +272,9 @@ const handleRemove = async event => {
                   <div
                     class="flex h-10 min-w-0 flex-1 items-center justify-between rounded-md border border-border bg-background px-3 text-sm shadow-xs"
                   >
-                    <span class="truncate text-foreground">{{ customDomain }}</span>
+                    <span class="truncate text-foreground">{{
+                      customDomain
+                    }}</span>
                     <span
                       class="ml-2 inline-flex shrink-0 items-center gap-1 rounded-md border border-emerald-500/20 bg-emerald-500/10 px-2 py-0.5 text-[12px] font-medium text-emerald-600"
                     >
@@ -313,113 +318,113 @@ const handleRemove = async event => {
               class="flex flex-col gap-5 rounded-xl border border-border bg-muted/40 p-4"
             >
               <div v-if="!isRootDomain" class="flex flex-col gap-3">
-              <p class="text-xs font-semibold text-foreground">
-              {{ $t('BRANDING_SETTINGS.CUSTOM_DOMAIN.OPTION_1_TITLE') }}
-              </p>
-              <p class="text-xs text-muted-foreground">
-              {{ $t('BRANDING_SETTINGS.CUSTOM_DOMAIN.CNAME_INSTRUCTION') }}
-              </p>
-              <div
-              class="grid grid-cols-[80px_1fr] gap-x-4 gap-y-2 rounded-lg border border-border bg-background p-3 text-xs"
-              >
-              <span class="text-muted-foreground">{{
-                $t('BRANDING_SETTINGS.CUSTOM_DOMAIN.TYPE')
-              }}</span>
-              <span class="font-mono font-semibold text-foreground">{{
-                cnameRecordType
-              }}</span>
-              <span class="text-muted-foreground">{{
-                $t('BRANDING_SETTINGS.CUSTOM_DOMAIN.NAME')
-              }}</span>
-              <code
-                class="select-all bg-transparent p-0 font-mono font-semibold text-foreground"
-                >{{ normalizedDomain }}</code
-              >
-              <span class="text-muted-foreground">{{
-                $t('BRANDING_SETTINGS.CUSTOM_DOMAIN.TARGET')
-              }}</span>
-              <code
-                class="select-all bg-transparent p-0 font-mono font-semibold text-foreground"
-                >{{ cnameTarget }}</code
-              >
-              </div>
+                <p class="text-xs font-semibold text-foreground">
+                  {{ $t('BRANDING_SETTINGS.CUSTOM_DOMAIN.OPTION_1_TITLE') }}
+                </p>
+                <p class="text-xs text-muted-foreground">
+                  {{ $t('BRANDING_SETTINGS.CUSTOM_DOMAIN.CNAME_INSTRUCTION') }}
+                </p>
+                <div
+                  class="grid grid-cols-[80px_1fr] gap-x-4 gap-y-2 rounded-lg border border-border bg-background p-3 text-xs"
+                >
+                  <span class="text-muted-foreground">{{
+                    $t('BRANDING_SETTINGS.CUSTOM_DOMAIN.TYPE')
+                  }}</span>
+                  <span class="font-mono font-semibold text-foreground">{{
+                    cnameRecordType
+                  }}</span>
+                  <span class="text-muted-foreground">{{
+                    $t('BRANDING_SETTINGS.CUSTOM_DOMAIN.NAME')
+                  }}</span>
+                  <code
+                    class="select-all bg-transparent p-0 font-mono font-semibold text-foreground"
+                    >{{ normalizedDomain }}</code
+                  >
+                  <span class="text-muted-foreground">{{
+                    $t('BRANDING_SETTINGS.CUSTOM_DOMAIN.TARGET')
+                  }}</span>
+                  <code
+                    class="select-all bg-transparent p-0 font-mono font-semibold text-foreground"
+                    >{{ cnameTarget }}</code
+                  >
+                </div>
               </div>
 
               <hr v-if="showTxtOption && !isRootDomain" class="border-border" />
 
               <div v-if="showTxtOption" class="flex flex-col gap-3">
-              <p class="text-xs font-semibold text-foreground">
-              {{
-                isRootDomain
-                  ? $t('BRANDING_SETTINGS.CUSTOM_DOMAIN.ROOT_RECORDS_TITLE')
-                  : $t('BRANDING_SETTINGS.CUSTOM_DOMAIN.OPTION_2_TITLE')
-              }}
-              </p>
-              <p class="text-xs text-muted-foreground">
-              {{ $t('BRANDING_SETTINGS.CUSTOM_DOMAIN.TXT_INSTRUCTION') }}
-              </p>
-              <div
-              class="flex flex-col gap-3 rounded-lg border border-border bg-background p-3"
-              >
-              <div
-                class="grid grid-cols-[80px_1fr] gap-x-4 gap-y-2 border-b border-border pb-3 text-xs"
-                :class="{ 'border-b-0 pb-0': !serverIp }"
-              >
-                <span class="text-muted-foreground">{{
-                  $t('BRANDING_SETTINGS.CUSTOM_DOMAIN.TYPE')
-                }}</span>
-                <span class="font-mono font-semibold text-foreground">{{
-                  txtRecordType
-                }}</span>
-                <span class="text-muted-foreground">{{
-                  $t('BRANDING_SETTINGS.CUSTOM_DOMAIN.NAME')
-                }}</span>
-                <code
-                  class="select-all bg-transparent p-0 font-mono font-semibold text-foreground"
-                  >{{ txtVerificationName }}</code
+                <p class="text-xs font-semibold text-foreground">
+                  {{
+                    isRootDomain
+                      ? $t('BRANDING_SETTINGS.CUSTOM_DOMAIN.ROOT_RECORDS_TITLE')
+                      : $t('BRANDING_SETTINGS.CUSTOM_DOMAIN.OPTION_2_TITLE')
+                  }}
+                </p>
+                <p class="text-xs text-muted-foreground">
+                  {{ $t('BRANDING_SETTINGS.CUSTOM_DOMAIN.TXT_INSTRUCTION') }}
+                </p>
+                <div
+                  class="flex flex-col gap-3 rounded-lg border border-border bg-background p-3"
                 >
-                <span class="text-muted-foreground">{{
-                  $t('BRANDING_SETTINGS.CUSTOM_DOMAIN.VALUE')
-                }}</span>
-                <code
-                  v-if="txtVerificationRecord"
-                  class="select-all bg-transparent p-0 font-mono font-semibold text-foreground"
-                  >{{ txtVerificationRecord }}</code
-                >
-                <span
-                  v-else
-                  class="inline-flex items-center gap-2 font-medium text-muted-foreground"
-                >
-                  <span class="i-lucide-loader-2 size-3.5 animate-spin" />
-                  {{ $t('BRANDING_SETTINGS.CUSTOM_DOMAIN.PENDING') }}
-                </span>
-              </div>
-              <div
-                v-if="serverIp"
-                class="grid grid-cols-[80px_1fr] gap-x-4 gap-y-2 pt-1 text-xs"
-              >
-                <span class="text-muted-foreground">{{
-                  $t('BRANDING_SETTINGS.CUSTOM_DOMAIN.TYPE')
-                }}</span>
-                <span class="font-mono font-semibold text-foreground">{{
-                  routingRecordType
-                }}</span>
-                <span class="text-muted-foreground">{{
-                  $t('BRANDING_SETTINGS.CUSTOM_DOMAIN.NAME')
-                }}</span>
-                <code
-                  class="select-all bg-transparent p-0 font-mono font-semibold text-foreground"
-                  >{{ rootRecordName }}</code
-                >
-                <span class="text-muted-foreground">{{
-                  $t('BRANDING_SETTINGS.CUSTOM_DOMAIN.VALUE')
-                }}</span>
-                <code
-                  class="select-all bg-transparent p-0 font-mono font-semibold text-foreground"
-                  >{{ serverIp }}</code
-                >
-              </div>
-              </div>
+                  <div
+                    class="grid grid-cols-[80px_1fr] gap-x-4 gap-y-2 border-b border-border pb-3 text-xs"
+                    :class="{ 'border-b-0 pb-0': !serverIp }"
+                  >
+                    <span class="text-muted-foreground">{{
+                      $t('BRANDING_SETTINGS.CUSTOM_DOMAIN.TYPE')
+                    }}</span>
+                    <span class="font-mono font-semibold text-foreground">{{
+                      txtRecordType
+                    }}</span>
+                    <span class="text-muted-foreground">{{
+                      $t('BRANDING_SETTINGS.CUSTOM_DOMAIN.NAME')
+                    }}</span>
+                    <code
+                      class="select-all bg-transparent p-0 font-mono font-semibold text-foreground"
+                      >{{ txtVerificationName }}</code
+                    >
+                    <span class="text-muted-foreground">{{
+                      $t('BRANDING_SETTINGS.CUSTOM_DOMAIN.VALUE')
+                    }}</span>
+                    <code
+                      v-if="txtVerificationRecord"
+                      class="select-all bg-transparent p-0 font-mono font-semibold text-foreground"
+                      >{{ txtVerificationRecord }}</code
+                    >
+                    <span
+                      v-else
+                      class="inline-flex items-center gap-2 font-medium text-muted-foreground"
+                    >
+                      <span class="i-lucide-loader-2 size-3.5 animate-spin" />
+                      {{ $t('BRANDING_SETTINGS.CUSTOM_DOMAIN.PENDING') }}
+                    </span>
+                  </div>
+                  <div
+                    v-if="serverIp"
+                    class="grid grid-cols-[80px_1fr] gap-x-4 gap-y-2 pt-1 text-xs"
+                  >
+                    <span class="text-muted-foreground">{{
+                      $t('BRANDING_SETTINGS.CUSTOM_DOMAIN.TYPE')
+                    }}</span>
+                    <span class="font-mono font-semibold text-foreground">{{
+                      routingRecordType
+                    }}</span>
+                    <span class="text-muted-foreground">{{
+                      $t('BRANDING_SETTINGS.CUSTOM_DOMAIN.NAME')
+                    }}</span>
+                    <code
+                      class="select-all bg-transparent p-0 font-mono font-semibold text-foreground"
+                      >{{ rootRecordName }}</code
+                    >
+                    <span class="text-muted-foreground">{{
+                      $t('BRANDING_SETTINGS.CUSTOM_DOMAIN.VALUE')
+                    }}</span>
+                    <code
+                      class="select-all bg-transparent p-0 font-mono font-semibold text-foreground"
+                      >{{ serverIp }}</code
+                    >
+                  </div>
+                </div>
               </div>
             </div>
 
@@ -430,7 +435,9 @@ const handleRemove = async event => {
                 </RelayLabel>
                 <RelaySwitch :model-value="isWhiteLabelEnabled" disabled />
               </div>
-              <p class="pr-12 text-[13px] leading-relaxed text-muted-foreground">
+              <p
+                class="pr-12 text-[13px] leading-relaxed text-muted-foreground"
+              >
                 {{ whiteLabelDescription }}
               </p>
             </div>

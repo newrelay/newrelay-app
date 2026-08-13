@@ -842,7 +842,6 @@ function insertCannedResponse(content) {
   insertSpecialContent('cannedResponse', content);
 }
 
-
 function toggleEditorMark(markName) {
   if (!editorView) return;
   const mark = editorView.state.schema.marks[markName];

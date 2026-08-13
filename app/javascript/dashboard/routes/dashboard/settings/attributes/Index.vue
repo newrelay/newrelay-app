@@ -117,9 +117,7 @@ const deleteConfirmText = computed(
     `${t('ATTRIBUTES_MGMT.DELETE.CONFIRM.YES')}${selectedAttributeName.value}`
 );
 
-const deleteRejectText = computed(
-  () => t('ATTRIBUTES_MGMT.DELETE.CONFIRM.NO')
-);
+const deleteRejectText = computed(() => t('ATTRIBUTES_MGMT.DELETE.CONFIRM.NO'));
 
 onMounted(() => {
   store.dispatch('attributes/get');

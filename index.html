@@ -6,6 +6,16 @@
     <title>DakshAI Dashboard (Frontend Standalone)</title>
     <link rel="icon" type="image/svg+xml" href="/brand-assets/logo_thumbnail.svg" />
     <script>
+      // Seed default session cookie for standalone UI and mock API testing
+      if (!document.cookie.includes('cw_d_session_info')) {
+        document.cookie = 'cw_d_session_info=' + encodeURIComponent(JSON.stringify({
+          'access-token': 'mock-access-token',
+          'client': 'mock-client',
+          'uid': 'john.doe@example.com',
+          'expiry': '9999999999'
+        })) + '; path=/; max-age=31536000';
+      }
+
       window.chatwootConfig = {
         hostURL: window.location.origin,
         helpCenterURL: '',

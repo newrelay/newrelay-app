@@ -160,11 +160,11 @@ export const handleMockRequest = (reqUrl, method) => {
 
   // Profile & Auth
   if (path.includes("/api/v1/profile") || path.includes("/auth/validate_token")) {
-    return { status: 200, data: { data: mockProfile } };
+    return { status: 200, data: { payload: { data: mockProfile }, data: mockProfile } };
   }
 
   if (path.includes("/auth/sign_in")) {
-    return { status: 200, data: { data: mockProfile } };
+    return { status: 200, data: { payload: { data: mockProfile }, data: mockProfile } };
   }
 
   // Conversations list

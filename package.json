@@ -11,7 +11,7 @@
     "start:dev": "foreman start -f ./Procfile.dev",
     "start:test": "RAILS_ENV=test foreman start -f ./Procfile.test",
     "dev": "overmind start -f ./Procfile.dev",
-    "dev:ui": "VITE_RUBY_PORT=5173 vite --port 5173",
+    "dev:ui": "STANDALONE_UI=true vite --port 5173",
     "dev:frontend": "bin/vite dev",
     "dev:backend": "eval \"$(rbenv init -)\" && bin/rails s -p 3000",
     "ruby:prettier": "bundle exec rubocop -a",

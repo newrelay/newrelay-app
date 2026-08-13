@@ -5,9 +5,11 @@ import { aliases, vueOptions } from './vite.shared';
 import yaml from '@rollup/plugin-yaml';
 import compression from 'vite-plugin-compression';
 
+const isStandaloneUI = process.env.STANDALONE_UI === 'true';
+
 export default defineConfig({
   plugins: [
-    ruby(),
+    ...(isStandaloneUI ? [] : [ruby()]),
     vue(vueOptions),
     yaml(),
     compression({ algorithm: 'gzip' }),

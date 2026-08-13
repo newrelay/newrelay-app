@@ -16,27 +16,22 @@ export default defineConfig({
     compression({ algorithm: 'brotliCompress', ext: '.br' }),
   ],
   server: {
+    port: 5173,
     proxy: {
-      '/api': {
-        target: process.env.BACKEND_URL || 'http://localhost:3000',
-        changeOrigin: true,
-        secure: false,
-      },
-      '/auth': {
-        target: process.env.BACKEND_URL || 'http://localhost:3000',
-        changeOrigin: true,
-        secure: false,
-      },
-      '/cable': {
-        target: process.env.BACKEND_URL || 'http://localhost:3000',
-        ws: true,
-        changeOrigin: true,
-      },
-      '/rails': {
-        target: process.env.BACKEND_URL || 'http://localhost:3000',
-        changeOrigin: true,
-        secure: false,
-      },
+      '/api': { target: process.env.BACKEND_URL || 'http://localhost:3000', changeOrigin: true, secure: false },
+      '/auth': { target: process.env.BACKEND_URL || 'http://localhost:3000', changeOrigin: true, secure: false },
+      '/cable': { target: process.env.BACKEND_URL || 'http://localhost:3000', ws: true, changeOrigin: true, secure: false },
+      '/rails': { target: process.env.BACKEND_URL || 'http://localhost:3000', changeOrigin: true, secure: false },
+      '/enterprise': { target: process.env.BACKEND_URL || 'http://localhost:3000', changeOrigin: true, secure: false },
+      '/platform': { target: process.env.BACKEND_URL || 'http://localhost:3000', changeOrigin: true, secure: false },
+      '/public': { target: process.env.BACKEND_URL || 'http://localhost:3000', changeOrigin: true, secure: false },
+      '/resend_confirmation': { target: process.env.BACKEND_URL || 'http://localhost:3000', changeOrigin: true, secure: false },
+      '/hc': { target: process.env.BACKEND_URL || 'http://localhost:3000', changeOrigin: true, secure: false },
+      '/swagger': { target: process.env.BACKEND_URL || 'http://localhost:3000', changeOrigin: true, secure: false },
+      '/super_admin': { target: process.env.BACKEND_URL || 'http://localhost:3000', changeOrigin: true, secure: false },
+      '/installation': { target: process.env.BACKEND_URL || 'http://localhost:3000', changeOrigin: true, secure: false },
+      '/brand-assets': { target: process.env.BACKEND_URL || 'http://localhost:3000', changeOrigin: true, secure: false },
+      '/uploads': { target: process.env.BACKEND_URL || 'http://localhost:3000', changeOrigin: true, secure: false },
     },
   },
   css: {

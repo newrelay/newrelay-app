@@ -44,7 +44,8 @@ BACKEND_URL=https://api.yourdomain.com pnpm dev:ui
 
 | Command | Description |
 | :--- | :--- |
-| `pnpm dev:ui` | Starts **frontend UI only** (Vite on port `5173` with Node.js) |
+| `pnpm dev:ui` | Starts **frontend UI only** (Vite on port `5173` connected to backend/proxy) |
+| `pnpm dev:mock` | Starts **frontend UI with Mock APIs** (no backend server required) |
 | `pnpm dev:backend` | Starts **backend Rails server only** (Rails on port `3000`) |
 | `pnpm dev` | Starts **both** frontend and backend together (via Overmind) |
 | `pnpm eslint` | Runs ESLint code quality checks on JavaScript & Vue files |

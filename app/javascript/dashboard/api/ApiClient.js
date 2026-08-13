@@ -39,8 +39,9 @@ class ApiClient {
     return url;
   }
 
-  get() {
-    return axios.get(this.url);
+  // eslint-disable-next-line complexity
+  get(params) {
+    return axios.get(this.url, { params });
   }
 
   show(id) {

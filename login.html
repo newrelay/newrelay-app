@@ -3,22 +3,19 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>DakshAI Dashboard (Frontend Standalone)</title>
+    <title>DakshAI — Login (Frontend Standalone)</title>
     <link rel="icon" type="image/svg+xml" href="/brand-assets/logo_thumbnail.svg" />
     <script>
-      // NOTE: the fake auth cookie is injected ONLY in mock mode by
-      // mockApiPlugin (vite.config.mts). In server mode (pnpm dev:server) no
-      // cookie is seeded, so the app falls through to the real login page.
+      // Auth (v3) entrypoint for standalone UI. Served for /app/login and
+      // /app/auth/* by the standalone-html-router plugin in vite.config.mts.
       window.chatwootConfig = {
         hostURL: window.location.origin,
         helpCenterURL: '',
         apiHost: '',
         signupEnabled: 'true',
         isEnterprise: 'false',
-        enabledLanguages: [
-          { name: "English", iso_639_1_code: "en" }
-        ],
-        selectedLocale: 'en'
+        enabledLanguages: [{ name: 'English', iso_639_1_code: 'en' }],
+        selectedLocale: 'en',
       };
       window.globalConfig = {
         INSTALLATION_NAME: 'DakshAI',
@@ -39,6 +36,6 @@
   </head>
   <body class="text-slate-600">
     <div id="app"></div>
-    <script type="module" src="/app/javascript/entrypoints/dashboard.js"></script>
+    <script type="module" src="/app/javascript/entrypoints/v3app.js"></script>
   </body>
 </html>

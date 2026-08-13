@@ -17,7 +17,10 @@ const latestChatwootVersion = computed(() => {
 const globalConfig = useMapGetter('globalConfig/get');
 
 const hasAnUpdateAvailable = computed(() => {
-  if (!semver.valid(latestChatwootVersion.value)) {
+  if (
+    !semver.valid(latestChatwootVersion.value) ||
+    !semver.valid(globalConfig.value.appVersion)
+  ) {
     return false;
   }
 
@@ -25,10 +28,13 @@ const hasAnUpdateAvailable = computed(() => {
 });
 
 const gitSha = computed(() => {
-  return globalConfig.value.gitSha.substring(0, 7);
+  const sha = globalConfig.value.gitSha;
+  if (!sha) return null;
+  return sha.substring(0, 7);
 });
 
 const copyGitSha = () => {
+  if (!globalConfig.value.gitSha) return;
   copyTextToClipboard(globalConfig.value.gitSha);
 };
 </script>
@@ -43,8 +49,11 @@ const copyGitSha = () => {
       }}
     </div>
     <div class="divide-x divide-muted-foreground">
-      <span class="px-2">{{ `v${globalConfig.appVersion}` }}</span>
+      <span v-if="globalConfig.appVersion" class="px-2">{{
+        `v${globalConfig.appVersion}`
+      }}</span>
       <span
+        v-if="gitSha"
         v-tooltip="t('COMPONENTS.CODE.BUTTON_TEXT')"
         class="px-2 build-id cursor-pointer"
         @click="copyGitSha"

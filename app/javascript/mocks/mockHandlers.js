@@ -96,7 +96,7 @@ export const mockProfile = {
   role: 'administrator',
   confirmed: true,
   pubsub_token: 'mock-pubsub-token',
-  avatar_url: 'https://avatar.iran.liara.run/public/32',
+  avatar_url: '',
   ui_settings: { locale: 'en' },
   accounts: [
     {
@@ -169,7 +169,7 @@ export const mockAgents = [
     confirmed: true,
     availability_status: 'online',
     available_name: 'John Doe',
-    thumbnail: 'https://avatar.iran.liara.run/public/32',
+    thumbnail: '',
   },
   {
     id: 2,
@@ -179,7 +179,7 @@ export const mockAgents = [
     confirmed: true,
     availability_status: 'online',
     available_name: 'Sarah Smith',
-    thumbnail: 'https://avatar.iran.liara.run/public/45',
+    thumbnail: '',
   },
   {
     id: 3,
@@ -189,7 +189,7 @@ export const mockAgents = [
     confirmed: true,
     availability_status: 'offline',
     available_name: 'Miguel Torres',
-    thumbnail: 'https://avatar.iran.liara.run/public/12',
+    thumbnail: '',
   },
 ];
 
@@ -249,7 +249,7 @@ export const mockContacts = [
     name: 'Alice Johnson',
     email: 'alice@example.com',
     phone_number: '+15550001111',
-    thumbnail: 'https://avatar.iran.liara.run/public/65',
+    thumbnail: '',
     availability_status: 'offline',
     created_at: 1723000000,
     last_activity_at: 1723500500,
@@ -261,7 +261,7 @@ export const mockContacts = [
     name: 'Bob Williams',
     email: 'bob@example.com',
     phone_number: '+15550002222',
-    thumbnail: 'https://avatar.iran.liara.run/public/44',
+    thumbnail: '',
     availability_status: 'offline',
     created_at: 1722000000,
     last_activity_at: 1723490000,
@@ -273,7 +273,7 @@ export const mockContacts = [
     name: 'Carla Mendes',
     email: 'carla@example.com',
     phone_number: '+15550003333',
-    thumbnail: 'https://avatar.iran.liara.run/public/23',
+    thumbnail: '',
     availability_status: 'online',
     created_at: 1721000000,
     last_activity_at: 1723480000,
@@ -285,7 +285,7 @@ export const mockContacts = [
     name: 'David Kim',
     email: 'david@example.com',
     phone_number: '+15550004444',
-    thumbnail: 'https://avatar.iran.liara.run/public/18',
+    thumbnail: '',
     availability_status: 'offline',
     created_at: 1720000000,
     last_activity_at: 1723470000,
@@ -424,13 +424,13 @@ export const mockConversations = {
           id: 101,
           name: 'Alice Johnson',
           email: 'alice@example.com',
-          thumbnail: 'https://avatar.iran.liara.run/public/65',
+          thumbnail: '',
         },
         assignee: {
           id: 1,
           name: 'John Doe',
           email: 'john.doe@example.com',
-          thumbnail: 'https://avatar.iran.liara.run/public/32',
+          thumbnail: '',
         },
         team: null,
         channel: 'Channel::WebWidget',
@@ -446,7 +446,7 @@ export const mockConversations = {
           sender: {
             id: 101,
             name: 'Alice Johnson',
-            thumbnail: 'https://avatar.iran.liara.run/public/65',
+            thumbnail: '',
           },
         },
         {
@@ -476,7 +476,7 @@ export const mockConversations = {
           id: 102,
           name: 'Bob Williams',
           email: 'bob@example.com',
-          thumbnail: 'https://avatar.iran.liara.run/public/44',
+          thumbnail: '',
         },
         assignee: null,
         team: null,
@@ -493,7 +493,7 @@ export const mockConversations = {
           sender: {
             id: 102,
             name: 'Bob Williams',
-            thumbnail: 'https://avatar.iran.liara.run/public/44',
+            thumbnail: '',
           },
         },
       ],
@@ -513,13 +513,13 @@ export const mockConversations = {
           id: 103,
           name: 'Carla Mendes',
           email: 'carla@example.com',
-          thumbnail: 'https://avatar.iran.liara.run/public/23',
+          thumbnail: '',
         },
         assignee: {
           id: 2,
           name: 'Sarah Smith',
           email: 'sarah.smith@example.com',
-          thumbnail: 'https://avatar.iran.liara.run/public/45',
+          thumbnail: '',
         },
         team: { id: 2, name: 'Support' },
         channel: 'Channel::Email',
@@ -535,7 +535,7 @@ export const mockConversations = {
           sender: {
             id: 103,
             name: 'Carla Mendes',
-            thumbnail: 'https://avatar.iran.liara.run/public/23',
+            thumbnail: '',
           },
         },
       ],
@@ -555,13 +555,13 @@ export const mockConversations = {
           id: 104,
           name: 'David Kim',
           email: 'david@example.com',
-          thumbnail: 'https://avatar.iran.liara.run/public/18',
+          thumbnail: '',
         },
         assignee: {
           id: 1,
           name: 'John Doe',
           email: 'john.doe@example.com',
-          thumbnail: 'https://avatar.iran.liara.run/public/32',
+          thumbnail: '',
         },
         team: { id: 1, name: 'Sales' },
         channel: 'Channel::WebWidget',
@@ -577,13 +577,60 @@ export const mockConversations = {
           sender: {
             id: 104,
             name: 'David Kim',
-            thumbnail: 'https://avatar.iran.liara.run/public/18',
+            thumbnail: '',
           },
         },
       ],
     },
   ],
 };
+
+// Inbox / notification feed. Each item's `primary_actor` is a full
+// conversation object (the InboxView finds the active item by
+// `primary_actor.id`). Store reads `response.data.{ payload, meta }` and
+// camelCases keys, so `read_at` → `readAt`, `primary_actor` → `primaryActor`.
+export const mockNotifications = [
+  {
+    id: 1,
+    notification_type: 'conversation_assignment',
+    read_at: null,
+    snoozed_until: null,
+    last_activity_at: 1723500500,
+    created_at: 1723500500,
+    primary_actor_type: 'Conversation',
+    primary_actor_id: 1,
+    primary_actor: mockConversations.payload[0],
+    push_message_title: 'A conversation was assigned to you',
+  },
+  {
+    id: 2,
+    notification_type: 'conversation_mention',
+    read_at: null,
+    snoozed_until: null,
+    last_activity_at: 1723480000,
+    created_at: 1723480000,
+    primary_actor_type: 'Conversation',
+    primary_actor_id: 3,
+    primary_actor: mockConversations.payload[2],
+    push_message_title: 'You were mentioned in a conversation',
+  },
+  {
+    id: 3,
+    notification_type: 'conversation_creation',
+    read_at: 1723471000,
+    snoozed_until: null,
+    last_activity_at: 1723470000,
+    created_at: 1723470000,
+    primary_actor_type: 'Conversation',
+    primary_actor_id: 2,
+    primary_actor: mockConversations.payload[1],
+    push_message_title: 'A new conversation was created',
+  },
+];
+
+const mockNotificationsUnreadCount = mockNotifications.filter(
+  n => !n.read_at
+).length;
 
 // Cache keys returned per model. CacheEnabledApiClient reads
 // `data.cache_keys[modelName]`; any stable value forces a network refetch
@@ -600,21 +647,20 @@ export const handleMockRequest = (reqUrl, method) => {
   const path = url.pathname;
 
   // Profile & Auth
-  if (
-    path.includes('/api/v1/profile') ||
-    path.includes('/auth/validate_token')
-  ) {
-    return {
-      status: 200,
-      data: { payload: { data: mockProfile }, data: mockProfile },
-    };
+  // validate_token wraps the user as `{ payload: { data: user } }`
+  // (store reads response.data.payload.data).
+  if (path.includes('/auth/validate_token')) {
+    return { status: 200, data: { payload: { data: mockProfile } } };
+  }
+
+  // /api/v1/profile (GET + PUT for ui_settings, availability, avatar, etc.)
+  // returns the user OBJECT directly — the store commits response.data as-is.
+  if (path.includes('/api/v1/profile')) {
+    return { status: 200, data: mockProfile };
   }
 
   if (path.includes('/auth/sign_in')) {
-    return {
-      status: 200,
-      data: { payload: { data: mockProfile }, data: mockProfile },
-    };
+    return { status: 200, data: { data: mockProfile } };
   }
 
   // Cache keys (must precede the accounts matcher — needed by inboxes/labels)
@@ -647,10 +693,17 @@ export const handleMockRequest = (reqUrl, method) => {
     };
   }
 
-  // Conversations list — store reads `response.data.data.{meta,payload}`
+  // Conversations list — store reads `response.data.data.{meta,payload}`.
+  // Return the list only for page 1; an empty payload on later pages tells the
+  // list it has reached the end, otherwise "load more" loops forever.
   if (path.includes('/api/v1/accounts/') && path.includes('/conversations')) {
     if (method === 'GET') {
-      return { status: 200, data: { data: mockConversations } };
+      const page = Number(url.searchParams.get('page') || 1);
+      const payload = page > 1 ? [] : mockConversations.payload;
+      return {
+        status: 200,
+        data: { data: { meta: mockConversations.meta, payload } },
+      };
     }
     return { status: 200, data: mockConversations.payload[0] };
   }
@@ -711,11 +764,29 @@ export const handleMockRequest = (reqUrl, method) => {
     return { status: 200, data: mockCampaigns };
   }
 
-  // Notifications
+  // Notifications unread count — mutation stores the raw number
+  if (path.includes('/notifications/unread_count')) {
+    return { status: 200, data: mockNotificationsUnreadCount };
+  }
+
+  // Notifications list (Inbox view) — store reads the DOUBLE-nested
+  // `response.data.data.{payload,meta}`. Empty payload on later pages so the
+  // list stops paginating.
   if (path.includes('/notifications')) {
+    const page = Number(url.searchParams.get('page') || 1);
+    const payload = page > 1 ? [] : mockNotifications;
     return {
       status: 200,
-      data: { payload: { notifications: [], meta: { unread_count: 0 } } },
+      data: {
+        data: {
+          payload,
+          meta: {
+            count: mockNotifications.length,
+            current_page: page,
+            unread_count: mockNotificationsUnreadCount,
+          },
+        },
+      },
     };
   }
 

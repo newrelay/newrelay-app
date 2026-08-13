@@ -13,6 +13,7 @@
     "dev": "overmind start -f ./Procfile.dev",
     "dev:ui": "STANDALONE_UI=true vite --port 5173",
     "dev:mock": "MOCK_API=true STANDALONE_UI=true vite --port 5173",
+    "dev:server": "STANDALONE_UI=true BACKEND_URL=https://app.newrelay.com vite --port 5173",
     "dev:frontend": "bin/vite dev",
     "dev:backend": "eval \"$(rbenv init -)\" && bin/rails s -p 3000",
     "ruby:prettier": "bundle exec rubocop -a",

@@ -6,6 +6,26 @@ class Contacts::BulkActionService
   end
 
   def perform
+    audit = create_audit_record
+    begin
+      audit&.processing!
+      result = execute_action
+      success_count = result[:updated_contact_ids]&.size || ids.size
+      audit&.update!(
+        status: :completed,
+        completed_at: Time.zone.now,
+        statistics: { total: ids.size, success: success_count }
+      )
+      result
+    rescue StandardError => e
+      audit&.failed!
+      raise e
+    end
+  end
+
+  private
+
+  def execute_action
     return delete_contacts if delete_requested?
     return assign_labels if labels_to_add.any?
     return remove_labels if labels_to_remove.any?
@@ -14,7 +34,42 @@ class Contacts::BulkActionService
     { success: false, error: 'unknown_operation' }
   end
 
-  private
+  def create_audit_record
+    op_type = operation_type
+    return if op_type.blank?
+
+    @account.bulk_action_audits.create!(
+      user: @user,
+      operation_type: op_type,
+      action_label: action_label_name,
+      status: :pending,
+      statistics: { total: ids.size, success: 0 }
+    )
+  rescue StandardError => e
+    Rails.logger.error("Failed to create BulkActionAudit: #{e.message}")
+    nil
+  end
+
+  def operation_type
+    return 'delete' if delete_requested?
+    return 'add_tag' if labels_to_add.any?
+    return 'remove_tag' if labels_to_remove.any?
+
+    nil
+  end
+
+  def action_label_name
+    case operation_type
+    when 'add_tag'
+      "Add label (#{labels_to_add.join(', ')})"
+    when 'remove_tag'
+      "Remove label (#{labels_to_remove.join(', ')})"
+    when 'delete'
+      "Delete #{ids.size} contacts"
+    else
+      'Bulk contact action'
+    end
+  end
 
   def assign_labels
     Contacts::BulkAssignLabelsService.new(

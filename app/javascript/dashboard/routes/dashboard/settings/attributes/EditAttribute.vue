@@ -1,5 +1,5 @@
 <script setup>
-import { computed, onMounted, ref } from 'vue';
+import { computed, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useVuelidate } from '@vuelidate/core';
 import { required, minLength } from '@vuelidate/validators';
@@ -8,14 +8,19 @@ import { useStore, useMapGetter } from 'dashboard/composables/store';
 import { getRegexp, normalizeRegexPattern } from 'shared/helpers/Validators';
 import { ATTRIBUTE_TYPES } from './constants';
 import TagInput from 'dashboard/components-next/taginput/TagInput.vue';
-import Icon from 'dashboard/components-next/icon/Icon.vue';
 import {
   RelayButton,
   RelayInput,
   RelayCheckbox,
+  RelayLabel,
+  RelayModal,
 } from 'dashboard/components-next/relay';
 
 const props = defineProps({
+  show: {
+    type: Boolean,
+    default: false,
+  },
   selectedAttribute: {
     type: Object,
     default: () => ({}),
@@ -126,9 +131,9 @@ const setFormValues = () => {
   regexCue.value = props.selectedAttribute.regex_cue || '';
   regexEnabled.value = pattern != null;
   values.value = [...(props.selectedAttribute.attribute_values || [])];
+  tagInputTouched.value = false;
+  v$.value.$reset();
 };
-
-const onClose = () => emit('close');
 
 const editAttributes = async () => {
   v$.value.$touch();
@@ -154,37 +159,35 @@ const editAttributes = async () => {
       regex_cue: cue || null,
     });
     useAlert(t('ATTRIBUTES_MGMT.EDIT.API.SUCCESS_MESSAGE'));
-    onClose();
+    emit('close');
   } catch (error) {
     useAlert(error?.message || t('ATTRIBUTES_MGMT.EDIT.API.ERROR_MESSAGE'));
   }
 };
 
-onMounted(setFormValues);
+watch(
+  () => [props.show, props.selectedAttribute],
+  ([show]) => {
+    if (show && props.selectedAttribute?.id) {
+      setFormValues();
+    }
+  }
+);
 </script>
 
 <template>
-  <div class="-m-6 flex max-h-[90vh] flex-col">
-    <div
-      class="flex shrink-0 items-center justify-between border-b border-border/40 bg-background/50 p-5"
-    >
-      <h3 class="text-[16px] font-semibold text-foreground">
-        {{ pageTitle }}
-      </h3>
-      <button
-        type="button"
-        class="text-muted-foreground transition-colors hover:text-foreground"
-        @click="onClose"
-      >
-        <Icon icon="i-lucide-x" class="size-5" />
-      </button>
-    </div>
-
-    <div class="space-y-5 overflow-y-auto p-6">
+  <RelayModal
+    :show="show"
+    :title="pageTitle"
+    size="md"
+    @close="emit('close')"
+  >
+    <form @submit.prevent="editAttributes">
+      <div class="max-h-[60vh] space-y-5 overflow-y-auto px-7 pb-2">
       <div class="flex flex-col gap-2.5">
-        <label class="text-[13.5px] font-medium text-foreground">
+        <RelayLabel class="text-[13.5px] font-medium text-foreground">
           {{ t('ATTRIBUTES_MGMT.ADD.FORM.NAME.LABEL') }}
-        </label>
+        </RelayLabel>
         <RelayInput
           v-model="displayName"
           type="text"
@@ -198,9 +201,9 @@ onMounted(setFormValues);
       </div>
 
       <div class="flex flex-col gap-2.5">
-        <label class="text-[13.5px] font-medium text-foreground">
+        <RelayLabel class="text-[13.5px] font-medium text-foreground">
           {{ t('ATTRIBUTES_MGMT.ADD.FORM.KEY.LABEL') }}
-        </label>
+        </RelayLabel>
         <RelayInput
           v-model="attributeKey"
           type="text"
@@ -214,9 +217,9 @@ onMounted(setFormValues);
       </div>
 
       <div class="flex flex-col gap-2.5">
-        <label class="text-[13.5px] font-medium text-foreground">
+        <RelayLabel class="text-[13.5px] font-medium text-foreground">
           {{ t('ATTRIBUTES_MGMT.ADD.FORM.DESC.LABEL') }}
-        </label>
+        </RelayLabel>
         <textarea
           v-model="description"
           rows="5"
@@ -230,9 +233,9 @@ onMounted(setFormValues);
       </div>
 
       <div class="flex flex-col gap-2.5">
-        <label class="text-[13.5px] font-medium text-foreground">
+        <RelayLabel class="text-[13.5px] font-medium text-foreground">
           {{ t('ATTRIBUTES_MGMT.ADD.FORM.TYPE.LABEL') }}
-        </label>
+        </RelayLabel>
         <div
           class="flex h-10 w-full items-center justify-between rounded-md border border-border/80 bg-muted/40 px-3 text-left text-[14px] text-muted-foreground shadow-sm"
         >
@@ -241,9 +244,9 @@ onMounted(setFormValues);
       </div>
 
       <div v-if="isAttributeTypeList" class="flex flex-col gap-2.5">
-        <label class="text-[13.5px] font-medium text-foreground">
+        <RelayLabel class="text-[13.5px] font-medium text-foreground">
           {{ t('ATTRIBUTES_MGMT.EDIT.TYPE.LIST.LABEL') }}
-        </label>
+        </RelayLabel>
         <div
           class="rounded-md border px-3 py-2"
           :class="isTagInputInvalid ? 'border-destructive' : 'border-border/80'"
@@ -271,9 +274,9 @@ onMounted(setFormValues);
         v-if="isAttributeTypeText && regexEnabled"
         class="flex flex-col gap-2.5"
       >
-        <label class="text-[13.5px] font-medium text-foreground">
+        <RelayLabel class="text-[13.5px] font-medium text-foreground">
           {{ t('ATTRIBUTES_MGMT.ADD.FORM.REGEX_PATTERN.LABEL') }}
-        </label>
+        </RelayLabel>
         <RelayInput
           v-model="regexPattern"
           type="text"
@@ -286,9 +289,9 @@ onMounted(setFormValues);
         v-if="isAttributeTypeText && regexEnabled"
         class="flex flex-col gap-2.5"
       >
-        <label class="text-[13.5px] font-medium text-foreground">
+        <RelayLabel class="text-[13.5px] font-medium text-foreground">
           {{ t('ATTRIBUTES_MGMT.ADD.FORM.REGEX_CUE.LABEL') }}
-        </label>
+        </RelayLabel>
         <RelayInput
           v-model="regexCue"
           type="text"
@@ -298,25 +301,25 @@ onMounted(setFormValues);
       </div>
     </div>
 
-    <div
-      class="flex shrink-0 justify-end gap-3 border-t border-border/40 bg-background/50 p-5"
-    >
-      <RelayButton
-        type="button"
-        variant="outline"
-        class="border-border bg-muted hover:bg-muted/80"
-        @click="onClose"
+      <div
+        class="flex justify-end gap-3 border-t border-border/40 bg-background/50 px-7 py-6"
       >
-        {{ t('ATTRIBUTES_MGMT.ADD.CANCEL_BUTTON_TEXT') }}
-      </RelayButton>
-      <RelayButton
-        type="button"
-        class="px-5"
-        :disabled="isButtonDisabled"
-        @click="editAttributes"
-      >
-        {{ t('ATTRIBUTES_MGMT.EDIT.UPDATE_BUTTON_TEXT') }}
-      </RelayButton>
-    </div>
-  </div>
+        <RelayButton
+          type="button"
+          variant="outline"
+          class="h-9 border-border bg-muted px-5 text-[13px] font-medium text-foreground shadow-sm hover:bg-muted/80"
+          @click="emit('close')"
+        >
+          {{ t('ATTRIBUTES_MGMT.ADD.CANCEL_BUTTON_TEXT') }}
+        </RelayButton>
+        <RelayButton
+          type="submit"
+          class="h-9 px-5 text-[13px] font-medium shadow-sm"
+          :disabled="isButtonDisabled"
+        >
+          {{ t('ATTRIBUTES_MGMT.EDIT.UPDATE_BUTTON_TEXT') }}
+        </RelayButton>
+      </div>
+    </form>
+  </RelayModal>
 </template>

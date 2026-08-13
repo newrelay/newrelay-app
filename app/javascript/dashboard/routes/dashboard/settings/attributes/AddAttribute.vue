@@ -15,18 +15,22 @@ import {
   RelayButton,
   RelayInput,
   RelayCheckbox,
+  RelayLabel,
+  RelayModal,
 } from 'dashboard/components-next/relay';
 
 const props = defineProps({
-  onClose: {
-    type: Function,
-    default: () => {},
+  show: {
+    type: Boolean,
+    default: false,
   },
   selectedAttributeModelTab: {
     type: Number,
     default: 0,
   },
 });
+
+const emit = defineEmits(['close']);
 
 const { t } = useI18n();
 const store = useStore();
@@ -128,6 +132,29 @@ const isButtonDisabled = computed(
     isTagInputEmpty.value
 );
 
+const resetForm = () => {
+  displayName.value = '';
+  description.value = '';
+  attributeModel.value = props.selectedAttributeModelTab || 0;
+  attributeType.value = 0;
+  attributeKey.value = '';
+  regexPattern.value = '';
+  regexCue.value = '';
+  regexEnabled.value = false;
+  values.value = [];
+  tagInputTouched.value = false;
+  showModelDropdown.value = false;
+  showTypeDropdown.value = false;
+  v$.value.$reset();
+};
+
+watch(
+  () => props.show,
+  newVal => {
+    if (newVal) resetForm();
+  }
+);
+
 watch(attributeType, () => {
   tagInputTouched.value = false;
   values.value = [];
@@ -173,7 +200,7 @@ const addAttributes = async () => {
       regex_cue: cue || null,
     });
     useAlert(t('ATTRIBUTES_MGMT.ADD.API.SUCCESS_MESSAGE'));
-    props.onClose();
+    emit('close');
   } catch (error) {
     useAlert(error?.message || t('ATTRIBUTES_MGMT.ADD.API.ERROR_MESSAGE'));
   }
@@ -181,33 +208,18 @@ const addAttributes = async () => {
 </script>
 
 <template>
-  <!-- Break out of Dialog p-6 to match NewRelay header / body / footer chrome -->
-  <div class="-m-6 flex max-h-[90vh] flex-col">
-    <div
-      class="flex shrink-0 items-center justify-between border-b border-border/40 bg-background/50 p-5"
-    >
-      <h3 class="text-[16px] font-semibold text-foreground">
-        {{ t('ATTRIBUTES_MGMT.ADD.TITLE') }}
-      </h3>
-      <button
-        type="button"
-        class="text-muted-foreground transition-colors hover:text-foreground"
-        @click="onClose()"
-      >
-        <Icon icon="i-lucide-x" class="size-5" />
-      </button>
-    </div>
-
-    <!--
-      Use a div (not <form>): Dialog already wraps content in a <form>.
-      Nested forms are invalid HTML and the Create submit would hit Dialog's
-      empty confirm handler instead of addAttributes.
-    -->
-    <div class="space-y-5 overflow-y-auto p-6">
+  <RelayModal
+    :show="show"
+    :title="t('ATTRIBUTES_MGMT.ADD.TITLE')"
+    size="md"
+    @close="emit('close')"
+  >
+    <form @submit.prevent="addAttributes">
+      <div class="max-h-[60vh] space-y-5 overflow-y-auto px-7 pb-2">
       <div class="flex flex-col gap-2.5">
-        <label class="text-[13.5px] font-medium text-foreground">
+        <RelayLabel class="text-[13.5px] font-medium text-foreground">
           {{ t('ATTRIBUTES_MGMT.ADD.FORM.MODEL.LABEL') }}
-        </label>
+        </RelayLabel>
         <OnClickOutside @trigger="showModelDropdown = false">
           <div class="relative">
             <button
@@ -245,9 +257,9 @@ const addAttributes = async () => {
       </div>
 
       <div class="flex flex-col gap-2.5">
-        <label class="text-[13.5px] font-medium text-foreground">
+        <RelayLabel class="text-[13.5px] font-medium text-foreground">
           {{ t('ATTRIBUTES_MGMT.ADD.FORM.NAME.LABEL') }}
-        </label>
+        </RelayLabel>
         <RelayInput
           v-model="displayName"
           type="text"
@@ -261,9 +273,9 @@ const addAttributes = async () => {
       </div>
 
       <div class="flex flex-col gap-2.5">
-        <label class="text-[13.5px] font-medium text-foreground">
+        <RelayLabel class="text-[13.5px] font-medium text-foreground">
           {{ t('ATTRIBUTES_MGMT.ADD.FORM.KEY.LABEL') }}
-        </label>
+        </RelayLabel>
         <RelayInput
           v-model="attributeKey"
           type="text"
@@ -277,9 +289,9 @@ const addAttributes = async () => {
       </div>
 
       <div class="flex flex-col gap-2.5">
-        <label class="text-[13.5px] font-medium text-foreground">
+        <RelayLabel class="text-[13.5px] font-medium text-foreground">
           {{ t('ATTRIBUTES_MGMT.ADD.FORM.DESC.LABEL') }}
-        </label>
+        </RelayLabel>
         <textarea
           v-model="description"
           rows="3"
@@ -293,9 +305,9 @@ const addAttributes = async () => {
       </div>
 
       <div class="flex flex-col gap-2.5">
-        <label class="text-[13.5px] font-medium text-foreground">
+        <RelayLabel class="text-[13.5px] font-medium text-foreground">
           {{ t('ATTRIBUTES_MGMT.ADD.FORM.TYPE.LABEL') }}
-        </label>
+        </RelayLabel>
         <OnClickOutside @trigger="showTypeDropdown = false">
           <div class="relative">
             <button
@@ -333,9 +345,9 @@ const addAttributes = async () => {
       </div>
 
       <div v-if="isAttributeTypeList" class="flex flex-col gap-2.5">
-        <label class="text-[13.5px] font-medium text-foreground">
+        <RelayLabel class="text-[13.5px] font-medium text-foreground">
           {{ t('ATTRIBUTES_MGMT.ADD.FORM.TYPE.LIST.LABEL') }}
-        </label>
+        </RelayLabel>
         <div
           class="rounded-md border px-3 py-2"
           :class="isTagInputInvalid ? 'border-destructive' : 'border-border/80'"
@@ -363,9 +375,9 @@ const addAttributes = async () => {
         v-if="isAttributeTypeText && regexEnabled"
         class="flex flex-col gap-2.5"
       >
-        <label class="text-[13.5px] font-medium text-foreground">
+        <RelayLabel class="text-[13.5px] font-medium text-foreground">
           {{ t('ATTRIBUTES_MGMT.ADD.FORM.REGEX_PATTERN.LABEL') }}
-        </label>
+        </RelayLabel>
         <RelayInput
           v-model="regexPattern"
           type="text"
@@ -378,9 +390,9 @@ const addAttributes = async () => {
         v-if="isAttributeTypeText && regexEnabled"
         class="flex flex-col gap-2.5"
       >
-        <label class="text-[13.5px] font-medium text-foreground">
+        <RelayLabel class="text-[13.5px] font-medium text-foreground">
           {{ t('ATTRIBUTES_MGMT.ADD.FORM.REGEX_CUE.LABEL') }}
-        </label>
+        </RelayLabel>
         <RelayInput
           v-model="regexCue"
           type="text"
@@ -390,25 +402,25 @@ const addAttributes = async () => {
       </div>
     </div>
 
-    <div
-      class="flex shrink-0 justify-end gap-3 border-t border-border/40 bg-background/50 p-5"
-    >
-      <RelayButton
-        type="button"
-        variant="outline"
-        class="border-border bg-muted hover:bg-muted/80"
-        @click="onClose()"
+      <div
+        class="flex justify-end gap-3 border-t border-border/40 bg-background/50 px-7 py-6"
       >
-        {{ t('ATTRIBUTES_MGMT.ADD.CANCEL_BUTTON_TEXT') }}
-      </RelayButton>
-      <RelayButton
-        type="button"
-        class="px-5"
-        :disabled="isButtonDisabled"
-        @click="addAttributes"
-      >
-        {{ t('ATTRIBUTES_MGMT.ADD.SUBMIT') }}
-      </RelayButton>
-    </div>
-  </div>
+        <RelayButton
+          type="button"
+          variant="outline"
+          class="h-9 border-border bg-muted px-5 text-[13px] font-medium text-foreground shadow-sm hover:bg-muted/80"
+          @click="emit('close')"
+        >
+          {{ t('ATTRIBUTES_MGMT.ADD.CANCEL_BUTTON_TEXT') }}
+        </RelayButton>
+        <RelayButton
+          type="submit"
+          class="h-9 px-5 text-[13px] font-medium shadow-sm"
+          :disabled="isButtonDisabled"
+        >
+          {{ t('ATTRIBUTES_MGMT.ADD.SUBMIT') }}
+        </RelayButton>
+      </div>
+    </form>
+  </RelayModal>
 </template>

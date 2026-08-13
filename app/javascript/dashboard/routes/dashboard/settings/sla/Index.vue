@@ -1,7 +1,6 @@
 <script>
 import AddSLA from './AddSLA.vue';
 import SettingsLayout from '../SettingsLayout.vue';
-import BaseSettingsHeader from 'dashboard/routes/dashboard/settings/components/BaseSettingsHeader.vue';
 import SLAPaywallEnterprise from './SLAPaywallEnterprise.vue';
 import Icon from 'dashboard/components-next/icon/Icon.vue';
 import {
@@ -20,7 +19,6 @@ export default {
   components: {
     AddSLA,
     SettingsLayout,
-    BaseSettingsHeader,
     SLAPaywallEnterprise,
     Icon,
     RelayButton,
@@ -138,29 +136,6 @@ export default {
     :is-loading="uiFlags.isFetching"
     :loading-message="$t('SLA.LOADING')"
   >
-    <template #header>
-      <BaseSettingsHeader
-        v-model:search-query="searchQuery"
-        :title="$t('SLA.HEADER')"
-        :description="$t('SLA.DESCRIPTION')"
-        :link-text="$t('SLA.LEARN_MORE')"
-        :search-placeholder="
-          isBehindAPaywall ? '' : $t('SLA.SEARCH_PLACEHOLDER')
-        "
-        feature-name="sla"
-      >
-        <template v-if="!isBehindAPaywall && records?.length" #count>
-          <span class="text-sm text-muted-foreground">
-            {{ $t('SLA.COUNT', { n: records.length }) }}
-          </span>
-        </template>
-        <template v-if="!isBehindAPaywall" #actions>
-          <RelayButton size="sm" @click="openAddPopup">
-            {{ $t('SLA.ADD_ACTION') }}
-          </RelayButton>
-        </template>
-      </BaseSettingsHeader>
-    </template>
     <template #body>
       <SLAPaywallEnterprise
         v-if="isBehindAPaywall"
@@ -170,97 +145,116 @@ export default {
       />
       <div
         v-else
-        class="overflow-hidden rounded-xl border border-border/60 bg-card shadow-xs"
+        class="mb-8 overflow-hidden rounded-xl border border-border/60 bg-card shadow-xs"
       >
-        <div v-if="emptyTableMessage" class="py-20">
-          <p class="text-center text-sm text-muted-foreground">
-            {{ emptyTableMessage }}
+        <!-- Header -->
+        <div class="border-b border-border/40 p-4 sm:p-6">
+          <h3 class="text-base font-semibold text-foreground">
+            {{ $t('SLA.HEADER') }}
+          </h3>
+          <p class="mt-1 max-w-4xl text-sm text-muted-foreground">
+            {{ $t('SLA.DESCRIPTION') }}
           </p>
         </div>
-        <div v-else class="overflow-x-auto">
-          <table class="w-full border-collapse text-left">
-            <thead>
-              <tr class="border-b border-border/40 bg-background">
-                <th
-                  class="px-6 py-3.5 text-[13px] font-medium text-muted-foreground"
-                >
-                  {{ $t('SLA.LIST.TABLE_HEADER.SLA') }}
-                </th>
-                <th
-                  class="w-40 px-6 py-3.5 text-[13px] font-medium text-muted-foreground"
-                >
-                  {{ $t('SLA.LIST.TABLE_HEADER.BUSINESS_HOURS') }}
-                </th>
-                <th
-                  class="w-24 px-6 py-3.5 text-[13px] font-medium text-muted-foreground"
-                >
-                  <div class="flex items-center gap-1">
-                    <span>
-                      {{ $t('SLA.LIST.RESPONSE_TYPES.SHORT_HAND.FRT') }}
-                    </span>
-                    <Icon
-                      v-tooltip.left="$t('SLA.LIST.RESPONSE_TYPES.FRT')"
-                      icon="i-lucide-info"
-                      class="size-3.5 cursor-help text-muted-foreground"
-                    />
-                  </div>
-                </th>
-                <th
-                  class="w-24 px-6 py-3.5 text-[13px] font-medium text-muted-foreground"
-                >
-                  <div class="flex items-center gap-1">
-                    <span>
-                      {{ $t('SLA.LIST.RESPONSE_TYPES.SHORT_HAND.NRT') }}
-                    </span>
-                    <Icon
-                      v-tooltip.left="$t('SLA.LIST.RESPONSE_TYPES.NRT')"
-                      icon="i-lucide-info"
-                      class="size-3.5 cursor-help text-muted-foreground"
-                    />
-                  </div>
-                </th>
-                <th
-                  class="w-24 px-6 py-3.5 text-[13px] font-medium text-muted-foreground"
-                >
-                  <div class="flex items-center gap-1">
-                    <span>
-                      {{ $t('SLA.LIST.RESPONSE_TYPES.SHORT_HAND.RT') }}
-                    </span>
-                    <Icon
-                      v-tooltip.left="$t('SLA.LIST.RESPONSE_TYPES.RT')"
-                      icon="i-lucide-info"
-                      class="size-3.5 cursor-help text-muted-foreground"
-                    />
-                  </div>
-                </th>
-                <th
-                  class="w-32 px-6 py-3.5 text-[13px] font-medium text-muted-foreground"
-                >
-                  {{ $t('INTEGRATION_APPS.LIST.ACTIONS') }}
-                </th>
-              </tr>
-            </thead>
-            <tbody class="divide-y divide-border/40">
-              <tr
+
+        <div class="space-y-6 p-4 sm:p-6">
+          <!-- Toolbar -->
+          <div
+            class="flex flex-col justify-between gap-4 sm:flex-row sm:items-center"
+          >
+            <div class="relative w-full max-w-md">
+              <Icon
+                icon="i-lucide-search"
+                class="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground"
+              />
+              <input
+                v-model="searchQuery"
+                type="text"
+                :placeholder="$t('SLA.SEARCH_PLACEHOLDER')"
+                class="h-10 w-full rounded-lg border border-border/60 bg-muted/20 pl-9 text-sm text-foreground outline-none placeholder:text-muted-foreground focus:ring-1 focus:ring-primary/20"
+              />
+            </div>
+            <RelayButton
+              size="sm"
+              class="h-10 whitespace-nowrap px-5"
+              @click="openAddPopup"
+            >
+              {{ $t('SLA.ADD_ACTION') }}
+            </RelayButton>
+          </div>
+
+          <!-- Empty state -->
+          <div v-if="emptyTableMessage" class="py-20">
+            <p class="text-center text-sm text-muted-foreground">
+              {{ emptyTableMessage }}
+            </p>
+          </div>
+
+          <!-- List -->
+          <div v-else class="min-w-full">
+            <!-- Header row -->
+            <div
+              class="grid grid-cols-[1.5fr_1fr_0.7fr_0.7fr_0.7fr_100px] items-center border-b border-border/40 px-4 py-3"
+            >
+              <div class="text-[12px] font-semibold text-muted-foreground">
+                {{ $t('SLA.LIST.TABLE_HEADER.SLA') }}
+              </div>
+              <div class="text-[12px] font-semibold text-muted-foreground">
+                {{ $t('SLA.LIST.TABLE_HEADER.BUSINESS_HOURS') }}
+              </div>
+              <div
+                class="flex items-center gap-1 text-[12px] font-semibold text-muted-foreground"
+              >
+                {{ $t('SLA.LIST.RESPONSE_TYPES.SHORT_HAND.FRT') }}
+                <Icon
+                  v-tooltip.top="$t('SLA.LIST.RESPONSE_TYPES.FRT')"
+                  icon="i-lucide-info"
+                  class="size-3.5 cursor-help"
+                />
+              </div>
+              <div
+                class="flex items-center gap-1 text-[12px] font-semibold text-muted-foreground"
+              >
+                {{ $t('SLA.LIST.RESPONSE_TYPES.SHORT_HAND.NRT') }}
+                <Icon
+                  v-tooltip.top="$t('SLA.LIST.RESPONSE_TYPES.NRT')"
+                  icon="i-lucide-info"
+                  class="size-3.5 cursor-help"
+                />
+              </div>
+              <div
+                class="flex items-center gap-1 text-[12px] font-semibold text-muted-foreground"
+              >
+                {{ $t('SLA.LIST.RESPONSE_TYPES.SHORT_HAND.RT') }}
+                <Icon
+                  v-tooltip.top="$t('SLA.LIST.RESPONSE_TYPES.RT')"
+                  icon="i-lucide-info"
+                  class="size-3.5 cursor-help"
+                />
+              </div>
+              <div
+                class="text-right text-[12px] font-semibold text-muted-foreground"
+              >
+                {{ $t('INTEGRATION_APPS.LIST.ACTIONS') }}
+              </div>
+            </div>
+
+            <!-- Body rows -->
+            <div class="divide-y divide-border/40">
+              <div
                 v-for="sla in filteredRecords"
                 :key="sla.id"
-                class="group bg-card transition-colors hover:bg-muted/10"
+                class="group grid grid-cols-[1.5fr_1fr_0.7fr_0.7fr_0.7fr_100px] items-center px-4 py-4 transition-colors hover:bg-muted/10"
               >
-                <td class="px-6 py-4">
-                  <div class="flex min-w-0 flex-col gap-1">
-                    <span
-                      class="truncate text-[14px] font-medium text-foreground"
-                    >
-                      {{ sla.name }}
-                    </span>
-                    <span
-                      class="line-clamp-1 text-[13px] text-muted-foreground"
-                    >
-                      {{ sla.description }}
-                    </span>
-                  </div>
-                </td>
-                <td class="px-6 py-4">
+                <div class="min-w-0 pr-4">
+                  <p class="truncate text-[14px] font-medium text-foreground">
+                    {{ sla.name }}
+                  </p>
+                  <p class="line-clamp-1 text-[13px] text-muted-foreground">
+                    {{ sla.description }}
+                  </p>
+                </div>
+                <div>
                   <RelayBadge
                     variant="outline"
                     class="inline-flex items-center gap-1.5 border-border bg-muted/30 text-foreground"
@@ -284,35 +278,33 @@ export default {
                         : $t('SLA.LIST.BUSINESS_HOURS_OFF')
                     }}
                   </RelayBadge>
-                </td>
-                <td class="px-6 py-4 text-[14px] text-foreground">
+                </div>
+                <div class="text-[14px] text-foreground">
                   {{ displayTime(sla.first_response_time_threshold) }}
-                </td>
-                <td class="px-6 py-4 text-[14px] text-foreground">
+                </div>
+                <div class="text-[14px] text-foreground">
                   {{ displayTime(sla.next_response_time_threshold) }}
-                </td>
-                <td class="px-6 py-4 text-[14px] text-foreground">
+                </div>
+                <div class="text-[14px] text-foreground">
                   {{ displayTime(sla.resolution_time_threshold) }}
-                </td>
-                <td class="px-6 py-4">
-                  <div
-                    class="flex items-center justify-end gap-1.5 opacity-0 transition-opacity group-hover:opacity-100"
+                </div>
+                <div
+                  class="flex items-center justify-end opacity-0 transition-opacity group-hover:opacity-100"
+                >
+                  <RelayButton
+                    v-tooltip.top="$t('SLA.FORM.DELETE')"
+                    variant="ghost"
+                    size="icon"
+                    class="size-8 border border-transparent text-muted-foreground shadow-xs hover:border-destructive/20 hover:bg-destructive/10 hover:text-destructive"
+                    :disabled="loading[sla.id]"
+                    @click="openDeletePopup(sla)"
                   >
-                    <RelayButton
-                      v-tooltip.top="$t('SLA.FORM.DELETE')"
-                      variant="ghost"
-                      size="icon"
-                      class="size-8 border border-transparent text-muted-foreground shadow-xs hover:border-destructive/20 hover:bg-destructive/10 hover:text-destructive"
-                      :disabled="loading[sla.id]"
-                      @click="openDeletePopup(sla)"
-                    >
-                      <Icon icon="i-lucide-trash-2" class="size-3.5" />
-                    </RelayButton>
-                  </div>
-                </td>
-              </tr>
-            </tbody>
-          </table>
+                    <Icon icon="i-lucide-trash-2" class="size-3.5" />
+                  </RelayButton>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 

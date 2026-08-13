@@ -9,6 +9,7 @@ import {
   useWhatsappCallSession,
   sendWhatsappTerminateBeacon,
   cleanupWhatsappSession,
+  setWhatsappCallMuted,
 } from 'dashboard/composables/useWhatsappCallSession';
 import { handleVoiceCallCreated } from 'dashboard/helper/voice';
 import { VOICE_CALL_PROVIDERS } from 'dashboard/helper/inbox';
@@ -34,6 +35,11 @@ const markDismissed = callSid => {
 let globalsAttachedCount = 0;
 let globalDurationTimer = null;
 const globalCallDuration = ref(0);
+// Mic mute + overlay expand/minimize are shared across every call surface
+// (immersive overlay, compact card, in-header banner), so they live at module
+// scope like the duration timer.
+const globalIsMuted = ref(false);
+const globalOverlayExpanded = ref(true);
 let storedCallsStoreRef = null;
 // Shared join lock so two surfaces (bubble + widget) clicking concurrently
 // see one in-flight join, not two unrelated isJoining refs.
@@ -218,7 +224,30 @@ const buildCallActions = ({ callsStore, whatsappSession, t }) => {
     callsStore.dismissCall(callSid);
   };
 
-  return { endCall, joinCall, rejectIncomingCall, dismissCall };
+  // Mute routes by provider: WhatsApp toggles the local mic track, Twilio uses
+  // the Voice SDK connection's native mute. Both share the one global flag.
+  const toggleMute = () => {
+    const next = !globalIsMuted.value;
+    globalIsMuted.value = next;
+    if (isWhatsappCall(callsStore.activeCall)) {
+      setWhatsappCallMuted(next);
+    } else {
+      TwilioVoiceClient.setMuted(next);
+    }
+  };
+
+  const setCallOverlayExpanded = value => {
+    globalOverlayExpanded.value = value;
+  };
+
+  return {
+    endCall,
+    joinCall,
+    rejectIncomingCall,
+    dismissCall,
+    toggleMute,
+    setCallOverlayExpanded,
+  };
 };
 
 const buildReactiveSurface = callsStore => {
@@ -237,6 +266,8 @@ const buildReactiveSurface = callsStore => {
     hasActiveCall,
     isJoining: globalIsJoiningReadonly,
     formattedCallDuration,
+    isMuted: globalIsMuted,
+    isCallOverlayExpanded: globalOverlayExpanded,
   };
 };
 
@@ -280,6 +311,9 @@ export function useCallSession() {
       } else {
         globalDurationTimer?.stop();
         globalCallDuration.value = 0;
+        // Reset shared UI flags so the next call starts unmuted and expanded.
+        globalIsMuted.value = false;
+        globalOverlayExpanded.value = true;
       }
     },
     { immediate: true }

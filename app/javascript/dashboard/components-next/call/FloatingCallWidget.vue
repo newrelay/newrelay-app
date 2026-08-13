@@ -1,15 +1,15 @@
 <script setup>
-import { computed, onBeforeUnmount, ref, watch } from 'vue';
+import { computed, onBeforeUnmount, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useStore } from 'vuex';
 import { useCallSession } from 'dashboard/composables/useCallSession';
-import { setWhatsappCallMuted } from 'dashboard/composables/useWhatsappCallSession';
-import TwilioVoiceClient from 'dashboard/api/channel/voice/twilioVoiceClient';
 import { frontendURL, conversationUrl } from 'dashboard/helper/URLHelper';
 import { VOICE_CALL_PROVIDERS } from 'dashboard/helper/inbox';
 import { VOICE_CALL_DIRECTION } from 'dashboard/components-next/message/constants';
 import WindowVisibilityHelper from 'dashboard/helper/AudioAlerts/WindowVisibilityHelper';
 import CallCard from 'dashboard/components-next/call/CallCard.vue';
+import IncomingCallOverlay from 'dashboard/components-next/call/IncomingCallOverlay.vue';
+import OngoingCallOverlay from 'dashboard/components-next/call/OngoingCallOverlay.vue';
 import countriesList from 'shared/constants/countries.js';
 
 const RINGTONE_URL = '/audio/dashboard/ringtone.mp3';
@@ -28,14 +28,11 @@ const {
   rejectIncomingCall,
   dismissCall,
   formattedCallDuration,
+  isMuted,
+  isCallOverlayExpanded,
+  toggleMute,
+  setCallOverlayExpanded,
 } = useCallSession();
-
-// Mute routes by provider: WhatsApp toggles the local mic track, Twilio uses
-// the Voice SDK connection's native mute. Both surface the same button.
-const isMuted = ref(false);
-const isWhatsappActive = computed(
-  () => activeCall.value?.provider === VOICE_CALL_PROVIDERS.WHATSAPP
-);
 
 const primaryIncomingCall = computed(() =>
   hasActiveCall.value ? null : incomingCalls.value[0] || null
@@ -53,6 +50,36 @@ const mainCardState = computed(() => {
     : VOICE_CALL_DIRECTION.INCOMING;
 });
 
+// The primary inbound ringing call takes over the whole screen with the
+// immersive overlay; everything else (outbound, stacked, ongoing) stays in the
+// compact bottom-right cards.
+const showIncomingOverlay = computed(
+  () =>
+    !!primaryIncomingCall.value &&
+    mainCardState.value === VOICE_CALL_DIRECTION.INCOMING
+);
+
+// Outbound (ringing) and connected calls share the immersive overlay. It opens
+// automatically and can be minimized back to the compact bottom-right card.
+const primaryActiveCall = computed(
+  () => activeCall.value || primaryIncomingCall.value
+);
+const isActiveCallVisible = computed(
+  () =>
+    mainCardState.value === VOICE_CALL_DIRECTION.OUTGOING ||
+    mainCardState.value === VOICE_CALL_DIRECTION.ONGOING
+);
+const showOngoingOverlay = computed(
+  () => isCallOverlayExpanded.value && isActiveCallVisible.value
+);
+const overlayHasConversation = computed(
+  () => !!primaryActiveCall.value?.conversationId
+);
+// Re-open the overlay whenever a fresh outbound/connected call appears.
+watch(isActiveCallVisible, visible => {
+  if (visible) setCallOverlayExpanded(true);
+});
+
 // Stacked cards are always non-active (ringing) calls, so reflect each call's
 // real direction. An outbound call must render as OUTGOING — otherwise it shows
 // the incoming-only dismiss (✕) control and the agent could drop it locally
@@ -61,19 +88,6 @@ const stackedCardState = call =>
   call?.callDirection === VOICE_CALL_DIRECTION.OUTBOUND
     ? VOICE_CALL_DIRECTION.OUTGOING
     : VOICE_CALL_DIRECTION.INCOMING;
-
-const toggleMute = () => {
-  isMuted.value = !isMuted.value;
-  if (isWhatsappActive.value) {
-    setWhatsappCallMuted(isMuted.value);
-  } else {
-    TwilioVoiceClient.setMuted(isMuted.value);
-  }
-};
-
-watch(hasActiveCall, active => {
-  if (!active) isMuted.value = false;
-});
 
 // Convert ISO 3166-1 alpha-2 country code (e.g. "US") to its regional indicator
 // flag emoji. Returns empty string if the code is missing or malformed.
@@ -236,6 +250,30 @@ onBeforeUnmount(stopRingtone);
 </script>
 
 <template>
+  <!-- Full-screen takeover for the primary inbound ringing call -->
+  <IncomingCallOverlay
+    v-if="showIncomingOverlay"
+    :call-info="getCallInfo(primaryIncomingCall)"
+    @accept="handleJoinCall(primaryIncomingCall)"
+    @reject="rejectIncomingCall(primaryIncomingCall?.callSid)"
+    @dismiss="dismissCall(primaryIncomingCall?.callSid)"
+  />
+
+  <!-- Full-screen overlay for outbound (ringing) and connected calls -->
+  <OngoingCallOverlay
+    v-if="showOngoingOverlay"
+    :call-info="getCallInfo(primaryActiveCall)"
+    :state="mainCardState"
+    :duration="hasActiveCall ? formattedCallDuration : ''"
+    :is-muted="isMuted"
+    :show-mute="hasActiveCall"
+    :show-go-to-conversation="overlayHasConversation"
+    @end="handleEndCall"
+    @toggle-mute="toggleMute"
+    @minimize="setCallOverlayExpanded(false)"
+    @go-to-conversation="goToConversation(primaryActiveCall)"
+  />
+
   <div
     v-if="incomingCalls.length || hasActiveCall"
     class="fixed ltr:right-4 rtl:left-4 bottom-4 z-50 flex flex-col gap-3 w-[400px]"
@@ -253,9 +291,13 @@ onBeforeUnmount(stopRingtone);
       @go-to-conversation="goToConversation(call)"
     />
 
-    <!-- Main Call Widget -->
+    <!-- Main Call Widget (compact/minimized view; hidden while an overlay is up) -->
     <CallCard
-      v-if="hasActiveCall || primaryIncomingCall"
+      v-if="
+        (hasActiveCall || primaryIncomingCall) &&
+        !showIncomingOverlay &&
+        !showOngoingOverlay
+      "
       :call="activeCall || primaryIncomingCall"
       :state="mainCardState"
       :call-info="getCallInfo(activeCall || primaryIncomingCall)"
@@ -267,6 +309,7 @@ onBeforeUnmount(stopRingtone);
       @dismiss="dismissCall(primaryIncomingCall?.callSid)"
       @end="handleEndCall"
       @toggle-mute="toggleMute"
+      @expand="setCallOverlayExpanded(true)"
       @go-to-conversation="goToConversation(activeCall || primaryIncomingCall)"
     />
   </div>

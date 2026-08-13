@@ -81,10 +81,15 @@ export default {
       <!-- No conversations available -->
       <EmptyStateMessage
         v-if="!allConversations.length"
+        variant="select"
+        icon="i-lucide-inbox"
         :message="$t('CONVERSATION.NO_MESSAGE_1')"
+        :description="$t('CONVERSATION.NO_MESSAGE_1_DESCRIPTION')"
       />
       <EmptyStateMessage
-        v-else-if="allConversations.length && !currentChat.id && isOnExpandedLayout"
+        v-else-if="
+          allConversations.length && !currentChat.id && isOnExpandedLayout
+        "
         :message="$t('CONVERSATION.404')"
       />
       <EmptyStateMessage

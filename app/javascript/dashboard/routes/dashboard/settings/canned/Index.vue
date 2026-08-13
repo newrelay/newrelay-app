@@ -7,11 +7,11 @@ import { useStoreGetters, useStore } from 'dashboard/composables/store';
 import { useMessageFormatter } from 'shared/composables/useMessageFormatter';
 
 import CannedModal from './component/CannedModal.vue';
-import BaseSettingsHeader from '../components/BaseSettingsHeader.vue';
 import SettingsLayout from '../SettingsLayout.vue';
 import {
   RelayButton,
   RelayConfirmModal,
+  RelayInput,
 } from 'dashboard/components-next/relay';
 import Icon from 'dashboard/components-next/icon/Icon.vue';
 
@@ -127,61 +127,92 @@ const confirmDeletion = () => {
   <SettingsLayout
     :is-loading="uiFlags.fetchingList"
     :loading-message="$t('CANNED_MGMT.LOADING')"
-    :no-records-found="!records.length"
-    :no-records-message="$t('CANNED_MGMT.LIST.404')"
+    :no-records-found="false"
   >
-    <template #header>
-      <BaseSettingsHeader
-        v-model:search-query="searchQuery"
-        :title="$t('CANNED_MGMT.HEADER')"
-        :description="$t('CANNED_MGMT.DESCRIPTION')"
-        :search-placeholder="$t('CANNED_MGMT.SEARCH_PLACEHOLDER')"
-        feature-name="canned_responses"
-      >
-        <template v-if="records?.length" #count>
-          <span class="text-sm text-muted-foreground">
-            {{ $t('CANNED_MGMT.COUNT', { n: filteredRecords.length }) }}
-          </span>
-        </template>
-        <template #actions>
-          <RelayButton size="sm" @click="openAddPopup">
-            {{ $t('CANNED_MGMT.HEADER_BTN_TXT') }}
-          </RelayButton>
-        </template>
-      </BaseSettingsHeader>
-    </template>
-
     <template #body>
       <div
-        class="overflow-hidden rounded-xl border border-border/60 bg-card shadow-xs"
+        class="mb-8 overflow-hidden rounded-xl border border-border/60 bg-card shadow-xs"
       >
-        <div v-if="!filteredRecords.length && searchQuery" class="py-20">
-          <p class="text-center text-sm text-muted-foreground">
-            {{ $t('CANNED_MGMT.NO_RESULTS') }}
-          </p>
-        </div>
         <div
-          v-else-if="!filteredRecords.length"
-          class="flex flex-col items-center justify-center py-20"
+          class="flex flex-col justify-between gap-4 border-b border-border/40 p-4 sm:flex-row sm:items-center sm:p-6"
         >
-          <div
-            class="mb-5 flex size-16 items-center justify-center rounded-full border border-border bg-muted/50"
-          >
-            <Icon
-              icon="i-lucide-message-square"
-              class="size-6 text-muted-foreground/70"
-            />
+          <div>
+            <h3 class="text-base font-medium text-foreground">
+              {{ $t('CANNED_MGMT.HEADER') }}
+            </h3>
+            <p class="mt-1 max-w-3xl text-sm text-muted-foreground">
+              {{ $t('CANNED_MGMT.DESCRIPTION') }}
+            </p>
           </div>
-          <h3 class="text-base font-semibold text-foreground">
-            {{ $t('CANNED_MGMT.LIST.404') }}
-          </h3>
+          <RelayButton
+            class="h-9 shrink-0 px-4 text-[13px] font-medium shadow-sm"
+            @click="openAddPopup"
+          >
+            {{ $t('CANNED_MGMT.HEADER_BTN_TXT') }}
+          </RelayButton>
         </div>
-        <div v-else class="overflow-x-auto">
-          <table class="w-full border-collapse text-left">
-            <thead>
-              <tr class="border-b border-border/40 bg-background">
-                <th
-                  class="w-52 px-6 py-3.5 text-[13px] font-medium text-muted-foreground"
+
+        <div class="space-y-6 p-4 sm:p-6">
+          <div
+            class="flex items-center justify-between rounded-xl border border-border/60 bg-card p-2 shadow-xs"
+          >
+            <div class="relative w-full max-w-md">
+              <Icon
+                icon="i-lucide-search"
+                class="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground"
+              />
+              <RelayInput
+                v-model="searchQuery"
+                type="search"
+                :placeholder="$t('CANNED_MGMT.SEARCH_PLACEHOLDER')"
+                class-name="h-9 w-full border-border/40 bg-background/50 pl-9 text-[13.5px] shadow-none focus-visible:bg-background focus-visible:ring-1 focus-visible:ring-primary/20"
+              />
+            </div>
+            <div
+              class="shrink-0 border-l border-border/40 px-4 text-[13px] font-medium text-muted-foreground"
+            >
+              {{ $t('CANNED_MGMT.COUNT', { n: filteredRecords.length }) }}
+            </div>
+          </div>
+
+          <div
+            class="overflow-hidden rounded-xl border border-border/60 bg-card shadow-xs"
+          >
+            <div
+              v-if="searchQuery && !filteredRecords.length"
+              class="flex flex-col items-center justify-center p-16 text-center"
+            >
+              <p class="text-sm text-muted-foreground">
+                {{ $t('CANNED_MGMT.NO_RESULTS') }}
+              </p>
+            </div>
+
+            <div
+              v-else-if="!records.length"
+              class="flex flex-col items-center justify-center p-16 text-center"
+            >
+              <div
+                class="mb-5 flex size-14 items-center justify-center rounded-full bg-muted"
+              >
+                <Icon
+                  icon="i-lucide-message-square"
+                  class="size-6 text-muted-foreground"
+                />
+              </div>
+              <h3 class="text-base font-medium text-foreground">
+                {{ $t('CANNED_MGMT.LIST.404') }}
+              </h3>
+              <p class="mt-1 text-[13.5px] text-muted-foreground">
+                {{ $t('CANNED_MGMT.LIST.DESC') }}
+              </p>
+            </div>
+
+            <div v-else class="min-w-full">
+              <div
+                class="grid grid-cols-[200px_1fr_120px] items-center border-b border-border/40 bg-muted/30 px-6 py-3.5"
+              >
+                <div
+                  class="text-[12px] font-medium uppercase tracking-wider text-muted-foreground"
                 >
                   <button
                     type="button"
@@ -191,44 +222,45 @@ const confirmDeletion = () => {
                     {{ $t('CANNED_MGMT.LIST.TABLE_HEADER.SHORT_CODE') }}
                     <Icon icon="i-lucide-arrow-up-down" class="size-3.5" />
                   </button>
-                </th>
-                <th
-                  class="px-6 py-3.5 text-[13px] font-medium text-muted-foreground"
+                </div>
+                <div
+                  class="text-[12px] font-medium uppercase tracking-wider text-muted-foreground"
                 >
                   {{ $t('CANNED_MGMT.LIST.TABLE_HEADER.CONTENT') }}
-                </th>
-                <th
-                  class="w-32 px-6 py-3.5 text-[13px] font-medium text-muted-foreground"
+                </div>
+                <div
+                  class="text-right text-[12px] font-medium uppercase tracking-wider text-muted-foreground"
                 >
                   {{ $t('CANNED_MGMT.LIST.TABLE_HEADER.ACTIONS') }}
-                </th>
-              </tr>
-            </thead>
-            <tbody class="divide-y divide-border/40">
-              <tr
-                v-for="cannedItem in filteredRecords"
-                :key="cannedItem.id || cannedItem.short_code"
-                class="group bg-card transition-colors hover:bg-muted/10"
-              >
-                <td class="px-6 py-4">
-                  <div
-                    class="inline-flex items-center gap-1.5 rounded-lg border border-primary/20 bg-primary/10 px-2.5 py-1 font-mono text-xs font-medium text-primary"
-                  >
-                    <Icon
-                      icon="i-lucide-terminal-square"
-                      class="size-3.5 text-muted-foreground"
-                    />
-                    {{ cannedItem.short_code }}
+                </div>
+              </div>
+
+              <div class="divide-y divide-border/40">
+                <div
+                  v-for="cannedItem in filteredRecords"
+                  :key="cannedItem.id || cannedItem.short_code"
+                  class="group grid grid-cols-[200px_1fr_120px] items-center px-6 py-4 transition-colors hover:bg-muted/20"
+                >
+                  <div class="flex items-center gap-3 pr-4">
+                    <div
+                      class="inline-flex items-center gap-1.5 rounded-md border border-primary/20 bg-primary/10 px-2.5 py-1 font-mono text-[13px] font-medium text-primary"
+                    >
+                      <Icon
+                        icon="i-lucide-terminal-square"
+                        class="size-3.5 opacity-70"
+                      />
+                      {{ cannedItem.short_code }}
+                    </div>
                   </div>
-                </td>
-                <td class="px-6 py-4">
-                  <p class="line-clamp-2 text-[14px] text-foreground">
-                    {{ getPlainText(cannedItem.content) }}
-                  </p>
-                </td>
-                <td class="px-6 py-4">
+
                   <div
-                    class="flex items-center gap-1.5 opacity-0 transition-opacity group-hover:opacity-100"
+                    class="truncate pr-6 text-[14px] leading-relaxed text-foreground"
+                  >
+                    {{ getPlainText(cannedItem.content) }}
+                  </div>
+
+                  <div
+                    class="flex items-center justify-end gap-2 opacity-0 transition-opacity group-hover:opacity-100"
                   >
                     <RelayButton
                       v-tooltip.top="$t('CANNED_MGMT.EDIT.BUTTON_TEXT')"
@@ -251,30 +283,30 @@ const confirmDeletion = () => {
                       <Icon icon="i-lucide-trash-2" class="size-3.5" />
                     </RelayButton>
                   </div>
-                </td>
-              </tr>
-            </tbody>
-          </table>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
+
+      <CannedModal
+        :show="showCannedModal"
+        :mode="cannedModalMode"
+        :selected-response="selectedResponse"
+        @close="hideCannedModal"
+      />
+
+      <RelayConfirmModal
+        :show="showDeleteConfirmationPopup"
+        :title="$t('CANNED_MGMT.DELETE.CONFIRM.TITLE')"
+        :message="$t('CANNED_MGMT.DELETE.CONFIRM.MESSAGE')"
+        :message-value="deleteMessage"
+        :confirm-text="deleteConfirmText"
+        :cancel-text="deleteRejectText"
+        @close="closeDeletePopup"
+        @confirm="confirmDeletion"
+      />
     </template>
-
-    <CannedModal
-      :show="showCannedModal"
-      :mode="cannedModalMode"
-      :selected-response="selectedResponse"
-      @close="hideCannedModal"
-    />
-
-    <RelayConfirmModal
-      :show="showDeleteConfirmationPopup"
-      :title="$t('CANNED_MGMT.DELETE.CONFIRM.TITLE')"
-      :message="$t('CANNED_MGMT.DELETE.CONFIRM.MESSAGE')"
-      :message-value="deleteMessage"
-      :confirm-text="deleteConfirmText"
-      :cancel-text="deleteRejectText"
-      @close="closeDeletePopup"
-      @confirm="confirmDeletion"
-    />
   </SettingsLayout>
 </template>

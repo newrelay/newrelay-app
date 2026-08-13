@@ -21,10 +21,6 @@ const connectChannel = () => {
 const learnMore = () => {
   window.open('https://chatwoot.com/docs', '_blank');
 };
-
-const exploreDemo = () => {
-  window.open('https://chatwoot.com/docs', '_blank');
-};
 </script>
 
 <template>
@@ -172,29 +168,6 @@ const exploreDemo = () => {
               {{ t('INBOX.EMPTY.LIVE_CHAT') }}
             </span>
           </div>
-        </div>
-
-        <!-- Footer Demo Workspace -->
-        <div
-          class="mt-12 flex flex-col sm:flex-row items-center gap-6 justify-center"
-        >
-          <a
-            href="https://chatwoot.com/docs"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="text-xs text-muted-foreground hover:text-primary flex items-center gap-1.5 transition-colors"
-          >
-            <span class="i-lucide-help-circle size-4" />
-            {{ t('INBOX.EMPTY.LEARN_HOW_WORKS') }}
-          </a>
-          <RelayButton
-            variant="outline"
-            size="sm"
-            class="h-8 text-xs gap-1.5"
-            @click="exploreDemo"
-          >
-            {{ t('INBOX.EMPTY.EXPLORE_DEMO') }}
-          </RelayButton>
         </div>
       </div>
     </div>

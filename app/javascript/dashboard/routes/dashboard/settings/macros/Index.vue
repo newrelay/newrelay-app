@@ -6,14 +6,18 @@ import SettingsLayout from '../SettingsLayout.vue';
 import { computed, onMounted, ref, watch, provide } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useStoreGetters, useStore } from 'dashboard/composables/store';
-import Button from 'dashboard/components-next/button/Button.vue';
+import Icon from 'dashboard/components-next/icon/Icon.vue';
 import { useAdmin } from 'dashboard/composables/useAdmin';
 import { useRoute, useRouter } from 'vue-router';
 import { MACRO_ACTION_TYPES } from './constants';
 import { useMacros } from 'dashboard/composables/useMacros';
 import actionQueryGenerator from 'dashboard/helper/actionQueryGenerator.js';
 import MacroForm from './MacroForm.vue';
-import { RelayConfirmModal } from 'dashboard/components-next/relay';
+import {
+  RelayButton,
+  RelayConfirmModal,
+  RelayInput,
+} from 'dashboard/components-next/relay';
 
 const getters = useStoreGetters();
 const store = useStore();
@@ -215,123 +219,130 @@ const saveMacro = async macroData => {
     :loading-message="$t('MACROS.LOADING')"
     feature-name="macros"
   >
-    <template #header>
-      <div
-        class="pb-6 border-b border-border/40 flex flex-col sm:flex-row sm:items-center justify-between gap-4"
-      >
-        <div>
-          <h3 class="text-base font-semibold text-foreground">
-            {{ $t('MACROS.HEADER') }}
-          </h3>
-          <p class="text-sm text-muted-foreground mt-1 max-w-3xl">
-            {{ $t('MACROS.DESCRIPTION') }}
-          </p>
-        </div>
-        <Button
-          class="shrink-0 h-9 px-4 font-medium shadow-sm bg-primary hover:bg-primary/90 text-primary-foreground border-0 text-[13px]"
-          @click="openNewMacroBuilder"
-        >
-          {{ $t('MACROS.HEADER_BTN_TXT') }}
-        </Button>
-      </div>
-    </template>
     <template #body>
-      <!-- Toolbar -->
       <div
-        class="flex items-center justify-between bg-card border border-border/60 p-2 rounded-xl shadow-sm mb-6 mt-4"
-      >
-        <div class="relative w-full max-w-md">
-          <span
-            class="i-lucide-search size-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground block"
-          />
-          <input
-            v-model="searchQuery"
-            :placeholder="$t('MACROS.SEARCH_PLACEHOLDER')"
-            class="pl-9 bg-background/50 border border-border/40 focus:border-border/80 shadow-none h-9 w-full text-[13.5px] rounded-lg outline-none focus-visible:ring-1 focus-visible:ring-primary/20 focus-visible:bg-background"
-          />
-        </div>
-        <div
-          class="px-4 text-[13px] font-medium text-muted-foreground shrink-0 border-l border-border/40"
-        >
-          {{ filteredRecords.length }}
-          {{
-            $t('MACROS.COUNT', { n: filteredRecords.length })
-              .replace(/[0-9]/g, '')
-              .trim()
-          }}
-        </div>
-      </div>
-
-      <!-- List View Table -->
-      <div
-        class="bg-card border border-border/60 rounded-xl shadow-sm overflow-hidden"
+        class="mb-8 overflow-hidden rounded-xl border border-border/60 bg-card shadow-xs"
       >
         <div
-          v-if="filteredRecords.length === 0"
-          class="p-16 text-center flex flex-col items-center justify-center"
+          class="flex flex-col justify-between gap-4 border-b border-border/40 p-4 sm:flex-row sm:items-center sm:p-6"
         >
-          <div
-            class="size-14 rounded-full bg-muted flex items-center justify-center mb-5"
-          >
-            <span class="i-lucide-wand-2 size-6 text-muted-foreground block" />
+          <div>
+            <h3 class="text-base font-medium text-foreground">
+              {{ $t('MACROS.HEADER') }}
+            </h3>
+            <p class="mt-1 max-w-3xl text-sm text-muted-foreground">
+              {{ $t('MACROS.DESCRIPTION') }}
+            </p>
           </div>
-          <h3 class="text-base font-medium text-foreground">
-            {{ $t('MACROS.NO_RESULTS') }}
-          </h3>
-          <p class="text-[13.5px] text-muted-foreground mt-1">
-            {{ $t('MACROS.LIST.404') }}
-          </p>
+          <RelayButton
+            class="h-9 shrink-0 px-4 text-[13px] font-medium shadow-sm"
+            @click="openNewMacroBuilder"
+          >
+            {{ $t('MACROS.HEADER_BTN_TXT') }}
+          </RelayButton>
         </div>
 
-        <div v-else class="min-w-full">
-          <!-- Table Header -->
+        <div class="space-y-6 p-4 sm:p-6">
           <div
-            class="grid grid-cols-[1.5fr_1fr_1fr_1fr_100px] items-center px-6 py-3.5 border-b border-border/40 bg-muted/30"
+            class="flex items-center justify-between rounded-xl border border-border/60 bg-card p-2 shadow-xs"
           >
-            <div
-              class="text-[12px] font-medium text-muted-foreground uppercase tracking-wider"
-            >
-              {{ $t('MACROS.LIST.TABLE_HEADER.NAME') }}
+            <div class="relative w-full max-w-md">
+              <Icon
+                icon="i-lucide-search"
+                class="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground"
+              />
+              <RelayInput
+                v-model="searchQuery"
+                type="search"
+                :placeholder="$t('MACROS.SEARCH_PLACEHOLDER')"
+                class-name="h-9 w-full border-border/40 bg-background/50 pl-9 text-[13.5px] shadow-none focus-visible:bg-background focus-visible:ring-1 focus-visible:ring-primary/20"
+              />
             </div>
             <div
-              class="text-[12px] font-medium text-muted-foreground uppercase tracking-wider"
+              class="shrink-0 border-l border-border/40 px-4 text-[13px] font-medium text-muted-foreground"
             >
-              {{ $t('MACROS.LIST.TABLE_HEADER.CREATED BY') }}
-            </div>
-            <div
-              class="text-[12px] font-medium text-muted-foreground uppercase tracking-wider"
-            >
-              {{ $t('MACROS.LIST.TABLE_HEADER.LAST_UPDATED_BY') }}
-            </div>
-            <div
-              class="text-[12px] font-medium text-muted-foreground uppercase tracking-wider"
-            >
-              {{ $t('MACROS.LIST.TABLE_HEADER.VISIBILITY') }}
-            </div>
-            <div
-              class="text-[12px] font-medium text-muted-foreground uppercase tracking-wider text-right"
-            >
-              {{ $t('MACROS.LIST.TABLE_HEADER.ACTIONS') }}
+              {{ $t('MACROS.COUNT', { n: filteredRecords.length }) }}
             </div>
           </div>
 
-          <!-- Table Body -->
-          <div class="divide-y divide-border/40">
-            <MacrosTableRow
-              v-for="macroRecord in filteredRecords"
-              :key="macroRecord.id"
-              :macro="macroRecord"
-              :can-manage-public-macros="isAdmin"
-              @edit="openEditMacroBuilder"
-              @delete="openDeletePopup(macroRecord)"
-            />
+          <div
+            class="overflow-hidden rounded-xl border border-border/60 bg-card shadow-xs"
+          >
+            <div
+              v-if="searchQuery && !filteredRecords.length"
+              class="flex flex-col items-center justify-center p-16 text-center"
+            >
+              <p class="text-sm text-muted-foreground">
+                {{ $t('MACROS.NO_RESULTS') }}
+              </p>
+            </div>
+
+            <div
+              v-else-if="!records.length"
+              class="flex flex-col items-center justify-center p-16 text-center"
+            >
+              <div
+                class="mb-5 flex size-14 items-center justify-center rounded-full bg-muted"
+              >
+                <Icon
+                  icon="i-lucide-wand-2"
+                  class="size-6 text-muted-foreground"
+                />
+              </div>
+              <h3 class="text-base font-medium text-foreground">
+                {{ $t('MACROS.LIST.404') }}
+              </h3>
+            </div>
+
+            <div v-else class="min-w-full">
+              <div
+                class="grid grid-cols-[1.5fr_1fr_1fr_1fr_100px] items-center border-b border-border/40 bg-muted/30 px-6 py-3.5"
+              >
+                <div
+                  class="text-[12px] font-medium uppercase tracking-wider text-muted-foreground"
+                >
+                  {{ $t('MACROS.LIST.TABLE_HEADER.NAME') }}
+                </div>
+                <div
+                  class="text-[12px] font-medium uppercase tracking-wider text-muted-foreground"
+                >
+                  {{ $t('MACROS.LIST.TABLE_HEADER.CREATED BY') }}
+                </div>
+                <div
+                  class="text-[12px] font-medium uppercase tracking-wider text-muted-foreground"
+                >
+                  {{ $t('MACROS.LIST.TABLE_HEADER.LAST_UPDATED_BY') }}
+                </div>
+                <div
+                  class="text-[12px] font-medium uppercase tracking-wider text-muted-foreground"
+                >
+                  {{ $t('MACROS.LIST.TABLE_HEADER.VISIBILITY') }}
+                </div>
+                <div
+                  class="text-right text-[12px] font-medium uppercase tracking-wider text-muted-foreground"
+                >
+                  {{ $t('MACROS.LIST.TABLE_HEADER.ACTIONS') }}
+                </div>
+              </div>
+
+              <div class="divide-y divide-border/40">
+                <MacrosTableRow
+                  v-for="macroRecord in filteredRecords"
+                  :key="macroRecord.id"
+                  :macro="macroRecord"
+                  :can-manage-public-macros="isAdmin"
+                  @edit="openEditMacroBuilder"
+                  @delete="openDeletePopup(macroRecord)"
+                />
+              </div>
+            </div>
           </div>
         </div>
       </div>
 
       <RelayConfirmModal
         :show="showDeleteConfirmationPopup"
-        :title="$t('LABEL_MGMT.DELETE.CONFIRM.TITLE')"
+        :title="$t('MACROS.DELETE.CONFIRM.TITLE')"
         :message="$t('MACROS.DELETE.CONFIRM.MESSAGE')"
         :message-value="deleteMessage"
         :confirm-text="$t('MACROS.DELETE.CONFIRM.YES')"

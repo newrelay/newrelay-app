@@ -42,6 +42,7 @@ defineEmits([
   'toggleMute',
   'goToConversation',
   'dismiss',
+  'expand',
 ]);
 
 const { t } = useI18n();
@@ -109,13 +110,23 @@ const channelIcon = computed(() => {
           </span>
         </div>
 
-        <!-- Ongoing: duration on right -->
-        <p
-          v-if="isOngoing"
-          class="font-display text-base font-medium text-muted-foreground shrink-0 mb-0 tabular-nums tracking-tight"
-        >
-          {{ duration }}
-        </p>
+        <!-- Ongoing: duration + expand-to-overlay on right -->
+        <template v-if="isOngoing">
+          <p
+            class="font-display text-base font-medium text-muted-foreground shrink-0 mb-0 tabular-nums tracking-tight"
+          >
+            {{ duration }}
+          </p>
+          <NextButton
+            v-tooltip.top="$t('CONVERSATION.VOICE_WIDGET.EXPAND')"
+            icon="i-ph-arrows-out-bold"
+            slate
+            ghost
+            xs
+            class="!rounded-full -my-1"
+            @click="$emit('expand')"
+          />
+        </template>
         <!-- Incoming/Outgoing: status badge on right -->
         <div v-else class="flex items-center gap-1.5 shrink-0">
           <Icon :icon="statusIcon" class="size-3.5 text-success shrink-0" />

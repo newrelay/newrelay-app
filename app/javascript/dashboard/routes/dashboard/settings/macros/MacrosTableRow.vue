@@ -1,6 +1,8 @@
 <script setup>
 import { computed } from 'vue';
 import Avatar from 'next/avatar/Avatar.vue';
+import Icon from 'dashboard/components-next/icon/Icon.vue';
+import { RelayButton } from 'dashboard/components-next/relay';
 import { useI18n } from 'vue-i18n';
 
 const props = defineProps({
@@ -45,10 +47,10 @@ const editTooltip = computed(() =>
 
 <template>
   <div
-    class="grid grid-cols-[1.5fr_1fr_1fr_1fr_100px] items-center px-6 py-4 hover:bg-muted/20 transition-colors group"
+    class="group grid grid-cols-[1.5fr_1fr_1fr_1fr_100px] items-center px-6 py-4 transition-colors hover:bg-muted/20"
   >
     <!-- Name -->
-    <div class="font-medium text-[14px] text-foreground pr-4 truncate">
+    <div class="truncate pr-4 text-[14px] font-medium text-foreground">
       {{ macro.name }}
     </div>
 
@@ -62,7 +64,7 @@ const editTooltip = computed(() =>
         rounded-full
         class="flex-shrink-0"
       />
-      <span class="text-[13.5px] text-muted-foreground truncate">{{
+      <span class="truncate text-[13.5px] text-muted-foreground">{{
         createdByName || '--'
       }}</span>
     </div>
@@ -77,7 +79,7 @@ const editTooltip = computed(() =>
         rounded-full
         class="flex-shrink-0"
       />
-      <span class="text-[13.5px] text-muted-foreground truncate">{{
+      <span class="truncate text-[13.5px] text-muted-foreground">{{
         updatedByName || '--'
       }}</span>
     </div>
@@ -85,7 +87,7 @@ const editTooltip = computed(() =>
     <!-- Visibility -->
     <div>
       <span
-        class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-medium bg-muted text-muted-foreground border border-border/60 capitalize"
+        class="inline-flex items-center rounded-full border border-border/60 bg-muted px-2 py-0.5 text-[11px] font-medium capitalize text-muted-foreground"
       >
         {{ visibilityLabel }}
       </span>
@@ -93,23 +95,27 @@ const editTooltip = computed(() =>
 
     <!-- Actions -->
     <div
-      class="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity"
+      class="flex items-center justify-end gap-1 opacity-0 transition-opacity group-hover:opacity-100"
     >
-      <button
-        class="p-1.5 text-muted-foreground hover:text-foreground hover:bg-muted rounded-md transition-colors cursor-pointer border-0 bg-transparent"
-        :title="editTooltip"
+      <RelayButton
+        v-tooltip.top="editTooltip"
+        variant="ghost"
+        size="icon"
+        class="size-8 border border-transparent text-muted-foreground shadow-xs hover:border-border hover:bg-background hover:text-foreground"
         @click="$emit('edit', macro.id)"
       >
-        <span class="i-lucide-edit size-4 block" />
-      </button>
-      <button
+        <Icon icon="i-lucide-pencil" class="size-3.5" />
+      </RelayButton>
+      <RelayButton
         v-if="canManageMacro"
-        class="p-1.5 text-muted-foreground hover:text-destructive hover:bg-destructive/10 rounded-md transition-colors cursor-pointer border-0 bg-transparent"
-        :title="$t('MACROS.DELETE.TOOLTIP')"
+        v-tooltip.top="$t('MACROS.DELETE.TOOLTIP')"
+        variant="ghost"
+        size="icon"
+        class="size-8 border border-transparent text-muted-foreground shadow-xs hover:border-destructive/20 hover:bg-destructive/10 hover:text-destructive"
         @click="$emit('delete')"
       >
-        <span class="i-lucide-trash-2 size-4 block" />
-      </button>
+        <Icon icon="i-lucide-trash-2" class="size-3.5" />
+      </RelayButton>
     </div>
   </div>
 </template>

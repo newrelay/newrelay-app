@@ -5,6 +5,7 @@ import { useI18n } from 'vue-i18n';
 import { useVuelidate } from '@vuelidate/core';
 import { required, minLength } from '@vuelidate/validators';
 import { useAlert } from 'dashboard/composables';
+import { useMessageFormatter } from 'shared/composables/useMessageFormatter';
 
 import {
   RelayButton,
@@ -12,7 +13,6 @@ import {
   RelayLabel,
   RelayModal,
 } from 'dashboard/components-next/relay';
-import WootMessageEditor from 'dashboard/components/widgets/WootWriter/Editor.vue';
 
 const props = defineProps({
   show: {
@@ -34,6 +34,7 @@ const emit = defineEmits(['close']);
 
 const store = useStore();
 const { t } = useI18n();
+const { getPlainText } = useMessageFormatter();
 
 const shortCode = ref('');
 const content = ref('');
@@ -55,7 +56,7 @@ const resetForm = () => {
 
 const populateEditForm = () => {
   shortCode.value = props.selectedResponse.short_code || '';
-  content.value = props.selectedResponse.content || '';
+  content.value = getPlainText(props.selectedResponse.content || '');
 };
 
 watch(
@@ -83,10 +84,6 @@ const modalTitle = computed(() => {
   return t('CANNED_MGMT.ADD.TITLE');
 });
 
-const modalDescription = computed(() =>
-  props.mode === 'add' ? t('CANNED_MGMT.ADD.DESC') : ''
-);
-
 const submitButtonText = computed(() => t(getTranslationKey('SUBMIT')));
 
 const cancelButtonText = computed(() =>
@@ -97,6 +94,10 @@ const cancelButtonText = computed(() =>
 
 const shortCodeErrorMessage = computed(() =>
   v$.value.shortCode.$error ? t(getTranslationKey('SHORT_CODE.ERROR')) : ''
+);
+
+const contentErrorMessage = computed(() =>
+  v$.value.content.$error ? t(getTranslationKey('CONTENT.ERROR')) : ''
 );
 
 const isSubmitDisabled = computed(
@@ -146,17 +147,27 @@ const handleSubmit = async () => {
   <RelayModal
     :show="show"
     :title="modalTitle"
-    :description="modalDescription"
-    size="lg"
+    size="md"
     @close="emit('close')"
   >
     <form @submit.prevent="handleSubmit">
-      <div class="space-y-5 px-7 pb-2">
-        <div class="flex flex-col gap-1.5">
-          <RelayLabel class="text-[13.5px] font-medium text-foreground">
+      <div class="max-h-[60vh] space-y-5 overflow-y-auto px-7 pb-2">
+        <p
+          v-if="mode === 'add'"
+          class="text-[13.5px] leading-relaxed text-muted-foreground"
+        >
+          {{ $t('CANNED_MGMT.ADD.DESC') }}
+        </p>
+
+        <div class="flex flex-col gap-2.5">
+          <RelayLabel
+            html-for="canned-short-code"
+            class="text-[13.5px] font-medium text-foreground"
+          >
             {{ $t(getTranslationKey('SHORT_CODE.LABEL')) }}
           </RelayLabel>
           <RelayInput
+            id="canned-short-code"
             v-model="shortCode"
             type="text"
             :placeholder="$t(getTranslationKey('SHORT_CODE.PLACEHOLDER'))"
@@ -168,28 +179,30 @@ const handleSubmit = async () => {
           </p>
         </div>
 
-        <div class="flex flex-col gap-1.5">
-          <RelayLabel class="text-[13.5px] font-medium text-foreground">
+        <div class="flex flex-col gap-2.5">
+          <RelayLabel
+            html-for="canned-content"
+            class="text-[13.5px] font-medium text-foreground"
+          >
             {{ $t(getTranslationKey('CONTENT.LABEL')) }}
           </RelayLabel>
-          <div
-            class="[&_.ProseMirror-menubar]:hidden [&_.ProseMirror-woot-style]:min-h-[12.5rem] [&_.ProseMirror-woot-style_p]:text-base"
-          >
-            <WootMessageEditor
-              v-model="content"
-              class="message-editor [&>div]:px-1"
-              :class="{ editor_warning: v$.content.$error }"
-              channel-type="Context::Default"
-              enable-variables
-              :enable-canned-responses="false"
-              :placeholder="$t(getTranslationKey('CONTENT.PLACEHOLDER'))"
-              @blur="v$.content.$touch"
-            />
-          </div>
+          <textarea
+            id="canned-content"
+            v-model="content"
+            :placeholder="$t(getTranslationKey('CONTENT.PLACEHOLDER'))"
+            class="w-full min-h-[120px] resize-y rounded-md border border-border/80 bg-background p-3 text-[14px] text-foreground shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary/30"
+            :class="{ 'border-destructive': v$.content.$error }"
+            @blur="v$.content.$touch"
+          />
+          <p v-if="v$.content.$error" class="text-xs text-destructive">
+            {{ contentErrorMessage }}
+          </p>
         </div>
       </div>
 
-      <div class="flex justify-end gap-3 border-t border-border/40 px-7 py-6">
+      <div
+        class="flex justify-end gap-3 border-t border-border/40 bg-background/50 px-7 py-6"
+      >
         <RelayButton
           type="button"
           variant="outline"

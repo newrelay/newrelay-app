@@ -43,17 +43,17 @@ const metaLine = computed(() => {
 
 <template>
   <div
-    class="group flex items-center justify-between gap-4 p-4 rounded-xl border border-border/80 bg-card hover:border-primary/30 transition-all shadow-2xs"
+    class="group flex items-center justify-between gap-4 p-4 transition-colors hover:bg-muted/20"
   >
     <div class="flex min-w-0 items-center gap-4">
       <div
-        class="flex size-10 shrink-0 items-center justify-center rounded-lg bg-primary/10 border border-primary/20 text-primary"
+        class="flex size-10 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary"
       >
         <Icon icon="i-lucide-code" class="size-5" />
       </div>
       <div class="min-w-0">
         <div class="flex min-w-0 flex-wrap items-center gap-2">
-          <h4 class="truncate text-sm font-semibold text-foreground">
+          <h4 class="truncate text-[14px] font-semibold text-foreground">
             {{ attribute.label }}
           </h4>
           <RelayBadge
@@ -69,7 +69,7 @@ const metaLine = computed(() => {
             }}
           </RelayBadge>
         </div>
-        <p class="mt-0.5 truncate text-xs text-muted-foreground">
+        <p class="mt-0.5 truncate text-[13px] text-muted-foreground">
           {{ metaLine }}
         </p>
       </div>
@@ -79,17 +79,17 @@ const metaLine = computed(() => {
       <RelayButton
         variant="outline"
         size="sm"
-        class="h-8 border-border/80 bg-background px-3 text-xs shadow-2xs hover:bg-muted font-medium"
+        class="h-8 border-border/80 bg-background px-3 text-xs font-medium shadow-sm hover:bg-muted"
         :disabled="loading"
         @click="emit('edit', attribute)"
       >
-        {{ t('ATTRIBUTES_MGMT.LIST.BUTTONS.EDIT', 'Edit') }}
+        {{ t('ATTRIBUTES_MGMT.LIST.BUTTONS.EDIT') }}
       </RelayButton>
       <RelayButton
         v-tooltip.top="t('ATTRIBUTES_MGMT.LIST.BUTTONS.DELETE')"
         variant="ghost"
         size="icon"
-        class="size-8 text-muted-foreground hover:text-destructive"
+        class="size-8 text-muted-foreground opacity-0 transition-opacity hover:text-destructive group-hover:opacity-100"
         :disabled="loading"
         @click="emit('delete', attribute)"
       >

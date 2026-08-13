@@ -8,9 +8,12 @@ import { picoSearch } from '@scmmishra/pico-search';
 import SettingsLayout from '../SettingsLayout.vue';
 import Avatar from 'dashboard/components-next/avatar/Avatar.vue';
 import AgentBotModal from './components/AgentBotModal.vue';
-import Dialog from 'dashboard/components-next/dialog/Dialog.vue';
 import Icon from 'dashboard/components-next/icon/Icon.vue';
-import { RelayButton, RelayInput } from 'dashboard/components-next/relay';
+import {
+  RelayButton,
+  RelayConfirmModal,
+  RelayInput,
+} from 'dashboard/components-next/relay';
 
 const MODAL_TYPES = {
   CREATE: 'create',
@@ -27,10 +30,14 @@ const selectedBot = ref({});
 const searchQuery = ref('');
 const loading = ref({});
 const modalType = ref(MODAL_TYPES.CREATE);
-const agentBotModalRef = ref(null);
-const agentBotDeleteDialogRef = ref(null);
+const showAgentBotModal = ref(false);
+const showDeleteConfirmationPopup = ref(false);
 
-const selectedBotName = computed(() => selectedBot.value?.name || '');
+const deleteMessage = computed(() =>
+  t('AGENT_BOTS.DELETE.CONFIRM.MESSAGE', {
+    name: selectedBot.value?.name || '',
+  })
+);
 
 const filteredAgentBots = computed(() => {
   const query = searchQuery.value.trim();
@@ -47,18 +54,22 @@ const emptyMessage = computed(() =>
 const openAddModal = () => {
   modalType.value = MODAL_TYPES.CREATE;
   selectedBot.value = {};
-  agentBotModalRef.value.dialogRef.open();
+  showAgentBotModal.value = true;
+};
+
+const hideAgentBotModal = () => {
+  showAgentBotModal.value = false;
 };
 
 const openEditModal = bot => {
   modalType.value = MODAL_TYPES.EDIT;
   selectedBot.value = bot;
-  agentBotModalRef.value.dialogRef.open();
+  showAgentBotModal.value = true;
 };
 
 const openDeletePopup = bot => {
   selectedBot.value = bot;
-  agentBotDeleteDialogRef.value.open();
+  showDeleteConfirmationPopup.value = true;
 };
 
 const deleteAgentBot = async id => {
@@ -73,10 +84,14 @@ const deleteAgentBot = async id => {
   }
 };
 
+const closeDeletePopup = () => {
+  showDeleteConfirmationPopup.value = false;
+};
+
 const confirmDeletion = () => {
   loading.value[selectedBot.value.id] = true;
+  closeDeletePopup();
   deleteAgentBot(selectedBot.value.id);
-  agentBotDeleteDialogRef.value.close();
 };
 
 const botWebhookUrl = bot => bot.outgoing_url || bot.bot_config?.webhook_url;
@@ -93,19 +108,20 @@ onMounted(() => {
     :no-records-found="false"
   >
     <template #body>
-      <div class="space-y-6">
-        <div>
-          <h2 class="text-base font-medium text-foreground">
+      <div
+        class="mb-8 overflow-hidden rounded-xl border border-border/60 bg-card shadow-xs"
+      >
+        <div class="border-b border-border/40 p-4 sm:p-6">
+          <h3 class="text-base font-medium text-foreground">
             {{ t('AGENT_BOTS.HEADER') }}
-          </h2>
-          <p
-            class="mt-1.5 max-w-4xl text-[13.5px] leading-relaxed text-muted-foreground"
-          >
+          </h3>
+          <p class="mt-1 max-w-4xl text-sm text-muted-foreground">
             {{ t('AGENT_BOTS.DESCRIPTION') }}
           </p>
         </div>
 
-        <div class="flex items-center justify-between gap-4">
+        <div class="space-y-6 p-4 sm:p-6">
+          <div class="flex items-center justify-between gap-4">
           <div class="relative w-full max-w-sm">
             <Icon
               icon="i-lucide-search"
@@ -171,9 +187,9 @@ onMounted(() => {
                 />
                 <div
                   v-else
-                  class="flex size-10 shrink-0 items-center justify-center rounded-xl border border-border/40 bg-[#FFEBDD] shadow-xs"
+                  class="flex size-10 shrink-0 items-center justify-center rounded-xl border border-border/40 bg-warning/10 shadow-xs"
                 >
-                  <Icon icon="i-lucide-bot" class="size-5 text-[#EB7A26]" />
+                  <Icon icon="i-lucide-bot" class="size-5 text-warning" />
                 </div>
                 <div class="flex min-w-0 flex-col">
                   <div class="flex min-w-0 items-center gap-2">
@@ -202,7 +218,7 @@ onMounted(() => {
                 {{ botWebhookUrl(bot) }}
               </div>
 
-              <div class="flex items-center justify-end gap-1 pr-2">
+              <div class="flex items-center justify-end gap-1 pr-2 opacity-0 transition-opacity group-hover:opacity-100">
                 <RelayButton
                   v-if="!bot.system_bot"
                   v-tooltip.top="t('AGENT_BOTS.EDIT.BUTTON_TEXT')"
@@ -229,25 +245,24 @@ onMounted(() => {
             </div>
           </div>
         </div>
+        </div>
       </div>
     </template>
 
     <AgentBotModal
-      ref="agentBotModalRef"
+      :show="showAgentBotModal"
       :type="modalType"
       :selected-bot="selectedBot"
+      @close="hideAgentBotModal"
     />
 
-    <Dialog
-      ref="agentBotDeleteDialogRef"
-      type="alert"
+    <RelayConfirmModal
+      :show="showDeleteConfirmationPopup"
       :title="t('AGENT_BOTS.DELETE.CONFIRM.TITLE')"
-      :description="
-        t('AGENT_BOTS.DELETE.CONFIRM.MESSAGE', { name: selectedBotName })
-      "
-      :is-loading="uiFlags.isDeleting"
-      :confirm-button-label="t('AGENT_BOTS.DELETE.CONFIRM.YES')"
-      :cancel-button-label="t('AGENT_BOTS.DELETE.CONFIRM.NO')"
+      :message="deleteMessage"
+      :confirm-text="t('AGENT_BOTS.DELETE.CONFIRM.YES')"
+      :cancel-text="t('AGENT_BOTS.DELETE.CONFIRM.NO')"
+      @close="closeDeletePopup"
       @confirm="confirmDeletion"
     />
   </SettingsLayout>

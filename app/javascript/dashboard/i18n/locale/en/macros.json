@@ -40,6 +40,7 @@
     "DELETE": {
       "TOOLTIP": "Delete macro",
       "CONFIRM": {
+        "TITLE": "Confirm Deletion",
         "MESSAGE": "Are you sure to delete ",
         "YES": "Yes, Delete",
         "NO": "No"

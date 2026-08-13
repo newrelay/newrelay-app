@@ -74,6 +74,11 @@ const isLeafActive = computed(() => {
     :feature-flag="resolveFeatureFlag(to)"
     as="li"
     class="group/menu-sub-item relative min-w-0"
+    :class="
+      isLeafActive
+        ? 'before:absolute before:inset-y-1.5 before:left-0 before:w-[3px] before:rounded-r-md before:bg-sidebar-primary'
+        : ''
+    "
   >
     <component
       :is="to ? 'router-link' : 'div'"

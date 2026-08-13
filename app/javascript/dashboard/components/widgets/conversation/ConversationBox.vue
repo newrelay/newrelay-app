@@ -4,6 +4,7 @@ import ConversationHeader from './ConversationHeader.vue';
 import DashboardAppFrame from '../DashboardApp/Frame.vue';
 import EmptyState from './EmptyState/EmptyState.vue';
 import MessagesView from './MessagesView.vue';
+import OnCallBanner from 'dashboard/components-next/call/OnCallBanner.vue';
 
 export default {
   components: {
@@ -11,6 +12,7 @@ export default {
     DashboardAppFrame,
     EmptyState,
     MessagesView,
+    OnCallBanner,
   },
   props: {
     inboxId: {
@@ -101,6 +103,7 @@ export default {
       :chat="currentChat"
       :show-back-button="isOnExpandedLayout && !isInboxView"
     />
+    <OnCallBanner v-if="currentChat.id" :conversation-id="currentChat.id" />
     <woot-tabs
       v-if="dashboardApps.length && currentChat.id"
       :index="activeIndex"

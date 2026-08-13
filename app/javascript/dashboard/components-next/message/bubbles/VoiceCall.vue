@@ -16,7 +16,7 @@ import { useCallActions } from 'dashboard/composables/useCallSession';
 import { useWhatsappCallSession } from 'dashboard/composables/useWhatsappCallSession';
 import { useCallsStore } from 'dashboard/stores/calls';
 import { VOICE_CALL_PROVIDERS } from 'dashboard/helper/inbox';
-import { formatDuration } from 'shared/helpers/timeHelper';
+import { formatDuration, messageStamp } from 'shared/helpers/timeHelper';
 import { useAlert } from 'dashboard/composables';
 
 import Icon from 'dashboard/components-next/icon/Icon.vue';
@@ -43,6 +43,7 @@ const {
   attachments,
   contentAttributes,
   conversationId,
+  createdAt,
   currentUserId,
   inboxId,
   sender,
@@ -120,6 +121,27 @@ const durationSeconds = computed(() => {
 
 const formattedDuration = computed(() => formatDuration(durationSeconds.value));
 
+const isCompleted = computed(
+  () => status.value === VOICE_CALL_STATUS.COMPLETED
+);
+
+// "Ended at" clock time for the completed-call metadata grid.
+const endedAt = computed(() =>
+  createdAt?.value ? messageStamp(createdAt.value, 'h:mm a') : null
+);
+
+const callTypeLabel = computed(() =>
+  t(
+    isOutbound.value
+      ? 'CONVERSATION.VOICE_CALL.OUTBOUND'
+      : 'CONVERSATION.VOICE_CALL.INBOUND'
+  )
+);
+
+const callTypeIcon = computed(() =>
+  isOutbound.value ? 'i-ph-arrow-up-right-bold' : 'i-ph-arrow-down-left-bold'
+);
+
 // Agent who handled the call (initiator on outbound, answerer on inbound), taken
 // strictly from the persisted accept fields — never the conversation's current
 // assignee, which would mis-attribute a historical call after a reassignment.
@@ -151,11 +173,9 @@ const labelKey = computed(() => {
 });
 
 const subtext = computed(() => {
-  // Completed: "Handled by {agent} · 0:42" (drops either part when absent).
+  // Completed: duration on the top row; handler/time/type move to the grid below.
   if (status.value === VOICE_CALL_STATUS.COMPLETED) {
-    return [handledBy.value, formattedDuration.value]
-      .filter(Boolean)
-      .join(' · ');
+    return formattedDuration.value;
   }
   if (status.value === VOICE_CALL_STATUS.IN_PROGRESS) {
     return handledBy.value;
@@ -198,7 +218,7 @@ const iconContainerClass = computed(() => {
   if (isMissedInbound.value) {
     return 'bg-accent text-destructive';
   }
-  return 'bg-accent text-foreground';
+  return 'bg-primary/10 text-primary';
 });
 
 const callSid = computed(() => call.value?.providerCallId);
@@ -301,17 +321,17 @@ const handleCallBack = async () => {
 
 <template>
   <BaseBubble
-    class="!p-3 !max-w-md min-w-[240px] !bg-card !text-card-foreground border border-border shadow-xs"
+    class="!p-3.5 !w-[360px] !max-w-full !bg-card !text-card-foreground border border-border shadow-xs"
     hide-meta
   >
     <div class="flex flex-col gap-3 w-full">
       <!-- Header row: icon + title + duration/subtext -->
-      <div class="flex gap-2.5 items-start">
+      <div class="flex gap-3 items-center">
         <div
-          class="flex justify-center items-center rounded-xl size-11 shrink-0"
+          class="flex justify-center items-center rounded-xl size-10 shrink-0"
           :class="iconContainerClass"
         >
-          <Icon class="size-4" :icon="iconName" />
+          <Icon class="size-5" :icon="iconName" />
         </div>
         <div class="flex flex-col flex-1 min-w-0 self-center">
           <span
@@ -334,6 +354,34 @@ const handleCallBack = async () => {
         :attachment="recordingAttachment"
         show-transcribed-text
       />
+
+      <!-- Metadata grid (completed calls): ended-at time, handler, direction -->
+      <div
+        v-if="isCompleted"
+        class="grid grid-cols-3 gap-2 pt-2.5 text-[11px] border-t border-border/50"
+      >
+        <div class="flex flex-col gap-0.5 min-w-0">
+          <span class="font-medium text-muted-foreground">
+            {{ $t('CONVERSATION.VOICE_CALL.ENDED_AT') }}
+          </span>
+          <span class="truncate text-foreground">{{ endedAt || '—' }}</span>
+        </div>
+        <div class="flex flex-col gap-0.5 min-w-0">
+          <span class="font-medium text-muted-foreground">
+            {{ $t('CONVERSATION.VOICE_CALL.HANDLED_BY_LABEL') }}
+          </span>
+          <span class="truncate text-foreground">{{ handlerName || '—' }}</span>
+        </div>
+        <div class="flex flex-col gap-0.5 min-w-0">
+          <span class="font-medium text-muted-foreground">
+            {{ $t('CONVERSATION.VOICE_CALL.CALL_TYPE') }}
+          </span>
+          <span class="flex gap-1 items-center truncate text-foreground">
+            <Icon class="size-3 text-primary/70" :icon="callTypeIcon" />
+            {{ callTypeLabel }}
+          </span>
+        </div>
+      </div>
 
       <!-- Call back button (missed inbound) -->
       <NextButton

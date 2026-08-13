@@ -12,9 +12,19 @@ export const mockProfile = {
       id: 1,
       name: "DakshAI Workspace",
       role: "administrator",
-      status: "active"
+      status: "active",
+      locale: "en"
     }
   ]
+};
+
+export const mockAccount = {
+  id: 1,
+  name: "DakshAI Workspace",
+  role: "administrator",
+  status: "active",
+  locale: "en",
+  custom_attributes: {}
 };
 
 export const mockInboxes = [
@@ -167,6 +177,11 @@ export const handleMockRequest = (reqUrl, method) => {
     return { status: 200, data: { payload: { data: mockProfile }, data: mockProfile } };
   }
 
+  // Accounts list or single account details
+  if (path.match(/\/api\/v1\/accounts\/?$/) || path.match(/\/api\/v1\/accounts\/\d+\/?$/)) {
+    return { status: 200, data: [mockAccount] };
+  }
+
   // Conversations list
   if (path.includes("/api/v1/accounts/") && path.includes("/conversations")) {
     if (method === "GET") {
@@ -189,9 +204,28 @@ export const handleMockRequest = (reqUrl, method) => {
     return { status: 200, data: { payload: mockLabels } };
   }
 
-  // Fallback for custom attributes, canned responses, etc.
-  if (path.includes("/custom_attribute_definitions") || path.includes("/canned_responses")) {
+  // Teams
+  if (path.includes("/api/v1/accounts/") && path.includes("/teams")) {
+    return { status: 200, data: [] };
+  }
+
+  // Custom attributes, canned responses, campaigns, webhooks, automation rules, etc.
+  if (
+    path.includes("/custom_attribute_definitions") ||
+    path.includes("/canned_responses") ||
+    path.includes("/campaigns") ||
+    path.includes("/webhooks") ||
+    path.includes("/automation_rules") ||
+    path.includes("/macros") ||
+    path.includes("/integrations") ||
+    path.includes("/contacts")
+  ) {
     return { status: 200, data: { payload: [] } };
+  }
+
+  // Generic fallback for any unhandled /api request in mock mode
+  if (path.startsWith("/api")) {
+    return { status: 200, data: { payload: [], data: [] } };
   }
 
   return null;

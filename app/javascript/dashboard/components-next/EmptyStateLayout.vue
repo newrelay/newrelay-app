@@ -45,13 +45,18 @@ defineOptions({
     <div
       class="relative z-20 flex flex-col items-center justify-center px-4 max-w-lg mx-auto"
     >
-      <h2
-        class="mb-2.5 text-[20px] font-semibold tracking-tight text-foreground"
+      <!-- Icon slot: wrap icon in size-16 rounded-full bg-primary/10 ring-8 ring-primary/5 -->
+      <div
+        v-if="$slots.icon"
+        class="mb-6 flex size-16 items-center justify-center rounded-full bg-primary/10 ring-8 ring-primary/5"
       >
+        <slot name="icon" />
+      </div>
+      <h2 class="mb-2.5 text-[20px] font-[600] text-foreground">
         {{ title }}
       </h2>
       <div v-if="subtitle" class="relative mx-auto mb-6 max-w-md">
-        <p class="text-[14.5px] leading-relaxed text-muted-foreground">
+        <p class="text-sm leading-relaxed text-muted-foreground">
           {{ subtitle }}
         </p>
       </div>

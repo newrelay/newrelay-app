@@ -12,7 +12,7 @@ const props = defineProps({
 });
 
 const base =
-  'inline-flex items-center rounded-md border px-2 py-0.5 text-xs font-medium transition-colors focus:outline-none focus:ring-1 focus:ring-ring';
+  'inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-1 focus:ring-ring';
 
 const variants = {
   default: 'border-transparent bg-primary text-primary-foreground',

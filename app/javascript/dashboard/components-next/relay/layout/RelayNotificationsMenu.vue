@@ -99,7 +99,7 @@ const openConversation = notification => {
   <div v-on-click-outside="closeMenu" class="relative">
     <button
       type="button"
-      class="relative inline-flex size-9 items-center justify-center rounded-full border border-input bg-background text-muted-foreground shadow-xs transition-colors hover:border-transparent hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+      class="relative inline-flex size-9 items-center justify-center rounded-full border border-[#e4e7ee] dark:border-[#ffffff26] bg-background text-muted-foreground shadow-xs transition-colors hover:border-transparent hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
       :class="{ 'bg-accent text-accent-foreground': isOpen }"
       :aria-label="t('SIDEBAR.NOTIFICATIONS')"
       :aria-expanded="isOpen"
@@ -113,58 +113,67 @@ const openConversation = notification => {
       <span class="sr-only">{{ t('SIDEBAR.NOTIFICATIONS') }}</span>
     </button>
 
-    <div
-      v-if="isOpen"
-      class="absolute top-full z-50 mt-1 w-[360px] overflow-hidden rounded-xl border border-border bg-popover text-popover-foreground shadow-sm ltr:right-0 rtl:left-0"
+    <Transition
+      enter-active-class="transition-all duration-150 ease-out origin-top-right"
+      enter-from-class="opacity-0 scale-95 translate-y-1"
+      enter-to-class="opacity-100 scale-100 translate-y-0"
+      leave-active-class="transition-all duration-100 ease-in origin-top-right"
+      leave-from-class="opacity-100 scale-100 translate-y-0"
+      leave-to-class="opacity-0 scale-95 translate-y-1"
     >
-      <div class="flex items-center justify-between px-4 py-3">
-        <span class="text-sm font-semibold text-foreground">
-          {{ t('NOTIFICATIONS_PAGE.HEADER') }}
-        </span>
-        <button
-          type="button"
-          class="text-xs text-muted-foreground transition-colors hover:text-foreground disabled:opacity-40"
-          :disabled="!hasUnread || uiFlags.isUpdating"
-          @click="onMarkAllRead"
-        >
-          {{ t('INBOX.MENU_ITEM.MARK_ALL_READ') }}
-        </button>
-      </div>
-
-      <div class="max-h-[360px] overflow-y-auto">
-        <div
-          v-if="showLoading"
-          class="border-t border-border px-4 py-6 text-center text-xs text-muted-foreground"
-        >
-          {{ t('NOTIFICATIONS_PAGE.LIST.LOADING_MESSAGE') }}
-        </div>
-        <div
-          v-else-if="isEmpty"
-          class="border-t border-border px-4 py-6 text-center text-xs text-muted-foreground"
-        >
-          {{ t('NOTIFICATIONS_PAGE.LIST.404') }}
-        </div>
-        <button
-          v-for="notification in previewNotifications"
-          :key="notification.id"
-          type="button"
-          class="flex w-full flex-col gap-0.5 border-t border-border px-4 py-3 text-left transition-colors hover:bg-accent"
-          :class="{ 'bg-muted': !notification.read_at }"
-          @click="openConversation(notification)"
-        >
-          <div class="flex items-center justify-between gap-2">
-            <span class="truncate text-sm font-medium text-foreground">
-              {{ notificationTitle(notification) }}
-            </span>
-            <span class="shrink-0 text-xs text-muted-foreground">
-              {{ notificationTime(notification) }}
-            </span>
-          </div>
-          <span class="line-clamp-2 text-xs text-muted-foreground">
-            {{ notificationBody(notification) }}
+      <div
+        v-if="isOpen"
+        class="absolute top-full z-50 mt-1 w-[360px] overflow-hidden rounded-[10px] border border-border bg-popover text-popover-foreground shadow-sm ltr:right-0 rtl:left-0"
+      >
+        <div class="flex items-center justify-between px-4 py-3">
+          <span class="text-sm font-semibold text-foreground">
+            {{ t('NOTIFICATIONS_PAGE.HEADER') }}
           </span>
-        </button>
+          <button
+            type="button"
+            class="text-xs text-muted-foreground transition-colors hover:text-foreground disabled:opacity-40"
+            :disabled="!hasUnread || uiFlags.isUpdating"
+            @click="onMarkAllRead"
+          >
+            {{ t('INBOX.MENU_ITEM.MARK_ALL_READ') }}
+          </button>
+        </div>
+
+        <div class="max-h-[360px] overflow-y-auto">
+          <div
+            v-if="showLoading"
+            class="border-t border-border px-4 py-6 text-center text-xs text-muted-foreground"
+          >
+            {{ t('NOTIFICATIONS_PAGE.LIST.LOADING_MESSAGE') }}
+          </div>
+          <div
+            v-else-if="isEmpty"
+            class="border-t border-border px-4 py-6 text-center text-xs text-muted-foreground"
+          >
+            {{ t('NOTIFICATIONS_PAGE.LIST.404') }}
+          </div>
+          <button
+            v-for="notification in previewNotifications"
+            :key="notification.id"
+            type="button"
+            class="flex w-full flex-col gap-0.5 border-t border-border px-4 py-3 text-left transition-colors hover:bg-accent"
+            :class="{ 'bg-muted': !notification.read_at }"
+            @click="openConversation(notification)"
+          >
+            <div class="flex items-center justify-between gap-2">
+              <span class="truncate text-sm font-medium text-foreground">
+                {{ notificationTitle(notification) }}
+              </span>
+              <span class="shrink-0 text-xs text-muted-foreground">
+                {{ notificationTime(notification) }}
+              </span>
+            </div>
+            <span class="line-clamp-2 text-xs text-muted-foreground">
+              {{ notificationBody(notification) }}
+            </span>
+          </button>
+        </div>
       </div>
-    </div>
+    </Transition>
   </div>
 </template>

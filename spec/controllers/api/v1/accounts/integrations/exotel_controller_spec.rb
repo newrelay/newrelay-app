@@ -35,7 +35,7 @@ RSpec.describe 'Exotel Integration Webhook API', type: :request do
       conversation = account.conversations.where("additional_attributes ->> 'call_sid' = ?", 'call_123').first
       expect(conversation).to_not be_nil
       expect(conversation.messages.count).to eq(1)
-      expect(conversation.messages.first.content).to include('Welcome to Daksh')
+      expect(conversation.messages.first.content).to include('Welcome to NewRelay')
     end
 
     it 'returns a bad request error if required parameters are missing' do
@@ -59,7 +59,7 @@ RSpec.describe 'Exotel Integration Webhook API', type: :request do
         CallSid: 'call_123',
         From: '+918888888888',
         To: '+919999999999',
-        Transcription: 'Tell me about Daksh AI features.'
+        Transcription: 'Tell me about NewRelay features.'
       }
 
       expect(response).to have_http_status(:ok)
@@ -69,8 +69,8 @@ RSpec.describe 'Exotel Integration Webhook API', type: :request do
 
       # Verify messages logged
       conversation = account.conversations.where("additional_attributes ->> 'call_sid' = ?", 'call_123').first
-      expect(conversation.messages.pluck(:content)).to include('Tell me about Daksh AI features.')
-      expect(conversation.messages.pluck(:content)).to include('Daksh AI is an advanced CRM platform featuring task boards, contacts management, corporate registries, and voice AI integrations.')
+      expect(conversation.messages.pluck(:content)).to include('Tell me about NewRelay features.')
+      expect(conversation.messages.pluck(:content)).to include('NewRelay is an advanced CRM platform featuring task boards, contacts management, corporate registries, and voice AI integrations.')
     end
   end
 end

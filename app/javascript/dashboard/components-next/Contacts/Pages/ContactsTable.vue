@@ -164,7 +164,7 @@ const handleColumnSort = sortKey => {
 
 <template>
   <div
-    class="w-full overflow-hidden rounded-xl border border-border/50 bg-card shadow-sm"
+    class="w-full overflow-hidden rounded-xl border border-border/60 bg-card shadow-xs"
   >
     <div class="w-full overflow-x-auto">
       <table class="w-full text-left text-sm">

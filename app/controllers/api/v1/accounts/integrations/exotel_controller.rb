@@ -16,7 +16,7 @@ class Api::V1::Accounts::Integrations::ExotelController < Api::BaseController
     conversation = fetch_or_create_conversation(account, call_sid, from_number)
 
     # Greeting message
-    greeting_text = 'Welcome to Daksh AI. How can I assist you today?'
+    greeting_text = 'Welcome to NewRelay. How can I assist you today?'
 
     # Log greeting response
     conversation.messages.create!(
@@ -140,7 +140,7 @@ class Api::V1::Accounts::Integrations::ExotelController < Api::BaseController
   end
 
   def transcribe_audio(recording_url)
-    return 'Hello, I would like to learn about Daksh AI features.' if recording_url.blank?
+    return 'Hello, I would like to learn about NewRelay features.' if recording_url.blank?
 
     # In production, download recording_url and call transcription API (Whisper/etc)
     # For local/testing, we fallback to a smart simulation based on the url
@@ -181,14 +181,14 @@ class Api::V1::Accounts::Integrations::ExotelController < Api::BaseController
 
   def generate_rule_based_response(prompt)
     prompt_clean = prompt.downcase
-    if prompt_clean.include?('feature') || prompt_clean.include?('crm') || prompt_clean.include?('daksh')
-      'Daksh AI is an advanced CRM platform featuring task boards, contacts management, corporate registries, and voice AI integrations.'
+    if prompt_clean.include?('feature') || prompt_clean.include?('crm') || prompt_clean.include?('newrelay')
+      'NewRelay is an advanced CRM platform featuring task boards, contacts management, corporate registries, and voice AI integrations.'
     elsif prompt_clean.include?('pricing') || prompt_clean.include?('cost')
       'Our pricing starts at twenty-nine dollars per user month. Contact sales for details.'
     elsif prompt_clean.include?('human') || prompt_clean.include?('agent') || prompt_clean.include?('operator')
       'Let me transfer you to a human agent. Please hold on.'
     else
-      "I heard you say: #{prompt}. How else can I assist you with Daksh AI today?"
+      "I heard you say: #{prompt}. How else can I assist you with NewRelay today?"
     end
   end
 

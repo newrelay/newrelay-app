@@ -26,5 +26,5 @@
     <path d="M295 90C295 62.3858 317.386 40 345 40H375C402.614 40 425 62.3858 425 90V410C425 437.614 402.614 460 375 460H345C317.386 460 295 437.614 295 410V90Z" fill="url(#n_grad_right)"/>
   </g>
   <!-- Text "Newrelay" (White text for dark mode) -->
-  <text x="650" y="385" font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-weight="700" font-size="270" fill="#FFFFFF" letter-spacing="-0.03em">Newrelay</text>
+  <text x="650" y="385" font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-weight="700" font-size="270" fill="#FFFFFF" letter-spacing="-0.03em">NewRelay</text>
 </svg>

@@ -65,7 +65,7 @@ const toggleTheme = () => {
     <div class="hidden flex-1 justify-center px-4 md:flex">
       <button
         type="button"
-        class="flex h-10 w-full max-w-md items-center gap-3 rounded-full border border-input bg-background px-4 text-sm text-muted-foreground shadow-xs transition-colors hover:border-transparent hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+        class="flex h-10 w-full max-w-md items-center gap-3 rounded-full border border-[#e4e7ee] dark:border-[#ffffff26] bg-background px-4 text-sm text-muted-foreground shadow-xs transition-colors hover:border-transparent hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
         @click="$emit('openSearch')"
       >
         <span class="i-lucide-search size-4 shrink-0" />
@@ -84,16 +84,41 @@ const toggleTheme = () => {
       <slot name="actions" />
       <button
         type="button"
-        class="relative inline-flex size-9 scale-100 items-center justify-center rounded-full border border-input bg-background text-muted-foreground shadow-xs transition-colors hover:border-transparent hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+        class="relative inline-flex size-9 scale-100 items-center justify-center rounded-full border border-[#e4e7ee] dark:border-[#ffffff26] bg-background text-muted-foreground shadow-xs transition-colors hover:border-transparent hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
         :aria-label="t('SIDEBAR.TOGGLE_THEME')"
         @click="toggleTheme"
       >
-        <span
-          class="i-lucide-sun size-[1.2rem] scale-100 rotate-0 transition-all dark:scale-0 dark:-rotate-90"
-        />
-        <span
-          class="i-lucide-moon absolute size-[1.2rem] scale-0 rotate-90 transition-all dark:scale-100 dark:rotate-0"
-        />
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          class="h-[1.2rem] w-[1.2rem] shrink-0 scale-100 rotate-0 transition-all text-muted-foreground dark:scale-0 dark:-rotate-90"
+        >
+          <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+          <path d="M12 12m-4 0a4 4 0 1 0 8 0a4 4 0 1 0 -8 0" />
+          <path
+            d="M3 12h1m8 -9v1m8 8h1m-9 8v1m-6.4 -15.4l.7 .7m12.1 -.7l-.7 .7m0 11.4l.7 .7m-12.1 -.7l-.7 .7"
+          />
+        </svg>
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          class="absolute h-[1.2rem] w-[1.2rem] shrink-0 scale-0 rotate-90 transition-all text-muted-foreground dark:scale-100 dark:rotate-0"
+        >
+          <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+          <path
+            d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z"
+          />
+        </svg>
         <span class="sr-only">{{ t('SIDEBAR.TOGGLE_THEME') }}</span>
       </button>
       <RelayNotificationsMenu />

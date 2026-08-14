@@ -136,6 +136,7 @@
   --border-strong: 228 231 238;
   --border-weak: 228 231 238;
   --card-color: 255 255 255;
+  --label-background: 255 255 255;
   --slate-12: 20 24 34;
   --solid-1: 255 255 255;
   --solid-2: 255 255 255;
@@ -160,6 +161,31 @@
   [data-relay] * {
     border-color: var(--border);
   }
+}
+
+// Match Design-System-NR: html { overflow-y: scroll } prevents layout shift when modals open
+html {
+  overflow-y: scroll;
+}
+
+// Custom sleek scrollbar (matches Design-System-NR style.css)
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--muted-foreground);
+}
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
 }
 
 @keyframes anim-pop-in {
@@ -224,4 +250,34 @@
 
 .anim-overlay[data-state='closed'] {
   animation: anim-fade-out 0.15s ease-in;
+}
+
+// Dialog / centered modal open-close animation (matches Design-System-NR)
+@keyframes anim-dialog-in {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -48%) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+@keyframes anim-dialog-out {
+  from {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translate(-50%, -48%) scale(0.96);
+  }
+}
+
+.anim-dialog[data-state='open'] {
+  animation: anim-dialog-in 0.18s ease-out;
+}
+
+.anim-dialog[data-state='closed'] {
+  animation: anim-dialog-out 0.15s ease-in;
 }

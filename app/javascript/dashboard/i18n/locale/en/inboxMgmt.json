@@ -21,7 +21,7 @@
     "CREATE_FLOW": {
       "CHANNEL": {
         "TITLE": "Choose Channel",
-        "BODY": "Choose the provider you want to integrate with Newrelay."
+        "BODY": "Choose the provider you want to integrate with NewRelay."
       },
       "INBOX": {
         "TITLE": "Create Inbox",

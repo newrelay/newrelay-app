@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-echo "=== 🚀 DakshAI Docker Starter ==="
+echo "=== 🚀 NewRelay Docker Starter ==="
 
 # 1. Create .env from template if it doesn't exist
 if [ ! -f .env ]; then
@@ -36,7 +36,7 @@ echo "🌱 Seeding initial mock data..."
 docker compose run --rm rails bundle exec rails db:seed || true
 
 # 5. Start all services
-echo "✨ Starting DakshAI stack..."
+echo "✨ Starting NewRelay stack..."
 echo "👉 The app will be available at http://localhost:3000"
 echo "👉 Mailhog (email testing inbox) will be available at http://localhost:8025"
 echo "--------------------------------------------------------"

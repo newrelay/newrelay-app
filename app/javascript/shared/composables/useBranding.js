@@ -7,9 +7,9 @@ export function useBranding() {
   const getAccount = useMapGetter('accounts/getAccount');
 
   /**
-   * Replaces "Chatwoot" or "DakshAI" in text with the installation name or custom brand name
+   * Replaces "Chatwoot" or "NewRelay" in text with the installation name or custom brand name
    * @param {string} text - The text to process
-   * @returns {string} - Text with "Chatwoot" / "DakshAI" replaced by installation/brand name
+   * @returns {string} - Text with "Chatwoot" / "NewRelay" replaced by installation/brand name
    */
   const replaceInstallationName = text => {
     if (!text) return text;
@@ -31,7 +31,7 @@ export function useBranding() {
     if (!installationName) return text;
 
     return text.replace(
-      /Chatwoot|DakshAI|Newrelay|newrelay/gi,
+      /Chatwoot|DakshAI|NewRelay|newrelay/gi,
       installationName
     );
   };

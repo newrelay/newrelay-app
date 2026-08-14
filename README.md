@@ -1,6 +1,6 @@
-# DakshAI
+# NewRelay
 
-DakshAI is a modern, open-source, and self-hosted customer support platform designed to help businesses deliver exceptional customer support experiences. Built for scale and flexibility, DakshAI gives you full control over your customer data while providing powerful tools to manage conversations across channels.
+NewRelay is a modern, open-source, and self-hosted customer support platform designed to help businesses deliver exceptional customer support experiences. Built for scale and flexibility, NewRelay gives you full control over your customer data while providing powerful tools to manage conversations across channels.
 
 ---
 
@@ -38,7 +38,7 @@ Publish help articles, FAQs, and guides through the built-in Help Center Portal.
 For a detailed deployment playbook, refer to our deployment guide:
 👉 **[DEPLOYMENT.md](file:///Users/deependrasankhala/Documents/chandresh/chatwoot/DEPLOYMENT.md)**
 
-We recommend deploying **DakshAI** using **Docker Compose** on a Linux Virtual Machine (such as Ubuntu on AWS, DigitalOcean, or Linode) for a simple and reliable self-hosted configuration.
+We recommend deploying **NewRelay** using **Docker Compose** on a Linux Virtual Machine (such as Ubuntu on AWS, DigitalOcean, or Linode) for a simple and reliable self-hosted configuration.
 
 ---
 

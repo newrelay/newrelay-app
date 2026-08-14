@@ -1,6 +1,6 @@
 # Frontend-Only & Standalone UI Setup Guide
 
-This guide explains how UI developers can set up, run, and develop the DakshAI / Chatwoot Vue frontend **without installing Ruby, Rails, PostgreSQL, or Redis**.
+This guide explains how UI developers can set up, run, and develop the NewRelay / Chatwoot Vue frontend **without installing Ruby, Rails, PostgreSQL, or Redis**.
 
 ---
 
@@ -13,8 +13,8 @@ This guide explains how UI developers can set up, run, and develop the DakshAI /
 ### 2. Installation
 Clone the repository and install npm packages:
 ```bash
-git clone https://github.com/auzadev/DakshAI.git
-cd DakshAI
+git clone https://github.com/auzadev/NewRelay.git
+cd NewRelay
 git checkout feature/ui-changes
 pnpm install
 ```

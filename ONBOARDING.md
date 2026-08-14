@@ -30,7 +30,7 @@ Top MCP Servers:
 ## Your Setup Checklist
 
 ### Codebases
-- [ ] dakshai — https://github.com/chandresh-ship-it/dakshai
+- [ ] newrelay — https://github.com/chandresh-ship-it/newrelay
 - [ ] chatwoot (newrelay) — the main working repo; Relay design system work lives on `feat/relay-ui-components`
 
 ### MCP Servers to Activate

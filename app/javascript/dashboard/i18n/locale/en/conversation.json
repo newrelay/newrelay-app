@@ -246,8 +246,8 @@
       "REPLYING_TO": "Replying to:",
       "TIP_EMOJI_ICON": "Show emoji selector",
       "TIP_ATTACH_ICON": "Attach files",
-      "TIP_CANNED_ICON": "Canned responses",
-      "CANNED_RESPONSES_MENU_LABEL": "Canned Responses",
+      "TIP_CANNED_ICON": "Quick replies",
+      "CANNED_RESPONSES_MENU_LABEL": "Quick Replies",
       "CANNED_RESPONSES_EMPTY": "No quick replies yet",
       "TIP_LOG_CALL": "Log call",
       "TIP_MEETING": "Meeting",
@@ -344,7 +344,7 @@
       "COPY": "Copy",
       "REPLY_TO": "Reply to this message",
       "DELETE": "Delete",
-      "CREATE_A_CANNED_RESPONSE": "Add to canned responses",
+      "CREATE_A_CANNED_RESPONSE": "Add to quick replies",
       "TRANSLATE": "Translate",
       "COPY_PERMALINK": "Copy link to the message",
       "LINK_COPIED": "Message URL copied to the clipboard",
@@ -481,10 +481,11 @@
       "DESCRIPTION": "Labels provide an easier way to categorize your conversation. Create some labels like #support-enquiry, #billing-question etc., so that you can use them in a conversation later.",
       "NEW_LINK": "Click here to create tags"
     },
-    "CANNED_RESPONSES": {
-      "TITLE": "Create canned responses",
+    "QUICK_REPLIES": {
+      "TITLE": "Create quick replies",
       "DESCRIPTION": "Pre-written quick reply templates help you quickly respond to a conversation. Agents can type the '/' character followed by the shortcode to insert a response.",
-      "NEW_LINK": "Click here to create a canned response"
+      "CANCEL_LINK": "Cancel",
+      "NEW_LINK": "Click here to create a quick reply"
     }
   },
   "CONVERSATION_SIDEBAR": {

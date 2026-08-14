@@ -43,7 +43,7 @@ const learnMore = () => {
             <span class="i-lucide-inbox size-8 text-primary" />
           </div>
         </div>
-        <h2 class="text-xl font-semibold text-foreground mb-2 tracking-tight">
+        <h2 class="text-[20px] font-[600] text-foreground mb-2 tracking-tight">
           {{ t('INBOX.EMPTY.TITLE') }}
         </h2>
         <p class="text-sm text-muted-foreground leading-relaxed">

@@ -1,6 +1,6 @@
-# Developer Maintenance Workflow Guide: DakshAI
+# Developer Maintenance Workflow Guide: NewRelay
 
-This guide details best practices and workflows for maintaining **DakshAI** as a custom fork of Chatwoot, implementing new features, and keeping your repository aligned with upstream Chatwoot updates.
+This guide details best practices and workflows for maintaining **NewRelay** as a custom fork of Chatwoot, implementing new features, and keeping your repository aligned with upstream Chatwoot updates.
 
 ---
 
@@ -13,7 +13,7 @@ gitGraph
    commit id: "chatwoot base"
    branch release/dev
    checkout release/dev
-   commit id: "DakshAI Branding"
+   commit id: "NewRelay Branding"
    branch feature/custom-integration
    checkout feature/custom-integration
    commit id: "add new API endpoint"
@@ -27,7 +27,7 @@ gitGraph
 
 ### Git Remotes Config
 Keep the original Chatwoot repository configured as `upstream` and your repository configured as `origin`:
-- **`origin`**: `https://github.com/chandresh-ship-it/DakshAI.git` (Your repository)
+- **`origin`**: `https://github.com/chandresh-ship-it/NewRelay.git` (Your repository)
 - **`upstream`**: `https://github.com/chatwoot/chatwoot.git` (Official Chatwoot repository)
 
 ### Standard Workflow for Upstream Syncing
@@ -81,7 +81,7 @@ When writing new features, adhere to these developer guidelines to ensure clean 
   - Do not write custom CSS or scoped CSS.
   - Do not use inline styling.
   - Exclusively use Tailwind utility classes mapping to values in `tailwind.config.js`.
-- **Branding Compose**: Use `replaceInstallationName` from `shared/composables/useBranding` for any custom text strings referencing the product name to allow it to dynamically resolve to `DakshAI` or whatever `INSTALLATION_NAME` is configured.
+- **Branding Compose**: Use `replaceInstallationName` from `shared/composables/useBranding` for any custom text strings referencing the product name to allow it to dynamically resolve to `NewRelay` or whatever `INSTALLATION_NAME` is configured.
 - **PascalCase Components**: Component file names and imports must use PascalCase.
 
 ---

@@ -101,7 +101,7 @@ export const mockProfile = {
   accounts: [
     {
       id: 1,
-      name: 'DakshAI Workspace',
+      name: 'NewRelay Workspace',
       role: 'administrator',
       status: 'active',
       locale: 'en',
@@ -125,7 +125,7 @@ export const mockProfile = {
 
 export const mockAccount = {
   id: 1,
-  name: 'DakshAI Workspace',
+  name: 'NewRelay Workspace',
   role: 'administrator',
   status: 'active',
   locale: 'en',
@@ -156,7 +156,7 @@ export const mockInboxes = [
     name: 'Support Email',
     channel_type: 'Channel::Email',
     avatar_url: '',
-    email: 'support@dakshai.example.com',
+    email: 'support@newrelay.example.com',
   },
 ];
 
@@ -394,7 +394,7 @@ export const mockCampaigns = [
       channel_type: 'Channel::WebWidget',
     },
     message: 'Hi! Looking for anything specific?',
-    trigger_rules: { url: 'https://dakshai.example.com/pricing' },
+    trigger_rules: { url: 'https://newrelay.example.com/pricing' },
     created_at: '2026-07-01T00:00:00.000Z',
   },
 ];

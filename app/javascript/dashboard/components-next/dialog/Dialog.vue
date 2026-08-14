@@ -133,7 +133,7 @@ defineExpose({ open, close });
         <form
           ref="dialogContentRef"
           data-relay
-          class="flex h-auto w-full flex-col gap-6 overflow-visible rounded-xl border border-border/40 bg-card p-6 text-start align-middle shadow-xl transition-all duration-300 ease-in-out transform"
+          class="flex h-auto w-full flex-col gap-6 overflow-visible rounded-xl border border-border bg-background p-6 text-start align-middle shadow-xl transition-all duration-300 ease-in-out transform"
           @submit.prevent="confirm"
           @click.stop
         >

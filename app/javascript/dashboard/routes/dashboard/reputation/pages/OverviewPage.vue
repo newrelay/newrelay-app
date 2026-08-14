@@ -194,7 +194,7 @@ onMounted(loadData);
         </div>
 
         <p class="text-xs text-slate-400 mt-8 border-t border-slate-100 dark:border-slate-850 pt-4">
-          By connecting your integrations, you authorize Newrelay to pull public review streams.
+          By connecting your integrations, you authorize NewRelay to pull public review streams.
         </p>
       </div>
 

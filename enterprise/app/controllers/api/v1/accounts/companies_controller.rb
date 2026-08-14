@@ -31,6 +31,17 @@ class Api::V1::Accounts::CompaniesController < Api::V1::Accounts::EnterpriseAcco
 
   def show; end
 
+  def import
+    render json: { error: I18n.t('errors.companies.import.failed') }, status: :unprocessable_entity and return if params[:import_file].blank?
+
+    ActiveRecord::Base.transaction do
+      import = Current.account.data_imports.create!(data_type: 'companies')
+      import.import_file.attach(params[:import_file])
+    end
+
+    head :ok
+  end
+
   def create
     @company = Current.account.companies.build(company_params)
     @company.save!

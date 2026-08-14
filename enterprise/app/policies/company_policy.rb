@@ -15,6 +15,10 @@ class CompanyPolicy < ApplicationPolicy
     true
   end
 
+  def import?
+    true
+  end
+
   def update?
     true
   end

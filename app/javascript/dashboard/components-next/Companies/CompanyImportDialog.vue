@@ -1,21 +1,37 @@
 <script setup>
 import { ref } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { useAlert } from 'dashboard/composables';
 import { RelayButton } from 'dashboard/components-next/relay';
 
 defineProps({
   open: { type: Boolean, default: false },
+  isLoading: { type: Boolean, default: false },
 });
 
-const emit = defineEmits(['update:open']);
+const emit = defineEmits(['update:open', 'import']);
 const { t } = useI18n();
 const fileInput = ref(null);
+const selectedFile = ref(null);
 
-const close = () => emit('update:open', false);
+const close = () => {
+  selectedFile.value = null;
+  emit('update:open', false);
+};
+
+const onDropzoneClick = () => fileInput.value?.click();
+
+const onFileChange = () => {
+  selectedFile.value = fileInput.value?.files?.[0] || null;
+};
+
+const onFileDrop = event => {
+  const file = event.dataTransfer?.files?.[0];
+  if (file) selectedFile.value = file;
+};
 
 const onUploadClick = () => {
-  useAlert(t('COMPANIES.IMPORT.UNAVAILABLE'));
+  if (!selectedFile.value) return;
+  emit('import', selectedFile.value);
 };
 </script>
 
@@ -51,11 +67,24 @@ const onUploadClick = () => {
           <button
             type="button"
             class="flex w-full cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-muted-foreground/20 p-10 text-center transition-colors hover:bg-muted/50"
-            @click="onUploadClick"
+            @click="onDropzoneClick"
+            @dragover.prevent
+            @drop.prevent="onFileDrop"
           >
-            <span class="i-lucide-upload mb-3 size-8 text-muted-foreground" />
+            <span
+              :class="
+                selectedFile
+                  ? 'i-lucide-file-spreadsheet text-primary'
+                  : 'i-lucide-upload text-muted-foreground'
+              "
+              class="mb-3 size-8"
+            />
             <p class="mb-1 text-sm font-medium text-foreground">
-              {{ t('COMPANIES.IMPORT.DROPZONE_TITLE') }}
+              {{
+                selectedFile
+                  ? selectedFile.name
+                  : t('COMPANIES.IMPORT.DROPZONE_TITLE')
+              }}
             </p>
             <p class="text-xs text-muted-foreground">
               {{ t('COMPANIES.IMPORT.DROPZONE_HINT') }}
@@ -65,7 +94,8 @@ const onUploadClick = () => {
             ref="fileInput"
             type="file"
             class="hidden"
-            accept=".csv,.xlsx,.xls"
+            accept=".csv"
+            @change="onFileChange"
           />
         </div>
         <div
@@ -74,7 +104,10 @@ const onUploadClick = () => {
           <RelayButton variant="outline" @click="close">
             {{ t('COMPANIES.IMPORT.CANCEL') }}
           </RelayButton>
-          <RelayButton disabled>
+          <RelayButton
+            :disabled="!selectedFile || isLoading"
+            @click="onUploadClick"
+          >
             {{ t('COMPANIES.IMPORT.UPLOAD') }}
           </RelayButton>
         </div>

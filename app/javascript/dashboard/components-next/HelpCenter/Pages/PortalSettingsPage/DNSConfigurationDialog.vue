@@ -30,7 +30,9 @@ const validationRules = {
   email: { email, required },
 };
 
-const v$ = useVuelidate(validationRules, state);
+// $scope: false keeps this dialog's (empty, required) email validation from
+// nesting into the parent portal settings form and disabling its Save button.
+const v$ = useVuelidate(validationRules, state, { $scope: false });
 
 const domain = computed(() => {
   const { hostURL, helpCenterURL } = window?.chatwootConfig || {};

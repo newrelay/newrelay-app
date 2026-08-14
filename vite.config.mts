@@ -1,3 +1,4 @@
+import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { defineConfig, loadEnv, type Plugin } from 'vite';
@@ -76,36 +77,57 @@ function standaloneHtmlRouterPlugin(): Plugin {
   return {
     name: 'standalone-html-router',
     configureServer(server) {
-      server.middlewares.use((req, res, next) => {
-        if (req.method !== 'GET' && req.method !== 'HEAD') {
-          next();
-          return;
-        }
+      // Register AFTER Vite's own middlewares so real module/asset/HMR
+      // requests are resolved first; only unmatched app routes fall through.
+      return () => {
+        server.middlewares.use(async (req, res, next) => {
+          if (req.method !== 'GET' && req.method !== 'HEAD') {
+            next();
+            return;
+          }
 
-        const rawUrl = req.url ?? '/';
-        const queryIndex = rawUrl.indexOf('?');
-        const pathname =
-          queryIndex === -1 ? rawUrl : rawUrl.slice(0, queryIndex);
-        const search = queryIndex === -1 ? '' : rawUrl.slice(queryIndex);
+          const rawUrl = req.url ?? '/';
+          const queryIndex = rawUrl.indexOf('?');
+          const pathname =
+            queryIndex === -1 ? rawUrl : rawUrl.slice(0, queryIndex);
 
-        if (shouldBypassHtmlRouter(pathname)) {
-          next();
-          return;
-        }
+          if (shouldBypassHtmlRouter(pathname)) {
+            next();
+            return;
+          }
 
-        const accept = req.headers.accept ?? '';
-        const wantsHtml =
-          accept.includes('text/html') || accept.includes('*/*') || !accept;
+          // Only real page navigations want HTML. Module/asset fetches send
+          // `*/*`; rewriting those to index.html makes import-analysis try to
+          // parse HTML as JS and 500s.
+          const accept = req.headers.accept ?? '';
+          if (!accept.includes('text/html')) {
+            next();
+            return;
+          }
 
-        if (!wantsHtml) {
-          next();
-          return;
-        }
-
-        const shell = isAuthShellPath(pathname) ? '/login.html' : '/index.html';
-        req.url = `${shell}${search}`;
-        next();
-      });
+          // Serve the shell through Vite's HTML pipeline directly instead of
+          // rewriting req.url, so it never reaches the JS transform middleware.
+          const shellFile = isAuthShellPath(pathname)
+            ? 'login.html'
+            : 'index.html';
+          try {
+            const html = fs.readFileSync(
+              path.resolve(__dirname, shellFile),
+              'utf-8'
+            );
+            const transformed = await server.transformIndexHtml(
+              req.url ?? '/',
+              html,
+              req.originalUrl
+            );
+            res.statusCode = 200;
+            res.setHeader('Content-Type', 'text/html');
+            res.end(transformed);
+          } catch (error) {
+            next(error);
+          }
+        });
+      };
     },
   };
 }

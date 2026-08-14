@@ -6,6 +6,17 @@
     <title>DakshAI Dashboard (Frontend Standalone)</title>
     <link rel="icon" type="image/svg+xml" href="/brand-assets/logo_thumbnail.svg" />
     <script>
+      // Standalone has no server-side root redirect (Rails does this in prod).
+      // The dashboard SPA has no route for "/" or "/app", so send bare entry to
+      // the login page; it forwards already-authenticated users to their
+      // dashboard. Real dashboard routes (/app/accounts/...) are untouched.
+      (function () {
+        var p = window.location.pathname;
+        if (p === '/' || p === '/app' || p === '/app/') {
+          window.location.replace('/app/login');
+        }
+      })();
+
       // NOTE: the fake auth cookie is injected ONLY in mock mode by
       // mockApiPlugin (vite.config.mts). In server mode (pnpm dev:server) no
       // cookie is seeded, so the app falls through to the real login page.
@@ -14,7 +25,9 @@
         helpCenterURL: '',
         apiHost: '',
         signupEnabled: 'true',
-        isEnterprise: 'false',
+        // isEnterprise gates ENTERPRISE-only nav (e.g. Companies). useConfig()
+        // reads THIS key (chatwootConfig.isEnterprise), not globalConfig.
+        isEnterprise: 'true',
         enabledLanguages: [
           { name: "English", iso_639_1_code: "en" }
         ],

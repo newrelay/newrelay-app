@@ -6,7 +6,7 @@ import {
   SIDEBAR_TREE_LIST_NESTED,
   SIDEBAR_TREE_INDENT,
   TREE_LEVEL,
-  leafLinkClasses,
+  subLeafClasses,
   sectionHeaderClasses,
 } from '../../sidebar/sidebarTree';
 import SidebarTreeChrome from '../../sidebar/SidebarTreeChrome.vue';
@@ -172,7 +172,7 @@ const widthClass = computed(() => (props.collapsed ? 'w-16' : 'w-60'));
                 <div :class="SIDEBAR_TREE_INDENT">
                   <button
                     type="button"
-                    :class="leafLinkClasses(isActive(child.href))"
+                    :class="subLeafClasses(isActive(child.href))"
                     @click="onNavigate(child.href)"
                   >
                     <span class="truncate">{{ child.title }}</span>

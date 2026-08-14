@@ -48,7 +48,7 @@ defineEmits(['edit', 'delete']);
         "
         variant="ghost"
         size="icon"
-        class="size-8 border border-transparent text-muted-foreground shadow-xs hover:border-border hover:bg-background hover:text-foreground"
+        class="size-8 border border-transparent text-muted-foreground shadow-xs hover:border-border hover:bg-background hover:text-foreground border border-border hover:border-transparent"
         :disabled="loading"
         @click="$emit('edit', app)"
       >
@@ -60,7 +60,7 @@ defineEmits(['edit', 'delete']);
         "
         variant="ghost"
         size="icon"
-        class="size-8 border border-transparent text-muted-foreground shadow-xs hover:border-destructive/20 hover:bg-destructive/10 hover:text-destructive"
+        class="size-8 border border-transparent text-muted-foreground shadow-xs hover:border-destructive/20 hover:bg-destructive/10 hover:text-destructive border border-border hover:border-transparent"
         :disabled="loading"
         @click="$emit('delete', app)"
       >

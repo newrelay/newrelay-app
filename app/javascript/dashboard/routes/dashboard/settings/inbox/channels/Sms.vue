@@ -24,7 +24,7 @@ export default {
       :header-content="$t('INBOX_MGMT.ADD.SMS.DESC')"
     />
     <div class="mb-6 flex flex-col gap-1.5">
-      <label class="text-[13.5px] font-medium text-foreground">
+      <label class="text-[13.5px] text-foreground font-[500]">
         {{ $t('INBOX_MGMT.ADD.SMS.PROVIDERS.LABEL') }}
       </label>
       <select

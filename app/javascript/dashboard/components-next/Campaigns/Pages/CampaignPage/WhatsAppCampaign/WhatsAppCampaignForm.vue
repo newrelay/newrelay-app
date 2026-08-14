@@ -180,8 +180,8 @@ watch(
       :message-type="formErrors.title ? 'error' : 'info'"
     />
 
-    <div class="flex flex-col gap-1">
-      <label for="inbox" class="mb-0.5 text-sm font-medium text-foreground">
+    <div class="flex flex-col gap-1.5">
+      <label for="inbox" class="text-foreground text-[13.5px] font-medium">
         {{ t('CAMPAIGN.WHATSAPP.CREATE.FORM.INBOX.LABEL') }}
       </label>
       <ComboBox
@@ -195,8 +195,8 @@ watch(
       />
     </div>
 
-    <div class="flex flex-col gap-1">
-      <label for="template" class="mb-0.5 text-sm font-medium text-foreground">
+    <div class="flex flex-col gap-1.5">
+      <label for="template" class="text-foreground text-[13.5px] font-medium">
         {{ t('CAMPAIGN.WHATSAPP.CREATE.FORM.TEMPLATE.LABEL') }}
       </label>
       <ComboBox
@@ -220,8 +220,8 @@ watch(
       :template="selectedTemplate"
     />
 
-    <div class="flex flex-col gap-1">
-      <label for="audience" class="mb-0.5 text-sm font-medium text-foreground">
+    <div class="flex flex-col gap-1.5">
+      <label for="audience" class="text-foreground text-[13.5px] font-medium">
         {{ t('CAMPAIGN.WHATSAPP.CREATE.FORM.AUDIENCE.LABEL') }}
       </label>
       <TagMultiSelectComboBox

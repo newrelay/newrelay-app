@@ -84,7 +84,7 @@ const pageInfo = computed(() => {
         variant="ghost"
         size="sm"
         color="slate"
-        class="!w-8 !h-6"
+        class="!w-8 !h-6 border border-border hover:border-transparent"
         :disabled="isFirstPage"
         @click="changePage(1)"
       />
@@ -93,7 +93,7 @@ const pageInfo = computed(() => {
         variant="ghost"
         color="slate"
         size="sm"
-        class="!w-8 !h-6"
+        class="!w-8 !h-6 border border-border hover:border-transparent"
         :disabled="isFirstPage"
         @click="changePage(currentPage - 1)"
       />
@@ -112,7 +112,7 @@ const pageInfo = computed(() => {
         variant="ghost"
         color="slate"
         size="sm"
-        class="!w-8 !h-6"
+        class="!w-8 !h-6 border border-border hover:border-transparent"
         :disabled="isLastPage"
         @click="changePage(currentPage + 1)"
       />
@@ -121,7 +121,7 @@ const pageInfo = computed(() => {
         variant="ghost"
         color="slate"
         size="sm"
-        class="!w-8 !h-6"
+        class="!w-8 !h-6 border border-border hover:border-transparent"
         :disabled="isLastPage"
         @click="changePage(totalPages)"
       />

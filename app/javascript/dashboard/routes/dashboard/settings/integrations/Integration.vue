@@ -78,7 +78,7 @@ const confirmDeletion = () => {
         />
       </div>
       <div>
-        <h3 class="mb-1 text-heading-1 text-foreground">
+        <h3 class="capitalize mb-1 text-heading-1 text-foreground">
           {{ integrationName }}
         </h3>
         <p class="text-muted-foreground text-body-main">

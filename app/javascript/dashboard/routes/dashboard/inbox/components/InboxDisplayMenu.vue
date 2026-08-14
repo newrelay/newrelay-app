@@ -186,7 +186,7 @@ export default {
           />
           <label
             :for="option.key"
-            class="text-xs font-medium text-foreground !ml-0 !mr-0 dark:text-foreground"
+            class="text-foreground !ml-0 !mr-0 dark:text-foreground text-[13.5px] font-[500]"
           >
             {{ option.name }}
           </label>

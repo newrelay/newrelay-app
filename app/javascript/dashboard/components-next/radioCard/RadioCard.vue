@@ -51,7 +51,7 @@ const handleChange = () => {
 <template>
   <label
     :for="id"
-    class="rounded-xl outline outline-1 p-4 transition-all duration-200 bg-card py-4 ltr:pl-4 rtl:pr-4 ltr:pr-6 rtl:pl-6 focus-within:has-[:focus-visible]:ring-2 focus-within:has-[:focus-visible]:ring-border"
+    class="rounded-xl outline outline-1 p-4 transition-all duration-200 bg-card py-4 ltr:pl-4 rtl:pr-4 ltr:pr-6 rtl:pl-6 focus-within:has-[:focus-visible]:ring-2 focus-within:has-[:focus-visible]:ring-border text-[13.5px] font-[500] text-foreground"
     :class="[
       disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer',
       isActive ? 'outline-primary' : 'outline-border',
@@ -61,7 +61,7 @@ const handleChange = () => {
     <div class="flex flex-col gap-2 items-start">
       <div class="flex items-center justify-between w-full gap-3">
         <div class="flex items-center gap-2">
-          <h3 class="text-heading-3 text-foreground">
+          <h3 class="capitalize text-heading-3 text-foreground">
             {{ label }}
           </h3>
           <Label v-if="disabled" :label="disabledLabel" color="amber" compact />

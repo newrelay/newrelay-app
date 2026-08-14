@@ -32,13 +32,13 @@ const onUploadClick = () => {
       >
         <div class="p-6">
           <div class="mb-4 flex items-center justify-between">
-            <h2 class="text-lg font-semibold tracking-tight text-foreground">
+            <h2 class="capitalize text-lg font-semibold tracking-tight text-foreground">
               {{ t('COMPANIES.IMPORT.TITLE') }}
             </h2>
             <RelayButton
               variant="ghost"
               size="icon"
-              class="size-8 text-muted-foreground hover:text-foreground"
+              class="size-8 text-muted-foreground hover:text-foreground border border-border hover:border-transparent"
               @click="close"
             >
               <span class="i-lucide-x size-4" />
@@ -64,7 +64,7 @@ const onUploadClick = () => {
           <input
             ref="fileInput"
             type="file"
-            class="hidden"
+            class="hidden text-[14px] shadow-sm rounded-md border-border/80 bg-background focus-visible:ring-1 focus-visible:ring-primary/30"
             accept=".csv,.xlsx,.xls"
           />
         </div>

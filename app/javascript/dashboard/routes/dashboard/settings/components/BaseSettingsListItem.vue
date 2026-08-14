@@ -21,7 +21,7 @@ defineProps({
           class="flex items-center justify-between w-full gap-3 sm:justify-normal whitespace-nowrap"
         >
           <h3
-            class="justify-between tracking-tight font-medium truncate w-fit sm:justify-normal text-foreground"
+            class="capitalize justify-between tracking-tight font-medium truncate w-fit sm:justify-normal text-foreground"
           >
             <slot name="title">
               {{ title }}

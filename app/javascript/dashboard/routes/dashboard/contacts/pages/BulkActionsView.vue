@@ -250,7 +250,7 @@ onMounted(() => {
     class="flex h-full flex-1 flex-col overflow-y-auto bg-background p-6 relative"
   >
     <div class="max-w-6xl">
-      <h2 class="mb-1 text-base font-semibold tracking-tight text-foreground">
+      <h2 class="capitalize mb-1 text-base font-semibold tracking-tight text-foreground">
         {{ t('CONTACTS_BULK_ACTIONS.AUDIT.TITLE') }}
       </h2>
       <p class="mb-12 text-[14px] text-muted-foreground">
@@ -342,7 +342,7 @@ onMounted(() => {
             <input
               v-model="dateFromFilter"
               type="date"
-              class="h-[38px] w-[180px] rounded-md border border-border bg-background px-3 text-[13px] font-medium text-foreground shadow-sm focus:outline-none focus:ring-1 focus:ring-primary/30"
+              class="h-[38px] w-[180px] border border-border bg-background px-3 text-[13px] font-medium text-foreground focus:outline-none focus:ring-1 focus:ring-primary/30 text-[14px] border-border/80 focus-visible:ring-1 focus-visible:ring-primary/30 shadow-sm rounded-md"
             />
           </div>
 
@@ -358,7 +358,7 @@ onMounted(() => {
             <input
               v-model="dateToFilter"
               type="date"
-              class="h-[38px] w-[180px] rounded-md border border-border bg-background px-3 text-[13px] font-medium text-foreground shadow-sm focus:outline-none focus:ring-1 focus:ring-primary/30"
+              class="h-[38px] w-[180px] border border-border bg-background px-3 text-[13px] font-medium text-foreground focus:outline-none focus:ring-1 focus:ring-primary/30 text-[14px] border-border/80 focus-visible:ring-1 focus-visible:ring-primary/30 shadow-sm rounded-md"
             />
           </div>
 
@@ -366,7 +366,7 @@ onMounted(() => {
             v-if="hasFilters"
             variant="ghost"
             size="sm"
-            class="mt-6"
+            class="mt-6 border border-border hover:border-transparent"
             @click="clearFilters"
           >
             {{ t('CONTACTS_LAYOUT.FILTER.ACTIVE_FILTERS.CLEAR_FILTERS') }}
@@ -386,7 +386,7 @@ onMounted(() => {
         class="flex flex-col items-center justify-center rounded-xl border border-dashed border-border bg-muted/20 py-20"
       >
         <span class="i-lucide-activity mb-4 size-12 text-muted-foreground/50" />
-        <h3 class="mb-1 text-lg font-medium text-foreground">
+        <h3 class="capitalize mb-1 text-lg font-medium text-foreground">
           {{ t('CONTACTS_BULK_ACTIONS.AUDIT.EMPTY.TITLE') }}
         </h3>
         <p class="max-w-sm text-center text-sm text-muted-foreground">

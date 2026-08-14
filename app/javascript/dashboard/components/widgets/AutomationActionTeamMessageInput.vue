@@ -43,7 +43,7 @@ export default {
     />
     <textarea
       v-model="message"
-      class="mb-0 !text-sm"
+      class="mb-0 ! text-[14px] shadow-sm rounded-md border-border/80 bg-background focus-visible:ring-1 focus-visible:ring-primary/30"
       rows="4"
       :placeholder="$t('AUTOMATION.ACTION.TEAM_MESSAGE_INPUT_PLACEHOLDER')"
       @input="updateValue"

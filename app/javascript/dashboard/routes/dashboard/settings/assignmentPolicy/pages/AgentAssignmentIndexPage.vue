@@ -61,7 +61,7 @@ onMounted(() => {
 <template>
   <div>
     <div class="mb-6 flex items-center justify-between gap-3">
-      <h3 class="text-[15px] font-medium text-foreground">
+      <h3 class="capitalize text-[15px] font-medium text-foreground">
         {{
           $t('ASSIGNMENT_POLICY.AGENT_ASSIGNMENT_POLICY.INDEX.ACTIVE_POLICIES')
         }}
@@ -90,7 +90,7 @@ onMounted(() => {
       >
         <Icon icon="i-lucide-zap" class="size-7 text-primary" />
       </div>
-      <h3 class="mb-2 text-[16px] font-semibold text-foreground">
+      <h3 class="capitalize mb-2 text-[16px] font-semibold text-foreground">
         {{ $t('ASSIGNMENT_POLICY.AGENT_ASSIGNMENT_POLICY.INDEX.EMPTY_TITLE') }}
       </h3>
       <p
@@ -116,7 +116,7 @@ onMounted(() => {
         <div class="absolute left-0 top-0 h-full w-1 bg-primary" />
         <div class="mb-4 flex items-start justify-between gap-3">
           <div class="min-w-0">
-            <h4 class="text-[15px] font-semibold text-foreground">
+            <h4 class="capitalize text-[15px] font-semibold text-foreground">
               {{ policy.name }}
             </h4>
             <p class="mt-1 text-[13px] text-muted-foreground">

@@ -98,7 +98,7 @@ defineExpose({
       v-if="label"
       :for="id"
       :class="customLabelClass"
-      class="mb-0.5 text-sm font-medium text-foreground"
+      class="text-[13.5px] font-medium text-foreground"
     >
       {{ label }}
     </label>

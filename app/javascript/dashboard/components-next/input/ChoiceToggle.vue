@@ -30,7 +30,7 @@ const handleSelect = value => {
       :key="option.value"
       class="flex flex-1 gap-2 justify-center items-center"
     >
-      <label class="inline-flex gap-2 items-center text-base cursor-pointer">
+      <label class="inline-flex gap-2 items-center cursor-pointer text-[13.5px] font-[500] text-foreground">
         <input
           type="radio"
           :value="option.value"

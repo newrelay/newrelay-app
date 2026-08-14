@@ -35,7 +35,7 @@ const titleCase = computed(() => props.title.toLowerCase());
       v-if="showTitle"
       class="sticky top-0 pt-2 py-3 z-20 bg-gradient-to-b from-muted from-80% to-transparent mb-3 -mx-1.5 px-1.5"
     >
-      <h3 class="text-sm text-muted-foreground">{{ title }}</h3>
+      <h3 class="capitalize text-sm text-muted-foreground">{{ title }}</h3>
     </div>
     <slot />
     <woot-loading-state

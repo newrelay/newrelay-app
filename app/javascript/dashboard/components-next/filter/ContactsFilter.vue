@@ -109,13 +109,13 @@ onBeforeUnmount(() => emit('close'));
         class="fixed inset-y-0 right-0 z-[60] flex w-full max-w-[450px] translate-x-0 animate-in slide-in-from-right flex-col border-l border-border bg-card p-6 shadow-2xl duration-300"
       >
         <div class="mb-6 flex shrink-0 items-center justify-between">
-          <h2 class="text-base font-medium tracking-tight text-foreground">
+          <h2 class="capitalize text-base font-medium tracking-tight text-foreground">
             {{ filterModalHeaderTitle }}
           </h2>
           <RelayButton
             variant="ghost"
             size="icon"
-            class="size-8 text-muted-foreground hover:text-foreground"
+            class="size-8 text-muted-foreground hover:text-foreground border border-border hover:border-transparent"
             @click="close"
           >
             <span class="i-lucide-x size-4" />
@@ -127,7 +127,7 @@ onBeforeUnmount(() => emit('close'));
             v-if="props.isSegmentView"
             class="mb-6 flex flex-col gap-1.5 border-b border-border pb-6"
           >
-            <label class="text-[13.5px] font-medium text-foreground">
+            <label class="text-[13.5px] text-foreground font-[500]">
               {{ t('CONTACTS_LAYOUT.FILTER.SEGMENT.LABEL') }}
             </label>
             <RelayInput
@@ -175,7 +175,7 @@ onBeforeUnmount(() => emit('close'));
 
           <RelayButton
             variant="ghost"
-            class="h-10 w-full justify-start rounded-lg border border-transparent px-4 text-sm font-medium text-primary hover:border-primary/20 hover:bg-primary/10 hover:text-primary"
+            class="h-9 w-full justify-start rounded-lg border border-transparent px-4 text-sm font-medium text-primary hover:border-primary/20 hover:bg-primary/10 hover:text-primary border border-border hover:border-transparent"
             @click="addFilter"
           >
             <span class="i-lucide-plus mr-2 size-4" />
@@ -186,7 +186,7 @@ onBeforeUnmount(() => emit('close'));
         <div class="mt-6 flex shrink-0 gap-3 border-t border-border pt-6">
           <RelayButton
             variant="outline"
-            class="h-10 flex-1 text-sm font-medium"
+            class="h-9 flex-1 text-sm font-medium"
             @click="resetFilter"
           >
             {{ $t('CONTACTS_LAYOUT.FILTER.BUTTONS.CLEAR_FILTERS') }}
@@ -194,7 +194,7 @@ onBeforeUnmount(() => emit('close'));
           <div class="flex-1">
             <RelayButton
               v-if="isSegmentView"
-              class="h-10 w-full bg-primary text-sm font-medium text-primary-foreground shadow-sm hover:bg-primary/90"
+              class="h-9 w-full bg-primary text-sm font-medium text-primary-foreground shadow-sm hover:bg-primary/90"
               :disabled="!segmentNameLocal"
               @click="updateSavedSegment"
             >
@@ -202,7 +202,7 @@ onBeforeUnmount(() => emit('close'));
             </RelayButton>
             <RelayButton
               v-else
-              class="h-10 w-full bg-primary text-sm font-medium text-primary-foreground shadow-sm hover:bg-primary/90"
+              class="h-9 w-full bg-primary text-sm font-medium text-primary-foreground shadow-sm hover:bg-primary/90"
               @click="validateAndSubmit"
             >
               {{ $t('CONTACTS_LAYOUT.FILTER.BUTTONS.APPLY_FILTERS') }}

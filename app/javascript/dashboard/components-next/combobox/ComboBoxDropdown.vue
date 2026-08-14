@@ -69,7 +69,7 @@ defineExpose({
         :value="searchValue"
         type="search"
         :placeholder="searchPlaceholder || t('COMBOBOX.SEARCH_PLACEHOLDER')"
-        class="reset-base w-full py-2 pl-10 pr-2 text-sm focus:outline-none border-none rounded-t-md bg-card text-foreground"
+        class="reset-base w-full py-2 pl-10 pr-2 focus:outline-none border-none rounded-t-md bg-card text-foreground text-[14px] shadow-sm rounded-md border-border/80 bg-background focus-visible:ring-1 focus-visible:ring-primary/30"
         @input="onInputSearch"
       />
     </div>

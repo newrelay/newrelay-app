@@ -90,7 +90,7 @@ export default {
   <div>
     <div v-if="toEmails">
       <div class="input-group small" :class="{ error: v$.toEmailsVal.$error }">
-        <label class="input-group-label">
+        <label class="input-group-label text-[13.5px] font-[500] text-foreground">
           {{ $t('CONVERSATION.REPLYBOX.EMAIL_HEAD.TO') }}
         </label>
         <div class="flex-1 min-w-0 m-0 rounded-none whitespace-nowrap">
@@ -107,7 +107,7 @@ export default {
     </div>
     <div class="input-group-wrap">
       <div class="input-group small" :class="{ error: v$.ccEmailsVal.$error }">
-        <label class="input-group-label">
+        <label class="input-group-label text-[13.5px] font-[500] text-foreground">
           {{ $t('CONVERSATION.REPLYBOX.EMAIL_HEAD.CC.LABEL') }}
         </label>
         <div class="flex-1 min-w-0 m-0 rounded-none whitespace-nowrap">
@@ -135,7 +135,7 @@ export default {
     </div>
     <div v-if="showBcc" class="input-group-wrap">
       <div class="input-group small" :class="{ error: v$.bccEmailsVal.$error }">
-        <label class="input-group-label">
+        <label class="input-group-label text-[13.5px] font-[500] text-foreground">
           {{ $t('CONVERSATION.REPLYBOX.EMAIL_HEAD.BCC.LABEL') }}
         </label>
         <div class="flex-1 min-w-0 m-0 rounded-none whitespace-nowrap">

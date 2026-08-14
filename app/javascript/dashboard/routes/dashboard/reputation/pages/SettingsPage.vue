@@ -431,18 +431,18 @@ onMounted(async () => {
     <!-- eslint-disable -->
     <!-- Header -->
     <div>
-      <h2 class="text-2xl font-extrabold text-slate-900 dark:text-white tracking-tight">Reputation Settings</h2>
-      <p class="text-xs text-slate-400 mt-0.5">Manage connected listings, review triggers, and outbound channel request templates</p>
+      <h2 class="capitalize text-2xl font-extrabold text-foreground dark:text-white tracking-tight">Reputation Settings</h2>
+      <p class="text-xs text-muted-foreground mt-0.5">Manage connected listings, review triggers, and outbound channel request templates</p>
     </div>
 
     <div v-if="loading" class="flex flex-col items-center justify-center py-20 space-y-4">
       <div class="size-10 border-4 border-woot-500 border-t-transparent rounded-full animate-spin"></div>
-      <p class="text-sm font-medium text-slate-500 dark:text-slate-400">Loading settings panel...</p>
+      <p class="text-sm font-medium text-muted-foreground dark:text-muted-foreground">Loading settings panel...</p>
     </div>
 
     <div v-else class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
       <!-- Left sidebar navigation -->
-      <aside class="lg:col-span-3 bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-850 rounded-2xl p-4 shadow-sm space-y-1">
+      <aside class="lg:col-span-3 bg-white dark:bg-slate-900 border border-border/80 dark:border-slate-850 rounded-2xl p-4 shadow-sm space-y-1">
         <button
           v-for="item in sidebarItems"
           :key="item.id"
@@ -467,20 +467,20 @@ onMounted(async () => {
       <main class="lg:col-span-9">
         <!-- 1. Integrations View -->
         <div v-if="currentTab === 'integrations'" class="space-y-6">
-          <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-850 shadow-sm p-6 space-y-6">
+          <div class="bg-white dark:bg-slate-900 rounded-2xl border border-border/80 dark:border-slate-850 shadow-sm p-6 space-y-6">
             <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
               <div>
-                <h3 class="font-extrabold text-slate-900 dark:text-white text-base">Integrations</h3>
-                <p class="text-xs text-slate-400 mt-0.5">Add review platforms by entering the page link to import reviews.</p>
+                <h3 class="capitalize font-extrabold text-foreground dark:text-white text-base">Integrations</h3>
+                <p class="text-xs text-muted-foreground mt-0.5">Add review platforms by entering the page link to import reviews.</p>
               </div>
               <div class="relative w-full md:w-72">
                 <input
                   v-model="searchQuery"
                   type="text"
                   placeholder="Search platforms..."
-                  class="w-full pl-9 pr-4 py-2 text-xs rounded-xl border border-slate-200 dark:border-slate-800 dark:bg-slate-850 focus:outline-none focus:ring-2 focus:ring-woot-500"
+                  class="w-full pl-9 pr-4 py-2 rounded-xl border border-border dark:border-slate-800 dark:bg-slate-850 focus:outline-none focus:ring-2 focus:ring-woot-500 text-[14px] border-border/80 bg-background focus-visible:ring-1 focus-visible:ring-primary/30 shadow-sm rounded-md"
                 />
-                <span class="absolute left-3 top-2.5 text-slate-400">
+                <span class="absolute left-3 top-2.5 text-muted-foreground">
                   <svg class="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
                 </span>
               </div>
@@ -489,16 +489,16 @@ onMounted(async () => {
             <!-- Integrations Grid -->
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
               <!-- Custom Link Card -->
-              <div class="p-5 rounded-2xl bg-slate-50/50 dark:bg-slate-850/50 border-2 border-dashed border-slate-200 dark:border-slate-800 flex flex-col items-center justify-center text-center space-y-4">
-                <div class="p-3 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 shadow-inner">
+              <div class="p-5 rounded-2xl bg-background/50 dark:bg-slate-850/50 border-2 border-dashed border-border dark:border-slate-800 flex flex-col items-center justify-center text-center space-y-4">
+                <div class="p-3 rounded-full bg-muted dark:bg-slate-800 text-muted-foreground shadow-inner">
                   <svg class="size-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" /></svg>
                 </div>
                 <div>
-                  <h4 class="font-extrabold text-sm text-slate-850 dark:text-white">Custom Links</h4>
-                  <p class="text-[10px] text-slate-400 mt-0.5">Connect any standard feedback url</p>
+                  <h4 class="capitalize font-extrabold text-sm text-slate-850 dark:text-white">Custom Links</h4>
+                  <p class="text-[10px] text-muted-foreground mt-0.5">Connect any standard feedback url</p>
                 </div>
                 <button
-                  class="px-4 py-1.5 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-250 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-bold shadow-sm hover:bg-slate-50 dark:hover:bg-slate-750 transition-all"
+                  class="px-4 py-1.5 bg-white dark:bg-slate-800 text-foreground dark:text-slate-250 border border-border dark:border-slate-700 rounded-xl text-xs font-bold shadow-sm hover:bg-background dark:hover:bg-slate-750 transition-all"
                   @click="showCustomModal = true"
                 >
                   + Add page
@@ -509,7 +509,7 @@ onMounted(async () => {
               <div
                 v-for="platform in filteredPlatforms"
                 :key="platform.id"
-                class="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-850 shadow-sm relative flex flex-col justify-between min-h-[190px]"
+                class="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-border/80 dark:border-slate-850 shadow-sm relative flex flex-col justify-between min-h-[190px]"
               >
                 <!-- Card Header -->
                 <div class="flex items-start justify-between gap-4">
@@ -518,7 +518,7 @@ onMounted(async () => {
                       {{ platform.name.substring(0, 2) }}
                     </div>
                     <div>
-                      <h4 class="font-extrabold text-sm text-slate-850 dark:text-white">{{ platform.name }}</h4>
+                      <h4 class="capitalize font-extrabold text-sm text-slate-850 dark:text-white">{{ platform.name }}</h4>
                       <span
                         class="text-[9px] uppercase tracking-wider font-extrabold"
                         :class="getIntegrationForPlatform(platform.id).length > 0 ? 'text-emerald-500' : 'text-slate-400'"
@@ -531,7 +531,7 @@ onMounted(async () => {
                   <!-- 3-dots Menu for active connections -->
                   <div v-if="getIntegrationForPlatform(platform.id).length > 0" class="relative">
                     <button 
-                      class="p-1 rounded hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-400"
+                      class="p-1 rounded hover:bg-background dark:hover:bg-slate-800 text-muted-foreground"
                       @click="activeMenuId = activeMenuId === platform.id ? null : platform.id"
                     >
                       <svg class="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" /></svg>
@@ -541,7 +541,7 @@ onMounted(async () => {
                       <button
                         v-for="int in getIntegrationForPlatform(platform.id)"
                         :key="int.id"
-                        class="w-full text-left px-3.5 py-1.5 text-xs text-red-500 hover:bg-slate-50 dark:hover:bg-slate-800 font-bold transition-colors"
+                        class="w-full text-left px-3.5 py-1.5 text-xs text-destructive hover:bg-background dark:hover:bg-slate-800 font-bold transition-colors"
                         @click="disconnect(int.id)"
                       >
                         Disconnect
@@ -553,14 +553,14 @@ onMounted(async () => {
                 <!-- Card Body -->
                 <div class="mt-4 flex-1">
                   <div v-if="getIntegrationForPlatform(platform.id).length > 0" class="space-y-1">
-                    <p class="text-xs font-semibold text-slate-800 dark:text-slate-200 truncate">
+                    <p class="text-xs font-semibold text-foreground dark:text-slate-200 truncate">
                       {{ getIntegrationForPlatform(platform.id)[0].location_name }}
                     </p>
                     <p class="text-[10px] text-slate-450">
                       {{ getIntegrationForPlatform(platform.id).length }} Connected account
                     </p>
                   </div>
-                  <div v-else class="text-[10px] text-slate-400">
+                  <div v-else class="text-[10px] text-muted-foreground">
                     No business page connected yet.
                   </div>
                 </div>
@@ -574,13 +574,13 @@ onMounted(async () => {
                   <button
                     v-else-if="platform.comingSoon"
                     disabled
-                    class="w-full py-2 bg-slate-50 dark:bg-slate-850 text-slate-400 dark:text-slate-500 rounded-xl text-xs font-bold border border-slate-100 dark:border-slate-800 shadow-sm cursor-not-allowed"
+                    class="w-full py-2 bg-background dark:bg-slate-850 text-muted-foreground dark:text-muted-foreground rounded-xl text-xs font-bold border border-slate-100 dark:border-slate-800 shadow-sm cursor-not-allowed"
                   >
                     Coming Soon
                   </button>
                   <button
                     v-else
-                    class="w-full py-2 bg-slate-50 dark:bg-slate-850 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-250 rounded-xl text-xs font-bold border border-slate-150 dark:border-slate-800 shadow-sm transition-all"
+                    class="w-full py-2 bg-background dark:bg-slate-850 hover:bg-muted dark:hover:bg-slate-800 text-foreground dark:text-slate-250 rounded-xl text-xs font-bold border border-slate-150 dark:border-slate-800 shadow-sm transition-all"
                     @click="openConnectModal(platform)"
                   >
                     Connect account
@@ -592,22 +592,22 @@ onMounted(async () => {
               <div
                 v-for="customInt in getIntegrationForPlatform('custom')"
                 :key="customInt.id"
-                class="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-850 shadow-sm relative flex flex-col justify-between min-h-[190px]"
+                class="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-border/80 dark:border-slate-850 shadow-sm relative flex flex-col justify-between min-h-[190px]"
               >
                 <div class="flex items-start justify-between gap-4">
                   <div class="flex items-center gap-3 min-w-0">
-                    <div class="p-2.5 rounded-xl shrink-0 font-extrabold text-xs text-indigo-500 bg-indigo-50 dark:bg-indigo-950/20">
+                    <div class="p-2.5 rounded-xl shrink-0 font-extrabold text-xs text-primary bg-primary/10 dark:bg-indigo-950/20">
                       LK
                     </div>
                     <div class="min-w-0">
-                      <h4 class="font-extrabold text-sm text-slate-850 dark:text-white truncate">
+                      <h4 class="capitalize font-extrabold text-sm text-slate-850 dark:text-white truncate">
                         {{ customInt.location_name.split(' - ')[0] }}
                       </h4>
                       <span class="text-[9px] uppercase tracking-wider font-extrabold text-emerald-500">Connected</span>
                     </div>
                   </div>
                   <button 
-                    class="p-1 rounded hover:bg-slate-50 dark:hover:bg-slate-800 text-red-500"
+                    class="p-1 rounded hover:bg-background dark:hover:bg-slate-800 text-destructive"
                     @click="disconnect(customInt.id)"
                   >
                     <svg class="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
@@ -615,7 +615,7 @@ onMounted(async () => {
                 </div>
 
                 <div class="mt-4 flex-1 min-w-0">
-                  <p class="text-xs font-semibold text-slate-800 dark:text-slate-200 truncate">
+                  <p class="text-xs font-semibold text-foreground dark:text-slate-200 truncate">
                     {{ customInt.location_id }}
                   </p>
                   <p class="text-[10px] text-slate-450 mt-1 capitalize">
@@ -624,7 +624,7 @@ onMounted(async () => {
                 </div>
 
                 <div class="mt-4 border-t border-slate-100 dark:border-slate-850/50 pt-3">
-                  <span class="text-[10px] font-bold text-slate-400">Custom connection</span>
+                  <span class="text-[10px] font-bold text-muted-foreground">Custom connection</span>
                 </div>
               </div>
             </div>
@@ -632,17 +632,17 @@ onMounted(async () => {
         </div>
 
         <!-- 2. Reviews AI View -->
-        <div v-else-if="currentTab === 'reviews_ai'" class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-850 shadow-sm p-6 space-y-6">
+        <div v-else-if="currentTab === 'reviews_ai'" class="bg-white dark:bg-slate-900 rounded-2xl border border-border/80 dark:border-slate-850 shadow-sm p-6 space-y-6">
           <div>
-            <h3 class="font-extrabold text-slate-900 dark:text-white text-base">Reviews AI</h3>
-            <p class="text-xs text-slate-400 mt-0.5">Automate and customize review replies with AI assistance</p>
+            <h3 class="capitalize font-extrabold text-foreground dark:text-white text-base">Reviews AI</h3>
+            <p class="text-xs text-muted-foreground mt-0.5">Automate and customize review replies with AI assistance</p>
           </div>
 
           <div class="space-y-4">
-            <div class="flex items-center justify-between p-4 rounded-xl border border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-850/30">
+            <div class="flex items-center justify-between p-4 rounded-xl border border-slate-100 dark:border-slate-800 bg-background/50 dark:bg-slate-850/30">
               <div>
-                <h4 class="text-sm font-bold text-slate-800 dark:text-white">Enable Auto-Reply with AI</h4>
-                <p class="text-xs text-slate-400 mt-0.5">Instantly draft and publish responses based on customer reviews</p>
+                <h4 class="capitalize text-sm font-bold text-foreground dark:text-white">Enable Auto-Reply with AI</h4>
+                <p class="text-xs text-muted-foreground mt-0.5">Instantly draft and publish responses based on customer reviews</p>
               </div>
               <button
                 type="button"
@@ -664,10 +664,10 @@ onMounted(async () => {
             </div>
 
             <div class="space-y-1">
-              <label class="text-[10px] font-bold text-slate-450 uppercase tracking-wider">Minimum Rating to Auto-Reply</label>
+              <label class="text-[10px] text-slate-450 uppercase tracking-wider text-[13.5px] font-[500] text-foreground">Minimum Rating to Auto-Reply</label>
               <select
                 v-model="aiMinRating"
-                class="w-full text-xs rounded-xl border border-slate-200 dark:border-slate-750 dark:bg-slate-850 p-2.5 focus:outline-none focus:ring-2 focus:ring-woot-500"
+                class="w-full text-xs rounded-xl border border-border dark:border-slate-750 dark:bg-slate-850 p-2.5 focus:outline-none focus:ring-2 focus:ring-woot-500"
               >
                 <option value="5">5 Stars only</option>
                 <option value="4">4 Stars & above</option>
@@ -676,11 +676,11 @@ onMounted(async () => {
             </div>
 
             <div class="space-y-1">
-              <label class="text-[10px] font-bold text-slate-450 uppercase tracking-wider">Custom AI Instructions</label>
+              <label class="text-[10px] text-slate-450 uppercase tracking-wider text-[13.5px] font-[500] text-foreground">Custom AI Instructions</label>
               <textarea
                 v-model="aiInstructions"
                 rows="4"
-                class="w-full text-xs rounded-xl border border-slate-200 dark:border-slate-750 dark:bg-slate-850 p-3 focus:outline-none focus:ring-2 focus:ring-woot-500"
+                class="w-full rounded-xl border border-border dark:border-slate-750 dark:bg-slate-850 p-3 focus:outline-none focus:ring-2 focus:ring-woot-500 text-[14px] border-border/80 bg-background focus-visible:ring-1 focus-visible:ring-primary/30 shadow-sm rounded-md"
                 placeholder="Instruct the AI on tone, context, or key business details..."
               />
             </div>
@@ -697,22 +697,22 @@ onMounted(async () => {
         </div>
 
         <!-- 3. Review Link View -->
-        <div v-else-if="currentTab === 'review_link'" class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-850 shadow-sm p-6 space-y-6">
+        <div v-else-if="currentTab === 'review_link'" class="bg-white dark:bg-slate-900 rounded-2xl border border-border/80 dark:border-slate-850 shadow-sm p-6 space-y-6">
           <div>
-            <h3 class="font-extrabold text-slate-900 dark:text-white text-base">Review Short Link</h3>
-            <p class="text-xs text-slate-400 mt-0.5">Customize the shortlink sent out to invite reviews</p>
+            <h3 class="capitalize font-extrabold text-foreground dark:text-white text-base">Review Short Link</h3>
+            <p class="text-xs text-muted-foreground mt-0.5">Customize the shortlink sent out to invite reviews</p>
           </div>
 
           <div class="space-y-4">
             <div class="space-y-1">
-              <label class="text-[10px] font-bold text-slate-450 uppercase tracking-wider">Review Invite URL</label>
+              <label class="text-[10px] text-slate-450 uppercase tracking-wider text-[13.5px] font-[500] text-foreground">Review Invite URL</label>
               <input
                 v-model="customSlug"
                 type="text"
                 placeholder="https://g.page/r/your-business/review"
-                class="w-full text-xs rounded-xl border border-slate-200 dark:border-slate-750 dark:bg-slate-850 p-2.5 focus:outline-none focus:ring-2 focus:ring-woot-500"
+                class="w-full rounded-xl border border-border dark:border-slate-750 dark:bg-slate-850 p-2.5 focus:outline-none focus:ring-2 focus:ring-woot-500 text-[14px] border-border/80 bg-background focus-visible:ring-1 focus-visible:ring-primary/30 shadow-sm rounded-md"
               />
-              <p class="text-[10px] text-slate-400 font-semibold mt-1">
+              <p class="text-[10px] text-muted-foreground font-semibold mt-1">
                 Enter your own external URL (e.g. Google or Facebook review link) or a custom slug. This link is used for your QR code.
               </p>
             </div>
@@ -731,14 +731,14 @@ onMounted(async () => {
         <!-- 4. Outbound Invite Templates (SMS, Email, WhatsApp Tabs) -->
         <div 
           v-else-if="['sms_requests', 'email_requests', 'whatsapp_requests'].includes(currentTab)"
-          class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-850 shadow-sm p-6 space-y-5"
+          class="bg-white dark:bg-slate-900 rounded-2xl border border-border/80 dark:border-slate-850 shadow-sm p-6 space-y-5"
         >
           <div class="flex items-center justify-between">
             <div>
-              <h3 class="font-extrabold text-slate-900 dark:text-white text-base">
+              <h3 class="capitalize font-extrabold text-foreground dark:text-white text-base">
                 {{ currentTab === 'sms_requests' ? 'SMS' : currentTab === 'email_requests' ? 'Email' : 'WhatsApp' }} Invite Templates
               </h3>
-              <p class="text-xs text-slate-400 mt-0.5">Customize outbound customer requests templates</p>
+              <p class="text-xs text-muted-foreground mt-0.5">Customize outbound customer requests templates</p>
             </div>
             <button
               class="px-3.5 py-1.5 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-xs font-bold transition-all shadow-sm"
@@ -763,7 +763,7 @@ onMounted(async () => {
                 <div class="truncate">
                   <span>{{ t.name }}</span>
                 </div>
-                <span v-if="!t.active" class="text-[8px] bg-slate-100 dark:bg-slate-800 px-1 py-0.5 text-slate-450 rounded uppercase">Inactive</span>
+                <span v-if="!t.active" class="text-[8px] bg-muted dark:bg-slate-800 px-1 py-0.5 text-slate-450 rounded uppercase">Inactive</span>
               </button>
               
               <div v-if="activeTabTemplates.length === 0" class="text-xs text-slate-450 py-10 text-center">
@@ -775,29 +775,29 @@ onMounted(async () => {
             <div v-if="activeTemplate" class="md:col-span-8 space-y-4">
               <div class="grid grid-cols-2 gap-3">
                 <div class="space-y-1">
-                  <label class="text-[10px] font-bold text-slate-450 uppercase tracking-wider">Template Name</label>
+                  <label class="text-[10px] text-slate-450 uppercase tracking-wider text-[13.5px] font-[500] text-foreground">Template Name</label>
                   <input
                     v-model="activeTemplate.name"
                     type="text"
-                    class="w-full text-xs rounded-xl border border-slate-200 dark:border-slate-750 dark:bg-slate-850 p-2.5 focus:outline-none focus:ring-2 focus:ring-woot-500"
+                    class="w-full rounded-xl border border-border dark:border-slate-750 dark:bg-slate-850 p-2.5 focus:outline-none focus:ring-2 focus:ring-woot-500 text-[14px] border-border/80 bg-background focus-visible:ring-1 focus-visible:ring-primary/30 shadow-sm rounded-md"
                   />
                 </div>
                 <div class="space-y-1">
-                  <label class="text-[10px] font-bold text-slate-450 uppercase tracking-wider">Channel</label>
+                  <label class="text-[10px] text-slate-450 uppercase tracking-wider text-[13.5px] font-[500] text-foreground">Channel</label>
                   <input
                     disabled
                     :value="activeTemplate.channel"
-                    class="w-full text-xs rounded-xl border border-slate-150 dark:border-slate-800 dark:bg-slate-850 p-2.5 text-slate-400 capitalize cursor-not-allowed"
+                    class="w-full rounded-xl border border-slate-150 dark:border-slate-800 dark:bg-slate-850 p-2.5 text-muted-foreground capitalize cursor-not-allowed text-[14px] border-border/80 bg-background focus-visible:ring-1 focus-visible:ring-primary/30 shadow-sm rounded-md"
                   />
                 </div>
               </div>
 
               <!-- Template Category -->
               <div class="space-y-1">
-                <label class="text-[10px] font-bold text-slate-450 uppercase tracking-wider">Template Category</label>
+                <label class="text-[10px] text-slate-450 uppercase tracking-wider text-[13.5px] font-[500] text-foreground">Template Category</label>
                 <select
                   v-model="activeTemplate.template_type"
-                  class="w-full text-xs rounded-xl border border-slate-200 dark:border-slate-750 dark:bg-slate-850 p-2.5 focus:outline-none focus:ring-2 focus:ring-woot-500"
+                  class="w-full text-xs rounded-xl border border-border dark:border-slate-750 dark:bg-slate-850 p-2.5 focus:outline-none focus:ring-2 focus:ring-woot-500"
                 >
                   <option value="standard">Standard Review Request</option>
                   <option value="video">Video Testimonial Request</option>
@@ -806,35 +806,35 @@ onMounted(async () => {
 
               <!-- Subject (Only if email) -->
               <div v-if="activeTemplate.channel === 'email'" class="space-y-1">
-                <label class="text-[10px] font-bold text-slate-450 uppercase tracking-wider">Email Subject</label>
+                <label class="text-[10px] text-slate-450 uppercase tracking-wider text-[13.5px] font-[500] text-foreground">Email Subject</label>
                 <input
                   v-model="activeTemplate.subject"
                   type="text"
-                  class="w-full text-xs rounded-xl border border-slate-200 dark:border-slate-750 dark:bg-slate-850 p-2.5 focus:outline-none focus:ring-2 focus:ring-woot-500"
+                  class="w-full rounded-xl border border-border dark:border-slate-750 dark:bg-slate-850 p-2.5 focus:outline-none focus:ring-2 focus:ring-woot-500 text-[14px] border-border/80 bg-background focus-visible:ring-1 focus-visible:ring-primary/30 shadow-sm rounded-md"
                 />
               </div>
 
               <!-- Body -->
               <div class="space-y-1">
-                <label class="text-[10px] font-bold text-slate-450 uppercase tracking-wider">Message Content</label>
+                <label class="text-[10px] text-slate-450 uppercase tracking-wider text-[13.5px] font-[500] text-foreground">Message Content</label>
                 <textarea
                   v-model="activeTemplate.body"
                   rows="4"
-                  class="w-full text-xs rounded-xl border border-slate-200 dark:border-slate-750 dark:bg-slate-850 p-3 focus:outline-none focus:ring-2 focus:ring-woot-500"
+                  class="w-full rounded-xl border border-border dark:border-slate-750 dark:bg-slate-850 p-3 focus:outline-none focus:ring-2 focus:ring-woot-500 text-[14px] border-border/80 bg-background focus-visible:ring-1 focus-visible:ring-primary/30 shadow-sm rounded-md"
                 />
               </div>
 
               <!-- Tag Placeholders -->
               <div class="flex items-center gap-2 flex-wrap">
-                <span class="text-[10px] text-slate-400">Insert tag:</span>
+                <span class="text-[10px] text-muted-foreground">Insert tag:</span>
                 <button
-                  class="px-2 py-1 text-[9px] font-bold bg-slate-100 dark:bg-slate-800 text-slate-650 dark:text-slate-300 rounded hover:bg-slate-200 transition-colors"
+                  class="px-2 py-1 text-[9px] font-bold bg-muted dark:bg-slate-800 text-slate-650 dark:text-slate-300 rounded hover:bg-muted transition-colors"
                   @click="insertPlaceholder('{{contact.name}}')"
                 >
                   Contact Name
                 </button>
                 <button
-                  class="px-2 py-1 text-[9px] font-bold bg-slate-100 dark:bg-slate-800 text-slate-650 dark:text-slate-300 rounded hover:bg-slate-200 transition-colors"
+                  class="px-2 py-1 text-[9px] font-bold bg-muted dark:bg-slate-800 text-slate-650 dark:text-slate-300 rounded hover:bg-muted transition-colors"
                   @click="insertPlaceholder('{{review_link}}')"
                 >
                   Review URL
@@ -848,15 +848,15 @@ onMounted(async () => {
                     id="t-active"
                     v-model="activeTemplate.active"
                     type="checkbox"
-                    class="rounded bg-slate-200 dark:bg-slate-700 border-transparent text-woot-500 focus:ring-woot-500 size-4"
+                    class="rounded bg-muted dark:bg-slate-700 border-transparent text-woot-500 focus:ring-woot-500 size-4"
                   />
-                  <label for="t-active" class="text-xs text-slate-600 dark:text-slate-300 font-medium">Template Active</label>
+                  <label for="t-active" class="text-muted-foreground dark:text-slate-300 text-[13.5px] font-[500] text-foreground">Template Active</label>
                 </div>
 
                 <div class="flex gap-2">
                   <button
                     v-if="!activeTemplate.isNew"
-                    class="px-3.5 py-1.5 rounded-xl border border-slate-200 dark:border-slate-800 text-xs font-bold text-red-500 transition-colors"
+                    class="px-3.5 py-1.5 rounded-xl border border-border dark:border-slate-800 text-xs font-bold text-destructive transition-colors"
                     @click="deleteTemplate(activeTemplate.id)"
                   >
                     Delete
@@ -875,18 +875,18 @@ onMounted(async () => {
         </div>
 
         <!-- 5. Reviews QR View -->
-        <div v-else-if="currentTab === 'reviews_qr'" class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-850 shadow-sm p-6 space-y-6">
+        <div v-else-if="currentTab === 'reviews_qr'" class="bg-white dark:bg-slate-900 rounded-2xl border border-border/80 dark:border-slate-850 shadow-sm p-6 space-y-6">
           <div>
-            <h3 class="font-extrabold text-slate-900 dark:text-white text-base">Reviews QR Code</h3>
-            <p class="text-xs text-slate-400 mt-0.5">Generate QR code for tables, counters, or physical print review invites</p>
+            <h3 class="capitalize font-extrabold text-foreground dark:text-white text-base">Reviews QR Code</h3>
+            <p class="text-xs text-muted-foreground mt-0.5">Generate QR code for tables, counters, or physical print review invites</p>
           </div>
 
           <div>
-            <label class="text-[10px] font-bold text-slate-450 uppercase tracking-wider">Custom Title for QR Code</label>
+            <label class="text-[10px] text-slate-450 uppercase tracking-wider text-[13.5px] font-[500] text-foreground">Custom Title for QR Code</label>
             <input
               v-model="qrTitle"
               type="text"
-              class="w-full mt-1 text-xs rounded-xl border border-slate-200 dark:border-slate-750 dark:bg-slate-850 p-2.5 focus:outline-none focus:ring-2 focus:ring-woot-500"
+              class="w-full mt-1 rounded-xl border border-border dark:border-slate-750 dark:bg-slate-850 p-2.5 focus:outline-none focus:ring-2 focus:ring-woot-500 text-[14px] border-border/80 bg-background focus-visible:ring-1 focus-visible:ring-primary/30 shadow-sm rounded-md"
               placeholder="e.g. Scan to Review"
             />
           </div>
@@ -906,10 +906,10 @@ onMounted(async () => {
                   </svg>
                 </div>
                 
-                <h3 class="font-extrabold text-slate-900 text-xl text-center leading-tight">
+                <h3 class="capitalize font-extrabold text-foreground text-xl text-center leading-tight">
                   {{ qrTitle || 'We value your feedback!' }}
                 </h3>
-                <p class="mt-2 text-slate-500 text-xs text-center font-medium">
+                <p class="mt-2 text-muted-foreground text-xs text-center font-medium">
                   Open your phone's camera and point it at the code below to leave us a review.
                 </p>
 
@@ -921,20 +921,20 @@ onMounted(async () => {
                   />
                 </div>
                 
-                <p class="mt-5 text-[10px] text-slate-400 font-medium truncate w-full px-4">
+                <p class="mt-5 text-[10px] text-muted-foreground font-medium truncate w-full px-4">
                   {{ qrUrl }}
                 </p>
               </div>
             </div>
 
             <div class="space-y-2">
-              <h4 class="font-extrabold text-sm text-slate-800 dark:text-white">Collect Offline Feedback Instantly</h4>
-              <p class="text-xs text-slate-500 max-w-sm">Place this QR code at checkout counters, tables, or product packages to let customers scan and write reviews instantly.</p>
+              <h4 class="capitalize font-extrabold text-sm text-foreground dark:text-white">Collect Offline Feedback Instantly</h4>
+              <p class="text-xs text-muted-foreground max-w-sm">Place this QR code at checkout counters, tables, or product packages to let customers scan and write reviews instantly.</p>
             </div>
 
             <div class="flex gap-2">
               <button
-                class="px-4 py-2 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 text-xs font-bold text-slate-650 dark:text-slate-300 rounded-xl shadow-sm transition-all"
+                class="px-4 py-2 border border-border dark:border-slate-700 hover:bg-background dark:hover:bg-slate-800 text-xs font-bold text-slate-650 dark:text-slate-300 rounded-xl shadow-sm transition-all"
                 onclick="window.print()"
               >
                 Print Poster (Save as PDF)
@@ -952,32 +952,32 @@ onMounted(async () => {
         </div>
 
         <!-- 6. Spam Reviews View -->
-        <div v-else-if="currentTab === 'spam_reviews'" class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-850 shadow-sm p-6 space-y-6">
+        <div v-else-if="currentTab === 'spam_reviews'" class="bg-white dark:bg-slate-900 rounded-2xl border border-border/80 dark:border-slate-850 shadow-sm p-6 space-y-6">
           <div>
-            <h3 class="font-extrabold text-slate-900 dark:text-white text-base">Spam Reviews Filters</h3>
-            <p class="text-xs text-slate-400 mt-0.5">Automatically identify and isolate low rating or fake feedback</p>
+            <h3 class="capitalize font-extrabold text-foreground dark:text-white text-base">Spam Reviews Filters</h3>
+            <p class="text-xs text-muted-foreground mt-0.5">Automatically identify and isolate low rating or fake feedback</p>
           </div>
 
           <div class="space-y-4">
             <div class="space-y-1">
-              <label class="text-[10px] font-bold text-slate-450 uppercase tracking-wider">Auto-flag ratings under</label>
+              <label class="text-[10px] text-slate-450 uppercase tracking-wider text-[13.5px] font-[500] text-foreground">Auto-flag ratings under</label>
               <select
                 v-model="spamMinRating"
-                class="w-full text-xs rounded-xl border border-slate-200 dark:border-slate-750 dark:bg-slate-850 p-2.5 focus:outline-none focus:ring-2 focus:ring-woot-500"
+                class="w-full text-xs rounded-xl border border-border dark:border-slate-750 dark:bg-slate-850 p-2.5 focus:outline-none focus:ring-2 focus:ring-woot-500"
               >
                 <option value="1">1 Star only</option>
                 <option value="2">2 Stars & below</option>
                 <option value="3">3 Stars & below</option>
               </select>
-              <p class="text-[10px] text-slate-400">Flagged reviews will be marked as isolated and pending manual validation before public publishing.</p>
+              <p class="text-[10px] text-muted-foreground">Flagged reviews will be marked as isolated and pending manual validation before public publishing.</p>
             </div>
 
             <div class="space-y-1">
-              <label class="text-[10px] font-bold text-slate-450 uppercase tracking-wider">Blocklist Keywords</label>
+              <label class="text-[10px] text-slate-450 uppercase tracking-wider text-[13.5px] font-[500] text-foreground">Blocklist Keywords</label>
               <input
                 v-model="spamKeywords"
                 type="text"
-                class="w-full text-xs rounded-xl border border-slate-200 dark:border-slate-750 dark:bg-slate-850 p-2.5 focus:outline-none focus:ring-2 focus:ring-woot-500"
+                class="w-full rounded-xl border border-border dark:border-slate-750 dark:bg-slate-850 p-2.5 focus:outline-none focus:ring-2 focus:ring-woot-500 text-[14px] border-border/80 bg-background focus-visible:ring-1 focus-visible:ring-primary/30 shadow-sm rounded-md"
               />
               <p class="text-[10px] text-slate-450">Comma-separated list of terms. Reviews containing these keywords are auto-marked as spam.</p>
             </div>
@@ -1000,14 +1000,14 @@ onMounted(async () => {
       v-if="showLocationModal"
       class="fixed inset-0 z-50 overflow-y-auto flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm"
     >
-      <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 max-w-lg w-full shadow-2xl p-6 space-y-5">
+      <div class="bg-white dark:bg-slate-900 rounded-2xl border border-border/80 dark:border-slate-800 max-w-lg w-full shadow-2xl p-6 space-y-5">
         <!-- Header -->
         <div class="flex items-center justify-between">
           <div class="flex items-center gap-3">
-            <div class="p-2 rounded-xl bg-red-50 dark:bg-red-950/30 text-red-500 font-extrabold text-xs">GB</div>
-            <h3 class="font-extrabold text-slate-900 dark:text-white text-base">Select Google Business Location</h3>
+            <div class="p-2 rounded-xl bg-red-50 dark:bg-red-950/30 text-destructive font-extrabold text-xs">GB</div>
+            <h3 class="capitalize font-extrabold text-foreground dark:text-white text-base">Select Google Business Location</h3>
           </div>
-          <button class="text-slate-400 hover:text-slate-650" @click="showLocationModal = false">
+          <button class="text-muted-foreground hover:text-slate-650" @click="showLocationModal = false">
             <svg class="size-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
           </button>
         </div>
@@ -1015,28 +1015,28 @@ onMounted(async () => {
         <!-- Content -->
         <div v-if="loadingLocations" class="flex flex-col items-center justify-center py-10 space-y-3">
           <div class="size-8 border-4 border-red-500 border-t-transparent rounded-full animate-spin"></div>
-          <p class="text-xs text-slate-500">Fetching locations from Google Business...</p>
+          <p class="text-xs text-muted-foreground">Fetching locations from Google Business...</p>
         </div>
 
-        <div v-else-if="locationError" class="text-xs text-red-500 bg-red-50 dark:bg-red-950/20 border border-red-100 dark:border-red-900/30 rounded-xl px-4 py-2.5">
+        <div v-else-if="locationError" class="text-xs text-destructive bg-red-50 dark:bg-red-950/20 border border-red-100 dark:border-red-900/30 rounded-xl px-4 py-2.5">
           {{ locationError }}
         </div>
 
         <div v-else-if="googleLocations.length === 0" class="text-center py-10 space-y-2">
-          <p class="text-sm font-bold text-slate-700 dark:text-slate-350">No locations found</p>
-          <p class="text-xs text-slate-400">Your Google Account has no registered Google Business Profile locations.</p>
+          <p class="text-sm font-bold text-foreground dark:text-slate-350">No locations found</p>
+          <p class="text-xs text-muted-foreground">Your Google Account has no registered Google Business Profile locations.</p>
         </div>
 
         <div v-else class="space-y-4">
-          <p class="text-xs text-slate-500">
+          <p class="text-xs text-muted-foreground">
             We found the following Google Business Profile locations. Select the location you want to link to this account:
           </p>
 
           <div class="space-y-2">
-            <label class="text-[10px] font-bold text-slate-450 uppercase tracking-wider">Select Location</label>
+            <label class="text-[10px] text-slate-450 uppercase tracking-wider text-[13.5px] font-[500] text-foreground">Select Location</label>
             <select
               v-model="selectedLocation"
-              class="w-full text-xs rounded-xl border border-slate-200 dark:border-slate-750 dark:bg-slate-850 p-2.5 focus:outline-none focus:ring-2 focus:ring-woot-500"
+              class="w-full text-xs rounded-xl border border-border dark:border-slate-750 dark:bg-slate-850 p-2.5 focus:outline-none focus:ring-2 focus:ring-woot-500"
             >
               <option v-for="loc in googleLocations" :key="loc.location_id" :value="loc">
                 {{ loc.location_name }}
@@ -1048,14 +1048,14 @@ onMounted(async () => {
         <!-- Footer -->
         <div class="flex justify-end gap-2 pt-1">
           <button
-            class="px-4 py-2 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 text-xs font-bold text-slate-500 dark:text-slate-355 rounded-xl transition-all"
+            class="px-4 py-2 border border-border dark:border-slate-700 hover:bg-background dark:hover:bg-slate-800 text-xs font-bold text-muted-foreground dark:text-slate-355 rounded-xl transition-all"
             @click="showLocationModal = false"
           >
             Cancel
           </button>
           <button
             v-if="googleLocations.length > 0 && !locationError"
-            class="px-5 py-2 bg-red-500 hover:bg-red-600 text-white rounded-xl text-xs font-bold shadow-sm transition-all flex items-center gap-2 disabled:opacity-60"
+            class="px-5 py-2 bg-destructive hover:bg-destructive text-white rounded-xl text-xs font-bold shadow-sm transition-all flex items-center gap-2 disabled:opacity-60"
             :disabled="connectingLocation || loadingLocations"
             @click="submitGoogleLocationConnection"
           >
@@ -1071,13 +1071,13 @@ onMounted(async () => {
       v-if="showConnectModal"
       class="fixed inset-0 z-50 overflow-y-auto flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm"
     >
-      <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 max-w-md w-full shadow-2xl p-6 space-y-5 animate-fade-in">
+      <div class="bg-white dark:bg-slate-900 rounded-2xl border border-border/80 dark:border-slate-800 max-w-md w-full shadow-2xl p-6 space-y-5 animate-fade-in">
         <div class="flex items-center justify-between">
-          <h3 class="font-extrabold text-slate-900 dark:text-white text-base">
+          <h3 class="capitalize font-extrabold text-foreground dark:text-white text-base">
             Connect {{ selectedPlatform?.name }} Listing
           </h3>
           <button 
-            class="text-slate-400 hover:text-slate-650"
+            class="text-muted-foreground hover:text-slate-650"
             @click="showConnectModal = false"
           >
             <svg class="size-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
@@ -1086,30 +1086,30 @@ onMounted(async () => {
 
         <div class="space-y-4">
           <div class="space-y-1">
-            <label class="text-[10px] font-bold text-slate-450 uppercase tracking-wider">Listing URL</label>
+            <label class="text-[10px] text-slate-450 uppercase tracking-wider text-[13.5px] font-[500] text-foreground">Listing URL</label>
             <input
               v-model="listingUrl"
               type="url"
               placeholder="https://..."
-              class="w-full text-xs rounded-xl border border-slate-200 dark:border-slate-750 dark:bg-slate-850 p-2.5 focus:outline-none focus:ring-2 focus:ring-woot-500"
+              class="w-full rounded-xl border border-border dark:border-slate-750 dark:bg-slate-850 p-2.5 focus:outline-none focus:ring-2 focus:ring-woot-500 text-[14px] border-border/80 bg-background focus-visible:ring-1 focus-visible:ring-primary/30 shadow-sm rounded-md"
             />
-            <p class="text-[10px] text-slate-400">The public page URL where consumers leave feedback for your business.</p>
+            <p class="text-[10px] text-muted-foreground">The public page URL where consumers leave feedback for your business.</p>
           </div>
 
           <div class="space-y-1">
-            <label class="text-[10px] font-bold text-slate-450 uppercase tracking-wider">Listing / Location Label</label>
+            <label class="text-[10px] text-slate-450 uppercase tracking-wider text-[13.5px] font-[500] text-foreground">Listing / Location Label</label>
             <input
               v-model="listingName"
               type="text"
               placeholder="e.g. My Business Listing"
-              class="w-full text-xs rounded-xl border border-slate-200 dark:border-slate-750 dark:bg-slate-850 p-2.5 focus:outline-none focus:ring-2 focus:ring-woot-500"
+              class="w-full rounded-xl border border-border dark:border-slate-750 dark:bg-slate-850 p-2.5 focus:outline-none focus:ring-2 focus:ring-woot-500 text-[14px] border-border/80 bg-background focus-visible:ring-1 focus-visible:ring-primary/30 shadow-sm rounded-md"
             />
           </div>
         </div>
 
         <div class="flex justify-end gap-2 pt-2">
           <button
-            class="px-4 py-2 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 text-xs font-bold text-slate-500 dark:text-slate-350 rounded-xl transition-all"
+            class="px-4 py-2 border border-border dark:border-slate-700 hover:bg-background dark:hover:bg-slate-800 text-xs font-bold text-muted-foreground dark:text-slate-350 rounded-xl transition-all"
             @click="showConnectModal = false"
           >
             Cancel
@@ -1130,13 +1130,13 @@ onMounted(async () => {
       v-if="showCustomModal"
       class="fixed inset-0 z-50 overflow-y-auto flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm"
     >
-      <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 max-w-md w-full shadow-2xl p-6 space-y-5">
+      <div class="bg-white dark:bg-slate-900 rounded-2xl border border-border/80 dark:border-slate-800 max-w-md w-full shadow-2xl p-6 space-y-5">
         <div class="flex items-center justify-between">
-          <h3 class="font-extrabold text-slate-900 dark:text-white text-base">
+          <h3 class="capitalize font-extrabold text-foreground dark:text-white text-base">
             Create Custom Link Channel
           </h3>
           <button 
-            class="text-slate-400 hover:text-slate-650"
+            class="text-muted-foreground hover:text-slate-650"
             @click="showCustomModal = false"
           >
             <svg class="size-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
@@ -1145,30 +1145,30 @@ onMounted(async () => {
 
         <div class="space-y-4">
           <div class="space-y-1">
-            <label class="text-[10px] font-bold text-slate-450 uppercase tracking-wider">Channel Platform Name</label>
+            <label class="text-[10px] text-slate-450 uppercase tracking-wider text-[13.5px] font-[500] text-foreground">Channel Platform Name</label>
             <input
               v-model="customPlatformName"
               type="text"
               placeholder="e.g. Trustpilot"
-              class="w-full text-xs rounded-xl border border-slate-200 dark:border-slate-750 dark:bg-slate-850 p-2.5 focus:outline-none focus:ring-2 focus:ring-woot-500"
+              class="w-full rounded-xl border border-border dark:border-slate-750 dark:bg-slate-850 p-2.5 focus:outline-none focus:ring-2 focus:ring-woot-500 text-[14px] border-border/80 bg-background focus-visible:ring-1 focus-visible:ring-primary/30 shadow-sm rounded-md"
             />
           </div>
 
           <div class="space-y-1">
-            <label class="text-[10px] font-bold text-slate-450 uppercase tracking-wider">Listing Page Link</label>
+            <label class="text-[10px] text-slate-450 uppercase tracking-wider text-[13.5px] font-[500] text-foreground">Listing Page Link</label>
             <input
               v-model="customPlatformUrl"
               type="url"
               placeholder="https://..."
-              class="w-full text-xs rounded-xl border border-slate-200 dark:border-slate-750 dark:bg-slate-850 p-2.5 focus:outline-none focus:ring-2 focus:ring-woot-500"
+              class="w-full rounded-xl border border-border dark:border-slate-750 dark:bg-slate-850 p-2.5 focus:outline-none focus:ring-2 focus:ring-woot-500 text-[14px] border-border/80 bg-background focus-visible:ring-1 focus-visible:ring-primary/30 shadow-sm rounded-md"
             />
           </div>
 
           <div class="space-y-1">
-            <label class="text-[10px] font-bold text-slate-450 uppercase tracking-wider">Logo/Icon theme</label>
+            <label class="text-[10px] text-slate-450 uppercase tracking-wider text-[13.5px] font-[500] text-foreground">Logo/Icon theme</label>
             <select
               v-model="customPlatformLogo"
-              class="w-full text-xs rounded-xl border border-slate-200 dark:border-slate-750 dark:bg-slate-850 p-2.5 focus:outline-none focus:ring-2 focus:ring-woot-500"
+              class="w-full text-xs rounded-xl border border-border dark:border-slate-750 dark:bg-slate-850 p-2.5 focus:outline-none focus:ring-2 focus:ring-woot-500"
             >
               <option value="link">Standard link icon</option>
               <option value="star">Star rating icon</option>
@@ -1179,7 +1179,7 @@ onMounted(async () => {
 
         <div class="flex justify-end gap-2 pt-2">
           <button
-            class="px-4 py-2 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 text-xs font-bold text-slate-500 dark:text-slate-350 rounded-xl transition-all"
+            class="px-4 py-2 border border-border dark:border-slate-700 hover:bg-background dark:hover:bg-slate-800 text-xs font-bold text-muted-foreground dark:text-slate-350 rounded-xl transition-all"
             @click="showCustomModal = false"
           >
             Cancel

@@ -539,7 +539,7 @@ onMounted(() => {
       <!-- Header -->
       <div class="mb-6 flex items-center justify-between">
         <div class="flex items-center gap-3">
-          <h2 class="text-base font-semibold tracking-tight text-foreground">
+          <h2 class="capitalize text-base font-semibold tracking-tight text-foreground">
             {{ t('CONTACTS_LAYOUT.TASKS_VIEW.TITLE') }}
           </h2>
           <RelayBadge
@@ -688,14 +688,14 @@ onMounted(() => {
             <RelayButton
               variant="ghost"
               size="icon"
-              class="size-8 rounded-md text-muted-foreground hover:text-foreground"
+              class="size-8 rounded-md text-muted-foreground hover:text-foreground border border-border hover:border-transparent"
             >
               <span class="i-lucide-list-filter size-4" />
             </RelayButton>
             <RelayButton
               variant="ghost"
               size="icon"
-              class="size-8 rounded-md text-muted-foreground hover:text-foreground"
+              class="size-8 rounded-md text-muted-foreground hover:text-foreground border border-border hover:border-transparent"
             >
               <span class="i-lucide-arrow-up-down size-4" />
             </RelayButton>
@@ -735,7 +735,7 @@ onMounted(() => {
             <div class="flex items-start justify-between gap-4">
               <div>
                 <h3
-                  class="text-[15px] font-semibold tracking-tight text-foreground"
+                  class="capitalize text-[15px] font-semibold tracking-tight text-foreground"
                   :class="{
                     'line-through text-muted-foreground': task.completed,
                   }"
@@ -760,7 +760,7 @@ onMounted(() => {
                   <RelayButton
                     variant="ghost"
                     size="icon"
-                    class="size-7 text-muted-foreground hover:text-foreground"
+                    class="size-7 text-muted-foreground hover:text-foreground border border-border hover:border-transparent"
                     @click="toggleTaskMenu(task.id)"
                   >
                     <span class="i-lucide-more-horizontal size-4" />
@@ -826,7 +826,7 @@ onMounted(() => {
         v-else
         class="relative flex h-[350px] flex-col items-center justify-center rounded-xl border border-border/60 bg-card shadow-sm"
       >
-        <h3 class="mb-1 text-[20px] font-semibold text-foreground">
+        <h3 class="capitalize mb-1 text-[20px] font-semibold text-foreground">
           {{ t('CONTACTS_LAYOUT.TASKS_VIEW.NO_TASKS') }}
         </h3>
         <p class="text-[14px] font-medium text-muted-foreground">
@@ -846,7 +846,7 @@ onMounted(() => {
           class="flex w-full max-w-[480px] animate-in fade-in zoom-in-95 flex-col rounded-2xl border border-border bg-card shadow-xl duration-200"
         >
           <div class="border-b border-border px-6 py-5">
-            <h2 class="text-base font-semibold tracking-tight text-foreground">
+            <h2 class="capitalize text-base font-semibold tracking-tight text-foreground">
               {{
                 editingTask
                   ? t('CONTACTS_LAYOUT.TASKS_VIEW.EDIT_TASK')
@@ -857,7 +857,7 @@ onMounted(() => {
 
           <div class="space-y-5 p-6" @click="closeMenus">
             <div class="flex flex-col gap-1.5">
-              <label class="text-[13.5px] font-medium text-foreground">
+              <label class="text-[13.5px] text-foreground font-[500]">
                 {{ t('CONTACTS_LAYOUT.TASKS_VIEW.FORM_TITLE') }}
               </label>
               <RelayInput
@@ -870,7 +870,7 @@ onMounted(() => {
             </div>
 
             <div class="flex flex-col gap-1.5">
-              <label class="text-[13.5px] font-medium text-foreground">
+              <label class="text-[13.5px] text-foreground font-[500]">
                 {{ t('CONTACTS_LAYOUT.TASKS_VIEW.FORM_DESCRIPTION') }}
               </label>
               <textarea
@@ -878,13 +878,13 @@ onMounted(() => {
                 :placeholder="
                   t('CONTACTS_LAYOUT.TASKS_VIEW.FORM_DESCRIPTION_PLACEHOLDER')
                 "
-                class="min-h-[100px] w-full resize-y rounded-md border border-solid border-border bg-background p-3 text-[14px] text-foreground shadow-sm outline-none placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary/30"
+                class="min-h-[100px] w-full resize-y border border-solid border-border bg-background p-3 text-[14px] text-foreground outline-none placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary/30 border-border/80 shadow-sm rounded-md"
               />
             </div>
 
             <div class="grid grid-cols-2 gap-4">
               <div class="relative flex flex-col gap-1.5">
-                <label class="text-[13.5px] font-medium text-foreground">
+                <label class="text-[13.5px] text-foreground font-[500]">
                   {{ t('CONTACTS_LAYOUT.TASKS_VIEW.FORM_ASSIGNEE') }}
                 </label>
                 <RelayButton
@@ -918,7 +918,7 @@ onMounted(() => {
               </div>
 
               <div class="relative flex flex-col gap-1.5">
-                <label class="text-[13.5px] font-medium text-foreground">
+                <label class="text-[13.5px] text-foreground font-[500]">
                   {{ t('CONTACTS_LAYOUT.TASKS_VIEW.FORM_CONTACT') }}
                 </label>
                 <RelayButton
@@ -958,7 +958,7 @@ onMounted(() => {
             </div>
 
             <div class="relative flex flex-col gap-1.5">
-              <label class="text-[13.5px] font-medium text-foreground">
+              <label class="text-[13.5px] text-foreground font-[500]">
                 {{ t('CONTACTS_LAYOUT.TASKS_VIEW.FORM_DUE_DATE') }}
               </label>
               <RelayButton

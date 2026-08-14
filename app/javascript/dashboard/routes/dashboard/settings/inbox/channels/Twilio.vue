@@ -129,7 +129,7 @@ export default {
 <template>
   <form class="space-y-6" @submit.prevent="createChannel()">
     <div class="flex flex-col gap-1.5">
-      <label class="text-[13.5px] font-medium text-foreground">
+      <label class="text-[13.5px] text-foreground font-[500]">
         {{ $t('INBOX_MGMT.ADD.TWILIO.CHANNEL_NAME.LABEL') }}
       </label>
       <RelayInput
@@ -145,7 +145,7 @@ export default {
     </div>
 
     <div v-if="useMessagingService" class="flex flex-col gap-1.5">
-      <label class="text-[13.5px] font-medium text-foreground">
+      <label class="text-[13.5px] text-foreground font-[500]">
         {{ $t('INBOX_MGMT.ADD.TWILIO.MESSAGING_SERVICE_SID.LABEL') }}
       </label>
       <RelayInput
@@ -166,7 +166,7 @@ export default {
     </div>
 
     <div v-if="!useMessagingService" class="flex flex-col gap-1.5">
-      <label class="text-[13.5px] font-medium text-foreground">
+      <label class="text-[13.5px] text-foreground font-[500]">
         {{ $t('INBOX_MGMT.ADD.TWILIO.PHONE_NUMBER.LABEL') }}
       </label>
       <RelayInput
@@ -181,7 +181,7 @@ export default {
       </p>
     </div>
 
-    <label class="flex items-center gap-3">
+    <label class="flex items-center gap-3 text-[13.5px] font-[500] text-foreground">
       <RelayCheckbox v-model="useMessagingService" />
       <span class="text-[13.5px] text-foreground">
         {{
@@ -193,7 +193,7 @@ export default {
     </label>
 
     <div class="flex flex-col gap-1.5">
-      <label class="text-[13.5px] font-medium text-foreground">
+      <label class="text-[13.5px] text-foreground font-[500]">
         {{ $t('INBOX_MGMT.ADD.TWILIO.ACCOUNT_SID.LABEL') }}
       </label>
       <RelayInput
@@ -208,7 +208,7 @@ export default {
       </p>
     </div>
 
-    <label class="flex items-center gap-3">
+    <label class="flex items-center gap-3 text-[13.5px] font-[500] text-foreground">
       <RelayCheckbox v-model="useAPIKey" />
       <span class="text-[13.5px] text-foreground">
         {{ $t('INBOX_MGMT.ADD.TWILIO.API_KEY.USE_API_KEY') }}
@@ -216,7 +216,7 @@ export default {
     </label>
 
     <div v-if="useAPIKey" class="flex flex-col gap-1.5">
-      <label class="text-[13.5px] font-medium text-foreground">
+      <label class="text-[13.5px] text-foreground font-[500]">
         {{ $t('INBOX_MGMT.ADD.TWILIO.API_KEY.LABEL') }}
       </label>
       <RelayInput
@@ -232,7 +232,7 @@ export default {
     </div>
 
     <div class="flex flex-col gap-1.5">
-      <label class="text-[13.5px] font-medium text-foreground">
+      <label class="text-[13.5px] text-foreground font-[500]">
         {{ $t(`INBOX_MGMT.ADD.TWILIO.${authTokeni18nKey}.LABEL`) }}
       </label>
       <RelayInput

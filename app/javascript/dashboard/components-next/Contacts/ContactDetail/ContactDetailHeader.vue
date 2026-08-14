@@ -101,7 +101,7 @@ const handleMoreAction = ({ action }) => {
       <RelayButton
         variant="ghost"
         size="icon"
-        class="-ml-2 size-9 text-muted-foreground hover:bg-muted/50 hover:text-foreground"
+        class="-ml-2 size-9 text-muted-foreground hover:bg-muted/50 hover:text-foreground border border-border hover:border-transparent"
         :aria-label="t('CONTACTS_LAYOUT.DETAIL.BACK')"
         @click="emit('back')"
       >
@@ -116,7 +116,7 @@ const handleMoreAction = ({ action }) => {
           rounded-full
         />
         <div class="min-w-0">
-          <h1 class="truncate text-base font-semibold text-foreground">
+          <h1 class="capitalize truncate text-[16px] font-[500] text-foreground">
             {{ contact?.name || t('CONTACTS_LAYOUT.CARD.UNNAMED_CONTACT') }}
           </h1>
           <p class="truncate text-xs text-muted-foreground">

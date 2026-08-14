@@ -42,10 +42,10 @@ const maxWidthClass = computed(() =>
         :class="maxWidthClass"
         @click.stop
       >
-        <div class="px-7 py-6" :class="description ? '' : 'pb-4'">
+        <div class="px-8 pt-8" :class="description ? 'pb-0' : 'pb-4'">
           <div class="flex items-start justify-between">
             <div class="space-y-1.5">
-              <h2 class="text-base font-medium text-foreground">
+              <h2 class="capitalize text-base font-medium text-foreground">
                 {{ title }}
               </h2>
               <p
@@ -57,14 +57,16 @@ const maxWidthClass = computed(() =>
             </div>
             <button
               type="button"
-              class="-mr-2 shrink-0 rounded-md p-1.5 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+              class="-mr-2 shrink-0 rounded-md border border-border p-1.5 text-muted-foreground transition-colors hover:border-transparent hover:bg-muted hover:text-foreground"
               @click="emit('close')"
             >
               <Icon icon="i-lucide-x" class="size-4" />
             </button>
           </div>
         </div>
-        <slot />
+        <div class="px-8 pb-8 pt-4">
+          <slot />
+        </div>
       </div>
     </div>
   </TeleportWithDirection>

@@ -185,7 +185,7 @@ const handleSubmit = async () => {
             id="canned-content"
             v-model="content"
             :placeholder="$t(getTranslationKey('CONTENT.PLACEHOLDER'))"
-            class="w-full min-h-[120px] resize-y rounded-md border border-border/80 bg-background p-3 text-[14px] text-foreground shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary/30"
+            class="w-full min-h-[120px] resize-y border border-border/80 bg-background p-3 text-[14px] text-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary/30 shadow-sm rounded-md"
             :class="{ 'border-destructive': v$.content.$error }"
             @blur="v$.content.$touch"
           />

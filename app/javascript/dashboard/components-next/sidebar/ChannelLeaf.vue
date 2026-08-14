@@ -30,8 +30,8 @@ const reauthorizationRequired = computed(() => {
 </script>
 
 <template>
-  <span class="size-4 grid place-content-center rounded-full">
-    <ChannelIcon :inbox="inbox" class="size-4" />
+  <span class="size-3.5 grid shrink-0 place-content-center rounded-full">
+    <ChannelIcon :inbox="inbox" class="size-3.5" />
   </span>
   <div class="flex-1 truncate min-w-0">{{ label }}</div>
   <SidebarUnreadBadge :count="badgeCount" />

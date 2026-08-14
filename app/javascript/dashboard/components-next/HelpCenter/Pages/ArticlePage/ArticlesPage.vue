@@ -381,7 +381,7 @@ watch(
               <RelayButton
                 variant="ghost"
                 size="sm"
-                class="h-8 text-[12.5px] text-muted-foreground"
+                class="h-8 text-[12.5px] text-muted-foreground border border-border hover:border-transparent"
                 @click="clearSelection"
               >
                 {{

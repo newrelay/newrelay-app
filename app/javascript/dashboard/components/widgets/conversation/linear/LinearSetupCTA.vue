@@ -36,7 +36,7 @@ const openLinearAccount = () => {
     </div>
 
     <div class="flex-1 mb-4">
-      <h3 class="mb-1.5 text-sm font-medium text-foreground">
+      <h3 class="capitalize mb-1.5 text-sm font-medium text-foreground">
         {{ $t('INTEGRATION_SETTINGS.LINEAR.CTA.TITLE') }}
       </h3>
       <p v-if="isAdmin" class="text-sm text-muted-foreground">

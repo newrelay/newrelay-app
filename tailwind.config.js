@@ -308,6 +308,7 @@ const tailwindConfig = {
         accent: withAlpha('--sidebar-accent'),
         'accent-foreground': withAlpha('--sidebar-accent-foreground'),
         border: 'var(--sidebar-border)',
+        'tree-dot': 'var(--sidebar-tree-dot)',
         ring: withAlpha('--sidebar-ring'),
       },
       success: withAlpha('--success'),

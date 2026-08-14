@@ -612,7 +612,7 @@ onMounted(async () => {
           >
             <span class="i-lucide-search size-6 text-muted-foreground" />
           </div>
-          <h3 class="text-lg font-medium text-foreground">
+          <h3 class="capitalize text-lg font-medium text-foreground">
             {{ emptyStateMessage }}
           </h3>
           <p v-if="searchQuery" class="max-w-sm text-sm text-muted-foreground">

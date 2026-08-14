@@ -75,7 +75,7 @@ const selectedValue = computed({
 <template>
   <div class="flex gap-2 justify-between w-full items-start">
     <div>
-      <label class="text-foreground font-medium leading-6 text-sm">
+      <label class="text-foreground leading-6 text-[13.5px] font-[500]">
         {{ label }}
       </label>
       <p class="text-muted-foreground">

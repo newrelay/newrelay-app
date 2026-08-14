@@ -139,10 +139,10 @@ defineExpose({ dialogRef, open, close, onSuccess });
         @click="openMenu = null"
       >
         <div
-          class="flex shrink-0 items-center justify-between border-b border-border p-6"
+          class="flex shrink-0 items-center justify-between border-b border-border px-8 pt-8 pb-0"
         >
           <div>
-            <h2 class="text-lg font-semibold tracking-tight text-foreground">
+            <h2 class="capitalize text-base font-medium tracking-tight text-foreground">
               {{ t('COMPANIES.CREATE.TITLE') }}
             </h2>
             <p class="mt-1 text-sm text-muted-foreground">
@@ -152,7 +152,7 @@ defineExpose({ dialogRef, open, close, onSuccess });
           <RelayButton
             variant="ghost"
             size="icon"
-            class="size-8 rounded-full text-muted-foreground hover:text-foreground"
+            class="size-8 rounded-full text-muted-foreground hover:text-foreground border border-border hover:border-transparent"
             @click="close"
           >
             <span class="i-lucide-x size-4" />
@@ -160,10 +160,10 @@ defineExpose({ dialogRef, open, close, onSuccess });
         </div>
 
         <div
-          class="hide-scrollbar grid flex-1 grid-cols-2 gap-x-6 gap-y-5 overflow-y-auto p-6"
+          class="hide-scrollbar grid flex-1 grid-cols-2 gap-x-6 gap-y-5 overflow-y-auto px-8 pb-8 pt-4"
         >
           <div class="col-span-2 flex flex-col gap-1.5">
-            <label class="text-[13.5px] font-medium text-foreground">
+            <label class="text-[13.5px] text-foreground font-[500]">
               {{ t('COMPANIES.CREATE.FIELDS.LOGO') }}
             </label>
             <div class="mb-2 flex items-center gap-4">
@@ -199,7 +199,7 @@ defineExpose({ dialogRef, open, close, onSuccess });
                   ref="logoInput"
                   type="file"
                   accept="image/*"
-                  class="hidden"
+                  class="hidden text-[14px] shadow-sm rounded-md border-border/80 bg-background focus-visible:ring-1 focus-visible:ring-primary/30"
                   @change="handleLogoUpload"
                 />
               </div>
@@ -207,7 +207,7 @@ defineExpose({ dialogRef, open, close, onSuccess });
           </div>
 
           <div class="col-span-2 flex flex-col gap-1.5">
-            <label class="text-[13.5px] font-medium text-foreground">
+            <label class="text-[13.5px] text-foreground font-[500]">
               {{ t('COMPANIES.CREATE.FIELDS.NAME') }}
               <span class="text-destructive">{{
                 t('COMPANIES.CREATE.REQUIRED_MARK')
@@ -216,7 +216,7 @@ defineExpose({ dialogRef, open, close, onSuccess });
             <RelayInput
               v-model="form.name"
               :placeholder="t('COMPANIES.CREATE.FIELDS.NAME_PLACEHOLDER')"
-              class-name="h-10 w-full rounded-md border-border bg-background text-[14px] shadow-sm"
+              class-name="h-9 w-full rounded-md border-border bg-background text-[14px] shadow-sm"
               :disabled="isLoading"
               @update:model-value="showErrors = false"
             />
@@ -233,12 +233,12 @@ defineExpose({ dialogRef, open, close, onSuccess });
             class="relative flex flex-col gap-1.5"
             @click.stop
           >
-            <label class="text-[13.5px] font-medium text-foreground">
+            <label class="text-[13.5px] text-foreground font-[500]">
               {{ t('COMPANIES.CREATE.FIELDS.OWNER') }}
             </label>
             <RelayButton
               variant="outline"
-              class="h-10 w-full justify-between rounded-md border-border bg-background px-3 text-[14px] font-normal shadow-sm"
+              class="h-9 w-full justify-between rounded-md border-border bg-background px-3 text-[14px] font-normal shadow-sm"
               :class="form.owner ? 'text-foreground' : 'text-muted-foreground'"
               :disabled="isLoading"
               @click="toggleMenu('owner')"
@@ -279,12 +279,12 @@ defineExpose({ dialogRef, open, close, onSuccess });
             class="relative flex flex-col gap-1.5"
             @click.stop
           >
-            <label class="text-[13.5px] font-medium text-foreground">
+            <label class="text-[13.5px] text-foreground font-[500]">
               {{ t('COMPANIES.CREATE.FIELDS.MEMBERS') }}
             </label>
             <RelayButton
               variant="outline"
-              class="h-10 w-full justify-between rounded-md border-border bg-background px-3 text-[14px] font-normal shadow-sm"
+              class="h-9 w-full justify-between rounded-md border-border bg-background px-3 text-[14px] font-normal shadow-sm"
               :class="
                 form.members ? 'text-foreground' : 'text-muted-foreground'
               "
@@ -323,64 +323,64 @@ defineExpose({ dialogRef, open, close, onSuccess });
           </div>
 
           <div class="flex flex-col gap-1.5">
-            <label class="text-[13.5px] font-medium text-foreground">
+            <label class="text-[13.5px] text-foreground font-[500]">
               {{ t('COMPANIES.CREATE.FIELDS.PHONE') }}
             </label>
             <RelayInput
               v-model="form.phone"
               type="tel"
               :placeholder="t('COMPANIES.CREATE.FIELDS.PHONE_PLACEHOLDER')"
-              class-name="h-10 w-full rounded-md border-border bg-background text-[14px] shadow-sm"
+              class-name="h-9 w-full rounded-md border-border bg-background text-[14px] shadow-sm"
               :disabled="isLoading"
             />
           </div>
 
           <div class="flex flex-col gap-1.5">
-            <label class="text-[13.5px] font-medium text-foreground">
+            <label class="text-[13.5px] text-foreground font-[500]">
               {{ t('COMPANIES.CREATE.FIELDS.EMAIL') }}
             </label>
             <RelayInput
               v-model="form.email"
               type="email"
               :placeholder="t('COMPANIES.CREATE.FIELDS.EMAIL_PLACEHOLDER')"
-              class-name="h-10 w-full rounded-md border-border bg-background text-[14px] shadow-sm"
+              class-name="h-9 w-full rounded-md border-border bg-background text-[14px] shadow-sm"
               :disabled="isLoading"
             />
           </div>
 
           <div class="flex flex-col gap-1.5">
-            <label class="text-[13.5px] font-medium text-foreground">
+            <label class="text-[13.5px] text-foreground font-[500]">
               {{ t('COMPANIES.CREATE.FIELDS.WEBSITE') }}
             </label>
             <RelayInput
               v-model="form.website"
               :placeholder="t('COMPANIES.CREATE.FIELDS.WEBSITE_PLACEHOLDER')"
-              class-name="h-10 w-full rounded-md border-border bg-background text-[14px] shadow-sm"
+              class-name="h-9 w-full rounded-md border-border bg-background text-[14px] shadow-sm"
               :disabled="isLoading"
             />
           </div>
 
           <div class="flex flex-col gap-1.5">
-            <label class="text-[13.5px] font-medium text-foreground">
+            <label class="text-[13.5px] text-foreground font-[500]">
               {{ t('COMPANIES.CREATE.FIELDS.ADDRESS') }}
             </label>
             <RelayInput
               v-model="form.address"
               :placeholder="t('COMPANIES.CREATE.FIELDS.ADDRESS_PLACEHOLDER')"
-              class-name="h-10 w-full rounded-md border-border bg-background text-[14px] shadow-sm"
+              class-name="h-9 w-full rounded-md border-border bg-background text-[14px] shadow-sm"
               :disabled="isLoading"
             />
           </div>
 
           <div class="flex flex-col gap-1.5">
-            <label class="text-[13.5px] font-medium text-foreground">
+            <label class="text-[13.5px] text-foreground font-[500]">
               {{ t('COMPANIES.CREATE.FIELDS.STATE') }}
             </label>
             <div class="relative w-full">
               <RelayInput
                 v-model="form.state"
                 :placeholder="t('COMPANIES.CREATE.FIELDS.STATE_PLACEHOLDER')"
-                class-name="h-10 w-full rounded-md border-border bg-background pr-9 text-[14px] shadow-sm"
+                class-name="h-9 w-full rounded-md border-border bg-background pr-9 text-[14px] shadow-sm"
                 :disabled="isLoading"
               />
               <span
@@ -390,19 +390,19 @@ defineExpose({ dialogRef, open, close, onSuccess });
           </div>
 
           <div class="flex flex-col gap-1.5">
-            <label class="text-[13.5px] font-medium text-foreground">
+            <label class="text-[13.5px] text-foreground font-[500]">
               {{ t('COMPANIES.CREATE.FIELDS.CITY') }}
             </label>
             <RelayInput
               v-model="form.city"
               :placeholder="t('COMPANIES.CREATE.FIELDS.CITY_PLACEHOLDER')"
-              class-name="h-10 w-full rounded-md border-border bg-background text-[14px] shadow-sm"
+              class-name="h-9 w-full rounded-md border-border bg-background text-[14px] shadow-sm"
               :disabled="isLoading"
             />
           </div>
 
           <div class="col-span-2 flex flex-col gap-1.5">
-            <label class="text-[13.5px] font-medium text-foreground">
+            <label class="text-[13.5px] text-foreground font-[500]">
               {{ t('COMPANIES.CREATE.FIELDS.DESCRIPTION') }}
               <span class="font-normal text-muted-foreground">
                 {{ t('COMPANIES.CREATE.OPTIONAL') }}
@@ -414,17 +414,17 @@ defineExpose({ dialogRef, open, close, onSuccess });
                 t('COMPANIES.CREATE.FIELDS.DESCRIPTION_PLACEHOLDER')
               "
               :disabled="isLoading"
-              class="min-h-[80px] w-full resize-y rounded-md border border-border bg-background p-3 text-[14px] text-foreground shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary/30 disabled:opacity-50"
+              class="min-h-[80px] w-full resize-y border border-border bg-background p-3 text-[14px] text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary/30 disabled:opacity-50 shadow-sm rounded-md border-border/80"
             />
           </div>
         </div>
 
         <div
-          class="mt-auto flex shrink-0 items-center justify-between border-t border-border bg-muted/10 p-6"
+          class="mt-auto flex shrink-0 items-center justify-between border-t border-border bg-muted/10 px-8 pb-8 pt-4"
         >
           <RelayButton
             variant="ghost"
-            class="text-sm font-medium"
+            class="text-sm font-medium border border-border hover:border-transparent"
             @click="close"
           >
             {{ t('COMPANIES.CREATE.ACTIONS.CANCEL') }}

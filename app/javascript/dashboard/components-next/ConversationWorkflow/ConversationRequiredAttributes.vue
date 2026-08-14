@@ -131,7 +131,7 @@ const handleDelete = attribute => {
         class="mb-6 flex flex-col justify-between gap-4 sm:flex-row sm:items-center"
       >
         <div>
-          <h3 class="text-foreground text-[16px] font-semibold">
+          <h3 class="capitalize text-foreground text-[16px] font-semibold">
             {{ $t('CONVERSATION_WORKFLOW.REQUIRED_ATTRIBUTES.TITLE') }}
           </h3>
           <p class="text-muted-foreground mt-1.5 text-[13.5px] leading-relaxed">

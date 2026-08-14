@@ -682,7 +682,7 @@ export default {
         />
         {{ $t('INBOX_MGMT.HEADER') }}
       </router-link>
-      <h2 class="mb-6 text-base font-medium text-foreground">
+      <h2 class="capitalize mb-6 text-base font-medium text-foreground">
         {{ inboxName }}
       </h2>
       <div class="flex items-center gap-6 overflow-x-auto">
@@ -760,7 +760,7 @@ export default {
             }"
           >
             <div class="flex flex-col gap-1 items-start mb-4">
-              <label class="text-heading-3 text-foreground">
+              <label class="text-heading-3 text-foreground text-[13.5px] font-[500]">
                 {{ $t('INBOX_MGMT.ADD.WEBSITE_CHANNEL.CHANNEL_AVATAR.LABEL') }}
               </label>
               <Avatar
@@ -852,7 +852,7 @@ export default {
                 v-model="whatsAppAPIProviderName"
                 type="text"
                 disabled
-                class="!mb-0"
+                class="!mb-0 text-[14px] border-border/80 bg-background focus-visible:ring-1 focus-visible:ring-primary/30 shadow-sm rounded-md"
               />
             </SettingsFieldSection>
 
@@ -916,7 +916,7 @@ export default {
                       'INBOX_MGMT.EDIT.SENDER_NAME_SECTION.BUSINESS_NAME.PLACEHOLDER'
                     )
                   "
-                  class="!mb-0"
+                  class="!mb-0 text-[14px] border-border/80 bg-background focus-visible:ring-1 focus-visible:ring-primary/30 shadow-sm rounded-md"
                   type="text"
                 />
                 <NextButton
@@ -997,7 +997,7 @@ export default {
               >
                 <div class="flex items-center gap-6">
                   <div class="flex items-center gap-2">
-                    <label class="text-muted-foreground text-heading-3">
+                    <label class="text-muted-foreground text-heading-3 text-[13.5px] font-[500] text-foreground">
                       {{
                         $t(
                           'INBOX_MGMT.WIDGET_BUILDER.WIDGET_OPTIONS.WIDGET_BUBBLE_POSITION_LABEL'
@@ -1025,7 +1025,7 @@ export default {
                   </div>
                   <div class="h-3 w-px bg-border rounded-lg" />
                   <div class="flex items-center gap-2">
-                    <label class="text-muted-foreground text-heading-3">
+                    <label class="text-muted-foreground text-heading-3 text-[13.5px] font-[500] text-foreground">
                       {{
                         $t(
                           'INBOX_MGMT.WIDGET_BUILDER.WIDGET_OPTIONS.WIDGET_BUBBLE_TYPE_LABEL'

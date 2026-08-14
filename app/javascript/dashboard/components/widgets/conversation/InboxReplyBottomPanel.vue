@@ -279,7 +279,7 @@ export default {
       <RelayButton
         v-if="showAudioPlayStopButton"
         variant="ghost"
-        class="h-8 px-2 text-muted-foreground"
+        class="h-8 px-2 text-muted-foreground border border-border hover:border-transparent"
         @click="toggleAudioRecorderPlayPause"
       >
         <span :class="audioRecorderPlayStopIcon" class="size-4" />
@@ -386,7 +386,7 @@ export default {
           class="flex fixed top-0 right-0 bottom-0 left-0 z-20 flex-col gap-2 justify-center items-center w-full h-full text-foreground bg-background/80 backdrop-blur-sm"
         >
           <span class="i-lucide-cloud-upload size-10" />
-          <h4 class="text-2xl break-words font-medium">
+          <h4 class="capitalize text-2xl break-words font-medium">
             {{ $t('CONVERSATION.REPLYBOX.DRAG_DROP') }}
           </h4>
         </div>

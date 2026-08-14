@@ -79,9 +79,9 @@ const sizeClass = computed(() => {
     case 'sm':
       return 'h-8 !px-3 !py-2';
     case 'md':
-      return 'h-10 !px-3 !py-2.5';
+      return 'h-9 !px-3 !py-1';
     default:
-      return 'h-10 !px-3 !py-2.5';
+      return 'h-9 !px-3 !py-1';
   }
 });
 
@@ -104,11 +104,11 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="relative flex flex-col min-w-0 gap-1">
+  <div class="relative flex flex-col min-w-0 gap-1.5">
     <label
       v-if="label"
       :for="uniqueId"
-      class="mb-0.5 text-heading-3 text-foreground"
+      class="text-heading-3 text-foreground text-[13.5px] font-medium"
     >
       {{ label }}
     </label>
@@ -119,12 +119,7 @@ onMounted(() => {
       v-bind="$attrs"
       ref="inputRef"
       :value="modelValue"
-      :class="[
-        customInputClass,
-        inputOutlineClass,
-        sizeClass,
-        {
-          error: messageType === 'error',
+      :class="[ customInputClass, inputOutlineClass, sizeClass, { error: messageType === 'error',
           focus: isFocused,
         },
       ]"

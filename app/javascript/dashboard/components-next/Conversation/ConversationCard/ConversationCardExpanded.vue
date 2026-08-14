@@ -104,11 +104,11 @@ const selectedModel = computed({
       >
         <span
           v-if="isStarred"
-          class="size-4 hover:text-[#b6872d] cursor-pointer i-ri-star-fill text-[#b6872d] opacity-100"
+          class="size-4 hover:text-warning cursor-pointer i-ri-star-fill text-warning opacity-100"
         />
         <span
           v-else
-          class="size-4 hover:text-[#b6872d] cursor-pointer i-lucide-star text-muted-foreground opacity-30 group-hover:opacity-100 transition-opacity"
+          class="size-4 hover:text-warning cursor-pointer i-lucide-star text-muted-foreground opacity-30 group-hover:opacity-100 transition-opacity"
         />
       </button>
 

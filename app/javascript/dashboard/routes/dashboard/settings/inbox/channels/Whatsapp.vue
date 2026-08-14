@@ -73,7 +73,7 @@ const handleManualLinkClick = () => {
   <div class="w-full max-w-3xl">
     <div v-if="showProviderSelection">
       <div class="mb-8 border-b border-border/40 pb-4 text-left">
-        <h3 class="mb-1 text-lg font-semibold text-foreground">
+        <h3 class="capitalize mb-1 text-lg font-semibold text-foreground">
           {{ $t('INBOX_MGMT.ADD.WHATSAPP.SELECT_PROVIDER.TITLE') }}
         </h3>
         <p class="text-[13px] leading-relaxed text-muted-foreground">

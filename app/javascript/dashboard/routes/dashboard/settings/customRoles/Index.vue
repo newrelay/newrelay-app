@@ -142,7 +142,7 @@ const confirmDeletion = () => {
           class="overflow-hidden rounded-xl border border-border/60 bg-card shadow-xs"
         >
           <div class="border-b border-border/40 p-4 sm:p-6">
-            <h3 class="text-base font-semibold text-foreground">
+            <h3 class="capitalize text-base font-semibold text-foreground">
               {{ $t('CUSTOM_ROLE.HEADER') }}
             </h3>
             <p class="mt-1 max-w-3xl text-sm text-muted-foreground">
@@ -191,7 +191,7 @@ const confirmDeletion = () => {
                   class="size-6 text-muted-foreground"
                 />
               </div>
-              <h3 class="mb-2 text-[16px] font-semibold text-foreground">
+              <h3 class="capitalize mb-2 text-[16px] font-semibold text-foreground">
                 {{ $t('CUSTOM_ROLE.LIST.EMPTY_TITLE') }}
               </h3>
               <p
@@ -258,7 +258,7 @@ const confirmDeletion = () => {
                           v-tooltip.top="$t('CUSTOM_ROLE.EDIT.BUTTON_TEXT')"
                           variant="ghost"
                           size="icon"
-                          class="size-8 border border-transparent text-muted-foreground shadow-xs hover:border-border hover:bg-background hover:text-foreground"
+                          class="size-8 border border-transparent text-muted-foreground shadow-xs hover:border-border hover:bg-background hover:text-foreground border border-border hover:border-transparent"
                           @click="openEditModal(role)"
                         >
                           <Icon icon="i-lucide-pencil" class="size-3.5" />
@@ -267,7 +267,7 @@ const confirmDeletion = () => {
                           v-tooltip.top="$t('CUSTOM_ROLE.DELETE.BUTTON_TEXT')"
                           variant="ghost"
                           size="icon"
-                          class="size-8 border border-transparent text-muted-foreground shadow-xs hover:border-destructive/20 hover:bg-destructive/10 hover:text-destructive"
+                          class="size-8 border border-transparent text-muted-foreground shadow-xs hover:border-destructive/20 hover:bg-destructive/10 hover:text-destructive border border-border hover:border-transparent"
                           :disabled="loading[role.id]"
                           @click="openDeletePopup(role)"
                         >

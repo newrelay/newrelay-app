@@ -212,7 +212,7 @@ export default {
     >
       <div class="flex items-center justify-between mb-1">
         <h4
-          class="m-0 overflow-hidden text-sm whitespace-nowrap text-ellipsis text-foreground"
+          class="capitalize m-0 overflow-hidden text-sm whitespace-nowrap text-ellipsis text-foreground"
         >
           {{ $t('CONVERSATION_PARTICIPANTS.ADD_PARTICIPANTS') }}
         </h4>

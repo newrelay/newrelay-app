@@ -168,7 +168,7 @@ defineExpose({
   <div
     class="flex w-full flex-col gap-6 rounded-2xl border border-border/40 bg-card p-6 shadow-sm"
   >
-    <h2 class="flex items-center gap-2 text-base font-medium text-foreground">
+    <h2 class="capitalize flex items-center gap-2 text-base font-medium text-foreground">
       <span
         class="i-lucide-paintbrush size-4 text-primary"
         aria-hidden="true"
@@ -199,16 +199,16 @@ defineExpose({
         </RelayLabel>
         <div class="flex items-center gap-3">
           <label
-            class="relative cursor-pointer transition-transform hover:scale-105"
+            class="relative cursor-pointer transition-transform hover:scale-105 text-[13.5px] font-[500] text-foreground"
           >
-            <input v-model="state.widgetColor" type="color" class="sr-only" />
+            <input v-model="state.widgetColor" type="color" class="sr-only text-[14px] shadow-sm rounded-md border-border/80 bg-background focus-visible:ring-1 focus-visible:ring-primary/30" />
             <span
               class="block size-10 rounded-full border-2 border-background shadow-sm ring-1 ring-border/50"
               :style="{ backgroundColor: state.widgetColor || '#2781F6' }"
             />
           </label>
           <div
-            class="flex h-10 items-center rounded-md border border-border/80 bg-muted/30 px-3 text-[14px] font-medium uppercase shadow-sm"
+            class="flex h-9 items-center rounded-md border border-border/80 bg-muted/30 px-3 text-[14px] font-medium uppercase shadow-sm"
           >
             {{ state.widgetColor || '—' }}
           </div>
@@ -218,7 +218,7 @@ defineExpose({
 
     <div class="space-y-4 border-t border-border/40 pt-6">
       <div class="space-y-1">
-        <h3 class="text-[14px] font-semibold text-foreground">
+        <h3 class="capitalize text-[14px] font-semibold text-foreground">
           {{ t('HELP_CENTER.PORTAL_SETTINGS.LAYOUT_CONTENT.HEADER') }}
         </h3>
         <p class="text-[13px] text-muted-foreground">
@@ -339,8 +339,8 @@ defineExpose({
             </div>
             <div class="flex-1 space-y-1.5 rounded bg-muted/30 p-1.5">
               <div class="mb-3 h-2 w-1/2 rounded-full bg-border/80" />
-              <div class="h-10 w-full rounded bg-muted" />
-              <div class="h-10 w-full rounded bg-muted" />
+              <div class="h-9 w-full rounded bg-muted" />
+              <div class="h-9 w-full rounded bg-muted" />
             </div>
           </div>
         </button>
@@ -351,7 +351,7 @@ defineExpose({
         class="mt-2 space-y-4 border-t border-border/40 pt-6"
       >
         <div class="space-y-1">
-          <h3 class="text-[14px] font-semibold text-foreground">
+          <h3 class="capitalize text-[14px] font-semibold text-foreground">
             {{
               t(
                 'HELP_CENTER.PORTAL_SETTINGS.LAYOUT_CONTENT.SOCIAL_LINKS.HEADER'
@@ -385,7 +385,7 @@ defineExpose({
             <input
               v-model="state.socialProfiles[platform.key]"
               type="text"
-              class="min-w-0 flex-1 bg-transparent text-[14px] text-foreground outline-none placeholder:text-muted-foreground/50"
+              class="min-w-0 flex-1 bg-transparent text-[14px] text-foreground outline-none placeholder:text-muted-foreground/50 shadow-sm rounded-md border-border/80 bg-background focus-visible:ring-1 focus-visible:ring-primary/30"
               :placeholder="
                 t(
                   'HELP_CENTER.PORTAL_SETTINGS.LAYOUT_CONTENT.SOCIAL_LINKS.PLACEHOLDER'
@@ -395,7 +395,7 @@ defineExpose({
             <RelayButton
               variant="ghost"
               size="icon"
-              class="size-7 shrink-0 text-muted-foreground"
+              class="size-7 shrink-0 text-muted-foreground border border-border hover:border-transparent"
               :aria-label="
                 t(
                   'HELP_CENTER.PORTAL_SETTINGS.LAYOUT_CONTENT.SOCIAL_LINKS.REMOVE'

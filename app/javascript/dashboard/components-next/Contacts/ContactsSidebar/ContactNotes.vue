@@ -113,7 +113,7 @@ useKeyboardEvents(keyboardEvents);
 <template>
   <div>
     <div class="mb-6 flex items-center justify-between">
-      <h3 class="text-sm font-medium text-foreground">
+      <h3 class="capitalize text-sm font-medium text-foreground">
         {{ t('CONTACTS_LAYOUT.SIDEBAR.TABS.NOTES') }}
       </h3>
       <RelayButton
@@ -134,13 +134,13 @@ useKeyboardEvents(keyboardEvents);
       <textarea
         v-model="newNoteContent"
         :placeholder="t('CONTACTS_LAYOUT.SIDEBAR.NOTES.PLACEHOLDER')"
-        class="min-h-[100px] w-full resize-none rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary/30"
+        class="min-h-[100px] w-full resize-none border border-input bg-background px-3 py-2 text-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary/30 text-[14px] shadow-sm rounded-md border-border/80"
       />
       <div class="flex justify-end gap-2">
         <RelayButton
           variant="ghost"
           size="sm"
-          class="h-8 text-xs font-medium"
+          class="h-8 text-xs font-medium border border-border hover:border-transparent"
           @click="cancelAddNote"
         >
           {{ t('CONTACTS_LAYOUT.SIDEBAR.NOTES.CANCEL') }}
@@ -172,13 +172,13 @@ useKeyboardEvents(keyboardEvents);
         <template v-if="editingNoteId === note.id">
           <textarea
             v-model="editNoteContent"
-            class="mb-3 min-h-[100px] w-full resize-none rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary/30"
+            class="mb-3 min-h-[100px] w-full resize-none border border-input bg-background px-3 py-2 text-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary/30 text-[14px] shadow-sm rounded-md border-border/80"
           />
           <div class="flex justify-end gap-2">
             <RelayButton
               variant="ghost"
               size="sm"
-              class="h-8 text-xs font-medium"
+              class="h-8 text-xs font-medium border border-border hover:border-transparent"
               @click="cancelEditNote"
             >
               {{ t('CONTACTS_LAYOUT.SIDEBAR.NOTES.CANCEL') }}
@@ -206,7 +206,7 @@ useKeyboardEvents(keyboardEvents);
               <RelayButton
                 variant="ghost"
                 size="icon"
-                class="size-6 rounded-md text-muted-foreground hover:bg-primary/10 hover:text-primary"
+                class="size-6 rounded-md text-muted-foreground hover:bg-primary/10 hover:text-primary border border-border hover:border-transparent"
                 @click="
                   openMenuNoteId = openMenuNoteId === note.id ? null : note.id
                 "

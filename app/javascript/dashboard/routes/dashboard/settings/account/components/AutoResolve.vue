@@ -125,7 +125,7 @@ const onEnabledChange = val => {
   >
     <div class="flex items-start justify-between gap-4 p-5 sm:p-6">
       <div>
-        <h3 class="text-foreground text-[16px] font-semibold">
+        <h3 class="capitalize text-foreground text-[16px] font-semibold">
           {{ t('GENERAL_SETTINGS.FORM.AUTO_RESOLVE.TITLE') }}
         </h3>
         <p class="text-muted-foreground mt-1.5 text-[13.5px] leading-relaxed">
@@ -150,7 +150,7 @@ const onEnabledChange = val => {
     >
       <form class="space-y-8" @submit.prevent="handleSubmit">
         <div class="space-y-2">
-          <label class="text-foreground text-[14px] font-semibold">
+          <label class="text-foreground text-[14px] text-[13.5px] font-[500]">
             {{ t('GENERAL_SETTINGS.FORM.AUTO_RESOLVE.DURATION.LABEL') }}
           </label>
           <DurationInput
@@ -166,14 +166,14 @@ const onEnabledChange = val => {
         </div>
 
         <div class="space-y-2">
-          <label class="text-foreground text-[14px] font-semibold">
+          <label class="text-foreground text-[14px] text-[13.5px] font-[500]">
             {{ t('GENERAL_SETTINGS.FORM.AUTO_RESOLVE.MESSAGE.LABEL') }}
           </label>
           <textarea
             v-model="message"
             :disabled="!isEnabled"
             rows="4"
-            class="border-border/80 text-foreground placeholder:text-muted-foreground focus-visible:ring-primary/30 w-full resize-y rounded-md border bg-background p-3 text-[14px] shadow-xs focus-visible:outline-none focus-visible:ring-1 disabled:cursor-not-allowed disabled:opacity-50"
+            class="border-border/80 text-foreground placeholder:text-muted-foreground focus-visible:ring-primary/30 w-full resize-y border bg-background p-3 text-[14px] shadow-xs focus-visible:outline-none focus-visible:ring-1 disabled:cursor-not-allowed disabled:opacity-50 shadow-sm rounded-md"
             :placeholder="
               t('GENERAL_SETTINGS.FORM.AUTO_RESOLVE.MESSAGE.PLACEHOLDER')
             "
@@ -184,7 +184,7 @@ const onEnabledChange = val => {
         </div>
 
         <div class="space-y-4 pt-2">
-          <label class="text-foreground text-[14px] font-semibold">
+          <label class="text-foreground text-[14px] text-[13.5px] font-[500]">
             {{ t('GENERAL_SETTINGS.FORM.AUTO_RESOLVE.PREFERENCES') }}
           </label>
 

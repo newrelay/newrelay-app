@@ -137,7 +137,7 @@ const confirmDeletion = () => {
           class="flex flex-col justify-between gap-4 border-b border-border/40 p-4 sm:flex-row sm:items-center sm:p-6"
         >
           <div>
-            <h3 class="text-base font-medium text-foreground">
+            <h3 class="capitalize text-base font-medium text-foreground">
               {{ $t('CANNED_MGMT.HEADER') }}
             </h3>
             <p class="mt-1 max-w-3xl text-sm text-muted-foreground">
@@ -199,7 +199,7 @@ const confirmDeletion = () => {
                   class="size-6 text-muted-foreground"
                 />
               </div>
-              <h3 class="text-base font-medium text-foreground">
+              <h3 class="capitalize text-base font-medium text-foreground">
                 {{ $t('CANNED_MGMT.LIST.404') }}
               </h3>
               <p class="mt-1 text-[13.5px] text-muted-foreground">
@@ -266,7 +266,7 @@ const confirmDeletion = () => {
                       v-tooltip.top="$t('CANNED_MGMT.EDIT.BUTTON_TEXT')"
                       variant="ghost"
                       size="icon"
-                      class="size-8 border border-transparent text-muted-foreground shadow-xs hover:border-border hover:bg-background hover:text-foreground"
+                      class="size-8 border border-transparent text-muted-foreground shadow-xs hover:border-border hover:bg-background hover:text-foreground border border-border hover:border-transparent"
                       :disabled="loading[cannedItem.id]"
                       @click="openEditPopup(cannedItem)"
                     >
@@ -276,7 +276,7 @@ const confirmDeletion = () => {
                       v-tooltip.top="$t('CANNED_MGMT.DELETE.BUTTON_TEXT')"
                       variant="ghost"
                       size="icon"
-                      class="size-8 border border-transparent text-muted-foreground shadow-xs hover:border-destructive/20 hover:bg-destructive/10 hover:text-destructive"
+                      class="size-8 border border-transparent text-muted-foreground shadow-xs hover:border-destructive/20 hover:bg-destructive/10 hover:text-destructive border border-border hover:border-transparent"
                       :disabled="loading[cannedItem.id]"
                       @click="openDeletePopup(cannedItem)"
                     >

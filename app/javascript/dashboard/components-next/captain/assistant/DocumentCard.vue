@@ -188,7 +188,7 @@ const handleCardClick = () => {
       </div>
 
       <div class="min-w-0 flex-1">
-        <h3 class="mb-1 truncate text-[14.5px] font-medium text-foreground">
+        <h3 class="capitalize mb-1 truncate text-[14.5px] font-medium text-foreground">
           {{ name }}
         </h3>
         <div
@@ -241,7 +241,7 @@ const handleCardClick = () => {
         <RelayButton
           variant="ghost"
           size="icon"
-          class="size-8 rounded-md text-muted-foreground opacity-0 hover:bg-muted hover:text-foreground group-hover:opacity-100 focus:opacity-100"
+          class="size-8 rounded-md text-muted-foreground opacity-0 hover:bg-muted hover:text-foreground group-hover:opacity-100 focus:opacity-100 border border-border hover:border-transparent"
           @click="toggleDropdown()"
         >
           <span class="i-lucide-ellipsis-vertical size-4" />

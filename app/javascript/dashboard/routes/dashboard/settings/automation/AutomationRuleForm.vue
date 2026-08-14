@@ -264,7 +264,7 @@ defineExpose({ open, close });
           <Icon icon="i-lucide-zap" class="size-5 text-primary" />
         </div>
         <div>
-          <h3 class="text-base font-medium text-foreground">
+          <h3 class="capitalize text-base font-medium text-foreground">
             {{ $t(titleKey) }}
           </h3>
           <p class="mt-0.5 text-[13px] text-muted-foreground">
@@ -364,7 +364,7 @@ defineExpose({ open, close });
 
         <section class="space-y-3">
           <div>
-            <h4 class="text-[14px] font-semibold text-foreground">
+            <h4 class="capitalize text-[14px] font-semibold text-foreground">
               {{ $t('AUTOMATION.ADD.FORM.CONDITIONS.LABEL') }}
             </h4>
             <p class="mt-1 text-[12.5px] leading-relaxed text-muted-foreground">
@@ -421,7 +421,7 @@ defineExpose({ open, close });
 
         <section class="space-y-3">
           <div>
-            <h4 class="text-[14px] font-semibold text-foreground">
+            <h4 class="capitalize text-[14px] font-semibold text-foreground">
               {{ $t('AUTOMATION.ADD.FORM.ACTIONS.LABEL') }}
             </h4>
             <p class="mt-1 text-[12.5px] leading-relaxed text-muted-foreground">

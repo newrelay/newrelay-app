@@ -21,7 +21,7 @@ const { t } = useI18n();
       >
         <span class="i-lucide-building-2 size-8 text-primary" />
       </div>
-      <h2 class="mb-2 text-base font-medium tracking-tight text-foreground">
+      <h2 class="capitalize mb-2 text-[20px] font-[600] tracking-tight text-foreground">
         {{ title || t('COMPANIES.EMPTY_STATE.TITLE') }}
       </h2>
       <p class="mb-6 max-w-lg text-sm leading-relaxed text-muted-foreground">
@@ -38,7 +38,7 @@ const { t } = useI18n();
         />
         <div class="relative z-10">
           <div class="mb-8 flex items-center justify-between">
-            <h3 class="text-lg font-semibold text-foreground">
+            <h3 class="capitalize text-lg font-semibold text-foreground">
               {{ t('COMPANIES.EMPTY_STATE.GETTING_STARTED') }}
             </h3>
             <RelayBadge
@@ -119,7 +119,7 @@ const { t } = useI18n();
         <div
           class="flex flex-col gap-4 rounded-3xl border border-border/50 bg-card p-8 shadow-sm"
         >
-          <h3 class="mb-2 text-lg font-semibold text-foreground">
+          <h3 class="capitalize mb-2 text-lg font-semibold text-foreground">
             {{ t('COMPANIES.EMPTY_STATE.ADD_ACCOUNTS') }}
           </h3>
           <RelayButton
@@ -174,7 +174,7 @@ const { t } = useI18n();
 
     <div class="w-full max-w-5xl">
       <h4
-        class="mb-8 text-center text-xs font-semibold uppercase tracking-widest text-muted-foreground"
+        class="capitalize mb-8 text-center text-xs font-semibold uppercase tracking-widest text-muted-foreground"
       >
         {{ t('COMPANIES.EMPTY_STATE.WHY_TITLE') }}
       </h4>

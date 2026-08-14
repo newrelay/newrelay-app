@@ -94,7 +94,7 @@ const handleBulkSync = async () => {
         <RelayButton
           variant="ghost"
           size="sm"
-          class="h-8 rounded-md px-2 text-[13px] font-medium text-muted-foreground hover:text-foreground"
+          class="h-8 rounded-md px-2 text-[13px] font-medium text-muted-foreground hover:text-foreground border border-border hover:border-transparent"
           @click="handleBulkSync"
         >
           <span class="i-lucide-refresh-cw mr-1.5 size-3.5" />

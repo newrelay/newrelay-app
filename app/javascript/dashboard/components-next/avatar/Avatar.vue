@@ -298,7 +298,7 @@ watch(
             ref="fileInput"
             type="file"
             accept="image/png, image/jpeg, image/jpg, image/gif, image/webp"
-            class="hidden"
+            class="hidden text-[14px] shadow-sm rounded-md border-border/80 bg-background focus-visible:ring-1 focus-visible:ring-primary/30"
             @change="handleImageUpload"
           />
         </div>

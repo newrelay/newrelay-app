@@ -110,7 +110,7 @@ const redirectToPortalHomePage = () => {
           <RelayButton
             variant="ghost"
             size="icon"
-            class="size-6 text-muted-foreground"
+            class="size-6 text-muted-foreground border border-border hover:border-transparent"
             @click="onClickPreviewPortal"
           >
             <span class="i-lucide-arrow-up-right size-3.5" aria-hidden="true" />

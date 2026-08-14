@@ -44,7 +44,7 @@ const toggleAudioTranscription = async () => {
   >
     <div class="flex flex-row items-start justify-between gap-8">
       <div class="flex-1">
-        <label class="block text-sm font-medium text-foreground">
+        <label class="block text-foreground text-[13.5px] font-[500]">
           {{ t('GENERAL_SETTINGS.FORM.AUDIO_TRANSCRIPTION.TITLE') }}
         </label>
         <p class="mt-1 text-[13px] leading-relaxed text-muted-foreground">

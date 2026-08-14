@@ -70,7 +70,7 @@ const alertDescription = computed(() => {
 
 <template>
   <div>
-    <label class="pb-1 text-sm font-medium leading-6 text-foreground">
+    <label class="pb-1 leading-6 text-foreground text-[13.5px] font-[500]">
       {{ label }}
     </label>
     <div class="grid gap-3 mt-2">
@@ -86,7 +86,7 @@ const alertDescription = computed(() => {
         />
         <label
           :for="`checkbox-${option.value}`"
-          class="text-sm text-foreground font-normal"
+          class="text-foreground text-[13.5px] font-[500]"
         >
           {{
             $t(

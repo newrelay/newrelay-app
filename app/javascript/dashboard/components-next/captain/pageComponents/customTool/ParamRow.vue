@@ -91,7 +91,7 @@ defineExpose({ validate });
           "
         />
         <label
-          class="flex cursor-pointer items-center gap-3 select-none text-[13.5px] font-medium leading-none text-foreground"
+          class="flex cursor-pointer items-center gap-3 select-none text-[13.5px] leading-none text-foreground font-[500]"
         >
           <RelayCheckbox v-model="required" />
           {{ t('CAPTAIN.CUSTOM_TOOLS.FORM.PARAM_REQUIRED.LABEL') }}
@@ -100,7 +100,7 @@ defineExpose({ validate });
       <RelayButton
         variant="ghost"
         size="icon"
-        class="size-9 shrink-0 text-muted-foreground hover:text-destructive"
+        class="size-9 shrink-0 text-muted-foreground hover:text-destructive border border-border hover:border-transparent"
         @click.stop="emit('remove')"
       >
         <span class="i-lucide-trash size-3.5" />

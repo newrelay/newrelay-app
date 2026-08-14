@@ -180,11 +180,11 @@ const previewReviewsList = computed(() => {
     <div v-if="!isEditing" class="flex items-center justify-between">
       <div>
         <h2
-          class="text-2xl font-extrabold text-slate-900 dark:text-white tracking-tight"
+          class="capitalize text-2xl font-extrabold text-foreground dark:text-white tracking-tight"
         >
           Review Widgets
         </h2>
-        <p class="text-xs text-slate-400 mt-0.5">
+        <p class="text-xs text-muted-foreground mt-0.5">
           Embed customer ratings directly onto your landing pages
         </p>
       </div>
@@ -216,7 +216,7 @@ const previewReviewsList = computed(() => {
       <div
         class="size-10 border-4 border-woot-500 border-t-transparent rounded-full animate-spin"
       />
-      <p class="text-sm font-medium text-slate-500 dark:text-slate-400">
+      <p class="text-sm font-medium text-muted-foreground dark:text-muted-foreground">
         Loading widgets list...
       </p>
     </div>
@@ -224,10 +224,10 @@ const previewReviewsList = computed(() => {
     <!-- Empty State -->
     <div
       v-else-if="widgets.length === 0"
-      class="flex flex-col items-center justify-center py-20 bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-850 rounded-2xl"
+      class="flex flex-col items-center justify-center py-20 bg-white dark:bg-slate-900 border border-border/80 dark:border-slate-850 rounded-2xl"
     >
       <div
-        class="p-3.5 rounded-full bg-slate-100 dark:bg-slate-850 text-slate-400"
+        class="p-3.5 rounded-full bg-muted dark:bg-slate-850 text-muted-foreground"
       >
         <svg
           class="size-7"
@@ -243,10 +243,10 @@ const previewReviewsList = computed(() => {
           />
         </svg>
       </div>
-      <h3 class="font-extrabold text-slate-800 dark:text-slate-200 mt-4">
+      <h3 class="capitalize font-extrabold text-foreground dark:text-slate-200 mt-4">
         No widgets defined
       </h3>
-      <p class="text-xs text-slate-400 mt-1 max-w-sm text-center">
+      <p class="text-xs text-muted-foreground mt-1 max-w-sm text-center">
         Generate an embeddable badge or review list to showcase your positive
         reviews.
       </p>
@@ -257,13 +257,13 @@ const previewReviewsList = computed(() => {
       <div 
         v-for="w in widgets" 
         :key="w.id"
-        class="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-850 rounded-2xl shadow-sm hover:shadow-md transition-all p-5 flex flex-col space-y-4 cursor-pointer group"
+        class="bg-white dark:bg-slate-900 border border-border/80 dark:border-slate-850 rounded-2xl shadow-sm hover:shadow-md transition-all p-5 flex flex-col space-y-4 cursor-pointer group"
         @click="activeWidget = { ...w }; isEditing = true;"
       >
         <div class="flex items-start justify-between">
           <div>
-            <h3 class="font-extrabold text-slate-800 dark:text-slate-100 text-sm group-hover:text-woot-500 transition-colors">{{ w.name }}</h3>
-            <p class="text-[10px] text-slate-400 font-normal mt-0.5 capitalize">{{ w.style }} Widget</p>
+            <h3 class="capitalize font-extrabold text-foreground dark:text-slate-100 text-sm group-hover:text-woot-500 transition-colors">{{ w.name }}</h3>
+            <p class="text-[10px] text-muted-foreground font-normal mt-0.5 capitalize">{{ w.style }} Widget</p>
           </div>
           <span 
             class="px-2 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider"
@@ -273,7 +273,7 @@ const previewReviewsList = computed(() => {
           </span>
         </div>
 
-        <div class="flex items-center gap-4 text-xs font-medium text-slate-500 pt-2 border-t border-slate-100 dark:border-slate-800/80">
+        <div class="flex items-center gap-4 text-xs font-medium text-muted-foreground pt-2 border-t border-slate-100 dark:border-slate-800/80">
           <div class="flex items-center gap-1.5">
             <span class="text-yellow-400 text-sm">★</span>
             <span>{{ w.min_rating }}+ Stars only</span>
@@ -285,9 +285,9 @@ const previewReviewsList = computed(() => {
     <!-- Main Workspace (Edit Mode) -->
     <div v-if="isEditing" class="space-y-6">
       <!-- Edit Mode Header -->
-      <div class="flex items-center gap-4 border-b border-slate-200/60 dark:border-slate-800/60 pb-4">
+      <div class="flex items-center gap-4 border-b border-border/60 dark:border-slate-800/60 pb-4">
         <button 
-          class="p-2 -ml-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500 transition-colors"
+          class="p-2 -ml-2 rounded-xl hover:bg-muted dark:hover:bg-slate-800 text-muted-foreground transition-colors"
           @click="isEditing = false; activeWidget = null;"
         >
           <svg class="size-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -295,7 +295,7 @@ const previewReviewsList = computed(() => {
           </svg>
         </button>
         <div>
-          <h2 class="text-xl font-extrabold text-slate-900 dark:text-white tracking-tight flex items-center gap-2">
+          <h2 class="capitalize text-xl font-extrabold text-foreground dark:text-white tracking-tight flex items-center gap-2">
             Edit {{ activeWidget?.name || 'Widget' }}
           </h2>
         </div>
@@ -307,10 +307,10 @@ const previewReviewsList = computed(() => {
           <!-- Customizer Config Card -->
         <div
           v-if="activeWidget"
-          class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-850 shadow-sm p-6 space-y-4"
+          class="bg-white dark:bg-slate-900 rounded-2xl border border-border/80 dark:border-slate-850 shadow-sm p-6 space-y-4"
         >
           <div>
-            <h3 class="font-extrabold text-slate-900 dark:text-white text-sm">
+            <h3 class="capitalize font-extrabold text-foreground dark:text-white text-sm">
               Widget Configuration
             </h3>
             <p class="text-[10px] text-slate-450 mt-0.5">
@@ -320,19 +320,19 @@ const previewReviewsList = computed(() => {
 
           <div class="space-y-4">
             <div class="space-y-1.5">
-              <label class="block text-xs font-bold text-slate-450">Widget Name</label>
+              <label class="block text-slate-450 text-[13.5px] font-[500] text-foreground">Widget Name</label>
               <input
                 v-model="activeWidget.name"
                 type="text"
-                class="w-full text-xs rounded-xl border border-slate-200 dark:border-slate-700 dark:bg-slate-850 p-3 focus:outline-none focus:ring-2 focus:ring-woot-500"
+                class="w-full rounded-xl border border-border dark:border-slate-700 dark:bg-slate-850 p-3 focus:outline-none focus:ring-2 focus:ring-woot-500 text-[14px] border-border/80 bg-background focus-visible:ring-1 focus-visible:ring-primary/30 shadow-sm rounded-md"
               />
             </div>
 
             <div class="space-y-1.5">
-              <label class="block text-xs font-bold text-slate-450">Display Style</label>
+              <label class="block text-slate-450 text-[13.5px] font-[500] text-foreground">Display Style</label>
               <select
                 v-model="activeWidget.style"
-                class="w-full text-xs rounded-xl border border-slate-200 dark:border-slate-700 dark:bg-slate-850 p-3 focus:outline-none focus:ring-2 focus:ring-woot-500"
+                class="w-full text-xs rounded-xl border border-border dark:border-slate-700 dark:bg-slate-850 p-3 focus:outline-none focus:ring-2 focus:ring-woot-500"
               >
                 <option value="carousel">Carousel (Responsive Slider)</option>
                 <option value="grid">Grid (Columns layout)</option>
@@ -340,10 +340,10 @@ const previewReviewsList = computed(() => {
             </div>
 
             <div class="space-y-1.5">
-              <label class="block text-xs font-bold text-slate-450">Minimum Rating threshold</label>
+              <label class="block text-slate-450 text-[13.5px] font-[500] text-foreground">Minimum Rating threshold</label>
               <select
                 v-model="activeWidget.min_rating"
-                class="w-full text-xs rounded-xl border border-slate-200 dark:border-slate-700 dark:bg-slate-850 p-3 focus:outline-none focus:ring-2 focus:ring-woot-500"
+                class="w-full text-xs rounded-xl border border-border dark:border-slate-700 dark:bg-slate-850 p-3 focus:outline-none focus:ring-2 focus:ring-woot-500"
               >
                 <option :value="5">5 Stars only</option>
                 <option :value="4">4 Stars & Above</option>
@@ -403,7 +403,7 @@ const previewReviewsList = computed(() => {
             class="flex justify-between items-center pt-4 border-t border-slate-100 dark:border-slate-850"
           >
             <button
-              class="text-xs text-red-500 dark:text-red-400 font-bold hover:underline"
+              class="text-xs text-destructive dark:text-red-400 font-bold hover:underline"
               @click="deleteWidget(activeWidget.id)"
             >
               Delete Widget
@@ -424,11 +424,11 @@ const previewReviewsList = computed(() => {
       <div v-if="activeWidget" class="lg:col-span-7 space-y-6">
         <!-- Live Mock Preview -->
         <div
-          class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-850 shadow-sm p-6 space-y-6"
+          class="bg-white dark:bg-slate-900 rounded-2xl border border-border/80 dark:border-slate-850 shadow-sm p-6 space-y-6"
         >
           <div class="flex items-center justify-between">
             <div>
-              <h3 class="font-extrabold text-slate-900 dark:text-white text-sm">
+              <h3 class="capitalize font-extrabold text-foreground dark:text-white text-sm">
                 Interactive Live Preview
               </h3>
               <p class="text-[10px] text-slate-450 mt-0.5">
@@ -436,7 +436,7 @@ const previewReviewsList = computed(() => {
               </p>
             </div>
             <span
-              class="px-2 py-0.5 rounded-lg text-[10px] uppercase font-bold bg-slate-100 dark:bg-slate-800 text-slate-500"
+              class="px-2 py-0.5 rounded-lg text-[10px] uppercase font-bold bg-muted dark:bg-slate-800 text-muted-foreground"
             >
               Live Mockup
             </span>
@@ -445,7 +445,7 @@ const previewReviewsList = computed(() => {
           <!-- Carousel widget style mockup -->
           <div
             v-if="activeWidget.style === 'carousel'"
-            class="relative p-6 bg-slate-50 dark:bg-slate-850/40 rounded-2xl border border-slate-150 dark:border-slate-800 min-h-[160px] flex flex-col justify-between"
+            class="relative p-6 bg-background dark:bg-slate-850/40 rounded-2xl border border-slate-150 dark:border-slate-800 min-h-[160px] flex flex-col justify-between"
           >
             <div v-if="previewReviewsList.length > 0" class="space-y-4">
               <!-- Carousel Content card -->
@@ -460,7 +460,7 @@ const previewReviewsList = computed(() => {
                       }}
                     </span>
                   </div>
-                  <span class="text-[10px] text-slate-400">{{
+                  <span class="text-[10px] text-muted-foreground">{{
                     previewReviewsList[carouselIndex].date
                   }}</span>
                 </div>
@@ -471,13 +471,13 @@ const previewReviewsList = computed(() => {
                 </p>
                 <div class="flex items-center gap-1.5 pt-1">
                   <span
-                    class="text-xs font-bold text-slate-800 dark:text-slate-200"
+                    class="text-xs font-bold text-foreground dark:text-slate-200"
                   >
                     {{ previewReviewsList[carouselIndex].reviewer_name }}
                   </span>
                   <span class="size-1 bg-slate-300 rounded-full" />
                   <span
-                    class="text-[9px] uppercase font-bold px-2 py-0.5 bg-slate-100 dark:bg-slate-800 text-slate-400 rounded-full capitalize"
+                    class="text-[9px] uppercase font-bold px-2 py-0.5 bg-muted dark:bg-slate-800 text-muted-foreground rounded-full capitalize"
                   >
                     {{ previewReviewsList[carouselIndex].provider }}
                   </span>
@@ -502,7 +502,7 @@ const previewReviewsList = computed(() => {
                 </div>
                 <div class="flex gap-1.5">
                   <button
-                    class="p-1 rounded-lg border border-slate-200 dark:border-slate-750 hover:bg-white dark:hover:bg-slate-800 text-slate-600 dark:text-slate-400 shrink-0 shadow-sm"
+                    class="p-1 rounded-lg border border-border dark:border-slate-750 hover:bg-white dark:hover:bg-slate-800 text-muted-foreground dark:text-muted-foreground shrink-0 shadow-sm"
                     @click="prevSlide(previewReviewsList.length)"
                   >
                     <svg
@@ -520,7 +520,7 @@ const previewReviewsList = computed(() => {
                     </svg>
                   </button>
                   <button
-                    class="p-1 rounded-lg border border-slate-200 dark:border-slate-750 hover:bg-white dark:hover:bg-slate-800 text-slate-600 dark:text-slate-400 shrink-0 shadow-sm"
+                    class="p-1 rounded-lg border border-border dark:border-slate-750 hover:bg-white dark:hover:bg-slate-800 text-muted-foreground dark:text-muted-foreground shrink-0 shadow-sm"
                     @click="nextSlide(previewReviewsList.length)"
                   >
                     <svg
@@ -542,13 +542,13 @@ const previewReviewsList = computed(() => {
               <!-- Watermark -->
               <div
                 v-if="!activeWidget.hide_watermark"
-                class="text-center pt-2 text-[10px] text-slate-400 border-t border-slate-100 dark:border-slate-800/80"
+                class="text-center pt-2 text-[10px] text-muted-foreground border-t border-slate-100 dark:border-slate-800/80"
               >
                 Powered by
                 <span class="font-bold text-slate-650 dark:text-slate-350">NewRelay</span>
               </div>
             </div>
-            <div v-else class="text-xs text-slate-400 text-center py-10">
+            <div v-else class="text-xs text-muted-foreground text-center py-10">
               No mockup reviews matching min {{ activeWidget.min_rating }}★
               filter.
             </div>
@@ -557,7 +557,7 @@ const previewReviewsList = computed(() => {
           <!-- Grid widget style mockup -->
           <div
             v-else-if="activeWidget.style === 'grid'"
-            class="p-4 bg-slate-50 dark:bg-slate-850/40 rounded-2xl border border-slate-150 dark:border-slate-800 space-y-4"
+            class="p-4 bg-background dark:bg-slate-850/40 rounded-2xl border border-slate-150 dark:border-slate-800 space-y-4"
           >
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div
@@ -571,21 +571,21 @@ const previewReviewsList = computed(() => {
                       {{ n <= r.rating ? '★' : '☆' }}
                     </span>
                   </div>
-                  <span class="text-[10px] text-slate-400">{{ r.date }}</span>
+                  <span class="text-[10px] text-muted-foreground">{{ r.date }}</span>
                 </div>
                 <p
-                  class="text-[11px] text-slate-600 dark:text-slate-350 italic line-clamp-3"
+                  class="text-[11px] text-muted-foreground dark:text-slate-350 italic line-clamp-3"
                 >
                   "{{ r.body }}"
                 </p>
                 <div class="flex items-center gap-1.5">
                   <span
-                    class="text-xs font-bold text-slate-800 dark:text-slate-200 truncate"
+                    class="text-xs font-bold text-foreground dark:text-slate-200 truncate"
                   >
                     {{ r.reviewer_name }}
                   </span>
                   <span
-                    class="text-[9px] font-bold text-slate-400 uppercase shrink-0 capitalize"
+                    class="text-[9px] font-bold text-muted-foreground uppercase shrink-0 capitalize"
                   >
                     {{ r.provider }}
                   </span>
@@ -595,14 +595,14 @@ const previewReviewsList = computed(() => {
             <!-- Watermark -->
             <div
               v-if="!activeWidget.hide_watermark"
-              class="text-center pt-2 text-[10px] text-slate-400 border-t border-slate-100 dark:border-slate-800/80"
+              class="text-center pt-2 text-[10px] text-muted-foreground border-t border-slate-100 dark:border-slate-800/80"
             >
               Powered by
               <span class="font-bold text-slate-650 dark:text-slate-350">NewRelay</span>
             </div>
             <div
               v-if="previewReviewsList.length === 0"
-              class="text-xs text-slate-400 text-center py-10"
+              class="text-xs text-muted-foreground text-center py-10"
             >
               No mockup reviews matching min {{ activeWidget.min_rating }}★
               filter.
@@ -612,10 +612,10 @@ const previewReviewsList = computed(() => {
 
         <!-- HTML Code Embed Block -->
         <div
-          class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-850 shadow-sm p-6 space-y-4"
+          class="bg-white dark:bg-slate-900 rounded-2xl border border-border/80 dark:border-slate-850 shadow-sm p-6 space-y-4"
         >
           <div>
-            <h3 class="font-extrabold text-slate-900 dark:text-white text-sm">
+            <h3 class="capitalize font-extrabold text-foreground dark:text-white text-sm">
               HTML Embed Script
             </h3>
             <p class="text-[10px] text-slate-450 mt-0.5">

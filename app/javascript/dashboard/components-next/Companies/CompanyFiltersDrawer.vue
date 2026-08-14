@@ -120,13 +120,13 @@ const applyFilters = () => {
         class="fixed inset-y-0 right-0 z-[60] flex w-full max-w-[450px] translate-x-0 animate-in slide-in-from-right flex-col border-l border-border bg-card p-6 shadow-2xl duration-300"
       >
         <div class="mb-6 flex shrink-0 items-center justify-between">
-          <h2 class="text-base font-medium tracking-tight text-foreground">
+          <h2 class="capitalize text-base font-medium tracking-tight text-foreground">
             {{ t('COMPANIES.FILTERS.TITLE') }}
           </h2>
           <RelayButton
             variant="ghost"
             size="icon"
-            class="size-8 text-muted-foreground hover:text-foreground"
+            class="size-8 text-muted-foreground hover:text-foreground border border-border hover:border-transparent"
             @click="close"
           >
             <span class="i-lucide-x size-4" />
@@ -249,7 +249,7 @@ const applyFilters = () => {
 
           <RelayButton
             variant="ghost"
-            class="h-10 w-full justify-start rounded-lg border border-transparent px-4 text-sm font-medium text-primary hover:border-primary/20 hover:bg-primary/10 hover:text-primary"
+            class="h-9 w-full justify-start rounded-lg border border-transparent px-4 text-sm font-medium text-primary hover:border-primary/20 hover:bg-primary/10 hover:text-primary border border-border hover:border-transparent"
             @click="addFilterDraft"
           >
             <span class="i-lucide-plus mr-2 size-4" />
@@ -260,14 +260,14 @@ const applyFilters = () => {
         <div class="mt-6 flex shrink-0 gap-3 border-t border-border pt-6">
           <RelayButton
             variant="outline"
-            class="h-10 flex-1 text-sm font-medium"
+            class="h-9 flex-1 text-sm font-medium"
             @click="clearFilters"
           >
             {{ t('COMPANIES.FILTERS.CLEAR') }}
           </RelayButton>
           <div class="flex-1" @click="handleDisabledApplyClick">
             <RelayButton
-              class="h-10 w-full text-sm font-medium shadow-sm"
+              class="h-9 w-full text-sm font-medium shadow-sm"
               :disabled="isApplyDisabled"
               @click="applyFilters"
             >

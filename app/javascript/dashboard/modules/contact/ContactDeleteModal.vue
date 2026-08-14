@@ -62,7 +62,7 @@ const onDelete = async hide => {
     <template #content="{ hide }">
       <div class="w-full md:w-80 p-6 flex flex-col gap-4">
         <div class="flex flex-col gap-2">
-          <h3 class="text-base font-medium leading-6 text-foreground">
+          <h3 class="capitalize text-base font-medium leading-6 text-foreground">
             {{ $t('DELETE_CONTACT.CONFIRM.TITLE') }}
           </h3>
           <p class="mb-0 text-sm text-muted-foreground">

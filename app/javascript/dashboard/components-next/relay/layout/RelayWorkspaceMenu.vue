@@ -63,8 +63,8 @@ const availabilityLabel = computed(() => {
 });
 
 const statusDotClass = computed(() => {
-  if (currentUserAvailability.value === 'online') return 'bg-[#00c950]';
-  if (currentUserAvailability.value === 'busy') return 'bg-amber-500';
+  if (currentUserAvailability.value === 'online') return 'bg-success';
+  if (currentUserAvailability.value === 'busy') return 'bg-warning';
   return 'bg-muted-foreground';
 });
 
@@ -156,7 +156,7 @@ const onLogout = () => {
   <div v-on-click-outside="closeMenu" class="relative">
     <button
       type="button"
-      class="flex items-center gap-2 rounded-full border border-[#e4e7ee] dark:border-[#ffffff26] bg-background py-1 pl-1 pr-2 text-left text-sm shadow-xs transition-colors hover:border-transparent hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+      class="flex items-center gap-2 rounded-full border border-input bg-background py-1 pl-1 pr-2 text-left text-sm shadow-xs transition-colors hover:border-transparent hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
       :class="{ 'bg-accent': isOpen }"
       :aria-expanded="isOpen"
       @click="toggleMenu"
@@ -271,7 +271,7 @@ const onLogout = () => {
               class="flex w-full cursor-pointer items-center gap-2 rounded-md px-2 py-1.5 text-sm transition-colors hover:bg-accent"
               @click="changeAvailabilityStatus('online')"
             >
-              <span class="size-2.5 rounded-full bg-[#00c950]" />
+              <span class="size-2.5 rounded-full bg-success" />
               <span>{{
                 t('PROFILE_SETTINGS.FORM.AVAILABILITY.STATUS.ONLINE')
               }}</span>
@@ -285,7 +285,7 @@ const onLogout = () => {
               class="flex w-full cursor-pointer items-center gap-2 rounded-md px-2 py-1.5 text-sm transition-colors hover:bg-accent"
               @click="changeAvailabilityStatus('busy')"
             >
-              <span class="size-2.5 rounded-full bg-amber-500" />
+              <span class="size-2.5 rounded-full bg-warning" />
               <span>{{
                 t('PROFILE_SETTINGS.FORM.AVAILABILITY.STATUS.BUSY')
               }}</span>

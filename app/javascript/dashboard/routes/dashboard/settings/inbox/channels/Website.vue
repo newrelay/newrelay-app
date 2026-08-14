@@ -99,7 +99,7 @@ export default {
       @submit.prevent="createChannel"
     >
       <div class="flex flex-col gap-1.5">
-        <label class="text-[13.5px] font-medium text-foreground">
+        <label class="text-[13.5px] text-foreground font-[500]">
           {{ $t('INBOX_MGMT.ADD.WEBSITE_NAME.LABEL') }}
         </label>
         <RelayInput
@@ -111,7 +111,7 @@ export default {
       </div>
 
       <div class="flex flex-col gap-1.5">
-        <label class="text-[13.5px] font-medium text-foreground">
+        <label class="text-[13.5px] text-foreground font-[500]">
           {{ $t('INBOX_MGMT.ADD.WEBSITE_CHANNEL.CHANNEL_DOMAIN.LABEL') }}
         </label>
         <RelayInput
@@ -125,14 +125,14 @@ export default {
       </div>
 
       <div class="flex flex-col gap-1.5">
-        <label class="text-[13.5px] font-medium text-foreground">
+        <label class="text-[13.5px] text-foreground font-[500]">
           {{ $t('INBOX_MGMT.ADD.WEBSITE_CHANNEL.WIDGET_COLOR.LABEL') }}
         </label>
         <div class="flex items-center gap-3">
           <input
             v-model="channelWidgetColor"
             type="color"
-            class="size-10 cursor-pointer rounded-md border border-border bg-background p-1"
+            class="size-10 cursor-pointer border border-border bg-background p-1 text-[14px] border-border/80 focus-visible:ring-1 focus-visible:ring-primary/30 shadow-sm rounded-md"
           />
           <span class="font-mono text-[13px] text-muted-foreground">
             {{ channelWidgetColor }}
@@ -141,7 +141,7 @@ export default {
       </div>
 
       <div class="flex flex-col gap-1.5">
-        <label class="text-[13.5px] font-medium text-foreground">
+        <label class="text-[13.5px] text-foreground font-[500]">
           {{ $t('INBOX_MGMT.ADD.WEBSITE_CHANNEL.CHANNEL_WELCOME_TITLE.LABEL') }}
         </label>
         <RelayInput
@@ -171,7 +171,7 @@ export default {
       />
 
       <div class="flex flex-col gap-1.5">
-        <label class="text-[13.5px] font-medium text-foreground">
+        <label class="text-[13.5px] text-foreground font-[500]">
           {{
             $t('INBOX_MGMT.ADD.WEBSITE_CHANNEL.CHANNEL_GREETING_TOGGLE.LABEL')
           }}

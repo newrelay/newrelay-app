@@ -35,7 +35,7 @@ export default {
     >
       <span :class="icon" class="size-8 text-primary" />
     </div>
-    <h3 class="text-[20px] font-[600] text-foreground mb-3">
+    <h3 class="capitalize text-[20px] font-[600] text-foreground mb-3">
       {{ message }}
     </h3>
     <p

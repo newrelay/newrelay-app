@@ -43,7 +43,7 @@ const formatAmount = (amount, currency) => {
 
 <template>
   <label
-    class="relative flex cursor-pointer flex-col rounded-xl border p-5 transition-all duration-200"
+    class="relative flex cursor-pointer flex-col rounded-xl border p-5 transition-all duration-200 text-[13.5px] font-[500] text-foreground"
     :class="
       isSelected
         ? 'border-primary bg-primary/5 ring-1 ring-primary'

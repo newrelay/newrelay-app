@@ -206,7 +206,7 @@ onMounted(() => store.dispatch('agents/get'));
         <div
           class="flex items-center justify-between border-b border-border/40 bg-background/50 p-5"
         >
-          <h3 class="text-[16px] font-semibold text-foreground">
+          <h3 class="capitalize text-[16px] font-semibold text-foreground">
             {{ $t(`${BASE_KEY}.EDIT.HEADER.TITLE`) }}
           </h3>
           <button

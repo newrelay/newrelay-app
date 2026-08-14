@@ -130,7 +130,7 @@ const handleAvatarHover = isHovered => {
           >
             <template v-if="selectable" #overlay="{ size }">
               <label
-                class="flex items-center justify-center rounded-full cursor-pointer absolute inset-0 z-10 backdrop-blur-[2px] border border-border"
+                class="flex items-center justify-center rounded-full cursor-pointer absolute inset-0 z-10 backdrop-blur-[2px] border border-border text-[13.5px] font-[500] text-foreground"
                 :style="{ width: `${size}px`, height: `${size}px` }"
                 @click.stop
               >

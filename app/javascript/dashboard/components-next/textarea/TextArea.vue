@@ -139,11 +139,11 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="relative flex flex-col gap-1">
+  <div class="relative flex flex-col gap-1.5">
     <label
       v-if="label"
       :for="id"
-      class="mb-0.5 text-sm font-medium text-foreground"
+      class="text-foreground text-[13.5px] font-medium"
     >
       {{ label }}
     </label>
@@ -169,10 +169,7 @@ onMounted(() => {
         :value="modelValue"
         :placeholder="placeholder"
         :maxlength="showCharacterCount ? maxLength : undefined"
-        :class="[
-          customTextAreaClass,
-          {
-            'resize-none': !resize,
+        :class="[ customTextAreaClass, { 'resize-none': !resize,
           },
         ]"
         :style="{

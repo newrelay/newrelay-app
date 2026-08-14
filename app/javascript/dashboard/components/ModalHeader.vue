@@ -28,7 +28,7 @@ export default {
     <img v-if="headerImage" :src="headerImage" alt="No image" />
     <h2
       data-test-id="modal-header-title"
-      class="text-base font-semibold leading-6 text-foreground"
+      class="capitalize text-base font-semibold leading-6 text-foreground"
     >
       {{ headerTitle }}
     </h2>

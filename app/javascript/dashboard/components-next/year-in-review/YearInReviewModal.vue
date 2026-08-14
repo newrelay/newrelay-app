@@ -214,7 +214,7 @@ watch(
           class="flex items-center justify-center w-full h-full bg-muted"
         >
           <div class="text-center">
-            <p class="text-lg font-semibold text-red-600">
+            <p class="text-lg font-semibold text-destructive">
               {{ t('YEAR_IN_REVIEW.ERROR') }}
             </p>
             <p class="mt-2 text-sm text-muted-foreground">{{ error }}</p>

@@ -89,7 +89,7 @@ const handleAction = ({ action, value }) => {
         class="flex min-w-0 flex-1 flex-wrap items-center gap-3 sm:flex-nowrap"
       >
         <h3
-          class="shrink-0 cursor-pointer truncate text-[14.5px] font-medium text-foreground hover:text-primary"
+          class="capitalize shrink-0 cursor-pointer truncate text-[14.5px] font-medium text-foreground hover:text-primary"
           @click="handleClick(slug)"
         >
           {{ title }}

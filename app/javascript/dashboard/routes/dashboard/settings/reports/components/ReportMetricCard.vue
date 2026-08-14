@@ -26,7 +26,7 @@ defineProps({
       'grayscale pointer-events-none opacity-30': disabled,
     }"
   >
-    <h3 class="flex items-center m-0 text-sm font-medium text-muted-foreground">
+    <h3 class="capitalize flex items-center m-0 text-sm font-medium text-muted-foreground">
       <span data-test-id="reportMetricLabel">{{ label }}</span>
       <fluent-icon
         v-tooltip="infoText"
@@ -38,7 +38,7 @@ defineProps({
     </h3>
     <h4
       data-test-id="reportMetricValue"
-      class="mt-1 mb-0 text-2xl text-foreground"
+      class="capitalize mt-1 mb-0 text-2xl text-foreground"
     >
       {{ value }}
     </h4>

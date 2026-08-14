@@ -106,7 +106,7 @@ const STYLE_CONFIG = {
         'bg-primary/10 text-primary hover:enabled:bg-primary/20 focus-visible:bg-primary/20 outline-transparent',
       outline: 'text-primary outline-primary',
       ghost:
-        'text-primary hover:enabled:bg-accent focus-visible:bg-accent outline-transparent',
+        'text-primary border border-border hover:border-transparent hover:enabled:bg-accent focus-visible:bg-accent outline-transparent',
       link: 'text-primary hover:enabled:underline focus-visible:underline outline-transparent',
     },
     ruby: {
@@ -117,7 +117,7 @@ const STYLE_CONFIG = {
       outline:
         'text-destructive hover:enabled:bg-destructive/10 focus-visible:bg-destructive/10 outline-destructive',
       ghost:
-        'text-destructive hover:enabled:bg-accent focus-visible:bg-accent outline-transparent',
+        'text-destructive border border-border hover:border-transparent hover:enabled:bg-accent focus-visible:bg-accent outline-transparent',
       link: 'text-destructive dark:text-destructive hover:enabled:underline focus-visible:underline outline-transparent',
     },
     amber: {
@@ -129,7 +129,7 @@ const STYLE_CONFIG = {
         'text-warning hover:enabled:bg-warning/10 focus-visible:bg-warning/10 outline-warning',
       link: 'text-warning hover:enabled:underline focus-visible:underline outline-transparent',
       ghost:
-        'text-warning hover:enabled:bg-accent focus-visible:bg-accent outline-transparent',
+        'text-warning border border-border hover:border-transparent hover:enabled:bg-accent focus-visible:bg-accent outline-transparent',
     },
     slate: {
       solid:
@@ -140,7 +140,7 @@ const STYLE_CONFIG = {
         'text-muted-foreground outline-border hover:enabled:bg-muted-foreground/10 focus-visible:bg-muted-foreground/10',
       link: 'text-muted-foreground hover:enabled:text-foreground focus-visible:text-foreground hover:enabled:underline focus-visible:underline outline-transparent',
       ghost:
-        'text-foreground hover:enabled:bg-accent focus-visible:bg-accent outline-transparent',
+        'text-foreground border border-border hover:border-transparent hover:enabled:bg-accent focus-visible:bg-accent outline-transparent',
     },
     teal: {
       solid:
@@ -151,20 +151,20 @@ const STYLE_CONFIG = {
         'text-success hover:enabled:bg-success/10 focus-visible:bg-success/10 outline-success',
       link: 'text-success hover:enabled:underline focus-visible:underline outline-transparent',
       ghost:
-        'text-success hover:enabled:bg-accent focus-visible:bg-accent outline-transparent',
+        'text-success border border-border hover:border-transparent hover:enabled:bg-accent focus-visible:bg-accent outline-transparent',
     },
   },
   sizes: {
     regular: {
       xs: 'h-6 px-2',
       sm: 'h-8 px-3',
-      md: 'h-10 px-4',
+      md: 'h-9 px-4',
       lg: 'h-12 px-5',
     },
     iconOnly: {
       xs: 'h-6 w-6 p-0',
       sm: 'h-8 w-8 p-0',
-      md: 'h-10 w-10 p-0',
+      md: 'h-9 w-9 p-0',
       lg: 'h-12 w-12 p-0',
     },
     link: {
@@ -191,7 +191,7 @@ const STYLE_CONFIG = {
     center: 'justify-center',
     end: 'justify-end',
   },
-  base: 'inline-flex items-center min-w-0 gap-2 transition-all duration-100 ease-out border-0 rounded-lg outline-1 outline disabled:opacity-50',
+  base: 'inline-flex items-center min-w-0 gap-2 transition-all duration-100 ease-out border-0 rounded-md outline-1 outline disabled:opacity-50 shadow-xs',
 };
 
 const variantClasses = computed(() => {

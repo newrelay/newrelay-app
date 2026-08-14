@@ -110,7 +110,7 @@ const handleSelect = content => {
           v-model="searchQuery"
           type="search"
           :placeholder="t('CANNED_MGMT.SEARCH_PLACEHOLDER')"
-          class="reset-base w-full h-8 pl-8 pr-2 text-xs rounded-sm bg-muted text-foreground placeholder:text-muted-foreground focus:outline-none focus-visible:ring-1 focus-visible:ring-primary/30"
+          class="reset-base w-full h-8 pl-8 pr-2 bg-muted text-foreground placeholder:text-muted-foreground focus:outline-none focus-visible:ring-1 focus-visible:ring-primary/30 text-[14px] shadow-sm rounded-md border-border/80 bg-background"
         />
       </div>
       <div v-if="isLoading" class="px-2 py-1.5 text-xs text-muted-foreground">

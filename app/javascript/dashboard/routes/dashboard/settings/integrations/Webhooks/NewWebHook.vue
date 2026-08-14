@@ -47,7 +47,7 @@ const handleCopySecret = async () => {
   <div class="flex flex-col gap-6">
     <template v-if="createdWebhook">
       <div class="relative -mt-2 flex items-center justify-between">
-        <h3 class="text-base font-semibold text-foreground">
+        <h3 class="capitalize text-base font-semibold text-foreground">
           {{ t('INTEGRATION_SETTINGS.WEBHOOK.ADD.API.SUCCESS_MESSAGE') }}
         </h3>
         <button
@@ -76,7 +76,7 @@ const handleCopySecret = async () => {
                   : '••••••••••••••••••••••••••••••••'
               "
               readonly
-              class="h-10 w-full rounded-md border border-border/80 bg-background pl-3 pr-10 font-mono text-[14px] text-foreground shadow-sm focus:outline-none"
+              class="h-10 w-full border border-border/80 bg-background pl-3 pr-10 font-mono text-[14px] text-foreground focus:outline-none focus-visible:ring-1 focus-visible:ring-primary/30 shadow-sm rounded-md"
             />
             <button
               type="button"
@@ -110,7 +110,7 @@ const handleCopySecret = async () => {
     <template v-else>
       <div class="relative -mt-2 flex items-start justify-between gap-4">
         <div>
-          <h3 class="text-base font-semibold text-foreground">
+          <h3 class="capitalize text-base font-semibold text-foreground">
             {{ t('INTEGRATION_SETTINGS.WEBHOOK.ADD.TITLE') }}
           </h3>
           <p class="mt-1 text-[13.5px] leading-relaxed text-muted-foreground">

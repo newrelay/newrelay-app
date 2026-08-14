@@ -181,7 +181,7 @@ onBeforeMount(() => {
                       v-tooltip.top="$t('LABEL_MGMT.FORM.EDIT')"
                       variant="ghost"
                       size="icon"
-                      class="size-8 border border-transparent text-muted-foreground shadow-xs hover:border-border hover:bg-background hover:text-foreground"
+                      class="size-8 border border-transparent text-muted-foreground shadow-xs hover:border-border hover:bg-background hover:text-foreground border border-border hover:border-transparent"
                       :disabled="loading[label.id]"
                       @click="openEditPopup(label)"
                     >
@@ -191,7 +191,7 @@ onBeforeMount(() => {
                       v-tooltip.top="$t('LABEL_MGMT.FORM.DELETE')"
                       variant="ghost"
                       size="icon"
-                      class="size-8 border border-transparent text-muted-foreground shadow-xs hover:border-destructive/20 hover:bg-destructive/10 hover:text-destructive"
+                      class="size-8 border border-transparent text-muted-foreground shadow-xs hover:border-destructive/20 hover:bg-destructive/10 hover:text-destructive border border-border hover:border-transparent"
                       :disabled="loading[label.id]"
                       @click="openDeletePopup(label)"
                     >

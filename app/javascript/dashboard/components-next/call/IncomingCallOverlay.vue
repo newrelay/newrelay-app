@@ -69,7 +69,7 @@ defineEmits(['accept', 'reject', 'dismiss']);
 
           <div class="flex flex-col gap-2 items-center w-full sm:items-start">
             <h2
-              class="text-3xl font-semibold tracking-tight sm:text-4xl text-foreground"
+              class="capitalize text-3xl font-semibold tracking-tight sm:text-4xl text-foreground"
             >
               {{ callInfo.contactName }}
             </h2>

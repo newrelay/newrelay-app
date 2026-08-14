@@ -117,7 +117,7 @@ const handleInput = value => {
           v-if="!contactId"
           variant="ghost"
           size="icon"
-          class="size-6 shrink-0 text-muted-foreground hover:text-foreground"
+          class="size-6 shrink-0 text-muted-foreground hover:text-foreground border border-border hover:border-transparent"
           @click="emit('clearSelectedContact')"
         >
           <span class="i-lucide-x size-3.5" />

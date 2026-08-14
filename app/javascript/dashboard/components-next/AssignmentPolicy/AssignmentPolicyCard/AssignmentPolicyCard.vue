@@ -60,7 +60,7 @@ const handleFetchInboxes = () => {
     <div class="flex flex-col gap-2 relative justify-between w-full">
       <div class="flex items-center gap-3 justify-between w-full">
         <div class="flex items-center gap-3">
-          <h3 class="text-heading-2 text-foreground line-clamp-1">
+          <h3 class="capitalize text-heading-2 text-foreground line-clamp-1">
             {{ name }}
           </h3>
           <CardPopover

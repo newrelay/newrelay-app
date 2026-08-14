@@ -99,9 +99,9 @@ const statusText = computed(() => {
 });
 
 const statusColors = computed(() => {
-  if (isLive.value) return 'text-emerald-600';
+  if (isLive.value) return 'text-success';
   if (isError.value) return 'text-destructive';
-  return 'text-amber-600';
+  return 'text-warning';
 });
 
 const updatePortalConfiguration = customDomain => {
@@ -142,7 +142,7 @@ const openDomainDialog = () => {
   <div class="mt-4 rounded-xl border border-border bg-muted/10 p-5">
     <div class="flex flex-col items-start justify-between gap-4 sm:flex-row">
       <div class="flex-1 space-y-2">
-        <h3 class="text-[14px] font-semibold text-foreground">
+        <h3 class="capitalize text-[14px] font-semibold text-foreground">
           {{
             t(
               'HELP_CENTER.PORTAL_SETTINGS.CONFIGURATION_FORM.CUSTOM_DOMAIN.HEADER'
@@ -173,7 +173,7 @@ const openDomainDialog = () => {
           </span>
           <span
             v-if="isLive || (!isOnChatwootCloud && customDomainAddress)"
-            class="i-lucide-circle-check size-4 text-emerald-500"
+            class="i-lucide-circle-check size-4 text-success"
             aria-hidden="true"
           />
           <span

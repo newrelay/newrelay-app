@@ -174,7 +174,7 @@ onMounted(() => {
       <OnClickOutside @trigger="openAgentsList = false">
         <RelayButton
           variant="ghost"
-          class="h-8 border border-transparent px-2 text-[13px] font-normal text-muted-foreground hover:bg-transparent hover:text-foreground"
+          class="h-8 border border-transparent px-2 text-[13px] font-normal text-muted-foreground hover:bg-transparent hover:text-foreground border border-border hover:border-transparent"
           @click="openAgentsList = !openAgentsList"
         >
           <Avatar
@@ -201,7 +201,7 @@ onMounted(() => {
       <OnClickOutside @trigger="openCategoryList = false">
         <RelayButton
           variant="ghost"
-          class="h-8 border border-transparent px-2 text-[13px] font-normal text-muted-foreground hover:bg-transparent hover:text-foreground"
+          class="h-8 border border-transparent px-2 text-[13px] font-normal text-muted-foreground hover:bg-transparent hover:text-foreground border border-border hover:border-transparent"
           @click="openCategoryList = !openCategoryList"
         >
           <span
@@ -234,7 +234,7 @@ onMounted(() => {
         <RelayButton
           variant="ghost"
           :disabled="isNewArticle"
-          class="h-8 border border-transparent px-2 text-[13px] font-normal text-muted-foreground hover:bg-transparent hover:text-foreground"
+          class="h-8 border border-transparent px-2 text-[13px] font-normal text-muted-foreground hover:bg-transparent hover:text-foreground border border-border hover:border-transparent"
           @click="openProperties = !openProperties"
         >
           <span class="i-lucide-plus size-3.5" aria-hidden="true" />

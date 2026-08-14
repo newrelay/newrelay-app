@@ -89,7 +89,7 @@ const handleAction = ({ action, value }) => {
           <RelayButton
             variant="ghost"
             size="icon"
-            class="size-8 rounded-md text-muted-foreground hover:bg-accent"
+            class="size-8 rounded-md text-muted-foreground hover:bg-accent border border-border hover:border-transparent"
             @click="toggleDropdown()"
           >
             <span class="i-lucide-ellipsis-vertical size-4" />

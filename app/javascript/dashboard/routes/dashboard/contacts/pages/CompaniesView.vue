@@ -213,14 +213,14 @@ onMounted(() => {
           variant="ghost"
           color="slate"
           size="sm"
-        />
+         class="border border-border hover:border-transparent" />
         <Button
           label="Sort"
           icon="i-lucide-arrow-up-down"
           variant="ghost"
           color="slate"
           size="sm"
-        />
+         class="border border-border hover:border-transparent" />
       </div>
 
       <div class="flex items-center gap-4">
@@ -344,13 +344,13 @@ onMounted(() => {
                   color="slate"
                   size="xs"
                   @click="openEditDrawer(company)"
-                />
+                 class="border border-border hover:border-transparent" />
                 <Button
                   icon="i-lucide-trash"
                   variant="ghost"
                   color="slate"
                   size="xs"
-                  class="hover:text-red-600"
+                  class="hover:text-destructive border border-border hover:border-transparent"
                   @click="handleDeleteCompany(company.id)"
                 />
               </td>
@@ -374,7 +374,7 @@ onMounted(() => {
           class="p-6 border-b border-muted flex items-center justify-between"
         >
           <h2
-            class="text-lg font-semibold text-foreground flex items-center gap-2"
+            class="capitalize text-lg font-semibold text-foreground flex items-center gap-2"
           >
             <span class="i-lucide-plus-circle text-primary size-5" />
             {{
@@ -389,15 +389,15 @@ onMounted(() => {
             color="slate"
             size="sm"
             @click="closeDrawer"
-          />
+           class="border border-border hover:border-transparent" />
         </div>
 
         <!-- Form Content -->
         <div class="flex-1 overflow-y-auto p-6 space-y-6">
           <div>
-            <label class="block text-sm font-semibold text-foreground mb-1.5">
+            <label class="block text-foreground mb-1.5 text-[13.5px] font-[500]">
               {{ t('CONTACTS_LAYOUT.COMPANIES_VIEW.FORM_NAME') }}
-              <span class="text-red-500">*</span>
+              <span class="text-destructive">*</span>
             </label>
             <Input
               v-model="companyForm.name"
@@ -406,7 +406,7 @@ onMounted(() => {
             />
           </div>
           <div>
-            <label class="block text-sm font-semibold text-foreground mb-1.5">
+            <label class="block text-foreground mb-1.5 text-[13.5px] font-[500]">
               {{ t('CONTACTS_LAYOUT.COMPANIES_VIEW.FORM_PHONE') }}
             </label>
             <PhoneNumberInput
@@ -416,7 +416,7 @@ onMounted(() => {
             />
           </div>
           <div>
-            <label class="block text-sm font-semibold text-foreground mb-1.5">
+            <label class="block text-foreground mb-1.5 text-[13.5px] font-[500]">
               {{ t('CONTACTS_LAYOUT.COMPANIES_VIEW.FORM_EMAIL') }}
             </label>
             <Input
@@ -430,7 +430,7 @@ onMounted(() => {
             </Input>
           </div>
           <div>
-            <label class="block text-sm font-semibold text-foreground mb-1.5">
+            <label class="block text-foreground mb-1.5 text-[13.5px] font-[500]">
               {{ t('CONTACTS_LAYOUT.COMPANIES_VIEW.FORM_WEBSITE') }}
             </label>
             <Input
@@ -440,7 +440,7 @@ onMounted(() => {
             />
           </div>
           <div>
-            <label class="block text-sm font-semibold text-foreground mb-1.5">
+            <label class="block text-foreground mb-1.5 text-[13.5px] font-[500]">
               {{ t('CONTACTS_LAYOUT.COMPANIES_VIEW.FORM_ADDRESS') }}
             </label>
             <Input
@@ -450,7 +450,7 @@ onMounted(() => {
             />
           </div>
           <div>
-            <label class="block text-sm font-semibold text-foreground mb-1.5">
+            <label class="block text-foreground mb-1.5 text-[13.5px] font-[500]">
               {{ t('CONTACTS_LAYOUT.COMPANIES_VIEW.FORM_STATE') }}
             </label>
             <Input
@@ -460,7 +460,7 @@ onMounted(() => {
             />
           </div>
           <div>
-            <label class="block text-sm font-semibold text-foreground mb-1.5">
+            <label class="block text-foreground mb-1.5 text-[13.5px] font-[500]">
               {{ t('CONTACTS_LAYOUT.COMPANIES_VIEW.FORM_CITY') }}
             </label>
             <Input
@@ -470,13 +470,13 @@ onMounted(() => {
             />
           </div>
           <div>
-            <label class="block text-sm font-semibold text-foreground mb-1.5">
+            <label class="block text-foreground mb-1.5 text-[13.5px] font-[500]">
               {{ t('CONTACTS_LAYOUT.COMPANIES_VIEW.FORM_DESCRIPTION') }}
             </label>
             <textarea
               v-model="companyForm.description"
               placeholder="Please input"
-              class="w-full min-h-[80px] p-2 text-sm border rounded-lg border-muted bg-transparent text-foreground outline-none focus:border-primary"
+              class="w-full min-h-[80px] p-2 border border-muted bg-transparent text-foreground outline-none focus:border-primary text-[14px] border-border/80 bg-background focus-visible:ring-1 focus-visible:ring-primary/30 shadow-sm rounded-md"
             />
           </div>
         </div>
@@ -490,7 +490,7 @@ onMounted(() => {
             variant="ghost"
             color="slate"
             @click="closeDrawer"
-          />
+           class="border border-border hover:border-transparent" />
           <div class="flex items-center gap-3">
             <Button
               :label="t('CONTACTS_LAYOUT.COMPANIES_VIEW.SAVE_ADD_ANOTHER')"

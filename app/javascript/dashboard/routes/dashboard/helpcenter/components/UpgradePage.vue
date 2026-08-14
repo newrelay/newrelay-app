@@ -73,7 +73,7 @@ export default {
     <div class="flex flex-col justify-start sm:justify-center gap-6">
       <div class="flex flex-col gap-1.5 items-start sm:items-center">
         <h1
-          class="text-foreground text-left sm:text-center text-4xl sm:text-5xl mb-6 font-semibold"
+          class="capitalize text-foreground text-left sm:text-center text-[16px] sm:text-5xl mb-6 font-[500]"
         >
           {{ $t('HELP_CENTER.UPGRADE_PAGE.TITLE') }}
         </h1>

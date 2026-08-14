@@ -316,7 +316,7 @@ onMounted(() => {
             >
               <div class="flex flex-col gap-6 pt-2 pb-4">
                 <div class="flex flex-col gap-2">
-                  <h4 class="text-sm font-semibold text-foreground px-6">
+                  <h4 class="capitalize text-sm font-semibold text-foreground px-6">
                     {{
                       $t(
                         'CONVERSATION_SIDEBAR.ACCORDION.CONTACT_NOTES',
@@ -327,7 +327,7 @@ onMounted(() => {
                   <ContactNotes :contact-id="contactId" />
                 </div>
                 <div class="flex flex-col gap-2">
-                  <h4 class="text-sm font-semibold text-foreground px-6">
+                  <h4 class="capitalize text-sm font-semibold text-foreground px-6">
                     {{
                       $t(
                         'CONVERSATION_SIDEBAR.ACCORDION.SHARED_FILES',

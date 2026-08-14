@@ -401,7 +401,7 @@ onBeforeUnmount(() => {
                     <span class="i-lucide-building size-4 text-foreground/70" />
                   </div>
                   <h3
-                    class="text-base font-medium tracking-tight text-foreground"
+                    class="capitalize text-base font-medium tracking-tight text-foreground"
                   >
                     {{ t('COMPANIES.DETAIL.ABOUT.TITLE') }}
                   </h3>
@@ -424,7 +424,7 @@ onBeforeUnmount(() => {
                       />
                     </div>
                     <h3
-                      class="text-base font-medium tracking-tight text-foreground"
+                      class="capitalize text-base font-medium tracking-tight text-foreground"
                     >
                       {{ t('COMPANIES.DETAIL.DETAILS_CARD.TITLE') }}
                     </h3>
@@ -640,7 +640,7 @@ onBeforeUnmount(() => {
                     />
                   </div>
                   <h3
-                    class="text-base font-medium tracking-tight text-foreground"
+                    class="capitalize text-base font-medium tracking-tight text-foreground"
                   >
                     {{ t('COMPANIES.DETAIL.DESCRIPTION.TITLE') }}
                   </h3>
@@ -683,7 +683,7 @@ onBeforeUnmount(() => {
                 <div class="mb-6 flex items-center gap-2">
                   <span class="i-lucide-bar-chart-2 size-4 text-primary" />
                   <h3
-                    class="text-base font-medium tracking-tight text-foreground"
+                    class="capitalize text-base font-medium tracking-tight text-foreground"
                   >
                     {{ t('COMPANIES.DETAIL.SUMMARY.TITLE') }}
                   </h3>
@@ -725,7 +725,7 @@ onBeforeUnmount(() => {
                   <div class="flex items-center gap-2">
                     <span class="i-lucide-users size-4 text-primary" />
                     <h3
-                      class="text-base font-medium tracking-tight text-foreground"
+                      class="capitalize text-base font-medium tracking-tight text-foreground"
                     >
                       {{ t('COMPANIES.DETAIL.RECENT_CONTACTS.TITLE') }}
                     </h3>
@@ -790,7 +790,7 @@ onBeforeUnmount(() => {
                   <div class="flex items-center gap-2">
                     <span class="i-lucide-activity size-4 text-primary" />
                     <h3
-                      class="text-base font-medium tracking-tight text-foreground"
+                      class="capitalize text-base font-medium tracking-tight text-foreground"
                     >
                       {{ t('COMPANIES.DETAIL.ACTIVITY.TITLE') }}
                     </h3>

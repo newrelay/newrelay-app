@@ -95,7 +95,7 @@ const confirmDeletion = () => {
     <template #body>
       <div class="space-y-6">
         <div>
-          <h2 class="text-base font-medium text-foreground">
+          <h2 class="capitalize text-base font-medium text-foreground">
             {{ t('INTEGRATION_SETTINGS.DASHBOARD_APPS.TITLE') }}
           </h2>
           <p

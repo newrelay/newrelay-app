@@ -173,7 +173,7 @@ defineExpose({
     <div
       class="relative flex flex-col gap-6 overflow-hidden rounded-2xl border border-border/40 bg-card p-6 shadow-sm"
     >
-      <h2 class="flex items-center gap-2 text-base font-medium text-foreground">
+      <h2 class="capitalize flex items-center gap-2 text-base font-medium text-foreground">
         <span class="i-lucide-monitor size-4 text-primary" aria-hidden="true" />
         {{ t('HELP_CENTER.PORTAL_SETTINGS.FORM.SECTION_IDENTITY') }}
       </h2>
@@ -209,7 +209,7 @@ defineExpose({
               :placeholder="
                 t('HELP_CENTER.PORTAL_SETTINGS.FORM.NAME.PLACEHOLDER')
               "
-              class-name="h-10 text-[14px]"
+              class-name="h-9 text-[14px]"
               @blur="v$.name.$touch()"
             />
             <p v-if="nameError" class="text-[12px] text-destructive">
@@ -225,7 +225,7 @@ defineExpose({
               :placeholder="
                 t('HELP_CENTER.PORTAL_SETTINGS.FORM.HEADER_TEXT.PLACEHOLDER')
               "
-              class-name="h-10 text-[14px]"
+              class-name="h-9 text-[14px]"
             />
           </div>
           <div class="flex flex-col gap-1.5">
@@ -237,7 +237,7 @@ defineExpose({
               :placeholder="
                 t('HELP_CENTER.PORTAL_SETTINGS.FORM.PAGE_TITLE.PLACEHOLDER')
               "
-              class-name="h-10 text-[14px]"
+              class-name="h-9 text-[14px]"
             />
           </div>
         </div>
@@ -248,7 +248,7 @@ defineExpose({
     <div
       class="flex flex-col gap-6 rounded-2xl border border-border/40 bg-card p-6 shadow-sm"
     >
-      <h2 class="flex items-center gap-2 text-base font-medium text-foreground">
+      <h2 class="capitalize flex items-center gap-2 text-base font-medium text-foreground">
         <span
           class="i-lucide-layout-grid size-4 text-primary"
           aria-hidden="true"
@@ -266,7 +266,7 @@ defineExpose({
             :placeholder="
               t('HELP_CENTER.PORTAL_SETTINGS.FORM.HOME_PAGE_LINK.PLACEHOLDER')
             "
-            class-name="h-10 text-[14px]"
+            class-name="h-9 text-[14px]"
             @blur="v$.homePageLink.$touch()"
           />
           <p v-if="homePageLinkError" class="text-[12px] text-destructive">
@@ -283,7 +283,7 @@ defineExpose({
             :placeholder="
               t('HELP_CENTER.PORTAL_SETTINGS.FORM.SLUG.PLACEHOLDER')
             "
-            class-name="h-10 text-[14px]"
+            class-name="h-9 text-[14px]"
             @blur="v$.slug.$touch()"
           />
           <p

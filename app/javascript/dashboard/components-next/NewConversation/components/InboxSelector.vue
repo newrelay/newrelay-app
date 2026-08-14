@@ -53,7 +53,7 @@ const targetInboxLabel = computed(() => {
     class="flex w-full flex-1 items-center gap-3 overflow-y-visible border-b border-border/40 px-4 py-2"
   >
     <label
-      class="mb-0.5 whitespace-nowrap text-xs font-medium text-muted-foreground"
+      class="mb-0.5 whitespace-nowrap text-muted-foreground text-[13.5px] font-[500] text-foreground"
     >
       {{ t('COMPOSE_NEW_CONVERSATION.FORM.INBOX_SELECTOR.LABEL') }}
     </label>
@@ -69,7 +69,7 @@ const targetInboxLabel = computed(() => {
         icon="i-lucide-x"
         color="slate"
         size="xs"
-        class="flex-shrink-0"
+        class="flex-shrink-0 border border-border hover:border-transparent"
         @click="emit('updateInbox', null)"
       />
     </div>

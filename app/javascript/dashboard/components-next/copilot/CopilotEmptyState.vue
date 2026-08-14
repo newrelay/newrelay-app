@@ -64,7 +64,7 @@ const handleSuggestion = opt => {
     <div class="flex flex-col space-y-4 py-4">
       <Icon icon="i-woot-captain" class="text-muted-foreground text-4xl" />
       <div class="space-y-1">
-        <h3 class="text-base font-medium text-foreground leading-8">
+        <h3 class="capitalize text-[20px] font-[600] text-foreground leading-8">
           {{ $t('CAPTAIN.COPILOT.PANEL_TITLE') }}
         </h3>
         <p class="text-sm text-muted-foreground leading-6">

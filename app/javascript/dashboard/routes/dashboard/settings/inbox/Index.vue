@@ -102,7 +102,7 @@ const openAddInbox = () => {
       >
         <template #toolbar>
           <div>
-            <h3 class="text-base font-medium text-foreground">
+            <h3 class="capitalize text-base font-medium text-foreground">
               {{ $t('INBOX_MGMT.HEADER') }}
             </h3>
             <p class="mt-1 text-sm text-muted-foreground">
@@ -153,7 +153,7 @@ const openAddInbox = () => {
                 class="size-6 text-muted-foreground/70"
               />
             </div>
-            <h3 class="mb-1.5 text-base font-semibold text-foreground">
+            <h3 class="capitalize mb-1.5 text-base font-semibold text-foreground">
               {{ $t('INBOX_MGMT.LIST.EMPTY_TITLE') }}
             </h3>
             <p
@@ -216,7 +216,7 @@ const openAddInbox = () => {
                 v-tooltip.top="$t('INBOX_MGMT.SETTINGS')"
                 variant="ghost"
                 size="icon"
-                class="size-8 border border-transparent text-muted-foreground shadow-xs hover:border-border hover:bg-background hover:text-foreground"
+                class="size-8 border border-transparent text-muted-foreground shadow-xs hover:border-border hover:bg-background hover:text-foreground border border-border hover:border-transparent"
               >
                 <Icon icon="i-lucide-sliders-horizontal" class="size-3.5" />
               </RelayButton>
@@ -226,7 +226,7 @@ const openAddInbox = () => {
               v-tooltip.top="$t('INBOX_MGMT.DELETE.BUTTON_TEXT')"
               variant="ghost"
               size="icon"
-              class="size-8 border border-transparent text-muted-foreground shadow-xs hover:border-destructive/20 hover:bg-destructive/10 hover:text-destructive"
+              class="size-8 border border-transparent text-muted-foreground shadow-xs hover:border-destructive/20 hover:bg-destructive/10 hover:text-destructive border border-border hover:border-transparent"
               @click="openDelete(inbox)"
             >
               <Icon icon="i-lucide-trash-2" class="size-3.5" />

@@ -270,7 +270,6 @@ const primaryMenuItems = computed(() => {
           name: 'Conversations',
           label: t('SIDEBAR.CONVERSATIONS'),
           collapsible: true,
-          defaultOpen: true,
           children: [
             {
               name: 'All',
@@ -776,7 +775,7 @@ const logoutMenuItem = computed(() => ({
           {{ section.label }}
         </p>
         <ul
-          class="m-0 flex w-full min-w-0 list-none flex-col gap-3"
+          class="m-0 flex w-full min-w-0 list-none flex-col gap-0.5"
           :class="{ 'items-center': isEffectivelyCollapsed }"
         >
           <SidebarGroup

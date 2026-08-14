@@ -192,7 +192,7 @@ export default {
   >
     <!-- Header -->
     <div class="flex w-full justify-between items-center mb-6">
-      <h3 class="text-base font-medium text-foreground">
+      <h3 class="capitalize text-base font-medium text-foreground">
         {{ $t('CONVERSATION.SIDEBAR.OVERVIEW') }}
       </h3>
       <a
@@ -238,7 +238,7 @@ export default {
           />
           <h2
             v-else-if="showAvatar"
-            class="group/name text-[15px] font-semibold text-foreground truncate cursor-pointer hover:text-primary transition-colors leading-tight"
+            class="capitalize group/name text-[15px] font-semibold text-foreground truncate cursor-pointer hover:text-primary transition-colors leading-tight"
             :title="$t('CONTACT_PANEL.CLICK_TO_EDIT')"
             @click="startEditingName"
           >

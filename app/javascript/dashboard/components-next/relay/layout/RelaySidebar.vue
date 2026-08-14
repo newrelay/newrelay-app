@@ -2,6 +2,14 @@
 import { computed, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { cn } from '../utils/cn';
+import {
+  SIDEBAR_TREE_LIST_NESTED,
+  SIDEBAR_TREE_INDENT,
+  TREE_LEVEL,
+  leafLinkClasses,
+  sectionHeaderClasses,
+} from '../../sidebar/sidebarTree';
+import SidebarTreeChrome from '../../sidebar/SidebarTreeChrome.vue';
 
 const props = defineProps({
   brandName: { type: String, default: 'newrelay' },
@@ -104,16 +112,14 @@ const widthClass = computed(() => (props.collapsed ? 'w-16' : 'w-60'));
           {{ section.label }}
         </p>
 
-        <div class="flex w-full min-w-0 flex-col gap-3">
+        <div class="flex w-full min-w-0 flex-col gap-0.5">
           <div v-for="item in section.items" :key="item.title" class="relative">
             <button
               type="button"
               :class="
                 cn(
-                  'relative flex w-full items-center gap-3 rounded-md p-2 py-2 text-left text-sm outline-none transition-colors',
-                  'hover:bg-sidebar-accent hover:text-sidebar-accent-foreground',
-                  collapsed && 'mx-auto h-10 w-10 justify-center',
-                  itemHasActiveChild(item) && 'font-medium text-sidebar-primary'
+                  sectionHeaderClasses(itemHasActiveChild(item)),
+                  collapsed && 'mx-auto size-9 justify-center p-0'
                 )
               "
               @click="
@@ -148,30 +154,32 @@ const widthClass = computed(() => (props.collapsed ? 'w-16' : 'w-60'));
               />
             </button>
 
-            <div
+            <ul
               v-if="
                 !collapsed && item.children?.length && openGroup === item.title
               "
-              class="mx-3.5 mt-0.5 flex min-w-0 flex-col gap-1 border-l border-sidebar-border py-0.5 pl-5 pr-2"
+              :class="SIDEBAR_TREE_LIST_NESTED"
             >
-              <button
-                v-for="child in item.children"
+              <li
+                v-for="(child, index) in item.children"
                 :key="child.href || child.title"
-                type="button"
-                :class="
-                  cn(
-                    'flex h-8 w-full items-center rounded-md px-2 text-left text-sm transition-colors',
-                    'hover:bg-sidebar-accent hover:text-sidebar-accent-foreground',
-                    isActive(child.href)
-                      ? 'font-medium text-sidebar-primary'
-                      : 'text-sidebar-foreground'
-                  )
-                "
-                @click="onNavigate(child.href)"
+                class="relative min-w-0"
               >
-                <span class="truncate">{{ child.title }}</span>
-              </button>
-            </div>
+                <SidebarTreeChrome
+                  :level="TREE_LEVEL.LEAF"
+                  :is-last="index === item.children.length - 1"
+                />
+                <div :class="SIDEBAR_TREE_INDENT">
+                  <button
+                    type="button"
+                    :class="leafLinkClasses(isActive(child.href))"
+                    @click="onNavigate(child.href)"
+                  >
+                    <span class="truncate">{{ child.title }}</span>
+                  </button>
+                </div>
+              </li>
+            </ul>
           </div>
         </div>
       </div>

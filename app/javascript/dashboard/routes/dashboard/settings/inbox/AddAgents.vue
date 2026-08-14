@@ -103,7 +103,7 @@ export default {
       />
 
       <div class="flex flex-col gap-1.5">
-        <label class="text-[13.5px] font-medium text-foreground">
+        <label class="text-[13.5px] text-foreground font-[500]">
           {{ $t('INBOX_MGMT.ADD.AGENTS.TITLE') }}
         </label>
         <div

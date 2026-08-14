@@ -170,8 +170,8 @@ const statusColor = s => {
     <!-- Top Header -->
     <div class="flex items-center justify-between">
       <div>
-        <h2 class="text-2xl font-extrabold text-slate-900 dark:text-white tracking-tight">Review Requests</h2>
-        <p class="text-xs text-slate-400 mt-0.5">Send custom reviews invites to your contacts</p>
+        <h2 class="capitalize text-2xl font-extrabold text-foreground dark:text-white tracking-tight">Review Requests</h2>
+        <p class="text-xs text-muted-foreground mt-0.5">Send custom reviews invites to your contacts</p>
       </div>
       <button
         class="px-4 py-2 bg-woot-500 hover:bg-woot-600 text-white rounded-xl text-xs font-bold shadow-sm transition-all flex items-center gap-1.5"
@@ -185,51 +185,51 @@ const statusColor = s => {
     <!-- Loading State -->
     <div v-if="loading" class="flex flex-col items-center justify-center py-20 space-y-4">
       <div class="size-10 border-4 border-woot-500 border-t-transparent rounded-full animate-spin"></div>
-      <p class="text-sm font-medium text-slate-500 dark:text-slate-400">Loading requests feed...</p>
+      <p class="text-sm font-medium text-muted-foreground dark:text-muted-foreground">Loading requests feed...</p>
     </div>
 
     <div v-else class="space-y-6">
       <!-- Funnel Metrics Widget -->
-      <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-850 shadow-sm">
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 p-6 rounded-2xl bg-white dark:bg-slate-900 border border-border/80 dark:border-slate-850 shadow-sm">
         <div class="space-y-1">
-          <span class="text-[10px] uppercase font-bold text-slate-400">Total Sent</span>
-          <h4 class="text-2xl font-extrabold text-slate-900 dark:text-white">{{ stats.sent }}</h4>
-          <p class="text-[10px] text-slate-500">Outbound requests</p>
+          <span class="text-[10px] uppercase font-bold text-muted-foreground">Total Sent</span>
+          <h4 class="capitalize text-2xl font-extrabold text-foreground dark:text-white">{{ stats.sent }}</h4>
+          <p class="text-[10px] text-muted-foreground">Outbound requests</p>
         </div>
         <div class="space-y-1">
-          <span class="text-[10px] uppercase font-bold text-slate-400">Delivered</span>
-          <h4 class="text-2xl font-extrabold text-slate-900 dark:text-white">{{ stats.delivered }}</h4>
-          <p class="text-[10px] text-slate-500">Receipts confirmed</p>
+          <span class="text-[10px] uppercase font-bold text-muted-foreground">Delivered</span>
+          <h4 class="capitalize text-2xl font-extrabold text-foreground dark:text-white">{{ stats.delivered }}</h4>
+          <p class="text-[10px] text-muted-foreground">Receipts confirmed</p>
         </div>
         <div class="space-y-1">
-          <span class="text-[10px] uppercase font-bold text-slate-400">Link Clicks</span>
-          <h4 class="text-2xl font-extrabold text-slate-900 dark:text-white">{{ stats.clicked }}</h4>
+          <span class="text-[10px] uppercase font-bold text-muted-foreground">Link Clicks</span>
+          <h4 class="capitalize text-2xl font-extrabold text-foreground dark:text-white">{{ stats.clicked }}</h4>
           <p class="text-[10px] text-amber-500 font-bold">{{ conversionRates.click }}% Click Rate</p>
         </div>
         <div class="space-y-1">
-          <span class="text-[10px] uppercase font-bold text-slate-400">Completed Reviews</span>
-          <h4 class="text-2xl font-extrabold text-slate-900 dark:text-white">{{ stats.completed }}</h4>
+          <span class="text-[10px] uppercase font-bold text-muted-foreground">Completed Reviews</span>
+          <h4 class="capitalize text-2xl font-extrabold text-foreground dark:text-white">{{ stats.completed }}</h4>
           <p class="text-[10px] text-emerald-500 font-bold">{{ conversionRates.complete }}% Conversion</p>
         </div>
       </div>
 
       <!-- Logs List -->
-      <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-850 shadow-sm overflow-hidden">
+      <div class="bg-white dark:bg-slate-900 rounded-2xl border border-border/80 dark:border-slate-850 shadow-sm overflow-hidden">
         <div class="px-6 py-4 border-b border-slate-100 dark:border-slate-850">
-          <h3 class="font-extrabold text-slate-900 dark:text-white text-sm">Outbound Logs</h3>
+          <h3 class="capitalize font-extrabold text-foreground dark:text-white text-sm">Outbound Logs</h3>
         </div>
 
         <div v-if="requests.length === 0" class="flex flex-col items-center justify-center py-16 space-y-2">
-          <div class="p-3 rounded-full bg-slate-100 dark:bg-slate-850 text-slate-400">
+          <div class="p-3 rounded-full bg-muted dark:bg-slate-850 text-muted-foreground">
             <svg class="size-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
           </div>
-          <p class="text-sm font-bold text-slate-700 dark:text-slate-355">No requests dispatched</p>
-          <p class="text-xs text-slate-400">Click the "+ New Request" button to invite contacts.</p>
+          <p class="text-sm font-bold text-foreground dark:text-slate-355">No requests dispatched</p>
+          <p class="text-xs text-muted-foreground">Click the "+ New Request" button to invite contacts.</p>
         </div>
 
         <table v-else class="w-full text-left border-collapse">
           <thead>
-            <tr class="bg-slate-50 dark:bg-slate-800/40 text-[10px] font-extrabold text-slate-400 uppercase tracking-wider">
+            <tr class="bg-background dark:bg-slate-800/40 text-[10px] font-extrabold text-muted-foreground uppercase tracking-wider">
               <th class="px-6 py-3.5">Contact Name</th>
               <th class="px-6 py-3.5">Template</th>
               <th class="px-6 py-3.5">Channel</th>
@@ -241,21 +241,21 @@ const statusColor = s => {
             <tr
               v-for="req in requests"
               :key="req.id"
-              class="hover:bg-slate-50/50 dark:hover:bg-slate-850/30 text-xs transition-colors"
+              class="hover:bg-background/50 dark:hover:bg-slate-850/30 text-xs transition-colors"
             >
-              <td class="px-6 py-4 font-bold text-slate-800 dark:text-slate-200">
+              <td class="px-6 py-4 font-bold text-foreground dark:text-slate-200">
                 <div class="flex flex-col">
                   <span>{{ req.contact?.name || 'Customer' }}</span>
-                  <span class="text-[10px] text-slate-400 font-normal mt-0.5">
+                  <span class="text-[10px] text-muted-foreground font-normal mt-0.5">
                     {{ req.contact?.phone_number || req.contact?.email || 'No credentials' }}
                   </span>
                 </div>
               </td>
-              <td class="px-6 py-4 text-slate-600 dark:text-slate-350">
+              <td class="px-6 py-4 text-muted-foreground dark:text-slate-350">
                 {{ req.reputation_template?.name || 'Custom' }}
               </td>
               <td class="px-6 py-4">
-                <span class="px-2 py-0.5 text-[10px] font-bold rounded-lg uppercase bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">
+                <span class="px-2 py-0.5 text-[10px] font-bold rounded-lg uppercase bg-muted dark:bg-slate-800 text-muted-foreground dark:text-slate-300">
                   {{ req.channel }}
                 </span>
               </td>
@@ -264,7 +264,7 @@ const statusColor = s => {
                   {{ req.status }}
                 </span>
               </td>
-              <td class="px-6 py-4 text-right text-slate-400">
+              <td class="px-6 py-4 text-right text-muted-foreground">
                 {{ new Date(req.created_at).toLocaleDateString() }}
               </td>
             </tr>
@@ -278,11 +278,11 @@ const statusColor = s => {
       v-if="showModal" 
       class="fixed inset-0 z-50 overflow-y-auto flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm transition-all"
     >
-      <div class="relative w-full max-w-lg bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-2xl p-6 space-y-5 flex flex-col justify-between">
+      <div class="relative w-full max-w-lg bg-white dark:bg-slate-900 rounded-2xl border border-border/80 dark:border-slate-800 shadow-2xl p-6 space-y-5 flex flex-col justify-between">
         <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-850 pb-3">
-          <h3 class="text-base font-extrabold text-slate-950 dark:text-white">Create Review Invitation</h3>
+          <h3 class="capitalize text-base font-extrabold text-slate-950 dark:text-white">Create Review Invitation</h3>
           <button 
-            class="p-1 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-850 text-slate-400"
+            class="p-1 rounded-lg hover:bg-muted dark:hover:bg-slate-850 text-muted-foreground"
             @click="showModal = false"
           >
             <svg class="size-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
@@ -292,12 +292,12 @@ const statusColor = s => {
         <div class="space-y-4 overflow-y-auto max-h-[350px]">
           <!-- Contact Search Form -->
           <div class="space-y-1.5 relative">
-            <label class="block text-xs font-bold text-slate-450 uppercase tracking-wider">Recipient Contact</label>
+            <label class="block text-slate-450 uppercase tracking-wider text-[13.5px] font-[500] text-foreground">Recipient Contact</label>
             <input
               v-model="contactsQuery"
               type="text"
               placeholder="Search contact name..."
-              class="w-full text-xs rounded-xl border border-slate-200 dark:border-slate-700 dark:bg-slate-850 p-3 focus:outline-none focus:ring-2 focus:ring-woot-500"
+              class="w-full rounded-xl border border-border dark:border-slate-700 dark:bg-slate-850 p-3 focus:outline-none focus:ring-2 focus:ring-woot-500 text-[14px] border-border/80 bg-background focus-visible:ring-1 focus-visible:ring-primary/30 shadow-sm rounded-md"
             />
             
             <div v-if="loadingContacts" class="absolute right-3 top-9">
@@ -305,25 +305,25 @@ const statusColor = s => {
             </div>
 
             <!-- Contacts Dropdown Result -->
-            <ul v-if="contactsList.length > 0" class="absolute left-0 right-0 z-10 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl mt-1 shadow-lg max-h-40 overflow-y-auto divide-y divide-slate-100 dark:divide-slate-850">
+            <ul v-if="contactsList.length > 0" class="absolute left-0 right-0 z-10 bg-white dark:bg-slate-900 border border-border dark:border-slate-800 rounded-xl mt-1 shadow-lg max-h-40 overflow-y-auto divide-y divide-slate-100 dark:divide-slate-850">
               <li
                 v-for="c in contactsList"
                 :key="c.id"
-                class="px-4 py-2.5 hover:bg-slate-50 dark:hover:bg-slate-850 cursor-pointer text-xs flex flex-col"
+                class="px-4 py-2.5 hover:bg-background dark:hover:bg-slate-850 cursor-pointer text-xs flex flex-col"
                 @click="selectContact(c)"
               >
-                <span class="font-bold text-slate-800 dark:text-slate-200">{{ c.name }}</span>
-                <span class="text-[10px] text-slate-400 mt-0.5">{{ c.phone_number || c.email || 'No phone/email' }}</span>
+                <span class="font-bold text-foreground dark:text-slate-200">{{ c.name }}</span>
+                <span class="text-[10px] text-muted-foreground mt-0.5">{{ c.phone_number || c.email || 'No phone/email' }}</span>
               </li>
             </ul>
           </div>
 
           <!-- Template Select Dropdown -->
           <div class="space-y-1.5">
-            <label class="block text-xs font-bold text-slate-450 uppercase tracking-wider">Invite Template</label>
+            <label class="block text-slate-450 uppercase tracking-wider text-[13.5px] font-[500] text-foreground">Invite Template</label>
             <select
               v-model="selectedTemplateId"
-              class="w-full text-xs rounded-xl border border-slate-200 dark:border-slate-700 dark:bg-slate-850 p-3 focus:outline-none focus:ring-2 focus:ring-woot-500"
+              class="w-full text-xs rounded-xl border border-border dark:border-slate-700 dark:bg-slate-850 p-3 focus:outline-none focus:ring-2 focus:ring-woot-500"
             >
               <option value="">Select template...</option>
               <option v-for="t in templates" :key="t.id" :value="t.id">{{ t.name }} ({{ t.channel }})</option>
@@ -331,9 +331,9 @@ const statusColor = s => {
           </div>
 
           <!-- Message Body Preview -->
-          <div v-if="selectedTemplateId" class="p-4 bg-slate-50 dark:bg-slate-850 rounded-xl border border-slate-150 dark:border-slate-800/80 space-y-2">
-            <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider">Dynamic Preview</label>
-            <div v-if="getSelectedTemplateSubject" class="text-xs font-bold text-slate-800 dark:text-slate-200">
+          <div v-if="selectedTemplateId" class="p-4 bg-background dark:bg-slate-850 rounded-xl border border-slate-150 dark:border-slate-800/80 space-y-2">
+            <label class="block text-[10px] text-muted-foreground uppercase tracking-wider text-[13.5px] font-[500] text-foreground">Dynamic Preview</label>
+            <div v-if="getSelectedTemplateSubject" class="text-xs font-bold text-foreground dark:text-slate-200">
               Subject: {{ getSelectedTemplateSubject }}
             </div>
             <p class="text-xs text-slate-650 dark:text-slate-300 leading-relaxed italic whitespace-pre-wrap">
@@ -344,7 +344,7 @@ const statusColor = s => {
 
         <div class="flex justify-end gap-2 pt-3 border-t border-slate-100 dark:border-slate-850">
           <button
-            class="px-4 py-2 text-xs font-bold text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-850 rounded-xl border border-slate-200 dark:border-slate-800"
+            class="px-4 py-2 text-xs font-bold text-muted-foreground hover:bg-background dark:hover:bg-slate-850 rounded-xl border border-border dark:border-slate-800"
             @click="showModal = false"
           >
             Cancel

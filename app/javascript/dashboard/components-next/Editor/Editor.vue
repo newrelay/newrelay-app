@@ -78,8 +78,8 @@ watch(
 </script>
 
 <template>
-  <div class="flex flex-col min-w-0 gap-1">
-    <label v-if="label" class="mb-0.5 text-sm font-medium text-foreground">
+  <div class="flex flex-col min-w-0 gap-1.5">
+    <label v-if="label" class="text-foreground text-[13.5px] font-medium">
       {{ label }}
     </label>
     <div

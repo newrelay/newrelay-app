@@ -109,7 +109,7 @@ async function clearDeletionMark() {
         </p>
         <RelayButton
           variant="outline"
-          class="border-red-200 bg-background text-red-500 shadow-xs hover:bg-red-50 hover:text-red-600"
+          class="border-red-200 bg-background text-destructive shadow-xs hover:bg-red-50 hover:text-destructive"
           :disabled="uiFlags.isUpdating"
           @click="clearDeletionMark"
         >
@@ -124,7 +124,7 @@ async function clearDeletionMark() {
         <RelayButton
           variant="outline"
           type="button"
-          class="border-red-200 text-red-500 hover:bg-red-50"
+          class="border-red-200 text-destructive hover:bg-red-50"
         >
           {{ $t('GENERAL_SETTINGS.ACCOUNT_DELETE_SECTION.DEACTIVATE_BUTTON') }}
         </RelayButton>

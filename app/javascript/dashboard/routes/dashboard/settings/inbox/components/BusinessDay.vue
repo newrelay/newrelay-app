@@ -154,7 +154,7 @@ export default {
         <input
           v-model="isDayEnabled"
           name="enable-day"
-          class="m-0"
+          class="m-0 text-[14px] border-border/80 bg-background focus-visible:ring-1 focus-visible:ring-primary/30 shadow-sm rounded-md"
           type="checkbox"
           :title="$t('INBOX_MGMT.BUSINESS_HOURS.DAY.ENABLE')"
         />
@@ -170,7 +170,7 @@ export default {
             <input
               v-model="isOpenAllDay"
               name="enable-open-all-day"
-              class="m-0"
+              class="m-0 text-[14px] border-border/80 bg-background focus-visible:ring-1 focus-visible:ring-primary/30 shadow-sm rounded-md"
               type="checkbox"
               :title="$t('INBOX_MGMT.BUSINESS_HOURS.ALL_DAY')"
             />

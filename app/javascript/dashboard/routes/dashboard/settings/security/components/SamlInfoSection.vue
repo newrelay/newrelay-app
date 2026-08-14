@@ -62,7 +62,7 @@ const handleCopy = async text => {
 <template>
   <div>
     <h4
-      class="mb-3 flex items-center gap-1.5 text-[13px] font-semibold text-foreground"
+      class="capitalize mb-3 flex items-center gap-1.5 text-[13px] font-semibold text-foreground"
     >
       {{ t('SECURITY_SETTINGS.SAML.INFO_SECTION.TITLE') }}
       <i

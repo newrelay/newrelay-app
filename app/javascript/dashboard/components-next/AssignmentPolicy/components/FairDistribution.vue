@@ -98,7 +98,7 @@ onMounted(() => {
   >
     <div class="flex items-center gap-2.5">
       <label
-        class="whitespace-nowrap text-[13.5px] font-medium text-foreground"
+        class="whitespace-nowrap text-[13.5px] text-foreground font-[500]"
       >
         {{
           t(
@@ -115,7 +115,7 @@ onMounted(() => {
 
     <div class="relative flex flex-wrap items-center gap-2.5">
       <label
-        class="whitespace-nowrap text-[13.5px] font-medium text-foreground"
+        class="whitespace-nowrap text-[13.5px] text-foreground font-[500]"
       >
         {{
           t(

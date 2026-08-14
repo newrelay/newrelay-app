@@ -104,7 +104,7 @@ const handleLauncherClick = e => {
             <span class="i-lucide-x size-3.5 block" />
           </button>
           <h4
-            class="text-[15px] font-semibold text-foreground mb-1.5 flex items-center gap-1.5"
+            class="capitalize text-[15px] font-semibold text-foreground mb-1.5 flex items-center gap-1.5"
           >
             {{ $t('CAPTAIN.COPILOT.LAUNCHER.TITLE') }}
           </h4>

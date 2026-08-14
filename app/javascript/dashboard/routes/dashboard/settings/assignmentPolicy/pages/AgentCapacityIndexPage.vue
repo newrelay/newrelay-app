@@ -58,7 +58,7 @@ onMounted(() => {
 <template>
   <div>
     <div class="mb-6 flex items-center justify-between gap-3">
-      <h3 class="text-[15px] font-medium text-foreground">
+      <h3 class="capitalize text-[15px] font-medium text-foreground">
         {{
           $t('ASSIGNMENT_POLICY.AGENT_CAPACITY_POLICY.INDEX.CAPACITY_LIMITS')
         }}
@@ -87,7 +87,7 @@ onMounted(() => {
       >
         <Icon icon="i-lucide-shield-alert" class="size-7 text-emerald-600" />
       </div>
-      <h3 class="mb-2 text-[16px] font-semibold text-foreground">
+      <h3 class="capitalize mb-2 text-[16px] font-semibold text-foreground">
         {{ $t('ASSIGNMENT_POLICY.AGENT_CAPACITY_POLICY.INDEX.EMPTY_TITLE') }}
       </h3>
       <p
@@ -109,7 +109,7 @@ onMounted(() => {
         <div class="absolute left-0 top-0 h-full w-1 bg-emerald-500" />
         <div class="mb-4 flex items-start justify-between gap-3">
           <div class="min-w-0">
-            <h4 class="text-[15px] font-semibold text-foreground">
+            <h4 class="capitalize text-[15px] font-semibold text-foreground">
               {{ policy.name }}
             </h4>
             <p class="mt-1 text-[13px] text-muted-foreground">

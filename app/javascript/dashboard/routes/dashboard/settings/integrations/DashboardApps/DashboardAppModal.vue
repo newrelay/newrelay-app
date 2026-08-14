@@ -133,7 +133,7 @@ const submit = async () => {
   >
     <div class="flex flex-col gap-6">
       <div class="relative -mt-2 flex items-center justify-between">
-        <h3 class="text-base font-semibold text-foreground">
+        <h3 class="capitalize text-base font-semibold text-foreground">
           {{ header }}
         </h3>
         <button
@@ -147,7 +147,7 @@ const submit = async () => {
 
       <form class="flex flex-col gap-5" @submit.prevent="submit">
         <div class="flex flex-col gap-1.5">
-          <label class="text-[13.5px] font-medium text-foreground">
+          <label class="text-[13.5px] text-foreground font-[500]">
             {{ t('INTEGRATION_SETTINGS.DASHBOARD_APPS.FORM.TITLE_LABEL') }}
           </label>
           <RelayInput
@@ -165,7 +165,7 @@ const submit = async () => {
         </div>
 
         <div class="flex flex-col gap-1.5">
-          <label class="text-[13.5px] font-medium text-foreground">
+          <label class="text-[13.5px] text-foreground font-[500]">
             {{ t('INTEGRATION_SETTINGS.DASHBOARD_APPS.FORM.URL_LABEL') }}
           </label>
           <RelayInput

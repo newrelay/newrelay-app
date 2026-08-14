@@ -27,7 +27,7 @@ const handleButtonClick = () => {
     >
       <div class="w-full max-w-7xl mx-auto">
         <div class="flex items-center justify-between w-full h-16 gap-4">
-          <h1 class="text-xl font-semibold tracking-tight text-foreground">
+          <h1 class="capitalize text-[16px] font-[500] tracking-tight text-foreground">
             {{ headerTitle }}
           </h1>
           <div

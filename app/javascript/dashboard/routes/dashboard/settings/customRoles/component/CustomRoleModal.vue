@@ -218,7 +218,7 @@ const isSubmitDisabled = computed(
             v-model="description"
             rows="3"
             :placeholder="$t('CUSTOM_ROLE.FORM.DESCRIPTION.PLACEHOLDER')"
-            class="min-h-[90px] w-full resize-none rounded-md border border-border/80 bg-background p-3 text-[14px] text-foreground shadow-sm outline-none focus:ring-1 focus:ring-primary/30"
+            class="min-h-[90px] w-full resize-none border border-border/80 bg-background p-3 text-[14px] text-foreground outline-none focus:ring-1 focus:ring-primary/30 focus-visible:ring-1 focus-visible:ring-primary/30 shadow-sm rounded-md"
             @blur="v$.description.$touch"
           />
           <p v-if="v$.description.$error" class="text-xs text-destructive">
@@ -234,7 +234,7 @@ const isSubmitDisabled = computed(
             <label
               v-for="permission in AVAILABLE_CUSTOM_ROLE_PERMISSIONS"
               :key="permission"
-              class="flex cursor-pointer items-center gap-3"
+              class="flex cursor-pointer items-center gap-3 text-[13.5px] font-[500] text-foreground"
             >
               <RelayCheckbox
                 :model-value="isPermissionChecked(permission)"

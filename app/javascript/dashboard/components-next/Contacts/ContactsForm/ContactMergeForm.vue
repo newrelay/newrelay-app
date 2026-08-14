@@ -39,7 +39,7 @@ const { t } = useI18n();
   <div class="flex flex-col">
     <div class="flex flex-col gap-2">
       <div class="flex items-center justify-between h-5 gap-2">
-        <label class="text-sm text-foreground">
+        <label class="text-foreground text-[13.5px] font-[500]">
           {{ t('CONTACTS_LAYOUT.SIDEBAR.MERGE.PRIMARY') }}
         </label>
         <span
@@ -81,7 +81,7 @@ const { t } = useI18n();
     </div>
     <div class="flex flex-col gap-2">
       <div class="flex items-center justify-between h-5 gap-2">
-        <label class="text-sm text-foreground">
+        <label class="text-foreground text-[13.5px] font-[500]">
           {{ t('CONTACTS_LAYOUT.SIDEBAR.MERGE.PARENT') }}
         </label>
         <span

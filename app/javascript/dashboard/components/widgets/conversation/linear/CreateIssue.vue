@@ -232,7 +232,7 @@ onMounted(getTeams);
         v-model="formState.description"
         :style="{ ...inputStyles, padding: '0.5rem 0.75rem' }"
         rows="3"
-        class="text-sm"
+        class="text-[14px] shadow-sm rounded-md border-border/80 bg-background focus-visible:ring-1 focus-visible:ring-primary/30"
         :placeholder="
           $t(
             'INTEGRATION_SETTINGS.LINEAR.ADD_OR_LINK.FORM.DESCRIPTION.PLACEHOLDER'

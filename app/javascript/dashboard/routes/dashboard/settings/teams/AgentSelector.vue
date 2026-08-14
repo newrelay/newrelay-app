@@ -116,7 +116,7 @@ const headers = computed(() => [
                   rounded-full
                   class="flex-shrink-0"
                 />
-                <h4 class="mb-0 truncate text-sm font-medium text-foreground">
+                <h4 class="capitalize mb-0 truncate text-sm font-medium text-foreground">
                   {{ agent.name }}
                 </h4>
               </div>

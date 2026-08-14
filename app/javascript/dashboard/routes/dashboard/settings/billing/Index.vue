@@ -804,7 +804,7 @@ onMounted(() => {
               <template
                 v-if="marketplaceData.connected_account?.charges_enabled"
               >
-                <h4 class="text-sm font-medium text-foreground">
+                <h4 class="capitalize text-sm font-medium text-foreground">
                   {{ $t('BILLING_SETTINGS.RESELLER.SET_PRICE') }}
                 </h4>
                 <div class="grid gap-4 sm:grid-cols-3">
@@ -910,7 +910,7 @@ onMounted(() => {
               >
                 <div class="flex items-start justify-between w-full">
                   <div>
-                    <h3 class="text-sm font-semibold text-foreground">
+                    <h3 class="capitalize text-sm font-semibold text-foreground">
                       {{
                         $t('BILLING_SETTINGS.SELECT_PLAN.PLAN_LABEL', { plan })
                       }}
@@ -1012,7 +1012,7 @@ onMounted(() => {
             <div>
               <div class="mb-4 flex flex-wrap items-center gap-3">
                 <h2
-                  class="text-[27px] font-semibold tracking-tight text-foreground"
+                  class="capitalize text-[27px] font-semibold tracking-tight text-foreground"
                 >
                   {{ planName }}
                 </h2>
@@ -1325,7 +1325,7 @@ onMounted(() => {
             class="flex flex-col justify-between gap-4 py-4 sm:flex-row sm:items-center"
           >
             <div>
-              <h3 class="text-base font-medium text-foreground">
+              <h3 class="capitalize text-base font-medium text-foreground">
                 {{ $t('BILLING_SETTINGS.CHAT_WITH_US.TITLE') }}
               </h3>
               <p class="mt-1 text-sm text-muted-foreground">

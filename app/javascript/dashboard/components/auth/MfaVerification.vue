@@ -167,7 +167,7 @@ const handleTryAnotherMethod = () => {
         >
           <Icon icon="i-lucide-lock-keyhole" class="size-6 text-primary" />
         </div>
-        <h2 class="text-2xl font-semibold text-foreground">
+        <h2 class="capitalize text-2xl font-semibold text-foreground">
           {{ $t('MFA_VERIFICATION.TITLE') }}
         </h2>
         <p class="text-sm text-muted-foreground mt-2">
@@ -200,7 +200,7 @@ const handleTryAnotherMethod = () => {
       <form class="space-y-4" @submit.prevent="handleVerification">
         <!-- OTP Code Input -->
         <div v-if="verificationMethod === OTP">
-          <label class="block text-[13.5px] font-medium text-foreground mb-2">
+          <label class="block text-[13.5px] text-foreground mb-2 font-[500]">
             {{ $t('MFA_VERIFICATION.ENTER_OTP_CODE') }}
           </label>
           <div class="flex justify-between gap-2">
@@ -213,7 +213,7 @@ const handleTryAnotherMethod = () => {
               maxlength="1"
               pattern="[0-9]"
               inputmode="numeric"
-              class="w-12 h-12 text-center text-lg font-semibold border border-input hover:border-border rounded-lg focus:border-primary focus-visible:ring-1 focus-visible:ring-primary/30 outline-none bg-background text-foreground placeholder:text-muted-foreground transition-colors"
+              class="w-12 h-12 text-center font-semibold border border-input hover:border-border focus:border-primary focus-visible:ring-1 focus-visible:ring-primary/30 outline-none bg-background text-foreground placeholder:text-muted-foreground transition-colors text-[14px] shadow-sm rounded-md border-border/80"
               @input="handleOtpInput(i)"
               @keydown.left.prevent="focusInput(i - 1)"
               @keydown.right.prevent="focusInput(i + 1)"
@@ -311,13 +311,13 @@ const handleTryAnotherMethod = () => {
     >
       <div class="space-y-4 text-sm text-muted-foreground">
         <div v-for="section in ['AUTHENTICATOR', 'BACKUP']" :key="section">
-          <h4 class="font-medium text-foreground mb-2">
+          <h4 class="capitalize font-medium text-foreground mb-2">
             {{ $t(`MFA_VERIFICATION.HELP_MODAL.${section}_TITLE`) }}
           </h4>
           <p>{{ $t(`MFA_VERIFICATION.HELP_MODAL.${section}_DESC`) }}</p>
         </div>
         <div>
-          <h4 class="font-medium text-foreground mb-2">
+          <h4 class="capitalize font-medium text-foreground mb-2">
             {{ $t('MFA_VERIFICATION.HELP_MODAL.CONTACT_TITLE') }}
           </h4>
           <p>{{ $t(`MFA_VERIFICATION.HELP_MODAL.${contactDescKey}`) }}</p>

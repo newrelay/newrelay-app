@@ -353,7 +353,7 @@ const handleMagicPaletteApplied = palette => {
                       class="i-lucide-sun size-6 text-muted-foreground/60 transition-colors group-hover:text-primary/80"
                     />
                   </div>
-                  <h4 class="text-sm font-medium text-foreground">
+                  <h4 class="capitalize text-sm font-medium text-foreground">
                     {{ $t('BRANDING_SETTINGS.LOGO_SETTINGS.LIGHT_LOGO.TITLE') }}
                   </h4>
                   <p
@@ -365,7 +365,7 @@ const handleMagicPaletteApplied = palette => {
                     ref="lightLogoInput"
                     type="file"
                     accept="image/*"
-                    class="hidden"
+                    class="hidden text-[14px] border-border/80 bg-background focus-visible:ring-1 focus-visible:ring-primary/30 shadow-sm rounded-md"
                     @change="onLightLogoChange"
                     @click.stop
                   />
@@ -405,7 +405,7 @@ const handleMagicPaletteApplied = palette => {
                       class="i-lucide-moon size-6 text-muted-foreground/60 transition-colors group-hover:text-primary/80"
                     />
                   </div>
-                  <h4 class="text-sm font-medium text-foreground">
+                  <h4 class="capitalize text-sm font-medium text-foreground">
                     {{ $t('BRANDING_SETTINGS.LOGO_SETTINGS.DARK_LOGO.TITLE') }}
                   </h4>
                   <p
@@ -417,7 +417,7 @@ const handleMagicPaletteApplied = palette => {
                     ref="darkLogoInput"
                     type="file"
                     accept="image/*"
-                    class="hidden"
+                    class="hidden text-[14px] border-border/80 bg-background focus-visible:ring-1 focus-visible:ring-primary/30 shadow-sm rounded-md"
                     @change="onDarkLogoChange"
                     @click.stop
                   />
@@ -455,7 +455,7 @@ const handleMagicPaletteApplied = palette => {
                       class="i-lucide-globe size-5 text-muted-foreground/60 transition-colors group-hover:text-primary/80"
                     />
                   </div>
-                  <h4 class="text-sm font-medium text-foreground">
+                  <h4 class="capitalize text-sm font-medium text-foreground">
                     {{ $t('BRANDING_SETTINGS.LOGO_SETTINGS.FAVICON.TITLE') }}
                   </h4>
                   <p
@@ -467,7 +467,7 @@ const handleMagicPaletteApplied = palette => {
                     ref="faviconInput"
                     type="file"
                     accept="image/x-icon,image/png,image/svg+xml"
-                    class="hidden"
+                    class="hidden text-[14px] border-border/80 bg-background focus-visible:ring-1 focus-visible:ring-primary/30 shadow-sm rounded-md"
                     @change="onFaviconChange"
                     @click.stop
                   />
@@ -494,7 +494,7 @@ const handleMagicPaletteApplied = palette => {
             >
               <div>
                 <label
-                  class="flex items-center gap-2 text-sm font-medium text-foreground"
+                  class="flex items-center gap-2 text-foreground text-[13.5px] font-[500]"
                 >
                   <span class="i-lucide-palette size-4 text-muted-foreground" />
                   {{ $t('BRANDING_SETTINGS.THEME_SETTINGS.TITLE') }}

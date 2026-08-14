@@ -74,7 +74,7 @@ export default {
         ref="searchbar"
         v-model="search"
         type="text"
-        class="m-0 w-full h-8 px-2.5 text-[13px] text-foreground rounded-md border border-border/80 bg-background shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary/30"
+        class="m-0 w-full h-8 px-2.5 text-[13px] text-foreground border border-border/80 bg-background focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary/30 text-[14px] shadow-sm rounded-md"
         autofocus="true"
         :placeholder="inputPlaceholder"
       />

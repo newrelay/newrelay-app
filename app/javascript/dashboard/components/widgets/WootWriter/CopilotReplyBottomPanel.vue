@@ -34,7 +34,7 @@ const handleSubmit = () => {
   >
     <RelayButton
       variant="ghost"
-      class="text-muted-foreground hover:text-foreground"
+      class="text-muted-foreground hover:text-foreground border border-border hover:border-transparent"
       :disabled="isGeneratingContent"
       @click="handleCancel"
     >

@@ -78,7 +78,7 @@ const handleConfirm = () => {
         <div class="px-7 py-6 pb-4">
           <div class="flex items-start justify-between">
             <div class="space-y-1.5">
-              <h2 class="text-base font-medium text-foreground">
+              <h2 class="capitalize text-base font-medium text-foreground">
                 {{ title }}
               </h2>
               <p class="pr-6 text-[13px] leading-relaxed text-muted-foreground">
@@ -101,7 +101,7 @@ const handleConfirm = () => {
               v-model="typedConfirmValue"
               type="text"
               :placeholder="confirmPlaceholder"
-              class-name="h-10 px-4 text-[14px] shadow-sm rounded-md border-border/80 bg-background focus-visible:ring-1 focus-visible:ring-primary/30"
+              class-name="h-9 px-4 text-[14px] shadow-sm rounded-md border-border/80 bg-background focus-visible:ring-1 focus-visible:ring-primary/30"
             />
           </div>
         </div>

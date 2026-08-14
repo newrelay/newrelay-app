@@ -43,7 +43,7 @@ onMounted(async () => {
       <div
         class="flex items-center justify-between px-6 py-5 border-b border-border/40"
       >
-        <h2 class="text-base font-medium text-foreground">
+        <h2 class="capitalize text-base font-medium text-foreground">
           {{ $t('SIDEBAR_ITEMS.KEYBOARD_SHORTCUTS') }}
         </h2>
       </div>

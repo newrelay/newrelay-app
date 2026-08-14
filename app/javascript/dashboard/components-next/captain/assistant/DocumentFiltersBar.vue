@@ -116,7 +116,7 @@ const handleMenuAction = ({ action, value }) => {
 <template>
   <div
     v-on-click-outside="closeMenu"
-    class="mb-6 inline-flex h-10 w-fit flex-wrap items-center gap-4"
+    class="mb-6 inline-flex h-9 w-fit flex-wrap items-center gap-4"
   >
     <div v-for="menu in filterMenus" :key="menu.key" class="relative">
       <RelayButton

@@ -132,7 +132,7 @@ const toggleSelected = option => {
         <input
           v-model="searchTerm"
           autofocus
-          class="p-1.5 pl-8 text-muted-foreground bg-muted rounded-lg w-full"
+          class="p-1.5 pl-8 text-muted-foreground bg-muted w-full text-[14px] shadow-sm rounded-md border-border/80 bg-background focus-visible:ring-1 focus-visible:ring-primary/30"
           :placeholder="searchPlaceholder || t('COMBOBOX.SEARCH_PLACEHOLDER')"
         />
       </div>

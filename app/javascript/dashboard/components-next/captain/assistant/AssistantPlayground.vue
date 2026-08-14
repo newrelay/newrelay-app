@@ -95,7 +95,7 @@ const handleEnterKey = event => {
       class="flex shrink-0 items-start justify-between gap-4 border-b border-border/40 pb-4"
     >
       <div class="space-y-1">
-        <h2 class="text-base font-semibold tracking-tight text-foreground">
+        <h2 class="capitalize text-base font-semibold tracking-tight text-foreground">
           {{ t('CAPTAIN.PLAYGROUND.HEADER') }}
         </h2>
         <p class="text-[13.5px] leading-relaxed text-muted-foreground">
@@ -121,7 +121,7 @@ const handleEnterKey = event => {
       >
         <input
           v-model="newMessage"
-          class="mb-0 h-10 flex-1 border-none bg-transparent px-3 text-[14px] text-foreground placeholder:text-muted-foreground/60 focus:outline-none"
+          class="mb-0 h-10 flex-1 border-none bg-transparent px-3 text-[14px] text-foreground placeholder:text-muted-foreground/60 focus:outline-none shadow-sm rounded-md border-border/80 bg-background focus-visible:ring-1 focus-visible:ring-primary/30"
           :placeholder="t('CAPTAIN.PLAYGROUND.MESSAGE_PLACEHOLDER')"
           @keydown.enter.exact="handleEnterKey"
         />

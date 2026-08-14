@@ -154,7 +154,7 @@ const xAxisLabels = computed(() => {
         <span class="size-5" :class="[metricIcon]" />
       </div>
       <div class="flex flex-col">
-        <h3 class="text-[14px] font-medium text-muted-foreground">
+        <h3 class="capitalize text-[14px] font-medium text-muted-foreground">
           {{ metric.NAME }}
         </h3>
 

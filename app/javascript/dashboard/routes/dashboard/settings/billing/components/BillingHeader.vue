@@ -16,7 +16,7 @@ defineProps({
     class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between"
   >
     <div class="min-w-0 flex-1">
-      <h3 class="text-base font-medium text-foreground">
+      <h3 class="capitalize text-base font-medium text-foreground">
         {{ title }}
       </h3>
       <p

@@ -291,7 +291,7 @@ export default {
     @submit.prevent="handleSubmit"
   >
     <div class="flex flex-col mb-4 items-start gap-1 w-full">
-      <label class="mb-0.5 text-sm font-medium text-foreground">
+      <label class="mb-0.5 text-foreground text-[13.5px] font-[500]">
         {{ $t('CONTACT_FORM.FORM.AVATAR.LABEL') }}
       </label>
       <Avatar
@@ -344,9 +344,7 @@ export default {
     <div>
       <div class="w-full">
         <label
-          :class="{
-            error: isPhoneNumberNotValid,
-          }"
+          :class="{ error: isPhoneNumberNotValid, }"
         >
           {{ $t('CONTACT_FORM.FORM.PHONE_NUMBER.LABEL') }}
           <woot-phone-input
@@ -414,7 +412,7 @@ export default {
         </span>
         <input
           v-model="socialProfileUserNames[socialProfile.key]"
-          class="input-group-field ltr:!rounded-l-none rtl:!rounded-r-none !mb-0"
+          class="input-group-field ltr:!rounded-l-none rtl:!rounded-r-none !mb-0 text-[14px] border-border/80 bg-background focus-visible:ring-1 focus-visible:ring-primary/30 shadow-sm rounded-md"
           type="text"
         />
       </div>

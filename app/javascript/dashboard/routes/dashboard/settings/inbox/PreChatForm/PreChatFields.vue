@@ -86,7 +86,7 @@ watch(
             v-model="item.label"
             type="text"
             :disabled="isFieldEditable(item)"
-            class="w-full text-sm !mb-0 px-2 py-1 border border-border rounded"
+            class="w-full !mb-0 px-2 py-1 border border-border rounded text-[14px] border-border/80 bg-background focus-visible:ring-1 focus-visible:ring-primary/30 shadow-sm rounded-md"
           />
         </td>
         <td
@@ -97,7 +97,7 @@ watch(
             v-model="item.placeholder"
             type="text"
             :disabled="isFieldEditable(item)"
-            class="w-full text-sm !mb-0 px-2 py-1 border border-border rounded"
+            class="w-full !mb-0 px-2 py-1 border border-border rounded text-[14px] border-border/80 bg-background focus-visible:ring-1 focus-visible:ring-primary/30 shadow-sm rounded-md"
           />
         </td>
       </tr>

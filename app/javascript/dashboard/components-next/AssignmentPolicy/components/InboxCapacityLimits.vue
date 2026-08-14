@@ -93,7 +93,7 @@ const closeInboxDropdown = () => {
 
 <template>
   <div class="space-y-2 border-t border-border/40 pt-2">
-    <label class="block text-[13.5px] font-medium text-foreground">
+    <label class="block text-[13.5px] text-foreground font-[500]">
       {{ t(`${BASE_KEY}.FORM.INBOX_CAPACITY_LIMIT.LABEL`) }}
     </label>
 
@@ -123,7 +123,7 @@ const closeInboxDropdown = () => {
           </button>
         </span>
         <div class="flex items-center gap-2">
-          <label class="whitespace-nowrap text-[12px] text-muted-foreground">
+          <label class="whitespace-nowrap text-[12px] text-muted-foreground text-[13.5px] font-[500] text-foreground">
             {{
               t(`${BASE_KEY}.FORM.INBOX_CAPACITY_LIMIT.FIELD.MAX_CONVERSATIONS`)
             }}
@@ -136,7 +136,7 @@ const closeInboxDropdown = () => {
             :placeholder="
               t(`${BASE_KEY}.FORM.INBOX_CAPACITY_LIMIT.FIELD.SET_LIMIT`)
             "
-            class="h-8 w-24 rounded-md border border-border/80 bg-background px-2 text-[13px] text-foreground shadow-sm outline-none placeholder:text-muted-foreground focus:ring-1 focus:ring-primary/30"
+            class="h-8 w-24 border border-border/80 bg-background px-2 text-[13px] text-foreground outline-none placeholder:text-muted-foreground focus:ring-1 focus:ring-primary/30 text-[14px] shadow-sm rounded-md focus-visible:ring-1 focus-visible:ring-primary/30"
             :class="{
               'border-destructive text-destructive': !isLimitValid(limit),
             }"
@@ -168,7 +168,7 @@ const closeInboxDropdown = () => {
           <input
             v-model="inboxSearch"
             type="text"
-            class="w-full rounded-md bg-muted/50 py-1.5 pl-8 pr-3 text-[13px] text-foreground outline-none placeholder:text-muted-foreground"
+            class="w-full bg-muted/50 py-1.5 pl-8 pr-3 text-[13px] text-foreground outline-none placeholder:text-muted-foreground text-[14px] shadow-sm rounded-md border-border/80 bg-background focus-visible:ring-1 focus-visible:ring-primary/30"
             :placeholder="
               t(`${BASE_KEY}.FORM.INBOX_CAPACITY_LIMIT.FIELD.SELECT_INBOX`)
             "

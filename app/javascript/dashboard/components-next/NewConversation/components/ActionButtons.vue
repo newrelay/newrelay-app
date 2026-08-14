@@ -253,7 +253,7 @@ useEventListener(document, 'paste', onPaste);
         <RelayButton
           variant="ghost"
           size="icon"
-          class="size-8"
+          class="size-8 border border-border hover:border-transparent"
           :class="
             showFormatting
               ? 'bg-primary/10 text-primary'
@@ -284,7 +284,7 @@ useEventListener(document, 'paste', onPaste);
           <RelayButton
             variant="ghost"
             size="icon"
-            class="size-8 text-muted-foreground hover:text-foreground"
+            class="size-8 text-muted-foreground hover:text-foreground border border-border hover:border-transparent"
             :title="t('COMPOSE_NEW_CONVERSATION.FORM.ACTION_BUTTONS.ATTACH')"
             as="span"
           >
@@ -295,7 +295,7 @@ useEventListener(document, 'paste', onPaste);
         <RelayButton
           variant="ghost"
           size="icon"
-          class="hidden size-8 text-muted-foreground hover:text-foreground sm:inline-flex"
+          class="hidden size-8 text-muted-foreground hover:text-foreground sm:inline-flex border border-border hover:border-transparent"
           :title="t('COMPOSE_NEW_CONVERSATION.FORM.ACTION_BUTTONS.LINK')"
           @click="emit('insertLink')"
         >
@@ -310,7 +310,7 @@ useEventListener(document, 'paste', onPaste);
           <RelayButton
             variant="ghost"
             size="icon"
-            class="size-8 text-muted-foreground hover:text-foreground"
+            class="size-8 text-muted-foreground hover:text-foreground border border-border hover:border-transparent"
             :title="t('COMPOSE_NEW_CONVERSATION.FORM.ACTION_BUTTONS.EMOJI')"
             @click="isEmojiPickerOpen = !isEmojiPickerOpen"
           >
@@ -341,7 +341,7 @@ useEventListener(document, 'paste', onPaste);
           <RelayButton
             variant="ghost"
             size="icon"
-            class="size-8 text-muted-foreground hover:text-foreground"
+            class="size-8 text-muted-foreground hover:text-foreground border border-border hover:border-transparent"
             :title="t('COMPOSE_NEW_CONVERSATION.FORM.ACTION_BUTTONS.IMAGE')"
             as="span"
           >
@@ -353,7 +353,7 @@ useEventListener(document, 'paste', onPaste);
           v-if="shouldShowSignatureButton"
           variant="ghost"
           size="icon"
-          class="size-8 text-muted-foreground hover:text-foreground"
+          class="size-8 text-muted-foreground hover:text-foreground border border-border hover:border-transparent"
           :title="t('COMPOSE_NEW_CONVERSATION.FORM.ACTION_BUTTONS.SIGNATURE')"
           @click="toggleMessageSignature"
         >
@@ -365,7 +365,7 @@ useEventListener(document, 'paste', onPaste);
     <RelayButton
       variant="ghost"
       size="icon"
-      class="size-8 shrink-0 text-muted-foreground hover:text-destructive"
+      class="size-8 shrink-0 text-muted-foreground hover:text-destructive border border-border hover:border-transparent"
       :title="t('COMPOSE_NEW_CONVERSATION.FORM.ACTION_BUTTONS.DISCARD')"
       @click="emit('discard')"
     >

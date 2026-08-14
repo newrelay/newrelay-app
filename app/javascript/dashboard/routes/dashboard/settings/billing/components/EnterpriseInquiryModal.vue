@@ -106,7 +106,7 @@ defineExpose({ open, close });
   >
     <div class="flex flex-col gap-4">
       <div class="flex flex-col gap-1">
-        <label class="text-sm font-medium text-foreground">
+        <label class="text-foreground text-[13.5px] font-[500]">
           {{ $t('BILLING_SETTINGS.ENTERPRISE_INQUIRY.COMPANY_SIZE.LABEL') }}
         </label>
         <Select
@@ -130,7 +130,7 @@ defineExpose({ open, close });
       />
 
       <div class="flex flex-col gap-1">
-        <label class="text-sm font-medium text-foreground">
+        <label class="text-foreground text-[13.5px] font-[500]">
           {{ $t('BILLING_SETTINGS.ENTERPRISE_INQUIRY.FEATURES.LABEL') }}
         </label>
         <TagMultiSelectComboBox

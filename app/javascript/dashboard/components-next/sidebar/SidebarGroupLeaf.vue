@@ -5,6 +5,16 @@ import Icon from 'next/icon/Icon.vue';
 import Policy from 'dashboard/components/policy.vue';
 import { useSidebarContext } from './provider';
 import SidebarUnreadBadge from './SidebarUnreadBadge.vue';
+import SidebarTreeChrome from './SidebarTreeChrome.vue';
+import {
+  SIDEBAR_TREE_INDENT,
+  isDotOnlyDepth,
+  treeButtonClasses,
+  treeButtonLevel,
+  treeItemWrapperClass,
+  treeRowClass,
+  shouldConnectBranchDown,
+} from './sidebarTree';
 
 const props = defineProps({
   label: { type: String, required: true },
@@ -16,6 +26,8 @@ const props = defineProps({
   badgeCount: { type: [Number, String], default: 0 },
   disabled: { type: Boolean, default: false },
   comingSoon: { type: Boolean, default: false },
+  depth: { type: Number, default: 1 },
+  isLast: { type: Boolean, default: false },
 });
 
 const route = useRoute();
@@ -25,8 +37,25 @@ const shouldRenderComponent = computed(() => {
   return typeof props.component === 'function' || isVNode(props.component);
 });
 
-// Parent passes `active` from activeChild selection; also match locally so
-// portal/Captain redirector leaves (navigationPath) never miss highlight.
+const dotOnly = computed(() => isDotOnlyDepth(props.depth));
+
+const buttonLevel = computed(() =>
+  treeButtonLevel({
+    depth: props.depth,
+    isLeaf: dotOnly.value,
+    collapsible: false,
+  })
+);
+
+const rowClass = computed(() =>
+  treeRowClass(buttonLevel.value, { dotOnly: dotOnly.value })
+);
+
+const connectDown = computed(() =>
+  !dotOnly.value &&
+  shouldConnectBranchDown({ isLast: props.isLast, depth: props.depth })
+);
+
 const isLeafActive = computed(() => {
   if (props.active) return true;
 
@@ -41,6 +70,10 @@ const isLeafActive = computed(() => {
       : null;
   return Boolean(navPath && names.includes(navPath));
 });
+
+const showLeadingIcon = computed(
+  () => Boolean(props.icon) && !dotOnly.value && !shouldRenderComponent.value
+);
 </script>
 
 <!-- eslint-disable-next-line vue/no-root-v-if -->
@@ -48,24 +81,35 @@ const isLeafActive = computed(() => {
   <li
     v-if="disabled"
     :title="label"
-    class="group/menu-sub-item relative min-w-0"
+    :class="treeItemWrapperClass(buttonLevel)"
   >
-    <div
-      class="flex h-8 min-w-0 -translate-x-px cursor-not-allowed items-center gap-3 overflow-hidden rounded-md px-2 text-sm text-muted-foreground/60"
-    >
-      <span
-        v-if="icon"
-        class="grid size-4 shrink-0 place-content-center text-muted-foreground/50"
-      >
-        <Icon :icon="icon" class="inline-block size-4" />
-      </span>
-      <div class="min-w-0 flex-1 truncate">{{ label }}</div>
-      <span
-        v-if="comingSoon"
-        class="shrink-0 rounded-full bg-muted px-1.5 py-0.5 text-[10px] font-medium text-muted-foreground"
-      >
-        {{ $t('SIDEBAR.COMING_SOON') }}
-      </span>
+    <div :class="rowClass">
+      <SidebarTreeChrome
+        :mode="dotOnly ? 'dot' : 'branch'"
+        :connect-down="connectDown"
+      />
+      <div :class="SIDEBAR_TREE_INDENT">
+        <div
+          :class="[
+            treeButtonClasses(buttonLevel, false),
+            'cursor-not-allowed text-muted-foreground/60',
+          ]"
+        >
+          <span
+            v-if="showLeadingIcon"
+            class="grid size-4 shrink-0 place-content-center text-muted-foreground/50"
+          >
+            <Icon :icon="icon" class="inline-block size-4" />
+          </span>
+          <div class="min-w-0 flex-1 truncate">{{ label }}</div>
+          <span
+            v-if="comingSoon"
+            class="shrink-0 rounded-full bg-muted px-1.5 py-0.5 text-[10px] font-medium text-muted-foreground"
+          >
+            {{ $t('SIDEBAR.COMING_SOON') }}
+          </span>
+        </div>
+      </div>
     </div>
   </li>
   <Policy
@@ -73,45 +117,43 @@ const isLeafActive = computed(() => {
     :permissions="resolvePermissions(to)"
     :feature-flag="resolveFeatureFlag(to)"
     as="li"
-    class="group/menu-sub-item relative min-w-0"
-    :class="
-      isLeafActive
-        ? 'before:absolute before:inset-y-1.5 before:left-0 before:w-[3px] before:rounded-r-md before:bg-sidebar-primary'
-        : ''
-    "
+    :class="treeItemWrapperClass(buttonLevel)"
   >
-    <component
-      :is="to ? 'router-link' : 'div'"
-      :to="to"
-      :title="label"
-      active-class=""
-      exact-active-class=""
-      class="flex h-8 min-w-0 -translate-x-px items-center gap-3 overflow-hidden rounded-md px-2 text-sm outline-none transition-colors"
-      :class="
-        isLeafActive
-          ? 'bg-sidebar-accent font-medium text-sidebar-primary hover:bg-sidebar-accent hover:text-sidebar-primary'
-          : 'text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground'
-      "
-      :aria-current="isLeafActive ? 'page' : undefined"
-    >
-      <component
-        :is="component"
-        v-if="shouldRenderComponent"
-        v-bind="{ label, icon, active: isLeafActive, badgeCount }"
+    <div :class="rowClass">
+      <SidebarTreeChrome
+        :mode="dotOnly ? 'dot' : 'branch'"
+        :connect-down="connectDown"
       />
-      <template v-else>
-        <span
-          v-if="icon"
-          class="grid size-4 shrink-0 place-content-center"
-          :class="
-            isLeafActive ? 'text-sidebar-primary' : 'text-muted-foreground'
-          "
+      <div :class="SIDEBAR_TREE_INDENT">
+        <component
+          :is="to ? 'router-link' : 'div'"
+          :to="to"
+          :title="label"
+          active-class=""
+          exact-active-class=""
+          :class="treeButtonClasses(buttonLevel, isLeafActive)"
+          :aria-current="isLeafActive ? 'page' : undefined"
         >
-          <Icon :icon="icon" class="inline-block size-4" />
-        </span>
-        <div class="min-w-0 flex-1 truncate">{{ label }}</div>
-        <SidebarUnreadBadge :count="badgeCount" />
-      </template>
-    </component>
+          <component
+            :is="component"
+            v-if="shouldRenderComponent"
+            v-bind="{ label, icon, active: isLeafActive, badgeCount }"
+          />
+          <template v-else>
+            <span
+              v-if="showLeadingIcon"
+              class="grid size-4 shrink-0 place-content-center"
+              :class="
+                isLeafActive ? 'text-sidebar-primary' : 'text-muted-foreground'
+              "
+            >
+              <Icon :icon="icon" class="inline-block size-4" />
+            </span>
+            <div class="min-w-0 flex-1 truncate">{{ label }}</div>
+            <SidebarUnreadBadge :count="badgeCount" />
+          </template>
+        </component>
+      </div>
+    </div>
   </Policy>
 </template>

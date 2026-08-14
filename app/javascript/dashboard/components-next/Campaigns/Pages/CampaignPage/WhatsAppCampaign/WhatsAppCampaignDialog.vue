@@ -41,7 +41,7 @@ const handleClose = () => emit('close');
     class="w-[26rem] z-50 min-w-0 absolute top-12 ltr:right-0 rtl:left-0 bg-popover text-popover-foreground rounded-xl border border-border shadow-xl max-h-[80vh] overflow-y-auto"
   >
     <div class="p-6 flex flex-col gap-6">
-      <h3 class="text-base font-semibold text-foreground flex-shrink-0">
+      <h3 class="capitalize text-base font-medium text-foreground flex-shrink-0">
         {{ t(`CAMPAIGN.WHATSAPP.CREATE.TITLE`) }}
       </h3>
       <WhatsAppCampaignForm @submit="handleSubmit" @cancel="handleClose" />

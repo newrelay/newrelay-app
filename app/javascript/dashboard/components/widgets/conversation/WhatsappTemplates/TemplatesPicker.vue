@@ -80,7 +80,7 @@ const refreshTemplates = async () => {
           v-model="query"
           type="search"
           :placeholder="t('WHATSAPP_TEMPLATES.PICKER.SEARCH_PLACEHOLDER')"
-          class="reset-base w-full h-9 bg-transparent text-foreground !text-sm !outline-0"
+          class="reset-base w-full h-9 bg-transparent text-foreground ! !outline-0 text-[14px] shadow-sm rounded-md border-border/80 bg-background focus-visible:ring-1 focus-visible:ring-primary/30"
         />
       </div>
       <button

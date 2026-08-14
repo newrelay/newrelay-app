@@ -43,7 +43,7 @@ const learnMore = () => {
             <span class="i-lucide-inbox size-8 text-primary" />
           </div>
         </div>
-        <h2 class="text-[20px] font-[600] text-foreground mb-2 tracking-tight">
+        <h2 class="capitalize text-[20px] font-[600] text-foreground mb-2 tracking-tight">
           {{ t('INBOX.EMPTY.TITLE') }}
         </h2>
         <p class="text-sm text-muted-foreground leading-relaxed">
@@ -161,7 +161,7 @@ const learnMore = () => {
               class="size-12 rounded-xl border border-border/60 bg-card flex items-center justify-center shadow-xs"
             >
               <span
-                class="i-lucide-message-square size-6 text-indigo-500 opacity-90"
+                class="i-lucide-message-square size-6 text-primary opacity-90"
               />
             </div>
             <span class="text-xs font-normal text-muted-foreground">

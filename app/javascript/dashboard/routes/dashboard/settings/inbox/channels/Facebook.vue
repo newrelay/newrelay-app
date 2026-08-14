@@ -263,7 +263,7 @@ export default {
           "
         />
         <div class="flex flex-col gap-1.5">
-          <label class="text-[13.5px] font-medium text-foreground">
+          <label class="text-[13.5px] text-foreground font-[500]">
             {{ $t('INBOX_MGMT.ADD.FB.CHOOSE_PAGE') }}
           </label>
           <ComboBox
@@ -281,14 +281,14 @@ export default {
           </p>
         </div>
         <div class="flex flex-col gap-1.5">
-          <label class="text-[13.5px] font-medium text-foreground">
+          <label class="text-[13.5px] text-foreground font-[500]">
             {{ $t('INBOX_MGMT.ADD.FB.INBOX_NAME') }}
           </label>
           <input
             v-model="pageName"
             type="text"
             :placeholder="$t('INBOX_MGMT.ADD.FB.PICK_NAME')"
-            class="h-10 w-full rounded-md border border-border/80 bg-background px-4 text-[14px] text-foreground shadow-sm outline-none focus-visible:ring-1 focus-visible:ring-primary/30"
+            class="h-10 w-full border border-border/80 bg-background px-4 text-[14px] text-foreground outline-none focus-visible:ring-1 focus-visible:ring-primary/30 shadow-sm rounded-md"
             @input="v$.pageName.$touch"
           />
           <p v-if="v$.pageName.$error" class="text-[12.5px] text-destructive">

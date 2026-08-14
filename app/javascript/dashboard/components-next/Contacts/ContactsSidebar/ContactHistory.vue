@@ -155,13 +155,13 @@ const openConversation = conversation => {
           <RelayButton
             variant="ghost"
             size="sm"
-            class="-mr-2 h-6 px-2 text-xs"
+            class="-mr-2 h-6 px-2 text-xs border border-border hover:border-transparent"
             @click.stop="openConversation(conversation)"
           >
             {{ t('CONTACTS_LAYOUT.SIDEBAR.HISTORY.OPEN') }}
           </RelayButton>
         </div>
-        <h4 class="mb-1 text-sm font-semibold text-foreground line-clamp-2">
+        <h4 class="capitalize mb-1 text-sm font-semibold text-foreground line-clamp-2">
           {{ subjectOrPreview(conversation) }}
         </h4>
         <div class="mt-2 flex items-center gap-2">
@@ -186,7 +186,7 @@ const openConversation = conversation => {
     >
       <span class="i-lucide-history size-6 text-muted-foreground" />
     </div>
-    <h3 class="mb-1 text-sm font-medium text-foreground">
+    <h3 class="capitalize mb-1 text-sm font-medium text-foreground">
       {{ t('CONTACTS_LAYOUT.SIDEBAR.TABS.HISTORY') }}
     </h3>
     <p class="text-xs text-muted-foreground">

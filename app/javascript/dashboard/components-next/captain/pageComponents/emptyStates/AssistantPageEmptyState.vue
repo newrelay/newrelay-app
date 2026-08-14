@@ -41,7 +41,7 @@ const onClick = () => {
         :class="assistant.opacity"
       >
         <div class="min-w-0 flex-1 text-left">
-          <h3 class="mb-1 text-[15px] font-medium text-foreground">
+          <h3 class="capitalize mb-1 text-[15px] font-medium text-foreground">
             {{ assistant.name }}
           </h3>
           <p class="text-[14px] text-muted-foreground">

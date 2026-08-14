@@ -109,7 +109,7 @@ const commitNameEdit = async () => {
       <RelayButton
         variant="ghost"
         size="sm"
-        class="-ml-2 h-8 rounded-md px-2 text-[13px] font-medium text-muted-foreground hover:text-foreground"
+        class="-ml-2 h-8 rounded-md px-2 text-[13px] font-medium text-muted-foreground hover:text-foreground border border-border hover:border-transparent"
         @click="emit('back')"
       >
         <span class="i-lucide-arrow-left mr-1.5 size-4" />
@@ -136,7 +136,7 @@ const commitNameEdit = async () => {
           <div class="flex items-center gap-3">
             <h2
               v-if="!isEditingName"
-              class="group flex cursor-pointer items-center gap-2 text-xl font-bold tracking-tight text-foreground"
+              class="capitalize group flex cursor-pointer items-center gap-2 text-base font-medium tracking-tight text-foreground"
               @click="isEditingName = true"
             >
               {{ displayName }}
@@ -148,12 +148,12 @@ const commitNameEdit = async () => {
               v-else
               v-model="nameDraft"
               type="text"
-              class="rounded-md border border-border bg-background px-2 py-0.5 text-xl font-bold text-foreground focus:outline-none focus:ring-1 focus:ring-primary/50"
+              class="border border-border bg-background px-2 py-0.5 text-xl font-bold text-foreground focus:outline-none focus:ring-1 focus:ring-primary/50 text-[14px] shadow-sm rounded-md border-border/80 focus-visible:ring-1 focus-visible:ring-primary/30"
               @blur="commitNameEdit"
               @keyup.enter="commitNameEdit"
             />
             <RelayBadge
-              class="h-5 border-none bg-emerald-500/15 px-2 py-0 text-[11px] font-medium text-emerald-600 shadow-none hover:bg-emerald-500/25"
+              class="h-5 border-none bg-success/15 px-2 py-0 text-[11px] font-medium text-success shadow-none hover:bg-success/25"
             >
               {{ t('COMPANIES.DETAIL.STATUS_ACTIVE') }}
             </RelayBadge>

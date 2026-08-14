@@ -164,7 +164,7 @@ watch(
         />
         <label
           for="captain-create-feature-faqs"
-          class="cursor-pointer select-none text-[13.5px] font-medium leading-none text-foreground"
+          class="cursor-pointer select-none text-[13.5px] leading-none text-foreground font-[500]"
         >
           {{ t('CAPTAIN.ASSISTANTS.FORM.FEATURES.ALLOW_CONVERSATION_FAQS') }}
         </label>
@@ -177,7 +177,7 @@ watch(
         />
         <label
           for="captain-create-feature-memories"
-          class="cursor-pointer select-none text-[13.5px] font-medium leading-none text-foreground"
+          class="cursor-pointer select-none text-[13.5px] leading-none text-foreground font-[500]"
         >
           {{ t('CAPTAIN.ASSISTANTS.FORM.FEATURES.ALLOW_MEMORIES') }}
         </label>
@@ -190,7 +190,7 @@ watch(
         />
         <label
           for="captain-create-feature-citations"
-          class="cursor-pointer select-none text-[13.5px] font-medium leading-none text-foreground"
+          class="cursor-pointer select-none text-[13.5px] leading-none text-foreground font-[500]"
         >
           {{ t('CAPTAIN.ASSISTANTS.FORM.FEATURES.ALLOW_CITATIONS') }}
         </label>

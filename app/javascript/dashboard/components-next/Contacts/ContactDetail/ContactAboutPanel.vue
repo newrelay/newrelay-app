@@ -168,14 +168,14 @@ const saveAbout = async () => {
     >
       <div class="border-b border-border/30 p-6">
         <h3
-          class="mb-6 flex items-center justify-between text-[15px] font-semibold text-foreground"
+          class="capitalize mb-6 flex items-center justify-between text-[15px] font-semibold text-foreground"
         >
           {{ t('CONTACTS_LAYOUT.DETAIL.ABOUT.TITLE') }}
           <RelayButton
             v-if="!isEditing"
             variant="ghost"
             size="icon"
-            class="size-6 text-muted-foreground hover:text-foreground"
+            class="size-6 text-muted-foreground hover:text-foreground border border-border hover:border-transparent"
             :title="t('CONTACTS_LAYOUT.DETAIL.ABOUT.EDIT')"
             @click="startEditing"
           >
@@ -300,7 +300,7 @@ const saveAbout = async () => {
               rounded-full
             />
             <div class="flex flex-1 flex-col gap-1.5">
-              <label class="text-[12px] font-medium text-foreground">
+              <label class="text-[12px] text-foreground text-[13.5px] font-[500]">
                 {{ t('CONTACTS_LAYOUT.DETAIL.ABOUT.FULL_NAME') }}
               </label>
               <RelayInput
@@ -311,7 +311,7 @@ const saveAbout = async () => {
           </div>
 
           <div class="flex flex-col gap-1.5">
-            <label class="text-[13.5px] font-medium text-foreground">
+            <label class="text-[13.5px] text-foreground font-[500]">
               {{ t('CONTACTS_LAYOUT.DETAIL.ABOUT.EMAIL') }}
             </label>
             <RelayInput
@@ -321,7 +321,7 @@ const saveAbout = async () => {
             />
           </div>
           <div class="flex flex-col gap-1.5">
-            <label class="text-[13.5px] font-medium text-foreground">
+            <label class="text-[13.5px] text-foreground font-[500]">
               {{ t('CONTACTS_LAYOUT.DETAIL.ABOUT.PHONE') }}
             </label>
             <RelayInput
@@ -330,7 +330,7 @@ const saveAbout = async () => {
             />
           </div>
           <div class="flex flex-col gap-1.5">
-            <label class="text-[13.5px] font-medium text-foreground">
+            <label class="text-[13.5px] text-foreground font-[500]">
               {{ t('CONTACTS_LAYOUT.DETAIL.ABOUT.ADDRESS') }}
             </label>
             <RelayInput
@@ -340,7 +340,7 @@ const saveAbout = async () => {
           </div>
 
           <div class="flex flex-col gap-1.5 pt-2">
-            <label class="text-[13.5px] font-medium text-foreground">
+            <label class="text-[13.5px] text-foreground font-[500]">
               {{ t('CONTACTS_LAYOUT.DETAIL.ABOUT.SOCIAL_LINKS') }}
             </label>
             <div class="mt-1 space-y-2">
@@ -362,7 +362,7 @@ const saveAbout = async () => {
                   </div>
                   <input
                     :value="link.handle"
-                    class="h-full min-w-0 flex-1 border-none bg-transparent px-1 text-foreground placeholder:text-muted-foreground focus:outline-none"
+                    class="h-full min-w-0 flex-1 border-none bg-transparent px-1 text-foreground placeholder:text-muted-foreground focus:outline-none text-[14px] shadow-sm rounded-md border-border/80 bg-background focus-visible:ring-1 focus-visible:ring-primary/30"
                     :placeholder="t('CONTACTS_LAYOUT.DETAIL.ABOUT.HANDLE')"
                     @input="updateSocialHandle(link.id, $event.target.value)"
                   />
@@ -370,7 +370,7 @@ const saveAbout = async () => {
                 <RelayButton
                   variant="ghost"
                   size="icon"
-                  class="size-8 shrink-0 text-muted-foreground hover:text-destructive"
+                  class="size-8 shrink-0 text-muted-foreground hover:text-destructive border border-border hover:border-transparent"
                   @click="removeSocialLink(link.id)"
                 >
                   <span class="i-lucide-x size-4" />
@@ -424,7 +424,7 @@ const saveAbout = async () => {
       </div>
 
       <div class="p-6">
-        <h3 class="mb-4 text-[15px] font-semibold text-foreground">
+        <h3 class="capitalize mb-4 text-[15px] font-semibold text-foreground">
           {{ t('CONTACTS_LAYOUT.DETAIL.ABOUT.STATUS_PROPERTIES') }}
         </h3>
         <div class="flex flex-col gap-3">

@@ -166,7 +166,7 @@ const handleSubmit = async () => {
           ref="fileInputRef"
           type="file"
           accept=".pdf"
-          class="hidden"
+          class="hidden text-[14px] shadow-sm rounded-md border-border/80 bg-background focus-visible:ring-1 focus-visible:ring-primary/30"
           @change="handleFileChange"
         />
         <RelayButton

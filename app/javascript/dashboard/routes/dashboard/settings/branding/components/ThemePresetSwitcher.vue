@@ -150,7 +150,7 @@ const shuffle = () => {
             v-model="query"
             type="search"
             :placeholder="$t('BRANDING_SETTINGS.THEME_SETTINGS.SEARCH')"
-            class="h-10 w-full bg-transparent text-sm outline-none placeholder:text-muted-foreground"
+            class="h-10 w-full bg-transparent outline-none placeholder:text-muted-foreground text-[14px] border-border/80 bg-background focus-visible:ring-1 focus-visible:ring-primary/30 shadow-sm rounded-md"
           />
         </div>
         <div

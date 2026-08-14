@@ -60,7 +60,7 @@ export default {
 </script>
 
 <template>
-  <label class="input-container">
+  <label class="input-container text-[13.5px] font-[500] text-foreground">
     <span v-if="label" class="text-heading-3">{{ label }}</span>
     <input
       :value="modelValue"

@@ -92,7 +92,7 @@ const authTypeLabel = computed(() => {
         >
           {{ httpMethod }}
         </RelayBadge>
-        <h3 class="truncate text-base font-semibold text-foreground">
+        <h3 class="capitalize truncate text-base font-semibold text-foreground">
           {{ title }}
         </h3>
       </div>

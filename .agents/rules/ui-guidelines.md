@@ -69,4 +69,6 @@ No hex codes or Tailwind static colors (e.g., `bg-blue-500`) are allowed. Everyt
 - **No unstyled native HTML elements**: Any dropdown, date picker, or complex UI must be designed custom using Reka UI to match the design system — no browser-default popups.
 - **Empty States**: Must have a temporary developer button at the very bottom to easily toggle mock data back and forth.
 - **Dark Mode**: Relies purely on the `.dark` class added to `<html>`. No `@media (prefers-color-scheme)` media queries.
-- **Copywriting**: The AI must consistently be referred to as "Relay AI" (never Captain AI or just Captain).
+- **Copywriting / AI Terminology**: The AI must consistently be referred to as "Relay AI" (never Captain, or Captain AI). Automatically interpret and replace any mentions of Captain with Relay AI.
+- **UI Consistency Across Pages**: Ensure every page resembles each other. Visual consistency is paramount. When successfully implementing a functional or visual UI component on one page and the user approves it, you MUST proactively ask the user if they want you to apply those exact same UI patterns and layouts to other relevant pages. Do not leave pages visually out-of-sync.
+- **Strict Color Adherence on New Components**: When building new components based on reference images, NEVER copy external or hardcoded colors from the reference. You must always translate the reference's intent into dynamic semantic variables (`bg-primary`, `bg-muted`, `bg-card`, etc.) to guarantee compatibility with light/dark modes.

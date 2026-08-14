@@ -132,7 +132,7 @@ const handleAvatarDelete = async () => {
         @delete="handleAvatarDelete"
       />
       <div class="flex flex-col gap-1">
-        <h3 class="text-base font-medium text-foreground">
+        <h3 class="capitalize text-base font-medium text-foreground">
           {{ selectedContact?.name }}
         </h3>
         <div class="flex flex-col gap-1.5">

@@ -200,7 +200,7 @@ const displayTime = attachment => {
     <section v-if="mediaAttachments.length" class="flex flex-col gap-2.5">
       <header class="flex items-center justify-between px-0.5">
         <h4
-          class="text-xs font-semibold tracking-wider uppercase text-muted-foreground"
+          class="capitalize text-xs font-semibold tracking-wider uppercase text-muted-foreground"
         >
           {{ t('CONVERSATION_SIDEBAR.SHARED_FILES.MEDIA_HEADING') }}
           <span
@@ -338,7 +338,7 @@ const displayTime = attachment => {
     <section v-if="fileAttachments.length" class="flex flex-col gap-2.5">
       <header class="flex items-center justify-between px-0.5">
         <h4
-          class="text-xs font-semibold tracking-wider uppercase text-muted-foreground"
+          class="capitalize text-xs font-semibold tracking-wider uppercase text-muted-foreground"
         >
           {{ t('CONVERSATION_SIDEBAR.SHARED_FILES.FILES_HEADING') }}
           <span

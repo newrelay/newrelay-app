@@ -25,7 +25,7 @@ defineProps({
     <div class="flex justify-between w-full gap-5">
       <div class="flex flex-col gap-2">
         <div class="flex flex-col gap-2 items-start">
-          <h2 class="text-xl font-medium text-foreground tracking-tight">
+          <h2 class="capitalize text-xl font-medium text-foreground tracking-tight">
             {{ headerTitle }}
           </h2>
           <p

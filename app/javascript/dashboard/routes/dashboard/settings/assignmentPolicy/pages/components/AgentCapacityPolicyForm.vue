@@ -231,7 +231,7 @@ defineExpose({
         v-if="showUserSection"
         class="space-y-2 border-t border-border/40 pt-2"
       >
-        <label class="block text-[13.5px] font-medium text-foreground">
+        <label class="block text-[13.5px] text-foreground font-[500]">
           {{ t(`${BASE_KEY}.FORM.USERS.LABEL`) }}
         </label>
 
@@ -288,7 +288,7 @@ defineExpose({
               <input
                 v-model="agentSearch"
                 type="text"
-                class="w-full rounded-md bg-muted/50 py-1.5 pl-8 pr-3 text-[13px] text-foreground outline-none placeholder:text-muted-foreground"
+                class="w-full bg-muted/50 py-1.5 pl-8 pr-3 text-[13px] text-foreground outline-none placeholder:text-muted-foreground text-[14px] border-border/80 bg-background focus-visible:ring-1 focus-visible:ring-primary/30 shadow-sm rounded-md"
                 :placeholder="
                   t(`${BASE_KEY}.FORM.USERS.DROPDOWN.SEARCH_PLACEHOLDER`)
                 "

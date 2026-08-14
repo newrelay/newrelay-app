@@ -74,7 +74,7 @@ const onImport = async file => {
     >
       <span class="i-lucide-users size-8 text-primary" />
     </div>
-    <h2 class="mb-2 text-base font-medium tracking-tight text-foreground">
+    <h2 class="capitalize mb-2 text-[20px] font-[600] tracking-tight text-foreground">
       {{ title || t('CONTACTS_LAYOUT.EMPTY_STATE.TITLE') }}
     </h2>
     <p class="mb-8 max-w-md text-sm text-muted-foreground">
@@ -88,7 +88,7 @@ const onImport = async file => {
         class="absolute right-0 top-0 h-32 w-32 translate-x-1/4 -translate-y-1/2 rounded-full bg-primary/5 blur-2xl"
       />
       <h3
-        class="mb-4 flex items-center justify-between text-sm font-semibold text-foreground"
+        class="capitalize mb-4 flex items-center justify-between text-sm font-semibold text-foreground"
       >
         {{ t('CONTACTS_LAYOUT.EMPTY_STATE.GETTING_STARTED') }}
         <span

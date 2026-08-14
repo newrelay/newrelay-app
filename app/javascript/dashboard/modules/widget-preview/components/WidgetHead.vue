@@ -54,7 +54,7 @@ const isDefaultScreen = computed(() => {
         </div>
       </div>
       <div v-if="isDefaultScreen" class="overflow-auto max-h-60">
-        <h2 class="mb-2 text-2xl break-words text-foreground">
+        <h2 class="capitalize mb-2 text-2xl break-words text-foreground">
           {{ config.welcomeHeading }}
         </h2>
         <p

@@ -47,7 +47,7 @@ const selectedItemId = computed(() => selectedItem.value?.id || null);
     class="flex w-full"
     :class="type === 'stateId' && shouldShowDropdown ? 'h-[150px]' : 'gap-2'"
   >
-    <label class="w-full" :class="{ error: hasError }">
+    <label class="w-full text-[13.5px] font-[500] text-foreground" :class="{ error: hasError }">
       {{ label }}
       <FilterButton
         trailing-icon

@@ -255,7 +255,7 @@ defineExpose({
         :key="section.key"
         class="space-y-3 pt-2"
       >
-        <label class="text-[13.5px] font-medium text-foreground">
+        <label class="text-[13.5px] text-foreground font-[500]">
           {{ section.label }}
         </label>
         <div class="grid grid-cols-1 gap-3 xs:grid-cols-2">
@@ -301,7 +301,7 @@ defineExpose({
 
       <div class="space-y-4 border-t border-border/40 pt-4">
         <div>
-          <h4 class="text-[14px] font-semibold text-foreground">
+          <h4 class="capitalize text-[14px] font-semibold text-foreground">
             {{ t(`${BASE_KEY}.FORM.FAIR_DISTRIBUTION.LABEL`) }}
           </h4>
           <p class="mt-1 text-[12.5px] leading-relaxed text-muted-foreground">
@@ -320,7 +320,7 @@ defineExpose({
       >
         <div class="flex w-full items-end justify-between gap-4">
           <div class="flex flex-col items-start gap-1 py-1">
-            <label class="py-1 text-sm font-medium text-foreground">
+            <label class="py-1 text-foreground text-[13.5px] font-[500]">
               {{ t(`${BASE_KEY}.FORM.INBOXES.LABEL`) }}
             </label>
             <p class="mb-0 text-sm text-muted-foreground">

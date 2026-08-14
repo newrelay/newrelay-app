@@ -122,7 +122,7 @@ defineExpose({ dialogRef });
             variant="ghost"
             size="sm"
             @click.stop="handleFileClick"
-          />
+           class="border border-border hover:border-transparent" />
           <div class="h-3 w-px bg-border mx-1" />
           <Button
             icon="i-lucide-trash"
@@ -130,7 +130,7 @@ defineExpose({ dialogRef });
             variant="ghost"
             size="sm"
             @click.stop="handleRemoveFile"
-          />
+           class="border border-border hover:border-transparent" />
         </div>
       </div>
     </div>
@@ -139,7 +139,7 @@ defineExpose({ dialogRef });
       ref="fileInput"
       type="file"
       accept="text/csv"
-      class="hidden"
+      class="hidden text-[14px] shadow-sm rounded-md border-border/80 bg-background focus-visible:ring-1 focus-visible:ring-primary/30"
       @change="handleFileChange"
     />
   </Dialog>

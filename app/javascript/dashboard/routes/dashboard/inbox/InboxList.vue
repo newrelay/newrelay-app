@@ -491,7 +491,7 @@ onMounted(() => {
               v-if="filteredNotifications.length"
               variant="ghost"
               size="sm"
-              class="h-8 text-xs text-muted-foreground hover:text-foreground"
+              class="h-8 text-xs text-muted-foreground hover:text-foreground border border-border hover:border-transparent"
               @click="toggleSelectAll"
             >
               {{
@@ -504,7 +504,7 @@ onMounted(() => {
               <RelayButton
                 variant="ghost"
                 size="sm"
-                class="h-8 text-xs text-muted-foreground hover:text-foreground"
+                class="h-8 text-xs text-muted-foreground hover:text-foreground border border-border hover:border-transparent"
                 @click="markSelectedAsRead"
               >
                 <span class="i-lucide-check-check size-3.5 mr-1" />
@@ -513,7 +513,7 @@ onMounted(() => {
               <RelayButton
                 variant="ghost"
                 size="sm"
-                class="h-8 text-xs text-destructive hover:text-destructive hover:bg-destructive/10"
+                class="h-8 text-xs text-destructive hover:text-destructive hover:bg-destructive/10 border border-border hover:border-transparent"
                 @click="deleteSelected"
               >
                 <span class="i-lucide-trash-2 size-3.5 mr-1" />
@@ -576,7 +576,7 @@ onMounted(() => {
               <RelayButton
                 variant="ghost"
                 size="icon"
-                class="h-8 w-8 text-muted-foreground"
+                class="h-8 w-8 text-muted-foreground border border-border hover:border-transparent"
                 :aria-label="t('INBOX.LIST.MORE_OPTIONS')"
                 @click="showTabMoreMenu = !showTabMoreMenu"
               >

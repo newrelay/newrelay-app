@@ -49,7 +49,7 @@ const onClickClose = () => {
       <RelayButton
         variant="ghost"
         size="icon"
-        class="size-6 flex-shrink-0 text-muted-foreground hover:text-foreground"
+        class="size-6 flex-shrink-0 text-muted-foreground hover:text-foreground border border-border hover:border-transparent"
         @click="onClickClose"
       >
         <span class="i-lucide-x size-3.5" />

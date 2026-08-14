@@ -78,7 +78,7 @@ const onRemove = () => {
         />
       </div>
       <div class="min-w-0 flex-1 pt-0.5">
-        <h4 class="text-[15px] font-bold leading-none text-foreground">
+        <h4 class="capitalize text-[15px] font-bold leading-none text-foreground">
           {{ name }}
         </h4>
         <p class="mt-2 text-[13px] leading-relaxed text-muted-foreground">
@@ -101,7 +101,7 @@ const onRemove = () => {
         <RelayButton
           variant="ghost"
           size="sm"
-          class="h-8 px-4 text-xs font-semibold text-rose-500 hover:bg-rose-50 hover:text-rose-600 dark:hover:bg-rose-500/10"
+          class="h-8 px-4 text-xs font-semibold text-destructive hover:bg-rose-50 hover:text-destructive dark:hover:bg-destructive/10 border border-border hover:border-transparent"
           :disabled="!enabled"
           @click="onRemove"
         >

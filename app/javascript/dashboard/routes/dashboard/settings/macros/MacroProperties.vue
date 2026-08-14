@@ -62,7 +62,7 @@ export default {
       <div
         class="flex items-center justify-between pb-4 border-b border-border/40 mb-6"
       >
-        <h3 class="text-base font-medium text-foreground">
+        <h3 class="capitalize text-base font-medium text-foreground">
           {{ $t('MACROS.EDITOR.DETAILS_TITLE') }}
         </h3>
         <button
@@ -76,14 +76,14 @@ export default {
 
       <!-- Name Field -->
       <div class="flex flex-col gap-2">
-        <label class="text-[14px] font-semibold text-foreground">
+        <label class="text-[14px] text-foreground text-[13.5px] font-[500]">
           {{ $t('MACROS.ADD.FORM.NAME.LABEL') }}
         </label>
         <input
           :value="macroName"
           type="text"
           :placeholder="$t('MACROS.ADD.FORM.NAME.PLACEHOLDER')"
-          class="h-10 px-3 text-[14px] shadow-sm rounded-lg bg-background border border-border/60 focus:border-border/80 focus-visible:ring-1 focus-visible:ring-primary/20 outline-none w-full"
+          class="h-10 px-3 text-[14px] bg-background border border-border/60 focus:border-border/80 focus-visible:ring-1 focus-visible:ring-primary/20 outline-none w-full focus-visible:ring-primary/30 shadow-sm rounded-md"
           :class="
             v$.macro.name.$error
               ? 'border-destructive/80 focus-visible:ring-destructive/30'
@@ -102,7 +102,7 @@ export default {
 
       <!-- Visibility Selection -->
       <div class="flex flex-col gap-2">
-        <label class="text-[14px] font-semibold text-foreground">
+        <label class="text-[14px] text-foreground text-[13.5px] font-[500]">
           {{ $t('MACROS.EDITOR.VISIBILITY.LABEL') }}
         </label>
         <div class="grid grid-cols-2 gap-3">
@@ -180,13 +180,13 @@ export default {
 
       <!-- Info Box -->
       <div
-        class="p-4 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-800 flex items-start gap-3"
+        class="p-4 rounded-xl bg-background dark:bg-slate-900 border border-slate-100 dark:border-slate-800 flex items-start gap-3"
       >
         <span
           class="i-lucide-info size-4.5 text-primary shrink-0 mt-0.5 block"
         />
         <p
-          class="text-[13px] text-slate-600 dark:text-slate-400 leading-relaxed mb-0"
+          class="text-[13px] text-muted-foreground dark:text-muted-foreground leading-relaxed mb-0"
         >
           {{ $t('MACROS.ORDER_INFO') }}
         </p>

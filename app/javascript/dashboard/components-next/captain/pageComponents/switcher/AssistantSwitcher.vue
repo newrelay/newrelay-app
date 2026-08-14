@@ -116,7 +116,7 @@ const openCreateAssistantDialog = () => {
         :key="assistant.id"
         variant="ghost"
         size="sm"
-        class="h-9 w-full justify-start gap-2 !px-2 !py-2 hover:bg-muted/60"
+        class="h-9 w-full justify-start gap-2 !px-2 !py-2 hover:bg-muted/60 border border-border hover:border-transparent"
         @click="handleAssistantChange(assistant)"
       >
         <span

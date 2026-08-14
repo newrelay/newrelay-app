@@ -161,7 +161,7 @@ const statusTextColorClass = computed(() => {
       <RelayButton
         variant="ghost"
         size="icon"
-        class="text-muted-foreground shrink-0 focus-visible:ring-0"
+        class="text-muted-foreground shrink-0 focus-visible:ring-0 border border-border hover:border-transparent"
         @click="toggleSidebar"
       >
         <span class="i-lucide-panel-right size-4" />

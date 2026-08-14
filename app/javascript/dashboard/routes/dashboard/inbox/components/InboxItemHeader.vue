@@ -219,7 +219,7 @@ export default {
       <RelayButton
         variant="ghost"
         size="icon"
-        class="size-8 text-muted-foreground hover:text-foreground"
+        class="size-8 text-muted-foreground hover:text-foreground border border-border hover:border-transparent"
         :aria-label="$t('INBOX.ACTION_HEADER.BACK')"
         @click="onClickGoToInboxList"
       >
@@ -246,7 +246,7 @@ export default {
         <RelayButton
           variant="ghost"
           size="icon"
-          class="size-8 text-muted-foreground hover:text-foreground"
+          class="size-8 text-muted-foreground hover:text-foreground border border-border hover:border-transparent"
           :aria-label="$t('CONVERSATION.HEADER.MORE_ACTIONS')"
           @click="showMoreActionsDropdown = !showMoreActionsDropdown"
         >
@@ -263,7 +263,7 @@ export default {
       <RelayButton
         variant="ghost"
         size="icon"
-        class="size-8 text-muted-foreground hover:text-foreground"
+        class="size-8 text-muted-foreground hover:text-foreground border border-border hover:border-transparent"
         :class="{ 'bg-accent text-accent-foreground': isContactSidebarOpen }"
         @click="toggleContactSidebar"
       >

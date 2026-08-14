@@ -324,7 +324,7 @@ export default {
           type="checkbox"
           @change="handleHmacFlag"
         />
-        <label for="hmacMandatory" class="text-body-main text-foreground">
+        <label for="hmacMandatory" class="text-body-main text-foreground text-[13.5px] font-[500]">
           {{ $t('INBOX_MGMT.EDIT.ENABLE_HMAC.LABEL') }}
         </label>
       </div>

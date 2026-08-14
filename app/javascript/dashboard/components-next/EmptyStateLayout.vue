@@ -52,7 +52,7 @@ defineOptions({
       >
         <slot name="icon" />
       </div>
-      <h2 class="mb-2.5 text-[20px] font-[600] text-foreground">
+      <h2 class="capitalize mb-2.5 text-[20px] font-[600] text-foreground">
         {{ title }}
       </h2>
       <div v-if="subtitle" class="relative mx-auto mb-6 max-w-md">

@@ -107,9 +107,9 @@ const articleMenuItems = computed(() => {
 const statusBadgeClass = computed(() => {
   switch (props.status) {
     case 'archived':
-      return 'bg-violet-500/10 text-violet-700 border border-violet-500/20';
+      return 'bg-accent text-accent-foreground border border-border';
     case 'draft':
-      return 'bg-amber-500/10 text-amber-600 border border-amber-500/20';
+      return 'bg-warning/10 text-warning border border-warning/20';
     default:
       return 'bg-primary/10 text-primary border border-primary/20';
   }
@@ -151,8 +151,8 @@ const authorAvatarColor = computed(() => {
   const colors = [
     'bg-primary/10 text-primary',
     'bg-primary/20 text-primary',
-    'bg-violet-500/10 text-violet-700',
-    'bg-amber-500/10 text-amber-600',
+    'bg-accent text-accent-foreground',
+    'bg-warning/10 text-warning',
     'bg-muted text-foreground',
   ];
   return colors[code];
@@ -201,7 +201,7 @@ const handleClick = id => {
 
       <div class="flex min-w-0 flex-1 flex-col gap-1.5">
         <h3
-          class="truncate text-[15px] font-normal text-foreground transition-colors group-hover:text-primary"
+          class="capitalize truncate text-[15px] font-normal text-foreground transition-colors group-hover:text-primary"
         >
           {{ title }}
         </h3>

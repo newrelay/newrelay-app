@@ -104,7 +104,7 @@ const copySecret = async () => {
 <template>
   <form class="flex w-full flex-col gap-5" @submit.prevent="onSubmit">
     <div class="flex flex-col gap-1.5">
-      <label class="text-[13.5px] font-medium text-foreground">
+      <label class="text-[13.5px] text-foreground font-[500]">
         {{ t('INTEGRATION_SETTINGS.WEBHOOK.FORM.END_POINT.LABEL') }}
       </label>
       <RelayInput
@@ -120,7 +120,7 @@ const copySecret = async () => {
     </div>
 
     <div class="flex flex-col gap-1.5">
-      <label class="text-[13.5px] font-medium text-foreground">
+      <label class="text-[13.5px] text-foreground font-[500]">
         {{ t('INTEGRATION_SETTINGS.WEBHOOK.FORM.NAME.LABEL') }}
       </label>
       <RelayInput
@@ -132,7 +132,7 @@ const copySecret = async () => {
     </div>
 
     <div v-if="hasSecret" class="flex flex-col gap-1.5">
-      <label class="text-[13.5px] font-medium text-foreground">
+      <label class="text-[13.5px] text-foreground font-[500]">
         {{ t('INTEGRATION_SETTINGS.WEBHOOK.SECRET.LABEL') }}
       </label>
       <div class="flex items-center gap-2">
@@ -143,7 +143,7 @@ const copySecret = async () => {
             "
             type="text"
             readonly
-            class="h-10 w-full rounded-md border border-border/80 bg-background pl-3 pr-10 font-mono text-[14px] text-foreground shadow-sm focus:outline-none"
+            class="h-10 w-full border border-border/80 bg-background pl-3 pr-10 font-mono text-[14px] text-foreground focus:outline-none focus-visible:ring-1 focus-visible:ring-primary/30 shadow-sm rounded-md"
           />
           <button
             type="button"
@@ -168,7 +168,7 @@ const copySecret = async () => {
     </div>
 
     <div class="flex flex-col gap-2">
-      <label class="text-[13.5px] font-medium text-foreground">
+      <label class="text-[13.5px] text-foreground font-[500]">
         {{ t('INTEGRATION_SETTINGS.WEBHOOK.FORM.SUBSCRIPTIONS.LABEL') }}
       </label>
       <div class="flex flex-col gap-2.5">

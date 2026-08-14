@@ -311,7 +311,7 @@ defineExpose({
   >
     <div class="flex flex-col gap-4">
       <div v-if="showCountrySelect">
-        <label class="block text-sm font-medium text-foreground mb-1">
+        <label class="block text-foreground mb-1 text-[13.5px] font-[500]">
           {{ $t('BILLING_SETTINGS.SELECT_PLAN.COUNTRY_LABEL') }}
         </label>
         <ComboBox

@@ -137,11 +137,11 @@ onMounted(fetchTestimonials);
     <div class="flex items-center justify-between">
       <div>
         <h2
-          class="text-2xl font-extrabold text-slate-900 dark:text-white tracking-tight"
+          class="capitalize text-2xl font-extrabold text-foreground dark:text-white tracking-tight"
         >
           Video Testimonials
         </h2>
-        <p class="text-xs text-slate-400 mt-0.5">
+        <p class="text-xs text-muted-foreground mt-0.5">
           Watch and manage the video testimonials submitted by your customers.
         </p>
       </div>
@@ -169,7 +169,7 @@ onMounted(fetchTestimonials);
         <a
           :href="`/reputation/video/${accountId}/new`"
           target="_blank"
-          class="px-4 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-750 text-slate-700 dark:text-slate-200 rounded-xl text-xs font-bold shadow-sm transition-all flex items-center gap-1.5"
+          class="px-4 py-2 bg-white dark:bg-slate-800 border border-border dark:border-slate-700 hover:bg-background dark:hover:bg-slate-750 text-foreground dark:text-slate-200 rounded-xl text-xs font-bold shadow-sm transition-all flex items-center gap-1.5"
         >
           <svg
             class="size-4"
@@ -192,10 +192,10 @@ onMounted(fetchTestimonials);
     <!-- Empty State -->
     <div
       v-if="!loading && testimonials.length === 0"
-      class="flex flex-col items-center justify-center py-20 bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-850 rounded-2xl"
+      class="flex flex-col items-center justify-center py-20 bg-white dark:bg-slate-900 border border-border/80 dark:border-slate-850 rounded-2xl"
     >
       <div
-        class="p-3.5 rounded-full bg-slate-100 dark:bg-slate-850 text-slate-400"
+        class="p-3.5 rounded-full bg-muted dark:bg-slate-850 text-muted-foreground"
       >
         <svg
           class="size-7"
@@ -211,10 +211,10 @@ onMounted(fetchTestimonials);
           />
         </svg>
       </div>
-      <h3 class="font-extrabold text-slate-800 dark:text-slate-200 mt-4">
+      <h3 class="capitalize font-extrabold text-foreground dark:text-slate-200 mt-4">
         No video testimonials yet
       </h3>
-      <p class="text-xs text-slate-400 mt-1 max-w-sm text-center">
+      <p class="text-xs text-muted-foreground mt-1 max-w-sm text-center">
         Share the submission form link with your customers to start collecting
         video testimonials.
       </p>
@@ -228,7 +228,7 @@ onMounted(fetchTestimonials);
       <div
         v-for="t in testimonials"
         :key="t.id"
-        class="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-850 rounded-2xl shadow-sm overflow-hidden flex flex-col group"
+        class="bg-white dark:bg-slate-900 border border-border/80 dark:border-slate-850 rounded-2xl shadow-sm overflow-hidden flex flex-col group"
       >
         <!-- Video Player -->
         <div class="aspect-video bg-black relative">
@@ -241,7 +241,7 @@ onMounted(fetchTestimonials);
           />
           <div
             v-else
-            class="w-full h-full flex flex-col items-center justify-center text-slate-500"
+            class="w-full h-full flex flex-col items-center justify-center text-muted-foreground"
           >
             <svg
               class="size-8 mb-2 opacity-50"
@@ -264,11 +264,11 @@ onMounted(fetchTestimonials);
         <div class="p-4 flex-1 flex flex-col justify-between space-y-4">
           <div>
             <h3
-              class="font-extrabold text-slate-800 dark:text-slate-100 text-sm line-clamp-2"
+              class="capitalize font-extrabold text-foreground dark:text-slate-100 text-sm line-clamp-2"
             >
               "{{ t.title }}"
             </h3>
-            <p class="text-[11px] text-slate-500 font-medium mt-1">
+            <p class="text-[11px] text-muted-foreground font-medium mt-1">
               {{ t.email }}
             </p>
           </div>
@@ -276,11 +276,11 @@ onMounted(fetchTestimonials);
           <div
             class="flex items-center justify-between pt-3 border-t border-slate-100 dark:border-slate-800"
           >
-            <span class="text-[10px] text-slate-400 font-medium">{{
+            <span class="text-[10px] text-muted-foreground font-medium">{{
               formatDate(t.created_at)
             }}</span>
             <button
-              class="text-[10px] uppercase font-bold tracking-wider text-red-500 hover:text-red-600 px-2 py-1 hover:bg-red-50 dark:hover:bg-red-900/30 rounded-lg transition-colors"
+              class="text-[10px] uppercase font-bold tracking-wider text-destructive hover:text-destructive px-2 py-1 hover:bg-red-50 dark:hover:bg-red-900/30 rounded-lg transition-colors"
               @click="deleteTestimonial(t.id)"
             >
               Delete
@@ -293,10 +293,10 @@ onMounted(fetchTestimonials);
     <!-- Outbound Logs -->
     <div
       v-if="!loading"
-      class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-850 shadow-sm overflow-hidden mt-8"
+      class="bg-white dark:bg-slate-900 rounded-2xl border border-border/80 dark:border-slate-850 shadow-sm overflow-hidden mt-8"
     >
       <div class="px-6 py-4 border-b border-slate-100 dark:border-slate-850">
-        <h3 class="font-extrabold text-slate-900 dark:text-white text-sm">
+        <h3 class="capitalize font-extrabold text-foreground dark:text-white text-sm">
           Outbound Video Requests
         </h3>
       </div>
@@ -306,7 +306,7 @@ onMounted(fetchTestimonials);
         class="flex flex-col items-center justify-center py-16 space-y-2"
       >
         <div
-          class="p-3 rounded-full bg-slate-100 dark:bg-slate-850 text-slate-400"
+          class="p-3 rounded-full bg-muted dark:bg-slate-850 text-muted-foreground"
         >
           <svg
             class="size-6"
@@ -322,7 +322,7 @@ onMounted(fetchTestimonials);
             />
           </svg>
         </div>
-        <p class="text-sm font-bold text-slate-700 dark:text-slate-355">
+        <p class="text-sm font-bold text-foreground dark:text-slate-355">
           No video requests dispatched
         </p>
       </div>
@@ -330,7 +330,7 @@ onMounted(fetchTestimonials);
       <table v-else class="w-full text-left border-collapse">
         <thead>
           <tr
-            class="bg-slate-50 dark:bg-slate-800/40 text-[10px] font-extrabold text-slate-400 uppercase tracking-wider"
+            class="bg-background dark:bg-slate-800/40 text-[10px] font-extrabold text-muted-foreground uppercase tracking-wider"
           >
             <th class="px-6 py-3.5">Contact Name</th>
             <th class="px-6 py-3.5">Template</th>
@@ -343,12 +343,12 @@ onMounted(fetchTestimonials);
           <tr
             v-for="req in requests"
             :key="req.id"
-            class="hover:bg-slate-50/50 dark:hover:bg-slate-850/30 text-xs transition-colors"
+            class="hover:bg-background/50 dark:hover:bg-slate-850/30 text-xs transition-colors"
           >
-            <td class="px-6 py-4 font-bold text-slate-800 dark:text-slate-200">
+            <td class="px-6 py-4 font-bold text-foreground dark:text-slate-200">
               <div class="flex flex-col">
                 <span>{{ req.contact?.name || 'Customer' }}</span>
-                <span class="text-[10px] text-slate-400 font-normal mt-0.5">
+                <span class="text-[10px] text-muted-foreground font-normal mt-0.5">
                   {{
                     req.contact?.phone_number ||
                     req.contact?.email ||
@@ -357,12 +357,12 @@ onMounted(fetchTestimonials);
                 </span>
               </div>
             </td>
-            <td class="px-6 py-4 text-slate-600 dark:text-slate-350">
+            <td class="px-6 py-4 text-muted-foreground dark:text-slate-350">
               {{ req.reputation_template?.name || 'Custom' }}
             </td>
             <td class="px-6 py-4">
               <span
-                class="px-2 py-0.5 text-[10px] font-bold rounded-lg uppercase bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300"
+                class="px-2 py-0.5 text-[10px] font-bold rounded-lg uppercase bg-muted dark:bg-slate-800 text-muted-foreground dark:text-slate-300"
               >
                 {{ req.channel }}
               </span>
@@ -375,7 +375,7 @@ onMounted(fetchTestimonials);
                 {{ req.status }}
               </span>
             </td>
-            <td class="px-6 py-4 text-right text-slate-400">
+            <td class="px-6 py-4 text-right text-muted-foreground">
               {{ new Date(req.created_at).toLocaleDateString() }}
             </td>
           </tr>
@@ -389,16 +389,16 @@ onMounted(fetchTestimonials);
       class="fixed inset-0 z-50 overflow-y-auto flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm transition-all"
     >
       <div
-        class="relative w-full max-w-lg bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-2xl p-6 space-y-5"
+        class="relative w-full max-w-lg bg-white dark:bg-slate-900 rounded-2xl border border-border/80 dark:border-slate-800 shadow-2xl p-6 space-y-5"
       >
         <div
           class="flex items-center justify-between border-b border-slate-100 dark:border-slate-850 pb-3"
         >
-          <h3 class="text-base font-extrabold text-slate-950 dark:text-white">
+          <h3 class="capitalize text-base font-extrabold text-slate-950 dark:text-white">
             Send Video Testimonial Request
           </h3>
           <button
-            class="p-1 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-850 text-slate-400"
+            class="p-1 rounded-lg hover:bg-muted dark:hover:bg-slate-850 text-muted-foreground"
             @click="showModal = false"
           >
             <svg
@@ -420,23 +420,23 @@ onMounted(fetchTestimonials);
         <div class="space-y-4">
           <div class="space-y-1.5">
             <label
-              class="block text-xs font-bold text-slate-450 uppercase tracking-wider"
+              class="block text-slate-450 uppercase tracking-wider text-[13.5px] font-[500] text-foreground"
               >Customer Email</label>
             <input
               v-model="requestForm.email"
               type="email"
               placeholder="customer@example.com"
-              class="w-full text-xs rounded-xl border border-slate-200 dark:border-slate-700 dark:bg-slate-850 p-3 focus:outline-none focus:ring-2 focus:ring-woot-500"
+              class="w-full rounded-xl border border-border dark:border-slate-700 dark:bg-slate-850 p-3 focus:outline-none focus:ring-2 focus:ring-woot-500 text-[14px] border-border/80 bg-background focus-visible:ring-1 focus-visible:ring-primary/30 shadow-sm rounded-md"
             />
           </div>
 
           <div class="space-y-1.5">
             <label
-              class="block text-xs font-bold text-slate-450 uppercase tracking-wider"
+              class="block text-slate-450 uppercase tracking-wider text-[13.5px] font-[500] text-foreground"
               >Message Template (Optional)</label>
             <select
               v-model="selectedTemplate"
-              class="w-full text-xs rounded-xl border border-slate-200 dark:border-slate-700 dark:bg-slate-850 p-3 focus:outline-none focus:ring-2 focus:ring-woot-500"
+              class="w-full text-xs rounded-xl border border-border dark:border-slate-700 dark:bg-slate-850 p-3 focus:outline-none focus:ring-2 focus:ring-woot-500"
               @change="handleTemplateChange"
             >
               <option :value="null">Select a template to autofill...</option>
@@ -448,27 +448,27 @@ onMounted(fetchTestimonials);
 
           <div class="space-y-1.5">
             <label
-              class="block text-xs font-bold text-slate-450 uppercase tracking-wider"
+              class="block text-slate-450 uppercase tracking-wider text-[13.5px] font-[500] text-foreground"
               >Email Subject</label>
             <input
               v-model="requestForm.subject"
               type="text"
-              class="w-full text-xs rounded-xl border border-slate-200 dark:border-slate-700 dark:bg-slate-850 p-3 focus:outline-none focus:ring-2 focus:ring-woot-500"
+              class="w-full rounded-xl border border-border dark:border-slate-700 dark:bg-slate-850 p-3 focus:outline-none focus:ring-2 focus:ring-woot-500 text-[14px] border-border/80 bg-background focus-visible:ring-1 focus-visible:ring-primary/30 shadow-sm rounded-md"
             />
           </div>
 
           <div class="space-y-1.5">
             <label
-              class="block text-xs font-bold text-slate-450 uppercase tracking-wider"
+              class="block text-slate-450 uppercase tracking-wider text-[13.5px] font-[500] text-foreground"
               >Message</label>
             <textarea
               v-model="requestForm.body"
               rows="5"
-              class="w-full text-xs rounded-xl border border-slate-200 dark:border-slate-700 dark:bg-slate-850 p-3 focus:outline-none focus:ring-2 focus:ring-woot-500 font-mono"
+              class="w-full rounded-xl border border-border dark:border-slate-700 dark:bg-slate-850 p-3 focus:outline-none focus:ring-2 focus:ring-woot-500 font-mono text-[14px] border-border/80 bg-background focus-visible:ring-1 focus-visible:ring-primary/30 shadow-sm rounded-md"
             />
-            <p class="text-[10px] text-slate-400 mt-1">
+            <p class="text-[10px] text-muted-foreground mt-1">
               Keep
-              <code class="bg-slate-100 dark:bg-slate-800 px-1 rounded">{{
+              <code class="bg-muted dark:bg-slate-800 px-1 rounded">{{
                 video_link
               }}</code>
               in the message, it will be replaced by the real link.
@@ -480,7 +480,7 @@ onMounted(fetchTestimonials);
           class="flex justify-end gap-2 pt-3 border-t border-slate-100 dark:border-slate-850"
         >
           <button
-            class="px-4 py-2 text-xs font-bold text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-850 rounded-xl border border-slate-200 dark:border-slate-800"
+            class="px-4 py-2 text-xs font-bold text-muted-foreground hover:bg-background dark:hover:bg-slate-850 rounded-xl border border-border dark:border-slate-800"
             @click="showModal = false"
           >
             Cancel

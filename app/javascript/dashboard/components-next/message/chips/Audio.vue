@@ -195,7 +195,7 @@ const downloadAudio = async () => {
           min="0"
           :max="duration"
           :value="currentTime"
-          class="w-full h-1 bg-foreground/40 rounded-lg appearance-none cursor-pointer accent-current"
+          class="w-full h-1 bg-foreground/40 appearance-none cursor-pointer accent-current text-[14px] shadow-sm rounded-md border-border/80 bg-background focus-visible:ring-1 focus-visible:ring-primary/30"
           @input="seek"
         />
       </div>

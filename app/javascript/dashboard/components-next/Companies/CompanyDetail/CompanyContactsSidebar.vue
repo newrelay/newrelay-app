@@ -172,7 +172,7 @@ const handleContactSelect = contactId => {
   <div class="flex flex-col gap-6 px-6 pb-8">
     <div v-if="!selectedContact" class="flex flex-col gap-4">
       <div class="flex flex-col gap-2">
-        <label class="text-base text-foreground">
+        <label class="text-foreground text-[13.5px] font-[500]">
           {{ t('COMPANIES.DETAIL.CONTACTS.ACTIONS.ADD') }}
         </label>
         <span class="text-sm text-muted-foreground">
@@ -197,7 +197,7 @@ const handleContactSelect = contactId => {
 
     <div v-else class="flex flex-col gap-4">
       <div class="flex flex-col gap-2">
-        <label class="text-base text-foreground">
+        <label class="text-foreground text-[13.5px] font-[500]">
           {{ t('COMPANIES.DETAIL.CONTACTS.DIALOGS.ADD.CONFIRM_TITLE') }}
         </label>
         <span class="text-sm text-muted-foreground">
@@ -212,7 +212,7 @@ const handleContactSelect = contactId => {
           class="flex flex-col gap-2"
         >
           <div class="flex items-center justify-between h-5 gap-2">
-            <label class="text-sm text-foreground">
+            <label class="text-foreground text-[13.5px] font-[500]">
               {{ row.label }}
             </label>
             <span
@@ -271,7 +271,7 @@ const handleContactSelect = contactId => {
 
     <div class="flex flex-col gap-3">
       <div class="flex items-center justify-between gap-3">
-        <h4 class="text-sm font-medium text-foreground">
+        <h4 class="capitalize text-sm font-medium text-foreground">
           {{ t('COMPANIES.DETAIL.SIDEBAR.TABS.CONTACTS') }}
         </h4>
         <span
@@ -334,7 +334,7 @@ const handleContactSelect = contactId => {
             color="slate"
             variant="ghost"
             size="xs"
-            class="shrink-0 opacity-70 transition-opacity sm:opacity-0 sm:group-hover/contact:opacity-100 sm:focus-visible:opacity-100"
+            class="shrink-0 opacity-70 transition-opacity sm:opacity-0 sm:group-hover/contact:opacity-100 sm:focus-visible:opacity-100 border border-border hover:border-transparent"
             :disabled="isBusy"
             :title="t('COMPANIES.DETAIL.CONTACTS.ACTIONS.REMOVE')"
             :aria-label="t('COMPANIES.DETAIL.CONTACTS.ACTIONS.REMOVE')"

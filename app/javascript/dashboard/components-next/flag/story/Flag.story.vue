@@ -30,7 +30,7 @@ const SizeVariants = {
   },
   template: `
     <div class="flex flex-col gap-4">
-      <label class="flex items-center gap-2">
+      <label class="flex items-center gap-2 text-[13.5px] font-[500] text-foreground">
         <input type="checkbox" v-model="isSquared">
         Squared flags
       </label>
@@ -52,7 +52,7 @@ const AllFlags = {
   },
   template: `
     <div class="flex flex-col gap-4">
-      <label class="flex items-center gap-2">
+      <label class="flex items-center gap-2 text-[13.5px] font-[500] text-foreground">
         <input type="checkbox" v-model="isSquared">
         Squared flags
       </label>

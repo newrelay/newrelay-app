@@ -56,7 +56,7 @@ const resetAccessToken = async () => {
     <template #body>
       <div class="space-y-6">
         <div>
-          <h2 class="text-base font-medium text-foreground">
+          <h2 class="capitalize text-base font-medium text-foreground">
             {{ t('INTEGRATION_SETTINGS.API_KEYS.HEADER') }}
           </h2>
           <p
@@ -76,7 +76,7 @@ const resetAccessToken = async () => {
               <Icon icon="i-lucide-code" class="size-5 text-primary" />
             </div>
             <div>
-              <h3 class="text-base font-semibold text-foreground">
+              <h3 class="capitalize text-base font-semibold text-foreground">
                 {{
                   t('INTEGRATION_SETTINGS.API_KEYS.ACCOUNT_ID.SECTION_TITLE')
                 }}
@@ -91,7 +91,7 @@ const resetAccessToken = async () => {
             </div>
           </header>
           <div class="flex flex-col gap-2 p-4 sm:p-6">
-            <label class="block text-sm font-medium text-foreground">
+            <label class="block text-foreground text-[13.5px] font-[500]">
               {{ t('INTEGRATION_SETTINGS.API_KEYS.ACCOUNT_ID.TITLE') }}
             </label>
             <div class="mt-1 flex w-full">
@@ -134,7 +134,7 @@ const resetAccessToken = async () => {
               <Icon icon="i-lucide-key-round" class="size-5 text-primary" />
             </div>
             <div>
-              <h3 class="text-base font-semibold text-foreground">
+              <h3 class="capitalize text-base font-semibold text-foreground">
                 {{ t('INTEGRATION_SETTINGS.API_KEYS.ACCESS_TOKEN.TITLE') }}
               </h3>
               <p class="mt-1 text-sm leading-relaxed text-muted-foreground">
@@ -153,7 +153,7 @@ const resetAccessToken = async () => {
                     showToken ? accessToken : '••••••••••••••••••••••••••••••••'
                   "
                   readonly
-                  class="h-10 w-full rounded-md border border-border/80 bg-background pl-3 pr-10 font-mono text-[14px] text-foreground shadow-sm focus:outline-none"
+                  class="h-10 w-full border border-border/80 bg-background pl-3 pr-10 font-mono text-[14px] text-foreground focus:outline-none focus-visible:ring-1 focus-visible:ring-primary/30 shadow-sm rounded-md"
                 />
                 <button
                   type="button"

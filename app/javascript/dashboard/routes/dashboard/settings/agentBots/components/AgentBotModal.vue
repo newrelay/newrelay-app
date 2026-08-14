@@ -338,7 +338,7 @@ watch(() => props.selectedBot, initializeForm, { deep: true });
               v-model="formState.botDescription"
               :placeholder="t('AGENT_BOTS.FORM.DESCRIPTION.PLACEHOLDER')"
               :maxlength="DESCRIPTION_MAX"
-              class="h-[100px] w-full resize-none rounded-md border border-border/80 bg-background p-3 text-[14px] text-foreground shadow-sm focus:outline-none focus-visible:ring-1 focus-visible:ring-primary/30"
+              class="h-[100px] w-full resize-none border border-border/80 bg-background p-3 text-[14px] text-foreground focus:outline-none focus-visible:ring-1 focus-visible:ring-primary/30 shadow-sm rounded-md"
             />
             <div
               class="absolute bottom-3 text-[12px] font-medium text-muted-foreground ltr:right-3 rtl:left-3"
@@ -386,7 +386,7 @@ watch(() => props.selectedBot, initializeForm, { deep: true });
                   showTokenValue ? accessToken : '••••••••••••••••••••••••'
                 "
                 readonly
-                class="h-10 w-full rounded-md border border-border/80 bg-background pl-3 pr-9 font-mono text-[14px] text-foreground shadow-sm focus:outline-none"
+                class="h-10 w-full border border-border/80 bg-background pl-3 pr-9 font-mono text-[14px] text-foreground focus:outline-none focus-visible:ring-1 focus-visible:ring-primary/30 shadow-sm rounded-md"
               />
               <button
                 type="button"
@@ -459,7 +459,7 @@ watch(() => props.selectedBot, initializeForm, { deep: true });
               :type="showTokenValue ? 'text' : 'password'"
               :value="showTokenValue ? accessToken : '••••••••••••••••••••••••'"
               readonly
-              class="h-10 w-full rounded-md border border-border/80 bg-background pl-3 pr-10 font-mono text-[14px] text-foreground shadow-sm focus:outline-none"
+              class="h-10 w-full border border-border/80 bg-background pl-3 pr-10 font-mono text-[14px] text-foreground focus:outline-none focus-visible:ring-1 focus-visible:ring-primary/30 shadow-sm rounded-md"
             />
             <button
               type="button"
@@ -497,7 +497,7 @@ watch(() => props.selectedBot, initializeForm, { deep: true });
               :type="showSecretValue ? 'text' : 'password'"
               :value="showSecretValue ? botSecret : '••••••••••••••••••••••••'"
               readonly
-              class="h-10 w-full rounded-md border border-border/80 bg-background pl-3 pr-10 font-mono text-[14px] text-foreground shadow-sm focus:outline-none"
+              class="h-10 w-full border border-border/80 bg-background pl-3 pr-10 font-mono text-[14px] text-foreground focus:outline-none focus-visible:ring-1 focus-visible:ring-primary/30 shadow-sm rounded-md"
             />
             <button
               type="button"

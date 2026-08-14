@@ -2,9 +2,17 @@
 import { computed, ref } from 'vue';
 import SidebarGroupLeaf from './SidebarGroupLeaf.vue';
 import SidebarGroupSeparator from './SidebarGroupSeparator.vue';
-
+import SidebarTreeChrome from './SidebarTreeChrome.vue';
 import { useSidebarContext } from './provider';
 import { useEventListener } from '@vueuse/core';
+import {
+  SIDEBAR_TREE_INDENT,
+  SIDEBAR_TREE_LIST_DOTS,
+  treeBranchItemClass,
+  treeButtonLevel,
+  treeRowClass,
+  shouldConnectBranchDown,
+} from './sidebarTree';
 
 const props = defineProps({
   isExpanded: { type: Boolean, default: false },
@@ -12,100 +20,80 @@ const props = defineProps({
   icon: { type: [Object, String], required: true },
   children: { type: Array, default: undefined },
   activeChild: { type: Object, default: undefined },
+  depth: { type: Number, default: 1 },
+  isLast: { type: Boolean, default: false },
 });
 
 const { isAllowed } = useSidebarContext();
 const scrollableContainer = ref(null);
 
 const accessibleItems = computed(() =>
-  props.children.filter(child => {
-    return child.to && isAllowed(child.to);
-  })
+  props.children.filter(child => child.to && isAllowed(child.to))
 );
 
-const hasAccessibleItems = computed(() => {
-  return accessibleItems.value.length > 0;
-});
+const hasAccessibleItems = computed(() => accessibleItems.value.length > 0);
 
-const isScrollable = computed(() => {
-  return accessibleItems.value.length > 7;
-});
+const isScrollable = computed(() => accessibleItems.value.length > 7);
 
 const scrollEnd = ref(false);
 
-// set scrollEnd to true when the scroll reaches the end
 useEventListener(scrollableContainer, 'scroll', () => {
   const { scrollHeight, scrollTop, clientHeight } = scrollableContainer.value;
   scrollEnd.value = scrollHeight - scrollTop === clientHeight;
 });
+
+const buttonLevel = computed(() =>
+  treeButtonLevel({ depth: props.depth, isLeaf: false, collapsible: false })
+);
+
+const rowClass = computed(() => treeRowClass(buttonLevel.value));
+
+const connectRowDown = computed(() =>
+  shouldConnectBranchDown({
+    isLast: props.isLast,
+    isOpen: props.isExpanded,
+    depth: props.depth,
+  })
+);
 </script>
 
+<!-- eslint-disable-next-line vue/no-root-v-if -->
 <template>
-  <SidebarGroupSeparator
+  <li
     v-if="hasAccessibleItems"
-    v-show="isExpanded"
-    :label
-    :icon
-    class="my-1"
-  />
-  <ul
-    v-if="children.length"
-    class="m-0 list-none reset-base relative group min-w-0"
+    :class="[
+      'group/menu-sub-item relative min-w-0',
+      treeBranchItemClass({ isOpen: isExpanded, depth }),
+    ]"
   >
-    <!-- Each element has h-8, which is 32px, we will show 7 items with one hidden at the end,
-    which is 14rem. Then we add 16px so that we have some text visible from the next item  -->
-    <div
+    <div :class="rowClass">
+      <SidebarTreeChrome mode="branch" :connect-down="connectRowDown" />
+      <div :class="SIDEBAR_TREE_INDENT">
+        <SidebarGroupSeparator
+          v-show="isExpanded"
+          :label="label"
+          :icon="icon"
+        />
+      </div>
+    </div>
+    <ul
+      v-show="isExpanded"
       ref="scrollableContainer"
-      class="min-w-0"
-      :class="{
-        'max-h-[calc(14rem+16px)] overflow-y-scroll no-scrollbar': isScrollable,
-      }"
+      :class="[
+        SIDEBAR_TREE_LIST_DOTS,
+        'relative min-w-0',
+        isScrollable &&
+          'max-h-[calc(14rem+16px)] overflow-y-scroll no-scrollbar',
+      ]"
     >
       <SidebarGroupLeaf
-        v-for="child in children"
-        v-show="isExpanded || activeChild?.name === child.name"
+        v-for="(child, index) in accessibleItems"
         v-bind="child"
         :key="child.name"
         :active="activeChild?.name === child.name"
+        :depth="depth + 1"
+        :is-last="index === accessibleItems.length - 1"
       />
-    </div>
-    <div
-      v-if="isScrollable && isExpanded"
-      v-show="!scrollEnd"
-      class="pointer-events-none absolute -bottom-1 flex h-12 w-full animate-fade-in-up items-end justify-end bg-gradient-to-t from-card to-transparent px-2"
-    >
-      <svg
-        width="16"
-        height="24"
-        viewBox="0 0 16 24"
-        fill="none"
-        class="text-muted-foreground opacity-50 group-hover:opacity-100"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <path
-          d="M4 4L8 8L12 4"
-          stroke="currentColor"
-          opacity="0.5"
-          stroke-width="1.33333"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-        />
-        <path
-          d="M4 10L8 14L12 10"
-          stroke="currentColor"
-          opacity="0.75"
-          stroke-width="1.33333"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-        />
-        <path
-          d="M4 16L8 20L12 16"
-          stroke="currentColor"
-          stroke-width="1.33333"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-        />
-      </svg>
-    </div>
-  </ul>
+    </ul>
+  </li>
 </template>

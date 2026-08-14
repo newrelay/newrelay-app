@@ -112,7 +112,7 @@ onMounted(() => {
           v-model="searchQuery"
           type="search"
           :placeholder="t('COMPANIES.DETAIL.ATTRIBUTES.SEARCH_PLACEHOLDER')"
-          class="w-full h-8 py-2 pl-10 pr-2 text-sm reset-base outline-none border-none rounded-lg bg-black/10 dark:bg-card text-foreground"
+          class="w-full h-8 py-2 pl-10 pr-2 reset-base outline-none border-none bg-black/10 dark:bg-card text-foreground text-[14px] shadow-sm rounded-md border-border/80 bg-background focus-visible:ring-1 focus-visible:ring-primary/30"
         />
       </div>
 

@@ -293,10 +293,10 @@ defineExpose({ open, close });
       >
         <!-- Header -->
         <div
-          class="flex shrink-0 items-center justify-between border-b border-border p-6"
+          class="flex shrink-0 items-center justify-between border-b border-border px-8 pt-8 pb-0"
         >
           <div>
-            <h2 class="text-lg font-semibold tracking-tight text-foreground">
+            <h2 class="capitalize text-base font-medium tracking-tight text-foreground">
               {{ headerTitle }}
             </h2>
             <p class="mt-1 text-sm text-muted-foreground">
@@ -306,7 +306,7 @@ defineExpose({ open, close });
           <RelayButton
             variant="ghost"
             size="icon"
-            class="size-8 rounded-full text-muted-foreground hover:text-foreground"
+            class="size-8 rounded-full text-muted-foreground hover:text-foreground border border-border hover:border-transparent"
             @click="close"
           >
             <span class="i-lucide-x size-4" />
@@ -314,10 +314,10 @@ defineExpose({ open, close });
         </div>
 
         <!-- Body -->
-        <div class="hide-scrollbar flex-1 space-y-6 overflow-y-auto p-6">
+        <div class="hide-scrollbar flex-1 space-y-6 overflow-y-auto px-8 pb-8 pt-4">
           <!-- Profile picture -->
           <div class="flex flex-col gap-1.5">
-            <label class="text-[13.5px] font-medium text-foreground">
+            <label class="text-[13.5px] text-foreground font-[500]">
               {{ t('CONTACTS_LAYOUT.ADD_CONTACT_DRAWER.PROFILE_PICTURE') }}
             </label>
             <div class="mb-2 flex items-center gap-4">
@@ -353,7 +353,7 @@ defineExpose({ open, close });
                   ref="avatarInput"
                   type="file"
                   accept="image/*"
-                  class="hidden"
+                  class="hidden text-[14px] shadow-sm rounded-md border-border/80 bg-background focus-visible:ring-1 focus-visible:ring-primary/30"
                   @change="handleAvatarUpload"
                 />
               </div>
@@ -363,7 +363,7 @@ defineExpose({ open, close });
           <!-- Name -->
           <div class="grid grid-cols-2 gap-4">
             <div class="flex flex-col gap-1.5">
-              <label class="text-[13.5px] font-medium text-foreground">
+              <label class="text-[13.5px] text-foreground font-[500]">
                 {{ t('CONTACTS_LAYOUT.ADD_CONTACT_DRAWER.FIRST_NAME') }}
                 <span class="text-destructive">{{
                   t('CONTACTS_LAYOUT.ADD_CONTACT_DRAWER.REQUIRED_MARK')
@@ -376,8 +376,8 @@ defineExpose({ open, close });
                 "
                 :class-name="
                   showErrors && !form.firstName.trim()
-                    ? 'h-10 w-full rounded-md border-destructive bg-background px-4 text-[14px] shadow-sm'
-                    : 'h-10 w-full rounded-md border-border bg-background px-4 text-[14px] shadow-sm'
+                    ? 'h-9 w-full rounded-md border-destructive bg-background px-4 text-[14px] shadow-sm'
+                    : 'h-9 w-full rounded-md border-border bg-background px-4 text-[14px] shadow-sm'
                 "
                 @update:model-value="showErrors = false"
               />
@@ -391,7 +391,7 @@ defineExpose({ open, close });
               </span>
             </div>
             <div class="flex flex-col gap-1.5">
-              <label class="text-[13.5px] font-medium text-foreground">
+              <label class="text-[13.5px] text-foreground font-[500]">
                 {{ t('CONTACTS_LAYOUT.ADD_CONTACT_DRAWER.LAST_NAME') }}
                 <span class="text-destructive">{{
                   t('CONTACTS_LAYOUT.ADD_CONTACT_DRAWER.REQUIRED_MARK')
@@ -404,8 +404,8 @@ defineExpose({ open, close });
                 "
                 :class-name="
                   showErrors && !form.lastName.trim()
-                    ? 'h-10 w-full rounded-md border-destructive bg-background px-4 text-[14px] shadow-sm'
-                    : 'h-10 w-full rounded-md border-border bg-background px-4 text-[14px] shadow-sm'
+                    ? 'h-9 w-full rounded-md border-destructive bg-background px-4 text-[14px] shadow-sm'
+                    : 'h-9 w-full rounded-md border-border bg-background px-4 text-[14px] shadow-sm'
                 "
                 @update:model-value="showErrors = false"
               />
@@ -420,7 +420,7 @@ defineExpose({ open, close });
 
           <!-- Email -->
           <div class="flex flex-col gap-1.5">
-            <label class="text-[13.5px] font-medium text-foreground">
+            <label class="text-[13.5px] text-foreground font-[500]">
               {{ t('CONTACTS_LAYOUT.ADD_CONTACT_DRAWER.EMAIL') }}
               <span class="text-destructive">{{
                 t('CONTACTS_LAYOUT.ADD_CONTACT_DRAWER.REQUIRED_MARK')
@@ -434,8 +434,8 @@ defineExpose({ open, close });
               "
               :class-name="
                 showErrors && !form.email.trim()
-                  ? 'h-10 w-full rounded-md border-destructive bg-background px-4 text-[14px] shadow-sm'
-                  : 'h-10 w-full rounded-md border-border bg-background px-4 text-[14px] shadow-sm'
+                  ? 'h-9 w-full rounded-md border-destructive bg-background px-4 text-[14px] shadow-sm'
+                  : 'h-9 w-full rounded-md border-border bg-background px-4 text-[14px] shadow-sm'
               "
               @update:model-value="showErrors = false"
             />
@@ -448,7 +448,7 @@ defineExpose({ open, close });
             <div
               v-for="(_, index) in additionalEmails"
               :key="`email-${index}`"
-              class="mt-0.5 flex items-center gap-2"
+              class="flex items-center gap-3"
             >
               <RelayInput
                 v-model="additionalEmails[index]"
@@ -458,12 +458,12 @@ defineExpose({ open, close });
                     'CONTACTS_LAYOUT.ADD_CONTACT_DRAWER.ADDITIONAL_EMAIL_PLACEHOLDER'
                   )
                 "
-                class-name="h-10 flex-1 rounded-md border-border bg-background px-4 text-[14px] shadow-sm"
+                class-name="h-9 flex-1 rounded-md border-border bg-background px-4 text-[14px] shadow-sm"
               />
               <RelayButton
                 variant="ghost"
                 size="icon"
-                class="size-10 shrink-0 text-muted-foreground hover:text-destructive"
+                class="size-10 shrink-0 text-muted-foreground hover:text-destructive border border-border hover:border-transparent"
                 @click="additionalEmails.splice(index, 1)"
               >
                 <span class="i-lucide-trash-2 size-4" />
@@ -481,7 +481,7 @@ defineExpose({ open, close });
 
           <!-- Phone -->
           <div class="flex flex-col gap-1.5">
-            <label class="text-[13.5px] font-medium text-foreground">
+            <label class="text-[13.5px] text-foreground font-[500]">
               {{ t('CONTACTS_LAYOUT.ADD_CONTACT_DRAWER.PHONE') }}
             </label>
             <RelayInput
@@ -490,12 +490,12 @@ defineExpose({ open, close });
               :placeholder="
                 t('CONTACTS_LAYOUT.ADD_CONTACT_DRAWER.PHONE_PLACEHOLDER')
               "
-              class-name="h-10 w-full rounded-md border-border bg-background px-4 text-[14px] shadow-sm"
+              class-name="h-9 w-full rounded-md border-border bg-background px-4 text-[14px] shadow-sm"
             />
             <div
               v-for="(_, index) in additionalPhones"
               :key="`phone-${index}`"
-              class="mt-0.5 flex items-center gap-2"
+              class="flex items-center gap-3"
             >
               <RelayInput
                 v-model="additionalPhones[index]"
@@ -505,12 +505,12 @@ defineExpose({ open, close });
                     'CONTACTS_LAYOUT.ADD_CONTACT_DRAWER.ADDITIONAL_PHONE_PLACEHOLDER'
                   )
                 "
-                class-name="h-10 flex-1 rounded-md border-border bg-background px-4 text-[14px] shadow-sm"
+                class-name="h-9 flex-1 rounded-md border-border bg-background px-4 text-[14px] shadow-sm"
               />
               <RelayButton
                 variant="ghost"
                 size="icon"
-                class="size-10 shrink-0 text-muted-foreground hover:text-destructive"
+                class="size-10 shrink-0 text-muted-foreground hover:text-destructive border border-border hover:border-transparent"
                 @click="additionalPhones.splice(index, 1)"
               >
                 <span class="i-lucide-trash-2 size-4" />
@@ -528,7 +528,7 @@ defineExpose({ open, close });
 
           <!-- Company -->
           <div class="flex flex-col gap-1.5">
-            <label class="text-[13.5px] font-medium text-foreground">
+            <label class="text-[13.5px] text-foreground font-[500]">
               {{ t('CONTACTS_LAYOUT.ADD_CONTACT_DRAWER.COMPANY') }}
             </label>
             <div class="relative">
@@ -540,7 +540,7 @@ defineExpose({ open, close });
                 :placeholder="
                   t('CONTACTS_LAYOUT.ADD_CONTACT_DRAWER.COMPANY_PLACEHOLDER')
                 "
-                class-name="h-10 w-full rounded-md border-border bg-background pl-9 pr-4 text-[14px] shadow-sm"
+                class-name="h-9 w-full rounded-md border-border bg-background pl-9 pr-4 text-[14px] shadow-sm"
               />
             </div>
           </div>
@@ -572,12 +572,12 @@ defineExpose({ open, close });
                 class="relative flex flex-col gap-1.5"
                 @click.stop
               >
-                <label class="text-[13.5px] font-medium text-foreground">
+                <label class="text-[13.5px] text-foreground font-[500]">
                   {{ t('CONTACTS_LAYOUT.ADD_CONTACT_DRAWER.CONTACT_TYPE') }}
                 </label>
                 <RelayButton
                   variant="outline"
-                  class="h-10 w-full justify-between rounded-md border-border bg-background px-4 text-[14px] font-normal shadow-sm hover:bg-background"
+                  class="h-9 w-full justify-between rounded-md border-border bg-background px-4 text-[14px] font-normal shadow-sm hover:bg-background"
                   @click="toggleMenu('contactType')"
                 >
                   {{ selectedContactTypeLabel }}
@@ -599,7 +599,7 @@ defineExpose({ open, close });
                           'CONTACTS_LAYOUT.ADD_CONTACT_DRAWER.SEARCH_PLACEHOLDER'
                         )
                       "
-                      class="h-10 w-full border-0 bg-transparent py-3 text-sm outline-none placeholder:text-muted-foreground focus:ring-0"
+                      class="h-9 w-full border-0 bg-transparent py-3 outline-none placeholder:text-muted-foreground focus:ring-0 text-[14px] shadow-sm rounded-md border-border/80 bg-background focus-visible:ring-1 focus-visible:ring-primary/30"
                     />
                   </div>
                   <div class="max-h-[240px] overflow-y-auto p-1">
@@ -628,12 +628,12 @@ defineExpose({ open, close });
                 class="relative flex flex-col gap-1.5"
                 @click.stop
               >
-                <label class="text-[13.5px] font-medium text-foreground">
+                <label class="text-[13.5px] text-foreground font-[500]">
                   {{ t('CONTACTS_LAYOUT.ADD_CONTACT_DRAWER.TIMEZONE') }}
                 </label>
                 <RelayButton
                   variant="outline"
-                  class="h-10 w-full justify-between rounded-md border-border bg-background px-4 text-[14px] font-normal shadow-sm hover:bg-background"
+                  class="h-9 w-full justify-between rounded-md border-border bg-background px-4 text-[14px] font-normal shadow-sm hover:bg-background"
                   @click="toggleMenu('timezone')"
                 >
                   <span class="truncate">{{ selectedTimezoneLabel }}</span>
@@ -657,7 +657,7 @@ defineExpose({ open, close });
                           'CONTACTS_LAYOUT.ADD_CONTACT_DRAWER.SEARCH_PLACEHOLDER'
                         )
                       "
-                      class="h-10 w-full border-0 bg-transparent py-3 text-sm outline-none placeholder:text-muted-foreground focus:ring-0"
+                      class="h-9 w-full border-0 bg-transparent py-3 outline-none placeholder:text-muted-foreground focus:ring-0 text-[14px] shadow-sm rounded-md border-border/80 bg-background focus-visible:ring-1 focus-visible:ring-primary/30"
                     />
                   </div>
                   <div class="max-h-[240px] overflow-y-auto p-1">
@@ -680,7 +680,7 @@ defineExpose({ open, close });
 
               <!-- Tags -->
               <div class="flex flex-col gap-1.5">
-                <label class="text-[13.5px] font-medium text-foreground">
+                <label class="text-[13.5px] text-foreground font-[500]">
                   {{ t('CONTACTS_LAYOUT.ADD_CONTACT_DRAWER.TAGS') }}
                 </label>
                 <RelayInput
@@ -688,7 +688,7 @@ defineExpose({ open, close });
                   :placeholder="
                     t('CONTACTS_LAYOUT.ADD_CONTACT_DRAWER.TAGS_PLACEHOLDER')
                   "
-                  class-name="h-10 w-full rounded-md border-border bg-background px-4 text-[14px] shadow-sm"
+                  class-name="h-9 w-full rounded-md border-border bg-background px-4 text-[14px] shadow-sm"
                 />
               </div>
 
@@ -700,12 +700,12 @@ defineExpose({ open, close });
                 class="relative flex flex-col gap-1.5"
                 @click.stop
               >
-                <label class="text-[13.5px] font-medium text-foreground">
+                <label class="text-[13.5px] text-foreground font-[500]">
                   {{ t('CONTACTS_LAYOUT.ADD_CONTACT_DRAWER.OWNER') }}
                 </label>
                 <RelayButton
                   variant="outline"
-                  class="h-10 w-full justify-between rounded-md border-border bg-background px-4 text-[14px] font-normal shadow-sm hover:bg-background"
+                  class="h-9 w-full justify-between rounded-md border-border bg-background px-4 text-[14px] font-normal shadow-sm hover:bg-background"
                   :class="
                     form.owner ? 'text-foreground' : 'text-muted-foreground'
                   "
@@ -752,7 +752,7 @@ defineExpose({ open, close });
 
               <!-- Communication preferences -->
               <div class="flex flex-col gap-3">
-                <label class="text-[13.5px] font-medium text-foreground">
+                <label class="text-[13.5px] text-foreground font-[500]">
                   {{
                     t(
                       'CONTACTS_LAYOUT.ADD_CONTACT_DRAWER.COMMUNICATION_PREFERENCES'
@@ -760,19 +760,19 @@ defineExpose({ open, close });
                   }}
                 </label>
                 <div class="grid grid-cols-2 gap-3">
-                  <label class="flex cursor-pointer items-center gap-3">
+                  <label class="flex cursor-pointer items-center gap-3 text-[13.5px] font-[500] text-foreground">
                     <RelayCheckbox v-model="form.prefs.email" />
                     <span class="text-sm text-foreground">
                       {{ t('CONTACTS_LAYOUT.ADD_CONTACT_DRAWER.PREF_EMAIL') }}
                     </span>
                   </label>
-                  <label class="flex cursor-pointer items-center gap-3">
+                  <label class="flex cursor-pointer items-center gap-3 text-[13.5px] font-[500] text-foreground">
                     <RelayCheckbox v-model="form.prefs.sms" />
                     <span class="text-sm text-foreground">
                       {{ t('CONTACTS_LAYOUT.ADD_CONTACT_DRAWER.PREF_SMS') }}
                     </span>
                   </label>
-                  <label class="flex cursor-pointer items-center gap-3">
+                  <label class="flex cursor-pointer items-center gap-3 text-[13.5px] font-[500] text-foreground">
                     <RelayCheckbox v-model="form.prefs.whatsapp" />
                     <span class="text-sm text-foreground">
                       {{
@@ -780,7 +780,7 @@ defineExpose({ open, close });
                       }}
                     </span>
                   </label>
-                  <label class="flex cursor-pointer items-center gap-3">
+                  <label class="flex cursor-pointer items-center gap-3 text-[13.5px] font-[500] text-foreground">
                     <RelayCheckbox v-model="form.prefs.marketingEmails" />
                     <span class="text-sm text-foreground">
                       {{
@@ -798,7 +798,7 @@ defineExpose({ open, close });
 
         <!-- Footer -->
         <div
-          class="mt-auto flex shrink-0 gap-3 border-t border-border bg-muted/10 p-6"
+          class="mt-auto flex shrink-0 gap-3 border-t border-border bg-muted/10 px-8 pb-8 pt-4"
         >
           <RelayButton
             variant="outline"

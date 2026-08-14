@@ -53,7 +53,7 @@ const metaLine = computed(() => {
       </div>
       <div class="min-w-0">
         <div class="flex min-w-0 flex-wrap items-center gap-2">
-          <h4 class="truncate text-[14px] font-semibold text-foreground">
+          <h4 class="capitalize truncate text-[14px] font-semibold text-foreground">
             {{ attribute.label }}
           </h4>
           <RelayBadge
@@ -89,7 +89,7 @@ const metaLine = computed(() => {
         v-tooltip.top="t('ATTRIBUTES_MGMT.LIST.BUTTONS.DELETE')"
         variant="ghost"
         size="icon"
-        class="size-8 text-muted-foreground opacity-0 transition-opacity hover:text-destructive group-hover:opacity-100"
+        class="size-8 text-muted-foreground opacity-0 transition-opacity hover:text-destructive group-hover:opacity-100 border border-border hover:border-transparent"
         :disabled="loading"
         @click="emit('delete', attribute)"
       >

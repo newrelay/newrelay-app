@@ -147,7 +147,7 @@ const handleDeleteSuccess = () => {
           <div class="space-y-3 pt-2">
             <div>
               <h2
-                class="text-base font-semibold tracking-tight text-foreground"
+                class="capitalize text-base font-semibold tracking-tight text-foreground"
               >
                 {{ t('CAPTAIN.ASSISTANTS.SETTINGS.DELETE.TITLE') }}
               </h2>

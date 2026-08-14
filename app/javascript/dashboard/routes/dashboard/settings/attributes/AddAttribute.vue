@@ -302,7 +302,7 @@ const addAttributes = async () => {
             v-model="description"
             rows="3"
             :placeholder="t('ATTRIBUTES_MGMT.ADD.FORM.DESC.PLACEHOLDER')"
-            class="min-h-[80px] w-full resize-y rounded-md border border-border/80 bg-background p-3 text-[14px] text-foreground shadow-sm outline-none focus-visible:ring-1 focus-visible:ring-primary/30"
+            class="min-h-[80px] w-full resize-y border border-border/80 bg-background p-3 text-[14px] text-foreground outline-none focus-visible:ring-1 focus-visible:ring-primary/30 shadow-sm rounded-md"
             @blur="v$.description.$touch()"
           />
           <p

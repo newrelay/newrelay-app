@@ -68,7 +68,7 @@ const automationActive = computed({
         v-tooltip.top="$t('AUTOMATION.FORM.EDIT')"
         variant="ghost"
         size="icon"
-        class="size-8 text-muted-foreground hover:bg-muted hover:text-foreground"
+        class="size-8 text-muted-foreground hover:bg-muted hover:text-foreground border border-border hover:border-transparent"
         :disabled="loading"
         @click="$emit('edit', automation)"
       >
@@ -78,7 +78,7 @@ const automationActive = computed({
         v-tooltip.top="$t('AUTOMATION.CLONE.TOOLTIP')"
         variant="ghost"
         size="icon"
-        class="size-8 text-muted-foreground hover:bg-muted hover:text-foreground"
+        class="size-8 text-muted-foreground hover:bg-muted hover:text-foreground border border-border hover:border-transparent"
         :disabled="loading"
         @click="$emit('clone', automation)"
       >
@@ -88,7 +88,7 @@ const automationActive = computed({
         v-tooltip.top="$t('AUTOMATION.FORM.DELETE')"
         variant="ghost"
         size="icon"
-        class="size-8 text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
+        class="size-8 text-muted-foreground hover:bg-destructive/10 hover:text-destructive border border-border hover:border-transparent"
         :disabled="loading"
         @click="$emit('delete', automation)"
       >

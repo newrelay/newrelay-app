@@ -44,7 +44,7 @@ const triggerClick = () => {
     <component
       :is="componentIs"
       v-bind="$attrs"
-      class="flex text-left rtl:text-right items-center p-2 reset-base text-sm text-foreground w-full border-0"
+      class="flex text-left rtl:text-right items-center p-2 reset-base text-sm text-foreground w-full border-0 capitalize"
       :class="{
         'hover:bg-accent rounded-lg w-full gap-3': !$slots.default,
       }"

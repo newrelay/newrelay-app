@@ -45,11 +45,11 @@ const accountId = computed(
 
 <template>
   <div
-    class="flex flex-col h-full w-full bg-slate-50 dark:bg-slate-900 font-sans text-slate-900 dark:text-slate-100"
+    class="flex flex-col h-full w-full bg-background dark:bg-slate-900 font-sans text-foreground dark:text-slate-100"
   >
     <!-- eslint-disable -->
     <!-- Top Header & Navigation -->
-    <header class="border-b border-slate-200/80 dark:border-slate-800 bg-white/95 dark:bg-slate-900/95 backdrop-blur px-6 py-4 shrink-0 shadow-sm sticky top-0 z-30">
+    <header class="border-b border-border/80 dark:border-slate-800 bg-white/95 dark:bg-slate-900/95 backdrop-blur px-6 py-4 shrink-0 shadow-sm sticky top-0 z-30">
       <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div class="flex items-center gap-3">
           <div class="p-2 rounded-xl bg-gradient-to-tr from-woot-600 to-indigo-500 text-white shadow-md shadow-woot-500/10">
@@ -58,14 +58,14 @@ const accountId = computed(
             </svg>
           </div>
           <div>
-            <h1 class="text-lg font-bold tracking-tight text-slate-900 dark:text-white">
+            <h1 class="capitalize text-[16px] font-[500] tracking-tight text-foreground dark:text-white">
               Reputation
             </h1>
-            <p class="text-xs text-slate-400 font-medium">Manage and grow your online presence</p>
+            <p class="text-xs text-muted-foreground font-medium">Manage and grow your online presence</p>
           </div>
         </div>
 
-        <nav class="flex flex-wrap gap-1 p-1 bg-slate-100 dark:bg-slate-800/60 rounded-xl max-w-max self-start sm:self-center">
+        <nav class="flex flex-wrap gap-1 p-1 bg-muted dark:bg-slate-800/60 rounded-xl max-w-max self-start sm:self-center">
           <router-link
             v-for="item in navItems"
             :key="item.name"

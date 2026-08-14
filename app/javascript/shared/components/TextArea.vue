@@ -33,7 +33,7 @@ export default {
 </script>
 
 <template>
-  <label class="block">
+  <label class="block text-[13.5px] font-[500] text-foreground">
     <div
       v-if="label"
       class="mb-2 text-xs font-medium"
@@ -46,7 +46,7 @@ export default {
     </div>
     <textarea
       v-model="computedModel"
-      class="w-full px-3 py-2 leading-tight border rounded outline-none resize-none text-n-gray-12"
+      class="w-full px-3 py-2 leading-tight border rounded outline-none resize-none text-n-gray-12 text-[14px] shadow-sm rounded-md border-border/80 bg-background focus-visible:ring-1 focus-visible:ring-primary/30"
       :class="{
         'border-n-weak hover:border-n-weak focus:border-n-weak': !error,
         'border-n-ruby-9 hover:border-n-ruby-9 focus:border-n-ruby-9': error,

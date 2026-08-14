@@ -278,7 +278,7 @@ onMounted(() => {
           <RelayButton
             variant="ghost"
             size="sm"
-            class="text-muted-foreground"
+            class="text-muted-foreground border border-border hover:border-transparent"
             @click="handleBulkApprove"
           >
             <span class="i-lucide-check size-3.5" />

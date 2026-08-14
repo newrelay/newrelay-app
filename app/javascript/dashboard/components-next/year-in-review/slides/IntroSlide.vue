@@ -23,12 +23,12 @@ const { t } = useI18n();
   >
     <div class="text-center max-w-3xl">
       <h1
-        class="text-8xl md:text-9xl lg:text-[220px] font-semibold mb-4 md:mb-6 leading-none tracking-tight text-foreground dark:text-background"
+        class="capitalize text-8xl md:text-9xl lg:text-[220px] font-[500] mb-4 md:mb-6 leading-none tracking-tight text-foreground dark:text-background text-[16px]"
       >
         {{ year }}
       </h1>
       <h2
-        class="text-3xl md:text-4xl lg:text-5xl font-medium mb-12 md:mb-16 lg:mb-20 text-foreground dark:text-background"
+        class="capitalize text-3xl md:text-4xl lg:text-5xl font-medium mb-12 md:mb-16 lg:mb-20 text-foreground dark:text-background"
       >
         {{ t('YEAR_IN_REVIEW.TITLE') }}
       </h2>

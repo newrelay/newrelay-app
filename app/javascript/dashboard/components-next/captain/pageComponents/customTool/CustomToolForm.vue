@@ -249,7 +249,7 @@ const handleTest = async () => {
     />
 
     <div class="flex flex-col gap-2">
-      <label class="text-sm font-medium text-foreground">
+      <label class="text-foreground text-[13.5px] font-[500]">
         {{ t('CAPTAIN.CUSTOM_TOOLS.FORM.PARAMETERS.LABEL') }}
       </label>
       <p class="text-xs text-muted-foreground -mt-1">
@@ -271,7 +271,7 @@ const handleTest = async () => {
         type="button"
         variant="ghost"
         size="sm"
-        class="text-primary hover:bg-transparent hover:text-primary/80"
+        class="text-primary hover:bg-transparent hover:text-primary/80 border border-border hover:border-transparent"
         @click="addParam"
       >
         <span class="i-lucide-plus size-4" />

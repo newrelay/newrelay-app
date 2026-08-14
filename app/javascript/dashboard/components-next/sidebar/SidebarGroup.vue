@@ -10,6 +10,7 @@ import SidebarSubGroup from './SidebarSubGroup.vue';
 import SidebarCollapsibleSubItem from './SidebarCollapsibleSubItem.vue';
 import SidebarGroupEmptyLeaf from './SidebarGroupEmptyLeaf.vue';
 import SidebarCollapsedPopover from './SidebarCollapsedPopover.vue';
+import { SIDEBAR_TREE_LIST } from './sidebarTree';
 
 const props = defineProps({
   name: { type: String, required: true },
@@ -262,7 +263,7 @@ watch(
     :permissions="resolvePermissions(to)"
     :feature-flag="resolveFeatureFlag(to)"
     as="li"
-    class="grid gap-0 text-sm cursor-pointer select-none min-w-0"
+    class="group/menu-item relative grid min-w-0 cursor-pointer select-none gap-0 text-sm"
   >
     <!-- Collapsed State -->
     <template v-if="isCollapsed">
@@ -328,18 +329,21 @@ watch(
         class="grid transition-[grid-template-rows] duration-200 ease-out"
         :class="isExpanded ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'"
       >
-        <div class="overflow-hidden">
-          <ul
-            class="mx-3.5 flex min-w-0 list-none flex-col gap-1 border-l border-sidebar-border py-0.5 ltr:translate-x-px ltr:pl-5 ltr:pr-2 rtl:-translate-x-px rtl:pr-5 rtl:pl-2"
-          >
-            <template v-for="child in children" :key="child.name">
+        <div :class="isExpanded ? 'overflow-visible' : 'overflow-hidden'">
+          <ul :class="SIDEBAR_TREE_LIST">
+            <template
+              v-for="(child, index) in accessibleItems"
+              :key="child.name"
+            >
               <SidebarCollapsibleSubItem
                 v-if="child.collapsible && child.children"
                 :label="child.label"
                 :children="child.children"
                 :active-child="activeChild"
                 :is-parent-expanded="isExpanded"
-                :default-open="child.defaultOpen !== false"
+                :default-open="child.defaultOpen === true"
+                :depth="1"
+                :is-last="index === accessibleItems.length - 1"
               />
               <SidebarSubGroup
                 v-else-if="child.children"
@@ -348,11 +352,15 @@ watch(
                 :children="child.children"
                 :is-expanded="isExpanded"
                 :active-child="activeChild"
+                :depth="1"
+                :is-last="index === accessibleItems.length - 1"
               />
               <SidebarGroupLeaf
                 v-else-if="isAllowed(child.to)"
                 v-bind="child"
                 :active="activeChild?.name === child.name"
+                :depth="1"
+                :is-last="index === accessibleItems.length - 1"
               />
             </template>
           </ul>

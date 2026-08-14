@@ -206,11 +206,11 @@ export default {
 <template>
   <div class="px-4 py-3">
     <div class="flex items-center mb-1">
-      <h4 class="flex items-center w-full m-0 text-sm error">
+      <h4 class="capitalize flex items-center w-full m-0 text-sm error">
         <div v-if="isAttributeTypeCheckbox" class="flex items-center">
           <input
             v-model="editedValue"
-            class="!my-0 ltr:mr-2 ltr:ml-0 rtl:mr-0 rtl:ml-2"
+            class="!my-0 ltr:mr-2 ltr:ml-0 rtl:mr-0 rtl:ml-2 text-[14px] shadow-sm rounded-md border-border/80 bg-background focus-visible:ring-1 focus-visible:ring-primary/30"
             type="checkbox"
             @change="onUpdate"
           />
@@ -248,7 +248,7 @@ export default {
             ref="inputfield"
             v-model="editedValue"
             :type="inputType"
-            class="!h-8 ltr:!rounded-r-none rtl:!rounded-l-none !mb-0 !text-sm"
+            class="!h-8 ltr:!rounded-r-none rtl:!rounded-l-none !mb-0 ! text-[14px] shadow-sm rounded-md border-border/80 bg-background focus-visible:ring-1 focus-visible:ring-primary/30"
             autofocus="true"
             :class="{ error: v$.editedValue.$error }"
             @blur="v$.editedValue.$touch"

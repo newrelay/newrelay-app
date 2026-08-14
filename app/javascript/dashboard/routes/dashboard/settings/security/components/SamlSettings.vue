@@ -172,7 +172,7 @@ onMounted(() => {
     <div class="flex flex-col justify-between gap-8 md:flex-row md:items-start">
       <div class="max-w-xl">
         <div class="mb-2 flex items-center gap-2">
-          <h3 class="text-[15px] font-medium text-foreground">
+          <h3 class="capitalize text-[15px] font-medium text-foreground">
             {{ t('SECURITY_SETTINGS.SAML.TITLE') }}
           </h3>
           <span
@@ -204,7 +204,7 @@ onMounted(() => {
 
       <form class="space-y-6" @submit.prevent="handleSubmit">
         <div class="flex flex-col gap-1.5">
-          <label class="text-[13px] font-semibold text-foreground" for="ssoUrl">
+          <label class="text-[13px] text-foreground text-[13.5px] font-[500]" for="ssoUrl">
             {{ t('SECURITY_SETTINGS.SAML.SSO_URL.LABEL') }}
           </label>
           <RelayInput
@@ -224,7 +224,7 @@ onMounted(() => {
 
         <div class="flex flex-col gap-1.5">
           <label
-            class="text-[13px] font-semibold text-foreground"
+            class="text-[13px] text-foreground text-[13.5px] font-[500]"
             for="idpEntityId"
           >
             {{ t('SECURITY_SETTINGS.SAML.IDP_ENTITY_ID.LABEL') }}
@@ -245,7 +245,7 @@ onMounted(() => {
 
         <div class="flex flex-col gap-1.5">
           <label
-            class="text-[13px] font-semibold text-foreground"
+            class="text-[13px] text-foreground text-[13.5px] font-[500]"
             for="certificate"
           >
             {{ t('SECURITY_SETTINGS.SAML.CERTIFICATE.LABEL') }}
@@ -254,7 +254,7 @@ onMounted(() => {
             id="certificate"
             v-model="formState.certificate"
             rows="4"
-            class="h-24 w-full resize-none rounded-lg border border-border/80 bg-background p-3 font-mono text-[13px] text-foreground shadow-sm placeholder:text-muted-foreground focus:outline-none focus-visible:ring-1 focus-visible:ring-primary/30"
+            class="h-24 w-full resize-none border border-border/80 bg-background p-3 font-mono text-[13px] text-foreground placeholder:text-muted-foreground focus:outline-none focus-visible:ring-1 focus-visible:ring-primary/30 text-[14px] shadow-sm rounded-md"
             :placeholder="t('SECURITY_SETTINGS.SAML.CERTIFICATE.PLACEHOLDER')"
           />
           <p v-if="certificateError" class="text-[12.5px] text-destructive">

@@ -148,7 +148,7 @@ const handleCardClick = () => {
       </div>
 
       <div class="min-w-0 flex-1">
-        <h3 class="mb-1.5 text-[15px] font-medium text-foreground">
+        <h3 class="capitalize mb-1.5 text-[15px] font-medium text-foreground">
           {{ question }}
         </h3>
         <p

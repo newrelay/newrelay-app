@@ -318,7 +318,7 @@ defineExpose({
             v-model="
               state.additionalAttributes.socialProfiles[item.key.toLowerCase()]
             "
-            class="w-auto min-w-[100px] text-sm bg-transparent outline-none reset-base text-foreground dark:text-foreground placeholder:text-muted-foreground dark:placeholder:text-muted-foreground"
+            class="w-auto min-w-[100px] bg-transparent outline-none reset-base text-foreground dark:text-foreground placeholder:text-muted-foreground dark:placeholder:text-muted-foreground text-[14px] shadow-sm rounded-md border-border/80 bg-background focus-visible:ring-1 focus-visible:ring-primary/30"
             :placeholder="item.placeholder"
             :size="item.placeholder.length"
             @input="emit('update', state)"

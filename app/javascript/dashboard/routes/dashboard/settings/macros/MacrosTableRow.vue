@@ -101,7 +101,7 @@ const editTooltip = computed(() =>
         v-tooltip.top="editTooltip"
         variant="ghost"
         size="icon"
-        class="size-8 border border-transparent text-muted-foreground shadow-xs hover:border-border hover:bg-background hover:text-foreground"
+        class="size-8 border border-transparent text-muted-foreground shadow-xs hover:border-border hover:bg-background hover:text-foreground border border-border hover:border-transparent"
         @click="$emit('edit', macro.id)"
       >
         <Icon icon="i-lucide-pencil" class="size-3.5" />
@@ -111,7 +111,7 @@ const editTooltip = computed(() =>
         v-tooltip.top="$t('MACROS.DELETE.TOOLTIP')"
         variant="ghost"
         size="icon"
-        class="size-8 border border-transparent text-muted-foreground shadow-xs hover:border-destructive/20 hover:bg-destructive/10 hover:text-destructive"
+        class="size-8 border border-transparent text-muted-foreground shadow-xs hover:border-destructive/20 hover:bg-destructive/10 hover:text-destructive border border-border hover:border-transparent"
         @click="$emit('delete')"
       >
         <Icon icon="i-lucide-trash-2" class="size-3.5" />

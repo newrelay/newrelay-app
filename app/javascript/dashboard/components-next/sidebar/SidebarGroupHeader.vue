@@ -2,6 +2,7 @@
 import { computed } from 'vue';
 import { useMapGetter } from 'dashboard/composables/store.js';
 import Icon from 'next/icon/Icon.vue';
+import { sectionHeaderClasses } from './sidebarTree';
 
 const props = defineProps({
   to: { type: [Object, String], default: '' },
@@ -24,31 +25,29 @@ const count = computed(() =>
 );
 
 const isHighlighted = computed(() => props.isActive || props.hasActiveChild);
+
+const headerClasses = computed(() => {
+  if (props.danger) {
+    return [
+      'relative flex w-full min-w-0 items-center gap-3 rounded-md p-2 py-2 text-left text-sm capitalize outline-none transition-colors',
+      'text-sidebar-foreground hover:bg-destructive/10 hover:text-destructive',
+    ];
+  }
+  return sectionHeaderClasses(isHighlighted.value);
+});
 </script>
 
 <template>
   <component
     :is="to ? 'router-link' : 'button'"
-    class="group peer/menu-button relative flex min-w-0 w-full items-center gap-3 rounded-md p-2 py-2 text-left text-sm outline-none transition-colors"
+    :class="headerClasses"
     role="button"
     draggable="false"
     :to="to || undefined"
     :type="to ? undefined : 'button'"
     :title="label"
-    :class="
-      danger
-        ? 'text-sidebar-foreground hover:bg-red-500/10 hover:text-destructive'
-        : isHighlighted
-          ? 'bg-sidebar-primary/10 font-medium text-sidebar-primary hover:bg-sidebar-primary/15'
-          : 'text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground'
-    "
     @click.stop="emit('toggle')"
   >
-    <span
-      v-if="isHighlighted"
-      class="pointer-events-none absolute inset-y-1.5 w-[3px] rounded-r-md bg-sidebar-primary ltr:-left-2 rtl:-right-2 rtl:rounded-l-md rtl:rounded-r-none"
-      aria-hidden="true"
-    />
     <div v-if="icon" class="relative flex shrink-0 items-center">
       <Icon
         :icon="icon"
@@ -85,7 +84,7 @@ const isHighlighted = computed(() => props.isActive || props.hasActiveChild);
     </div>
     <span
       v-if="expandable"
-      class="i-lucide-chevron-right ml-auto size-4 shrink-0 text-muted-foreground opacity-50 transition-all group-hover:opacity-100"
+      class="i-lucide-chevron-right ml-auto size-3.5 shrink-0 text-muted-foreground transition-transform duration-200"
       :class="[{ 'rotate-90': isExpanded }]"
       @click.stop="emit('toggle')"
     />

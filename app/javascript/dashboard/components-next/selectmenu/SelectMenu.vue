@@ -76,7 +76,7 @@ const handleSelect = value => {
         variant="ghost"
         color="slate"
         trailing-icon
-        class="!justify-end !px-2.5 !h-7"
+        class="!justify-end !px-2.5 !h-7 border border-border hover:border-transparent"
         :class="{ '!bg-accent': option.value === modelValue }"
         @click="handleSelect(option.value)"
       />

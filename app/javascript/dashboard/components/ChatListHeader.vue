@@ -64,7 +64,7 @@ const applySort = value => {
           v-tooltip.top-end="$t('FILTER.CUSTOM_VIEWS.ADD.SAVE_BUTTON')"
           variant="ghost"
           size="icon"
-          class="h-8 w-8 text-muted-foreground"
+          class="h-8 w-8 text-muted-foreground border border-border hover:border-transparent"
           @click="emit('addFolders')"
         >
           <span class="i-lucide-save size-4" />
@@ -79,7 +79,7 @@ const applySort = value => {
         v-tooltip.top-end="$t('FILTER.CLEAR_BUTTON_LABEL')"
         variant="ghost"
         size="icon"
-        class="h-8 w-8 text-destructive"
+        class="h-8 w-8 text-destructive border border-border hover:border-transparent"
         @click="emit('resetFilters')"
       >
         <span class="i-lucide-circle-x size-4" />
@@ -92,7 +92,7 @@ const applySort = value => {
           v-tooltip.top-end="$t('FILTER.CUSTOM_VIEWS.EDIT.EDIT_BUTTON')"
           variant="ghost"
           size="icon"
-          class="h-8 w-8 text-muted-foreground"
+          class="h-8 w-8 text-muted-foreground border border-border hover:border-transparent"
           @click="emit('filtersModal')"
         >
           <span class="i-lucide-pen-line size-4" />
@@ -107,7 +107,7 @@ const applySort = value => {
         v-tooltip.top-end="$t('FILTER.CUSTOM_VIEWS.DELETE.DELETE_BUTTON')"
         variant="ghost"
         size="icon"
-        class="h-8 w-8 text-destructive"
+        class="h-8 w-8 text-destructive border border-border hover:border-transparent"
         @click="emit('deleteFolders')"
       >
         <span class="i-lucide-trash-2 size-4" />
@@ -118,7 +118,7 @@ const applySort = value => {
         v-tooltip.top-end="$t('CHAT_LIST.SEARCH.INPUT')"
         variant="ghost"
         size="icon"
-        class="h-8 w-8 text-muted-foreground hover:text-foreground shrink-0"
+        class="h-8 w-8 text-muted-foreground hover:text-foreground shrink-0 border border-border hover:border-transparent"
         @click="emit('toggleSearch')"
       >
         <span class="i-lucide-search size-4" />

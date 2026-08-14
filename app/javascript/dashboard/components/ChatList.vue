@@ -940,7 +940,7 @@ watch(conversationFilters, (newVal, oldVal) => {
       class="flex items-center justify-between px-4 h-14 shrink-0 border-b border-border"
     >
       <h1
-        class="text-base font-medium truncate text-foreground flex items-center gap-1.5 min-w-0"
+        class="capitalize text-[16px] font-[500] truncate text-foreground flex items-center gap-1.5 min-w-0"
         :title="pageSubtitle ? `${pageTitle} / ${pageSubtitle}` : pageTitle"
       >
         <span class="truncate">{{ pageTitle }}</span>
@@ -954,7 +954,7 @@ watch(conversationFilters, (newVal, oldVal) => {
           v-if="false"
           variant="ghost"
           size="sm"
-          class="text-xs h-8 text-muted-foreground hover:text-foreground"
+          class="text-xs h-8 text-muted-foreground hover:text-foreground border border-border hover:border-transparent"
           @click="toggleSelectAll(!allConversationsSelected)"
         >
           {{
@@ -1028,7 +1028,7 @@ watch(conversationFilters, (newVal, oldVal) => {
             v-model="searchQuery"
             type="text"
             :placeholder="t('CHAT_LIST.SEARCH.INPUT')"
-            class="w-full h-8 pl-8 pr-7 text-xs rounded-md bg-muted/50 border border-input focus:outline-none focus:ring-1 focus:ring-primary text-foreground placeholder:text-muted-foreground transition-colors"
+            class="w-full h-8 pl-8 pr-7 bg-muted/50 border border-input focus:outline-none focus:ring-1 focus:ring-primary text-foreground placeholder:text-muted-foreground transition-colors text-[14px] shadow-sm rounded-md border-border/80 bg-background focus-visible:ring-1 focus-visible:ring-primary/30"
           />
           <button
             v-if="searchQuery"

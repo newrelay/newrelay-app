@@ -91,7 +91,7 @@ const openLink = link => {
 
           <h3
             v-if="title"
-            class="mb-0 text-start text-base font-medium text-foreground"
+            class="capitalize mb-0 text-start text-base font-medium text-foreground"
           >
             {{ title }}
           </h3>

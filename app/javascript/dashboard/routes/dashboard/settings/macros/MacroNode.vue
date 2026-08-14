@@ -54,7 +54,7 @@ const dropdownValues = () => {
 
 <template>
   <div
-    class="w-full max-w-[600px] bg-slate-50/40 dark:bg-slate-900/40 border border-border/60 rounded-xl py-2.5 px-4 shadow-sm relative group transition-colors hover:border-primary/25 flex items-center justify-between gap-3 mx-auto"
+    class="w-full max-w-[600px] bg-background/40 dark:bg-slate-900/40 border border-border/60 rounded-xl py-2.5 px-4 shadow-sm relative group transition-colors hover:border-primary/25 flex items-center justify-between gap-3 mx-auto"
     :class="
       errorKey ? 'animate-shake bg-destructive/10 border-destructive/40' : ''
     "

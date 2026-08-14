@@ -248,7 +248,7 @@ const resetPassword = async () => {
           v-if="provider !== 'saml'"
           type="button"
           variant="ghost"
-          class="h-9 px-4 text-[13px] font-medium text-primary hover:bg-primary/10 hover:text-primary"
+          class="h-9 px-4 text-[13px] font-medium text-primary hover:bg-primary/10 hover:text-primary border border-border hover:border-transparent"
           @click="resetPassword"
         >
           <Icon icon="i-lucide-lock" class="size-4" />

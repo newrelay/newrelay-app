@@ -85,7 +85,7 @@ export default {
           'has-submitted': hasSubmitted,
         }"
       >
-        <label class="text-n-slate-12">
+        <label class="text-n-slate-12 text-[13.5px] font-[500] text-foreground">
           {{ item.label }}
         </label>
         <input

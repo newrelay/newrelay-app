@@ -34,7 +34,7 @@ const value = defineModel({
         v-model="value"
         :placeholder="inputPlaceholder"
         type="search"
-        class="w-full mb-0 text-sm !outline-0 !outline-none bg-transparent text-foreground placeholder:text-muted-foreground reset-base"
+        class="w-full mb-0 !outline-0 !outline-none bg-transparent text-foreground placeholder:text-muted-foreground reset-base text-[14px] shadow-sm rounded-md border-border/80 bg-background focus-visible:ring-1 focus-visible:ring-primary/30"
       />
     </div>
     <!-- Clear filter button -->

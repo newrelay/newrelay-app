@@ -47,7 +47,7 @@ useKeyboardEvents(keyboardEvents);
 <template>
   <div class="flex flex-col py-1">
     <div class="flex items-center justify-between py-2 mb-1">
-      <h3 class="text-base text-foreground">
+      <h3 class="capitalize text-base text-foreground">
         {{ title }}
       </h3>
       <Button ghost xs slate icon="i-lucide-x" @click="onClose" />
@@ -63,7 +63,7 @@ useKeyboardEvents(keyboardEvents);
         ref="searchInputRef"
         type="text"
         :placeholder="$t('HELP_CENTER.ARTICLE_SEARCH.PLACEHOLDER')"
-        class="block w-full !h-9 ltr:!pl-8 rtl:!pr-8 dark:!bg-muted !border-border !bg-muted text-sm rounded-md leading-8 text-foreground shadow-sm ring-2 ring-transparent ring-border border border-solid placeholder:text-muted-foreground focus:border-primary focus:ring-primary !mb-0"
+        class="block w-full !h-9 ltr:!pl-8 rtl:!pr-8 dark:!bg-muted !border-border !bg-muted leading-8 text-foreground ring-2 ring-transparent ring-border border border-solid placeholder:text-muted-foreground focus:border-primary focus:ring-primary !mb-0 text-[14px] border-border/80 bg-background focus-visible:ring-1 focus-visible:ring-primary/30 shadow-sm rounded-md"
         :value="searchQuery"
         @input="onInput"
       />

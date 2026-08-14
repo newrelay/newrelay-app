@@ -270,7 +270,7 @@ const confirmPlaceHolderText = computed(() =>
                 class="size-6 text-muted-foreground/70"
               />
             </div>
-            <h3 class="mb-1.5 text-base font-semibold text-foreground">
+            <h3 class="capitalize mb-1.5 text-base font-semibold text-foreground">
               {{ $t('TEAMS_SETTINGS.LIST.EMPTY_TITLE') }}
             </h3>
             <p
@@ -326,7 +326,7 @@ const confirmPlaceHolderText = computed(() =>
                 </div>
                 <div class="min-w-0">
                   <div class="mb-1 flex items-center gap-2">
-                    <h3 class="text-[16px] font-semibold text-foreground">
+                    <h3 class="capitalize text-[16px] font-semibold text-foreground">
                       {{ team.name }}
                     </h3>
                   </div>

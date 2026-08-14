@@ -127,7 +127,7 @@ export default {
         ref="searchbar"
         v-model="search"
         type="text"
-        class="search-input"
+        class="search-input text-[14px] shadow-sm rounded-md border-border/80 bg-background focus-visible:ring-1 focus-visible:ring-primary/30"
         autofocus="true"
         :placeholder="$t('CONTACT_PANEL.LABELS.LABEL_SELECT.PLACEHOLDER')"
       />

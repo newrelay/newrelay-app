@@ -32,7 +32,7 @@ const emit = defineEmits([
       <!-- Top: Title + subtitle + action buttons -->
       <div class="flex items-start justify-between px-6 pb-4 pt-5">
         <div>
-          <h1 class="text-base font-medium tracking-tight text-foreground">
+          <h1 class="capitalize text-[16px] font-[500] tracking-tight text-foreground">
             {{ headerTitle }}
           </h1>
           <p v-if="!isLabelView" class="mt-0.5 text-sm text-muted-foreground">
@@ -59,7 +59,7 @@ const emit = defineEmits([
             <template #trigger>
               <RelayButton
                 variant="outline"
-                class="h-10 rounded-lg px-3 text-sm font-medium shadow-sm"
+                class="h-9 rounded-lg px-3 text-sm font-medium shadow-sm"
               >
                 {{ buttonLabel }}
               </RelayButton>
@@ -67,7 +67,7 @@ const emit = defineEmits([
           </ComposeConversation>
 
           <RelayButton
-            class="h-10 gap-2 rounded-lg px-3 text-sm font-medium shadow-sm"
+            class="h-9 gap-2 rounded-lg px-3 text-sm font-medium shadow-sm"
             @click="emit('add')"
           >
             <span class="i-lucide-plus size-4" />
@@ -94,7 +94,7 @@ const emit = defineEmits([
           />
           <RelayInput
             type="search"
-            class-name="h-10 rounded-lg border-border/60 bg-card pl-9 text-sm shadow-sm"
+            class-name="h-9 rounded-lg border-border/60 bg-card pl-9 text-sm shadow-sm"
             :model-value="searchValue"
             :placeholder="$t('CONTACTS_LAYOUT.HEADER.SEARCH_PLACEHOLDER')"
             @update:model-value="emit('search', $event)"
@@ -106,7 +106,7 @@ const emit = defineEmits([
             v-if="!isLabelView && !isActiveView"
             id="toggleContactsFilterButton"
             variant="outline"
-            class="h-10 gap-2 rounded-lg px-3 text-sm font-medium shadow-sm"
+            class="h-9 gap-2 rounded-lg px-3 text-sm font-medium shadow-sm"
             @click="emit('filter')"
           >
             <span class="i-lucide-list-filter size-4" />
@@ -131,7 +131,7 @@ const emit = defineEmits([
             v-if="!isLabelView && !isActiveView"
             id="toggleContactsFilterButton"
             variant="outline"
-            class="h-10 gap-2 rounded-lg px-3 text-sm font-medium shadow-sm"
+            class="h-9 gap-2 rounded-lg px-3 text-sm font-medium shadow-sm"
             @click="emit('filter')"
           >
             <span
@@ -173,7 +173,7 @@ const emit = defineEmits([
             <template #trigger>
               <RelayButton
                 variant="outline"
-                class="h-10 rounded-lg px-3 text-sm font-medium shadow-sm"
+                class="h-9 rounded-lg px-3 text-sm font-medium shadow-sm"
               >
                 {{ buttonLabel }}
               </RelayButton>

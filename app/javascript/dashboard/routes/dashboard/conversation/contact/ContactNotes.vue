@@ -152,7 +152,7 @@ watch(
       class="!items-start [&>div]:!top-12 [&>div]:sticky"
     >
       <div class="flex w-full flex-col gap-6 px-6 py-6">
-        <h3 class="text-lg font-semibold text-foreground">
+        <h3 class="capitalize text-lg font-semibold text-foreground">
           {{ t('CONTACTS_LAYOUT.SIDEBAR.NOTES.ADD_NOTE') }}
         </h3>
         <Editor

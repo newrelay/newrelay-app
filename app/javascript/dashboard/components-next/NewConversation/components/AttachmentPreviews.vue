@@ -57,7 +57,7 @@ const removeAttachment = id => {
           variant="ghost"
           icon="i-lucide-trash"
           color="slate"
-          class="absolute top-1 ltr:right-1 rtl:left-1 !w-5 !h-5 transition-opacity duration-150 ease-in-out opacity-0 group-hover/image:opacity-100"
+          class="absolute top-1 ltr:right-1 rtl:left-1 !w-5 !h-5 transition-opacity duration-150 ease-in-out opacity-0 group-hover/image:opacity-100 border border-border hover:border-transparent"
           @click="removeAttachment(attachment.resource.id)"
         />
       </div>
@@ -79,7 +79,7 @@ const removeAttachment = id => {
           icon="i-lucide-x"
           color="slate"
           size="xs"
-          class="shrink-0 !h-5 !w-5"
+          class="shrink-0 !h-5 !w-5 border border-border hover:border-transparent"
           @click="removeAttachment(attachment.resource.id)"
         />
       </div>

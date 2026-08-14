@@ -66,7 +66,7 @@ const steps = computed(() =>
       <div class="flex flex-col items-start gap-1.5 pb-10 pt-1">
         <div class="flex items-center">
           <h3
-            class="text-sm font-medium overflow-hidden whitespace-nowrap mt-0.5 text-ellipsis leading-tight"
+            class="capitalize text-sm font-medium overflow-hidden whitespace-nowrap mt-0.5 text-ellipsis leading-tight"
             :class="step.isActive ? 'text-primary' : 'text-foreground'"
           >
             {{ step.title }}

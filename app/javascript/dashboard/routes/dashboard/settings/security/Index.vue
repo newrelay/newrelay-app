@@ -37,7 +37,7 @@ const showPaywall = computed(() => shouldShowPaywall('saml'));
     <template #body>
       <div class="mt-2 space-y-6">
         <div>
-          <h2 class="text-base font-medium text-foreground">
+          <h2 class="capitalize text-base font-medium text-foreground">
             {{ t('SECURITY_SETTINGS.TITLE') }}
           </h2>
           <p class="mt-0.5 text-[13px] text-muted-foreground">

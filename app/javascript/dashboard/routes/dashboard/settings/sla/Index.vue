@@ -149,7 +149,7 @@ export default {
       >
         <!-- Header -->
         <div class="border-b border-border/40 p-4 sm:p-6">
-          <h3 class="text-base font-semibold text-foreground">
+          <h3 class="capitalize text-base font-semibold text-foreground">
             {{ $t('SLA.HEADER') }}
           </h3>
           <p class="mt-1 max-w-4xl text-sm text-muted-foreground">
@@ -171,7 +171,7 @@ export default {
                 v-model="searchQuery"
                 type="text"
                 :placeholder="$t('SLA.SEARCH_PLACEHOLDER')"
-                class="h-10 w-full rounded-lg border border-border/60 bg-muted/20 pl-9 text-sm text-foreground outline-none placeholder:text-muted-foreground focus:ring-1 focus:ring-primary/20"
+                class="h-10 w-full border border-border/60 bg-muted/20 pl-9 text-foreground outline-none placeholder:text-muted-foreground focus:ring-1 focus:ring-primary/20 text-[14px] border-border/80 bg-background focus-visible:ring-1 focus-visible:ring-primary/30 shadow-sm rounded-md"
               />
             </div>
             <RelayButton
@@ -295,7 +295,7 @@ export default {
                     v-tooltip.top="$t('SLA.FORM.DELETE')"
                     variant="ghost"
                     size="icon"
-                    class="size-8 border border-transparent text-muted-foreground shadow-xs hover:border-destructive/20 hover:bg-destructive/10 hover:text-destructive"
+                    class="size-8 border border-transparent text-muted-foreground shadow-xs hover:border-destructive/20 hover:bg-destructive/10 hover:text-destructive border border-border hover:border-transparent"
                     :disabled="loading[sla.id]"
                     @click="openDeletePopup(sla)"
                   >

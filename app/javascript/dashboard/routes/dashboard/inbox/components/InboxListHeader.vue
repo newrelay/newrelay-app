@@ -84,7 +84,7 @@ const onFilterChange = option => {
     class="flex items-center justify-between w-full gap-1 h-14 border-b border-border/60 px-4 shrink-0 bg-card"
   >
     <div class="flex items-center min-w-0 flex-1">
-      <h1 class="text-base font-semibold text-foreground truncate min-w-0">
+      <h1 class="capitalize text-[16px] font-[500] text-foreground truncate min-w-0">
         {{ t('INBOX.LIST.TITLE') }}
       </h1>
     </div>
@@ -97,7 +97,7 @@ const onFilterChange = option => {
           @click="openInboxDisplayMenu"
         >
           {{ t('INBOX.LIST.DISPLAY_DROPDOWN') }}
-          <span class="i-lucide-chevron-down size-3" />
+          <span class="i-lucide-chevron-down size-4" />
         </RelayButton>
         <InboxDisplayMenu
           v-if="showInboxDisplayMenu"
@@ -112,7 +112,7 @@ const onFilterChange = option => {
         class="h-8 w-8 text-muted-foreground"
         @click="openInboxOptionsMenu"
       >
-        <span class="i-lucide-sliders-horizontal size-4" />
+        <span class="i-lucide-sliders-horizontal size-4" style="color: #60646C;" />
       </RelayButton>
       <InboxOptionMenu
         v-if="showInboxOptionMenu"

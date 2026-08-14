@@ -120,7 +120,7 @@ const updateArticleStatus = async ({ value }) => {
     <RelayButton
       variant="ghost"
       size="sm"
-      class="pl-2 text-[13px] text-muted-foreground hover:text-foreground"
+      class="pl-2 text-[13px] text-muted-foreground hover:text-foreground border border-border hover:border-transparent"
       @click="onClickGoBack"
     >
       <span class="i-lucide-chevron-left size-4" aria-hidden="true" />

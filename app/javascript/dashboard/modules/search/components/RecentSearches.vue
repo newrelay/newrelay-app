@@ -73,7 +73,7 @@ onMounted(() => {
     <div class="flex items-center justify-between mb-4">
       <div class="flex items-center gap-2.5">
         <Icon icon="i-lucide-rotate-ccw" class="text-muted-foreground size-4" />
-        <h3 class="text-base font-medium text-muted-foreground">
+        <h3 class="capitalize text-base font-medium text-muted-foreground">
           {{ $t('SEARCH.RECENT_SEARCHES') }}
         </h3>
       </div>

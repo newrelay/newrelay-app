@@ -83,7 +83,7 @@ export default {
 <template>
   <form class="space-y-6" @submit.prevent="createChannel()">
     <div class="flex flex-col gap-1.5">
-      <label class="text-[13.5px] font-medium text-foreground">
+      <label class="text-[13.5px] text-foreground font-[500]">
         {{ $t('INBOX_MGMT.ADD.WHATSAPP.INBOX_NAME.LABEL') }}
       </label>
       <RelayInput
@@ -99,7 +99,7 @@ export default {
     </div>
 
     <div class="flex flex-col gap-1.5">
-      <label class="text-[13.5px] font-medium text-foreground">
+      <label class="text-[13.5px] text-foreground font-[500]">
         {{ $t('INBOX_MGMT.ADD.WHATSAPP.PHONE_NUMBER.LABEL') }}
       </label>
       <RelayInput
@@ -115,7 +115,7 @@ export default {
     </div>
 
     <div class="flex flex-col gap-1.5">
-      <label class="text-[13.5px] font-medium text-foreground">
+      <label class="text-[13.5px] text-foreground font-[500]">
         {{ $t('INBOX_MGMT.ADD.WHATSAPP.PHONE_NUMBER_ID.LABEL') }}
       </label>
       <RelayInput
@@ -131,7 +131,7 @@ export default {
     </div>
 
     <div class="flex flex-col gap-1.5">
-      <label class="text-[13.5px] font-medium text-foreground">
+      <label class="text-[13.5px] text-foreground font-[500]">
         {{ $t('INBOX_MGMT.ADD.WHATSAPP.BUSINESS_ACCOUNT_ID.LABEL') }}
       </label>
       <RelayInput
@@ -152,7 +152,7 @@ export default {
     </div>
 
     <div class="flex flex-col gap-1.5">
-      <label class="text-[13.5px] font-medium text-foreground">
+      <label class="text-[13.5px] text-foreground font-[500]">
         {{ $t('INBOX_MGMT.ADD.WHATSAPP.API_KEY.LABEL') }}
       </label>
       <RelayInput

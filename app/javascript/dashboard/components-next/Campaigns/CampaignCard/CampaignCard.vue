@@ -58,7 +58,7 @@ const isActive = computed(() =>
 
 const statusColorClass = computed(() =>
   isActive.value
-    ? 'text-emerald-600 bg-emerald-500/10 dark:text-emerald-400 dark:bg-emerald-500/20'
+    ? 'text-success bg-success/10'
     : 'text-muted-foreground bg-muted'
 );
 
@@ -133,7 +133,7 @@ const inboxIcon = computed(() => {
         v-if="isLiveChatType"
         variant="ghost"
         size="sm"
-        class="size-8 p-0 bg-muted/50 text-muted-foreground hover:text-foreground"
+        class="size-8 p-0 bg-muted/50 text-muted-foreground hover:text-foreground border border-border hover:border-transparent"
         :title="t('CAMPAIGN.LIVE_CHAT.EDIT.TITLE')"
         @click="emit('edit')"
       >
@@ -142,7 +142,7 @@ const inboxIcon = computed(() => {
       <RelayButton
         variant="ghost"
         size="sm"
-        class="size-8 p-0 bg-destructive/10 text-destructive/70 hover:bg-destructive/20 hover:text-destructive"
+        class="size-8 p-0 bg-destructive/10 text-destructive/70 hover:bg-destructive/20 hover:text-destructive border border-border hover:border-transparent"
         :title="t('CAMPAIGN.CONFIRM_DELETE.CONFIRM')"
         @click="emit('delete')"
       >

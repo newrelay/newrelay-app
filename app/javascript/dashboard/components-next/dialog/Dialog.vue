@@ -82,7 +82,9 @@ const maxWidthClass = computed(() => {
 });
 
 const positionClass = computed(() =>
-  props.position === 'top' ? 'dialog-position-top' : ''
+  props.position === 'top'
+    ? 'mt-[clamp(2rem,5vh,5rem)] mb-auto'
+    : ''
 );
 
 const open = () => {
@@ -121,7 +123,7 @@ defineExpose({ open, close });
   <TeleportWithDirection to="body">
     <dialog
       ref="dialogRef"
-      class="w-full transition-all duration-300 ease-in-out shadow-xl rounded-xl bg-transparent border-0 p-0 outline-none"
+      class="w-full transition-all duration-300 ease-in-out shadow-xl rounded-xl bg-transparent border-0 p-0 outline-none backdrop:bg-black/50 backdrop:backdrop-blur-[4px]"
       :class="[
         maxWidthClass,
         positionClass,
@@ -133,12 +135,15 @@ defineExpose({ open, close });
         <form
           ref="dialogContentRef"
           data-relay
-          class="flex h-auto w-full flex-col gap-6 overflow-visible rounded-xl border border-border bg-background p-6 text-start align-middle shadow-xl transition-all duration-300 ease-in-out transform"
+          class="flex h-auto w-full flex-col overflow-visible rounded-xl border border-border bg-background text-start align-middle shadow-xl transition-all duration-300 ease-in-out transform"
           @submit.prevent="confirm"
           @click.stop
         >
-          <div v-if="title || description" class="flex flex-col gap-2">
-            <h3 class="text-base font-semibold leading-6 text-foreground">
+          <div
+            v-if="title || description"
+            class="flex flex-col gap-2 px-8 pt-8 pb-0"
+          >
+            <h3 class="capitalize text-base font-medium leading-6 text-foreground">
               {{ title }}
             </h3>
             <slot name="description">
@@ -147,12 +152,20 @@ defineExpose({ open, close });
               </p>
             </slot>
           </div>
-          <slot v-if="isOpen" />
+          <div
+            :class="[
+              overflowYAuto ? 'overflow-y-auto' : 'overflow-visible',
+              'px-8 pt-4',
+              showCancelButton || showConfirmButton ? 'pb-0' : 'pb-8',
+            ]"
+          >
+            <slot v-if="isOpen" />
+          </div>
           <!-- Dialog content will be injected here -->
           <slot name="footer">
             <div
               v-if="showCancelButton || showConfirmButton"
-              class="flex items-center justify-between w-full gap-3"
+              class="flex items-center justify-between w-full gap-3 px-8 pb-8 pt-4"
             >
               <Button
                 v-if="showCancelButton"
@@ -179,16 +192,3 @@ defineExpose({ open, close });
     </dialog>
   </TeleportWithDirection>
 </template>
-
-<style scoped>
-dialog::backdrop {
-  background-color: rgba(0, 0, 0, 0.5);
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
-}
-
-.dialog-position-top {
-  margin-top: clamp(2rem, 5vh, 5rem);
-  margin-bottom: auto;
-}
-</style>

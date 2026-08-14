@@ -265,7 +265,7 @@ onBeforeUnmount(() => {
           </div>
         </div>
 
-        <h3 class="mb-2 text-base font-semibold text-foreground">
+        <h3 class="capitalize mb-2 text-base font-semibold text-foreground">
           {{ $t('INBOX_MGMT.ADD.WHATSAPP.EMBEDDED_SIGNUP.TITLE') }}
         </h3>
         <p class="text-[13px] leading-relaxed text-muted-foreground">

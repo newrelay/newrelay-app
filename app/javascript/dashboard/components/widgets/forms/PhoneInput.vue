@@ -202,7 +202,7 @@ export default {
         ref="phoneNumberInput"
         :value="phoneNumber"
         type="tel"
-        class="no-margin !rounded-tl-none !rounded-bl-none !outline-none !border-0 font-normal !w-full !bg-transparent text-base !px-1.5 placeholder:font-normal"
+        class="no-margin !rounded-tl-none !rounded-bl-none !outline-none !border-0 font-normal !w-full !bg-transparent !px-1.5 placeholder:font-normal text-[14px] shadow-sm rounded-md border-border/80 bg-background focus-visible:ring-1 focus-visible:ring-primary/30"
         :placeholder="placeholder"
         :readonly="readonly"
         :style="styles"
@@ -230,7 +230,7 @@ export default {
           v-model="searchCountry"
           type="text"
           :placeholder="$t('GENERAL.PHONE_INPUT.PLACEHOLDER')"
-          class="!h-8 !mb-0 !text-sm !outline-primary dark:!outline-primary"
+          class="!h-8 !mb-0 ! !outline-primary dark:!outline-primary text-[14px] shadow-sm rounded-md border-border/80 bg-background focus-visible:ring-1 focus-visible:ring-primary/30"
           @input="onSearchCountry"
         />
       </div>

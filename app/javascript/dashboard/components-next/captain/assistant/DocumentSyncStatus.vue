@@ -117,7 +117,7 @@ const tone = computed(() => {
 });
 
 const textClass = computed(() => {
-  if (tone.value === 'amber') return 'text-amber-500';
+  if (tone.value === 'amber') return 'text-warning';
   if (tone.value === 'ruby') return 'text-destructive';
   return 'text-muted-foreground/60';
 });
@@ -136,7 +136,7 @@ const statusIcon = computed(() => {
     :class="textClass"
     :title="fullLabel"
   >
-    <Spinner v-if="isSyncing" class="size-3 text-amber-500" />
+    <Spinner v-if="isSyncing" class="size-3 text-warning" />
     <Icon v-else :icon="statusIcon" class="size-3.5 shrink-0" />
     <span class="truncate">{{ label }}</span>
     <RelayButton

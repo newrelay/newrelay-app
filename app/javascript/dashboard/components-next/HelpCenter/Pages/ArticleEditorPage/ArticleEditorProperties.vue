@@ -57,7 +57,7 @@ onMounted(() => {
     <div
       class="mb-1 flex items-center justify-between border-b border-border/40 px-2.5 py-2"
     >
-      <h3 class="text-[13.5px] font-medium text-foreground">
+      <h3 class="capitalize text-[13.5px] font-medium text-foreground">
         {{
           t(
             'HELP_CENTER.EDIT_ARTICLE_PAGE.ARTICLE_PROPERTIES.ARTICLE_PROPERTIES'
@@ -67,7 +67,7 @@ onMounted(() => {
       <RelayButton
         variant="ghost"
         size="icon"
-        class="size-7 text-muted-foreground hover:text-foreground"
+        class="size-7 text-muted-foreground hover:text-foreground border border-border hover:border-transparent"
         @click="emit('close')"
       >
         <span class="i-lucide-x size-3.5" aria-hidden="true" />
@@ -77,7 +77,7 @@ onMounted(() => {
       <div>
         <div class="flex w-full justify-between gap-4 py-2">
           <label
-            class="min-w-[6.25rem] whitespace-nowrap text-[13px] font-medium text-foreground"
+            class="min-w-[6.25rem] whitespace-nowrap text-[13px] text-foreground text-[13.5px] font-[500]"
           >
             {{
               t(
@@ -115,7 +115,7 @@ onMounted(() => {
         </div>
         <div class="flex justify-between w-full gap-3 py-2">
           <label
-            class="min-w-[7.5rem] whitespace-nowrap text-[13px] font-medium text-foreground"
+            class="min-w-[7.5rem] whitespace-nowrap text-[13px] text-foreground text-[13.5px] font-[500]"
           >
             {{
               t('HELP_CENTER.EDIT_ARTICLE_PAGE.ARTICLE_PROPERTIES.META_TAGS')

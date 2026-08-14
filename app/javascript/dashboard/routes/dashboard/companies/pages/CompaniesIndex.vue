@@ -287,7 +287,7 @@ onMounted(() => {
       >
         <span class="i-lucide-search size-6 text-muted-foreground" />
       </div>
-      <h3 class="text-lg font-medium text-foreground">
+      <h3 class="capitalize text-lg font-medium text-foreground">
         {{ t('COMPANIES.EMPTY_STATE.SEARCH_EMPTY_TITLE') }}
       </h3>
       <p class="max-w-sm text-sm text-muted-foreground">

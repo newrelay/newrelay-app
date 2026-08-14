@@ -362,14 +362,14 @@ onBeforeUnmount(() => {
         }"
         @click="isMinimized && (isMinimized = false)"
       >
-        <h3 class="text-sm font-semibold tracking-tight text-foreground">
+        <h3 class="capitalize text-sm font-semibold tracking-tight text-foreground">
           {{ t('COMPOSE_NEW_CONVERSATION.TITLE') }}
         </h3>
         <div class="flex items-center gap-1">
           <RelayButton
             variant="ghost"
             size="icon"
-            class="size-6 rounded-md text-muted-foreground hover:bg-muted hover:text-foreground"
+            class="size-6 rounded-md text-muted-foreground hover:bg-muted hover:text-foreground border border-border hover:border-transparent"
             :title="
               isMinimized
                 ? t('COMPOSE_NEW_CONVERSATION.ACTIONS.RESTORE')
@@ -382,7 +382,7 @@ onBeforeUnmount(() => {
           <RelayButton
             variant="ghost"
             size="icon"
-            class="size-6 rounded-md text-muted-foreground hover:bg-muted hover:text-foreground"
+            class="size-6 rounded-md text-muted-foreground hover:bg-muted hover:text-foreground border border-border hover:border-transparent"
             :title="
               isMaximized
                 ? t('COMPOSE_NEW_CONVERSATION.ACTIONS.EXIT_FULLSCREEN')
@@ -400,7 +400,7 @@ onBeforeUnmount(() => {
           <RelayButton
             variant="ghost"
             size="icon"
-            class="size-6 rounded-md text-muted-foreground hover:bg-muted hover:text-foreground"
+            class="size-6 rounded-md text-muted-foreground hover:bg-muted hover:text-foreground border border-border hover:border-transparent"
             :title="t('COMPOSE_NEW_CONVERSATION.ACTIONS.CLOSE')"
             @click.stop="closeCompose"
           >

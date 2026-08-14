@@ -95,7 +95,7 @@ export default {
           ref="searchbar"
           v-model="search"
           type="text"
-          class="focus:box-shadow-blue dark:focus:box-shadow-dark !mb-0 !h-8 !text-sm"
+          class="focus:box-shadow-blue dark:focus:box-shadow-dark !mb-0 !h-8 ! text-[14px] shadow-sm rounded-md border-border/80 bg-background focus-visible:ring-1 focus-visible:ring-primary/30"
           :placeholder="$t('EMOJI.PLACEHOLDER')"
         />
         <NextButton

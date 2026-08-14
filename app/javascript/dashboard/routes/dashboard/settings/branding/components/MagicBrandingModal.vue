@@ -197,7 +197,7 @@ watch(
           <textarea
             v-model="promptInput"
             :placeholder="t('BRANDING_SETTINGS.MAGIC_AI.PROMPT_PLACEHOLDER')"
-            class="w-full min-h-[100px] p-3 text-sm rounded-lg bg-black/10 border-none outline outline-1 outline-border outline-offset-[-1px] focus:outline-primary text-foreground placeholder:text-muted-foreground"
+            class="w-full min-h-[100px] p-3 bg-black/10 border-none outline outline-1 outline-border outline-offset-[-1px] focus:outline-primary text-foreground placeholder:text-muted-foreground text-[14px] border-border/80 bg-background focus-visible:ring-1 focus-visible:ring-primary/30 shadow-sm rounded-md"
           />
         </template>
 
@@ -220,7 +220,7 @@ watch(
               ref="fileInputRef"
               type="file"
               accept="image/*"
-              class="hidden"
+              class="hidden text-[14px] border-border/80 bg-background focus-visible:ring-1 focus-visible:ring-primary/30 shadow-sm rounded-md"
               @change="onImageChange"
             />
             <NextButton
@@ -253,7 +253,7 @@ watch(
         v-if="options.length > 0"
         class="flex flex-col gap-3 mt-2 pt-5 border-t border-border"
       >
-        <h4 class="text-sm font-semibold text-foreground">
+        <h4 class="capitalize text-sm font-semibold text-foreground">
           {{ t('BRANDING_SETTINGS.MAGIC_AI.RESULTS') }}
         </h4>
         <div class="grid grid-cols-1 gap-3">

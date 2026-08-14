@@ -45,7 +45,9 @@ const attributeIcon = computed(() => {
         </div>
         <div class="flex flex-col gap-1.5 items-start min-w-0 overflow-hidden">
           <div class="flex items-center gap-2 min-w-0">
-            <h4 class="capitalize text-heading-3 truncate text-foreground min-w-0">
+            <h4
+              class="capitalize text-heading-3 truncate text-foreground min-w-0"
+            >
               {{ attribute.label }}
             </h4>
             <div class="flex items-center gap-1.5">

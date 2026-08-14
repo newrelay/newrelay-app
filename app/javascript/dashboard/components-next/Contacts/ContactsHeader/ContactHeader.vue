@@ -32,7 +32,9 @@ const emit = defineEmits([
       <!-- Top: Title + subtitle + action buttons -->
       <div class="flex items-start justify-between px-6 pb-4 pt-5">
         <div>
-          <h1 class="capitalize text-[16px] font-[500] tracking-tight text-foreground">
+          <h1
+            class="capitalize text-[16px] font-[500] tracking-tight text-foreground"
+          >
             {{ headerTitle }}
           </h1>
           <p v-if="!isLabelView" class="mt-0.5 text-sm text-muted-foreground">

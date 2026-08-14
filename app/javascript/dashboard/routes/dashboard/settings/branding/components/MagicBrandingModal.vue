@@ -289,8 +289,7 @@ watch(
                 }}</span>
                 <span
                   class="text-xs text-muted-foreground uppercase font-mono"
-                  >{{ option.primary }}</span
-                >
+                  >{{ option.primary }}</span>
               </div>
             </div>
             <span

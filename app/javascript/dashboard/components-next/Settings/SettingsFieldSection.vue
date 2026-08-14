@@ -16,7 +16,9 @@ defineProps({
     <div
       class="grid grid-cols-1 lg:grid-cols-8 gap-1.5 lg:gap-4 items-start lg:items-center"
     >
-      <label class="text-heading-3 text-foreground col-span-1 lg:col-span-2 text-[13.5px] font-[500]">
+      <label
+        class="text-heading-3 text-foreground col-span-1 lg:col-span-2 text-[13.5px] font-[500]"
+      >
         {{ label }}
       </label>
       <div class="col-span-1 lg:col-span-6">

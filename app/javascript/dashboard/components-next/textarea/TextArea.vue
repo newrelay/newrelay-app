@@ -169,9 +169,7 @@ onMounted(() => {
         :value="modelValue"
         :placeholder="placeholder"
         :maxlength="showCharacterCount ? maxLength : undefined"
-        :class="[ customTextAreaClass, { 'resize-none': !resize,
-          },
-        ]"
+        :class="[customTextAreaClass, { 'resize-none': !resize }]"
         :style="{
           minHeight: autoHeight ? minHeight : undefined,
           maxHeight: autoHeight ? maxHeight : undefined,

@@ -13,7 +13,8 @@ import {
   treeButtonLevel,
   treeItemWrapperClass,
   treeRowClass,
-  shouldConnectBranchDown,
+  getTreeElbowSize,
+  getTreeSpineVariant,
 } from './sidebarTree';
 
 const props = defineProps({
@@ -51,9 +52,17 @@ const rowClass = computed(() =>
   treeRowClass(buttonLevel.value, { dotOnly: dotOnly.value })
 );
 
-const connectDown = computed(() =>
-  !dotOnly.value &&
-  shouldConnectBranchDown({ isLast: props.isLast, depth: props.depth })
+const spineVariant = computed(() => {
+  if (dotOnly.value) return 'none';
+  return getTreeSpineVariant({
+    isLast: props.isLast,
+    depth: props.depth,
+    collapsible: false,
+  });
+});
+
+const elbowSize = computed(() =>
+  dotOnly.value ? 'md' : getTreeElbowSize(props.depth)
 );
 
 const isLeafActive = computed(() => {
@@ -78,16 +87,15 @@ const showLeadingIcon = computed(
 
 <!-- eslint-disable-next-line vue/no-root-v-if -->
 <template>
-  <li
-    v-if="disabled"
-    :title="label"
-    :class="treeItemWrapperClass(buttonLevel)"
-  >
+  <li v-if="disabled" :title="label" :class="treeItemWrapperClass(buttonLevel)">
+    <SidebarTreeChrome
+      v-if="!dotOnly"
+      mode="branch"
+      :spine="spineVariant"
+      :elbow="elbowSize"
+    />
+    <SidebarTreeChrome v-else mode="dot" />
     <div :class="rowClass">
-      <SidebarTreeChrome
-        :mode="dotOnly ? 'dot' : 'branch'"
-        :connect-down="connectDown"
-      />
       <div :class="SIDEBAR_TREE_INDENT">
         <div
           :class="[
@@ -119,11 +127,14 @@ const showLeadingIcon = computed(
     as="li"
     :class="treeItemWrapperClass(buttonLevel)"
   >
+    <SidebarTreeChrome
+      v-if="!dotOnly"
+      mode="branch"
+      :spine="spineVariant"
+      :elbow="elbowSize"
+    />
+    <SidebarTreeChrome v-else mode="dot" />
     <div :class="rowClass">
-      <SidebarTreeChrome
-        :mode="dotOnly ? 'dot' : 'branch'"
-        :connect-down="connectDown"
-      />
       <div :class="SIDEBAR_TREE_INDENT">
         <component
           :is="to ? 'router-link' : 'div'"

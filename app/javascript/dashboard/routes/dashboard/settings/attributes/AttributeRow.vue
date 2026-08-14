@@ -53,7 +53,9 @@ const metaLine = computed(() => {
       </div>
       <div class="min-w-0">
         <div class="flex min-w-0 flex-wrap items-center gap-2">
-          <h4 class="capitalize truncate text-[14px] font-semibold text-foreground">
+          <h4
+            class="capitalize truncate text-[14px] font-semibold text-foreground"
+          >
             {{ attribute.label }}
           </h4>
           <RelayBadge

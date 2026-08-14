@@ -300,7 +300,9 @@ const saveAbout = async () => {
               rounded-full
             />
             <div class="flex flex-1 flex-col gap-1.5">
-              <label class="text-[12px] text-foreground text-[13.5px] font-[500]">
+              <label
+                class="text-[12px] text-foreground text-[13.5px] font-[500]"
+              >
                 {{ t('CONTACTS_LAYOUT.DETAIL.ABOUT.FULL_NAME') }}
               </label>
               <RelayInput

@@ -188,7 +188,9 @@ const handleCardClick = () => {
       </div>
 
       <div class="min-w-0 flex-1">
-        <h3 class="capitalize mb-1 truncate text-[14.5px] font-medium text-foreground">
+        <h3
+          class="capitalize mb-1 truncate text-[14.5px] font-medium text-foreground"
+        >
           {{ name }}
         </h3>
         <div

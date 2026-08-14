@@ -278,14 +278,18 @@ defineExpose({ prepareCampaignDetails, isSubmitDisabled });
         {{ t('CAMPAIGN.LIVE_CHAT.CREATE.FORM.OTHER_PREFERENCES.TITLE') }}
       </legend>
 
-      <label class="flex items-center gap-2 text-[13.5px] font-[500] text-foreground">
+      <label
+        class="flex items-center gap-2 text-[13.5px] font-[500] text-foreground"
+      >
         <input v-model="state.enabled" type="checkbox" />
         <span class="text-sm font-medium text-foreground">
           {{ t('CAMPAIGN.LIVE_CHAT.CREATE.FORM.OTHER_PREFERENCES.ENABLED') }}
         </span>
       </label>
 
-      <label class="flex items-center gap-2 text-[13.5px] font-[500] text-foreground">
+      <label
+        class="flex items-center gap-2 text-[13.5px] font-[500] text-foreground"
+      >
         <input v-model="state.triggerOnlyDuringBusinessHours" type="checkbox" />
         <span class="text-sm font-medium text-foreground">
           {{

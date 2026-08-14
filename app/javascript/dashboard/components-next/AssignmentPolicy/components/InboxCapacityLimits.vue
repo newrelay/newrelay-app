@@ -123,7 +123,9 @@ const closeInboxDropdown = () => {
           </button>
         </span>
         <div class="flex items-center gap-2">
-          <label class="whitespace-nowrap text-[12px] text-muted-foreground text-[13.5px] font-[500] text-foreground">
+          <label
+            class="whitespace-nowrap text-[12px] text-muted-foreground text-[13.5px] font-[500] text-foreground"
+          >
             {{
               t(`${BASE_KEY}.FORM.INBOX_CAPACITY_LIMIT.FIELD.MAX_CONVERSATIONS`)
             }}

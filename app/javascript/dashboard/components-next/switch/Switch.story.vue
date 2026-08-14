@@ -43,7 +43,9 @@ const onChange = value => {
     <Variant title="Events">
       <div class="p-2 space-y-4">
         <Switch v-model="eventValue" @change="onChange" />
-        <div class="text-sm text-muted-foreground">Last change: {{ lastChange }}</div>
+        <div class="text-sm text-muted-foreground">
+          Last change: {{ lastChange }}
+        </div>
       </div>
     </Variant>
 

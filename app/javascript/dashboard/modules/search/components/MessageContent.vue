@@ -81,8 +81,7 @@ const authorText = computed(() => {
       <span
         v-if="authorText"
         class="text-muted-foreground font-medium leading-4"
-        >{{ authorText }}</span
-      >
+        >{{ authorText }}</span>
       <span
         v-dompurify-html="highlightedContent"
         class="message-content text-foreground [&_.searchkey--highlight]:text-foreground [&_.searchkey--highlight]:font-semibold"

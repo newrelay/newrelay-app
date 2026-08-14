@@ -178,7 +178,9 @@ const exploreDemo = () => {
         <span class="i-lucide-message-square size-8 text-primary" />
       </div>
 
-      <h2 class="capitalize text-base font-medium tracking-tight text-foreground mb-2">
+      <h2
+        class="capitalize text-base font-medium tracking-tight text-foreground mb-2"
+      >
         {{ t('ONBOARDING.CONNECT.TITLE') }}
       </h2>
       <p class="text-muted-foreground mb-8 text-sm max-w-lg">

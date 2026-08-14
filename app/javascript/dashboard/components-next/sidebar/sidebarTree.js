@@ -1,4 +1,4 @@
-/** Sidebar directory-tree — single vertical spine, flat column alignment. */
+/** Sidebar directory-tree — aligned with Design-System-NR AppSidebar.vue */
 
 export const TREE_LEVEL = {
   SECTION: 1,
@@ -10,43 +10,34 @@ export const TREE_LEVEL = {
   SUB_LEAF: 4,
 };
 
-/** Section tree — spine is drawn per-row (not border-l) so the last item can terminate cleanly. */
+/** Level-1 sub-menu under a section group (Inbox, Conversations). */
 export const SIDEBAR_TREE_LIST =
-  'relative m-0 flex min-w-0 list-none flex-col ltr:ml-5 rtl:mr-5';
+  'relative m-0 flex min-w-0 list-none flex-col gap-0.5 py-0.5 ltr:ml-4 rtl:mr-4';
 
-/** Nested branch rows share the parent spine column. */
+/** Nested list under Conversations. */
 export const SIDEBAR_TREE_LIST_NESTED =
-  'relative m-0 flex min-w-0 list-none flex-col';
+  'relative m-0 flex min-w-0 list-none flex-col gap-0.5 py-1';
 
-/** Dot-only sub-lists (Teams / Channels / Labels children). */
+/** Dot-only list under Teams / Channels / Labels. */
 export const SIDEBAR_TREE_LIST_DOTS =
-  'relative m-0 flex min-w-0 list-none flex-col before:pointer-events-none before:absolute before:inset-y-0 before:z-[1] before:bg-sidebar ltr:before:-left-1 ltr:before:w-2 rtl:before:-right-1 rtl:before:w-2';
-
-export const SIDEBAR_TREE_DOT_ROW = 'relative z-[2] min-w-0';
+  'relative m-0 flex min-w-0 list-none flex-col gap-0.5 py-1';
 
 export const SIDEBAR_TREE_INDENT = 'pl-3';
 
 export const SIDEBAR_TREE_ROW = 'relative min-w-0 min-h-8';
 export const SIDEBAR_TREE_ROW_COMPACT = 'relative min-w-0 min-h-7';
 
-/** Hide the shared spine beside open dot sub-menus (Teams / Channels / Labels). */
-export const SIDEBAR_TREE_OPEN_BRANCH_MASK =
-  'before:pointer-events-none before:absolute before:top-7 before:bottom-0 before:z-[1] before:bg-sidebar ltr:before:-left-1 ltr:before:w-2 rtl:before:-right-1 rtl:before:w-2';
+export const SIDEBAR_TREE_COLLAPSE_GRID =
+  'grid transition-[grid-template-rows] duration-200 ease-out';
 
 export const treeRowClass = (
   level,
   { dotOnly = false, compact = false } = {}
 ) => {
-  const useCompact =
-    dotOnly || compact || level === TREE_LEVEL.SUB_LEAF;
+  const useCompact = dotOnly || compact || level === TREE_LEVEL.SUB_LEAF;
   const base = useCompact ? SIDEBAR_TREE_ROW_COMPACT : SIDEBAR_TREE_ROW;
 
-  return dotOnly ? `${base} ${SIDEBAR_TREE_DOT_ROW}` : base;
-};
-
-export const treeBranchItemClass = ({ isOpen = false, depth = 1 } = {}) => {
-  if (isOpen && depth >= 2) return SIDEBAR_TREE_OPEN_BRANCH_MASK;
-  return '';
+  return dotOnly ? `${base} relative z-[2]` : base;
 };
 
 export const sectionHeaderClasses = active => [
@@ -96,7 +87,6 @@ export const treeButtonClasses = (level, active, { compact = false } = {}) => {
   }
 };
 
-/** Deepest rows under Teams / Channels / Labels — dot only, no tree lines. */
 export const isDotOnlyDepth = depth => depth >= 3;
 
 export const treeButtonLevel = ({ depth, isLeaf, collapsible }) => {
@@ -105,17 +95,34 @@ export const treeButtonLevel = ({ depth, isLeaf, collapsible }) => {
   return TREE_LEVEL.CHILD_BRANCH;
 };
 
-/** Whether this branch row should continue the spine to the next sibling. */
-export const shouldConnectBranchDown = ({
+export const isCompactChildBranch = ({ depth, collapsible }) =>
+  depth >= 2 && collapsible;
+
+/** Elbow height: depth 1 → h-4, depth 2+ → h-[14px] */
+export const getTreeElbowSize = depth => (depth <= 1 ? 'md' : 'sm');
+
+/**
+ * Spine variant matching Design-System-NR:
+ * - none: last closed item (no line below elbow)
+ * - extend: -bottom-[2px] connector to next sibling
+ * - fixed-36: Conversations open (stops before nested children)
+ * - fixed-7: Teams/Channels/Labels open (stops before dot children)
+ */
+export const getTreeSpineVariant = ({
   isLast,
   isOpen = false,
   depth = 1,
+  collapsible = false,
+  hasDotChildren = false,
 }) => {
-  if (isLast) return false;
-  if (depth >= 2 && isOpen) return false;
-  return true;
-};
+  if (collapsible) {
+    if (isLast && !isOpen) return 'none';
+    if (isOpen && depth === 1) return 'fixed-36';
+    if (isOpen && depth >= 2 && hasDotChildren) return 'fixed-7';
+    if (!isLast) return 'extend';
+    return 'none';
+  }
 
-/** Collapsible rows under Conversations (Teams / Channels / Labels) use compact height. */
-export const isCompactChildBranch = ({ depth, collapsible }) =>
-  depth >= 2 && collapsible;
+  if (isLast) return 'none';
+  return 'extend';
+};

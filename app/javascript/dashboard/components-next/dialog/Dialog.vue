@@ -82,9 +82,7 @@ const maxWidthClass = computed(() => {
 });
 
 const positionClass = computed(() =>
-  props.position === 'top'
-    ? 'mt-[clamp(2rem,5vh,5rem)] mb-auto'
-    : ''
+  props.position === 'top' ? 'mt-[clamp(2rem,5vh,5rem)] mb-auto' : ''
 );
 
 const open = () => {
@@ -143,7 +141,9 @@ defineExpose({ open, close });
             v-if="title || description"
             class="flex flex-col gap-2 px-8 pt-8 pb-0"
           >
-            <h3 class="capitalize text-base font-medium leading-6 text-foreground">
+            <h3
+              class="capitalize text-base font-medium leading-6 text-foreground"
+            >
               {{ title }}
             </h3>
             <slot name="description">
@@ -153,9 +153,9 @@ defineExpose({ open, close });
             </slot>
           </div>
           <div
+            class="px-8 pt-4"
             :class="[
               overflowYAuto ? 'overflow-y-auto' : 'overflow-visible',
-              'px-8 pt-4',
               showCancelButton || showConfirmButton ? 'pb-0' : 'pb-8',
             ]"
           >

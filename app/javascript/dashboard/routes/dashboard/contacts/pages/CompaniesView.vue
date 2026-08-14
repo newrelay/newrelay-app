@@ -213,14 +213,16 @@ onMounted(() => {
           variant="ghost"
           color="slate"
           size="sm"
-         class="border border-border hover:border-transparent" />
+          class="border border-border hover:border-transparent"
+        />
         <Button
           label="Sort"
           icon="i-lucide-arrow-up-down"
           variant="ghost"
           color="slate"
           size="sm"
-         class="border border-border hover:border-transparent" />
+          class="border border-border hover:border-transparent"
+        />
       </div>
 
       <div class="flex items-center gap-4">
@@ -343,8 +345,9 @@ onMounted(() => {
                   variant="ghost"
                   color="slate"
                   size="xs"
+                  class="border border-border hover:border-transparent"
                   @click="openEditDrawer(company)"
-                 class="border border-border hover:border-transparent" />
+                />
                 <Button
                   icon="i-lucide-trash"
                   variant="ghost"
@@ -388,14 +391,17 @@ onMounted(() => {
             variant="ghost"
             color="slate"
             size="sm"
+            class="border border-border hover:border-transparent"
             @click="closeDrawer"
-           class="border border-border hover:border-transparent" />
+          />
         </div>
 
         <!-- Form Content -->
         <div class="flex-1 overflow-y-auto p-6 space-y-6">
           <div>
-            <label class="block text-foreground mb-1.5 text-[13.5px] font-[500]">
+            <label
+              class="block text-foreground mb-1.5 text-[13.5px] font-[500]"
+            >
               {{ t('CONTACTS_LAYOUT.COMPANIES_VIEW.FORM_NAME') }}
               <span class="text-destructive">*</span>
             </label>
@@ -406,7 +412,9 @@ onMounted(() => {
             />
           </div>
           <div>
-            <label class="block text-foreground mb-1.5 text-[13.5px] font-[500]">
+            <label
+              class="block text-foreground mb-1.5 text-[13.5px] font-[500]"
+            >
               {{ t('CONTACTS_LAYOUT.COMPANIES_VIEW.FORM_PHONE') }}
             </label>
             <PhoneNumberInput
@@ -416,7 +424,9 @@ onMounted(() => {
             />
           </div>
           <div>
-            <label class="block text-foreground mb-1.5 text-[13.5px] font-[500]">
+            <label
+              class="block text-foreground mb-1.5 text-[13.5px] font-[500]"
+            >
               {{ t('CONTACTS_LAYOUT.COMPANIES_VIEW.FORM_EMAIL') }}
             </label>
             <Input
@@ -430,7 +440,9 @@ onMounted(() => {
             </Input>
           </div>
           <div>
-            <label class="block text-foreground mb-1.5 text-[13.5px] font-[500]">
+            <label
+              class="block text-foreground mb-1.5 text-[13.5px] font-[500]"
+            >
               {{ t('CONTACTS_LAYOUT.COMPANIES_VIEW.FORM_WEBSITE') }}
             </label>
             <Input
@@ -440,7 +452,9 @@ onMounted(() => {
             />
           </div>
           <div>
-            <label class="block text-foreground mb-1.5 text-[13.5px] font-[500]">
+            <label
+              class="block text-foreground mb-1.5 text-[13.5px] font-[500]"
+            >
               {{ t('CONTACTS_LAYOUT.COMPANIES_VIEW.FORM_ADDRESS') }}
             </label>
             <Input
@@ -450,7 +464,9 @@ onMounted(() => {
             />
           </div>
           <div>
-            <label class="block text-foreground mb-1.5 text-[13.5px] font-[500]">
+            <label
+              class="block text-foreground mb-1.5 text-[13.5px] font-[500]"
+            >
               {{ t('CONTACTS_LAYOUT.COMPANIES_VIEW.FORM_STATE') }}
             </label>
             <Input
@@ -460,7 +476,9 @@ onMounted(() => {
             />
           </div>
           <div>
-            <label class="block text-foreground mb-1.5 text-[13.5px] font-[500]">
+            <label
+              class="block text-foreground mb-1.5 text-[13.5px] font-[500]"
+            >
               {{ t('CONTACTS_LAYOUT.COMPANIES_VIEW.FORM_CITY') }}
             </label>
             <Input
@@ -470,7 +488,9 @@ onMounted(() => {
             />
           </div>
           <div>
-            <label class="block text-foreground mb-1.5 text-[13.5px] font-[500]">
+            <label
+              class="block text-foreground mb-1.5 text-[13.5px] font-[500]"
+            >
               {{ t('CONTACTS_LAYOUT.COMPANIES_VIEW.FORM_DESCRIPTION') }}
             </label>
             <textarea
@@ -489,8 +509,9 @@ onMounted(() => {
             :label="t('CONTACTS_LAYOUT.COMPANIES_VIEW.CANCEL')"
             variant="ghost"
             color="slate"
+            class="border border-border hover:border-transparent"
             @click="closeDrawer"
-           class="border border-border hover:border-transparent" />
+          />
           <div class="flex items-center gap-3">
             <Button
               :label="t('CONTACTS_LAYOUT.COMPANIES_VIEW.SAVE_ADD_ANOTHER')"

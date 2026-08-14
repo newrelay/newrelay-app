@@ -338,15 +338,13 @@ const handleRemove = async event => {
                   }}</span>
                   <code
                     class="select-all bg-transparent p-0 font-mono font-semibold text-foreground"
-                    >{{ normalizedDomain }}</code
-                  >
+                    >{{ normalizedDomain }}</code>
                   <span class="text-muted-foreground">{{
                     $t('BRANDING_SETTINGS.CUSTOM_DOMAIN.TARGET')
                   }}</span>
                   <code
                     class="select-all bg-transparent p-0 font-mono font-semibold text-foreground"
-                    >{{ cnameTarget }}</code
-                  >
+                    >{{ cnameTarget }}</code>
                 </div>
               </div>
 
@@ -381,16 +379,14 @@ const handleRemove = async event => {
                     }}</span>
                     <code
                       class="select-all bg-transparent p-0 font-mono font-semibold text-foreground"
-                      >{{ txtVerificationName }}</code
-                    >
+                      >{{ txtVerificationName }}</code>
                     <span class="text-muted-foreground">{{
                       $t('BRANDING_SETTINGS.CUSTOM_DOMAIN.VALUE')
                     }}</span>
                     <code
                       v-if="txtVerificationRecord"
                       class="select-all bg-transparent p-0 font-mono font-semibold text-foreground"
-                      >{{ txtVerificationRecord }}</code
-                    >
+                      >{{ txtVerificationRecord }}</code>
                     <span
                       v-else
                       class="inline-flex items-center gap-2 font-medium text-muted-foreground"
@@ -414,15 +410,13 @@ const handleRemove = async event => {
                     }}</span>
                     <code
                       class="select-all bg-transparent p-0 font-mono font-semibold text-foreground"
-                      >{{ rootRecordName }}</code
-                    >
+                      >{{ rootRecordName }}</code>
                     <span class="text-muted-foreground">{{
                       $t('BRANDING_SETTINGS.CUSTOM_DOMAIN.VALUE')
                     }}</span>
                     <code
                       class="select-all bg-transparent p-0 font-mono font-semibold text-foreground"
-                      >{{ serverIp }}</code
-                    >
+                      >{{ serverIp }}</code>
                   </div>
                 </div>
               </div>

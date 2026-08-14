@@ -57,7 +57,9 @@ const onClick = () => {
         <div class="flex min-w-0 flex-1 items-center gap-4 pr-4">
           <div class="size-4 shrink-0 rounded border border-border/60" />
           <div class="min-w-0 flex-1 text-left">
-            <h3 class="capitalize mb-1 truncate text-[14.5px] font-medium text-foreground">
+            <h3
+              class="capitalize mb-1 truncate text-[14.5px] font-medium text-foreground"
+            >
               {{ doc.title }}
             </h3>
             <div

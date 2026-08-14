@@ -184,7 +184,9 @@ onMounted(() => {
       <Icon icon="i-lucide-check" class="size-10 text-green-600" />
     </div>
 
-    <h2 class="capitalize mb-3 text-2xl font-bold tracking-tight text-foreground">
+    <h2
+      class="capitalize mb-3 text-2xl font-bold tracking-tight text-foreground"
+    >
       {{ $t('INBOX_MGMT.FINISH.TITLE') }}
     </h2>
     <p

@@ -181,7 +181,9 @@ export default {
       </p>
     </div>
 
-    <label class="flex items-center gap-3 text-[13.5px] font-[500] text-foreground">
+    <label
+      class="flex items-center gap-3 text-[13.5px] font-[500] text-foreground"
+    >
       <RelayCheckbox v-model="useMessagingService" />
       <span class="text-[13.5px] text-foreground">
         {{
@@ -208,7 +210,9 @@ export default {
       </p>
     </div>
 
-    <label class="flex items-center gap-3 text-[13.5px] font-[500] text-foreground">
+    <label
+      class="flex items-center gap-3 text-[13.5px] font-[500] text-foreground"
+    >
       <RelayCheckbox v-model="useAPIKey" />
       <span class="text-[13.5px] text-foreground">
         {{ $t('INBOX_MGMT.ADD.TWILIO.API_KEY.USE_API_KEY') }}

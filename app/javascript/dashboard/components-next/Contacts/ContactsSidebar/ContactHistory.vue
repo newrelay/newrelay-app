@@ -161,7 +161,9 @@ const openConversation = conversation => {
             {{ t('CONTACTS_LAYOUT.SIDEBAR.HISTORY.OPEN') }}
           </RelayButton>
         </div>
-        <h4 class="capitalize mb-1 text-sm font-semibold text-foreground line-clamp-2">
+        <h4
+          class="capitalize mb-1 text-sm font-semibold text-foreground line-clamp-2"
+        >
           {{ subjectOrPreview(conversation) }}
         </h4>
         <div class="mt-2 flex items-center gap-2">

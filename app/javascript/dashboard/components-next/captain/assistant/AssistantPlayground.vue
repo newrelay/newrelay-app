@@ -95,7 +95,9 @@ const handleEnterKey = event => {
       class="flex shrink-0 items-start justify-between gap-4 border-b border-border/40 pb-4"
     >
       <div class="space-y-1">
-        <h2 class="capitalize text-base font-semibold tracking-tight text-foreground">
+        <h2
+          class="capitalize text-base font-semibold tracking-tight text-foreground"
+        >
           {{ t('CAPTAIN.PLAYGROUND.HEADER') }}
         </h2>
         <p class="text-[13.5px] leading-relaxed text-muted-foreground">

@@ -5,15 +5,16 @@ import SidebarSubGroup from './SidebarSubGroup.vue';
 import SidebarTreeChrome from './SidebarTreeChrome.vue';
 import SidebarCollapsibleSubItem from './SidebarCollapsibleSubItem.vue';
 import {
+  SIDEBAR_TREE_COLLAPSE_GRID,
   SIDEBAR_TREE_INDENT,
   SIDEBAR_TREE_LIST_DOTS,
   SIDEBAR_TREE_LIST_NESTED,
-  treeBranchItemClass,
   treeButtonClasses,
   treeButtonLevel,
   treeItemWrapperClass,
   treeRowClass,
-  shouldConnectBranchDown,
+  getTreeElbowSize,
+  getTreeSpineVariant,
   isCompactChildBranch,
 } from './sidebarTree';
 import { useSidebarContext } from './provider';
@@ -35,6 +36,8 @@ const buttonLevel = computed(() =>
   treeButtonLevel({ depth: props.depth, isLeaf: false, collapsible: true })
 );
 
+const hasDotChildren = computed(() => props.depth >= 2);
+
 const rowClass = computed(() =>
   treeRowClass(buttonLevel.value, {
     compact: isCompactChildBranch({
@@ -53,20 +56,17 @@ const buttonClasses = computed(() =>
   })
 );
 
-const connectRowDown = computed(() =>
-  shouldConnectBranchDown({
+const spineVariant = computed(() =>
+  getTreeSpineVariant({
     isLast: props.isLast,
     isOpen: isOpen.value,
     depth: props.depth,
+    collapsible: true,
+    hasDotChildren: hasDotChildren.value,
   })
 );
 
-const itemClass = computed(() =>
-  [
-    treeItemWrapperClass(buttonLevel.value),
-    treeBranchItemClass({ isOpen: isOpen.value, depth: props.depth }),
-  ].join(' ')
-);
+const elbowSize = computed(() => getTreeElbowSize(props.depth));
 
 const nestedListClass = computed(() =>
   props.depth >= 2 ? SIDEBAR_TREE_LIST_DOTS : SIDEBAR_TREE_LIST_NESTED
@@ -113,9 +113,9 @@ const isHighlighted = computed(() => isOpen.value || containsActiveChild.value);
 
 <!-- eslint-disable-next-line vue/no-root-v-if -->
 <template>
-  <li v-if="hasAccessibleChildren" :class="itemClass">
+  <li v-if="hasAccessibleChildren" :class="treeItemWrapperClass(buttonLevel)">
+    <SidebarTreeChrome mode="branch" :spine="spineVariant" :elbow="elbowSize" />
     <div :class="rowClass">
-      <SidebarTreeChrome mode="branch" :connect-down="connectRowDown" />
       <div :class="SIDEBAR_TREE_INDENT">
         <button
           type="button"
@@ -132,39 +132,48 @@ const isHighlighted = computed(() => isOpen.value || containsActiveChild.value);
       </div>
     </div>
 
-    <ul v-if="isOpen" :class="nestedListClass">
-      <template
-        v-for="(child, index) in accessibleChildren"
-        :key="child.name"
-      >
-        <SidebarCollapsibleSubItem
-          v-if="child.collapsible && child.children && depth < 2"
-          :label="child.label"
-          :children="child.children"
-          :active-child="activeChild"
-          :is-parent-expanded="isParentExpanded && isOpen"
-          :default-open="child.defaultOpen === true"
-          :depth="depth + 1"
-          :is-last="index === accessibleChildren.length - 1"
-        />
-        <SidebarSubGroup
-          v-else-if="child.children && depth < 2"
-          :label="child.label"
-          :icon="child.icon"
-          :children="child.children"
-          :is-expanded="isParentExpanded && isOpen"
-          :active-child="activeChild"
-          :depth="depth + 1"
-          :is-last="index === accessibleChildren.length - 1"
-        />
-        <SidebarGroupLeaf
-          v-else-if="isAllowed(child.to)"
-          v-bind="child"
-          :active="activeChild?.name === child.name"
-          :depth="depth + 1"
-          :is-last="index === accessibleChildren.length - 1"
-        />
-      </template>
-    </ul>
+    <div
+      :class="[
+        SIDEBAR_TREE_COLLAPSE_GRID,
+        isOpen ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]',
+      ]"
+    >
+      <div class="overflow-hidden">
+        <ul :class="nestedListClass">
+          <template
+            v-for="(child, index) in accessibleChildren"
+            :key="child.name"
+          >
+            <SidebarCollapsibleSubItem
+              v-if="child.collapsible && child.children && depth < 2"
+              :label="child.label"
+              :children="child.children"
+              :active-child="activeChild"
+              :is-parent-expanded="isParentExpanded && isOpen"
+              :default-open="child.defaultOpen === true"
+              :depth="depth + 1"
+              :is-last="index === accessibleChildren.length - 1"
+            />
+            <SidebarSubGroup
+              v-else-if="child.children && depth < 2"
+              :label="child.label"
+              :icon="child.icon"
+              :children="child.children"
+              :is-expanded="isParentExpanded && isOpen"
+              :active-child="activeChild"
+              :depth="depth + 1"
+              :is-last="index === accessibleChildren.length - 1"
+            />
+            <SidebarGroupLeaf
+              v-else-if="isAllowed(child.to)"
+              v-bind="child"
+              :active="activeChild?.name === child.name"
+              :depth="depth + 1"
+              :is-last="index === accessibleChildren.length - 1"
+            />
+          </template>
+        </ul>
+      </div>
+    </div>
   </li>
 </template>

@@ -191,7 +191,9 @@ const confirmDeletion = () => {
                   class="size-6 text-muted-foreground"
                 />
               </div>
-              <h3 class="capitalize mb-2 text-[16px] font-semibold text-foreground">
+              <h3
+                class="capitalize mb-2 text-[16px] font-semibold text-foreground"
+              >
                 {{ $t('CUSTOM_ROLE.LIST.EMPTY_TITLE') }}
               </h3>
               <p

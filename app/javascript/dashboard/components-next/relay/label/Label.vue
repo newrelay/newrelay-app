@@ -9,7 +9,9 @@ defineProps({
 <template>
   <label
     :for="htmlFor"
-    :class="cn('text-[13.5px] font-medium leading-none text-foreground',
+    :class="
+      cn(
+        'text-[13.5px] font-medium leading-none text-foreground',
         'peer-disabled:cursor-not-allowed peer-disabled:opacity-70'
       )
     "

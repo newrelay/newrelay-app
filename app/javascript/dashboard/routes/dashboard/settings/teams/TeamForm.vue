@@ -112,7 +112,9 @@ export default {
         </p>
       </div>
 
-      <label class="flex cursor-pointer items-center gap-2.5 text-[13.5px] font-[500] text-foreground">
+      <label
+        class="flex cursor-pointer items-center gap-2.5 text-[13.5px] font-[500] text-foreground"
+      >
         <RelayCheckbox v-model="state.allowAutoAssign" />
         <span class="text-sm text-foreground">
           {{ $t('TEAMS_SETTINGS.FORM.AUTO_ASSIGN.LABEL') }}

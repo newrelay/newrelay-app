@@ -94,9 +94,7 @@ const handleAction = ({ action, value }) => {
         >
           {{ title }}
         </h3>
-        <span class="hidden text-[10px] text-muted-foreground/40 sm:inline"
-          >•</span
-        >
+        <span class="hidden text-[10px] text-muted-foreground/40 sm:inline">•</span>
         <p
           class="min-w-0 flex-1 truncate text-[13px]"
           :class="

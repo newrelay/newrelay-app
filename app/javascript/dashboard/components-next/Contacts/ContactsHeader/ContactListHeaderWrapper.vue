@@ -78,8 +78,8 @@ const onImport = async file => {
     useAlert(
       error instanceof ExceptionWithMessage
         ? error.data
-        : error.message ??
-            t('CONTACTS_LAYOUT.HEADER.ACTIONS.IMPORT_CONTACT.ERROR_MESSAGE')
+        : (error.message ??
+            t('CONTACTS_LAYOUT.HEADER.ACTIONS.IMPORT_CONTACT.ERROR_MESSAGE'))
     );
   }
 };

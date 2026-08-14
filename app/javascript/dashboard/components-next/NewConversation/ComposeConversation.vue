@@ -362,7 +362,9 @@ onBeforeUnmount(() => {
         }"
         @click="isMinimized && (isMinimized = false)"
       >
-        <h3 class="capitalize text-sm font-semibold tracking-tight text-foreground">
+        <h3
+          class="capitalize text-sm font-semibold tracking-tight text-foreground"
+        >
           {{ t('COMPOSE_NEW_CONVERSATION.TITLE') }}
         </h3>
         <div class="flex items-center gap-1">

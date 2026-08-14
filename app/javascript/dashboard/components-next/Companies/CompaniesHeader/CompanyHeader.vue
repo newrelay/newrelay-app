@@ -58,7 +58,9 @@ const propertyLabel = property => {
   <div class="flex flex-col gap-6">
     <div class="flex items-center justify-between">
       <div>
-        <h1 class="capitalize text-[16px] font-[500] tracking-tight text-foreground">
+        <h1
+          class="capitalize text-[16px] font-[500] tracking-tight text-foreground"
+        >
           {{ headerTitle }}
         </h1>
         <p v-if="headerSubtitle" class="mt-1.5 text-sm text-muted-foreground">

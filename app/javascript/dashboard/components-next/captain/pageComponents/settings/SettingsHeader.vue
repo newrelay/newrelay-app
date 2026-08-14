@@ -13,7 +13,9 @@ defineProps({
 
 <template>
   <header class="flex flex-col items-start gap-1">
-    <h2 class="capitalize text-base font-semibold tracking-tight text-foreground">
+    <h2
+      class="capitalize text-base font-semibold tracking-tight text-foreground"
+    >
       {{ heading }}
     </h2>
     <p

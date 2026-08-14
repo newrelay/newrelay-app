@@ -168,7 +168,9 @@ defineExpose({
   <div
     class="flex w-full flex-col gap-6 rounded-2xl border border-border/40 bg-card p-6 shadow-sm"
   >
-    <h2 class="capitalize flex items-center gap-2 text-base font-medium text-foreground">
+    <h2
+      class="capitalize flex items-center gap-2 text-base font-medium text-foreground"
+    >
       <span
         class="i-lucide-paintbrush size-4 text-primary"
         aria-hidden="true"
@@ -201,7 +203,11 @@ defineExpose({
           <label
             class="relative cursor-pointer transition-transform hover:scale-105 text-[13.5px] font-[500] text-foreground"
           >
-            <input v-model="state.widgetColor" type="color" class="sr-only text-[14px] shadow-sm rounded-md border-border/80 bg-background focus-visible:ring-1 focus-visible:ring-primary/30" />
+            <input
+              v-model="state.widgetColor"
+              type="color"
+              class="sr-only text-[14px] shadow-sm rounded-md border-border/80 bg-background focus-visible:ring-1 focus-visible:ring-primary/30"
+            />
             <span
               class="block size-10 rounded-full border-2 border-background shadow-sm ring-1 ring-border/50"
               :style="{ backgroundColor: state.widgetColor || '#2781F6' }"

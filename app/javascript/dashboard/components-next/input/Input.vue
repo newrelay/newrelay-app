@@ -119,9 +119,11 @@ onMounted(() => {
       v-bind="$attrs"
       ref="inputRef"
       :value="modelValue"
-      :class="[ customInputClass, inputOutlineClass, sizeClass, { error: messageType === 'error',
-          focus: isFocused,
-        },
+      :class="[
+        customInputClass,
+        inputOutlineClass,
+        sizeClass,
+        { error: messageType === 'error', focus: isFocused },
       ]"
       :type="type"
       :placeholder="placeholder"

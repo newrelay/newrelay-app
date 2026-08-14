@@ -23,10 +23,14 @@ export default {
 
 <template>
   <div>
-    <label class="radio-group-label text-[13.5px] font-[500] text-foreground">{{ label }}</label>
+    <label class="radio-group-label text-[13.5px] font-[500] text-foreground">{{
+      label
+    }}</label>
     <div class="radio-group">
       <div v-for="item in items" :key="item.id" class="radio-group-item">
-        <label class="radio-group-item-label text-[13.5px] font-[500] text-foreground">
+        <label
+          class="radio-group-item-label text-[13.5px] font-[500] text-foreground"
+        >
           <input
             class="radio-input text-[14px] border-border/80 bg-background focus-visible:ring-1 focus-visible:ring-primary/30 shadow-sm rounded-md"
             :name="`${name} -radio-input`"

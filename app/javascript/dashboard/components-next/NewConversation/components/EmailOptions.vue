@@ -83,7 +83,9 @@ const subjectClass = computed(() => {
       v-if="showCcInput"
       class="flex min-h-8 items-center gap-3 border-b border-border/40 px-4 py-2"
     >
-      <label class="shrink-0 text-muted-foreground text-[13.5px] font-[500] text-foreground">
+      <label
+        class="shrink-0 text-muted-foreground text-[13.5px] font-[500] text-foreground"
+      >
         {{ t(`${i18nPrefix}.CC_LABEL`) }}
       </label>
       <TagInput
@@ -104,7 +106,9 @@ const subjectClass = computed(() => {
       v-if="showBccInput"
       class="flex min-h-8 items-center gap-3 border-b border-border/40 px-4 py-2"
     >
-      <label class="shrink-0 text-muted-foreground text-[13.5px] font-[500] text-foreground">
+      <label
+        class="shrink-0 text-muted-foreground text-[13.5px] font-[500] text-foreground"
+      >
         {{ t(`${i18nPrefix}.BCC_LABEL`) }}
       </label>
       <TagInput

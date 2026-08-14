@@ -19,7 +19,9 @@ const onChange = (id, value) => {
 
 <template>
   <div>
-    <label class="flex justify-between pb-1 text-heading-3 text-foreground text-[13.5px] font-[500]">
+    <label
+      class="flex justify-between pb-1 text-heading-3 text-foreground text-[13.5px] font-[500]"
+    >
       {{ label }}
     </label>
     <div class="flex flex-col gap-3 mt-2">

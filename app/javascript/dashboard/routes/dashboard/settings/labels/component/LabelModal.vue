@@ -202,7 +202,9 @@ const handleSubmit = async () => {
           <ColorPicker v-model="color" variant="swatch" />
         </div>
 
-        <label class="flex cursor-pointer items-center gap-3 text-[13.5px] font-[500] text-foreground">
+        <label
+          class="flex cursor-pointer items-center gap-3 text-[13.5px] font-[500] text-foreground"
+        >
           <RelayCheckbox v-model="showOnSidebar" />
           <span class="text-[13px] font-normal text-foreground">
             {{ $t('LABEL_MGMT.FORM.SHOW_ON_SIDEBAR.LABEL') }}

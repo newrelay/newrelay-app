@@ -21,7 +21,9 @@ const { t } = useI18n();
       >
         <span class="i-lucide-building-2 size-8 text-primary" />
       </div>
-      <h2 class="capitalize mb-2 text-[20px] font-[600] tracking-tight text-foreground">
+      <h2
+        class="capitalize mb-2 text-[20px] font-[600] tracking-tight text-foreground"
+      >
         {{ title || t('COMPANIES.EMPTY_STATE.TITLE') }}
       </h2>
       <p class="mb-6 max-w-lg text-sm leading-relaxed text-muted-foreground">

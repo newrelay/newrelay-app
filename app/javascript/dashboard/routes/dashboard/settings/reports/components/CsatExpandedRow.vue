@@ -117,8 +117,9 @@ const saveReviewNotes = async () => {
                     variant="ghost"
                     size="xs"
                     :label="$t('CSAT_REPORTS.REVIEW_NOTES.CANCEL')"
+                    class="border border-border hover:border-transparent"
                     @click.stop="cancelEditing"
-                   class="border border-border hover:border-transparent" />
+                  />
                   <Button
                     :label="$t('CSAT_REPORTS.REVIEW_NOTES.SAVE')"
                     :disabled="!hasChanges || isSaving"

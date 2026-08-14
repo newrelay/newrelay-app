@@ -67,7 +67,12 @@ const onClickCancel = () => {
         @keyup.enter="onClickAdd"
       />
       <div class="flex justify-between gap-2">
-        <RelayButton variant="ghost" size="sm" @click="onClickCancel" class="border border-border hover:border-transparent" >
+        <RelayButton
+          variant="ghost"
+          size="sm"
+          class="border border-border hover:border-transparent"
+          @click="onClickCancel"
+        >
           {{ cancelLabel }}
         </RelayButton>
         <RelayButton size="sm" @click="onClickAdd">

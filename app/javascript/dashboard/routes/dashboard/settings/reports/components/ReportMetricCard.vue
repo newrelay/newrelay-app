@@ -26,7 +26,9 @@ defineProps({
       'grayscale pointer-events-none opacity-30': disabled,
     }"
   >
-    <h3 class="capitalize flex items-center m-0 text-sm font-medium text-muted-foreground">
+    <h3
+      class="capitalize flex items-center m-0 text-sm font-medium text-muted-foreground"
+    >
       <span data-test-id="reportMetricLabel">{{ label }}</span>
       <fluent-icon
         v-tooltip="infoText"

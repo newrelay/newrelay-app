@@ -48,7 +48,10 @@ export default {
 </script>
 
 <template>
-  <label class="input-wrapper text-[13.5px] font-[500] text-foreground" :class="uploadState">
+  <label
+    class="input-wrapper text-[13.5px] font-[500] text-foreground"
+    :class="uploadState"
+  >
     <input
       v-if="uploadState !== 'processing'"
       type="file"

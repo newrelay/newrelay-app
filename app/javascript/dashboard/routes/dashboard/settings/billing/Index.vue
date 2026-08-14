@@ -910,7 +910,9 @@ onMounted(() => {
               >
                 <div class="flex items-start justify-between w-full">
                   <div>
-                    <h3 class="capitalize text-sm font-semibold text-foreground">
+                    <h3
+                      class="capitalize text-sm font-semibold text-foreground"
+                    >
                       {{
                         $t('BILLING_SETTINGS.SELECT_PLAN.PLAN_LABEL', { plan })
                       }}

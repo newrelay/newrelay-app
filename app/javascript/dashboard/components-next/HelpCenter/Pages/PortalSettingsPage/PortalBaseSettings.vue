@@ -173,7 +173,9 @@ defineExpose({
     <div
       class="relative flex flex-col gap-6 overflow-hidden rounded-2xl border border-border/40 bg-card p-6 shadow-sm"
     >
-      <h2 class="capitalize flex items-center gap-2 text-base font-medium text-foreground">
+      <h2
+        class="capitalize flex items-center gap-2 text-base font-medium text-foreground"
+      >
         <span class="i-lucide-monitor size-4 text-primary" aria-hidden="true" />
         {{ t('HELP_CENTER.PORTAL_SETTINGS.FORM.SECTION_IDENTITY') }}
       </h2>
@@ -248,7 +250,9 @@ defineExpose({
     <div
       class="flex flex-col gap-6 rounded-2xl border border-border/40 bg-card p-6 shadow-sm"
     >
-      <h2 class="capitalize flex items-center gap-2 text-base font-medium text-foreground">
+      <h2
+        class="capitalize flex items-center gap-2 text-base font-medium text-foreground"
+      >
         <span
           class="i-lucide-layout-grid size-4 text-primary"
           aria-hidden="true"

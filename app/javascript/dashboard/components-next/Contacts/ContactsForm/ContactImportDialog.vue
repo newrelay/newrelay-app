@@ -121,16 +121,18 @@ defineExpose({ dialogRef });
             color="slate"
             variant="ghost"
             size="sm"
+            class="border border-border hover:border-transparent"
             @click.stop="handleFileClick"
-           class="border border-border hover:border-transparent" />
+          />
           <div class="h-3 w-px bg-border mx-1" />
           <Button
             icon="i-lucide-trash"
             color="slate"
             variant="ghost"
             size="sm"
+            class="border border-border hover:border-transparent"
             @click.stop="handleRemoveFile"
-           class="border border-border hover:border-transparent" />
+          />
         </div>
       </div>
     </div>

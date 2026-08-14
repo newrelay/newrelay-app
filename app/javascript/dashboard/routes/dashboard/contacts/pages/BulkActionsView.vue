@@ -250,7 +250,9 @@ onMounted(() => {
     class="flex h-full flex-1 flex-col overflow-y-auto bg-background p-6 relative"
   >
     <div class="max-w-6xl">
-      <h2 class="capitalize mb-1 text-base font-semibold tracking-tight text-foreground">
+      <h2
+        class="capitalize mb-1 text-base font-semibold tracking-tight text-foreground"
+      >
         {{ t('CONTACTS_BULK_ACTIONS.AUDIT.TITLE') }}
       </h2>
       <p class="mb-12 text-[14px] text-muted-foreground">

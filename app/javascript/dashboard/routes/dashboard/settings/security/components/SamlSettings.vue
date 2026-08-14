@@ -204,7 +204,10 @@ onMounted(() => {
 
       <form class="space-y-6" @submit.prevent="handleSubmit">
         <div class="flex flex-col gap-1.5">
-          <label class="text-[13px] text-foreground text-[13.5px] font-[500]" for="ssoUrl">
+          <label
+            class="text-[13px] text-foreground text-[13.5px] font-[500]"
+            for="ssoUrl"
+          >
             {{ t('SECURITY_SETTINGS.SAML.SSO_URL.LABEL') }}
           </label>
           <RelayInput

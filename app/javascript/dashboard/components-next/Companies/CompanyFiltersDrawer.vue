@@ -120,7 +120,9 @@ const applyFilters = () => {
         class="fixed inset-y-0 right-0 z-[60] flex w-full max-w-[450px] translate-x-0 animate-in slide-in-from-right flex-col border-l border-border bg-card p-6 shadow-2xl duration-300"
       >
         <div class="mb-6 flex shrink-0 items-center justify-between">
-          <h2 class="capitalize text-base font-medium tracking-tight text-foreground">
+          <h2
+            class="capitalize text-base font-medium tracking-tight text-foreground"
+          >
             {{ t('COMPANIES.FILTERS.TITLE') }}
           </h2>
           <RelayButton

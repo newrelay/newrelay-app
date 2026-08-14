@@ -190,7 +190,9 @@ defineExpose({
             {{ $t('MFA_SETTINGS.SETUP.MANUAL_ENTRY') }}
           </summary>
           <div class="px-4 pb-4">
-            <label class="block text-muted-foreground mb-2 text-[13.5px] font-[500] text-foreground">
+            <label
+              class="block text-muted-foreground mb-2 text-[13.5px] font-[500] text-foreground"
+            >
               {{ $t('MFA_SETTINGS.SETUP.SECRET_KEY') }}
             </label>
             <div class="flex items-center gap-2">
@@ -300,7 +302,9 @@ defineExpose({
 
       <!-- Confirmation -->
       <div class="space-y-4">
-        <label class="flex items-start gap-3 text-[13.5px] font-[500] text-foreground">
+        <label
+          class="flex items-start gap-3 text-[13.5px] font-[500] text-foreground"
+        >
           <input
             v-model="backupCodesConfirmed"
             type="checkbox"

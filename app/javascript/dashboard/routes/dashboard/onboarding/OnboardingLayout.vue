@@ -50,7 +50,9 @@ defineEmits(['continue']);
             </slot>
           </div>
           <div>
-            <h1 class="capitalize text-heading-1 text-foreground text-[16px] font-[500]">
+            <h1
+              class="capitalize text-heading-1 text-foreground text-[16px] font-[500]"
+            >
               {{ greeting }}
             </h1>
             <p v-if="subtitle" class="text-sm text-muted-foreground">

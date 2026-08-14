@@ -6,12 +6,14 @@ import SidebarTreeChrome from './SidebarTreeChrome.vue';
 import { useSidebarContext } from './provider';
 import { useEventListener } from '@vueuse/core';
 import {
+  SIDEBAR_TREE_COLLAPSE_GRID,
   SIDEBAR_TREE_INDENT,
   SIDEBAR_TREE_LIST_DOTS,
-  treeBranchItemClass,
   treeButtonLevel,
+  treeItemWrapperClass,
   treeRowClass,
-  shouldConnectBranchDown,
+  getTreeElbowSize,
+  getTreeSpineVariant,
 } from './sidebarTree';
 
 const props = defineProps({
@@ -48,26 +50,22 @@ const buttonLevel = computed(() =>
 
 const rowClass = computed(() => treeRowClass(buttonLevel.value));
 
-const connectRowDown = computed(() =>
-  shouldConnectBranchDown({
+const spineVariant = computed(() =>
+  getTreeSpineVariant({
     isLast: props.isLast,
-    isOpen: props.isExpanded,
     depth: props.depth,
+    collapsible: false,
   })
 );
+
+const elbowSize = computed(() => getTreeElbowSize(props.depth));
 </script>
 
 <!-- eslint-disable-next-line vue/no-root-v-if -->
 <template>
-  <li
-    v-if="hasAccessibleItems"
-    :class="[
-      'group/menu-sub-item relative min-w-0',
-      treeBranchItemClass({ isOpen: isExpanded, depth }),
-    ]"
-  >
+  <li v-if="hasAccessibleItems" :class="treeItemWrapperClass(buttonLevel)">
+    <SidebarTreeChrome mode="branch" :spine="spineVariant" :elbow="elbowSize" />
     <div :class="rowClass">
-      <SidebarTreeChrome mode="branch" :connect-down="connectRowDown" />
       <div :class="SIDEBAR_TREE_INDENT">
         <SidebarGroupSeparator
           v-show="isExpanded"
@@ -76,24 +74,31 @@ const connectRowDown = computed(() =>
         />
       </div>
     </div>
-    <ul
-      v-show="isExpanded"
-      ref="scrollableContainer"
+    <div
       :class="[
-        SIDEBAR_TREE_LIST_DOTS,
-        'relative min-w-0',
-        isScrollable &&
-          'max-h-[calc(14rem+16px)] overflow-y-scroll no-scrollbar',
+        SIDEBAR_TREE_COLLAPSE_GRID,
+        isExpanded ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]',
       ]"
     >
-      <SidebarGroupLeaf
-        v-for="(child, index) in accessibleItems"
-        v-bind="child"
-        :key="child.name"
-        :active="activeChild?.name === child.name"
-        :depth="depth + 1"
-        :is-last="index === accessibleItems.length - 1"
-      />
-    </ul>
+      <div :class="isExpanded ? 'overflow-visible' : 'overflow-hidden'">
+        <ul
+          ref="scrollableContainer"
+          :class="[
+            SIDEBAR_TREE_LIST_DOTS,
+            isScrollable &&
+              'max-h-[calc(14rem+16px)] overflow-y-scroll no-scrollbar',
+          ]"
+        >
+          <SidebarGroupLeaf
+            v-for="(child, index) in accessibleItems"
+            v-bind="child"
+            :key="child.name"
+            :active="activeChild?.name === child.name"
+            :depth="depth + 1"
+            :is-last="index === accessibleItems.length - 1"
+          />
+        </ul>
+      </div>
+    </div>
   </li>
 </template>

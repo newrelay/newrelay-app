@@ -78,7 +78,9 @@ const onRemove = () => {
         />
       </div>
       <div class="min-w-0 flex-1 pt-0.5">
-        <h4 class="capitalize text-[15px] font-bold leading-none text-foreground">
+        <h4
+          class="capitalize text-[15px] font-bold leading-none text-foreground"
+        >
           {{ name }}
         </h4>
         <p class="mt-2 text-[13px] leading-relaxed text-muted-foreground">

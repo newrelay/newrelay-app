@@ -142,7 +142,9 @@ defineExpose({ dialogRef, open, close, onSuccess });
           class="flex shrink-0 items-center justify-between border-b border-border px-8 pt-8 pb-0"
         >
           <div>
-            <h2 class="capitalize text-base font-medium tracking-tight text-foreground">
+            <h2
+              class="capitalize text-base font-medium tracking-tight text-foreground"
+            >
               {{ t('COMPANIES.CREATE.TITLE') }}
             </h2>
             <p class="mt-1 text-sm text-muted-foreground">

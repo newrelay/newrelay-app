@@ -64,7 +64,10 @@ const openLink = link => {
       </div>
 
       <div class="flex flex-col flex-1 gap-3 ltr:pr-8 rtl:pl-8">
-        <h3 v-if="title" class="capitalize mb-0 text-base font-medium text-foreground">
+        <h3
+          v-if="title"
+          class="capitalize mb-0 text-base font-medium text-foreground"
+        >
           {{ title }}
         </h3>
         <p v-if="note" class="mb-0 text-sm text-foreground">{{ note }}</p>

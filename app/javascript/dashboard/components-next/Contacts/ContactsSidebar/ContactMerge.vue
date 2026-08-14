@@ -220,7 +220,9 @@ const initials = name => {
         class="flex max-h-[90vh] w-full max-w-2xl flex-col overflow-hidden rounded-xl border border-border bg-card shadow-2xl animate-in fade-in zoom-in-95 duration-200"
       >
         <div class="shrink-0 border-b border-border/40 p-6">
-          <h2 class="capitalize text-lg font-semibold tracking-tight text-foreground">
+          <h2
+            class="capitalize text-lg font-semibold tracking-tight text-foreground"
+          >
             {{ t('CONTACTS_LAYOUT.SIDEBAR.MERGE.PREVIEW_TITLE') }}
           </h2>
           <p class="mt-1 text-sm text-muted-foreground">
@@ -246,7 +248,9 @@ const initials = name => {
                 {{ initials(selectedContact.name) }}
               </div>
               <div class="min-w-0">
-                <h4 class="capitalize truncate text-sm font-medium text-foreground">
+                <h4
+                  class="capitalize truncate text-sm font-medium text-foreground"
+                >
                   {{ selectedContact.name }}
                 </h4>
                 <p class="truncate text-xs text-muted-foreground">
@@ -285,7 +289,9 @@ const initials = name => {
                 {{ initials(selectedDuplicate?.name) }}
               </div>
               <div class="min-w-0">
-                <h4 class="capitalize truncate text-sm font-medium text-foreground">
+                <h4
+                  class="capitalize truncate text-sm font-medium text-foreground"
+                >
                   {{ selectedDuplicate?.name }}
                 </h4>
                 <p class="truncate text-xs text-muted-foreground">

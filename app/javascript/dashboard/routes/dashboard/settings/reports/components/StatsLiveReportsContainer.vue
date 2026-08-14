@@ -103,7 +103,9 @@ onMounted(() => {
     <div class="flex-1 flex flex-col gap-4">
       <div class="flex items-center justify-between h-8">
         <div class="flex items-center gap-3">
-          <h3 class="capitalize text-base font-medium text-foreground tracking-tight">
+          <h3
+            class="capitalize text-base font-medium text-foreground tracking-tight"
+          >
             {{ $t(`${accounti18nKey}.HEADER`) }}
           </h3>
           <div
@@ -179,7 +181,9 @@ onMounted(() => {
     <!-- Agent status column -->
     <div class="flex flex-col gap-4 w-full xl:w-[320px] shrink-0">
       <div class="flex items-center gap-3 h-8">
-        <h3 class="capitalize text-base font-medium text-foreground tracking-tight">
+        <h3
+          class="capitalize text-base font-medium text-foreground tracking-tight"
+        >
           {{ $t('OVERVIEW_REPORTS.AGENT_STATUS.HEADER') }}
         </h3>
         <div

@@ -153,7 +153,9 @@ const openAddInbox = () => {
                 class="size-6 text-muted-foreground/70"
               />
             </div>
-            <h3 class="capitalize mb-1.5 text-base font-semibold text-foreground">
+            <h3
+              class="capitalize mb-1.5 text-base font-semibold text-foreground"
+            >
               {{ $t('INBOX_MGMT.LIST.EMPTY_TITLE') }}
             </h3>
             <p

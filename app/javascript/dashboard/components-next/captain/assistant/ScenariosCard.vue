@@ -154,7 +154,9 @@ const renderInstruction = instruction => () =>
 
       <div v-if="!isEditing" class="min-w-0 flex-1">
         <div class="mb-2 flex w-full items-center justify-between gap-2">
-          <h3 class="capitalize text-[15px] font-medium text-foreground">{{ title }}</h3>
+          <h3 class="capitalize text-[15px] font-medium text-foreground">
+            {{ title }}
+          </h3>
           <div class="flex shrink-0 items-center gap-1" @click.stop>
             <RelayButton
               variant="ghost"

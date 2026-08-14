@@ -52,7 +52,9 @@ const helpURL = getHelpUrlForFeature(props.featureName);
       v-if="title"
       class="mb-2 flex min-h-8 w-full items-center justify-between gap-4"
     >
-      <h1 class="capitalize text-[16px] font-[500] tracking-tight text-foreground">
+      <h1
+        class="capitalize text-[16px] font-[500] tracking-tight text-foreground"
+      >
         {{ title }}
       </h1>
     </div>

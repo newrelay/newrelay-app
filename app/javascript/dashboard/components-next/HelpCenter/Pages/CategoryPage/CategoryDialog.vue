@@ -132,7 +132,9 @@ onMounted(() => {
         <div
           class="flex items-center justify-between border-b border-border/40 bg-muted/20 p-5"
         >
-          <h2 class="capitalize text-lg font-semibold tracking-tight text-foreground">
+          <h2
+            class="capitalize text-lg font-semibold tracking-tight text-foreground"
+          >
             {{
               t(
                 `HELP_CENTER.CATEGORY_PAGE.CATEGORY_DIALOG.HEADER.${mode.toUpperCase()}`

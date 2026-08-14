@@ -31,7 +31,9 @@ defineProps({
         <i class="i-lucide-x size-3 text-white" />
       </div>
     </div>
-    <h3 class="capitalize text-[16px] font-semibold text-foreground tracking-tight">
+    <h3
+      class="capitalize text-[16px] font-semibold text-foreground tracking-tight"
+    >
       {{ title }}
     </h3>
     <p

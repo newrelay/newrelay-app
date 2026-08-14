@@ -57,8 +57,8 @@ const onImport = async file => {
     useAlert(
       error instanceof ExceptionWithMessage
         ? error.data
-        : error.message ??
-            t('CONTACTS_LAYOUT.HEADER.ACTIONS.IMPORT_CONTACT.ERROR_MESSAGE')
+        : (error.message ??
+            t('CONTACTS_LAYOUT.HEADER.ACTIONS.IMPORT_CONTACT.ERROR_MESSAGE'))
     );
     useTrack(CONTACTS_EVENTS.IMPORT_FAILURE);
   }
@@ -74,7 +74,9 @@ const onImport = async file => {
     >
       <span class="i-lucide-users size-8 text-primary" />
     </div>
-    <h2 class="capitalize mb-2 text-[20px] font-[600] tracking-tight text-foreground">
+    <h2
+      class="capitalize mb-2 text-[20px] font-[600] tracking-tight text-foreground"
+    >
       {{ title || t('CONTACTS_LAYOUT.EMPTY_STATE.TITLE') }}
     </h2>
     <p class="mb-8 max-w-md text-sm text-muted-foreground">

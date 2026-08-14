@@ -211,7 +211,9 @@ onMounted(fetchTestimonials);
           />
         </svg>
       </div>
-      <h3 class="capitalize font-extrabold text-foreground dark:text-slate-200 mt-4">
+      <h3
+        class="capitalize font-extrabold text-foreground dark:text-slate-200 mt-4"
+      >
         No video testimonials yet
       </h3>
       <p class="text-xs text-muted-foreground mt-1 max-w-sm text-center">
@@ -296,7 +298,9 @@ onMounted(fetchTestimonials);
       class="bg-white dark:bg-slate-900 rounded-2xl border border-border/80 dark:border-slate-850 shadow-sm overflow-hidden mt-8"
     >
       <div class="px-6 py-4 border-b border-slate-100 dark:border-slate-850">
-        <h3 class="capitalize font-extrabold text-foreground dark:text-white text-sm">
+        <h3
+          class="capitalize font-extrabold text-foreground dark:text-white text-sm"
+        >
           Outbound Video Requests
         </h3>
       </div>
@@ -348,7 +352,9 @@ onMounted(fetchTestimonials);
             <td class="px-6 py-4 font-bold text-foreground dark:text-slate-200">
               <div class="flex flex-col">
                 <span>{{ req.contact?.name || 'Customer' }}</span>
-                <span class="text-[10px] text-muted-foreground font-normal mt-0.5">
+                <span
+                  class="text-[10px] text-muted-foreground font-normal mt-0.5"
+                >
                   {{
                     req.contact?.phone_number ||
                     req.contact?.email ||
@@ -394,7 +400,9 @@ onMounted(fetchTestimonials);
         <div
           class="flex items-center justify-between border-b border-slate-100 dark:border-slate-850 pb-3"
         >
-          <h3 class="capitalize text-base font-extrabold text-slate-950 dark:text-white">
+          <h3
+            class="capitalize text-base font-extrabold text-slate-950 dark:text-white"
+          >
             Send Video Testimonial Request
           </h3>
           <button

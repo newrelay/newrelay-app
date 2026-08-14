@@ -116,7 +116,9 @@ const handleMoreAction = ({ action }) => {
           rounded-full
         />
         <div class="min-w-0">
-          <h1 class="capitalize truncate text-[16px] font-[500] text-foreground">
+          <h1
+            class="capitalize truncate text-[16px] font-[500] text-foreground"
+          >
             {{ contact?.name || t('CONTACTS_LAYOUT.CARD.UNNAMED_CONTACT') }}
           </h1>
           <p class="truncate text-xs text-muted-foreground">

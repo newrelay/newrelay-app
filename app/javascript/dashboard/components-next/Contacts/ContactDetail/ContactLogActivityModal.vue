@@ -173,7 +173,9 @@ const submit = () => {
         class="flex shrink-0 items-center justify-between border-b border-border/40 px-8 pb-0 pt-8"
       >
         <div>
-          <h2 class="capitalize text-base font-medium leading-6 text-foreground">
+          <h2
+            class="capitalize text-base font-medium leading-6 text-foreground"
+          >
             {{ t('CONTACTS_LAYOUT.DETAIL.LOG_ACTIVITY.TITLE') }}
           </h2>
           <p class="mt-1 text-sm text-muted-foreground">

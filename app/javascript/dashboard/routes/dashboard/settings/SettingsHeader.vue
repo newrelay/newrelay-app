@@ -43,7 +43,9 @@ export default {
   <div
     class="flex justify-between items-center h-20 min-h-[3.5rem] px-6 py-2 bg-muted"
   >
-    <h1 class="capitalize flex items-center mb-0 text-[16px] text-foreground font-[500]">
+    <h1
+      class="capitalize flex items-center mb-0 text-[16px] text-foreground font-[500]"
+    >
       <BackButton
         v-if="showBackButton"
         :button-label="backButtonLabel"

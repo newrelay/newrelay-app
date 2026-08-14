@@ -296,7 +296,9 @@ defineExpose({ open, close });
           class="flex shrink-0 items-center justify-between border-b border-border px-8 pt-8 pb-0"
         >
           <div>
-            <h2 class="capitalize text-base font-medium tracking-tight text-foreground">
+            <h2
+              class="capitalize text-base font-medium tracking-tight text-foreground"
+            >
               {{ headerTitle }}
             </h2>
             <p class="mt-1 text-sm text-muted-foreground">
@@ -314,7 +316,9 @@ defineExpose({ open, close });
         </div>
 
         <!-- Body -->
-        <div class="hide-scrollbar flex-1 space-y-6 overflow-y-auto px-8 pb-8 pt-4">
+        <div
+          class="hide-scrollbar flex-1 space-y-6 overflow-y-auto px-8 pb-8 pt-4"
+        >
           <!-- Profile picture -->
           <div class="flex flex-col gap-1.5">
             <label class="text-[13.5px] text-foreground font-[500]">
@@ -760,19 +764,25 @@ defineExpose({ open, close });
                   }}
                 </label>
                 <div class="grid grid-cols-2 gap-3">
-                  <label class="flex cursor-pointer items-center gap-3 text-[13.5px] font-[500] text-foreground">
+                  <label
+                    class="flex cursor-pointer items-center gap-3 text-[13.5px] font-[500] text-foreground"
+                  >
                     <RelayCheckbox v-model="form.prefs.email" />
                     <span class="text-sm text-foreground">
                       {{ t('CONTACTS_LAYOUT.ADD_CONTACT_DRAWER.PREF_EMAIL') }}
                     </span>
                   </label>
-                  <label class="flex cursor-pointer items-center gap-3 text-[13.5px] font-[500] text-foreground">
+                  <label
+                    class="flex cursor-pointer items-center gap-3 text-[13.5px] font-[500] text-foreground"
+                  >
                     <RelayCheckbox v-model="form.prefs.sms" />
                     <span class="text-sm text-foreground">
                       {{ t('CONTACTS_LAYOUT.ADD_CONTACT_DRAWER.PREF_SMS') }}
                     </span>
                   </label>
-                  <label class="flex cursor-pointer items-center gap-3 text-[13.5px] font-[500] text-foreground">
+                  <label
+                    class="flex cursor-pointer items-center gap-3 text-[13.5px] font-[500] text-foreground"
+                  >
                     <RelayCheckbox v-model="form.prefs.whatsapp" />
                     <span class="text-sm text-foreground">
                       {{
@@ -780,7 +790,9 @@ defineExpose({ open, close });
                       }}
                     </span>
                   </label>
-                  <label class="flex cursor-pointer items-center gap-3 text-[13.5px] font-[500] text-foreground">
+                  <label
+                    class="flex cursor-pointer items-center gap-3 text-[13.5px] font-[500] text-foreground"
+                  >
                     <RelayCheckbox v-model="form.prefs.marketingEmails" />
                     <span class="text-sm text-foreground">
                       {{

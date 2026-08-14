@@ -495,7 +495,9 @@ onMounted(() => {
                     <i class="i-lucide-zap text-xl text-muted-foreground" />
                   </div>
                   <div class="flex-grow">
-                    <h4 class="capitalize text-heading-3 text-foreground mb-0.5">
+                    <h4
+                      class="capitalize text-heading-3 text-foreground mb-0.5"
+                    >
                       {{ $t('INBOX_MGMT.ASSIGNMENT.DEFAULT_POLICY_LINKED') }}
                     </h4>
                     <p class="text-body-main text-muted-foreground">

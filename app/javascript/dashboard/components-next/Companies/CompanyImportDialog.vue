@@ -32,7 +32,9 @@ const onUploadClick = () => {
       >
         <div class="p-6">
           <div class="mb-4 flex items-center justify-between">
-            <h2 class="capitalize text-lg font-semibold tracking-tight text-foreground">
+            <h2
+              class="capitalize text-lg font-semibold tracking-tight text-foreground"
+            >
               {{ t('COMPANIES.IMPORT.TITLE') }}
             </h2>
             <RelayButton

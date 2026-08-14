@@ -343,9 +343,7 @@ export default {
     </div>
     <div>
       <div class="w-full">
-        <label
-          :class="{ error: isPhoneNumberNotValid, }"
-        >
+        <label :class="{ error: isPhoneNumberNotValid }">
           {{ $t('CONTACT_FORM.FORM.PHONE_NUMBER.LABEL') }}
           <woot-phone-input
             v-model="phoneNumber"

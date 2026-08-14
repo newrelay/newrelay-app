@@ -97,9 +97,7 @@ onMounted(() => {
     class="flex flex-wrap items-center gap-4 rounded-xl border border-border/40 bg-muted/20 p-4"
   >
     <div class="flex items-center gap-2.5">
-      <label
-        class="whitespace-nowrap text-[13.5px] text-foreground font-[500]"
-      >
+      <label class="whitespace-nowrap text-[13.5px] text-foreground font-[500]">
         {{
           t(
             'ASSIGNMENT_POLICY.AGENT_ASSIGNMENT_POLICY.FORM.FAIR_DISTRIBUTION.INPUT_MAX'
@@ -114,9 +112,7 @@ onMounted(() => {
     </div>
 
     <div class="relative flex flex-wrap items-center gap-2.5">
-      <label
-        class="whitespace-nowrap text-[13.5px] text-foreground font-[500]"
-      >
+      <label class="whitespace-nowrap text-[13.5px] text-foreground font-[500]">
         {{
           t(
             'ASSIGNMENT_POLICY.AGENT_ASSIGNMENT_POLICY.FORM.FAIR_DISTRIBUTION.DURATION'

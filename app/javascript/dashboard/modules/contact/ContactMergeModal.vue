@@ -74,7 +74,9 @@ const onMergeContacts = async (parentContactId, hide) => {
     <template #content="{ hide }">
       <div class="w-full md:w-96 p-6 flex flex-col gap-4">
         <div class="flex flex-col gap-2">
-          <h3 class="capitalize text-base font-medium leading-6 text-foreground">
+          <h3
+            class="capitalize text-base font-medium leading-6 text-foreground"
+          >
             {{ $t('MERGE_CONTACTS.TITLE') }}
           </h3>
           <p class="mb-0 text-sm text-muted-foreground">

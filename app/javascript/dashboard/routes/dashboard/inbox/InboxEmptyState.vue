@@ -13,9 +13,15 @@ const router = useRouter();
 const { accountScopedRoute } = useAccount();
 
 const uiFlags = computed(() => store.getters['notifications/getUIFlags']);
+const inboxes = computed(() => store.getters['inboxes/getInboxes'] || []);
+const hasInboxes = computed(() => inboxes.value.length > 0);
 
 const connectChannel = () => {
   router.push(accountScopedRoute('settings_inbox_list'));
+};
+
+const goToConversations = () => {
+  router.push(accountScopedRoute('dashboard'));
 };
 
 const learnMore = () => {
@@ -31,6 +37,34 @@ const learnMore = () => {
       <Spinner class="text-primary" />
     </div>
 
+    <!-- Case A: Inboxes are already configured (Show "Go to Conversations") -->
+    <div v-else-if="hasInboxes" class="flex flex-col items-center w-full max-w-lg text-center">
+      <div
+        class="size-20 rounded-full bg-primary/5 flex items-center justify-center mb-6 relative"
+      >
+        <div
+          class="absolute inset-2 rounded-full border border-primary/10 bg-background flex items-center justify-center"
+        >
+          <span class="i-lucide-check-circle-2 size-8 text-primary" />
+        </div>
+      </div>
+      <h2 class="text-xl font-semibold text-foreground mb-2 tracking-tight">
+        {{ $t('INBOX.LIST.NO_NOTIFICATIONS') }}
+      </h2>
+      <p class="text-sm text-muted-foreground leading-relaxed mb-6">
+        {{ $t('INBOX.LIST.404') }}
+      </p>
+
+      <RelayButton
+        class="h-10 px-6 text-sm font-medium"
+        @click="goToConversations"
+      >
+        <span class="i-lucide-message-square size-4 mr-2" />
+        {{ $t('INBOX.LIST.CONVERSATIONS') }}
+      </RelayButton>
+    </div>
+
+    <!-- Case B: No channels connected (Show Onboarding "Connect a Channel") -->
     <div v-else class="flex flex-col items-center w-full max-w-4xl">
       <!-- Hero Section -->
       <div class="flex flex-col items-center text-center mb-10 max-w-lg">

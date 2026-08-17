@@ -74,7 +74,7 @@ const viewsList = computed(() => [
 const channelIcon = channel => {
   const type = channel.channelType || channel.channel_type;
   const medium = channel.medium;
-  return getInboxIconByType(type, medium);
+  return getInboxIconByType(type, medium, 'line');
 };
 
 const channelLabel = channel => {
@@ -101,56 +101,65 @@ const selectView = id => emit('select', id);
 const addChannel = () => {
   router.push(accountScopedRoute('settings_inbox_list'));
 };
+
+const NAV_ITEM_BASE_CLASS =
+  'relative flex h-9 w-full items-center justify-between rounded-lg border-0 px-3 text-sm font-medium transition-colors outline-none';
+
+const navItemClass = active =>
+  active
+    ? 'bg-primary/10 text-primary'
+    : 'bg-transparent text-muted-foreground hover:bg-muted/50 hover:text-foreground';
+
+const navBadgeClass = active =>
+  [
+    'shrink-0 rounded-full px-2 py-0.5 text-[11px] font-semibold',
+    active
+      ? 'bg-transparent text-primary'
+      : 'bg-muted/50 text-muted-foreground',
+  ].join(' ');
 </script>
 
 <template>
   <div class="flex-1 overflow-y-auto py-4 px-3 flex flex-col gap-6 min-h-0">
     <!-- Views -->
     <div class="w-full">
-      <button
-        type="button"
-        class="flex items-center gap-2 px-3 mb-2 hover:opacity-80 transition-opacity outline-none"
-        @click="isViewsOpen = !isViewsOpen"
-      >
-        <span
-          class="text-xs font-bold text-muted-foreground uppercase tracking-wider"
+      <div class="mb-2 flex items-center justify-between px-3">
+        <button
+          type="button"
+          class="flex items-center gap-2 p-0 outline-none transition-opacity hover:opacity-80"
+          @click="isViewsOpen = !isViewsOpen"
         >
-          {{ t('INBOX.VIEWS.TITLE') }}
-        </span>
-        <span
-          class="i-lucide-chevron-down size-3.5 text-muted-foreground transition-transform duration-200"
-          :class="{ '-rotate-90': !isViewsOpen }"
-        />
-      </button>
+          <span
+            class="text-xs font-bold uppercase tracking-wider text-muted-foreground"
+          >
+            {{ t('INBOX.VIEWS.TITLE') }}
+          </span>
+          <span
+            class="i-lucide-chevron-down size-3.5 text-muted-foreground transition-transform duration-200"
+            :class="{ '-rotate-90': !isViewsOpen }"
+          />
+        </button>
+      </div>
       <div v-show="isViewsOpen" class="space-y-0.5">
         <button
           v-for="view in viewsList"
           :key="view.id"
           type="button"
-          class="w-full flex items-center justify-between px-3 py-2 rounded-lg text-sm font-medium transition-colors relative"
-          :class="
-            activeView === view.id
-              ? 'bg-primary/10 text-primary'
-              : 'text-muted-foreground hover:bg-muted/50 hover:text-foreground'
-          "
+          :class="[NAV_ITEM_BASE_CLASS, navItemClass(activeView === view.id)]"
           @click="selectView(view.id)"
         >
           <div
             v-if="activeView === view.id"
-            class="absolute left-0 top-1/2 -translate-y-1/2 h-4 w-[3px] bg-primary rounded-r-full"
+            class="absolute left-0 top-1/2 h-4 w-[3px] -translate-y-1/2 rounded-r-full bg-primary"
           />
-          <div class="flex items-center gap-3 min-w-0">
-            <span class="size-4 shrink-0" :class="[view.icon]" />
+          <div class="flex min-w-0 items-center gap-3">
+            <span
+              class="inline-flex size-4 shrink-0 items-center justify-center"
+              :class="[view.icon]"
+            />
             <span class="truncate">{{ view.label }}</span>
           </div>
-          <span
-            class="text-[11px] font-semibold px-2 py-0.5 rounded-full shrink-0"
-            :class="
-              activeView === view.id
-                ? 'text-primary'
-                : 'bg-muted/50 text-muted-foreground'
-            "
-          >
+          <span :class="navBadgeClass(activeView === view.id)">
             {{ view.count }}
           </span>
         </button>
@@ -159,14 +168,14 @@ const addChannel = () => {
 
     <!-- Channels -->
     <div class="w-full">
-      <div class="flex items-center justify-between px-3 mb-2">
+      <div class="mb-2 flex items-center justify-between px-3">
         <button
           type="button"
-          class="flex items-center gap-2 hover:opacity-80 transition-opacity outline-none"
+          class="flex items-center gap-2 p-0 outline-none transition-opacity hover:opacity-80"
           @click="isChannelsOpen = !isChannelsOpen"
         >
           <span
-            class="text-xs font-bold text-muted-foreground uppercase tracking-wider"
+            class="text-xs font-bold uppercase tracking-wider text-muted-foreground"
           >
             {{ t('INBOX.CHANNELS.TITLE') }}
           </span>
@@ -177,7 +186,7 @@ const addChannel = () => {
         </button>
         <button
           type="button"
-          class="text-muted-foreground hover:text-foreground transition-colors p-1 rounded-md hover:bg-muted"
+          class="rounded-md p-1 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
           :aria-label="t('INBOX.CHANNELS.ADD')"
           @click="addChannel"
         >
@@ -189,30 +198,24 @@ const addChannel = () => {
           v-for="channel in channels"
           :key="channel.id"
           type="button"
-          class="w-full flex items-center justify-between px-3 py-2 rounded-lg text-sm font-medium transition-colors relative"
-          :class="
-            activeView === `inbox:${channel.id}`
-              ? 'bg-primary/10 text-primary'
-              : 'text-muted-foreground hover:bg-muted/50 hover:text-foreground'
-          "
+          :class="[
+            NAV_ITEM_BASE_CLASS,
+            navItemClass(activeView === `inbox:${channel.id}`),
+          ]"
           @click="selectView(`inbox:${channel.id}`)"
         >
           <div
             v-if="activeView === `inbox:${channel.id}`"
-            class="absolute left-0 top-1/2 -translate-y-1/2 h-4 w-[3px] bg-primary rounded-r-full"
+            class="absolute left-0 top-1/2 h-4 w-[3px] -translate-y-1/2 rounded-r-full bg-primary"
           />
-          <div class="flex items-center gap-3 min-w-0">
-            <span class="size-4 shrink-0" :class="[channelIcon(channel)]" />
+          <div class="flex min-w-0 items-center gap-3">
+            <span
+              class="inline-flex size-4 shrink-0 items-center justify-center"
+              :class="[channelIcon(channel)]"
+            />
             <span class="truncate">{{ channelLabel(channel) }}</span>
           </div>
-          <span
-            class="text-[11px] font-semibold px-2 py-0.5 rounded-full shrink-0"
-            :class="
-              activeView === `inbox:${channel.id}`
-                ? 'text-primary'
-                : 'bg-muted/50 text-muted-foreground'
-            "
-          >
+          <span :class="navBadgeClass(activeView === `inbox:${channel.id}`)">
             {{ channel.count ?? 0 }}
           </span>
         </button>

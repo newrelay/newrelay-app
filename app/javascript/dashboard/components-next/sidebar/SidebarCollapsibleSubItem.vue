@@ -47,15 +47,6 @@ const rowClass = computed(() =>
   })
 );
 
-const buttonClasses = computed(() =>
-  treeButtonClasses(buttonLevel.value, isHighlighted.value, {
-    compact: isCompactChildBranch({
-      depth: props.depth,
-      collapsible: true,
-    }),
-  })
-);
-
 const spineVariant = computed(() =>
   getTreeSpineVariant({
     isLast: props.isLast,
@@ -96,6 +87,17 @@ const containsActiveChild = computed(() => {
   return walk(props.children);
 });
 
+const isHighlighted = computed(() => isOpen.value || containsActiveChild.value);
+
+const buttonClasses = computed(() =>
+  treeButtonClasses(buttonLevel.value, isHighlighted.value, {
+    compact: isCompactChildBranch({
+      depth: props.depth,
+      collapsible: true,
+    }),
+  })
+);
+
 watch(
   containsActiveChild,
   active => {
@@ -107,8 +109,6 @@ watch(
 const toggle = () => {
   isOpen.value = !isOpen.value;
 };
-
-const isHighlighted = computed(() => isOpen.value || containsActiveChild.value);
 </script>
 
 <!-- eslint-disable-next-line vue/no-root-v-if -->
@@ -125,8 +125,11 @@ const isHighlighted = computed(() => isOpen.value || containsActiveChild.value);
         >
           <span class="min-w-0 flex-1 truncate text-left">{{ label }}</span>
           <span
-            class="i-lucide-chevron-right ml-auto size-3.5 shrink-0 text-muted-foreground transition-transform duration-200"
-            :class="{ 'rotate-90': isOpen }"
+            class="i-lucide-chevron-right ml-auto size-3.5 shrink-0 transition-transform duration-200"
+            :class="[
+              isHighlighted ? 'text-sidebar-primary' : 'text-muted-foreground',
+              { 'rotate-90': isOpen },
+            ]"
           />
         </button>
       </div>
@@ -138,7 +141,7 @@ const isHighlighted = computed(() => isOpen.value || containsActiveChild.value);
         isOpen ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]',
       ]"
     >
-      <div class="overflow-hidden">
+      <div :class="isOpen ? 'overflow-visible' : 'overflow-hidden'">
         <ul :class="nestedListClass">
           <template
             v-for="(child, index) in accessibleChildren"

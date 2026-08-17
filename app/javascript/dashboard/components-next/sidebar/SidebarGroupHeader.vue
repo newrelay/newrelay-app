@@ -84,8 +84,11 @@ const headerClasses = computed(() => {
     </div>
     <span
       v-if="expandable"
-      class="i-lucide-chevron-right ml-auto size-3.5 shrink-0 text-muted-foreground transition-transform duration-200"
-      :class="[{ 'rotate-90': isExpanded }]"
+      class="i-lucide-chevron-right ml-auto size-3.5 shrink-0 transition-transform duration-200"
+      :class="[
+        isHighlighted ? 'text-sidebar-primary' : 'text-muted-foreground',
+        { 'rotate-90': isExpanded },
+      ]"
       @click.stop="emit('toggle')"
     />
   </component>

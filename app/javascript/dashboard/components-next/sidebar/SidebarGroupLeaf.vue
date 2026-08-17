@@ -83,6 +83,15 @@ const isLeafActive = computed(() => {
 const showLeadingIcon = computed(
   () => Boolean(props.icon) && !dotOnly.value && !shouldRenderComponent.value
 );
+
+const disabledLinkClasses = computed(() => [
+  ...treeButtonClasses(buttonLevel.value, false),
+  'cursor-not-allowed text-muted-foreground/60',
+]);
+
+const linkClasses = computed(() =>
+  treeButtonClasses(buttonLevel.value, isLeafActive.value)
+);
 </script>
 
 <!-- eslint-disable-next-line vue/no-root-v-if -->
@@ -97,19 +106,14 @@ const showLeadingIcon = computed(
     <SidebarTreeChrome v-else mode="dot" />
     <div :class="rowClass">
       <div :class="SIDEBAR_TREE_INDENT">
-        <div
-          :class="[
-            treeButtonClasses(buttonLevel, false),
-            'cursor-not-allowed text-muted-foreground/60',
-          ]"
-        >
+        <div :class="disabledLinkClasses">
           <span
             v-if="showLeadingIcon"
             class="grid size-4 shrink-0 place-content-center text-muted-foreground/50"
           >
             <Icon :icon="icon" class="inline-block size-4" />
           </span>
-          <div class="min-w-0 flex-1 truncate">{{ label }}</div>
+          <div class="min-w-0 flex-1 truncate text-left">{{ label }}</div>
           <span
             v-if="comingSoon"
             class="shrink-0 rounded-full bg-muted px-1.5 py-0.5 text-[10px] font-medium text-muted-foreground"
@@ -142,7 +146,7 @@ const showLeadingIcon = computed(
           :title="label"
           active-class=""
           exact-active-class=""
-          :class="treeButtonClasses(buttonLevel, isLeafActive)"
+          :class="linkClasses"
           :aria-current="isLeafActive ? 'page' : undefined"
         >
           <component
@@ -160,7 +164,7 @@ const showLeadingIcon = computed(
             >
               <Icon :icon="icon" class="inline-block size-4" />
             </span>
-            <div class="min-w-0 flex-1 truncate">{{ label }}</div>
+            <span class="min-w-0 flex-1 truncate text-left">{{ label }}</span>
             <SidebarUnreadBadge :count="badgeCount" />
           </template>
         </component>

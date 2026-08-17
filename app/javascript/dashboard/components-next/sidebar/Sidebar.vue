@@ -178,14 +178,14 @@ useEventListener(document, 'touchend', onResizeEnd);
 
 const inboxes = useMapGetter('inboxes/getInboxes');
 const labels = useMapGetter('labels/getLabelsOnSidebar');
-const getInboxUnreadCount = useMapGetter(
-  'conversationUnreadCounts/getInboxUnreadCount'
+const teamUnreadCounts = useMapGetter(
+  'conversationUnreadCounts/getTeamUnreadCounts'
 );
-const getLabelUnreadCount = useMapGetter(
-  'conversationUnreadCounts/getLabelUnreadCount'
+const inboxUnreadCounts = useMapGetter(
+  'conversationUnreadCounts/getInboxUnreadCounts'
 );
-const getTeamUnreadCount = useMapGetter(
-  'conversationUnreadCounts/getTeamUnreadCount'
+const labelUnreadCounts = useMapGetter(
+  'conversationUnreadCounts/getLabelUnreadCounts'
 );
 const teams = useMapGetter('teams/getMyTeams');
 const conversationCustomViews = useMapGetter(
@@ -227,7 +227,7 @@ const sortedTeams = computed(() =>
   sortByUnreadCount(
     teams.value,
     team => team.name,
-    team => getTeamUnreadCount.value(team.id)
+    team => teamUnreadCounts.value[String(team.id)] || 0
   )
 );
 
@@ -235,7 +235,7 @@ const sortedInboxes = computed(() =>
   sortByUnreadCount(
     inboxes.value,
     inbox => inbox.name,
-    inbox => getInboxUnreadCount.value(inbox.id)
+    inbox => inboxUnreadCounts.value[String(inbox.id)] || 0
   )
 );
 
@@ -243,7 +243,7 @@ const sortedLabels = computed(() =>
   sortByUnreadCount(
     labels.value,
     label => label.title,
-    label => getLabelUnreadCount.value(label.id)
+    label => labelUnreadCounts.value[String(label.id)] || 0
   )
 );
 
@@ -314,7 +314,7 @@ const primaryMenuItems = computed(() => {
               children: sortedTeams.value.map(team => ({
                 name: `${team.name}-${team.id}`,
                 label: team.name,
-                badgeCount: getTeamUnreadCount.value(team.id),
+                badgeCount: teamUnreadCounts.value[String(team.id)] || 0,
                 to: accountScopedRoute('team_conversations', {
                   teamId: team.id,
                 }),
@@ -328,7 +328,7 @@ const primaryMenuItems = computed(() => {
               children: sortedInboxes.value.map(inbox => ({
                 name: `${inbox.name}-${inbox.id}`,
                 label: inbox.name,
-                badgeCount: getInboxUnreadCount.value(inbox.id),
+                badgeCount: inboxUnreadCounts.value[String(inbox.id)] || 0,
                 icon: h(ChannelIcon, { inbox, class: 'size-[16px]' }),
                 to: accountScopedRoute('inbox_dashboard', {
                   inbox_id: inbox.id,
@@ -350,7 +350,7 @@ const primaryMenuItems = computed(() => {
               children: sortedLabels.value.map(label => ({
                 name: `${label.title}-${label.id}`,
                 label: label.title,
-                badgeCount: getLabelUnreadCount.value(label.id),
+                badgeCount: labelUnreadCounts.value[String(label.id)] || 0,
                 icon: h('span', {
                   class: `size-[8px] rounded-sm`,
                   style: { backgroundColor: label.color },

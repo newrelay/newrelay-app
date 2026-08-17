@@ -2,11 +2,11 @@
 
 export const TREE_LEVEL = {
   SECTION: 1,
-  /** Conversations — 14px / 500 */
+  /** Conversations — 14px; 500 when open/active */
   MAIN_BRANCH: 2,
-  /** Items under Conversations (incl. Teams row) — 14px / 400 */
+  /** Items under Conversations (incl. Teams row) — 14px; 500 + primary when active */
   CHILD_BRANCH: 3,
-  /** Items under Teams / Channels / Labels — 13px / 400 */
+  /** Items under Teams / Channels / Labels — 13px; 500 + primary when active, 75% when inactive */
   SUB_LEAF: 4,
 };
 
@@ -22,10 +22,10 @@ export const SIDEBAR_TREE_LIST_NESTED =
 export const SIDEBAR_TREE_LIST_DOTS =
   'relative m-0 flex min-w-0 list-none flex-col gap-0.5 py-1';
 
-export const SIDEBAR_TREE_INDENT = 'pl-3';
+export const SIDEBAR_TREE_INDENT = 'min-w-0 w-full pl-3';
 
-export const SIDEBAR_TREE_ROW = 'relative min-w-0 min-h-8';
-export const SIDEBAR_TREE_ROW_COMPACT = 'relative min-w-0 min-h-7';
+export const SIDEBAR_TREE_ROW = 'relative min-w-0 min-h-8 w-full';
+export const SIDEBAR_TREE_ROW_COMPACT = 'relative min-w-0 min-h-7 w-full';
 
 export const SIDEBAR_TREE_COLLAPSE_GRID =
   'grid transition-[grid-template-rows] duration-200 ease-out';
@@ -47,28 +47,28 @@ export const sectionHeaderClasses = active => [
     : 'text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground',
 ];
 
-/** Depth 1 collapsible — Conversations: 14px, weight 500 */
+/** Depth 1 collapsible — Conversations: 14px; weight 500 only when open/active */
 export const mainBranchClasses = active => [
-  'flex w-full min-w-0 items-center gap-2 h-8 rounded-md px-2 text-[14px] font-medium capitalize outline-none transition-colors',
+  'flex w-full min-w-0 items-center gap-2 h-8 rounded-md px-2 text-[14px] capitalize outline-none transition-colors',
   active
-    ? 'text-sidebar-primary'
-    : 'text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground',
+    ? 'font-medium text-sidebar-primary'
+    : 'font-normal text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground',
 ];
 
-/** Depth 2 under Conversations — 14px, weight 400 */
+/** Depth 2 under Conversations — 14px; 500 + primary when active */
 export const childBranchClasses = (active, { compact = false } = {}) => [
-  `flex w-full min-w-0 items-center gap-2 ${compact ? 'h-7' : 'h-8'} rounded-md px-2 text-[14px] font-normal capitalize outline-none transition-colors`,
+  `flex w-full min-w-0 items-center gap-2 ${compact ? 'h-7' : 'h-8'} rounded-md px-2 text-[14px] capitalize outline-none transition-colors`,
   active
-    ? 'text-sidebar-primary'
-    : 'text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground',
+    ? 'font-medium text-sidebar-primary'
+    : 'font-normal text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground',
 ];
 
-/** Depth 3 under Teams / Channels / Labels — 13px, weight 400 */
+/** Depth 3 under Teams / Channels / Labels — 13px; 500 + primary when active, 75% when inactive */
 export const subLeafClasses = active => [
-  'flex h-7 min-w-0 w-full items-center gap-2 rounded-md px-2 text-[13px] font-normal capitalize outline-none transition-colors',
+  'flex h-7 min-w-0 w-full items-center gap-2 rounded-md px-2 text-[13px] capitalize outline-none transition-colors',
   active
-    ? 'text-sidebar-primary'
-    : 'text-sidebar-foreground/75 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground',
+    ? 'font-medium text-sidebar-primary'
+    : 'font-normal text-sidebar-foreground/75 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground',
 ];
 
 export const treeItemWrapperClass = level => {

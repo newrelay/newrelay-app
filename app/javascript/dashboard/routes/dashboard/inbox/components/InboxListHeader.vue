@@ -69,6 +69,7 @@ const onInboxOptionMenuClick = key => {
   };
   const action = actions[key];
   if (action) action();
+  showInboxOptionMenu.value = false;
   emit('redirect');
 };
 
@@ -95,36 +96,37 @@ const onFilterChange = option => {
         <RelayButton
           variant="outline"
           size="sm"
-          class="h-8 text-xs gap-1 py-1"
+          class="h-8 gap-1 px-3"
           @click="openInboxDisplayMenu"
         >
           {{ t('INBOX.LIST.DISPLAY_DROPDOWN') }}
-          <span class="i-lucide-chevron-down size-4" />
+          <span class="i-lucide-chevron-down size-4 shrink-0" />
         </RelayButton>
         <InboxDisplayMenu
           v-if="showInboxDisplayMenu"
           v-on-clickaway="openInboxDisplayMenu"
-          class="absolute mt-1.5 top-full ltr:right-0 rtl:left-0 z-50"
+          class="absolute top-full z-50 mt-1 ltr:left-0 rtl:right-0"
           @filter="onFilterChange"
         />
       </div>
-      <RelayButton
-        variant="outline"
-        size="icon"
-        class="h-8 w-8 text-muted-foreground"
-        @click="openInboxOptionsMenu"
-      >
-        <span
-          class="i-lucide-sliders-horizontal size-4"
-          style="color: #60646c"
+      <div class="relative">
+        <RelayButton
+          variant="outline"
+          size="icon"
+          class="size-8 shrink-0"
+          @click="openInboxOptionsMenu"
+        >
+          <span
+            class="i-lucide-sliders-horizontal size-4 shrink-0 text-muted-foreground"
+          />
+        </RelayButton>
+        <InboxOptionMenu
+          v-if="showInboxOptionMenu"
+          v-on-clickaway="openInboxOptionsMenu"
+          class="absolute top-full z-50 mt-1 ltr:right-0 rtl:left-0"
+          @option-click="onInboxOptionMenuClick"
         />
-      </RelayButton>
-      <InboxOptionMenu
-        v-if="showInboxOptionMenu"
-        v-on-clickaway="openInboxOptionsMenu"
-        class="absolute top-full mt-1.5 ltr:right-0 ltr:lg:right-[unset] rtl:left-0 rtl:lg:left-[unset] z-50"
-        @option-click="onInboxOptionMenuClick"
-      />
+      </div>
     </div>
   </div>
 </template>

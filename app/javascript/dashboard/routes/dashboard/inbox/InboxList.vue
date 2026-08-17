@@ -469,20 +469,15 @@ onMounted(() => {
               type="button"
               role="tab"
               :aria-selected="activeStatusTab === tab.value"
-              class="relative h-14 px-1 text-sm font-medium transition-colors shrink-0"
+              class="inline-flex h-14 shrink-0 items-center justify-center whitespace-nowrap rounded-none border-b-2 px-0 text-sm font-medium transition-colors"
               :class="
                 activeStatusTab === tab.value
-                  ? 'text-foreground font-semibold'
-                  : 'text-muted-foreground hover:text-foreground'
+                  ? 'border-primary bg-transparent text-foreground shadow-none'
+                  : 'border-transparent text-muted-foreground hover:text-foreground'
               "
               @click="activeStatusTab = tab.value"
             >
               {{ tab.label }}
-              <!-- Active Bottom Border Indicator -->
-              <span
-                v-if="activeStatusTab === tab.value"
-                class="absolute bottom-0 left-0 right-0 h-0.5 rounded-t-full bg-primary"
-              />
             </button>
           </div>
 

@@ -1,196 +1,213 @@
-<script>
+<script setup>
+import { computed, nextTick, onMounted, ref, watch } from 'vue';
+import { useI18n } from 'vue-i18n';
 import wootConstants from 'dashboard/constants/globals';
 import { useUISettings } from 'dashboard/composables/useUISettings';
+import {
+  RelayButton,
+  RelayCheckbox,
+  RelayLabel,
+} from 'dashboard/components-next/relay';
 
-import NextButton from 'dashboard/components-next/button/Button.vue';
+const emit = defineEmits(['filter']);
 
-export default {
-  components: {
-    NextButton,
-  },
-  emits: ['filter'],
+const { t } = useI18n();
+const { uiSettings, updateUISettings } = useUISettings();
 
-  setup() {
-    const { uiSettings, updateUISettings } = useUISettings();
+const showSortMenu = ref(false);
+const sortTriggerRef = ref(null);
+const sortMenuStyle = ref({});
 
-    return {
-      uiSettings,
-      updateUISettings,
-    };
+const displayOptions = ref([
+  {
+    id: 'display-snoozed',
+    name: t('INBOX.DISPLAY_MENU.DISPLAY_OPTIONS.SNOOZED'),
+    key: wootConstants.INBOX_DISPLAY_BY.SNOOZED,
+    selected: false,
+    type: wootConstants.INBOX_FILTER_TYPE.STATUS,
   },
-  data() {
-    return {
-      showSortMenu: false,
-      displayOptions: [
-        {
-          name: this.$t('INBOX.DISPLAY_MENU.DISPLAY_OPTIONS.SNOOZED'),
-          key: wootConstants.INBOX_DISPLAY_BY.SNOOZED,
-          selected: false,
-          type: wootConstants.INBOX_FILTER_TYPE.STATUS,
-        },
-        {
-          name: this.$t('INBOX.DISPLAY_MENU.DISPLAY_OPTIONS.READ'),
-          key: wootConstants.INBOX_DISPLAY_BY.READ,
-          selected: false,
-          type: wootConstants.INBOX_FILTER_TYPE.TYPE,
-        },
-      ],
-      sortOptions: [
-        {
-          name: this.$t('INBOX.DISPLAY_MENU.SORT_OPTIONS.NEWEST'),
-          key: wootConstants.INBOX_SORT_BY.NEWEST,
-          type: wootConstants.INBOX_FILTER_TYPE.SORT_ORDER,
-        },
-        {
-          name: this.$t('INBOX.DISPLAY_MENU.SORT_OPTIONS.OLDEST'),
-          key: wootConstants.INBOX_SORT_BY.OLDEST,
-          type: wootConstants.INBOX_FILTER_TYPE.SORT_ORDER,
-        },
-      ],
-      activeSort: wootConstants.INBOX_SORT_BY.NEWEST,
-      activeDisplayFilter: {
-        status: '',
-        type: '',
-      },
-    };
+  {
+    id: 'display-read',
+    name: t('INBOX.DISPLAY_MENU.DISPLAY_OPTIONS.READ'),
+    key: wootConstants.INBOX_DISPLAY_BY.READ,
+    selected: false,
+    type: wootConstants.INBOX_FILTER_TYPE.TYPE,
   },
-  computed: {
-    activeSortOption() {
-      return (
-        this.sortOptions.find(option => option.key === this.activeSort)?.name ||
-        ''
-      );
-    },
+]);
+
+const sortOptions = computed(() => [
+  {
+    name: t('INBOX.DISPLAY_MENU.SORT_OPTIONS.NEWEST'),
+    key: wootConstants.INBOX_SORT_BY.NEWEST,
+    type: wootConstants.INBOX_FILTER_TYPE.SORT_ORDER,
   },
-  mounted() {
-    this.setSavedFilter();
+  {
+    name: t('INBOX.DISPLAY_MENU.SORT_OPTIONS.OLDEST'),
+    key: wootConstants.INBOX_SORT_BY.OLDEST,
+    type: wootConstants.INBOX_FILTER_TYPE.SORT_ORDER,
   },
-  methods: {
-    updateDisplayOption(option) {
-      this.displayOptions.forEach(displayOption => {
-        if (displayOption.key === option.key) {
-          displayOption.selected = !option.selected;
-          this.activeDisplayFilter[displayOption.type] = displayOption.selected
-            ? displayOption.key
-            : '';
-          this.saveSelectedDisplayFilter();
-          this.$emit('filter', option);
-        }
-      });
+]);
+
+const activeSort = ref(wootConstants.INBOX_SORT_BY.NEWEST);
+const activeDisplayFilter = ref({
+  status: '',
+  type: '',
+});
+
+const activeSortOption = computed(
+  () =>
+    sortOptions.value.find(option => option.key === activeSort.value)?.name ||
+    ''
+);
+
+const saveSelectedDisplayFilter = () => {
+  updateUISettings({
+    inbox_filter_by: {
+      ...activeDisplayFilter.value,
+      sort_by: activeSort.value || wootConstants.INBOX_SORT_BY.NEWEST,
     },
-    openSortMenu() {
-      this.showSortMenu = !this.showSortMenu;
-    },
-    onSortOptionClick(option) {
-      this.activeSort = option.key;
-      this.showSortMenu = false;
-      this.saveSelectedDisplayFilter();
-      this.$emit('filter', option);
-    },
-    saveSelectedDisplayFilter() {
-      this.updateUISettings({
-        inbox_filter_by: {
-          ...this.activeDisplayFilter,
-          sort_by: this.activeSort || wootConstants.INBOX_SORT_BY.NEWEST,
-        },
-      });
-    },
-    setSavedFilter() {
-      const { inbox_filter_by: filterBy = {} } = this.uiSettings;
-      const { status, type, sort_by: sortBy } = filterBy;
-      this.activeSort = sortBy || wootConstants.INBOX_SORT_BY.NEWEST;
-      this.displayOptions.forEach(option => {
-        option.selected =
-          option.type === wootConstants.INBOX_FILTER_TYPE.STATUS
-            ? option.key === status
-            : option.key === type;
-        this.activeDisplayFilter[option.type] = option.selected
-          ? option.key
-          : '';
-      });
-    },
-  },
+  });
 };
+
+const setSavedFilter = () => {
+  const { inbox_filter_by: filterBy = {} } = uiSettings.value;
+  const { status, type, sort_by: sortBy } = filterBy;
+  activeSort.value = sortBy || wootConstants.INBOX_SORT_BY.NEWEST;
+
+  displayOptions.value.forEach(option => {
+    option.selected =
+      option.type === wootConstants.INBOX_FILTER_TYPE.STATUS
+        ? option.key === status
+        : option.key === type;
+    activeDisplayFilter.value[option.type] = option.selected ? option.key : '';
+  });
+};
+
+const updateDisplayOption = option => {
+  activeDisplayFilter.value[option.type] = option.selected ? option.key : '';
+  saveSelectedDisplayFilter();
+  emit('filter', option);
+};
+
+const toggleSortMenu = () => {
+  showSortMenu.value = !showSortMenu.value;
+};
+
+const updateSortMenuPosition = () => {
+  const trigger = sortTriggerRef.value;
+  if (!trigger || !showSortMenu.value) return;
+
+  const rect = trigger.getBoundingClientRect();
+  const isRtl = document.documentElement.dir === 'rtl';
+  const sideOffset = 4;
+
+  sortMenuStyle.value = isRtl
+    ? {
+        position: 'fixed',
+        top: `${rect.top}px`,
+        right: `${window.innerWidth - rect.left + sideOffset}px`,
+        zIndex: 60,
+      }
+    : {
+        position: 'fixed',
+        top: `${rect.top}px`,
+        left: `${rect.right + sideOffset}px`,
+        zIndex: 60,
+      };
+};
+
+watch(showSortMenu, async open => {
+  if (!open) return;
+  await nextTick();
+  updateSortMenuPosition();
+});
+
+const onSortOptionClick = option => {
+  activeSort.value = option.key;
+  showSortMenu.value = false;
+  saveSelectedDisplayFilter();
+  emit('filter', option);
+};
+
+const SORT_OPTION_CLASSES =
+  'relative flex w-full cursor-pointer select-none items-center justify-between gap-2 rounded-sm px-2 py-1.5 text-xs text-foreground outline-none transition-colors hover:bg-accent hover:text-accent-foreground';
+
+onMounted(() => {
+  setSavedFilter();
+});
 </script>
 
 <template>
   <div
-    class="flex flex-col bg-accent backdrop-blur-[100px] border-0 outline outline-1 outline-card shadow-lg z-50 max-w-64 min-w-[170px] w-fit rounded-xl divide-y divide-border dark:divide-border"
+    class="anim-pop z-50 w-56 min-w-[8rem] overflow-visible rounded-md border border-border bg-popover p-2 text-popover-foreground shadow-md"
+    data-state="open"
   >
-    <div class="flex items-center gap-2 justify-between p-3 rounded-t-lg h-11">
-      <div class="flex gap-1.5 min-w-0">
-        <span class="i-lucide-arrow-down-up size-3.5 text-foreground" />
-        <span class="text-xs font-medium text-foreground truncate min-w-0">
-          {{ $t('INBOX.DISPLAY_MENU.SORT') }}
-        </span>
+    <div class="relative flex items-center justify-between px-1 py-1.5">
+      <div class="flex items-center gap-2 text-sm text-foreground">
+        <span class="i-lucide-arrow-down-up size-4 shrink-0" />
+        {{ t('INBOX.DISPLAY_MENU.SORT') }}
       </div>
-      <div v-on-clickaway="() => (showSortMenu = false)" class="relative">
-        <NextButton
-          :label="activeSortOption"
-          icon="i-lucide-chevron-down"
-          slate
-          trailing-icon
-          xs
-          outline
-          class="w-fit min-w-20 max-w-32"
-          @click="openSortMenu"
-        />
-        <div
-          v-if="showSortMenu"
-          class="absolute flex flex-col gap-0.5 bg-accent backdrop-blur-[100px] z-60 rounded-lg p-0.5 w-fit min-w-20 max-w-32 top-px outline outline-1 outline-card dark:outline-border"
+      <div ref="sortTriggerRef" class="relative">
+        <RelayButton
+          variant="outline"
+          size="sm"
+          class="h-7 gap-1 px-2 text-xs outline-none"
+          @click="toggleSortMenu"
         >
+          {{ activeSortOption }}
+          <span class="i-lucide-chevron-down size-3 shrink-0" />
+        </RelayButton>
+        <Teleport to="body">
           <div
-            v-for="option in sortOptions"
-            :key="option.key"
-            role="button"
-            class="flex rounded-md h-5 w-full items-center justify-between px-1.5 py-0.5 gap-2 whitespace-nowrap"
-            :class="{
-              'bg-primary/10 dark:bg-primary/10': activeSort === option.key,
-            }"
-            @click.stop="onSortOptionClick(option)"
+            v-if="showSortMenu"
+            :style="sortMenuStyle"
+            class="anim-pop min-w-[8rem] overflow-hidden rounded-md border border-border bg-popover p-1 text-popover-foreground shadow-md"
+            data-state="open"
+            role="menu"
           >
-            <span
-              class="text-xs font-medium hover:text-primary truncate min-w-0 dark:hover:text-primary"
-              :class="{
-                'text-primary dark:text-primary': activeSort === option.key,
-                'text-muted-foreground': activeSort !== option.key,
-              }"
+            <button
+              v-for="option in sortOptions"
+              :key="option.key"
+              type="button"
+              role="menuitem"
+              :class="SORT_OPTION_CLASSES"
+              @click.stop="onSortOptionClick(option)"
             >
               {{ option.name }}
-            </span>
-            <span
-              v-if="activeSort === option.key"
-              class="i-lucide-check size-2.5 flex-shrink-0 text-primary"
-            />
+              <span
+                v-if="activeSort === option.key"
+                class="i-lucide-check size-3 shrink-0"
+              />
+            </button>
           </div>
-        </div>
+        </Teleport>
       </div>
     </div>
-    <div>
-      <span class="px-3 py-4 text-xs font-medium text-muted-foreground">
-        {{ $t('INBOX.DISPLAY_MENU.DISPLAY') }}
+
+    <div class="mt-1 px-1 py-1">
+      <span class="text-xs text-muted-foreground">
+        {{ t('INBOX.DISPLAY_MENU.DISPLAY') }}
       </span>
-      <div class="flex flex-col divide-y divide-border dark:divide-border">
-        <div
-          v-for="option in displayOptions"
-          :key="option.key"
-          class="flex items-center px-3 py-2 gap-1.5 h-9"
+    </div>
+
+    <div class="flex flex-col gap-3 px-1 py-1.5">
+      <div
+        v-for="option in displayOptions"
+        :key="option.key"
+        class="flex items-center gap-2"
+      >
+        <RelayCheckbox
+          :id="option.id"
+          v-model="option.selected"
+          :aria-label="option.name"
+          @update:model-value="updateDisplayOption(option)"
+        />
+        <RelayLabel
+          :html-for="option.id"
+          class="cursor-pointer text-sm font-normal"
         >
-          <input
-            :id="option.key"
-            type="checkbox"
-            :name="option.key"
-            :checked="option.selected"
-            class="m-0 border-[1.5px] shadow border-border appearance-none rounded-[4px] w-4 h-4 dark:bg-background focus:ring-1 focus:ring-border dark:focus:ring-border checked:bg-primary dark:checked:bg-primary after:content-[''] after:text-white checked:after:content-['✓'] after:flex after:items-center after:justify-center checked:border-t checked:border-primary checked:border-b-0 checked:border-r-0 checked:border-l-0 after:text-center after:text-xs after:font-bold after:relative after:-top-[1.5px]"
-            @change="updateDisplayOption(option)"
-          />
-          <label
-            :for="option.key"
-            class="text-foreground !ml-0 !mr-0 dark:text-foreground text-[13.5px] font-[500]"
-          >
-            {{ option.name }}
-          </label>
-        </div>
+          {{ option.name }}
+        </RelayLabel>
       </div>
     </div>
   </div>

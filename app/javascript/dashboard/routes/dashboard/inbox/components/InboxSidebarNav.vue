@@ -78,22 +78,7 @@ const channelIcon = channel => {
 };
 
 const channelLabel = channel => {
-  const type = channel.channelType || channel.channel_type;
-  const medium = channel.medium;
-  if (type === INBOX_TYPES.WHATSAPP || medium === 'whatsapp') {
-    return t('INBOX.CHANNELS.WHATSAPP');
-  }
-  if (type === INBOX_TYPES.EMAIL) return t('INBOX.CHANNELS.EMAIL');
-  if (type === INBOX_TYPES.INSTAGRAM) return t('INBOX.CHANNELS.INSTAGRAM');
-  if (type === INBOX_TYPES.WEB) return t('INBOX.CHANNELS.LIVE_CHAT');
-  if (
-    type === INBOX_TYPES.SMS ||
-    type === INBOX_TYPES.TWILIO ||
-    medium === 'sms'
-  ) {
-    return t('INBOX.CHANNELS.SMS');
-  }
-  return channel.name;
+  return channel.name || channel.phoneNumber || channel.email;
 };
 
 const selectView = id => emit('select', id);

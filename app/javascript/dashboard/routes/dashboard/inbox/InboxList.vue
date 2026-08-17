@@ -348,7 +348,7 @@ const setSavedFilter = () => {
   const { status: savedStatus, type: savedType, sort_by: sortBy } = filterBy;
   status.value = savedStatus || '';
   type.value = savedType || '';
-  sortOrder.value = sortBy || wootConstants.INBOX_SORT_BY.NEWEST;
+  sortOrder.value = sortBy && sortBy !== 'asc' ? sortBy : wootConstants.INBOX_SORT_BY.NEWEST;
   store.dispatch('notifications/setNotificationFilters', inboxFilters.value);
 };
 

@@ -24,6 +24,22 @@ async function oauthState() {
 }
 
 const connectGoogle = async () => {
+  // GMBapi mode: Google auth lives on GMBapi's side, so we skip OAuth and just
+  // record the client's location id. Reviews then sync via the GMBapi adapter.
+  if (window.chatwootConfig?.reputationGoogleViaGmbapi) {
+    const locationId = window.prompt('Enter the GMBapi location ID for this business:');
+    if (!locationId) return;
+    try {
+      await axios.post(`/api/v1/accounts/${accountId}/reputation/integrations`, {
+        integration: { provider: 'google', location_id: locationId },
+      });
+      await loadData();
+    } catch (err) {
+      alert(err.response?.data?.errors?.[0] || 'Failed to connect Google via GMBapi');
+    }
+    return;
+  }
+
   const clientId = window.chatwootConfig?.reputationGoogleClientId;
   const redirect = `${window.location.origin}/reputation/oauth/callback?provider=google`;
   const state = await oauthState();

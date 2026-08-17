@@ -128,6 +128,21 @@ const connectFacebook = async () => {
 };
 
 const connectGoogle = async () => {
+  // GMBapi mode: no Google OAuth — connect with just the client's location id.
+  if (window.chatwootConfig?.reputationGoogleViaGmbapi) {
+    const locationId = window.prompt('Enter the GMBapi location ID for this business:');
+    if (!locationId) return;
+    try {
+      await axios.post(`${baseApi()}/integrations`, {
+        integration: { provider: 'google', location_id: locationId },
+      });
+      await loadData();
+    } catch (err) {
+      alert(err.response?.data?.errors?.[0] || 'Failed to connect Google via GMBapi');
+    }
+    return;
+  }
+
   const clientId = window.chatwootConfig?.reputationGoogleClientId;
   if (!clientId) {
     alert('Google Client ID is not configured in the environment. Please add REPUTATION_GOOGLE_CLIENT_ID to your .env file and restart the server.');

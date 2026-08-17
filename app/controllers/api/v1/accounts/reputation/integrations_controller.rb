@@ -57,6 +57,8 @@ class Api::V1::Accounts::Reputation::IntegrationsController < Api::V1::Accounts:
   # POST /api/v1/accounts/:account_id/reputation/integrations
   def create
     if integration_params[:provider] == 'google'
+      return create_google_via_gmbapi if Reputation::Providers.gmbapi?
+
       cache_key = params[:oauth_session_id] || integration_params[:oauth_session_id]
       if cache_key.present?
         raw_data = $alfred.with { |redis| redis.get(cache_key) }
@@ -113,6 +115,27 @@ class Api::V1::Accounts::Reputation::IntegrationsController < Api::V1::Accounts:
   end
 
   private
+
+  # GMBapi holds the Google credentials, so a Google integration connects with just
+  # the client's location_id — no OAuth session. Real reviews arrive via ReviewSyncJob
+  # using the GMBapi adapter.
+  def create_google_via_gmbapi
+    integration = current_account.reputation_integrations.new(
+      provider: 'google',
+      location_id: integration_params[:location_id],
+      location_name: integration_params[:location_name],
+      status: :active
+    )
+
+    if integration.save
+      Reputation::ReviewSyncJob.perform_later(integration.id)
+      render json: integration.as_json(
+        only: [:id, :provider, :location_id, :location_name, :status, :created_at]
+      ), status: :created
+    else
+      render json: { errors: integration.errors.full_messages }, status: :unprocessable_entity
+    end
+  end
 
   def integration
     @integration ||= current_account.reputation_integrations.find(params[:id])

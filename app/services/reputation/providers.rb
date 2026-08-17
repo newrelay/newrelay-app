@@ -16,11 +16,14 @@ module Reputation
     end
 
     def self.google(integration)
-      if ENV.fetch('REPUTATION_GOOGLE_PROVIDER', 'google') == 'gmbapi'
-        Gmbapi.new(integration)
-      else
-        Google.new(integration)
-      end
+      gmbapi? ? Gmbapi.new(integration) : Google.new(integration)
+    end
+
+    # True when Google reviews are routed through GMBapi instead of Google's own
+    # API. In this mode there is no Google OAuth — GMBapi holds the credentials —
+    # so an integration only needs a location_id to connect.
+    def self.gmbapi?
+      ENV.fetch('REPUTATION_GOOGLE_PROVIDER', 'google') == 'gmbapi'
     end
   end
 end

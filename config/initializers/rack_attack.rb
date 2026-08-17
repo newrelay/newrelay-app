@@ -190,6 +190,11 @@ class Rack::Attack
     end
   end
 
+  ## Prevent spam on the public reputation feedback endpoint (unauthenticated)
+  throttle('reputation/feedback/ip', limit: 10, period: 1.hour) do |req|
+    req.ip if req.path_without_extentions == '/reputation/feedback' && req.post?
+  end
+
   ##-----------------------------------------------##
 
   ###-----------------------------------------------###

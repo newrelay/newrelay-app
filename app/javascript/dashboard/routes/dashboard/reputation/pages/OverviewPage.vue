@@ -16,18 +16,27 @@ const activeReview = ref(null);
 const replyBody = ref('');
 const drafting = ref(false);
 
-const connectGoogle = () => {
+// Signed, expiring state issued server-side so the OAuth callback can trust the
+// initiating account instead of a forgeable raw account id.
+async function oauthState() {
+  const { data } = await axios.get(`/api/v1/accounts/${accountId}/reputation/integrations/oauth_state`);
+  return encodeURIComponent(data.state);
+}
+
+const connectGoogle = async () => {
   const clientId = window.chatwootConfig?.reputationGoogleClientId;
   const redirect = `${window.location.origin}/reputation/oauth/callback?provider=google`;
+  const state = await oauthState();
   window.location.href =
-    `https://accounts.google.com/o/oauth2/v2/auth?client_id=${clientId}&redirect_uri=${redirect}&response_type=code&scope=https://www.googleapis.com/auth/business.manage&state=${accountId}`;
+    `https://accounts.google.com/o/oauth2/v2/auth?client_id=${clientId}&redirect_uri=${redirect}&response_type=code&scope=https://www.googleapis.com/auth/business.manage&state=${state}`;
 };
 
-const connectFacebook = () => {
+const connectFacebook = async () => {
   const appId = window.chatwootConfig?.reputationFacebookAppId;
   const redirect = `${window.location.origin}/reputation/oauth/callback?provider=facebook`;
+  const state = await oauthState();
   window.location.href =
-    `https://www.facebook.com/v18.0/dialog/oauth?client_id=${appId}&redirect_uri=${redirect}&scope=pages_show_list,pages_read_engagement&state=${accountId}`;
+    `https://www.facebook.com/v18.0/dialog/oauth?client_id=${appId}&redirect_uri=${redirect}&scope=pages_show_list,pages_read_engagement&state=${state}`;
 };
 
 async function loadData() {

@@ -108,26 +108,35 @@ async function loadData() {
   }
 }
 
-const connectFacebook = () => {
+// Signed, expiring state issued server-side so the OAuth callback can trust the
+// initiating account instead of a forgeable raw account id.
+async function oauthState() {
+  const { data } = await axios.get(`${baseApi()}/integrations/oauth_state`);
+  return encodeURIComponent(data.state);
+}
+
+const connectFacebook = async () => {
   const appId = window.chatwootConfig?.reputationFacebookAppId;
   if (!appId) {
     alert('Facebook App ID is not configured in the environment.');
     return;
   }
   const redirect = `${window.location.origin}/reputation/oauth/callback?provider=facebook`;
+  const state = await oauthState();
   window.location.href =
-    `https://www.facebook.com/v18.0/dialog/oauth?client_id=${appId}&redirect_uri=${redirect}&scope=pages_show_list,pages_read_engagement&state=${accountId}`;
+    `https://www.facebook.com/v18.0/dialog/oauth?client_id=${appId}&redirect_uri=${redirect}&scope=pages_show_list,pages_read_engagement&state=${state}`;
 };
 
-const connectGoogle = () => {
+const connectGoogle = async () => {
   const clientId = window.chatwootConfig?.reputationGoogleClientId;
   if (!clientId) {
     alert('Google Client ID is not configured in the environment. Please add REPUTATION_GOOGLE_CLIENT_ID to your .env file and restart the server.');
     return;
   }
   const redirect = `${window.location.origin}/reputation/oauth/callback?provider=google`;
+  const state = await oauthState();
   window.location.href =
-    `https://accounts.google.com/o/oauth2/v2/auth?client_id=${clientId}&redirect_uri=${redirect}&scope=https://www.googleapis.com/auth/business.manage&response_type=code&access_type=offline&prompt=consent&state=${accountId}`;
+    `https://accounts.google.com/o/oauth2/v2/auth?client_id=${clientId}&redirect_uri=${redirect}&scope=https://www.googleapis.com/auth/business.manage&response_type=code&access_type=offline&prompt=consent&state=${state}`;
 };
 
 function openConnectModal(platform) {

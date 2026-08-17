@@ -36,11 +36,11 @@ class Reputation::ReviewRequestSendService
   end
 
   def send_sms(body)
-    # ponytail: delegates to existing Twilio SMS infrastructure
-    Twilio::SendSmsJob.perform_later(
-      to: @contact.phone_number,
-      body: body
-    )
+    # ponytail: reuse the account's configured Twilio SMS channel directly — no new SMS infra.
+    channel = @account.twilio_sms.sms.first
+    raise 'No Twilio SMS channel configured for this account' if channel.nil?
+
+    channel.send_message(to: @contact.phone_number, body: body)
   end
 
   def send_email(body, _request)

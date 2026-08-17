@@ -209,6 +209,7 @@ Rails.application.routes.draw do
             resources :integrations, only: [:index, :create, :destroy] do
               collection do
                 get :google_locations
+                get :oauth_state
               end
             end
             resources :templates, only: [:index, :create, :update, :destroy]

@@ -44,6 +44,16 @@ class Api::V1::Accounts::Reputation::IntegrationsController < Api::V1::Accounts:
     end
   end
 
+  # GET /api/v1/accounts/:account_id/reputation/integrations/oauth_state
+  # Returns a signed, expiring state for the OAuth redirect. The callback verifies
+  # it to learn which account initiated the flow, instead of trusting a raw
+  # account_id param (which allowed cross-account integration hijack).
+  def oauth_state
+    state = Rails.application.message_verifier('reputation_oauth')
+                 .generate(current_account.id, purpose: :reputation_oauth, expires_in: 15.minutes)
+    render json: { state: state }
+  end
+
   # POST /api/v1/accounts/:account_id/reputation/integrations
   def create
     if integration_params[:provider] == 'google'
@@ -135,7 +145,9 @@ class Api::V1::Accounts::Reputation::IntegrationsController < Api::V1::Accounts:
   def fetch_google_reviews_from_api(place_id)
     api_key = ENV.fetch('GOOGLE_MAPS_API_KEY', nil)
     url = "https://maps.googleapis.com/maps/api/place/details/json?place_id=#{place_id}&fields=reviews,name,rating&key=#{api_key}"
-    response = HTTParty.get(url, verify: false)
+    options = {}
+    options[:verify] = false if Rails.env.development?
+    response = HTTParty.get(url, options)
     return [] unless response.success? && response.parsed_response['result']
 
     response.parsed_response.dig('result', 'reviews') || []
@@ -143,14 +155,16 @@ class Api::V1::Accounts::Reputation::IntegrationsController < Api::V1::Accounts:
 
   def save_real_google_reviews(integration, raw_reviews)
     raw_reviews.each do |raw|
-      integration.reputation_reviews.create!(
+      # Places reviews have no stable id; key on author + time so re-imports dedupe.
+      external_id = "places_#{raw['time']}_#{Digest::SHA256.hexdigest(raw['author_name'].to_s)[0, 8]}"
+      review = integration.reputation_reviews.find_or_initialize_by(external_id: external_id)
+      review.status = :pending if review.new_record?
+      review.update!(
         account: integration.account,
         provider: 'google',
-        external_id: "#{raw['time']}_#{SecureRandom.hex(2)}",
         reviewer_name: raw['author_name'] || 'Google User',
         rating: raw['rating'].to_i,
         body: raw['text'],
-        status: :pending,
         reviewed_at: Time.zone.at(raw['time'].to_i)
       )
     end

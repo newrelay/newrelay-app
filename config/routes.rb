@@ -738,6 +738,8 @@ Rails.application.routes.draw do
       resources :accounts, only: [:index, :new, :create, :show, :edit, :update, :destroy] do
         post :seed, on: :member
         post :reset_cache, on: :member
+        post :clear_custom_domain, on: :member
+        post :clear_portal_custom_domain, on: :member
       end
       resources :enterprise_contracts
       resources :enterprise_inquiries, only: %i[index destroy], controller: :enterprise_inquiries do
@@ -767,6 +769,9 @@ Rails.application.routes.draw do
       resources :platform_apps, only: [:index, :new, :create, :show, :edit, :update, :destroy]
       resources :platform_banners
       resource :instance_status, only: [:show]
+
+      get 'cloudflare_domains', to: 'cloudflare_domains#show'
+      delete 'cloudflare_domains', to: 'cloudflare_domains#destroy'
 
       resource :settings, only: [:show] do
         get :refresh, on: :collection

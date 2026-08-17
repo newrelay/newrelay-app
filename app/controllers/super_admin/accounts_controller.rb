@@ -57,6 +57,18 @@ class SuperAdmin::AccountsController < SuperAdmin::ApplicationController
     # rubocop:enable Rails/I18nLocaleTexts
   end
 
+  # rubocop:disable Rails/I18nLocaleTexts
+  def clear_custom_domain
+    requested_resource.update(custom_domain: nil)
+    redirect_back(fallback_location: [namespace, requested_resource], notice: 'Account custom domain removed')
+  end
+
+  def clear_portal_custom_domain
+    requested_resource.portals.find(params[:portal_id]).update(custom_domain: nil)
+    redirect_back(fallback_location: [namespace, requested_resource], notice: 'Portal custom domain removed')
+  end
+  # rubocop:enable Rails/I18nLocaleTexts
+
   def destroy
     account = Account.find(params[:id])
 

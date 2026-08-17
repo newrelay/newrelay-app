@@ -1,0 +1,24 @@
+<% portals_with_domain = page.resource.portals.where.not(custom_domain: [nil, '']) %>
+<% if page.resource.custom_domain.present? || portals_with_domain.any? %>
+  <section class="main-content__body">
+    <hr/>
+    <p class="pb-3">Remove a custom domain mapping. On cloud this also queues Cloudflare hostname cleanup.</p>
+
+    <% if page.resource.custom_domain.present? %>
+      <%= form_for([:clear_custom_domain, namespace, page.resource], method: :post, html: { class: "form" }) do |f| %>
+        <div class="form-actions">
+          <%= f.submit "Remove account domain (#{page.resource.custom_domain})" %>
+        </div>
+      <% end %>
+    <% end %>
+
+    <% portals_with_domain.each do |portal| %>
+      <%= form_for([:clear_portal_custom_domain, namespace, page.resource], method: :post, html: { class: "form" }) do |f| %>
+        <%= hidden_field_tag :portal_id, portal.id %>
+        <div class="form-actions">
+          <%= f.submit "Remove portal '#{portal.name}' domain (#{portal.custom_domain})" %>
+        </div>
+      <% end %>
+    <% end %>
+  </section>
+<% end %>

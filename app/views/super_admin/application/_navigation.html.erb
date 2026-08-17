@@ -40,7 +40,7 @@ as defined by the routes in the `admin/` namespace
     <ul class="flex w-full min-w-0 flex-col gap-1 px-2">
       <%= render partial: "nav_item", locals: { icon: 'i-lucide-layout-dashboard', url: super_admin_root_url, label: 'Dashboard' } %>
       <% Administrate::Namespace.new(namespace).resources.each do |resource| %>
-        <% next if ["account_users", "access_tokens", "installation_configs", "dashboard", "devise/sessions", "app_configs", "instance_statuses", "settings", "push_diagnostics", "account_hierarchy", "plan_management", "payment_gateways", "enterprise_inquiries", "payment_transactions"].include?  resource.resource %>
+        <% next if ["account_users", "access_tokens", "installation_configs", "dashboard", "devise/sessions", "app_configs", "instance_statuses", "settings", "push_diagnostics", "account_hierarchy", "plan_management", "payment_gateways", "enterprise_inquiries", "payment_transactions", "cloudflare_domains"].include?  resource.resource %>
         <% next if resource.resource == "platform_banners" && !ChatwootApp.chatwoot_cloud? %>
         <%= render partial: "nav_item", locals: {
             icon: sidebar_icons[resource.resource.to_sym] || 'i-lucide-folder',
@@ -54,6 +54,9 @@ as defined by the routes in the `admin/` namespace
       <%= render partial: "nav_item", locals: { icon: 'i-lucide-settings', url: super_admin_plan_management_url, label: 'Plan Management' } %>
       <%= render partial: "nav_item", locals: { icon: 'i-lucide-credit-card', url: super_admin_payment_gateways_url, label: 'Payment Gateways' } %>
       <%= render partial: "nav_item", locals: { icon: 'i-lucide-message-square', url: super_admin_enterprise_inquiries_url, label: 'Enterprise Inquiries' } %>
+      <% if ChatwootApp.chatwoot_cloud? %>
+        <%= render partial: "nav_item", locals: { icon: 'i-lucide-globe', url: super_admin_cloudflare_domains_url, label: 'Cloudflare Domains' } %>
+      <% end %>
       <%= render 'settings_menu', open: settings_open? %>
     </ul>
   </div>

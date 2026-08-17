@@ -96,9 +96,12 @@ const channelsForNav = computed(() => {
 const viewCounts = computed(() => {
   const items = allNotifications.value;
   const currentUserId = currentUser.value?.id;
+  const metaUnread = meta.value?.unreadCount ?? meta.value?.unread_count;
+  const metaCount = meta.value?.count;
+
   return {
-    all: meta.value?.count ?? items.length,
-    unread: meta.value?.unreadCount ?? items.filter(n => !n.readAt).length,
+    all: metaCount && metaCount > 0 ? metaCount : items.length,
+    unread: metaUnread !== undefined ? metaUnread : items.filter(n => !n.readAt).length,
     assigned: items.filter(
       n =>
         n.notificationType === 'conversation_assignment' ||
@@ -343,8 +346,8 @@ const onFilterChange = option => {
 const setSavedFilter = () => {
   const { inbox_filter_by: filterBy = {} } = uiSettings.value;
   const { status: savedStatus, type: savedType, sort_by: sortBy } = filterBy;
-  status.value = savedStatus;
-  type.value = savedType;
+  status.value = savedStatus || '';
+  type.value = savedType || '';
   sortOrder.value = sortBy || wootConstants.INBOX_SORT_BY.NEWEST;
   store.dispatch('notifications/setNotificationFilters', inboxFilters.value);
 };

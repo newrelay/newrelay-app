@@ -1,4 +1,5 @@
 <script setup>
+import { RelayTooltip } from 'dashboard/components-next/relay';
 import { useAlert } from 'dashboard/composables';
 import SettingsLayout from '../SettingsLayout.vue';
 import CustomRoleModal from './component/CustomRoleModal.vue';
@@ -256,25 +257,33 @@ const confirmDeletion = () => {
                     </td>
                     <td class="py-4 pl-4 align-top">
                       <div class="flex items-center justify-center gap-2">
-                        <RelayButton
-                          v-tooltip.top="$t('CUSTOM_ROLE.EDIT.BUTTON_TEXT')"
-                          variant="ghost"
-                          size="icon"
-                          class="size-8 border border-transparent text-muted-foreground shadow-xs hover:border-border hover:bg-background hover:text-foreground border border-border hover:border-transparent"
-                          @click="openEditModal(role)"
+                        <RelayTooltip
+                          :content="$t('CUSTOM_ROLE.EDIT.BUTTON_TEXT')"
+                          side="top"
                         >
-                          <Icon icon="i-lucide-pencil" class="size-3.5" />
-                        </RelayButton>
-                        <RelayButton
-                          v-tooltip.top="$t('CUSTOM_ROLE.DELETE.BUTTON_TEXT')"
-                          variant="ghost"
-                          size="icon"
-                          class="size-8 border border-transparent text-muted-foreground shadow-xs hover:border-destructive/20 hover:bg-destructive/10 hover:text-destructive border border-border hover:border-transparent"
-                          :disabled="loading[role.id]"
-                          @click="openDeletePopup(role)"
+                          <RelayButton
+                            variant="ghost"
+                            size="icon"
+                            class="size-8 border border-transparent text-muted-foreground shadow-xs hover:border-border hover:bg-background hover:text-foreground border border-border hover:border-transparent"
+                            @click="openEditModal(role)"
+                          >
+                            <Icon icon="i-lucide-pencil" class="size-3.5" />
+                          </RelayButton>
+                        </RelayTooltip>
+                        <RelayTooltip
+                          :content="$t('CUSTOM_ROLE.DELETE.BUTTON_TEXT')"
+                          side="top"
                         >
-                          <Icon icon="i-lucide-trash-2" class="size-3.5" />
-                        </RelayButton>
+                          <RelayButton
+                            variant="ghost"
+                            size="icon"
+                            class="size-8 border border-transparent text-muted-foreground shadow-xs hover:border-destructive/20 hover:bg-destructive/10 hover:text-destructive border border-border hover:border-transparent"
+                            :disabled="loading[role.id]"
+                            @click="openDeletePopup(role)"
+                          >
+                            <Icon icon="i-lucide-trash-2" class="size-3.5" />
+                          </RelayButton>
+                        </RelayTooltip>
                       </div>
                     </td>
                   </tr>

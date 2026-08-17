@@ -1,4 +1,5 @@
 <script setup>
+import { RelayTooltip } from 'dashboard/components-next/relay';
 import { computed } from 'vue';
 import { useAccount } from 'dashboard/composables/useAccount';
 import { useMapGetter } from 'dashboard/composables/store';
@@ -52,14 +53,15 @@ const copyGitSha = () => {
       <span v-if="globalConfig.appVersion" class="px-2">{{
         `v${globalConfig.appVersion}`
       }}</span>
-      <span
-        v-if="gitSha"
-        v-tooltip="t('COMPONENTS.CODE.BUTTON_TEXT')"
-        class="px-2 build-id cursor-pointer"
-        @click="copyGitSha"
-      >
-        {{ `Build ${gitSha}` }}
-      </span>
+      <RelayTooltip :content="t('COMPONENTS.CODE.BUTTON_TEXT')">
+        <span
+          v-if="gitSha"
+          class="px-2 build-id cursor-pointer"
+          @click="copyGitSha"
+        >
+          {{ `Build ${gitSha}` }}
+        </span>
+      </RelayTooltip>
     </div>
   </div>
 </template>

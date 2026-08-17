@@ -1,10 +1,11 @@
 <script setup>
 import { computed } from 'vue';
-import { useToggle } from '@vueuse/core';
 import { useI18n } from 'vue-i18n';
 
-import DropdownMenu from 'dashboard/components-next/dropdown-menu/DropdownMenu.vue';
-import { RelayButton } from 'dashboard/components-next/relay';
+import {
+  RelayButton,
+  RelayActionDropdown,
+} from 'dashboard/components-next/relay';
 import Policy from 'dashboard/components/policy.vue';
 import { INBOX_TYPES, getInboxIconByType } from 'dashboard/helper/inbox';
 
@@ -22,8 +23,6 @@ const props = defineProps({
 const emit = defineEmits(['action']);
 
 const { t } = useI18n();
-
-const [showActionsDropdown, toggleDropdown] = useToggle();
 
 const inboxName = computed(() => {
   const inbox = props.inbox;
@@ -62,7 +61,6 @@ const icon = computed(() => {
 });
 
 const handleAction = ({ action, value }) => {
-  toggleDropdown(false);
   emit('action', { action, value, id: props.id });
 };
 </script>
@@ -82,25 +80,22 @@ const handleAction = ({ action, value }) => {
       </h3>
     </div>
 
-    <Policy
-      v-on-clickaway="() => toggleDropdown(false)"
-      :permissions="['administrator']"
-      class="relative shrink-0"
-    >
-      <RelayButton
-        variant="ghost"
-        size="icon"
-        class="size-8 rounded-md border border-border text-muted-foreground hover:border-transparent hover:bg-muted hover:text-foreground"
-        @click="toggleDropdown()"
-      >
-        <span class="i-lucide-ellipsis-vertical size-4" />
-      </RelayButton>
-      <DropdownMenu
-        v-if="showActionsDropdown"
+    <Policy :permissions="['administrator']" class="relative shrink-0">
+      <RelayActionDropdown
         :menu-items="menuItems"
-        class="top-full mt-1 ltr:right-0 rtl:left-0"
+        align="end"
         @action="handleAction($event)"
-      />
+      >
+        <template #trigger>
+          <RelayButton
+            variant="ghost"
+            size="icon"
+            class="size-8 rounded-md border border-border text-muted-foreground hover:border-transparent hover:bg-muted hover:text-foreground"
+          >
+            <span class="i-lucide-ellipsis-vertical size-4" />
+          </RelayButton>
+        </template>
+      </RelayActionDropdown>
     </Policy>
   </div>
 </template>

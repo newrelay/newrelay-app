@@ -1,4 +1,5 @@
 <script>
+import { RelayTooltip } from 'dashboard/components-next/relay';
 import { format, parseISO } from 'date-fns';
 import { required, url } from '@vuelidate/validators';
 import { BUS_EVENTS } from 'shared/constants/busEvents';
@@ -15,6 +16,7 @@ const DATE_FORMAT = 'yyyy-MM-dd';
 
 export default {
   components: {
+    RelayTooltip,
     MultiselectDropdown,
     HelperTextPopup,
     NextButton,
@@ -229,15 +231,19 @@ export default {
               class="mt-0.5"
             />
           </span>
-          <NextButton
-            v-if="showActions && hasValue"
-            v-tooltip.left="$t('CUSTOM_ATTRIBUTES.ACTIONS.DELETE')"
-            slate
-            sm
-            link
-            icon="i-lucide-trash-2"
-            @click="onDelete"
-          />
+          <RelayTooltip
+            :content="$t('CUSTOM_ATTRIBUTES.ACTIONS.DELETE')"
+            side="left"
+          >
+            <NextButton
+              v-if="showActions && hasValue"
+              slate
+              sm
+              link
+              icon="i-lucide-trash-2"
+              @click="onDelete"
+            />
+          </RelayTooltip>
         </div>
       </h4>
     </div>
@@ -293,26 +299,31 @@ export default {
         <div
           class="flex items-center max-w-[2rem] gap-1 ml-1 rtl:mr-1 rtl:ml-0"
         >
-          <NextButton
-            v-if="showActions && hasValue"
-            v-tooltip="$t('CUSTOM_ATTRIBUTES.ACTIONS.COPY')"
-            xs
-            slate
-            ghost
-            icon="i-lucide-clipboard"
-            class="hidden group-hover:flex flex-shrink-0"
-            @click="onCopy"
-          />
-          <NextButton
-            v-if="showActions"
-            v-tooltip.right="$t('CUSTOM_ATTRIBUTES.ACTIONS.EDIT')"
-            xs
-            slate
-            ghost
-            icon="i-lucide-pen"
-            class="hidden group-hover:flex flex-shrink-0"
-            @click="onEdit"
-          />
+          <RelayTooltip :content="$t('CUSTOM_ATTRIBUTES.ACTIONS.COPY')">
+            <NextButton
+              v-if="showActions && hasValue"
+              xs
+              slate
+              ghost
+              icon="i-lucide-clipboard"
+              class="hidden group-hover:flex flex-shrink-0"
+              @click="onCopy"
+            />
+          </RelayTooltip>
+          <RelayTooltip
+            :content="$t('CUSTOM_ATTRIBUTES.ACTIONS.EDIT')"
+            side="right"
+          >
+            <NextButton
+              v-if="showActions"
+              xs
+              slate
+              ghost
+              icon="i-lucide-pen"
+              class="hidden group-hover:flex flex-shrink-0"
+              @click="onEdit"
+            />
+          </RelayTooltip>
         </div>
       </div>
     </div>

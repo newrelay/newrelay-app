@@ -1,11 +1,12 @@
 <script setup>
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { useToggle } from '@vueuse/core';
 import { buildLocaleMenuItems } from 'dashboard/helper/portalHelper';
 
-import DropdownMenu from 'dashboard/components-next/dropdown-menu/DropdownMenu.vue';
-import { RelayButton } from 'dashboard/components-next/relay';
+import {
+  RelayButton,
+  RelayActionDropdown,
+} from 'dashboard/components-next/relay';
 
 const props = defineProps({
   locale: {
@@ -38,8 +39,6 @@ const emit = defineEmits(['action']);
 
 const { t } = useI18n();
 
-const [showDropdownMenu, toggleDropdown] = useToggle();
-
 const localeLabel = computed(() => `${props.locale} (${props.localeCode})`);
 
 const localeMenuLabels = computed(() => ({
@@ -70,7 +69,6 @@ const localeMenuItems = computed(() =>
 
 const handleAction = ({ action, value }) => {
   emit('action', { action, value });
-  toggleDropdown(false);
 };
 </script>
 
@@ -118,27 +116,23 @@ const handleAction = ({ action, value }) => {
           }}
         </span>
       </div>
-      <div
+      <RelayActionDropdown
         v-if="localeMenuItems.length"
-        v-on-clickaway="() => toggleDropdown(false)"
-        class="relative"
+        :menu-items="localeMenuItems"
+        align="end"
+        content-class="min-w-[150px]"
+        @action="handleAction"
       >
-        <RelayButton
-          variant="ghost"
-          size="icon"
-          class="size-8 border border-border text-muted-foreground hover:border-transparent hover:bg-muted hover:text-foreground"
-          @click="toggleDropdown()"
-        >
-          <span class="i-lucide-ellipsis-vertical size-4" />
-        </RelayButton>
-
-        <DropdownMenu
-          v-if="showDropdownMenu"
-          :menu-items="localeMenuItems"
-          class="top-full z-60 mt-1 min-w-[150px] ltr:right-0 rtl:left-0"
-          @action="handleAction"
-        />
-      </div>
+        <template #trigger>
+          <RelayButton
+            variant="ghost"
+            size="icon"
+            class="size-8 border border-border text-muted-foreground hover:border-transparent hover:bg-muted hover:text-foreground"
+          >
+            <span class="i-lucide-ellipsis-vertical size-4" />
+          </RelayButton>
+        </template>
+      </RelayActionDropdown>
     </div>
   </div>
 </template>

@@ -1,4 +1,5 @@
 <script setup>
+import { RelayTooltip } from 'dashboard/components-next/relay';
 import Button from 'dashboard/components-next/button/Button.vue';
 import ButtonGroup from 'dashboard/components-next/buttonGroup/ButtonGroup.vue';
 import { useUISettings } from 'dashboard/composables/useUISettings';
@@ -59,31 +60,31 @@ useKeyboardEvents(keyboardEvents);
   <ButtonGroup
     class="flex flex-col justify-center items-center absolute top-36 xl:top-24 ltr:right-2 rtl:left-2 bg-secondary/90 backdrop-blur-lg border border-border/50 rounded-full gap-1.5 p-1.5 shadow-sm transition-shadow duration-200 hover:shadow !z-20"
   >
-    <Button
-      v-tooltip.top="$t('CONVERSATION.SIDEBAR.CONTACT')"
-      ghost
-      slate
-      sm
-      class="!rounded-full transition-all duration-[250ms] ease-out active:!scale-95 active:!brightness-105 active:duration-75"
-      :class="{
-        'bg-accent active:shadow-sm': isContactSidebarOpen,
-      }"
-      icon="i-ph-user-bold"
-      @click="handleConversationSidebarToggle"
-    />
-    <Button
-      v-if="showCopilotTab"
-      v-tooltip.bottom="$t('CONVERSATION.SIDEBAR.COPILOT')"
-      ghost
-      slate
-      sm
-      class="!rounded-full transition-all duration-[250ms] ease-out active:!scale-95 active:duration-75"
-      :class="{
-        'bg-accent !text-primary active:!brightness-105 active:shadow-sm':
-          isCopilotPanelOpen,
-      }"
-      icon="i-woot-captain"
-      @click="handleCopilotSidebarToggle"
-    />
+    <RelayTooltip :content="$t('CONVERSATION.SIDEBAR.CONTACT')" side="top">
+      <Button
+        ghost
+        slate
+        sm
+        class="!rounded-full transition-all duration-[250ms] ease-out active:!scale-95 active:!brightness-105 active:duration-75"
+        :class="{ 'bg-accent active:shadow-sm': isContactSidebarOpen }"
+        icon="i-ph-user-bold"
+        @click="handleConversationSidebarToggle"
+      />
+    </RelayTooltip>
+    <RelayTooltip :content="$t('CONVERSATION.SIDEBAR.COPILOT')">
+      <Button
+        v-if="showCopilotTab"
+        ghost
+        slate
+        sm
+        class="!rounded-full transition-all duration-[250ms] ease-out active:!scale-95 active:duration-75"
+        :class="{
+          'bg-accent !text-primary active:!brightness-105 active:shadow-sm':
+            isCopilotPanelOpen,
+        }"
+        icon="i-lucide-brain-circuit"
+        @click="handleCopilotSidebarToggle"
+      />
+    </RelayTooltip>
   </ButtonGroup>
 </template>

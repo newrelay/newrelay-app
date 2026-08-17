@@ -1,4 +1,5 @@
 <script setup>
+import { RelayTooltip } from 'dashboard/components-next/relay';
 import { computed } from 'vue';
 import Icon from 'next/icon/Icon.vue';
 import ChannelIcon from 'next/icon/ChannelIcon.vue';
@@ -35,11 +36,12 @@ const reauthorizationRequired = computed(() => {
   </span>
   <div class="flex-1 truncate min-w-0">{{ label }}</div>
   <SidebarUnreadBadge :count="badgeCount" />
-  <div
-    v-if="reauthorizationRequired"
-    v-tooltip.top-end="$t('SIDEBAR.REAUTHORIZE')"
-    class="grid place-content-center size-5 bg-destructive/20 rounded-full"
-  >
-    <Icon icon="i-woot-alert" class="size-3 text-destructive" />
-  </div>
+  <RelayTooltip :content="$t('SIDEBAR.REAUTHORIZE')" side="top" align="end">
+    <div
+      v-if="reauthorizationRequired"
+      class="grid place-content-center size-5 bg-destructive/20 rounded-full"
+    >
+      <Icon icon="i-woot-alert" class="size-3 text-destructive" />
+    </div>
+  </RelayTooltip>
 </template>

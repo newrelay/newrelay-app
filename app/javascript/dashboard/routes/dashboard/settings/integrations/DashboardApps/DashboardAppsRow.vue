@@ -1,4 +1,5 @@
 <script setup>
+import { RelayTooltip } from 'dashboard/components-next/relay';
 import Icon from 'dashboard/components-next/icon/Icon.vue';
 import { RelayButton } from 'dashboard/components-next/relay';
 
@@ -42,30 +43,34 @@ defineEmits(['edit', 'delete']);
     </div>
 
     <div class="flex items-center justify-end gap-1 pr-2">
-      <RelayButton
-        v-tooltip.top="
-          $t('INTEGRATION_SETTINGS.DASHBOARD_APPS.LIST.EDIT_TOOLTIP')
-        "
-        variant="ghost"
-        size="icon"
-        class="size-8 border border-transparent text-muted-foreground shadow-xs hover:border-border hover:bg-background hover:text-foreground border border-border hover:border-transparent"
-        :disabled="loading"
-        @click="$emit('edit', app)"
+      <RelayTooltip
+        :content="$t('INTEGRATION_SETTINGS.DASHBOARD_APPS.LIST.EDIT_TOOLTIP')"
+        side="top"
       >
-        <Icon icon="i-lucide-pencil" class="size-3.5" />
-      </RelayButton>
-      <RelayButton
-        v-tooltip.top="
-          $t('INTEGRATION_SETTINGS.DASHBOARD_APPS.LIST.DELETE_TOOLTIP')
-        "
-        variant="ghost"
-        size="icon"
-        class="size-8 border border-transparent text-muted-foreground shadow-xs hover:border-destructive/20 hover:bg-destructive/10 hover:text-destructive border border-border hover:border-transparent"
-        :disabled="loading"
-        @click="$emit('delete', app)"
+        <RelayButton
+          variant="ghost"
+          size="icon"
+          class="size-8 border border-border text-muted-foreground shadow-xs hover:border-transparent hover:bg-background hover:text-foreground"
+          :disabled="loading"
+          @click="$emit('edit', app)"
+        >
+          <Icon icon="i-lucide-pencil" class="size-3.5" />
+        </RelayButton>
+      </RelayTooltip>
+      <RelayTooltip
+        :content="$t('INTEGRATION_SETTINGS.DASHBOARD_APPS.LIST.DELETE_TOOLTIP')"
+        side="top"
       >
-        <Icon icon="i-lucide-trash-2" class="size-3.5" />
-      </RelayButton>
+        <RelayButton
+          variant="ghost"
+          size="icon"
+          class="size-8 border border-border text-muted-foreground shadow-xs hover:border-transparent hover:bg-destructive/10 hover:text-destructive"
+          :disabled="loading"
+          @click="$emit('delete', app)"
+        >
+          <Icon icon="i-lucide-trash-2" class="size-3.5" />
+        </RelayButton>
+      </RelayTooltip>
     </div>
   </div>
 </template>

@@ -16,7 +16,11 @@ import {
 } from 'dashboard/composables/store';
 import ChannelName from './components/ChannelName.vue';
 import ChannelIcon from 'next/icon/ChannelIcon.vue';
-import { RelayButton, RelayInput } from 'dashboard/components-next/relay';
+import {
+  RelayButton,
+  RelayInput,
+  RelayTooltip,
+} from 'dashboard/components-next/relay';
 import Icon from 'dashboard/components-next/icon/Icon.vue';
 
 const getters = useStoreGetters();
@@ -213,26 +217,34 @@ const openAddInbox = () => {
                 params: { inboxId: inbox.id },
               }"
             >
-              <RelayButton
+              <RelayTooltip
                 v-if="isAdmin"
-                v-tooltip.top="$t('INBOX_MGMT.SETTINGS')"
+                :content="$t('INBOX_MGMT.SETTINGS')"
+                side="top"
+              >
+                <RelayButton
+                  variant="ghost"
+                  size="icon"
+                  class="size-8 border border-transparent text-muted-foreground shadow-xs hover:border-border hover:bg-background hover:text-foreground border border-border hover:border-transparent"
+                >
+                  <Icon icon="i-lucide-sliders-horizontal" class="size-3.5" />
+                </RelayButton>
+              </RelayTooltip>
+            </router-link>
+            <RelayTooltip
+              v-if="isAdmin"
+              :content="$t('INBOX_MGMT.DELETE.BUTTON_TEXT')"
+              side="top"
+            >
+              <RelayButton
                 variant="ghost"
                 size="icon"
-                class="size-8 border border-transparent text-muted-foreground shadow-xs hover:border-border hover:bg-background hover:text-foreground border border-border hover:border-transparent"
+                class="size-8 border border-transparent text-muted-foreground shadow-xs hover:border-destructive/20 hover:bg-destructive/10 hover:text-destructive border border-border hover:border-transparent"
+                @click="openDelete(inbox)"
               >
-                <Icon icon="i-lucide-sliders-horizontal" class="size-3.5" />
+                <Icon icon="i-lucide-trash-2" class="size-3.5" />
               </RelayButton>
-            </router-link>
-            <RelayButton
-              v-if="isAdmin"
-              v-tooltip.top="$t('INBOX_MGMT.DELETE.BUTTON_TEXT')"
-              variant="ghost"
-              size="icon"
-              class="size-8 border border-transparent text-muted-foreground shadow-xs hover:border-destructive/20 hover:bg-destructive/10 hover:text-destructive border border-border hover:border-transparent"
-              @click="openDelete(inbox)"
-            >
-              <Icon icon="i-lucide-trash-2" class="size-3.5" />
-            </RelayButton>
+            </RelayTooltip>
           </template>
         </SettingsListRow>
       </SettingsListCard>

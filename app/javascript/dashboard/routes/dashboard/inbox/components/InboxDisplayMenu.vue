@@ -7,7 +7,11 @@ import {
   RelayButton,
   RelayCheckbox,
   RelayLabel,
+  DROPDOWN_MENU_CONTENT_CLASS,
+  DROPDOWN_MENU_ITEM_BASE_CLASS,
+  DROPDOWN_MENU_ITEM_CLASS,
 } from 'dashboard/components-next/relay';
+import { cn } from 'dashboard/components-next/relay/utils/cn';
 
 const emit = defineEmits(['filter']);
 
@@ -129,8 +133,11 @@ const onSortOptionClick = option => {
   emit('filter', option);
 };
 
-const SORT_OPTION_CLASSES =
-  'relative flex w-full cursor-pointer select-none items-center justify-between gap-2 rounded-sm px-2 py-1.5 text-xs text-foreground outline-none transition-colors hover:bg-accent hover:text-accent-foreground';
+const SORT_OPTION_CLASSES = cn(
+  DROPDOWN_MENU_ITEM_BASE_CLASS,
+  DROPDOWN_MENU_ITEM_CLASS,
+  'justify-between text-xs'
+);
 
 onMounted(() => {
   setSavedFilter();
@@ -139,7 +146,7 @@ onMounted(() => {
 
 <template>
   <div
-    class="anim-pop z-50 w-56 min-w-[8rem] overflow-visible rounded-md border border-border bg-popover p-2 text-popover-foreground shadow-md"
+    :class="cn(DROPDOWN_MENU_CONTENT_CLASS, 'w-56 overflow-visible p-2')"
     data-state="open"
   >
     <div class="relative flex items-center justify-between px-1 py-1.5">
@@ -161,7 +168,7 @@ onMounted(() => {
           <div
             v-if="showSortMenu"
             :style="sortMenuStyle"
-            class="anim-pop min-w-[8rem] overflow-hidden rounded-md border border-border bg-popover p-1 text-popover-foreground shadow-md"
+            :class="DROPDOWN_MENU_CONTENT_CLASS"
             data-state="open"
             role="menu"
           >

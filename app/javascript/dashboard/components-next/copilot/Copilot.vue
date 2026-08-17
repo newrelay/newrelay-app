@@ -125,7 +125,7 @@ watch(
 </script>
 
 <template>
-  <div class="flex flex-col h-full text-sm leading-6 tracking-tight w-full">
+  <div class="flex h-full w-full flex-col text-sm leading-6 tracking-tight">
     <SidebarActionsHeader
       :title="$t('CAPTAIN.COPILOT.TITLE')"
       :buttons="copilotButtons"
@@ -134,7 +134,7 @@ watch(
     />
     <div
       ref="chatContainer"
-      class="flex-1 flex px-4 py-4 overflow-y-auto items-start"
+      class="flex flex-1 items-start overflow-y-auto px-5 py-5"
     >
       <div v-if="hasMessages" class="space-y-6 flex-1 flex flex-col w-full">
         <template v-for="(item, index) in groupedMessages" :key="item.id">
@@ -164,21 +164,18 @@ watch(
       />
     </div>
 
-    <div class="mx-3 mt-px mb-2">
-      <div class="flex items-center gap-2 justify-between w-full mb-1">
+    <div class="shrink-0 border-t border-border px-4 py-3">
+      <div
+        v-if="assistants.length > 1"
+        class="mb-2 flex w-full items-center justify-between gap-2"
+      >
         <ToggleCopilotAssistant
-          v-if="assistants.length > 1"
           :assistants="assistants"
           :active-assistant="activeAssistant"
           @set-assistant="$event => emit('setAssistant', $event)"
         />
-        <div v-else />
       </div>
-      <CopilotInput
-        v-if="hasAssistants"
-        class="mb-1 w-full"
-        @send="sendMessage"
-      />
+      <CopilotInput v-if="hasAssistants" class="w-full" @send="sendMessage" />
     </div>
   </div>
 </template>

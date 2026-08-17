@@ -1,17 +1,14 @@
 <script setup>
 import { computed } from 'vue';
-import { useToggle } from '@vueuse/core';
 import { useStore } from 'vuex';
 import { useAlert } from 'dashboard/composables';
 import { useI18n } from 'vue-i18n';
 import ButtonV4 from 'dashboard/components-next/button/Button.vue';
-import DropdownMenu from 'dashboard/components-next/dropdown-menu/DropdownMenu.vue';
+import { RelayActionDropdown } from 'dashboard/components-next/relay';
 import wootConstants from 'dashboard/constants/globals';
 
 const store = useStore();
 const { t } = useI18n();
-
-const [showActionsDropdown, toggleDropdown] = useToggle(false);
 
 const currentChat = computed(() => store.getters.getSelectedChat);
 const isResolved = computed(
@@ -54,12 +51,14 @@ const actionMenuSections = computed(() => {
       label: 'Block Contact',
       action: 'block',
       value: 'block',
+      destructive: true,
     },
     {
       icon: 'i-lucide-trash-2',
       label: t('CONVERSATION.CARD_CONTEXT_MENU.DELETE', 'Delete Thread'),
       action: 'delete',
       value: 'delete',
+      destructive: true,
     },
   ];
 
@@ -72,8 +71,6 @@ const openSnoozeModal = () => {
 };
 
 const handleActionClick = ({ action }) => {
-  toggleDropdown(false);
-
   if (action === 'resolve') {
     store.dispatch('toggleStatus', {
       conversationId: currentChat.value.id,
@@ -103,26 +100,21 @@ const handleActionClick = ({ action }) => {
 </script>
 
 <template>
-  <div class="relative flex items-center gap-2 actions--container">
-    <div
-      v-on-clickaway="() => toggleDropdown(false)"
-      class="relative flex items-center group"
-    >
+  <RelayActionDropdown
+    :menu-sections="actionMenuSections"
+    align="end"
+    content-class="w-52"
+    @action="handleActionClick"
+  >
+    <template #trigger>
       <ButtonV4
-        v-tooltip="$t('CONVERSATION.HEADER.MORE_ACTIONS')"
         size="sm"
         variant="ghost"
         color="slate"
         icon="i-lucide-more-horizontal"
-        class="rounded-md group-hover:bg-accent"
-        @click="toggleDropdown()"
+        class="rounded-md"
+        :title="$t('CONVERSATION.HEADER.MORE_ACTIONS')"
       />
-      <DropdownMenu
-        v-if="showActionsDropdown"
-        :menu-sections="actionMenuSections"
-        class="mt-1 ltr:right-0 rtl:left-0 top-full"
-        @action="handleActionClick"
-      />
-    </div>
-  </div>
+    </template>
+  </RelayActionDropdown>
 </template>

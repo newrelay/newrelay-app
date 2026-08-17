@@ -1,4 +1,5 @@
 <script setup>
+import { RelayTooltip } from 'dashboard/components-next/relay';
 import { computed, ref } from 'vue';
 import { getInboxIconByType } from 'dashboard/helper/inbox';
 import { useRouter, useRoute } from 'vue-router';
@@ -104,15 +105,16 @@ const onCardClick = e => {
         </h4>
         <div class="flex items-center gap-2">
           <CardPriorityIcon :priority="conversation.priority || null" />
-          <div
-            v-tooltip.left="inboxName"
-            class="flex items-center justify-center flex-shrink-0 rounded-full bg-muted size-5"
-          >
-            <Icon
-              :icon="inboxIcon"
-              class="flex-shrink-0 text-muted-foreground size-3"
-            />
-          </div>
+          <RelayTooltip :content="inboxName" side="left">
+            <div
+              class="flex items-center justify-center flex-shrink-0 rounded-full bg-muted size-5"
+            >
+              <Icon
+                :icon="inboxIcon"
+                class="flex-shrink-0 text-muted-foreground size-3"
+              />
+            </div>
+          </RelayTooltip>
           <span class="text-sm text-muted-foreground">
             {{ lastActivityAt }}
           </span>

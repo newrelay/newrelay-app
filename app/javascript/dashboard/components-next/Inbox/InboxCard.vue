@@ -3,6 +3,7 @@ import { computed, ref, onBeforeMount } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { dynamicTime, shortTimestamp } from 'shared/helpers/timeHelper';
 import Avatar from 'dashboard/components-next/avatar/Avatar.vue';
+import InboxStarIcon from 'dashboard/components-next/Inbox/InboxStarIcon.vue';
 import InboxContextMenu from 'dashboard/routes/dashboard/inbox/components/InboxContextMenu.vue';
 import { useMapGetter } from 'dashboard/composables/store';
 import { getInboxIconByType } from 'dashboard/helper/inbox';
@@ -140,15 +141,17 @@ onBeforeMount(contextMenuActions.close);
 <template>
   <div
     role="button"
-    class="flex items-center gap-4 px-5 py-3 text-left transition-colors w-full group border-b border-border/60 hover:shadow-sm cursor-pointer"
+    class="relative flex w-full cursor-pointer items-center gap-4 border-b px-5 py-3 text-left transition-colors transition-shadow group"
     :class="[
       isSelected
-        ? 'bg-primary/10 hover:bg-primary/15'
-        : isActive
+        ? 'border-b-transparent bg-primary/10 hover:bg-primary/15'
+        : 'border-border/60 hover:z-10 hover:border-border hover:shadow-[0_1px_3px_0_rgb(0_0_0/0.1),0_1px_2px_-1px_rgb(0_0_0/0.1)]',
+      !isSelected &&
+        (isActive
           ? 'bg-primary/5 hover:bg-primary/5'
           : isUnread
             ? 'bg-background hover:bg-muted/20'
-            : 'bg-muted/10 hover:bg-muted/30',
+            : 'bg-muted/10 hover:bg-muted/30'),
     ]"
     @contextmenu="contextMenuActions.open($event)"
     @click="emit('click')"
@@ -171,18 +174,11 @@ onBeforeMount(contextMenuActions.close);
       </button>
       <button
         type="button"
-        class="flex items-center justify-center"
+        class="flex cursor-pointer items-center justify-center hover:[&_svg]:text-amber-400"
         :aria-label="t('INBOX.VIEWS.STARRED')"
         @click.stop="emit('toggleStar', inboxItem)"
       >
-        <span
-          v-if="isStarred"
-          class="size-4 cursor-pointer i-ri-star-fill text-warning opacity-100"
-        />
-        <span
-          v-else
-          class="size-4 cursor-pointer i-lucide-star text-muted-foreground opacity-30 group-hover:opacity-100 transition-opacity hover:text-warning"
-        />
+        <InboxStarIcon :filled="isStarred" />
       </button>
       <div class="relative shrink-0 ml-1">
         <Avatar

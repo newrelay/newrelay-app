@@ -10,6 +10,7 @@ import {
 import { useI18n } from 'vue-i18n';
 import BaseSettingsHeader from 'dashboard/routes/dashboard/settings/components/BaseSettingsHeader.vue';
 import NextButton from 'dashboard/components-next/button/Button.vue';
+import { RelayTooltip } from 'dashboard/components-next/relay';
 
 const props = defineProps({
   integrationId: {
@@ -126,16 +127,18 @@ const inboxName = hook => (hook.inbox ? hook.inbox.name : '');
 
               <BaseTableCell align="end" class="w-12">
                 <div class="flex justify-end gap-3 flex-shrink-0">
-                  <NextButton
-                    v-tooltip.top="
-                      $t('INTEGRATION_APPS.LIST.DELETE.BUTTON_TEXT')
-                    "
-                    icon="i-woot-bin"
-                    slate
-                    sm
-                    class="hover:enabled:text-destructive hover:enabled:bg-destructive/10"
-                    @click="$emit('delete', hook)"
-                  />
+                  <RelayTooltip
+                    :content="$t('INTEGRATION_APPS.LIST.DELETE.BUTTON_TEXT')"
+                    side="top"
+                  >
+                    <NextButton
+                      icon="i-woot-bin"
+                      slate
+                      sm
+                      class="hover:enabled:text-destructive hover:enabled:bg-destructive/10"
+                      @click="$emit('delete', hook)"
+                    />
+                  </RelayTooltip>
                 </div>
               </BaseTableCell>
             </template>

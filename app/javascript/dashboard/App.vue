@@ -6,6 +6,7 @@ import UpdateBanner from './components/app/UpdateBanner.vue';
 import StatusBanner from './components/app/StatusBanner.vue';
 import PaymentPendingBanner from './components/app/PaymentPendingBanner.vue';
 import PendingEmailVerificationBanner from './components/app/PendingEmailVerificationBanner.vue';
+import { RelayTooltipProvider } from 'dashboard/components-next/relay';
 import vueActionCable from './helper/actionCable';
 import { useRouter } from 'vue-router';
 import { useStore } from 'dashboard/composables/store';
@@ -36,6 +37,7 @@ export default {
     PaymentPendingBanner,
     WootSnackbarBox,
     PendingEmailVerificationBanner,
+    RelayTooltipProvider,
   },
   setup() {
     const router = useRouter();
@@ -226,41 +228,31 @@ export default {
 </script>
 
 <template>
-  <div
-    v-if="!authUIFlags.isFetching"
-    id="app"
-    class="flex flex-col w-full h-screen min-h-0 bg-background text-foreground"
-    :dir="isRTL ? 'rtl' : 'ltr'"
-  >
-    <UpdateBanner :latest-chatwoot-version="latestChatwootVersion" />
-    <StatusBanner />
-    <template v-if="currentAccountId">
-      <PendingEmailVerificationBanner v-if="hideOnOnboardingView" />
-      <PaymentPendingBanner v-if="hideOnOnboardingView" />
-    </template>
-    <router-view v-slot="{ Component }">
-      <transition name="fade" mode="out-in">
-        <component :is="Component" />
-      </transition>
-    </router-view>
-    <WootSnackbarBox />
-    <NetworkNotification />
-  </div>
-  <LoadingState v-else />
+  <RelayTooltipProvider>
+    <div
+      v-if="!authUIFlags.isFetching"
+      id="app"
+      class="flex flex-col w-full h-screen min-h-0 bg-background text-foreground"
+      :dir="isRTL ? 'rtl' : 'ltr'"
+    >
+      <UpdateBanner :latest-chatwoot-version="latestChatwootVersion" />
+      <StatusBanner />
+      <template v-if="currentAccountId">
+        <PendingEmailVerificationBanner v-if="hideOnOnboardingView" />
+        <PaymentPendingBanner v-if="hideOnOnboardingView" />
+      </template>
+      <router-view v-slot="{ Component }">
+        <transition name="fade" mode="out-in">
+          <component :is="Component" />
+        </transition>
+      </router-view>
+      <WootSnackbarBox />
+      <NetworkNotification />
+    </div>
+    <LoadingState v-else />
+  </RelayTooltipProvider>
 </template>
 
 <style lang="scss">
 @import './assets/scss/app';
-
-.v-popper--theme-tooltip .v-popper__inner {
-  background: black !important;
-  font-size: 0.75rem;
-  padding: 4px 8px !important;
-  border-radius: 6px;
-  font-weight: 400;
-}
-
-.v-popper--theme-tooltip .v-popper__arrow-container {
-  display: none;
-}
 </style>

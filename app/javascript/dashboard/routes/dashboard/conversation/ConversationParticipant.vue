@@ -1,4 +1,5 @@
 <script>
+import { RelayTooltip } from 'dashboard/components-next/relay';
 import Spinner from 'shared/components/Spinner.vue';
 import { useAlert } from 'dashboard/composables';
 import { mapGetters } from 'vuex';
@@ -10,6 +11,7 @@ import NextButton from 'dashboard/components-next/button/Button.vue';
 
 export default {
   components: {
+    RelayTooltip,
     Spinner,
     ThumbnailGroup,
     MultiselectDropdownItems,
@@ -167,16 +169,20 @@ export default {
             {{ $t('CONVERSATION_PARTICIPANTS.NO_PARTICIPANTS_TEXT') }}
           </p>
         </div>
-        <NextButton
-          v-tooltip.left="$t('CONVERSATION_PARTICIPANTS.ADD_PARTICIPANTS')"
-          slate
-          ghost
-          sm
-          icon="i-lucide-settings"
-          class="relative -top-1"
-          :title="$t('CONVERSATION_PARTICIPANTS.ADD_PARTICIPANTS')"
-          @click="onOpenDropdown"
-        />
+        <RelayTooltip
+          :content="$t('CONVERSATION_PARTICIPANTS.ADD_PARTICIPANTS')"
+          side="left"
+        >
+          <NextButton
+            slate
+            ghost
+            sm
+            icon="i-lucide-settings"
+            class="relative -top-1"
+            :title="$t('CONVERSATION_PARTICIPANTS.ADD_PARTICIPANTS')"
+            @click="onOpenDropdown"
+          />
+        </RelayTooltip>
       </div>
     </div>
     <div class="flex items-center justify-between">

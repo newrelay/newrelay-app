@@ -217,6 +217,7 @@
       "ENABLE_SIGN_TOOLTIP": "Enable signature",
       "DISABLE_SIGN_TOOLTIP": "Disable signature",
       "MSG_INPUT": "Shift + enter for new line.",
+      "INBOX_MSG_INPUT": "Shift + enter for new line. Start with '/' to select a Quick Reply.",
       "PRIVATE_MSG_INPUT": "Shift + enter for new line. This will be visible only to Agents",
       "MESSAGING_RESTRICTED": "You cannot reply to this conversation",
       "MESSAGING_RESTRICTED_WHATSAPP": "You can only reply using a template message due to 24-hour message window restriction",
@@ -233,6 +234,8 @@
       "CONTACT": "contact",
       "INTERNAL_COMMENT": "Internal comment",
       "SEND_WITH_SHORTCUT": "Send (CTRL + ↵)",
+      "EXPAND_EDITOR": "Expand composer",
+      "COLLAPSE_EDITOR": "Collapse composer",
       "TOGGLE_EDITOR_SIZE": "Toggle editor size",
       "FORMAT_BOLD": "Bold",
       "FORMAT_ITALIC": "Italic",
@@ -357,7 +360,7 @@
     },
     "SIDEBAR": {
       "CONTACT": "Contact",
-      "COPILOT": "Copilot",
+      "COPILOT": "RelayAI",
       "OVERVIEW": "Overview",
       "VIEW_FULL_PROFILE": "View full profile"
     },

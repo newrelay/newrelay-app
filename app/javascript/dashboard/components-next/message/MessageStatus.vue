@@ -1,4 +1,5 @@
 <script setup>
+import { RelayTooltip } from 'dashboard/components-next/relay';
 import { computed, ref } from 'vue';
 import { useIntervalFn } from '@vueuse/core';
 import { useI18n } from 'vue-i18n';
@@ -78,17 +79,12 @@ const tooltipText = computed(() => {
 </script>
 
 <template>
-  <Icon
-    v-if="status === MESSAGE_STATUS.PROGRESS"
-    v-tooltip.top-start="tooltipText"
-    :icon="progessIcon"
-    class="text-current"
-  />
-  <Icon
-    v-else
-    v-tooltip.top-start="tooltipText"
-    :icon="statusIcon"
-    :class="statusColor"
-    class="size-[14px]"
-  />
+  <RelayTooltip :content="tooltipText" side="top" align="start">
+    <Icon
+      v-if="status === MESSAGE_STATUS.PROGRESS"
+      :icon="progessIcon"
+      class="text-current"
+    />
+    <Icon v-else :icon="statusIcon" :class="statusColor" class="size-[14px]" />
+  </RelayTooltip>
 </template>

@@ -6,6 +6,7 @@ import { useMapGetter } from 'dashboard/composables/store';
 
 import Button from 'dashboard/components-next/button/Button.vue';
 import Label from 'dashboard/components-next/label/Label.vue';
+import { RelayTooltip } from 'dashboard/components-next/relay';
 
 const props = defineProps({
   labels: {
@@ -155,21 +156,25 @@ const onShowLabels = e => {
         'invisible absolute': !showAllLabels && index > labelPosition,
       }"
     />
-    <Button
+    <RelayTooltip
       v-if="showExpandLabelButton || (disableToggle && allLabelsHidden)"
-      v-tooltip.top="{
+      :content="{
         content: tooltipText,
         delay: { show: 500, hide: 0 },
       }"
-      :label="labelsCountText"
-      xs
-      slate
-      :no-animation="disableToggle"
-      :icon="labelsCountText ? 'i-lucide-plus' : 'i-lucide-chevron-left'"
-      class="!py-0 !px-1.5 flex-shrink-0 !rounded-md !bg-primary -outline-offset-1 !gap-0.5 [&>span:first-child]:!text-muted-foreground [&>span:last-child]:!text-muted-foreground"
-      :class="{ 'cursor-default': disableToggle }"
-      @click="onShowLabels"
-    />
+      side="top"
+    >
+      <Button
+        :label="labelsCountText"
+        xs
+        slate
+        :no-animation="disableToggle"
+        :icon="labelsCountText ? 'i-lucide-plus' : 'i-lucide-chevron-left'"
+        class="!py-0 !px-1.5 flex-shrink-0 !rounded-md !bg-primary -outline-offset-1 !gap-0.5 [&>span:first-child]:!text-muted-foreground [&>span:last-child]:!text-muted-foreground"
+        :class="{ 'cursor-default': disableToggle }"
+        @click="onShowLabels"
+      />
+    </RelayTooltip>
   </div>
   <template v-else />
 </template>

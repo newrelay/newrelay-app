@@ -1,4 +1,5 @@
 <script setup>
+import { RelayTooltip } from 'dashboard/components-next/relay';
 import MessagePreview from 'dashboard/components/widgets/conversation/MessagePreview.vue';
 import Button from 'dashboard/components-next/button/Button.vue';
 
@@ -26,15 +27,16 @@ const emit = defineEmits(['dismiss']);
         class="inline"
       />
     </div>
-    <Button
-      v-tooltip="$t('CONVERSATION.REPLYBOX.DISMISS_REPLY')"
-      ghost
-      xs
-      slate
-      icon="i-lucide-x"
-      class="flex-shrink-0"
-      @click.stop="emit('dismiss')"
-    />
+    <RelayTooltip :content="$t('CONVERSATION.REPLYBOX.DISMISS_REPLY')">
+      <Button
+        ghost
+        xs
+        slate
+        icon="i-lucide-x"
+        class="flex-shrink-0"
+        @click.stop="emit('dismiss')"
+      />
+    </RelayTooltip>
   </div>
 </template>
 

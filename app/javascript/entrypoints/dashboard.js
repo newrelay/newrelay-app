@@ -7,7 +7,6 @@ import hljsVuePlugin from '@highlightjs/vue-plugin';
 
 import { plugin, defaultConfig } from '@formkit/vue';
 import WootWizard from 'components/ui/Wizard.vue';
-import FloatingVue from 'floating-vue';
 import WootUiKit from 'dashboard/components';
 import App from 'dashboard/App.vue';
 import i18nMessages from 'dashboard/i18n';
@@ -30,8 +29,6 @@ import { domPurifyConfig } from 'shared/helpers/HTMLSanitizer.js';
 
 import { vResizeObserver } from '@vueuse/components';
 import { directive as onClickaway } from 'vue3-click-away';
-
-import 'floating-vue/dist/style.css';
 
 const i18n = createI18n({
   legacy: false, // https://github.com/intlify/vue-i18n/issues/1902
@@ -84,11 +81,6 @@ app.use(
     },
   })
 );
-app.use(FloatingVue, {
-  instantMove: true,
-  arrowOverflow: false,
-  disposeTimeout: 5000000,
-});
 app.use(hljsVuePlugin);
 
 app.component('woot-wizard', WootWizard);

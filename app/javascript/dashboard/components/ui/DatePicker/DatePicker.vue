@@ -370,16 +370,16 @@ const closeDatePicker = () => {
     <div
       v-if="showDatePicker"
       v-on-clickaway="closeDatePicker"
-      class="flex absolute top-9 ltr:left-0 rtl:right-0 z-30 shadow-md select-none w-[880px] rounded-2xl bg-accent backdrop-blur-[100px] border-0 outline outline-1 outline-card"
+      class="absolute top-9 z-30 flex w-[880px] max-w-[90vw] select-none overflow-hidden rounded-2xl border border-border bg-card text-[13px] shadow-2xl ltr:left-0 rtl:right-0"
     >
       <CalendarDateRange
         :selected-range="selectedRange"
         @set-range="setDateRange"
       />
       <div
-        class="flex flex-col w-[680px] ltr:border-l rtl:border-r border-border"
+        class="flex w-[680px] flex-col ltr:border-l rtl:border-r border-border"
       >
-        <div class="flex justify-around h-fit">
+        <div class="flex h-fit justify-around p-8 pb-6">
           <!-- Calendars for Start and End Dates -->
           <div
             v-for="calendar in [START_CALENDAR, END_CALENDAR]"
@@ -403,12 +403,12 @@ const closeDatePicker = () => {
               @validate="updateManualInput($event, calendar)"
               @error="handleManualInputError($event)"
             />
-            <div class="py-5 border-b border-border">
+            <div class="border-b border-border/40 pb-5">
               <div
-                class="flex flex-col items-center gap-2 px-5 min-w-[340px] max-h-[352px]"
+                class="flex min-w-[300px] max-h-[352px] flex-col items-center gap-2 px-2"
                 :class="
                   calendar === START_CALENDAR &&
-                  'ltr:border-r rtl:border-l border-border'
+                  'ltr:border-r rtl:border-l border-border/40 ltr:pr-8 rtl:pl-8'
                 "
               >
                 <CalendarYear

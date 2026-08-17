@@ -1,6 +1,13 @@
 <script setup>
 import { useRouter } from 'vue-router';
-import Button from 'dashboard/components-next/button/Button.vue';
+
+defineProps({
+  variant: {
+    type: String,
+    default: 'default',
+    validator: value => ['default', 'inbox'].includes(value),
+  },
+});
 
 const router = useRouter();
 
@@ -11,16 +18,34 @@ const openProfileSettings = () => {
 
 <template>
   <div
-    class="my-0 px-1 flex max-h-[8vh] items-baseline justify-between hover:bg-background border border-dashed border-border rounded-sm overflow-auto"
+    v-if="variant === 'inbox'"
+    class="flex items-center gap-1.5 border-t border-amber-500/20 bg-amber-500/10 px-3 py-1.5 text-[12px] text-amber-600"
   >
-    <p class="w-fit !m-0">
+    <span class="i-lucide-circle-alert size-3.5 shrink-0" />
+    <span>
       {{ $t('CONVERSATION.FOOTER.MESSAGE_SIGNATURE_NOT_CONFIGURED') }}
-
-      <Button
-        link
-        :label="$t('CONVERSATION.FOOTER.CLICK_HERE')"
+      <button
+        type="button"
+        class="font-medium underline hover:text-amber-700"
         @click="openProfileSettings"
-      />
+      >
+        {{ $t('CONVERSATION.FOOTER.CLICK_HERE') }}
+      </button>
+    </span>
+  </div>
+  <div
+    v-else
+    class="my-0 flex max-h-[8vh] items-baseline justify-between overflow-auto rounded-sm border border-dashed border-border px-1 hover:bg-background"
+  >
+    <p class="!m-0 w-fit">
+      {{ $t('CONVERSATION.FOOTER.MESSAGE_SIGNATURE_NOT_CONFIGURED') }}
+      <button
+        type="button"
+        class="text-primary underline hover:text-primary/80"
+        @click="openProfileSettings"
+      >
+        {{ $t('CONVERSATION.FOOTER.CLICK_HERE') }}
+      </button>
     </p>
   </div>
 </template>

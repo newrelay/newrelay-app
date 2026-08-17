@@ -1,3 +1,7 @@
+<script setup>
+import { DROPDOWN_MENU_SEPARATOR_CLASS } from 'dashboard/components-next/relay/dropdown-menu/constants';
+</script>
+
 <template>
-  <div class="h-0 border-b border-border -mx-2" />
+  <div :class="DROPDOWN_MENU_SEPARATOR_CLASS" />
 </template>

@@ -1,4 +1,5 @@
 <script setup>
+import { RelayTooltip } from 'dashboard/components-next/relay';
 import { ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useAlert } from 'dashboard/composables';
@@ -62,23 +63,33 @@ const closeMacroPreview = () => {
       {{ macro.name }}
     </span>
     <div class="flex items-center gap-1 justify-end">
-      <NextButton
-        v-tooltip.left-start="$t('MACROS.EXECUTE.PREVIEW')"
-        icon="i-lucide-info"
-        slate
-        faded
-        xs
-        @click="toggleMacroPreview"
-      />
-      <NextButton
-        v-tooltip.left-start="$t('MACROS.EXECUTE.BUTTON_TOOLTIP')"
-        icon="i-lucide-play"
-        slate
-        faded
-        xs
-        :is-loading="isExecuting"
-        @click="executeMacro(macro)"
-      />
+      <RelayTooltip
+        :content="$t('MACROS.EXECUTE.PREVIEW')"
+        side="left"
+        align="start"
+      >
+        <NextButton
+          icon="i-lucide-info"
+          slate
+          faded
+          xs
+          @click="toggleMacroPreview"
+        />
+      </RelayTooltip>
+      <RelayTooltip
+        :content="$t('MACROS.EXECUTE.BUTTON_TOOLTIP')"
+        side="left"
+        align="start"
+      >
+        <NextButton
+          icon="i-lucide-play"
+          slate
+          faded
+          xs
+          :is-loading="isExecuting"
+          @click="executeMacro(macro)"
+        />
+      </RelayTooltip>
     </div>
     <transition name="menu-slide">
       <MacroPreview

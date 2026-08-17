@@ -72,10 +72,11 @@ const selectYear = year => {
       <button
         v-for="year in years"
         :key="year"
-        class="p-2 text-sm font-medium text-center text-foreground w-[144px] h-10 rounded-lg py-2.5 px-2"
+        class="h-10 w-full rounded-lg p-2 text-center text-sm font-medium text-foreground"
         :class="{
-          'bg-primary text-white hover:bg-primary': year === activeYear,
-          'hover:bg-accent dark:hover:bg-accent': year !== activeYear,
+          'bg-primary text-primary-foreground hover:bg-primary/90':
+            year === activeYear,
+          'hover:bg-muted/80': year !== activeYear,
         }"
         @click.stop="selectYear(year)"
       >

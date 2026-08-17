@@ -1,4 +1,5 @@
 <script setup>
+import { RelayTooltip } from 'dashboard/components-next/relay';
 import { ref, computed, onMounted } from 'vue';
 import { useMapGetter, useStore } from 'dashboard/composables/store';
 import { useAlert } from 'dashboard/composables';
@@ -221,28 +222,36 @@ onMounted(() => {
                 <div
                   class="flex items-center justify-end gap-1 pr-2 opacity-0 transition-opacity group-hover:opacity-100"
                 >
-                  <RelayButton
-                    v-if="!bot.system_bot"
-                    v-tooltip.top="t('AGENT_BOTS.EDIT.BUTTON_TEXT')"
-                    variant="ghost"
-                    size="icon"
-                    class="size-8 border border-transparent text-muted-foreground shadow-xs hover:border-border hover:bg-background hover:text-foreground border border-border hover:border-transparent"
-                    :disabled="loading[bot.id]"
-                    @click="openEditModal(bot)"
+                  <RelayTooltip
+                    :content="t('AGENT_BOTS.EDIT.BUTTON_TEXT')"
+                    side="top"
                   >
-                    <Icon icon="i-lucide-pencil" class="size-3.5" />
-                  </RelayButton>
-                  <RelayButton
-                    v-if="!bot.system_bot"
-                    v-tooltip.top="t('AGENT_BOTS.DELETE.BUTTON_TEXT')"
-                    variant="ghost"
-                    size="icon"
-                    class="size-8 border border-transparent text-muted-foreground shadow-xs hover:border-destructive/20 hover:bg-destructive/10 hover:text-destructive border border-border hover:border-transparent"
-                    :disabled="loading[bot.id]"
-                    @click="openDeletePopup(bot)"
+                    <RelayButton
+                      v-if="!bot.system_bot"
+                      variant="ghost"
+                      size="icon"
+                      class="size-8 border border-transparent text-muted-foreground shadow-xs hover:border-border hover:bg-background hover:text-foreground border border-border hover:border-transparent"
+                      :disabled="loading[bot.id]"
+                      @click="openEditModal(bot)"
+                    >
+                      <Icon icon="i-lucide-pencil" class="size-3.5" />
+                    </RelayButton>
+                  </RelayTooltip>
+                  <RelayTooltip
+                    :content="t('AGENT_BOTS.DELETE.BUTTON_TEXT')"
+                    side="top"
                   >
-                    <Icon icon="i-lucide-trash-2" class="size-3.5" />
-                  </RelayButton>
+                    <RelayButton
+                      v-if="!bot.system_bot"
+                      variant="ghost"
+                      size="icon"
+                      class="size-8 border border-transparent text-muted-foreground shadow-xs hover:border-destructive/20 hover:bg-destructive/10 hover:text-destructive border border-border hover:border-transparent"
+                      :disabled="loading[bot.id]"
+                      @click="openDeletePopup(bot)"
+                    >
+                      <Icon icon="i-lucide-trash-2" class="size-3.5" />
+                    </RelayButton>
+                  </RelayTooltip>
                 </div>
               </div>
             </div>

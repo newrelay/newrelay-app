@@ -1,4 +1,5 @@
 <script setup>
+import { RelayTooltip } from 'dashboard/components-next/relay';
 import { computed, ref, useAttrs } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRoute, useRouter } from 'vue-router';
@@ -214,17 +215,18 @@ const onPickInbox = async inbox => {
 
 <template>
   <span class="contents">
-    <Button
-      v-if="shouldRender"
-      v-tooltip.top-end="tooltipLabel || null"
-      v-bind="attrs"
-      :disabled="isCallButtonDisabled"
-      :is-loading="isInitiatingCall"
-      :label="label"
-      :icon="icon"
-      :size="size"
-      @click="onClick"
-    />
+    <RelayTooltip :content="tooltipLabel || null" side="top" align="end">
+      <Button
+        v-if="shouldRender"
+        v-bind="attrs"
+        :disabled="isCallButtonDisabled"
+        :is-loading="isInitiatingCall"
+        :label="label"
+        :icon="icon"
+        :size="size"
+        @click="onClick"
+      />
+    </RelayTooltip>
 
     <Dialog
       v-if="shouldRender && voiceInboxes.length > 1"

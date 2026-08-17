@@ -1,4 +1,5 @@
 <script>
+import { RelayTooltip } from 'dashboard/components-next/relay';
 import { mapGetters } from 'vuex';
 import { useAlert } from 'dashboard/composables';
 import {
@@ -7,28 +8,21 @@ import {
 } from 'shared/helpers/CustomErrors';
 import { useAdmin } from 'dashboard/composables/useAdmin';
 import Avatar from 'next/avatar/Avatar.vue';
-import SocialIcons from './SocialIcons.vue';
 import AddContactDrawer from 'dashboard/components-next/Contacts/Drawers/AddContactDrawer.vue';
 import ContactMergeModal from 'dashboard/modules/contact/ContactMergeModal.vue';
 import ContactDeleteModal from 'dashboard/modules/contact/ContactDeleteModal.vue';
 import ComposeConversation from 'dashboard/components-next/NewConversation/ComposeConversation.vue';
 import { RelayButton } from 'dashboard/components-next/relay';
-import VoiceCallButton from 'dashboard/components-next/Contacts/VoiceCallButton.vue';
-import InlineInput from 'dashboard/components-next/inline-input/InlineInput.vue';
-import ConversationAction from '../ConversationAction.vue';
 
 export default {
   components: {
+    RelayTooltip,
     RelayButton,
     AddContactDrawer,
     Avatar,
     ComposeConversation,
-    SocialIcons,
     ContactMergeModal,
     ContactDeleteModal,
-    VoiceCallButton,
-    InlineInput,
-    ConversationAction,
   },
   props: {
     contact: {
@@ -39,14 +33,6 @@ export default {
       type: Boolean,
       default: true,
     },
-    conversationId: {
-      type: [Number, String],
-      default: undefined,
-    },
-    inboxId: {
-      type: Number,
-      default: undefined,
-    },
   },
   emits: ['panelClose'],
   setup() {
@@ -55,17 +41,9 @@ export default {
       isAdmin,
     };
   },
-  data() {
-    return {
-      editName: '',
-      isEditingName: false,
-      isConvMgmtOpen: true,
-    };
-  },
   computed: {
     ...mapGetters({
       uiFlags: 'contacts/getUIFlags',
-      currentChat: 'getSelectedChat',
     }),
     contactProfileLink() {
       return `/app/accounts/${this.$route.params.accountId}/contacts/${this.contact.id}`;
@@ -73,34 +51,24 @@ export default {
     additionalAttributes() {
       return this.contact.additional_attributes || {};
     },
-    location() {
-      const {
-        country = '',
-        city = '',
-        country_code: countryCode,
-      } = this.additionalAttributes;
+    locationText() {
+      const { country = '', city = '' } = this.additionalAttributes;
       const cityAndCountry = [city, country].filter(item => !!item).join(', ');
 
-      if (!cityAndCountry) {
-        return '';
-      }
-      return this.findCountryFlag(countryCode, cityAndCountry);
+      if (cityAndCountry) return cityAndCountry;
+      return this.additionalAttributes.location || '';
     },
-    socialProfiles() {
-      const {
-        social_profiles: socialProfiles,
-        screen_name: twitterScreenName,
-        social_telegram_user_name: telegramUsername,
-      } = this.additionalAttributes;
-
-      const telegram = socialProfiles?.telegram || telegramUsername || '';
-      const twitter = socialProfiles?.twitter || twitterScreenName || '';
-
-      return {
-        ...(socialProfiles || {}),
-        twitter,
-        telegram,
-      };
+    phoneTelLink() {
+      const phone = this.contact.phone_number || '';
+      const digits = phone.replace(/[^\d+]/g, '');
+      return digits ? `tel:${digits}` : '';
+    },
+    mapsLink() {
+      if (!this.locationText) return '';
+      return `https://maps.google.com/?q=${encodeURIComponent(this.locationText)}`;
+    },
+    actionButtonClass() {
+      return 'size-8 rounded-lg border border-border bg-transparent flex items-center justify-center text-foreground transition-colors hover:border-transparent hover:bg-muted/50';
     },
   },
   watch: {
@@ -117,39 +85,6 @@ export default {
     },
     async onContactUpdate(payload) {
       await this.updateContactField(payload);
-    },
-    findCountryFlag(countryCode, cityAndCountry) {
-      try {
-        if (!countryCode) {
-          return `${cityAndCountry} 🌎`;
-        }
-
-        const code = countryCode?.toLowerCase();
-        return `${cityAndCountry} <span class="fi fi-${code} size-3.5"></span>`;
-      } catch (error) {
-        return '';
-      }
-    },
-    startEditingName() {
-      this.editName = this.contact.name || '';
-      this.isEditingName = true;
-      this.$nextTick(() => {
-        this.$refs.nameInput?.focus();
-      });
-    },
-    saveNameEdit() {
-      if (!this.isEditingName) return;
-      this.isEditingName = false;
-      const trimmed = this.editName.trim();
-      if (trimmed && trimmed !== this.contact.name) {
-        this.updateContactField({ name: trimmed });
-      }
-    },
-    cancelNameEdit() {
-      this.isEditingName = false;
-    },
-    onFieldUpdate(field, value) {
-      this.updateContactField({ [field]: value });
     },
     async updateContactField(attrs) {
       const contactId = this.contact.id;
@@ -188,29 +123,30 @@ export default {
 
 <template>
   <div
-    class="relative w-full bg-card border border-border/60 rounded-xl p-5 shadow-sm flex flex-col"
+    class="relative flex w-full flex-col rounded-xl border border-border/60 bg-card p-5 shadow-sm"
   >
     <!-- Header -->
-    <div class="flex w-full justify-between items-center mb-6">
-      <h3 class="capitalize text-base font-medium text-foreground">
+    <div class="mb-6 flex w-full items-center justify-between">
+      <h3 class="text-base font-medium text-foreground">
         {{ $t('CONVERSATION.SIDEBAR.OVERVIEW') }}
       </h3>
       <a
         :href="contactProfileLink"
         target="_blank"
         rel="noopener nofollow noreferrer"
-        class="flex items-center gap-1.5 px-3 py-1.5 bg-primary/10 text-primary text-[13px] font-medium rounded-md hover:bg-primary/20 transition-colors"
+        class="flex items-center gap-1.5 rounded-md bg-primary/10 px-3 py-1.5 text-[13px] font-medium text-primary transition-colors hover:bg-primary/20"
       >
         {{ $t('CONVERSATION.SIDEBAR.VIEW_FULL_PROFILE') }}
         <span class="i-lucide-arrow-up-right size-3.5 shrink-0" />
       </a>
     </div>
 
-    <!-- Details -->
-    <div class="flex flex-col w-full">
-      <!-- Avatar & Name -->
-      <div class="flex items-center gap-4 mb-4">
-        <div class="relative shrink-0">
+    <!-- Avatar & Name -->
+    <div class="mb-4 flex items-center gap-4">
+      <div class="relative shrink-0">
+        <div
+          class="overflow-hidden rounded-full border border-border/40 shadow-xs"
+        >
           <Avatar
             v-if="showAvatar"
             :src="contact.thumbnail"
@@ -219,124 +155,122 @@ export default {
             hide-offline-status
             rounded-full
           />
-          <!-- Online status dot overlay -->
-          <div
-            v-if="contact.availability_status === 'online'"
-            class="absolute bottom-0 right-0 size-3.5 bg-[var(--success)] border-[2.5px] border-background rounded-full"
-          />
         </div>
-        <div class="min-w-0 flex-1 flex flex-col gap-0.5">
-          <InlineInput
-            v-if="isEditingName"
-            ref="nameInput"
-            v-model="editName"
-            custom-input-class="!text-[15px] !font-semibold"
-            class="!w-fit"
-            @enter-press="saveNameEdit"
-            @escape-press="cancelNameEdit"
-            @blur="saveNameEdit"
-          />
-          <h2
-            v-else-if="showAvatar"
-            class="capitalize group/name text-[15px] font-semibold text-foreground truncate cursor-pointer hover:text-primary transition-colors leading-tight"
-            :title="$t('CONTACT_PANEL.CLICK_TO_EDIT')"
-            @click="startEditingName"
-          >
-            {{ contact.name }}
-          </h2>
-          <p class="text-[13px] text-muted-foreground truncate">
-            {{ additionalAttributes.company_plan || 'Enterprise Plan' }}
-          </p>
+        <div
+          v-if="contact.availability_status === 'online'"
+          class="absolute bottom-0 right-0 size-3.5 rounded-full border-[2.5px] border-background bg-emerald-500"
+        />
+      </div>
+      <div class="flex min-w-0 w-full flex-col items-start gap-0.5">
+        <a
+          v-if="showAvatar"
+          :href="contactProfileLink"
+          target="_blank"
+          rel="noopener nofollow noreferrer"
+          class="max-w-full truncate text-[15px] font-semibold leading-tight text-foreground transition-colors hover:text-primary"
+        >
+          {{ contact.name }}
+        </a>
+        <span class="truncate text-[13px] text-muted-foreground">
+          {{ additionalAttributes.company_plan || 'Enterprise Plan' }}
+        </span>
+      </div>
+    </div>
+
+    <div class="mb-4 h-px w-full bg-border/60" />
+
+    <!-- Contact fields -->
+    <div class="flex flex-col gap-2">
+      <div v-if="contact.email" class="group flex items-center gap-3">
+        <div
+          class="flex size-8 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary"
+        >
+          <span class="i-lucide-mail size-4" />
         </div>
+        <a
+          :href="`mailto:${contact.email}`"
+          class="truncate text-[13px] text-foreground transition-colors hover:text-primary"
+        >
+          {{ contact.email }}
+        </a>
       </div>
 
-      <!-- Contact Metadata -->
-      <div class="flex flex-col gap-2 min-w-0">
-        <div v-if="contact.email" class="flex items-center gap-3">
-          <div
-            class="size-8 rounded-lg bg-primary/10 flex items-center justify-center text-primary shrink-0"
-          >
-            <span class="i-lucide-mail size-4" />
-          </div>
-          <span class="text-[13px] text-foreground truncate">{{
-            contact.email
-          }}</span>
-        </div>
-
-        <div v-if="contact.phone_number" class="flex items-center gap-3">
-          <div
-            class="size-8 rounded-lg bg-primary/10 flex items-center justify-center text-primary shrink-0"
-          >
-            <span class="i-lucide-phone size-4" />
-          </div>
-          <span class="text-[13px] text-foreground truncate">{{
-            contact.phone_number
-          }}</span>
-        </div>
-
+      <div v-if="contact.phone_number" class="group flex items-center gap-3">
         <div
-          v-if="location || additionalAttributes.location"
-          class="flex items-center gap-3"
+          class="flex size-8 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary"
         >
-          <div
-            class="size-8 rounded-lg bg-primary/10 flex items-center justify-center text-primary shrink-0"
-          >
-            <span class="i-lucide-map-pin size-4" />
-          </div>
-          <span
-            class="text-[13px] text-foreground truncate"
-            v-html="location || additionalAttributes.location"
-          />
+          <span class="i-lucide-phone size-4" />
         </div>
+        <a
+          :href="phoneTelLink"
+          class="truncate text-[13px] text-foreground transition-colors hover:text-primary"
+        >
+          {{ contact.phone_number }}
+        </a>
+      </div>
 
-        <div v-if="socialProfiles" class="mt-1">
-          <SocialIcons :social-profiles="socialProfiles" />
+      <div v-if="locationText" class="group flex items-center gap-3">
+        <div
+          class="flex size-8 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary"
+        >
+          <span class="i-lucide-map-pin size-4" />
         </div>
+        <a
+          :href="mapsLink"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="truncate text-[13px] text-foreground transition-colors hover:text-primary"
+        >
+          {{ locationText }}
+        </a>
       </div>
     </div>
 
     <!-- Actions -->
-    <div class="flex flex-wrap items-center gap-2 mt-6">
+    <div class="flex items-center gap-3 px-1 pt-5">
       <ComposeConversation :contact-id="String(contact.id)">
         <template #trigger>
-          <RelayButton
-            v-tooltip.top-end="$t('CONTACT_PANEL.NEW_MESSAGE')"
-            variant="ghost"
-            size="icon"
-            class="size-8 rounded-md border border-border text-muted-foreground hover:border-transparent hover:bg-muted hover:text-foreground"
+          <RelayTooltip
+            :content="$t('CONTACT_PANEL.NEW_MESSAGE')"
+            side="top"
+            align="end"
           >
-            <span class="i-lucide-message-square size-4" />
-          </RelayButton>
+            <RelayButton variant="ghost" size="icon" :class="actionButtonClass">
+              <span class="i-lucide-message-square size-4" />
+            </RelayButton>
+          </RelayTooltip>
         </template>
       </ComposeConversation>
-      <VoiceCallButton
-        :phone="contact.phone_number"
-        :contact-id="contact.id"
-        :conversation-id="currentChat?.id"
-        icon="i-lucide-phone"
-        :tooltip-label="$t('CONTACT_PANEL.CALL')"
-        class="size-8 rounded-md border border-border text-muted-foreground hover:border-transparent hover:bg-muted hover:text-foreground !p-0"
-      />
-      <RelayButton
-        v-tooltip.top-end="$t('EDIT_CONTACT.BUTTON_LABEL')"
-        variant="ghost"
-        size="icon"
-        class="size-8 rounded-md border border-border text-muted-foreground hover:border-transparent hover:bg-muted hover:text-foreground"
-        @click="toggleEditModal"
+      <RelayTooltip
+        :content="$t('EDIT_CONTACT.BUTTON_LABEL')"
+        side="top"
+        align="end"
       >
-        <span class="i-lucide-pen-line size-4" />
-      </RelayButton>
+        <RelayButton
+          variant="ghost"
+          size="icon"
+          :class="actionButtonClass"
+          @click="toggleEditModal"
+        >
+          <span class="i-lucide-pen-line size-4" />
+        </RelayButton>
+      </RelayTooltip>
       <ContactMergeModal :primary-contact="contact">
         <template #trigger>
-          <RelayButton
-            v-tooltip.top-end="$t('CONTACT_PANEL.MERGE_CONTACT')"
-            variant="ghost"
-            size="icon"
-            class="size-8 rounded-md border border-border text-muted-foreground hover:border-transparent hover:bg-muted hover:text-foreground"
-            :disabled="uiFlags.isMerging"
+          <RelayTooltip
+            :content="$t('CONTACT_PANEL.MERGE_CONTACT')"
+            side="top"
+            align="end"
           >
-            <span class="i-lucide-git-merge size-4" />
-          </RelayButton>
+            <RelayButton
+              variant="ghost"
+              size="icon"
+              :class="actionButtonClass"
+              :disabled="uiFlags.isMerging"
+            >
+              <span class="i-lucide-merge size-4" />
+            </RelayButton>
+          </RelayTooltip>
         </template>
       </ContactMergeModal>
       <ContactDeleteModal
@@ -345,15 +279,20 @@ export default {
         @deleted="$emit('panelClose')"
       >
         <template #trigger>
-          <RelayButton
-            v-tooltip.top-end="$t('DELETE_CONTACT.BUTTON_LABEL')"
-            variant="ghost"
-            size="icon"
-            class="size-8 rounded-md border border-border text-muted-foreground hover:border-transparent hover:bg-destructive/10 hover:text-destructive"
-            :disabled="uiFlags.isDeleting"
+          <RelayTooltip
+            :content="$t('DELETE_CONTACT.BUTTON_LABEL')"
+            side="top"
+            align="end"
           >
-            <span class="i-lucide-trash-2 size-4" />
-          </RelayButton>
+            <RelayButton
+              variant="ghost"
+              size="icon"
+              :class="`${actionButtonClass} text-destructive hover:bg-destructive/10 hover:text-destructive`"
+              :disabled="uiFlags.isDeleting"
+            >
+              <span class="i-lucide-trash-2 size-4" />
+            </RelayButton>
+          </RelayTooltip>
         </template>
       </ContactDeleteModal>
     </div>

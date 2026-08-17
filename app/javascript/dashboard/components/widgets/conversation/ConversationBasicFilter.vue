@@ -1,4 +1,5 @@
 <script setup>
+import { RelayTooltip } from 'dashboard/components-next/relay';
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useToggle } from '@vueuse/core';
@@ -136,14 +137,15 @@ const handleSortChange = value => {
 
 <template>
   <div class="relative flex">
-    <NextButton
-      v-tooltip.right="$t('CHAT_LIST.SORT_TOOLTIP_LABEL')"
-      icon="i-lucide-arrow-up-down"
-      slate
-      faded
-      xs
-      @click="toggleDropdown()"
-    />
+    <RelayTooltip :content="$t('CHAT_LIST.SORT_TOOLTIP_LABEL')" side="right">
+      <NextButton
+        icon="i-lucide-arrow-up-down"
+        slate
+        faded
+        xs
+        @click="toggleDropdown()"
+      />
+    </RelayTooltip>
     <div
       v-if="showActionsDropdown"
       v-on-click-outside="() => toggleDropdown()"

@@ -133,222 +133,230 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="w-full p-4 flex flex-col gap-4 bg-muted/30">
-    <ContactInfo
-      :contact="contact"
-      :channel-type="channelType"
-      :conversation-id="conversationId"
-      :inbox-id="inboxId"
-      @panel-close="closeContactPanel"
-    />
-    <AccordionItem
-      v-if="hasAiSummary"
-      :title="$t('CONVERSATION.AI_SUMMARY.TITLE')"
-      icon="i-lucide-sparkles"
-      :is-open="isContactSidebarItemOpen('is_ai_summary_open', true)"
-      @toggle="value => toggleSidebarUIState('is_ai_summary_open', value)"
-    >
-      <ConversationAiSummary
-        :conversation-id="conversationId"
+  <div class="flex w-full flex-col bg-card">
+    <div class="flex flex-col border-b border-border p-6">
+      <ContactInfo
         :contact="contact"
-        @update:has-summary="val => (hasAiSummary = val)"
+        :channel-type="channelType"
+        @panel-close="closeContactPanel"
       />
-    </AccordionItem>
-    <div class="list-group">
-      <Draggable
-        :list="conversationSidebarItems"
-        animation="200"
-        ghost-class="ghost"
-        handle=".drag-handle"
-        item-key="name"
-        class="flex flex-col gap-4"
-        @start="dragging = true"
-        @end="onDragEnd"
+    </div>
+    <div class="flex flex-col gap-4 p-6">
+      <AccordionItem
+        v-if="hasAiSummary"
+        :title="$t('CONVERSATION.AI_SUMMARY.TITLE')"
+        icon="i-lucide-sparkles"
+        :is-open="isContactSidebarItemOpen('is_ai_summary_open', true)"
+        @toggle="value => toggleSidebarUIState('is_ai_summary_open', value)"
       >
-        <template #item="{ element }">
-          <div v-if="element.name === 'conversation_actions'">
-            <AccordionItem
-              :title="$t('CONVERSATION_SIDEBAR.ACCORDION.CONVERSATION_ACTIONS')"
-              :is-open="isContactSidebarItemOpen('is_conv_actions_open', true)"
-              compact
-              @toggle="
-                value => toggleSidebarUIState('is_conv_actions_open', value)
-              "
-            >
-              <ConversationAction
-                :conversation-id="conversationId"
-                :inbox-id="inboxId"
-              />
-            </AccordionItem>
-          </div>
-          <div
-            v-else-if="element.name === 'conversation_participants'"
-            class="conversation--actions"
-          >
-            <AccordionItem
-              :title="$t('CONVERSATION_PARTICIPANTS.SIDEBAR_TITLE')"
-              :is-open="isContactSidebarItemOpen('is_conv_participants_open')"
-              @toggle="
-                value =>
-                  toggleSidebarUIState('is_conv_participants_open', value)
-              "
-            >
-              <ConversationParticipant
-                :conversation-id="conversationId"
-                :inbox-id="inboxId"
-              />
-            </AccordionItem>
-          </div>
-          <div v-else-if="element.name === 'conversation_info'">
-            <AccordionItem
-              :title="$t('CONVERSATION_SIDEBAR.ACCORDION.CONVERSATION_INFO')"
-              :is-open="isContactSidebarItemOpen('is_conv_details_open')"
-              compact
-              @toggle="
-                value => toggleSidebarUIState('is_conv_details_open', value)
-              "
-            >
-              <ConversationInfo
-                :conversation-attributes="conversationAdditionalAttributes"
-                :contact-attributes="contactAdditionalAttributes"
-              />
-            </AccordionItem>
-          </div>
-          <div v-else-if="element.name === 'contact_attributes'">
-            <AccordionItem
-              :title="$t('CONVERSATION_SIDEBAR.ACCORDION.CONTACT_ATTRIBUTES')"
-              :is-open="isContactSidebarItemOpen('is_contact_attributes_open')"
-              compact
-              @toggle="
-                value =>
-                  toggleSidebarUIState('is_contact_attributes_open', value)
-              "
-            >
-              <CustomAttributes
-                attribute-type="contact_attribute"
-                attribute-from="conversation_contact_panel"
-                :contact-id="contact.id"
-                :empty-state-message="
-                  $t('CONVERSATION_CUSTOM_ATTRIBUTES.NO_RECORDS_FOUND')
+        <ConversationAiSummary
+          :conversation-id="conversationId"
+          :contact="contact"
+          @update:has-summary="val => (hasAiSummary = val)"
+        />
+      </AccordionItem>
+      <div class="list-group">
+        <Draggable
+          :list="conversationSidebarItems"
+          animation="200"
+          ghost-class="ghost"
+          handle=".drag-handle"
+          item-key="name"
+          class="flex flex-col gap-4"
+          @start="dragging = true"
+          @end="onDragEnd"
+        >
+          <template #item="{ element }">
+            <div v-if="element.name === 'conversation_actions'">
+              <AccordionItem
+                :title="
+                  $t('CONVERSATION_SIDEBAR.ACCORDION.CONVERSATION_ACTIONS')
                 "
-              />
-            </AccordionItem>
-          </div>
-          <div v-else-if="element.name === 'previous_conversation'">
-            <AccordionItem
-              v-if="contact.id"
-              :title="
-                $t('CONVERSATION_SIDEBAR.ACCORDION.PREVIOUS_CONVERSATION')
-              "
-              :is-open="isContactSidebarItemOpen('is_previous_conv_open')"
-              compact
-              @toggle="
-                value => toggleSidebarUIState('is_previous_conv_open', value)
+                :is-open="
+                  isContactSidebarItemOpen('is_conv_actions_open', true)
+                "
+                compact
+                @toggle="
+                  value => toggleSidebarUIState('is_conv_actions_open', value)
+                "
+              >
+                <ConversationAction
+                  :conversation-id="conversationId"
+                  :inbox-id="inboxId"
+                />
+              </AccordionItem>
+            </div>
+            <div
+              v-else-if="element.name === 'conversation_participants'"
+              class="conversation--actions"
+            >
+              <AccordionItem
+                :title="$t('CONVERSATION_PARTICIPANTS.SIDEBAR_TITLE')"
+                :is-open="isContactSidebarItemOpen('is_conv_participants_open')"
+                @toggle="
+                  value =>
+                    toggleSidebarUIState('is_conv_participants_open', value)
+                "
+              >
+                <ConversationParticipant
+                  :conversation-id="conversationId"
+                  :inbox-id="inboxId"
+                />
+              </AccordionItem>
+            </div>
+            <div v-else-if="element.name === 'conversation_info'">
+              <AccordionItem
+                :title="$t('CONVERSATION_SIDEBAR.ACCORDION.CONVERSATION_INFO')"
+                :is-open="isContactSidebarItemOpen('is_conv_details_open')"
+                compact
+                @toggle="
+                  value => toggleSidebarUIState('is_conv_details_open', value)
+                "
+              >
+                <ConversationInfo
+                  :conversation-attributes="conversationAdditionalAttributes"
+                  :contact-attributes="contactAdditionalAttributes"
+                />
+              </AccordionItem>
+            </div>
+            <div v-else-if="element.name === 'contact_attributes'">
+              <AccordionItem
+                :title="$t('CONVERSATION_SIDEBAR.ACCORDION.CONTACT_ATTRIBUTES')"
+                :is-open="
+                  isContactSidebarItemOpen('is_contact_attributes_open')
+                "
+                compact
+                @toggle="
+                  value =>
+                    toggleSidebarUIState('is_contact_attributes_open', value)
+                "
+              >
+                <CustomAttributes
+                  attribute-type="contact_attribute"
+                  attribute-from="conversation_contact_panel"
+                  :contact-id="contact.id"
+                  :empty-state-message="
+                    $t('CONVERSATION_CUSTOM_ATTRIBUTES.NO_RECORDS_FOUND')
+                  "
+                />
+              </AccordionItem>
+            </div>
+            <div v-else-if="element.name === 'previous_conversation'">
+              <AccordionItem
+                v-if="contact.id"
+                :title="
+                  $t('CONVERSATION_SIDEBAR.ACCORDION.PREVIOUS_CONVERSATION')
+                "
+                :is-open="isContactSidebarItemOpen('is_previous_conv_open')"
+                compact
+                @toggle="
+                  value => toggleSidebarUIState('is_previous_conv_open', value)
+                "
+              >
+                <ContactConversations
+                  :contact-id="contact.id"
+                  :conversation-id="conversationId"
+                />
+              </AccordionItem>
+            </div>
+            <woot-feature-toggle
+              v-else-if="element.name === 'macros'"
+              feature-key="macros"
+            >
+              <AccordionItem
+                :title="$t('CONVERSATION_SIDEBAR.ACCORDION.MACROS')"
+                :is-open="isContactSidebarItemOpen('is_macro_open')"
+                compact
+                @toggle="value => toggleSidebarUIState('is_macro_open', value)"
+              >
+                <MacrosList :conversation-id="conversationId" />
+              </AccordionItem>
+            </woot-feature-toggle>
+            <div
+              v-else-if="
+                element.name === 'linear_issues' &&
+                isLinearFeatureEnabled &&
+                isLinearClientIdConfigured
               "
             >
-              <ContactConversations
-                :contact-id="contact.id"
-                :conversation-id="conversationId"
-              />
-            </AccordionItem>
-          </div>
-          <woot-feature-toggle
-            v-else-if="element.name === 'macros'"
-            feature-key="macros"
-          >
-            <AccordionItem
-              :title="$t('CONVERSATION_SIDEBAR.ACCORDION.MACROS')"
-              :is-open="isContactSidebarItemOpen('is_macro_open')"
-              compact
-              @toggle="value => toggleSidebarUIState('is_macro_open', value)"
-            >
-              <MacrosList :conversation-id="conversationId" />
-            </AccordionItem>
-          </woot-feature-toggle>
-          <div
-            v-else-if="
-              element.name === 'linear_issues' &&
-              isLinearFeatureEnabled &&
-              isLinearClientIdConfigured
-            "
-          >
-            <AccordionItem
-              :title="$t('CONVERSATION_SIDEBAR.ACCORDION.LINEAR_ISSUES')"
-              :is-open="isContactSidebarItemOpen('is_linear_issues_open')"
-              compact
-              @toggle="
-                value => toggleSidebarUIState('is_linear_issues_open', value)
+              <AccordionItem
+                :title="$t('CONVERSATION_SIDEBAR.ACCORDION.LINEAR_ISSUES')"
+                :is-open="isContactSidebarItemOpen('is_linear_issues_open')"
+                compact
+                @toggle="
+                  value => toggleSidebarUIState('is_linear_issues_open', value)
+                "
+              >
+                <LinearSetupCTA v-if="!isLinearConnected" />
+                <LinearIssuesList v-else :conversation-id="conversationId" />
+              </AccordionItem>
+            </div>
+            <div
+              v-else-if="
+                element.name === 'shopify_orders' && isShopifyFeatureEnabled
               "
             >
-              <LinearSetupCTA v-if="!isLinearConnected" />
-              <LinearIssuesList v-else :conversation-id="conversationId" />
-            </AccordionItem>
-          </div>
-          <div
-            v-else-if="
-              element.name === 'shopify_orders' && isShopifyFeatureEnabled
-            "
-          >
-            <AccordionItem
-              :title="$t('CONVERSATION_SIDEBAR.ACCORDION.SHOPIFY_ORDERS')"
-              :is-open="isContactSidebarItemOpen('is_shopify_orders_open')"
-              compact
-              @toggle="
-                value => toggleSidebarUIState('is_shopify_orders_open', value)
-              "
-            >
-              <ShopifyOrdersList :contact-id="contactId" />
-            </AccordionItem>
-          </div>
-          <div v-else-if="element.name === 'contact_notes'">
-            <AccordionItem
-              :title="
-                $t(
-                  'CONVERSATION_SIDEBAR.ACCORDION.CONTACT_NOTES',
-                  'Notes & Attachments'
-                )
-              "
-              :is-open="isContactSidebarItemOpen('is_contact_notes_open')"
-              compact
-              @toggle="
-                value => toggleSidebarUIState('is_contact_notes_open', value)
-              "
-            >
-              <div class="flex flex-col gap-6 pt-2 pb-4">
-                <div class="flex flex-col gap-2">
-                  <h4
-                    class="capitalize text-sm font-semibold text-foreground px-6"
-                  >
-                    {{
-                      $t(
-                        'CONVERSATION_SIDEBAR.ACCORDION.CONTACT_NOTES',
-                        'Contact Notes'
-                      )
-                    }}
-                  </h4>
-                  <ContactNotes :contact-id="contactId" />
+              <AccordionItem
+                :title="$t('CONVERSATION_SIDEBAR.ACCORDION.SHOPIFY_ORDERS')"
+                :is-open="isContactSidebarItemOpen('is_shopify_orders_open')"
+                compact
+                @toggle="
+                  value => toggleSidebarUIState('is_shopify_orders_open', value)
+                "
+              >
+                <ShopifyOrdersList :contact-id="contactId" />
+              </AccordionItem>
+            </div>
+            <div v-else-if="element.name === 'contact_notes'">
+              <AccordionItem
+                :title="
+                  $t(
+                    'CONVERSATION_SIDEBAR.ACCORDION.CONTACT_NOTES',
+                    'Notes & Attachments'
+                  )
+                "
+                :is-open="isContactSidebarItemOpen('is_contact_notes_open')"
+                compact
+                @toggle="
+                  value => toggleSidebarUIState('is_contact_notes_open', value)
+                "
+              >
+                <div class="flex flex-col gap-6 pt-2 pb-4">
+                  <div class="flex flex-col gap-2">
+                    <h4
+                      class="capitalize text-sm font-semibold text-foreground px-6"
+                    >
+                      {{
+                        $t(
+                          'CONVERSATION_SIDEBAR.ACCORDION.CONTACT_NOTES',
+                          'Contact Notes'
+                        )
+                      }}
+                    </h4>
+                    <ContactNotes :contact-id="contactId" />
+                  </div>
+                  <div class="flex flex-col gap-2">
+                    <h4
+                      class="capitalize text-sm font-semibold text-foreground px-6"
+                    >
+                      {{
+                        $t(
+                          'CONVERSATION_SIDEBAR.ACCORDION.SHARED_FILES',
+                          'Attachments'
+                        )
+                      }}
+                    </h4>
+                    <SharedFiles />
+                  </div>
                 </div>
-                <div class="flex flex-col gap-2">
-                  <h4
-                    class="capitalize text-sm font-semibold text-foreground px-6"
-                  >
-                    {{
-                      $t(
-                        'CONVERSATION_SIDEBAR.ACCORDION.SHARED_FILES',
-                        'Attachments'
-                      )
-                    }}
-                  </h4>
-                  <SharedFiles />
-                </div>
-              </div>
-            </AccordionItem>
-          </div>
-          <div v-else-if="element.name === 'shared_files'" class="hidden">
-            <!-- Hidden as it is now combined with contact_notes -->
-          </div>
-        </template>
-      </Draggable>
+              </AccordionItem>
+            </div>
+            <div v-else-if="element.name === 'shared_files'" class="hidden">
+              <!-- Hidden as it is now combined with contact_notes -->
+            </div>
+          </template>
+        </Draggable>
+      </div>
     </div>
   </div>
 </template>

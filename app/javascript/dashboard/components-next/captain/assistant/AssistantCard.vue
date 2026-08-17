@@ -1,13 +1,14 @@
 <script setup>
 import { computed } from 'vue';
-import { useToggle } from '@vueuse/core';
 import { useI18n } from 'vue-i18n';
 import { dynamicTime } from 'shared/helpers/timeHelper';
 import { usePolicy } from 'dashboard/composables/usePolicy';
 
 import CardLayout from 'dashboard/components-next/CardLayout.vue';
-import DropdownMenu from 'dashboard/components-next/dropdown-menu/DropdownMenu.vue';
-import { RelayButton } from 'dashboard/components-next/relay';
+import {
+  RelayButton,
+  RelayActionDropdown,
+} from 'dashboard/components-next/relay';
 
 const props = defineProps({
   id: {
@@ -32,8 +33,6 @@ const emit = defineEmits(['action']);
 const { checkPermissions } = usePolicy();
 
 const { t } = useI18n();
-
-const [showActionsDropdown, toggleDropdown] = useToggle();
 
 const menuItems = computed(() => {
   const allOptions = [
@@ -68,7 +67,6 @@ const menuItems = computed(() => {
 const lastUpdatedAt = computed(() => dynamicTime(props.updatedAt));
 
 const handleAction = ({ action, value }) => {
-  toggleDropdown(false);
   emit('action', { action, value, id: props.id });
 };
 </script>
@@ -82,25 +80,21 @@ const handleAction = ({ action, value }) => {
         {{ name }}
       </h6>
       <div class="flex items-center gap-2">
-        <div
-          v-on-clickaway="() => toggleDropdown(false)"
-          class="relative flex items-center group"
+        <RelayActionDropdown
+          :menu-items="menuItems"
+          align="end"
+          @action="handleAction($event)"
         >
-          <RelayButton
-            variant="ghost"
-            size="icon"
-            class="size-8 rounded-md text-muted-foreground hover:bg-accent border border-border hover:border-transparent"
-            @click="toggleDropdown()"
-          >
-            <span class="i-lucide-ellipsis-vertical size-4" />
-          </RelayButton>
-          <DropdownMenu
-            v-if="showActionsDropdown"
-            :menu-items="menuItems"
-            class="mt-1 ltr:right-0 rtl:left-0 top-full"
-            @action="handleAction($event)"
-          />
-        </div>
+          <template #trigger>
+            <RelayButton
+              variant="ghost"
+              size="icon"
+              class="size-8 rounded-md text-muted-foreground hover:bg-accent border border-border hover:border-transparent"
+            >
+              <span class="i-lucide-ellipsis-vertical size-4" />
+            </RelayButton>
+          </template>
+        </RelayActionDropdown>
       </div>
     </div>
     <div class="flex items-center justify-between w-full gap-4">

@@ -1,5 +1,10 @@
 <script>
+import { RelayTooltip } from 'dashboard/components-next/relay';
+
 export default {
+  components: {
+    RelayTooltip,
+  },
   props: {
     label: {
       type: String,
@@ -27,13 +32,14 @@ export default {
       class="inline-flex items-center gap-1 text-sm font-medium text-muted-foreground"
     >
       {{ label }}
-      <fluent-icon
-        v-tooltip.right="toolTip"
-        size="14"
-        icon="information"
-        type="outline"
-        class="flex flex-shrink-0 text-sm font-normal sm:font-medium text-muted-foreground"
-      />
+      <RelayTooltip :content="toolTip" side="right">
+        <fluent-icon
+          size="14"
+          icon="information"
+          type="outline"
+          class="flex flex-shrink-0 text-sm font-normal text-muted-foreground sm:font-medium"
+        />
+      </RelayTooltip>
     </span>
     <div
       v-if="isLoading"

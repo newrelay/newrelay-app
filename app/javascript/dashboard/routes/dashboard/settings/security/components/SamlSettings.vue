@@ -1,4 +1,5 @@
 <script setup>
+import { RelayTooltip } from 'dashboard/components-next/relay';
 import { ref, computed, onMounted, reactive } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useVuelidate } from '@vuelidate/core';
@@ -175,12 +176,13 @@ onMounted(() => {
           <h3 class="capitalize text-[15px] font-medium text-foreground">
             {{ t('SECURITY_SETTINGS.SAML.TITLE') }}
           </h3>
-          <span
-            v-tooltip.top="t('GENERAL.BETA_DESCRIPTION')"
-            class="rounded-full border border-primary/20 px-2 py-0.5 text-[10px] font-medium uppercase tracking-wider text-primary"
-          >
-            {{ t('GENERAL.BETA') }}
-          </span>
+          <RelayTooltip :content="t('GENERAL.BETA_DESCRIPTION')" side="top">
+            <span
+              class="rounded-full border border-primary/20 px-2 py-0.5 text-[10px] font-medium uppercase tracking-wider text-primary"
+            >
+              {{ t('GENERAL.BETA') }}
+            </span>
+          </RelayTooltip>
         </div>
         <p class="text-[13px] leading-relaxed text-muted-foreground">
           {{ t('SECURITY_SETTINGS.SAML.NOTE') }}

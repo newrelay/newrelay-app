@@ -13,6 +13,7 @@ import {
   DropdownItem,
 } from 'next/dropdown-menu/base';
 import Icon from 'next/icon/Icon.vue';
+import { RelayTooltip } from 'dashboard/components-next/relay';
 import Button from 'next/button/Button.vue';
 import ToggleSwitch from 'dashboard/components-next/switch/Switch.vue';
 
@@ -117,11 +118,15 @@ function changeAvailabilityStatus(availability) {
       <DropdownItem>
         <div class="flex-grow min-w-0">
           {{ $t('SIDEBAR.SET_AUTO_OFFLINE.TEXT') }}
-          <Icon
-            v-tooltip.top="$t('SIDEBAR.SET_AUTO_OFFLINE.INFO_SHORT')"
-            icon="i-lucide-info"
-            class="inline-block align-middle ms-1 size-4 text-muted-foreground"
-          />
+          <RelayTooltip
+            :content="$t('SIDEBAR.SET_AUTO_OFFLINE.INFO_SHORT')"
+            side="top"
+          >
+            <Icon
+              icon="i-lucide-info"
+              class="inline-block align-middle ms-1 size-4 text-muted-foreground"
+            />
+          </RelayTooltip>
         </div>
         <ToggleSwitch v-model="autoOfflineToggle" />
       </DropdownItem>

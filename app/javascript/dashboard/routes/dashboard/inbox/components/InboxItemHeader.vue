@@ -14,15 +14,17 @@ import { INBOX_EVENTS } from 'dashboard/helper/AnalyticsHelper/events';
 import PaginationButton from './PaginationButton.vue';
 import CustomSnoozeModal from 'dashboard/components/CustomSnoozeModal.vue';
 import { emitter } from 'shared/helpers/mitt';
-import { RelayButton } from 'dashboard/components-next/relay';
-import DropdownMenu from 'dashboard/components-next/dropdown-menu/DropdownMenu.vue';
+import {
+  RelayButton,
+  RelayActionDropdown,
+} from 'dashboard/components-next/relay';
 
 export default {
   components: {
     PaginationButton,
     RelayButton,
+    RelayActionDropdown,
     CustomSnoozeModal,
-    DropdownMenu,
   },
   props: {
     totalLength: {
@@ -46,7 +48,6 @@ export default {
   data() {
     return {
       showCustomSnoozeModal: false,
-      showMoreActionsDropdown: false,
     };
   },
   computed: {
@@ -108,6 +109,7 @@ export default {
         label: this.$t('INBOX.ACTION_HEADER.DELETE'),
         action: 'delete',
         value: 'delete',
+        destructive: true,
       });
 
       return items;
@@ -185,7 +187,6 @@ export default {
       });
     },
     handleActionClick({ action }) {
-      this.showMoreActionsDropdown = false;
       const currentChatId = this.$store.getters.getSelectedChat?.id;
 
       if (action === 'snooze') {
@@ -213,58 +214,46 @@ export default {
 
 <template>
   <div
-    class="flex items-center justify-between w-full px-4 h-14 border-b border-border bg-card/50 shrink-0"
+    class="flex h-14 shrink-0 items-center justify-between border-b border-border bg-card/50 px-4"
   >
-    <div class="flex items-center">
-      <RelayButton
-        variant="ghost"
-        size="icon"
-        class="size-8 text-muted-foreground hover:text-foreground border border-border hover:border-transparent"
-        :aria-label="$t('INBOX.ACTION_HEADER.BACK')"
-        @click="onClickGoToInboxList"
-      >
-        <span class="i-lucide-arrow-left size-4" />
-      </RelayButton>
-    </div>
+    <RelayButton
+      variant="ghost"
+      size="icon"
+      class="size-9 border-transparent text-muted-foreground hover:border-transparent hover:text-foreground"
+      :aria-label="$t('INBOX.ACTION_HEADER.BACK')"
+      @click="onClickGoToInboxList"
+    >
+      <span class="i-lucide-arrow-left size-4" />
+    </RelayButton>
 
     <div class="flex items-center gap-1">
       <PaginationButton
-        v-if="totalLength > 1"
-        :total-length="totalLength"
+        :total-length="totalLength || 1"
         :current-index="currentIndex + 1"
         @next="onClickNext"
         @prev="onClickPrev"
       />
-      <div
-        v-on-clickaway="
-          () => {
-            showMoreActionsDropdown = false;
-          }
-        "
-        class="relative flex items-center group"
+      <RelayActionDropdown
+        :menu-items="moreActionsItems"
+        align="end"
+        content-class="w-48"
+        @action="handleActionClick"
       >
-        <RelayButton
-          variant="ghost"
-          size="icon"
-          class="size-8 text-muted-foreground hover:text-foreground border border-border hover:border-transparent"
-          :aria-label="$t('CONVERSATION.HEADER.MORE_ACTIONS')"
-          @click="showMoreActionsDropdown = !showMoreActionsDropdown"
-        >
-          <span class="i-lucide-more-horizontal size-4" />
-        </RelayButton>
-        <DropdownMenu
-          v-if="showMoreActionsDropdown"
-          :menu-items="moreActionsItems"
-          class="mt-1 ltr:right-0 rtl:left-0 top-full"
-          @action="handleActionClick"
-        />
-      </div>
-      <div class="w-px h-4 bg-border mx-1" />
+        <template #trigger>
+          <RelayButton
+            variant="ghost"
+            size="icon"
+            class="ml-1 size-8 border-transparent text-muted-foreground hover:border-transparent hover:text-foreground"
+            :aria-label="$t('CONVERSATION.HEADER.MORE_ACTIONS')"
+          >
+            <span class="i-lucide-ellipsis size-4" />
+          </RelayButton>
+        </template>
+      </RelayActionDropdown>
       <RelayButton
         variant="ghost"
         size="icon"
-        class="size-8 text-muted-foreground hover:text-foreground border border-border hover:border-transparent"
-        :class="{ 'bg-accent text-accent-foreground': isContactSidebarOpen }"
+        class="ml-1 size-9 shrink-0 border-transparent text-muted-foreground hover:border-transparent hover:text-foreground focus-visible:ring-0"
         @click="toggleContactSidebar"
       >
         <span class="i-lucide-panel-right size-4" />

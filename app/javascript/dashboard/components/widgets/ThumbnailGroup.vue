@@ -1,6 +1,7 @@
 <script setup>
 import { computed } from 'vue';
 import Avatar from 'next/avatar/Avatar.vue';
+import { RelayTooltip } from 'dashboard/components-next/relay';
 
 const props = defineProps({
   usersList: {
@@ -46,18 +47,17 @@ const moreThumbnailsClass = computed(() => {
 
 <template>
   <div class="flex">
-    <Avatar
-      v-for="user in usersList"
-      :key="user.id"
-      v-tooltip="user.name"
-      :title="user.name"
-      :src="user.thumbnail"
-      :name="user.name"
-      :size="size"
-      class="[&>span]:outline [&>span]:outline-1 [&>span]:outline-background [&>span]:shadow"
-      :class="gapClass"
-      rounded-full
-    />
+    <RelayTooltip v-for="user in usersList" :key="user.id" :content="user.name">
+      <Avatar
+        :title="user.name"
+        :src="user.thumbnail"
+        :name="user.name"
+        :size="size"
+        class="[&>span]:outline [&>span]:outline-1 [&>span]:outline-background [&>span]:shadow"
+        :class="gapClass"
+        rounded-full
+      />
+    </RelayTooltip>
     <span
       v-if="showMoreThumbnailsCount"
       class="text-muted-foreground bg-muted outline outline-1 outline-background text-xs font-medium rounded-full px-2 inline-flex items-center shadow relative"

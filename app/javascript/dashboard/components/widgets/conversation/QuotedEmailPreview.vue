@@ -1,4 +1,5 @@
 <script setup>
+import { RelayTooltip } from 'dashboard/components-next/relay';
 import { computed, ref } from 'vue';
 import { useMessageFormatter } from 'shared/composables/useMessageFormatter';
 import { useI18n } from 'vue-i18n';
@@ -40,26 +41,32 @@ const toggleExpand = () => {
       class="relative rounded-md px-3 py-2 text-xs text-foreground bg-muted dark:bg-accent"
     >
       <div class="absolute top-2 right-2 z-10 flex items-center gap-1">
-        <NextButton
-          v-tooltip="
+        <RelayTooltip
+          :content="
             isExpanded
               ? t('CONVERSATION.REPLYBOX.QUOTED_REPLY.COLLAPSE')
               : t('CONVERSATION.REPLYBOX.QUOTED_REPLY.EXPAND')
           "
-          ghost
-          slate
-          xs
-          :icon="isExpanded ? 'i-lucide-minimize' : 'i-lucide-maximize'"
-          @click="toggleExpand"
-        />
-        <NextButton
-          v-tooltip="t('CONVERSATION.REPLYBOX.QUOTED_REPLY.REMOVE_PREVIEW')"
-          ghost
-          slate
-          xs
-          icon="i-lucide-x"
-          @click="emit('toggle')"
-        />
+        >
+          <NextButton
+            ghost
+            slate
+            xs
+            :icon="isExpanded ? 'i-lucide-minimize' : 'i-lucide-maximize'"
+            @click="toggleExpand"
+          />
+        </RelayTooltip>
+        <RelayTooltip
+          :content="t('CONVERSATION.REPLYBOX.QUOTED_REPLY.REMOVE_PREVIEW')"
+        >
+          <NextButton
+            ghost
+            slate
+            xs
+            icon="i-lucide-x"
+            @click="emit('toggle')"
+          />
+        </RelayTooltip>
       </div>
       <div
         v-dompurify-html="formattedQuotedEmailText"

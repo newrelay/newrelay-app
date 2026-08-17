@@ -1,4 +1,5 @@
 <script setup>
+import { RelayTooltip } from 'dashboard/components-next/relay';
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import Icon from 'dashboard/components-next/icon/Icon.vue';
@@ -87,16 +88,20 @@ const metaLine = computed(() => {
       >
         {{ t('ATTRIBUTES_MGMT.LIST.BUTTONS.EDIT') }}
       </RelayButton>
-      <RelayButton
-        v-tooltip.top="t('ATTRIBUTES_MGMT.LIST.BUTTONS.DELETE')"
-        variant="ghost"
-        size="icon"
-        class="size-8 text-muted-foreground opacity-0 transition-opacity hover:text-destructive group-hover:opacity-100 border border-border hover:border-transparent"
-        :disabled="loading"
-        @click="emit('delete', attribute)"
+      <RelayTooltip
+        :content="t('ATTRIBUTES_MGMT.LIST.BUTTONS.DELETE')"
+        side="top"
       >
-        <Icon icon="i-lucide-trash-2" class="size-3.5" />
-      </RelayButton>
+        <RelayButton
+          variant="ghost"
+          size="icon"
+          class="size-8 text-muted-foreground opacity-0 transition-opacity hover:text-destructive group-hover:opacity-100 border border-border hover:border-transparent"
+          :disabled="loading"
+          @click="emit('delete', attribute)"
+        >
+          <Icon icon="i-lucide-trash-2" class="size-3.5" />
+        </RelayButton>
+      </RelayTooltip>
     </div>
   </div>
 </template>

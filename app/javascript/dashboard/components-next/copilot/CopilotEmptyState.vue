@@ -2,7 +2,6 @@
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRoute } from 'vue-router';
-import Icon from '../icon/Icon.vue';
 
 defineProps({
   hasAssistants: {
@@ -46,6 +45,7 @@ const getCurrentRoute = () => {
   const path = route.path;
   if (path.includes('/conversations')) return 'conversations';
   if (path.includes('/dashboard')) return 'dashboard';
+  if (path.includes('/inbox')) return 'dashboard';
   return 'dashboard';
 };
 
@@ -60,20 +60,25 @@ const handleSuggestion = opt => {
 </script>
 
 <template>
-  <div class="flex-1 flex flex-col gap-6 px-2">
-    <div class="flex flex-col space-y-4 py-4">
-      <Icon icon="i-woot-captain" class="text-muted-foreground text-4xl" />
-      <div class="space-y-1">
-        <h3 class="capitalize text-[20px] font-[600] text-foreground leading-8">
+  <div class="flex flex-1 w-full flex-col gap-6">
+    <div class="flex flex-col gap-4">
+      <div
+        class="flex size-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 ring-4 ring-primary/5"
+      >
+        <span class="i-lucide-brain-circuit size-5 text-primary" />
+      </div>
+      <div class="space-y-2">
+        <h3 class="text-[20px] font-[600] leading-8 text-foreground">
           {{ $t('CAPTAIN.COPILOT.PANEL_TITLE') }}
         </h3>
-        <p class="text-sm text-muted-foreground leading-6">
+        <p class="text-sm leading-relaxed text-muted-foreground">
           {{ $t('CAPTAIN.COPILOT.KICK_OFF_MESSAGE') }}
         </p>
       </div>
     </div>
+
     <div v-if="!hasAssistants" class="w-full space-y-2">
-      <p class="text-sm text-muted-foreground leading-6">
+      <p class="text-sm leading-relaxed text-muted-foreground">
         {{ $t('CAPTAIN.ASSISTANTS.NO_ASSISTANTS_AVAILABLE') }}
       </p>
       <router-link
@@ -83,24 +88,26 @@ const handleSuggestion = opt => {
             accountId: route.params.accountId,
           },
         }"
-        class="text-muted-foreground underline hover:text-foreground"
+        class="text-sm text-muted-foreground underline hover:text-foreground"
       >
         {{ $t('CAPTAIN.ASSISTANTS.ADD_NEW') }}
       </router-link>
     </div>
+
     <div v-else class="w-full space-y-2">
-      <span class="text-xs text-muted-foreground block">
+      <span class="block text-xs text-muted-foreground">
         {{ $t('CAPTAIN.COPILOT.TRY_THESE_PROMPTS') }}
       </span>
-      <div class="space-y-1">
+      <div class="space-y-1.5">
         <button
           v-for="prompt in promptOptions"
           :key="prompt.label"
-          class="w-full px-3 py-2 rounded-md border border-border bg-muted text-muted-foreground flex items-center justify-between hover:bg-muted transition-colors"
+          type="button"
+          class="flex w-full items-center justify-between rounded-lg border border-border/60 bg-accent px-3 py-2.5 text-sm font-medium text-foreground transition-colors hover:bg-accent/80"
           @click="handleSuggestion(prompt)"
         >
           <span>{{ t(prompt.label) }}</span>
-          <Icon icon="i-lucide-chevron-right" />
+          <span class="i-lucide-chevron-right size-4 text-muted-foreground" />
         </button>
       </div>
     </div>

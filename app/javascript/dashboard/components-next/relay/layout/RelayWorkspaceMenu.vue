@@ -1,4 +1,5 @@
 <script setup>
+import { RelayTooltip } from 'dashboard/components-next/relay';
 import { computed, ref } from 'vue';
 import { useAccount } from 'dashboard/composables/useAccount';
 import { useMapGetter, useStore } from 'dashboard/composables/store';
@@ -317,10 +318,14 @@ const onLogout = () => {
         >
           <div class="flex items-center gap-1.5">
             <span>{{ t('SIDEBAR.SET_AUTO_OFFLINE.TEXT') }}</span>
-            <span
-              v-tooltip.top="$t('SIDEBAR.SET_AUTO_OFFLINE.INFO_SHORT')"
-              class="i-lucide-info size-3.5 cursor-help text-muted-foreground"
-            />
+            <RelayTooltip
+              :content="$t('SIDEBAR.SET_AUTO_OFFLINE.INFO_SHORT')"
+              side="top"
+            >
+              <span
+                class="i-lucide-info size-3.5 cursor-help text-muted-foreground"
+              />
+            </RelayTooltip>
           </div>
           <RelaySwitch v-model="autoOfflineToggle" />
         </div>

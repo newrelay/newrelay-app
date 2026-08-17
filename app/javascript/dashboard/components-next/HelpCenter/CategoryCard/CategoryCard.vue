@@ -1,10 +1,11 @@
 <script setup>
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { useToggle } from '@vueuse/core';
 
-import DropdownMenu from 'dashboard/components-next/dropdown-menu/DropdownMenu.vue';
-import { RelayButton } from 'dashboard/components-next/relay';
+import {
+  RelayButton,
+  RelayActionDropdown,
+} from 'dashboard/components-next/relay';
 
 const props = defineProps({
   id: {
@@ -37,8 +38,6 @@ const emit = defineEmits(['click', 'action']);
 
 const { t } = useI18n();
 
-const [showActionsDropdown, toggleDropdown] = useToggle();
-
 const categoryMenuItems = computed(() => [
   {
     label: t('HELP_CENTER.CATEGORY_PAGE.CATEGORY_CARD.EDIT'),
@@ -70,7 +69,6 @@ const handleClick = slug => {
 
 const handleAction = ({ action, value }) => {
   emit('action', { action, value, id: props.id });
-  toggleDropdown(false);
 };
 </script>
 
@@ -94,7 +92,10 @@ const handleAction = ({ action, value }) => {
         >
           {{ title }}
         </h3>
-        <span class="hidden text-[10px] text-muted-foreground/40 sm:inline">•</span>
+        <span
+          class="hidden size-1 rounded-full bg-muted-foreground/40 sm:inline-block"
+          aria-hidden="true"
+        />
         <p
           class="min-w-0 flex-1 truncate text-[13px]"
           :class="
@@ -118,22 +119,21 @@ const handleAction = ({ action, value }) => {
           })
         }}
       </span>
-      <div v-on-clickaway="() => toggleDropdown(false)" class="relative">
-        <RelayButton
-          variant="ghost"
-          size="icon"
-          class="size-7 border border-border text-muted-foreground hover:border-transparent hover:bg-muted hover:text-foreground"
-          @click="toggleDropdown()"
-        >
-          <span class="i-lucide-ellipsis-vertical size-3.5" />
-        </RelayButton>
-        <DropdownMenu
-          v-if="showActionsDropdown"
-          :menu-items="categoryMenuItems"
-          class="top-full z-60 mt-1 ltr:right-0 rtl:left-0 xl:ltr:left-0 xl:rtl:right-0"
-          @action="handleAction"
-        />
-      </div>
+      <RelayActionDropdown
+        :menu-items="categoryMenuItems"
+        align="end"
+        @action="handleAction"
+      >
+        <template #trigger>
+          <RelayButton
+            variant="ghost"
+            size="icon"
+            class="size-7 border border-border text-muted-foreground hover:border-transparent hover:bg-muted hover:text-foreground"
+          >
+            <span class="i-lucide-ellipsis-vertical size-3.5" />
+          </RelayButton>
+        </template>
+      </RelayActionDropdown>
     </div>
   </div>
 </template>

@@ -1,4 +1,5 @@
 <script setup>
+import { RelayTooltip } from 'dashboard/components-next/relay';
 import { useI18n } from 'vue-i18n';
 import { getI18nKey } from 'dashboard/routes/dashboard/settings/helper/settingsHelper';
 
@@ -54,22 +55,30 @@ const getFormattedPermissions = role => {
 
       <BaseTableCell align="end" class="w-24">
         <div class="flex gap-3 justify-end flex-shrink-0">
-          <Button
-            v-tooltip.top="$t('CUSTOM_ROLE.EDIT.BUTTON_TEXT')"
-            icon="i-woot-edit-pen"
-            slate
-            sm
-            @click="emit('edit', customRole)"
-          />
-          <Button
-            v-tooltip.top="$t('CUSTOM_ROLE.DELETE.BUTTON_TEXT')"
-            icon="i-woot-bin"
-            slate
-            sm
-            class="hover:enabled:text-destructive hover:enabled:bg-destructive/10"
-            :is-loading="loading[customRole.id]"
-            @click="emit('delete', customRole)"
-          />
+          <RelayTooltip
+            :content="$t('CUSTOM_ROLE.EDIT.BUTTON_TEXT')"
+            side="top"
+          >
+            <Button
+              icon="i-woot-edit-pen"
+              slate
+              sm
+              @click="emit('edit', customRole)"
+            />
+          </RelayTooltip>
+          <RelayTooltip
+            :content="$t('CUSTOM_ROLE.DELETE.BUTTON_TEXT')"
+            side="top"
+          >
+            <Button
+              icon="i-woot-bin"
+              slate
+              sm
+              class="hover:enabled:text-destructive hover:enabled:bg-destructive/10"
+              :is-loading="loading[customRole.id]"
+              @click="emit('delete', customRole)"
+            />
+          </RelayTooltip>
         </div>
       </BaseTableCell>
     </template>

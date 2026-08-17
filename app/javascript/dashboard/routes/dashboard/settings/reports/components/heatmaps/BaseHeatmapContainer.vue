@@ -1,4 +1,5 @@
 <script setup>
+import { RelayTooltip } from 'dashboard/components-next/relay';
 import { onMounted, ref, computed, watch } from 'vue';
 import { useToggle } from '@vueuse/core';
 import MetricCard from '../overview/MetricCard.vue';
@@ -293,15 +294,18 @@ onMounted(() => {
             @action="handleInboxAction($event)"
           />
         </div>
-        <Button
-          v-tooltip="t('OVERVIEW_REPORTS.CONVERSATION_HEATMAP.DOWNLOAD_REPORT')"
-          sm
-          slate
-          faded
-          icon="i-lucide-download"
-          class="rounded-md"
-          @click="downloadHeatmapData"
-        />
+        <RelayTooltip
+          :content="t('OVERVIEW_REPORTS.CONVERSATION_HEATMAP.DOWNLOAD_REPORT')"
+        >
+          <Button
+            sm
+            slate
+            faded
+            icon="i-lucide-download"
+            class="rounded-md"
+            @click="downloadHeatmapData"
+          />
+        </RelayTooltip>
       </template>
       <BaseHeatmap
         :heatmap-data="heatmapData"

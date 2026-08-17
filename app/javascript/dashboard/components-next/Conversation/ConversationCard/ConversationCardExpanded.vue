@@ -1,4 +1,5 @@
 <script setup>
+import { RelayTooltip } from 'dashboard/components-next/relay';
 import { computed, useTemplateRef } from 'vue';
 import { getLastMessage } from 'dashboard/helper/conversationHelper';
 import CardAvatar from './CardAvatar.vue';
@@ -119,18 +120,22 @@ const selectedModel = computed({
       </div>
 
       <div class="w-4 flex items-center justify-center flex-shrink-0">
-        <Avatar
+        <RelayTooltip
           v-if="showAssignee && assignee.name"
-          v-tooltip.top="{
+          :content="{
             content: assignee.name,
             delay: { show: 500, hide: 0 },
           }"
-          :name="assignee.name"
-          :src="assignee.thumbnail"
-          :size="14"
-          :status="assignee.availability_status"
-          hide-offline-status
-        />
+          side="top"
+        >
+          <Avatar
+            :name="assignee.name"
+            :src="assignee.thumbnail"
+            :size="14"
+            :status="assignee.availability_status"
+            hide-offline-status
+          />
+        </RelayTooltip>
         <Icon v-else icon="i-woot-empty-assignee" class="size-4 text-border" />
       </div>
 
@@ -149,21 +154,25 @@ const selectedModel = computed({
         class="w-px h-3 bg-border flex-shrink-0"
       />
 
-      <div
-        v-tooltip.top="{
+      <RelayTooltip
+        :content="{
           content: chat.id,
           delay: { show: 500, hide: 0 },
         }"
-        class="h-6 flex items-center gap-1 max-w-20 w-full min-w-0 flex-shrink-0"
+        side="top"
       >
-        <Icon
-          icon="i-woot-hash"
-          class="size-3.5 text-muted-foreground flex-shrink-0"
-        />
-        <span class="text-body-main text-muted-foreground truncate">
-          {{ chat.id }}
-        </span>
-      </div>
+        <div
+          class="h-6 flex items-center gap-1 max-w-20 w-full min-w-0 flex-shrink-0"
+        >
+          <Icon
+            icon="i-woot-hash"
+            class="size-3.5 text-muted-foreground flex-shrink-0"
+          />
+          <span class="text-body-main text-muted-foreground truncate">
+            {{ chat.id }}
+          </span>
+        </div>
+      </RelayTooltip>
 
       <CardAvatar
         :contact="currentContact"

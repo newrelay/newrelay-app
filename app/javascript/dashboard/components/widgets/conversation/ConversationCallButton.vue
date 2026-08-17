@@ -1,4 +1,5 @@
 <script setup>
+import { RelayTooltip } from 'dashboard/components-next/relay';
 import { computed } from 'vue';
 import { useStore } from 'dashboard/composables/store';
 import { useI18n } from 'vue-i18n';
@@ -73,10 +74,7 @@ const startWhatsappCall = async () => {
       props.chat.id
     );
 
-    // Composable returns LOCKED when init is already in flight or a call is
-    // active; soft no-op so a parallel click doesn't trigger a banner.
     if (response?.status === VOICE_CALL_OUTBOUND_INIT_STATUS.LOCKED) return;
-    // Permission template path returns no call id — show banner, no widget yet.
     if (!response?.id) {
       const status = response?.status;
       const messageKey =
@@ -87,8 +85,6 @@ const startWhatsappCall = async () => {
       return;
     }
 
-    // Stay non-active until Meta delivers the connect webhook (sdp_answer);
-    // flipping to active here would start the duration timer before pickup.
     callsStore.addCall({
       callSid: response.call_id,
       callId: response.id,
@@ -129,16 +125,15 @@ const startCall = () => {
 </script>
 
 <template>
-  <NextButton
-    v-if="isVoiceCallInbox"
-    v-tooltip.bottom="callButtonTooltip"
-    sm
-    ghost
-    slate
-    icon="i-lucide-phone"
-    :is-loading="isCallButtonLoading"
-    :disabled="isCallButtonDisabled"
-    @click="startCall"
-  />
-  <template v-else />
+  <RelayTooltip v-if="isVoiceCallInbox" :content="callButtonTooltip">
+    <NextButton
+      sm
+      ghost
+      slate
+      icon="i-lucide-phone"
+      :is-loading="isCallButtonLoading"
+      :disabled="isCallButtonDisabled"
+      @click="startCall"
+    />
+  </RelayTooltip>
 </template>

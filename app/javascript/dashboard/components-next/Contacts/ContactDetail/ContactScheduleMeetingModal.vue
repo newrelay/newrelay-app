@@ -1,8 +1,13 @@
 <script setup>
-import { reactive, computed } from 'vue';
+import { computed, reactive } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useAlert } from 'dashboard/composables';
-import { RelayButton, RelayInput } from 'dashboard/components-next/relay';
+import {
+  RelayButton,
+  RelayInput,
+  RelayDatePicker,
+  RelayTimePicker,
+} from 'dashboard/components-next/relay';
 
 defineProps({
   contactName: {
@@ -73,32 +78,29 @@ const submit = () => {
         <RelayButton
           variant="ghost"
           size="icon"
-          class="size-8 text-muted-foreground hover:text-foreground border border-border hover:border-transparent"
+          class="size-8 border border-border text-muted-foreground hover:border-transparent hover:text-foreground"
           @click="emit('close')"
         >
           <span class="i-lucide-x size-4" />
         </RelayButton>
       </div>
       <div class="flex flex-col gap-5 p-6">
-        <div class="flex flex-col gap-2">
-          <label class="text-foreground text-[13.5px] font-[500]">{{
+        <div class="flex flex-col gap-1.5">
+          <label class="text-[13.5px] font-medium text-foreground">{{
             t('CONVERSATION.REPLYBOX.SCHEDULE_MEETING.DATE')
           }}</label>
-          <input
+          <RelayDatePicker
             v-model="form.date"
-            type="date"
-            class="w-full border border-input bg-background p-2.5 text-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary/30 text-[14px] shadow-sm rounded-md border-border/80"
+            value-format="dd-MM-yyyy"
+            display-format="dd-MM-yyyy"
+            :placeholder="t('CONVERSATION.REPLYBOX.SCHEDULE_MEETING.DATE')"
           />
         </div>
-        <div class="flex flex-col gap-2">
-          <label class="text-foreground text-[13.5px] font-[500]">{{
+        <div class="flex flex-col gap-1.5">
+          <label class="text-[13.5px] font-medium text-foreground">{{
             t('CONVERSATION.REPLYBOX.SCHEDULE_MEETING.TIME')
           }}</label>
-          <input
-            v-model="form.time"
-            type="time"
-            class="w-full border border-input bg-background p-2.5 text-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary/30 text-[14px] shadow-sm rounded-md border-border/80"
-          />
+          <RelayTimePicker v-model="form.time" />
         </div>
       </div>
       <div
@@ -145,7 +147,7 @@ const submit = () => {
         <RelayButton
           variant="ghost"
           size="icon"
-          class="size-8 rounded-full text-muted-foreground hover:text-foreground border border-border hover:border-transparent"
+          class="size-8 rounded-full border border-border text-muted-foreground hover:border-transparent hover:text-foreground"
           @click="emit('close')"
         >
           <span class="i-lucide-x size-4" />
@@ -154,7 +156,7 @@ const submit = () => {
 
       <div class="flex-1 space-y-6 overflow-y-auto px-8 pb-8 pt-4">
         <div class="flex flex-col gap-1.5">
-          <label class="text-[13.5px] text-foreground font-[500]">
+          <label class="text-[13.5px] font-[500] text-foreground">
             {{ t('CONTACTS_LAYOUT.DETAIL.SCHEDULE_MEETING.MEETING_TITLE') }}
           </label>
           <RelayInput
@@ -168,29 +170,26 @@ const submit = () => {
 
         <div class="grid grid-cols-2 gap-3">
           <div class="flex flex-col gap-1.5">
-            <label class="text-[13.5px] text-foreground font-[500]">
+            <label class="text-[13.5px] font-[500] text-foreground">
               {{ t('CONTACTS_LAYOUT.DETAIL.SCHEDULE_MEETING.DATE') }}
             </label>
-            <input
+            <RelayDatePicker
               v-model="form.date"
-              type="date"
-              class="flex h-9 w-full border border-border/80 bg-background px-3 text-[14px] text-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary/30 shadow-sm rounded-md"
+              value-format="dd-MM-yyyy"
+              display-format="dd-MM-yyyy"
+              :placeholder="t('CONTACTS_LAYOUT.DETAIL.SCHEDULE_MEETING.DATE')"
             />
           </div>
           <div class="flex flex-col gap-1.5">
-            <label class="text-[13.5px] text-foreground font-[500]">
+            <label class="text-[13.5px] font-[500] text-foreground">
               {{ t('CONTACTS_LAYOUT.DETAIL.SCHEDULE_MEETING.TIME') }}
             </label>
-            <input
-              v-model="form.time"
-              type="time"
-              class="flex h-9 w-full border border-border/80 bg-background px-3 text-[14px] text-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary/30 shadow-sm rounded-md"
-            />
+            <RelayTimePicker v-model="form.time" />
           </div>
         </div>
 
         <div class="flex flex-col gap-1.5">
-          <label class="text-[13.5px] text-foreground font-[500]">
+          <label class="text-[13.5px] font-[500] text-foreground">
             {{ t('CONTACTS_LAYOUT.DETAIL.SCHEDULE_MEETING.NOTES') }}
           </label>
           <textarea
@@ -198,7 +197,7 @@ const submit = () => {
             :placeholder="
               t('CONTACTS_LAYOUT.DETAIL.SCHEDULE_MEETING.NOTES_PLACEHOLDER')
             "
-            class="min-h-[100px] w-full resize-none border border-input bg-background px-3 py-2 text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary/30 text-[14px] shadow-sm rounded-md border-border/80"
+            class="min-h-[100px] w-full resize-none rounded-md border border-border/80 bg-background px-3 py-2 text-[14px] text-foreground shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary/30"
           />
         </div>
       </div>

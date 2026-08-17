@@ -2,7 +2,7 @@
 import { reactive, computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useAlert } from 'dashboard/composables';
-import { RelayButton } from 'dashboard/components-next/relay';
+import { RelayButton, RelayDatePicker } from 'dashboard/components-next/relay';
 
 const props = defineProps({
   contactName: {
@@ -218,13 +218,14 @@ const submit = () => {
         </div>
 
         <div class="flex flex-col gap-1.5">
-          <label class="text-[13.5px] text-foreground font-[500]">
+          <label class="text-[13.5px] font-[500] text-foreground">
             {{ t('CONTACTS_LAYOUT.DETAIL.LOG_ACTIVITY.DATE') }}
           </label>
-          <input
+          <RelayDatePicker
             v-model="form.date"
-            type="date"
-            class="flex h-9 w-full border border-border/80 bg-background px-4 text-[14px] text-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary/30 shadow-sm rounded-md"
+            value-format="dd-MM-yyyy"
+            display-format="MMM d, yyyy"
+            :placeholder="t('CONTACTS_LAYOUT.DETAIL.LOG_ACTIVITY.DATE')"
           />
         </div>
 

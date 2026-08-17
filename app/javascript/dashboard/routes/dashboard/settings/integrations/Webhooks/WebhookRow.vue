@@ -1,4 +1,5 @@
 <script setup>
+import { RelayTooltip } from 'dashboard/components-next/relay';
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { getI18nKey } from 'dashboard/routes/dashboard/settings/helper/settingsHelper';
@@ -68,26 +69,34 @@ const displayName = computed(
     </div>
 
     <div class="flex items-center justify-end gap-1 pr-2">
-      <RelayButton
-        v-tooltip.top="t('INTEGRATION_SETTINGS.WEBHOOK.EDIT.BUTTON_TEXT')"
-        variant="ghost"
-        size="icon"
-        class="size-8 border border-transparent text-muted-foreground shadow-xs hover:border-border hover:bg-background hover:text-foreground border border-border hover:border-transparent"
-        :disabled="loading"
-        @click="emit('edit', webhook)"
+      <RelayTooltip
+        :content="t('INTEGRATION_SETTINGS.WEBHOOK.EDIT.BUTTON_TEXT')"
+        side="top"
       >
-        <Icon icon="i-lucide-pencil" class="size-3.5" />
-      </RelayButton>
-      <RelayButton
-        v-tooltip.top="t('INTEGRATION_SETTINGS.WEBHOOK.DELETE.BUTTON_TEXT')"
-        variant="ghost"
-        size="icon"
-        class="size-8 border border-transparent text-muted-foreground shadow-xs hover:border-destructive/20 hover:bg-destructive/10 hover:text-destructive border border-border hover:border-transparent"
-        :disabled="loading"
-        @click="emit('delete', webhook)"
+        <RelayButton
+          variant="ghost"
+          size="icon"
+          class="size-8 border border-transparent text-muted-foreground shadow-xs hover:border-border hover:bg-background hover:text-foreground border border-border hover:border-transparent"
+          :disabled="loading"
+          @click="emit('edit', webhook)"
+        >
+          <Icon icon="i-lucide-pencil" class="size-3.5" />
+        </RelayButton>
+      </RelayTooltip>
+      <RelayTooltip
+        :content="t('INTEGRATION_SETTINGS.WEBHOOK.DELETE.BUTTON_TEXT')"
+        side="top"
       >
-        <Icon icon="i-lucide-trash-2" class="size-3.5" />
-      </RelayButton>
+        <RelayButton
+          variant="ghost"
+          size="icon"
+          class="size-8 border border-transparent text-muted-foreground shadow-xs hover:border-destructive/20 hover:bg-destructive/10 hover:text-destructive border border-border hover:border-transparent"
+          :disabled="loading"
+          @click="emit('delete', webhook)"
+        >
+          <Icon icon="i-lucide-trash-2" class="size-3.5" />
+        </RelayButton>
+      </RelayTooltip>
     </div>
   </div>
 </template>

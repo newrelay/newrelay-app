@@ -25,6 +25,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    isEditorExpanded: {
+      type: Boolean,
+      default: false,
+    },
   },
   emits: ['setReplyMode', 'toggleEditorSize', 'resetCopilot'],
   setup(props, { emit }) {
@@ -65,27 +69,32 @@ export default {
     isNoteActive() {
       return this.mode === REPLY_EDITOR_MODES.NOTE && !this.isCopilotActive;
     },
+    replyTabClass() {
+      return this.isReplyActive
+        ? 'px-4 py-2.5 text-sm font-semibold text-foreground border-b-2 border-foreground -mb-px bg-transparent'
+        : 'px-4 py-2.5 text-sm font-medium text-muted-foreground hover:text-foreground border-b-2 border-transparent -mb-px transition-colors';
+    },
+    noteTabClass() {
+      return this.isNoteActive
+        ? 'px-4 py-2.5 text-sm font-semibold text-amber-600 border-b-2 border-amber-500 -mb-px bg-amber-500/10'
+        : 'px-4 py-2.5 text-sm font-medium text-muted-foreground hover:text-foreground border-b-2 border-transparent -mb-px transition-colors';
+    },
   },
 };
 </script>
 
 <template>
   <div
-    class="flex items-center justify-between border-b border-border px-1 pt-1 bg-muted/5 rounded-t-xl"
+    class="flex items-center justify-between rounded-t-xl border-b border-border bg-muted/5 px-1 pt-1"
     role="tablist"
   >
-    <!-- Tab bar: global button { border-0 rounded-lg } — use absolute underline, not border-b-2 -->
-    <div class="flex items-center gap-0">
+    <div class="flex items-center">
       <button
         type="button"
         role="tab"
         :aria-selected="isReplyActive"
-        class="relative -mb-px rounded-none border-0 bg-transparent px-4 py-2.5 text-sm shadow-none transition-colors hover:bg-transparent focus:outline-none focus-visible:ring-0"
-        :class="
-          isReplyActive
-            ? 'font-semibold text-foreground'
-            : 'font-medium text-muted-foreground hover:text-foreground'
-        "
+        class="rounded-none border-0 bg-transparent shadow-none focus:outline-none focus-visible:ring-0"
+        :class="replyTabClass"
         :disabled="disabled || isReplyRestricted"
         @click="handleReplyClick"
       >
@@ -94,40 +103,35 @@ export default {
             contactName: contactName || $t('CONVERSATION.REPLYBOX.CONTACT'),
           })
         }}
-        <span
-          v-if="isReplyActive"
-          class="absolute inset-x-0 bottom-0 h-0.5 bg-foreground"
-          aria-hidden="true"
-        />
       </button>
       <button
         type="button"
         role="tab"
         :aria-selected="isNoteActive"
-        class="relative -mb-px rounded-none border-0 bg-transparent px-4 py-2.5 text-sm shadow-none transition-colors hover:bg-transparent focus:outline-none focus-visible:ring-0"
-        :class="
-          isNoteActive
-            ? 'font-semibold text-amber-600 bg-amber-500/10'
-            : 'font-medium text-muted-foreground hover:text-foreground'
-        "
+        class="rounded-none border-0 bg-transparent shadow-none focus:outline-none focus-visible:ring-0"
+        :class="noteTabClass"
         :disabled="disabled"
         @click="handleNoteClick"
       >
         {{ $t('CONVERSATION.REPLYBOX.INTERNAL_COMMENT') }}
-        <span
-          v-if="isNoteActive"
-          class="absolute inset-x-0 bottom-0 h-0.5 bg-amber-500"
-          aria-hidden="true"
-        />
       </button>
     </div>
     <button
       type="button"
-      class="size-8 flex items-center justify-center rounded-md hover:bg-muted text-muted-foreground hover:text-foreground transition-colors mr-1 border-0 bg-transparent shadow-none"
-      :title="$t('CONVERSATION.REPLYBOX.TOGGLE_EDITOR_SIZE')"
+      class="mr-1 flex size-8 items-center justify-center rounded-md border-0 bg-transparent text-muted-foreground shadow-none transition-colors hover:bg-muted hover:text-foreground"
+      :title="
+        isEditorExpanded
+          ? $t('CONVERSATION.REPLYBOX.COLLAPSE_EDITOR')
+          : $t('CONVERSATION.REPLYBOX.EXPAND_EDITOR')
+      "
       @click="$emit('toggleEditorSize')"
     >
-      <span class="i-lucide-maximize-2 size-4" />
+      <span
+        class="size-4"
+        :class="
+          isEditorExpanded ? 'i-lucide-minimize-2' : 'i-lucide-maximize-2'
+        "
+      />
     </button>
   </div>
 </template>

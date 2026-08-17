@@ -1,4 +1,5 @@
 <script setup>
+import { RelayTooltip } from 'dashboard/components-next/relay';
 import { computed, onMounted, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useStore, useMapGetter } from 'dashboard/composables/store';
@@ -124,28 +125,36 @@ onMounted(() => {
           <div
             class="flex items-center gap-1 opacity-0 transition-all group-hover:opacity-100"
           >
-            <RelayButton
-              v-tooltip.top="
+            <RelayTooltip
+              :content="
                 $t('ASSIGNMENT_POLICY.AGENT_CAPACITY_POLICY.INDEX.CARD.EDIT')
               "
-              variant="outline"
-              size="icon"
-              class="size-8 border-border/60 bg-background p-0 text-muted-foreground shadow-none hover:bg-muted/50 hover:text-foreground"
-              @click="onClickEditPolicy(policy.id)"
+              side="top"
             >
-              <Icon icon="i-lucide-pencil" class="size-3.5" />
-            </RelayButton>
-            <RelayButton
-              v-tooltip.top="
+              <RelayButton
+                variant="outline"
+                size="icon"
+                class="size-8 border-border/60 bg-background p-0 text-muted-foreground shadow-none hover:bg-muted/50 hover:text-foreground"
+                @click="onClickEditPolicy(policy.id)"
+              >
+                <Icon icon="i-lucide-pencil" class="size-3.5" />
+              </RelayButton>
+            </RelayTooltip>
+            <RelayTooltip
+              :content="
                 $t('ASSIGNMENT_POLICY.AGENT_CAPACITY_POLICY.INDEX.CARD.DELETE')
               "
-              variant="outline"
-              size="icon"
-              class="size-8 border-border/60 bg-background p-0 text-muted-foreground shadow-none hover:bg-destructive/10 hover:text-destructive"
-              @click="handleDelete(policy.id)"
+              side="top"
             >
-              <Icon icon="i-lucide-trash-2" class="size-3.5" />
-            </RelayButton>
+              <RelayButton
+                variant="outline"
+                size="icon"
+                class="size-8 border-border/60 bg-background p-0 text-muted-foreground shadow-none hover:bg-destructive/10 hover:text-destructive"
+                @click="handleDelete(policy.id)"
+              >
+                <Icon icon="i-lucide-trash-2" class="size-3.5" />
+              </RelayButton>
+            </RelayTooltip>
           </div>
         </div>
 

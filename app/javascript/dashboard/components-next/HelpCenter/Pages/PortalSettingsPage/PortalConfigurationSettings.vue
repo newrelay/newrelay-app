@@ -1,4 +1,5 @@
 <script setup>
+import { RelayTooltip } from 'dashboard/components-next/relay';
 import { computed, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useAccount } from 'dashboard/composables/useAccount';
@@ -176,14 +177,14 @@ const openDomainDialog = () => {
             class="i-lucide-circle-check size-4 text-success"
             aria-hidden="true"
           />
-          <span
+          <RelayTooltip
             v-else-if="statusText && isOnChatwootCloud"
-            v-tooltip="verificationErrors"
-            class="text-[13px] font-medium"
-            :class="statusColors"
+            :content="verificationErrors"
           >
-            {{ statusText }}
-          </span>
+            <span class="text-[13px] font-medium" :class="statusColors">
+              {{ statusText }}
+            </span>
+          </RelayTooltip>
         </div>
         <p v-if="customDomainAddress" class="text-[12px] text-muted-foreground">
           {{

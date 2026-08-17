@@ -1,13 +1,15 @@
 <script setup>
-import { computed, ref } from 'vue';
+import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { dynamicTime } from 'shared/helpers/timeHelper';
 import { usePolicy } from 'dashboard/composables/usePolicy';
 
 import Avatar from 'dashboard/components-next/avatar/Avatar.vue';
-import DropdownMenu from 'dashboard/components-next/dropdown-menu/DropdownMenu.vue';
 import ComposeConversation from 'dashboard/components-next/NewConversation/ComposeConversation.vue';
-import { RelayButton } from 'dashboard/components-next/relay';
+import {
+  RelayButton,
+  RelayActionDropdown,
+} from 'dashboard/components-next/relay';
 
 const props = defineProps({
   contact: {
@@ -30,8 +32,6 @@ const emit = defineEmits([
 
 const { t } = useI18n();
 const { checkPermissions } = usePolicy();
-
-const showMoreMenu = ref(false);
 
 const attrs = computed(() => props.contact?.additionalAttributes || {});
 
@@ -70,6 +70,7 @@ const moreMenuItems = computed(() => {
     action: 'block',
     value: 'block',
     icon: isBlocked.value ? 'i-lucide-lock-open' : 'i-lucide-ban',
+    destructive: true,
   });
   if (checkPermissions(['administrator'])) {
     items.push({
@@ -77,13 +78,13 @@ const moreMenuItems = computed(() => {
       action: 'delete',
       value: 'delete',
       icon: 'i-lucide-trash-2',
+      destructive: true,
     });
   }
   return items;
 });
 
 const handleMoreAction = ({ action }) => {
-  showMoreMenu.value = false;
   if (action === 'call' && props.contact?.phoneNumber) {
     window.open(`tel:${props.contact.phoneNumber}`, '_self');
     return;
@@ -167,23 +168,23 @@ const handleMoreAction = ({ action }) => {
         </template>
       </ComposeConversation>
 
-      <div v-on-clickaway="() => (showMoreMenu = false)" class="relative">
-        <RelayButton
-          variant="outline"
-          size="icon"
-          class="size-9 rounded-lg text-muted-foreground shadow-sm hover:text-foreground"
-          :class="{ 'bg-accent': showMoreMenu }"
-          @click="showMoreMenu = !showMoreMenu"
-        >
-          <span class="i-lucide-ellipsis-vertical size-4" />
-        </RelayButton>
-        <DropdownMenu
-          v-if="showMoreMenu"
-          :menu-items="moreMenuItems"
-          class="ltr:right-0 rtl:left-0 top-full mt-1 w-48"
-          @action="handleMoreAction"
-        />
-      </div>
+      <RelayActionDropdown
+        :menu-items="moreMenuItems"
+        align="end"
+        content-class="w-48"
+        @action="handleMoreAction"
+      >
+        <template #trigger>
+          <RelayButton
+            variant="outline"
+            size="icon"
+            class="size-9 rounded-lg text-muted-foreground shadow-sm hover:text-foreground"
+            :aria-label="t('CONVERSATION.HEADER.MORE_ACTIONS')"
+          >
+            <span class="i-lucide-ellipsis-vertical size-4" />
+          </RelayButton>
+        </template>
+      </RelayActionDropdown>
     </div>
   </header>
 </template>

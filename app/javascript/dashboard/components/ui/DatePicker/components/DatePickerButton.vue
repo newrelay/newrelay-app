@@ -1,4 +1,5 @@
 <script setup>
+import { RelayTooltip } from 'dashboard/components-next/relay';
 import { computed } from 'vue';
 import { dateRanges } from '../helpers/DatePickerHelper';
 import { format, isSameYear, isValid } from 'date-fns';
@@ -77,26 +78,28 @@ const openDatePicker = () => {
         class="text-foreground size-4 flex-shrink-0"
       />
     </button>
-    <NextButton
-      v-if="showMonthNavigation"
-      v-tooltip.top="$t('DATE_PICKER.PREVIOUS_PERIOD')"
-      slate
-      faded
-      sm
-      icon="i-lucide-chevron-left"
-      class="rtl:rotate-180"
-      @click="emit('navigateMonth', 'prev')"
-    />
-    <NextButton
-      v-if="showMonthNavigation"
-      v-tooltip.top="$t('DATE_PICKER.NEXT_PERIOD')"
-      slate
-      faded
-      sm
-      icon="i-lucide-chevron-right"
-      class="rtl:rotate-180"
-      :disabled="!canNavigateNext"
-      @click="emit('navigateMonth', 'next')"
-    />
+    <RelayTooltip :content="$t('DATE_PICKER.PREVIOUS_PERIOD')" side="top">
+      <NextButton
+        v-if="showMonthNavigation"
+        slate
+        faded
+        sm
+        icon="i-lucide-chevron-left"
+        class="rtl:rotate-180"
+        @click="emit('navigateMonth', 'prev')"
+      />
+    </RelayTooltip>
+    <RelayTooltip :content="$t('DATE_PICKER.NEXT_PERIOD')" side="top">
+      <NextButton
+        v-if="showMonthNavigation"
+        slate
+        faded
+        sm
+        icon="i-lucide-chevron-right"
+        class="rtl:rotate-180"
+        :disabled="!canNavigateNext"
+        @click="emit('navigateMonth', 'next')"
+      />
+    </RelayTooltip>
   </div>
 </template>

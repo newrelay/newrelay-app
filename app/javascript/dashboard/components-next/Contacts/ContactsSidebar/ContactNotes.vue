@@ -8,8 +8,10 @@ import { dynamicTime } from 'shared/helpers/timeHelper';
 import { useMessageFormatter } from 'shared/composables/useMessageFormatter';
 
 import Spinner from 'dashboard/components-next/spinner/Spinner.vue';
-import DropdownMenu from 'dashboard/components-next/dropdown-menu/DropdownMenu.vue';
-import { RelayButton } from 'dashboard/components-next/relay';
+import {
+  RelayButton,
+  RelayActionDropdown,
+} from 'dashboard/components-next/relay';
 
 const { t } = useI18n();
 const store = useStore();
@@ -18,7 +20,6 @@ const { formatMessage, getPlainText } = useMessageFormatter();
 
 const isAddingNote = ref(false);
 const editingNoteId = ref(null);
-const openMenuNoteId = ref(null);
 const newNoteContent = ref('');
 const editNoteContent = ref('');
 
@@ -40,6 +41,7 @@ const noteMenuItems = [
     action: 'delete',
     value: 'delete',
     icon: 'i-lucide-trash-2',
+    destructive: true,
   },
 ];
 
@@ -67,13 +69,11 @@ const onDelete = noteId => {
   if (!noteId) return;
   const { contactId } = route.params;
   store.dispatch('contactNotes/delete', { noteId, contactId });
-  openMenuNoteId.value = null;
 };
 
 const startEditingNote = note => {
   editingNoteId.value = note.id;
   editNoteContent.value = getPlainText(note.content || '');
-  openMenuNoteId.value = null;
 };
 
 const cancelEditNote = () => {
@@ -199,27 +199,22 @@ useKeyboardEvents(keyboardEvents);
             <span class="text-xs font-semibold text-foreground">
               {{ noteDate(note) }}
             </span>
-            <div
-              v-on-clickaway="() => (openMenuNoteId = null)"
-              class="relative"
+            <RelayActionDropdown
+              :menu-items="noteMenuItems"
+              align="end"
+              content-class="w-32"
+              @action="handleNoteMenu(note, $event)"
             >
-              <RelayButton
-                variant="ghost"
-                size="icon"
-                class="size-6 rounded-md text-muted-foreground hover:bg-primary/10 hover:text-primary border border-border hover:border-transparent"
-                @click="
-                  openMenuNoteId = openMenuNoteId === note.id ? null : note.id
-                "
-              >
-                <span class="i-lucide-ellipsis size-3.5" />
-              </RelayButton>
-              <DropdownMenu
-                v-if="openMenuNoteId === note.id"
-                :menu-items="noteMenuItems"
-                class="ltr:right-0 rtl:left-0 top-full mt-1 w-32"
-                @action="handleNoteMenu(note, $event)"
-              />
-            </div>
+              <template #trigger>
+                <RelayButton
+                  variant="ghost"
+                  size="icon"
+                  class="size-6 rounded-md text-muted-foreground hover:bg-primary/10 hover:text-primary border border-border hover:border-transparent"
+                >
+                  <span class="i-lucide-ellipsis size-3.5" />
+                </RelayButton>
+              </template>
+            </RelayActionDropdown>
           </div>
           <p
             v-dompurify-html="formatMessage(note.content || '')"

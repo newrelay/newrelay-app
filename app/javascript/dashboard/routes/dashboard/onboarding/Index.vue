@@ -1,4 +1,5 @@
 <script setup>
+import { RelayTooltip } from 'dashboard/components-next/relay';
 import { ref, computed, nextTick, onMounted, onUnmounted, watch } from 'vue';
 import { useVuelidate } from '@vuelidate/core';
 import { useI18n } from 'vue-i18n';
@@ -295,11 +296,12 @@ const handleSubmit = async () => {
         >
           <div class="flex items-center justify-end gap-1.5">
             <span class="text-sm text-foreground">{{ userEmail }}</span>
-            <Icon
-              v-tooltip="t('ONBOARDING_NEXT.EMAIL_VERIFIED')"
-              icon="i-lucide-circle-check"
-              class="size-4 text-success flex-shrink-0"
-            />
+            <RelayTooltip :content="t('ONBOARDING_NEXT.EMAIL_VERIFIED')">
+              <Icon
+                icon="i-lucide-circle-check"
+                class="size-4 text-success flex-shrink-0"
+              />
+            </RelayTooltip>
           </div>
         </OnboardingFormRow>
         <OnboardingFormRow

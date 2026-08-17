@@ -1,4 +1,5 @@
 <script>
+import { RelayTooltip } from 'dashboard/components-next/relay';
 import AddSLA from './AddSLA.vue';
 import SettingsLayout from '../SettingsLayout.vue';
 import SLAPaywallEnterprise from './SLAPaywallEnterprise.vue';
@@ -17,6 +18,7 @@ import { picoSearch } from '@scmmishra/pico-search';
 
 export default {
   components: {
+    RelayTooltip,
     AddSLA,
     SettingsLayout,
     SLAPaywallEnterprise,
@@ -206,31 +208,34 @@ export default {
                 class="flex items-center gap-1 text-[12px] font-semibold text-muted-foreground"
               >
                 {{ $t('SLA.LIST.RESPONSE_TYPES.SHORT_HAND.FRT') }}
-                <Icon
-                  v-tooltip.top="$t('SLA.LIST.RESPONSE_TYPES.FRT')"
-                  icon="i-lucide-info"
-                  class="size-3.5 cursor-help"
-                />
+                <RelayTooltip
+                  :content="$t('SLA.LIST.RESPONSE_TYPES.FRT')"
+                  side="top"
+                >
+                  <Icon icon="i-lucide-info" class="size-3.5 cursor-help" />
+                </RelayTooltip>
               </div>
               <div
                 class="flex items-center gap-1 text-[12px] font-semibold text-muted-foreground"
               >
                 {{ $t('SLA.LIST.RESPONSE_TYPES.SHORT_HAND.NRT') }}
-                <Icon
-                  v-tooltip.top="$t('SLA.LIST.RESPONSE_TYPES.NRT')"
-                  icon="i-lucide-info"
-                  class="size-3.5 cursor-help"
-                />
+                <RelayTooltip
+                  :content="$t('SLA.LIST.RESPONSE_TYPES.NRT')"
+                  side="top"
+                >
+                  <Icon icon="i-lucide-info" class="size-3.5 cursor-help" />
+                </RelayTooltip>
               </div>
               <div
                 class="flex items-center gap-1 text-[12px] font-semibold text-muted-foreground"
               >
                 {{ $t('SLA.LIST.RESPONSE_TYPES.SHORT_HAND.RT') }}
-                <Icon
-                  v-tooltip.top="$t('SLA.LIST.RESPONSE_TYPES.RT')"
-                  icon="i-lucide-info"
-                  class="size-3.5 cursor-help"
-                />
+                <RelayTooltip
+                  :content="$t('SLA.LIST.RESPONSE_TYPES.RT')"
+                  side="top"
+                >
+                  <Icon icon="i-lucide-info" class="size-3.5 cursor-help" />
+                </RelayTooltip>
               </div>
               <div
                 class="text-right text-[12px] font-semibold text-muted-foreground"
@@ -291,16 +296,17 @@ export default {
                 <div
                   class="flex items-center justify-end opacity-0 transition-opacity group-hover:opacity-100"
                 >
-                  <RelayButton
-                    v-tooltip.top="$t('SLA.FORM.DELETE')"
-                    variant="ghost"
-                    size="icon"
-                    class="size-8 border border-transparent text-muted-foreground shadow-xs hover:border-destructive/20 hover:bg-destructive/10 hover:text-destructive border border-border hover:border-transparent"
-                    :disabled="loading[sla.id]"
-                    @click="openDeletePopup(sla)"
-                  >
-                    <Icon icon="i-lucide-trash-2" class="size-3.5" />
-                  </RelayButton>
+                  <RelayTooltip :content="$t('SLA.FORM.DELETE')" side="top">
+                    <RelayButton
+                      variant="ghost"
+                      size="icon"
+                      class="size-8 border border-transparent text-muted-foreground shadow-xs hover:border-destructive/20 hover:bg-destructive/10 hover:text-destructive border border-border hover:border-transparent"
+                      :disabled="loading[sla.id]"
+                      @click="openDeletePopup(sla)"
+                    >
+                      <Icon icon="i-lucide-trash-2" class="size-3.5" />
+                    </RelayButton>
+                  </RelayTooltip>
                 </div>
               </div>
             </div>

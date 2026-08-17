@@ -3,7 +3,9 @@ import { computed, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRouter } from 'vue-router';
 import { useAccount } from 'dashboard/composables/useAccount';
-import { INBOX_TYPES, getInboxIconByType } from 'dashboard/helper/inbox';
+import { INBOX_TYPES } from 'dashboard/helper/inbox';
+import Icon from 'next/icon/Icon.vue';
+import IconWhatsApp from 'dashboard/components-next/icons/IconWhatsApp.vue';
 
 const props = defineProps({
   activeView: { type: String, default: 'all' },
@@ -74,8 +76,29 @@ const viewsList = computed(() => [
 const channelIcon = channel => {
   const type = channel.channelType || channel.channel_type;
   const medium = channel.medium;
-  return getInboxIconByType(type, medium, 'line');
+
+  if (type === INBOX_TYPES.WEB) return 'i-lucide-message-circle';
+  if (type === INBOX_TYPES.EMAIL) return 'i-lucide-mail';
+  if (type === INBOX_TYPES.INSTAGRAM) return 'i-lucide-instagram';
+  if (type === INBOX_TYPES.FB) return 'i-lucide-message-circle';
+  if (
+    type === INBOX_TYPES.SMS ||
+    type === INBOX_TYPES.TWILIO ||
+    medium === 'sms'
+  ) {
+    return 'i-lucide-message-square-more';
+  }
+
+  return 'i-lucide-inbox';
 };
+
+const isWhatsAppChannel = channel => {
+  const type = channel.channelType || channel.channel_type;
+  const medium = channel.medium;
+  return type === INBOX_TYPES.WHATSAPP || medium === 'whatsapp';
+};
+
+const NAV_ICON_CLASS = 'size-4 shrink-0';
 
 const channelLabel = channel => {
   const type = channel.channelType || channel.channel_type;
@@ -153,10 +176,7 @@ const navBadgeClass = active =>
             class="absolute left-0 top-1/2 h-4 w-[3px] -translate-y-1/2 rounded-r-full bg-primary"
           />
           <div class="flex min-w-0 items-center gap-3">
-            <span
-              class="inline-flex size-4 shrink-0 items-center justify-center"
-              :class="[view.icon]"
-            />
+            <Icon :icon="view.icon" :class="NAV_ICON_CLASS" />
             <span class="truncate">{{ view.label }}</span>
           </div>
           <span :class="navBadgeClass(activeView === view.id)">
@@ -209,10 +229,11 @@ const navBadgeClass = active =>
             class="absolute left-0 top-1/2 h-4 w-[3px] -translate-y-1/2 rounded-r-full bg-primary"
           />
           <div class="flex min-w-0 items-center gap-3">
-            <span
-              class="inline-flex size-4 shrink-0 items-center justify-center"
-              :class="[channelIcon(channel)]"
+            <IconWhatsApp
+              v-if="isWhatsAppChannel(channel)"
+              :class="NAV_ICON_CLASS"
             />
+            <Icon v-else :icon="channelIcon(channel)" :class="NAV_ICON_CLASS" />
             <span class="truncate">{{ channelLabel(channel) }}</span>
           </div>
           <span :class="navBadgeClass(activeView === `inbox:${channel.id}`)">

@@ -18,6 +18,7 @@ import SettingsListRow from '../components/SettingsListRow.vue';
 import {
   RelayButton,
   RelayInput,
+  RelayTooltip,
   RelayModal,
   RelayConfirmModal,
 } from 'dashboard/components-next/relay';
@@ -299,27 +300,35 @@ const confirmDeletion = () => {
             </template>
           </div>
           <template #actions>
-            <RelayButton
+            <RelayTooltip
               v-if="showEditAction(agent)"
-              v-tooltip.top="$t('AGENT_MGMT.EDIT.BUTTON_TEXT')"
-              variant="ghost"
-              size="icon"
-              class="size-8 border border-transparent text-muted-foreground shadow-xs hover:border-border hover:bg-background hover:text-foreground border border-border hover:border-transparent"
-              @click="openEditPopup(agent)"
+              :content="$t('AGENT_MGMT.EDIT.BUTTON_TEXT')"
+              side="top"
             >
-              <Icon icon="i-lucide-pencil" class="size-3.5" />
-            </RelayButton>
-            <RelayButton
+              <RelayButton
+                variant="ghost"
+                size="icon"
+                class="size-8 border border-transparent text-muted-foreground shadow-xs hover:border-border hover:bg-background hover:text-foreground border border-border hover:border-transparent"
+                @click="openEditPopup(agent)"
+              >
+                <Icon icon="i-lucide-pencil" class="size-3.5" />
+              </RelayButton>
+            </RelayTooltip>
+            <RelayTooltip
               v-if="showDeleteAction(agent)"
-              v-tooltip.top="$t('AGENT_MGMT.DELETE.BUTTON_TEXT')"
-              variant="ghost"
-              size="icon"
-              class="size-8 border border-transparent text-muted-foreground shadow-xs hover:border-destructive/20 hover:bg-destructive/10 hover:text-destructive border border-border hover:border-transparent"
-              :disabled="loading[agent.id]"
-              @click="openDeletePopup(agent, index)"
+              :content="$t('AGENT_MGMT.DELETE.BUTTON_TEXT')"
+              side="top"
             >
-              <Icon icon="i-lucide-trash-2" class="size-3.5" />
-            </RelayButton>
+              <RelayButton
+                variant="ghost"
+                size="icon"
+                class="size-8 border border-transparent text-muted-foreground shadow-xs hover:border-destructive/20 hover:bg-destructive/10 hover:text-destructive border border-border hover:border-transparent"
+                :disabled="loading[agent.id]"
+                @click="openDeletePopup(agent, index)"
+              >
+                <Icon icon="i-lucide-trash-2" class="size-3.5" />
+              </RelayButton>
+            </RelayTooltip>
           </template>
         </SettingsListRow>
       </SettingsListCard>

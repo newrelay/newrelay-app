@@ -1,8 +1,5 @@
-<script>
-export default {
-  name: 'InboxFormattingToolbar',
-  emits: ['toggleMark'],
-};
+<script setup>
+defineEmits(['toggleMark']);
 </script>
 
 <template>
@@ -12,26 +9,26 @@ export default {
     <button
       type="button"
       :title="$t('CONVERSATION.REPLYBOX.FORMAT_BOLD')"
-      class="flex size-7 items-center justify-center rounded text-sm font-bold text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+      class="flex size-7 items-center justify-center rounded text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
       @click="$emit('toggleMark', 'strong')"
     >
-      <span class="i-lucide-bold size-3.5" />
+      <span class="i-lucide-bold size-4" />
     </button>
     <button
       type="button"
       :title="$t('CONVERSATION.REPLYBOX.FORMAT_ITALIC')"
-      class="flex size-7 items-center justify-center rounded text-sm font-medium italic text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+      class="flex size-7 items-center justify-center rounded text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
       @click="$emit('toggleMark', 'em')"
     >
-      <span class="i-lucide-italic size-3.5" />
+      <span class="i-lucide-italic size-4" />
     </button>
     <button
       type="button"
       :title="$t('CONVERSATION.REPLYBOX.FORMAT_UNDERLINE')"
-      class="flex size-7 items-center justify-center rounded text-sm font-medium underline text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+      class="flex size-7 items-center justify-center rounded text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
       @click="$emit('toggleMark', 'underline')"
     >
-      <span class="i-lucide-underline size-3.5" />
+      <span class="i-lucide-underline size-4" />
     </button>
   </div>
 </template>

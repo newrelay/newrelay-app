@@ -4,12 +4,16 @@ import { useI18n } from 'vue-i18n';
 import { vOnClickOutside } from '@vueuse/components';
 import { useMapGetter, useStore } from 'dashboard/composables/store';
 import { useMessageFormatter } from 'shared/composables/useMessageFormatter';
-import { RelayButton } from 'dashboard/components-next/relay';
+import { RelayButton, RelayTooltip } from 'dashboard/components-next/relay';
 
 const props = defineProps({
   buttonClass: {
     type: String,
     default: '',
+  },
+  plain: {
+    type: Boolean,
+    default: false,
   },
 });
 const emit = defineEmits(['select']);
@@ -79,19 +83,28 @@ const handleSelect = content => {
 </script>
 
 <template>
-  <div class="relative group flex items-center justify-center">
-    <RelayButton
-      variant="ghost"
-      :class="props.buttonClass"
-      @click="toggleDropdown"
+  <div class="relative flex items-center justify-center">
+    <RelayTooltip
+      :content="t('CONVERSATION.REPLYBOX.TIP_CANNED_ICON')"
+      side="top"
     >
-      <span class="i-lucide-file-text size-4 shrink-0" />
-    </RelayButton>
-    <span
-      class="pointer-events-none absolute bottom-full left-1/2 -translate-x-1/2 mb-1.5 whitespace-nowrap rounded-md border border-border bg-popover px-2 py-1 text-xs text-popover-foreground shadow-md opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50"
-    >
-      {{ t('CONVERSATION.REPLYBOX.TIP_CANNED_ICON') }}
-    </span>
+      <button
+        v-if="plain"
+        type="button"
+        :class="props.buttonClass"
+        @click="toggleDropdown"
+      >
+        <span class="i-lucide-file-text size-4 shrink-0" />
+      </button>
+      <RelayButton
+        v-else
+        variant="ghost"
+        :class="props.buttonClass"
+        @click="toggleDropdown"
+      >
+        <span class="i-lucide-file-text size-4 shrink-0" />
+      </RelayButton>
+    </RelayTooltip>
     <div
       v-if="isOpen"
       v-on-click-outside="closeDropdown"

@@ -1,4 +1,5 @@
 <script setup>
+import { RelayTooltip } from 'dashboard/components-next/relay';
 defineProps({
   label: {
     type: String,
@@ -30,13 +31,14 @@ defineProps({
       class="capitalize flex items-center m-0 text-sm font-medium text-muted-foreground"
     >
       <span data-test-id="reportMetricLabel">{{ label }}</span>
-      <fluent-icon
-        v-tooltip="infoText"
-        data-test-id="reportMetricInfo"
-        size="14"
-        icon="info"
-        class="text-muted-foreground my-0 mx-1 mt-0.5"
-      />
+      <RelayTooltip :content="infoText">
+        <fluent-icon
+          data-test-id="reportMetricInfo"
+          size="14"
+          icon="info"
+          class="text-muted-foreground my-0 mx-1 mt-0.5"
+        />
+      </RelayTooltip>
     </h3>
     <h4
       data-test-id="reportMetricValue"

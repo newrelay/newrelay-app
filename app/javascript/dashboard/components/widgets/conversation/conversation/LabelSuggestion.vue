@@ -1,4 +1,5 @@
 <script>
+import { RelayTooltip } from 'dashboard/components-next/relay';
 // components
 import NextButton from 'dashboard/components-next/button/Button.vue';
 import Avatar from 'dashboard/components-next/avatar/Avatar.vue';
@@ -19,6 +20,7 @@ import { CAPTAIN_EVENTS } from '../../../../helper/AnalyticsHelper/events';
 export default {
   name: 'LabelSuggestion',
   components: {
+    RelayTooltip,
     Avatar,
     NextButton,
   },
@@ -166,39 +168,47 @@ export default {
           {{ $t('LABEL_MGMT.SUGGESTIONS.SUGGESTED_LABELS') }}
         </h6>
         <div class="label-suggestion--options">
-          <button
+          <RelayTooltip
             v-for="label in preparedLabels"
             :key="label.title"
-            v-tooltip.top="{
+            :content="{
               content: selectedLabels.includes(label.title)
                 ? $t('LABEL_MGMT.SUGGESTIONS.TOOLTIP.DESELECT')
                 : labelTooltip,
               delay: { show: 600, hide: 0 },
-              hideOnClick: true,
             }"
-            class="label-suggestion--option !px-0"
-            @click="pushOrAddLabel(label.title)"
+            side="top"
           >
-            <woot-label
-              variant="dashed"
-              v-bind="label"
-              :bg-color="selectedLabels.includes(label.title) ? '#2781F6' : ''"
-            />
-          </button>
-          <NextButton
+            <button
+              class="label-suggestion--option !px-0"
+              @click="pushOrAddLabel(label.title)"
+            >
+              <woot-label
+                variant="dashed"
+                v-bind="label"
+                :bg-color="
+                  selectedLabels.includes(label.title) ? '#2781F6' : ''
+                "
+              />
+            </button>
+          </RelayTooltip>
+          <RelayTooltip
             v-if="preparedLabels.length === 1"
-            v-tooltip.top="{
+            :content="{
               content: $t('LABEL_MGMT.SUGGESTIONS.TOOLTIP.DISMISS'),
               delay: { show: 600, hide: 0 },
-              hideOnClick: true,
             }"
-            faded
-            xs
-            icon="i-lucide-x"
-            class="flex-shrink-0"
-            :color="isHovered ? 'ruby' : 'blue'"
-            @click="dismissSuggestions"
-          />
+            side="top"
+          >
+            <NextButton
+              faded
+              xs
+              icon="i-lucide-x"
+              class="flex-shrink-0"
+              :color="isHovered ? 'ruby' : 'blue'"
+              @click="dismissSuggestions"
+            />
+          </RelayTooltip>
         </div>
         <div
           v-if="preparedLabels.length > 1"
@@ -212,34 +222,36 @@ export default {
             :label="addButtonText"
             @click="addAllLabels"
           />
-          <NextButton
-            v-tooltip.top="{
+          <RelayTooltip
+            :content="{
               content: $t('LABEL_MGMT.SUGGESTIONS.TOOLTIP.DISMISS'),
               delay: { show: 600, hide: 0 },
-              hideOnClick: true,
             }"
-            faded
-            xs
-            icon="i-lucide-x"
-            class="flex-shrink-0"
-            :color="isHovered ? 'ruby' : 'blue'"
-            @click="dismissSuggestions"
-          />
+            side="top"
+          >
+            <NextButton
+              faded
+              xs
+              icon="i-lucide-x"
+              class="flex-shrink-0"
+              :color="isHovered ? 'ruby' : 'blue'"
+              @click="dismissSuggestions"
+            />
+          </RelayTooltip>
         </div>
       </div>
       <div class="sender--info has-tooltip" data-original-title="null">
-        <Avatar
-          v-tooltip.top="{
+        <RelayTooltip
+          :content="{
             content: replaceInstallationName(
               $t('LABEL_MGMT.SUGGESTIONS.POWERED_BY')
             ),
             delay: { show: 600, hide: 0 },
-            hideOnClick: true,
           }"
-          :size="16"
-          name="chatwoot-ai"
-          icon-name="i-lucide-sparkles"
-        />
+          side="top"
+        >
+          <Avatar :size="16" name="chatwoot-ai" icon-name="i-lucide-sparkles" />
+        </RelayTooltip>
       </div>
     </div>
   </li>

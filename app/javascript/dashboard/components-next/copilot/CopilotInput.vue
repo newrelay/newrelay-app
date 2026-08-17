@@ -46,16 +46,16 @@ onMounted(() => {
       ref="textareaRef"
       v-model="message"
       :placeholder="$t('CAPTAIN.COPILOT.SEND_MESSAGE')"
-      class="w-full reset-base bg-accent ltr:pl-4 ltr:pr-12 rtl:pl-12 rtl:pr-4 py-3 border border-border focus:outline-0 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary resize-none overflow-hidden max-h-[200px] mb-0 text-foreground text-[14px] shadow-sm rounded-md border-border/80 bg-background focus-visible:ring-1 focus-visible:ring-primary/30"
+      class="reset-base mb-0 w-full min-h-9 max-h-[200px] resize-none overflow-hidden rounded-md border border-border/80 bg-background py-2.5 text-[14px] text-foreground shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary/30 ltr:pl-4 ltr:pr-12 rtl:pl-12 rtl:pr-4"
       rows="1"
       @input="handleInput"
       @keydown.enter.exact="handleEnterKey"
     />
     <button
-      class="absolute ltr:right-1 rtl:left-1 top-1/2 -translate-y-1/2 h-9 w-10 flex items-center justify-center text-muted-foreground hover:text-primary"
+      class="absolute top-1/2 flex size-9 -translate-y-1/2 items-center justify-center text-muted-foreground transition-colors hover:text-primary ltr:right-1 rtl:left-1"
       type="submit"
     >
-      <i class="i-ph-arrow-up" />
+      <span class="i-lucide-arrow-up size-4" />
     </button>
   </form>
 </template>

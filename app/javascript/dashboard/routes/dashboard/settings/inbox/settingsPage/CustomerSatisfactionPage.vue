@@ -1,4 +1,5 @@
 <script setup>
+import { RelayTooltip } from 'dashboard/components-next/relay';
 import { reactive, onMounted, ref, watch, computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useAlert } from 'dashboard/composables';
@@ -643,13 +644,16 @@ const handleConfirmTemplateUpdate = async () => {
                   class="inline-flex items-center text-sm font-medium text-muted-foreground"
                 >
                   {{ $t('INBOX_MGMT.CSAT.MESSAGE_PREVIEW.LABEL') }}
-                  <Icon
-                    v-tooltip.top-end="
-                      $t('INBOX_MGMT.CSAT.MESSAGE_PREVIEW.TOOLTIP')
-                    "
-                    icon="i-lucide-info"
-                    class="flex-shrink-0 mx-1 size-4"
-                  />
+                  <RelayTooltip
+                    :content="$t('INBOX_MGMT.CSAT.MESSAGE_PREVIEW.TOOLTIP')"
+                    side="top"
+                    align="end"
+                  >
+                    <Icon
+                      icon="i-lucide-info"
+                      class="mx-1 size-4 flex-shrink-0"
+                    />
+                  </RelayTooltip>
                 </p>
                 <CSATTemplate
                   :message="messagePreviewData"

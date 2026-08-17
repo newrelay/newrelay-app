@@ -1,71 +1,58 @@
-<script>
-import NextButton from 'dashboard/components-next/button/Button.vue';
+<script setup>
+import { computed } from 'vue';
+import { RelayButton } from 'dashboard/components-next/relay';
 
-export default {
-  components: {
-    NextButton,
+const props = defineProps({
+  totalLength: {
+    type: Number,
+    default: 0,
   },
-  props: {
-    totalLength: {
-      type: Number,
-      default: 0,
-    },
-    currentIndex: {
-      type: Number,
-      default: 0,
-    },
+  currentIndex: {
+    type: Number,
+    default: 0,
   },
-  emits: ['prev', 'next'],
-  computed: {
-    isUpDisabled() {
-      return this.currentIndex === 1;
-    },
-    isDownDisabled() {
-      return this.currentIndex === this.totalLength || this.totalLength <= 1;
-    },
-  },
-  methods: {
-    handleUpClick() {
-      if (this.currentIndex > 1) {
-        this.$emit('prev');
-      }
-    },
-    handleDownClick() {
-      if (this.currentIndex < this.totalLength) {
-        this.$emit('next');
-      }
-    },
-  },
+});
+
+const emit = defineEmits(['prev', 'next']);
+
+const isUpDisabled = computed(() => props.currentIndex <= 1);
+const isDownDisabled = computed(
+  () => props.currentIndex >= props.totalLength || props.totalLength <= 1
+);
+
+const handleUpClick = () => {
+  if (!isUpDisabled.value) emit('prev');
+};
+
+const handleDownClick = () => {
+  if (!isDownDisabled.value) emit('next');
 };
 </script>
 
 <template>
-  <div class="flex gap-1 items-center">
+  <div class="flex items-center gap-1">
     <span
-      class="whitespace-nowrap text-xs font-semibold text-muted-foreground tabular-nums bg-muted/30 px-2.5 py-1 rounded-md tracking-tight mr-1"
+      class="mr-2 whitespace-nowrap rounded-md bg-muted/30 px-2.5 py-1 text-xs font-semibold tracking-tight text-muted-foreground tabular-nums"
     >
-      {{ totalLength <= 1 ? '1' : currentIndex }}
-      <template v-if="totalLength > 1"> / {{ totalLength }}</template>
+      {{ currentIndex }} / {{ totalLength || 1 }}
     </span>
-    <div class="flex gap-0.5 items-center">
-      <NextButton
-        icon="i-lucide-chevron-up"
-        sm
-        slate
-        ghost
-        class="size-8 [&_span]:size-4"
-        :disabled="isUpDisabled"
-        @click="handleUpClick"
-      />
-      <NextButton
-        icon="i-lucide-chevron-down"
-        sm
-        slate
-        ghost
-        class="size-8 [&_span]:size-4"
-        :disabled="isDownDisabled"
-        @click="handleDownClick"
-      />
-    </div>
+    <RelayButton
+      variant="ghost"
+      size="icon"
+      class="size-8 border-transparent text-muted-foreground hover:border-transparent hover:text-foreground"
+      :disabled="isUpDisabled"
+      @click="handleUpClick"
+    >
+      <span class="i-lucide-chevron-up size-4" />
+    </RelayButton>
+    <RelayButton
+      variant="ghost"
+      size="icon"
+      class="size-8 border-transparent text-muted-foreground hover:border-transparent hover:text-foreground"
+      :disabled="isDownDisabled"
+      @click="handleDownClick"
+    >
+      <span class="i-lucide-chevron-down size-4" />
+    </RelayButton>
   </div>
 </template>

@@ -1,4 +1,5 @@
 <script setup>
+import { RelayTooltip } from 'dashboard/components-next/relay';
 import { computed } from 'vue';
 import { messageTimestamp } from 'shared/helpers/timeHelper';
 import BaseBubble from './Base.vue';
@@ -12,11 +13,12 @@ const readableTime = computed(() =>
 </script>
 
 <template>
-  <BaseBubble
-    v-tooltip.top="readableTime"
-    class="px-3 py-1 !rounded-xl flex min-w-0 items-center gap-2"
-    data-bubble-name="activity"
-  >
-    <span v-dompurify-html="content" :title="content" />
-  </BaseBubble>
+  <RelayTooltip :content="readableTime" side="top">
+    <BaseBubble
+      class="px-3 py-1 !rounded-xl flex min-w-0 items-center gap-2"
+      data-bubble-name="activity"
+    >
+      <span v-dompurify-html="content" :title="content" />
+    </BaseBubble>
+  </RelayTooltip>
 </template>

@@ -1,4 +1,5 @@
 <script setup>
+import { RelayTooltip } from 'dashboard/components-next/relay';
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { VOICE_CALL_DIRECTION } from 'dashboard/components-next/message/constants';
@@ -117,15 +118,19 @@ const channelIcon = computed(() => {
           >
             {{ duration }}
           </p>
-          <NextButton
-            v-tooltip.top="$t('CONVERSATION.VOICE_WIDGET.EXPAND')"
-            icon="i-ph-arrows-out-bold"
-            slate
-            ghost
-            xs
-            class="!rounded-full -my-1"
-            @click="$emit('expand')"
-          />
+          <RelayTooltip
+            :content="$t('CONVERSATION.VOICE_WIDGET.EXPAND')"
+            side="top"
+          >
+            <NextButton
+              icon="i-ph-arrows-out-bold"
+              slate
+              ghost
+              xs
+              class="!rounded-full -my-1"
+              @click="$emit('expand')"
+            />
+          </RelayTooltip>
         </template>
         <!-- Incoming/Outgoing: status badge on right -->
         <div v-else class="flex items-center gap-1.5 shrink-0">
@@ -136,16 +141,20 @@ const channelIcon = computed(() => {
           <!-- Dismiss: removes the notification from the UI without declining.
                Incoming only — outgoing/ongoing calls are ended via the call
                controls, not silently dismissed. -->
-          <NextButton
+          <RelayTooltip
             v-if="isIncoming"
-            v-tooltip.top="$t('CONVERSATION.VOICE_WIDGET.DISMISS_CALL')"
-            icon="i-ph-x-bold"
-            slate
-            ghost
-            xs
-            class="!rounded-full -my-1"
-            @click="$emit('dismiss')"
-          />
+            :content="$t('CONVERSATION.VOICE_WIDGET.DISMISS_CALL')"
+            side="top"
+          >
+            <NextButton
+              icon="i-ph-x-bold"
+              slate
+              ghost
+              xs
+              class="!rounded-full -my-1"
+              @click="$emit('dismiss')"
+            />
+          </RelayTooltip>
         </div>
       </div>
 
@@ -175,44 +184,54 @@ const channelIcon = computed(() => {
         <!-- Actions -->
         <div class="flex items-center gap-2 shrink-0">
           <!-- Mute toggle (WhatsApp ongoing only) -->
-          <NextButton
+          <RelayTooltip
             v-if="isOngoing && showMute"
-            v-tooltip.top="
+            :content="
               isMuted
                 ? $t('CONVERSATION.VOICE_WIDGET.UNMUTE')
                 : $t('CONVERSATION.VOICE_WIDGET.MUTE')
             "
-            :icon="
-              isMuted ? 'i-ph-microphone-slash-bold' : 'i-ph-microphone-bold'
-            "
-            :variant="isMuted ? 'solid' : 'faded'"
-            :color="isMuted ? 'amber' : 'teal'"
-            class="!rounded-full"
-            @click="$emit('toggleMute')"
-          />
+            side="top"
+          >
+            <NextButton
+              :icon="
+                isMuted ? 'i-ph-microphone-slash-bold' : 'i-ph-microphone-bold'
+              "
+              :variant="isMuted ? 'solid' : 'faded'"
+              :color="isMuted ? 'amber' : 'teal'"
+              class="!rounded-full"
+              @click="$emit('toggleMute')"
+            />
+          </RelayTooltip>
 
-          <!-- Accept call (incoming only) -->
-          <NextButton
+          <RelayTooltip
             v-if="isIncoming"
-            v-tooltip.top="$t('CONVERSATION.VOICE_WIDGET.JOIN_CALL')"
-            icon="i-ph-phone-bold"
-            teal
-            class="!rounded-full"
-            @click="$emit('accept')"
-          />
+            :content="$t('CONVERSATION.VOICE_WIDGET.JOIN_CALL')"
+            side="top"
+          >
+            <NextButton
+              icon="i-ph-phone-bold"
+              teal
+              class="!rounded-full"
+              @click="$emit('accept')"
+            />
+          </RelayTooltip>
 
-          <!-- Reject / end call (all states) -->
-          <NextButton
-            v-tooltip.top="
+          <RelayTooltip
+            :content="
               isOngoing
                 ? $t('CONVERSATION.VOICE_WIDGET.END_CALL')
                 : $t('CONVERSATION.VOICE_WIDGET.REJECT_CALL')
             "
-            icon="i-ph-phone-bold"
-            ruby
-            class="!rounded-full rotate-[135deg]"
-            @click="isOngoing ? $emit('end') : $emit('reject')"
-          />
+            side="top"
+          >
+            <NextButton
+              icon="i-ph-phone-bold"
+              ruby
+              class="!rounded-full rotate-[135deg]"
+              @click="isOngoing ? $emit('end') : $emit('reject')"
+            />
+          </RelayTooltip>
         </div>
       </div>
     </div>

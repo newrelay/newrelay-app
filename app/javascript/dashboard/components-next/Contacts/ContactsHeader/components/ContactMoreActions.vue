@@ -1,9 +1,10 @@
 <script setup>
-import { computed, ref } from 'vue';
+import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
-
-import { RelayButton } from 'dashboard/components-next/relay';
-import DropdownMenu from 'dashboard/components-next/dropdown-menu/DropdownMenu.vue';
+import {
+  RelayActionDropdown,
+  RelayButton,
+} from 'dashboard/components-next/relay';
 import { usePolicy } from 'dashboard/composables/usePolicy';
 
 const emit = defineEmits(['add', 'import', 'export']);
@@ -33,7 +34,6 @@ const contactMenuItems = computed(() => [
       ]
     : []),
 ]);
-const showActionsDropdown = ref(false);
 
 const handleContactAction = ({ action }) => {
   if (action === 'export') {
@@ -47,25 +47,21 @@ const handleContactAction = ({ action }) => {
 </script>
 
 <template>
-  <div
-    v-on-clickaway="() => (showActionsDropdown = false)"
-    class="relative"
-    :class="{ hidden: !contactMenuItems.length }"
+  <RelayActionDropdown
+    v-if="contactMenuItems.length"
+    :menu-items="contactMenuItems"
+    align="end"
+    content-class="w-52"
+    @action="handleContactAction"
   >
-    <RelayButton
-      variant="outline"
-      size="icon"
-      class="size-10 rounded-lg shadow-sm"
-      :class="showActionsDropdown ? 'bg-accent' : ''"
-      @click="showActionsDropdown = !showActionsDropdown"
-    >
-      <span class="i-lucide-ellipsis-vertical size-4" />
-    </RelayButton>
-    <DropdownMenu
-      v-if="showActionsDropdown"
-      :menu-items="contactMenuItems"
-      class="ltr:right-0 rtl:left-0 mt-1 w-52 top-full"
-      @action="handleContactAction($event)"
-    />
-  </div>
+    <template #trigger>
+      <RelayButton
+        variant="outline"
+        size="icon"
+        class="size-10 rounded-lg shadow-sm"
+      >
+        <span class="i-lucide-ellipsis-vertical size-4" />
+      </RelayButton>
+    </template>
+  </RelayActionDropdown>
 </template>

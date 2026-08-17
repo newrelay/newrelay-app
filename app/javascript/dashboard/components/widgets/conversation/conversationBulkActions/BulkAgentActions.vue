@@ -1,4 +1,5 @@
 <script setup>
+import { RelayTooltip } from 'dashboard/components-next/relay';
 import { useTemplateRef, computed, ref } from 'vue';
 import { useI18n, I18nT } from 'vue-i18n';
 import { useToggle } from '@vueuse/core';
@@ -112,15 +113,16 @@ const handleToggleDropdown = () => {
 
 <template>
   <div ref="containerRef" class="relative">
-    <Button
-      v-tooltip="$t('BULK_ACTION.ASSIGN_AGENT_TOOLTIP')"
-      icon="i-lucide-user-round-check"
-      slate
-      xs
-      ghost
-      :class="{ 'bg-accent': showDropdown }"
-      @click="handleToggleDropdown"
-    />
+    <RelayTooltip :content="$t('BULK_ACTION.ASSIGN_AGENT_TOOLTIP')">
+      <Button
+        icon="i-lucide-user-round-check"
+        slate
+        xs
+        ghost
+        :class="{ 'bg-accent': showDropdown }"
+        @click="handleToggleDropdown"
+      />
+    </RelayTooltip>
     <Transition
       enter-active-class="transition-all duration-150 ease-out origin-bottom"
       enter-from-class="opacity-0 scale-95"

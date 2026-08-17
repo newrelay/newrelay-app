@@ -1,7 +1,12 @@
 <script setup>
 import { computed } from 'vue';
-import Icon from 'dashboard/components-next/icon/Icon.vue';
 import { useDropdownContext } from './provider.js';
+import Icon from 'dashboard/components-next/icon/Icon.vue';
+import {
+  DROPDOWN_MENU_ITEM_BASE_CLASS,
+  getDropdownItemInteractionClass,
+} from 'dashboard/components-next/relay/dropdown-menu/constants';
+import { cn } from 'dashboard/components-next/relay/utils/cn';
 
 const props = defineProps({
   label: { type: String, default: '' },
@@ -10,6 +15,8 @@ const props = defineProps({
   nativeLink: { type: Boolean, default: false },
   click: { type: Function, default: null },
   preserveOpen: { type: Boolean, default: false },
+  destructive: { type: Boolean, default: false },
+  disabled: { type: Boolean, default: false },
 });
 
 defineOptions({
@@ -31,7 +38,18 @@ const componentIs = computed(() => {
   return 'div';
 });
 
+const itemClass = computed(() =>
+  cn(
+    DROPDOWN_MENU_ITEM_BASE_CLASS,
+    getDropdownItemInteractionClass(
+      props.destructive ? { destructive: true } : {}
+    ),
+    props.disabled && 'pointer-events-none opacity-50'
+  )
+);
+
 const triggerClick = () => {
+  if (props.disabled) return;
   if (props.click) {
     props.click();
   }
@@ -40,21 +58,19 @@ const triggerClick = () => {
 </script>
 
 <template>
-  <li class="n-dropdown-item">
+  <li class="list-none">
     <component
       :is="componentIs"
       v-bind="$attrs"
-      class="flex text-left rtl:text-right items-center p-2 reset-base text-sm text-foreground w-full border-0 capitalize"
-      :class="{
-        'hover:bg-accent rounded-lg w-full gap-3': !$slots.default,
-      }"
+      :class="itemClass"
       :href="componentIs === 'a' ? props.link : null"
       :to="componentIs === 'router-link' ? props.link : null"
+      :disabled="componentIs === 'button' ? disabled : undefined"
       @click="triggerClick"
     >
       <slot>
         <slot name="icon">
-          <Icon v-if="icon" class="size-4 text-muted-foreground" :icon="icon" />
+          <Icon v-if="icon" :icon="icon" />
         </slot>
         <slot name="label">{{ label }}</slot>
       </slot>

@@ -6,8 +6,11 @@ import { useStore } from 'dashboard/composables/store';
 
 import Avatar from 'dashboard/components-next/avatar/Avatar.vue';
 import ContactLabels from 'dashboard/components-next/Contacts/ContactLabels/ContactLabels.vue';
-import DropdownMenu from 'dashboard/components-next/dropdown-menu/DropdownMenu.vue';
-import { RelayButton, RelayInput } from 'dashboard/components-next/relay';
+import {
+  RelayButton,
+  RelayInput,
+  RelayActionDropdown,
+} from 'dashboard/components-next/relay';
 
 const props = defineProps({
   contact: {
@@ -24,7 +27,6 @@ const { t } = useI18n();
 const store = useStore();
 
 const isEditing = ref(false);
-const showAddSocial = ref(false);
 
 const SOCIAL_NETWORKS = [
   {
@@ -114,12 +116,10 @@ const startEditing = () => {
 const cancelEditing = () => {
   syncForm(props.contact);
   isEditing.value = false;
-  showAddSocial.value = false;
 };
 
 const addSocialLink = ({ value }) => {
   form.socialProfiles = { ...form.socialProfiles, [value]: '' };
-  showAddSocial.value = false;
 };
 
 const removeSocialLink = networkId => {
@@ -151,7 +151,6 @@ const saveAbout = async () => {
       },
     });
     isEditing.value = false;
-    showAddSocial.value = false;
     useAlert(t('CONTACTS_LAYOUT.CARD.EDIT_DETAILS_FORM.SUCCESS_MESSAGE'));
   } catch {
     useAlert(t('CONTACTS_LAYOUT.CARD.EDIT_DETAILS_FORM.ERROR_MESSAGE'));
@@ -379,27 +378,24 @@ const saveAbout = async () => {
                 </RelayButton>
               </div>
 
-              <div
+              <RelayActionDropdown
                 v-if="availableNetworks.length"
-                v-on-clickaway="() => (showAddSocial = false)"
-                class="relative self-start"
+                :menu-items="availableNetworks"
+                align="start"
+                content-class="w-48"
+                @action="addSocialLink"
               >
-                <RelayButton
-                  variant="outline"
-                  size="sm"
-                  class="mt-2 h-8 gap-2 rounded-md text-xs font-medium text-foreground shadow-sm"
-                  @click="showAddSocial = !showAddSocial"
-                >
-                  <span class="i-lucide-plus size-3.5" />
-                  {{ t('CONTACTS_LAYOUT.DETAIL.ABOUT.ADD_SOCIAL') }}
-                </RelayButton>
-                <DropdownMenu
-                  v-if="showAddSocial"
-                  :menu-items="availableNetworks"
-                  class="left-0 top-full mt-1 w-48"
-                  @action="addSocialLink"
-                />
-              </div>
+                <template #trigger>
+                  <RelayButton
+                    variant="outline"
+                    size="sm"
+                    class="mt-2 h-8 gap-2 rounded-md text-xs font-medium text-foreground shadow-sm"
+                  >
+                    <span class="i-lucide-plus size-3.5" />
+                    {{ t('CONTACTS_LAYOUT.DETAIL.ABOUT.ADD_SOCIAL') }}
+                  </RelayButton>
+                </template>
+              </RelayActionDropdown>
             </div>
           </div>
 

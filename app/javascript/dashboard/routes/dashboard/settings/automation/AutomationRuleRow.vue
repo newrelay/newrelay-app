@@ -1,4 +1,5 @@
 <script setup>
+import { RelayTooltip } from 'dashboard/components-next/relay';
 import { computed } from 'vue';
 import { messageStamp } from 'shared/helpers/timeHelper';
 import Icon from 'dashboard/components-next/icon/Icon.vue';
@@ -64,36 +65,39 @@ const automationActive = computed({
     <div
       class="flex items-center justify-end gap-2 opacity-0 transition-opacity group-hover:opacity-100"
     >
-      <RelayButton
-        v-tooltip.top="$t('AUTOMATION.FORM.EDIT')"
-        variant="ghost"
-        size="icon"
-        class="size-8 text-muted-foreground hover:bg-muted hover:text-foreground border border-border hover:border-transparent"
-        :disabled="loading"
-        @click="$emit('edit', automation)"
-      >
-        <Icon icon="i-lucide-pencil" class="size-4" />
-      </RelayButton>
-      <RelayButton
-        v-tooltip.top="$t('AUTOMATION.CLONE.TOOLTIP')"
-        variant="ghost"
-        size="icon"
-        class="size-8 text-muted-foreground hover:bg-muted hover:text-foreground border border-border hover:border-transparent"
-        :disabled="loading"
-        @click="$emit('clone', automation)"
-      >
-        <Icon icon="i-lucide-copy" class="size-4" />
-      </RelayButton>
-      <RelayButton
-        v-tooltip.top="$t('AUTOMATION.FORM.DELETE')"
-        variant="ghost"
-        size="icon"
-        class="size-8 text-muted-foreground hover:bg-destructive/10 hover:text-destructive border border-border hover:border-transparent"
-        :disabled="loading"
-        @click="$emit('delete', automation)"
-      >
-        <Icon icon="i-lucide-trash-2" class="size-4" />
-      </RelayButton>
+      <RelayTooltip :content="$t('AUTOMATION.FORM.EDIT')" side="top">
+        <RelayButton
+          variant="ghost"
+          size="icon"
+          class="size-8 text-muted-foreground hover:bg-muted hover:text-foreground border border-border hover:border-transparent"
+          :disabled="loading"
+          @click="$emit('edit', automation)"
+        >
+          <Icon icon="i-lucide-pencil" class="size-4" />
+        </RelayButton>
+      </RelayTooltip>
+      <RelayTooltip :content="$t('AUTOMATION.CLONE.TOOLTIP')" side="top">
+        <RelayButton
+          variant="ghost"
+          size="icon"
+          class="size-8 text-muted-foreground hover:bg-muted hover:text-foreground border border-border hover:border-transparent"
+          :disabled="loading"
+          @click="$emit('clone', automation)"
+        >
+          <Icon icon="i-lucide-copy" class="size-4" />
+        </RelayButton>
+      </RelayTooltip>
+      <RelayTooltip :content="$t('AUTOMATION.FORM.DELETE')" side="top">
+        <RelayButton
+          variant="ghost"
+          size="icon"
+          class="size-8 text-muted-foreground hover:bg-destructive/10 hover:text-destructive border border-border hover:border-transparent"
+          :disabled="loading"
+          @click="$emit('delete', automation)"
+        >
+          <Icon icon="i-lucide-trash-2" class="size-4" />
+        </RelayButton>
+      </RelayTooltip>
     </div>
   </div>
 </template>

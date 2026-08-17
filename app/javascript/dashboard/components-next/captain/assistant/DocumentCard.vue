@@ -1,6 +1,5 @@
 <script setup>
 import { computed } from 'vue';
-import { useToggle } from '@vueuse/core';
 import { useI18n } from 'vue-i18n';
 import { dynamicTime } from 'shared/helpers/timeHelper';
 import { usePolicy } from 'dashboard/composables/usePolicy';
@@ -10,8 +9,10 @@ import {
   getDocumentDisplayPath,
 } from 'shared/helpers/documentHelper';
 
-import DropdownMenu from 'dashboard/components-next/dropdown-menu/DropdownMenu.vue';
-import { RelayButton } from 'dashboard/components-next/relay';
+import {
+  RelayButton,
+  RelayActionDropdown,
+} from 'dashboard/components-next/relay';
 import DocumentSyncStatus from 'dashboard/components-next/captain/assistant/DocumentSyncStatus.vue';
 
 const props = defineProps({
@@ -86,8 +87,6 @@ const { checkPermissions } = usePolicy();
 
 const { t } = useI18n();
 
-const [showActionsDropdown, toggleDropdown] = useToggle();
-
 const isPdf = computed(() => props.pdfDocument);
 const hasSafeLink = computed(() => isSafeHttpLink(props.externalLink));
 const canManage = computed(() => checkPermissions(['administrator']));
@@ -147,7 +146,6 @@ const linkIcon = computed(() =>
 );
 
 const handleAction = ({ action, value }) => {
-  toggleDropdown(false);
   emit('action', { action, value, id: props.id });
 };
 
@@ -235,26 +233,22 @@ const handleCardClick = () => {
         {{ createdAtLabel }}
       </div>
 
-      <div
+      <RelayActionDropdown
         v-if="showMenu"
-        v-on-clickaway="() => toggleDropdown(false)"
-        class="relative"
+        :menu-items="menuItems"
+        align="end"
+        @action="handleAction($event)"
       >
-        <RelayButton
-          variant="ghost"
-          size="icon"
-          class="size-8 rounded-md text-muted-foreground opacity-0 hover:bg-muted hover:text-foreground group-hover:opacity-100 focus:opacity-100 border border-border hover:border-transparent"
-          @click="toggleDropdown()"
-        >
-          <span class="i-lucide-ellipsis-vertical size-4" />
-        </RelayButton>
-        <DropdownMenu
-          v-if="showActionsDropdown"
-          :menu-items="menuItems"
-          class="top-full mt-1 ltr:right-0 rtl:left-0"
-          @action="handleAction($event)"
-        />
-      </div>
+        <template #trigger>
+          <RelayButton
+            variant="ghost"
+            size="icon"
+            class="size-8 rounded-md text-muted-foreground opacity-0 hover:bg-muted hover:text-foreground group-hover:opacity-100 focus:opacity-100 border border-border hover:border-transparent"
+          >
+            <span class="i-lucide-ellipsis-vertical size-4" />
+          </RelayButton>
+        </template>
+      </RelayActionDropdown>
     </div>
   </div>
 </template>

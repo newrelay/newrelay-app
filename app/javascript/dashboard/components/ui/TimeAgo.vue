@@ -1,4 +1,5 @@
 <script>
+import { RelayTooltip } from 'dashboard/components-next/relay';
 const MINUTE_IN_MILLI_SECONDS = 60000;
 const HOUR_IN_MILLI_SECONDS = MINUTE_IN_MILLI_SECONDS * 60;
 const DAY_IN_MILLI_SECONDS = HOUR_IN_MILLI_SECONDS * 24;
@@ -11,6 +12,9 @@ import {
 
 export default {
   name: 'TimeAgo',
+  components: {
+    RelayTooltip,
+  },
   props: {
     isAutoRefreshEnabled: {
       type: Boolean,
@@ -120,13 +124,17 @@ export default {
 </script>
 
 <template>
-  <div
-    v-tooltip.top="{
+  <RelayTooltip
+    :content="{
       content: tooltipText,
       delay: { show: 1000, hide: 0 },
     }"
-    class="ml-auto leading-4 text-xxs text-muted-foreground hover:text-muted-foreground"
+    side="top"
   >
-    <span>{{ `${createdAtTime} • ${lastActivityTime}` }}</span>
-  </div>
+    <div
+      class="ml-auto leading-4 text-xxs text-muted-foreground hover:text-muted-foreground"
+    >
+      <span>{{ `${createdAtTime} • ${lastActivityTime}` }}</span>
+    </div>
+  </RelayTooltip>
 </template>

@@ -1,11 +1,12 @@
 <script>
+import { RelayTooltip, RelayButton } from 'dashboard/components-next/relay';
 import { mapGetters } from 'vuex';
 import DyteAPI from 'dashboard/api/integrations/dyte';
 import { useAlert } from 'dashboard/composables';
-import { RelayButton } from 'dashboard/components-next/relay';
 
 export default {
   components: {
+    RelayTooltip,
     RelayButton,
   },
   props: {
@@ -14,6 +15,10 @@ export default {
       default: 0,
     },
     compact: {
+      type: Boolean,
+      default: false,
+    },
+    plain: {
       type: Boolean,
       default: false,
     },
@@ -51,20 +56,37 @@ export default {
 
 <!-- eslint-disable-next-line vue/no-root-v-if -->
 <template>
-  <RelayButton
-    v-if="isVideoIntegrationEnabled"
-    v-tooltip.top-end="
-      $t('INTEGRATION_SETTINGS.DYTE.START_VIDEO_CALL_HELP_TEXT')
-    "
-    variant="ghost"
-    :class="
-      compact
-        ? 'h-8 w-8 shrink-0 p-0 min-h-8 min-w-8 text-muted-foreground hover:text-foreground'
-        : ''
-    "
-    :disabled="isLoading"
-    @click="onClick"
+  <RelayTooltip
+    v-if="isVideoIntegrationEnabled && plain"
+    :content="$t('INTEGRATION_SETTINGS.DYTE.START_VIDEO_CALL_HELP_TEXT')"
+    side="top"
   >
-    <span class="i-lucide-video size-4 shrink-0" />
-  </RelayButton>
+    <button
+      type="button"
+      :disabled="isLoading"
+      class="size-8 flex items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-none disabled:opacity-50"
+      @click="onClick"
+    >
+      <span class="i-lucide-video size-4 shrink-0" />
+    </button>
+  </RelayTooltip>
+  <RelayTooltip
+    v-else-if="isVideoIntegrationEnabled"
+    :content="$t('INTEGRATION_SETTINGS.DYTE.START_VIDEO_CALL_HELP_TEXT')"
+    side="top"
+    align="end"
+  >
+    <RelayButton
+      variant="ghost"
+      :class="
+        compact
+          ? 'h-8 w-8 shrink-0 p-0 min-h-8 min-w-8 text-muted-foreground hover:text-foreground'
+          : ''
+      "
+      :disabled="isLoading"
+      @click="onClick"
+    >
+      <span class="i-lucide-video size-4 shrink-0" />
+    </RelayButton>
+  </RelayTooltip>
 </template>

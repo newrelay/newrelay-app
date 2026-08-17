@@ -11,15 +11,19 @@ import { getAllowedFileTypesByChannel } from '@chatwoot/utils';
 import VideoCallButton from '../VideoCallButton.vue';
 import { INBOX_TYPES } from 'dashboard/helper/inbox';
 import { mapGetters } from 'vuex';
-import { RelayButton } from 'dashboard/components-next/relay';
+import { RelayButton, RelayTooltip } from 'dashboard/components-next/relay';
 import CannedResponsesDropdown from './CannedResponsesDropdown.vue';
 import EmojiInput from 'shared/components/emoji/EmojiInput.vue';
 import { vOnClickOutside } from '@vueuse/components';
+
+const TOOLBAR_BUTTON_CLASS =
+  'size-8 flex items-center justify-center rounded-md hover:bg-muted text-muted-foreground hover:text-foreground transition-colors focus-visible:outline-none';
 
 export default {
   name: 'InboxReplyBottomPanel',
   components: {
     RelayButton,
+    RelayTooltip,
     FileUpload,
     VideoCallButton,
     EmojiInput,
@@ -104,8 +108,7 @@ export default {
       handleEmojiPickerClick,
       hideEmojiPicker,
       captainTasksEnabled,
-      toolbarIconButtonClass:
-        'h-8 w-8 shrink-0 p-0 min-h-8 min-w-8 text-muted-foreground hover:text-foreground',
+      toolbarButtonClass: TOOLBAR_BUTTON_CLASS,
     };
   },
   computed: {
@@ -192,6 +195,16 @@ export default {
     showSendShortcutIcon() {
       return !this.isNote;
     },
+    audioRecorderButtonClass() {
+      return this.isRecordingAudio
+        ? 'size-8 flex items-center justify-center rounded-md bg-red-500/10 text-red-500 transition-colors hover:bg-red-500/20 hover:text-red-600 focus-visible:outline-none'
+        : this.toolbarButtonClass;
+    },
+    aiReplyButtonClass() {
+      return this.isCopilotActive
+        ? 'size-8 flex items-center justify-center rounded-md bg-primary/10 text-primary transition-colors hover:bg-primary/20 hover:text-primary focus-visible:outline-none'
+        : 'size-8 flex items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-primary/10 hover:text-primary focus-visible:outline-none';
+    },
   },
   mounted() {
     ActiveStorage.start();
@@ -206,29 +219,31 @@ export default {
 
 <template>
   <div
-    class="px-3 py-2.5 flex items-center justify-between border-t border-border bg-muted/5 rounded-b-xl overflow-visible"
+    class="flex items-center justify-between overflow-visible rounded-b-xl border-t border-border bg-muted/5 px-3 py-2.5"
   >
-    <div class="flex items-center gap-1 flex-wrap">
+    <div class="flex flex-wrap items-center gap-1">
       <!-- Emoji -->
-      <div
+      <RelayTooltip
         v-if="!isEditorDisabled"
-        class="relative flex items-center justify-center"
+        :content="$t('CONVERSATION.REPLYBOX.TIP_EMOJI_ICON')"
+        side="top"
       >
-        <RelayButton
-          v-tooltip.top-end="$t('CONVERSATION.REPLYBOX.TIP_EMOJI_ICON')"
-          variant="ghost"
-          :class="toolbarIconButtonClass"
-          @click="handleEmojiPickerClick"
-        >
-          <span class="i-lucide-smile size-4 shrink-0" />
-        </RelayButton>
-        <EmojiInput
-          v-if="showEmojiPicker"
-          v-on-click-outside="hideEmojiPicker"
-          class="!left-0 !right-auto !top-auto !bottom-full !mb-2 z-50"
-          :on-click="onEmojiSelect"
-        />
-      </div>
+        <div class="relative flex items-center justify-center">
+          <button
+            type="button"
+            :class="toolbarButtonClass"
+            @click="handleEmojiPickerClick"
+          >
+            <span class="i-lucide-smile size-4 shrink-0" />
+          </button>
+          <EmojiInput
+            v-if="showEmojiPicker"
+            v-on-click-outside="hideEmojiPicker"
+            class="!bottom-full !left-0 !right-auto !top-auto !mb-2 z-50"
+            :on-click="onEmojiSelect"
+          />
+        </div>
+      </RelayTooltip>
 
       <!-- Attach -->
       <FileUpload
@@ -247,146 +262,160 @@ export default {
         class="inline-flex"
         @input-file="onFileUpload"
       >
-        <RelayButton
+        <RelayTooltip
           v-if="!isEditorDisabled"
-          v-tooltip.top-end="$t('CONVERSATION.REPLYBOX.TIP_ATTACH_ICON')"
-          variant="ghost"
-          :class="toolbarIconButtonClass"
+          :content="$t('CONVERSATION.REPLYBOX.TIP_ATTACH_ICON')"
+          side="top"
         >
-          <span class="i-lucide-paperclip size-4 shrink-0" />
-        </RelayButton>
+          <button type="button" :class="toolbarButtonClass">
+            <span class="i-lucide-paperclip size-4 shrink-0" />
+          </button>
+        </RelayTooltip>
       </FileUpload>
 
-      <!-- Audio Recorder -->
-      <RelayButton
+      <RelayTooltip
         v-if="showAudioRecorderButton"
-        v-tooltip.top-end="$t('CONVERSATION.REPLYBOX.TIP_AUDIORECORDER_ICON')"
-        variant="ghost"
-        :class="[
-          toolbarIconButtonClass,
-          isRecordingAudio
-            ? 'bg-red-500/10 text-red-500 hover:bg-red-500/20 hover:text-red-600'
-            : '',
-        ]"
-        @click="toggleAudioRecorder"
+        :content="$t('CONVERSATION.REPLYBOX.TIP_AUDIORECORDER_ICON')"
+        side="top"
       >
-        <span
-          class="size-4 shrink-0"
-          :class="!isRecordingAudio ? 'i-lucide-mic' : 'i-lucide-mic-off'"
-        />
-      </RelayButton>
+        <button
+          type="button"
+          :class="audioRecorderButtonClass"
+          @click="toggleAudioRecorder"
+        >
+          <span
+            class="size-4 shrink-0"
+            :class="!isRecordingAudio ? 'i-lucide-mic' : 'i-lucide-mic-off'"
+          />
+        </button>
+      </RelayTooltip>
 
-      <RelayButton
+      <button
         v-if="showAudioPlayStopButton"
-        variant="ghost"
-        class="h-8 px-2 text-muted-foreground border border-border hover:border-transparent"
+        type="button"
+        class="flex h-8 items-center gap-1 rounded-md px-2 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
         @click="toggleAudioRecorderPlayPause"
       >
         <span :class="audioRecorderPlayStopIcon" class="size-4" />
         {{ recordingAudioDurationText }}
-      </RelayButton>
+      </button>
 
-      <!-- Signature -->
-      <RelayButton
+      <RelayTooltip
         v-if="showMessageSignatureButton"
-        v-tooltip.top-end="signatureToggleTooltip"
-        variant="ghost"
-        :class="toolbarIconButtonClass"
-        @click="toggleMessageSignature"
+        :content="signatureToggleTooltip"
+        side="top"
       >
-        <span class="i-lucide-pen-line size-4 shrink-0" />
-      </RelayButton>
+        <button
+          type="button"
+          :class="toolbarButtonClass"
+          @click="toggleMessageSignature"
+        >
+          <span class="i-lucide-pen-line size-4 shrink-0" />
+        </button>
+      </RelayTooltip>
 
       <!-- Video Call -->
       <VideoCallButton
         v-if="!isEditorDisabled"
         compact
+        plain
         :conversation-id="conversationId"
       />
 
-      <!-- WhatsApp Templates -->
-      <RelayButton
+      <RelayTooltip
         v-if="enableWhatsAppTemplates"
-        v-tooltip.top-end="$t('CONVERSATION.FOOTER.WHATSAPP_TEMPLATES')"
-        variant="ghost"
-        :class="toolbarIconButtonClass"
-        @click="$emit('selectWhatsappTemplate')"
+        :content="$t('CONVERSATION.FOOTER.WHATSAPP_TEMPLATES')"
+        side="top"
       >
-        <span class="i-lucide-file-text size-4 shrink-0" />
-      </RelayButton>
+        <button
+          type="button"
+          :class="toolbarButtonClass"
+          @click="$emit('selectWhatsappTemplate')"
+        >
+          <span class="i-lucide-file-text size-4 shrink-0" />
+        </button>
+      </RelayTooltip>
 
       <!-- Content Templates -->
-      <RelayButton
+      <div
         v-if="enableContentTemplates"
-        v-tooltip.top-end="'Content Templates'"
-        variant="ghost"
-        :class="toolbarIconButtonClass"
-        @click="$emit('selectContentTemplate')"
+        class="group relative flex items-center justify-center"
       >
-        <span class="i-lucide-file-text size-4 shrink-0" />
-      </RelayButton>
+        <button
+          type="button"
+          :class="toolbarButtonClass"
+          @click="$emit('selectContentTemplate')"
+        >
+          <span class="i-lucide-file-text size-4 shrink-0" />
+        </button>
+      </div>
 
       <!-- Canned Responses -->
       <CannedResponsesDropdown
         v-if="showCannedResponsesButton"
-        :button-class="toolbarIconButtonClass"
+        plain
+        :button-class="toolbarButtonClass"
         @select="$emit('selectCannedResponse', $event)"
       />
 
-      <!-- Quoted Reply -->
-      <RelayButton
+      <RelayTooltip
         v-if="showQuotedReplyToggle"
-        v-tooltip.top-end="quotedReplyToggleTooltip"
-        :variant="quotedReplyEnabled ? 'secondary' : 'ghost'"
-        :class="[
-          toolbarIconButtonClass,
-          quotedReplyEnabled ? 'bg-muted text-foreground' : '',
-        ]"
-        :aria-pressed="quotedReplyEnabled"
-        @click="$emit('toggleQuotedReply')"
+        :content="quotedReplyToggleTooltip"
+        side="top"
       >
-        <span class="i-lucide-quote size-4 shrink-0" />
-      </RelayButton>
+        <button
+          type="button"
+          :class="[
+            toolbarButtonClass,
+            quotedReplyEnabled ? 'bg-muted text-foreground' : '',
+          ]"
+          :aria-pressed="quotedReplyEnabled"
+          @click="$emit('toggleQuotedReply')"
+        >
+          <span class="i-lucide-quote size-4 shrink-0" />
+        </button>
+      </RelayTooltip>
 
       <!-- Insert Article -->
-      <RelayButton
+      <div
         v-if="enableInsertArticleInReply && !isEditorDisabled"
-        v-tooltip.top-end="$t('HELP_CENTER.ARTICLE_SEARCH.OPEN_ARTICLE_SEARCH')"
-        variant="ghost"
-        :class="toolbarIconButtonClass"
-        @click="$emit('toggleInsertArticle')"
+        class="group relative flex items-center justify-center"
       >
-        <span class="i-lucide-file-text size-4 shrink-0" />
-      </RelayButton>
+        <button
+          type="button"
+          :class="toolbarButtonClass"
+          @click="$emit('toggleInsertArticle')"
+        >
+          <span class="i-lucide-file-text size-4 shrink-0" />
+        </button>
+      </div>
 
       <div
         v-if="captainTasksEnabled && !isEditorDisabled && !isOnPrivateNote"
-        class="w-px h-4 bg-border mx-1"
+        class="mx-1 h-4 w-px bg-border"
       />
 
-      <!-- AI Reply -->
-      <RelayButton
+      <RelayTooltip
         v-if="captainTasksEnabled && !isEditorDisabled && !isOnPrivateNote"
-        v-tooltip.top-end="$t('CONVERSATION.REPLYBOX.AI_REPLY')"
-        variant="ghost"
-        :class="[
-          toolbarIconButtonClass,
-          isCopilotActive
-            ? 'bg-primary/10 text-primary hover:bg-primary/20 hover:text-primary'
-            : 'hover:bg-primary/10 hover:text-primary',
-        ]"
-        @click="$emit('toggleCopilot')"
+        :content="$t('CONVERSATION.REPLYBOX.AI_REPLY')"
+        side="top"
       >
-        <span class="i-lucide-wand-sparkles size-4 shrink-0" />
-      </RelayButton>
+        <button
+          type="button"
+          :class="aiReplyButtonClass"
+          @click="$emit('toggleCopilot')"
+        >
+          <span class="i-lucide-wand-sparkles size-4 shrink-0" />
+        </button>
+      </RelayTooltip>
 
       <transition name="modal-fade">
         <div
           v-show="uploadRef && uploadRef.dropActive"
-          class="flex fixed top-0 right-0 bottom-0 left-0 z-20 flex-col gap-2 justify-center items-center w-full h-full text-foreground bg-background/80 backdrop-blur-sm"
+          class="fixed inset-0 z-20 flex h-full w-full flex-col items-center justify-center gap-2 bg-background/80 text-foreground backdrop-blur-sm"
         >
           <span class="i-lucide-cloud-upload size-10" />
-          <h4 class="capitalize text-2xl break-words font-medium">
+          <h4 class="break-words text-2xl font-medium capitalize">
             {{ $t('CONVERSATION.REPLYBOX.DRAG_DROP') }}
           </h4>
         </div>
@@ -397,7 +426,7 @@ export default {
       <RelayButton
         type="submit"
         variant="default"
-        class="h-8 px-4 gap-1.5 font-semibold text-sm shadow-xs"
+        class="h-8 gap-1.5 px-4 text-sm font-semibold shadow-xs"
         :class="isNote ? 'bg-amber-500 text-white hover:bg-amber-600' : ''"
         :disabled="isSendDisabled"
         @click="onSend"

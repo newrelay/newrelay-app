@@ -1,4 +1,5 @@
 <script setup>
+import { RelayTooltip } from 'dashboard/components-next/relay';
 import { computed } from 'vue';
 import { CONVERSATION_STATUS } from 'shared/constants/messages';
 
@@ -31,12 +32,13 @@ const iconName = computed(() => {
 </script>
 
 <template>
-  <Icon
-    v-tooltip.top="{
+  <RelayTooltip
+    :content="{
       content: status,
       delay: { show: 500, hide: 0 },
     }"
-    :icon="iconName"
-    class="size-4 flex-shrink-0"
-  />
+    side="top"
+  >
+    <Icon :icon="iconName" class="size-4 flex-shrink-0" />
+  </RelayTooltip>
 </template>

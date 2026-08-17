@@ -35,13 +35,9 @@ const learnMore = () => {
       <!-- Hero Section -->
       <div class="flex flex-col items-center text-center mb-10 max-w-lg">
         <div
-          class="size-20 rounded-full bg-primary/5 flex items-center justify-center mb-6 relative"
+          class="mb-6 flex size-16 items-center justify-center rounded-full bg-primary/10 ring-8 ring-primary/5"
         >
-          <div
-            class="absolute inset-2 rounded-full border border-primary/10 bg-background flex items-center justify-center"
-          >
-            <span class="i-lucide-inbox size-8 text-primary" />
-          </div>
+          <span class="i-lucide-inbox size-8 text-primary" />
         </div>
         <h2
           class="capitalize text-[20px] font-[600] text-foreground mb-2 tracking-tight"
@@ -78,7 +74,7 @@ const learnMore = () => {
         <div class="w-full flex items-center mb-8 gap-4">
           <div class="h-px bg-border flex-1" />
           <span
-            class="text-[11px] font-medium text-muted-foreground uppercase tracking-wider"
+            class="text-[14px] font-medium capitalize text-muted-foreground"
           >
             {{ t('INBOX.EMPTY.SUPPORTED_CHANNELS') }}
           </span>
@@ -86,87 +82,93 @@ const learnMore = () => {
         </div>
 
         <!-- Channel Icons -->
-        <div class="flex items-center justify-center gap-6 sm:gap-10 flex-wrap">
+        <div class="flex flex-wrap items-center justify-center gap-6 sm:gap-10">
           <!-- WhatsApp -->
-          <div class="flex flex-col items-center gap-2 cursor-default">
+          <div class="flex cursor-default flex-col items-center gap-2">
             <div
-              class="size-12 rounded-xl border border-border/60 bg-card flex items-center justify-center shadow-xs"
+              class="flex size-12 items-center justify-center rounded-xl border border-border bg-card"
             >
               <img
                 src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg"
-                alt="WhatsApp"
-                class="size-6 opacity-90 dark:opacity-80"
+                :alt="t('INBOX.EMPTY.WHATSAPP')"
+                class="size-6 opacity-90 transition-opacity dark:opacity-80"
               />
             </div>
-            <span class="text-xs font-normal text-muted-foreground">
+            <span class="text-sm font-normal text-muted-foreground">
               {{ t('INBOX.EMPTY.WHATSAPP') }}
             </span>
           </div>
 
           <!-- Email -->
-          <div class="flex flex-col items-center gap-2 cursor-default">
+          <div class="flex cursor-default flex-col items-center gap-2">
             <div
-              class="size-12 rounded-xl border border-border/60 bg-card flex items-center justify-center shadow-xs"
+              class="flex size-12 items-center justify-center rounded-xl border border-border bg-card"
             >
-              <span class="i-lucide-mail size-6 text-[#007BFF] opacity-90" />
+              <span
+                class="i-lucide-mail size-6 text-[#007BFF] opacity-90 transition-opacity dark:opacity-80"
+              />
             </div>
-            <span class="text-xs font-normal text-muted-foreground">
+            <span class="text-sm font-normal text-muted-foreground">
               {{ t('INBOX.EMPTY.EMAIL') }}
             </span>
           </div>
 
           <!-- SMS -->
-          <div class="flex flex-col items-center gap-2 cursor-default">
+          <div class="flex cursor-default flex-col items-center gap-2">
             <div
-              class="size-12 rounded-xl border border-border/60 bg-card flex items-center justify-center shadow-xs"
+              class="flex size-12 items-center justify-center rounded-xl border border-border bg-card"
             >
               <span
-                class="i-lucide-message-square size-6 text-emerald-500 opacity-90"
+                class="i-lucide-message-square-more size-6 text-[#25D366] opacity-90 transition-opacity dark:opacity-80"
               />
             </div>
-            <span class="text-xs font-normal text-muted-foreground">
+            <span class="text-sm font-normal text-muted-foreground">
               {{ t('INBOX.EMPTY.SMS') }}
             </span>
           </div>
 
           <!-- Messenger -->
-          <div class="flex flex-col items-center gap-2 cursor-default">
+          <div class="flex cursor-default flex-col items-center gap-2">
             <div
-              class="size-12 rounded-xl border border-border/60 bg-card flex items-center justify-center shadow-xs"
+              class="flex size-12 items-center justify-center rounded-xl border border-border bg-card"
             >
-              <span
-                class="i-lucide-message-circle size-6 text-[#0084FF] opacity-90"
+              <img
+                src="https://upload.wikimedia.org/wikipedia/commons/b/be/Facebook_Messenger_logo_2020.svg"
+                :alt="t('INBOX.EMPTY.MESSENGER')"
+                class="size-6 opacity-90 transition-opacity dark:opacity-80"
               />
             </div>
-            <span class="text-xs font-normal text-muted-foreground">
+            <span class="text-sm font-normal text-muted-foreground">
               {{ t('INBOX.EMPTY.MESSENGER') }}
             </span>
           </div>
 
           <!-- Instagram -->
-          <div class="flex flex-col items-center gap-2 cursor-default">
+          <div class="flex cursor-default flex-col items-center gap-2">
             <div
-              class="size-12 rounded-xl border border-border/60 bg-card flex items-center justify-center shadow-xs"
+              class="flex size-12 items-center justify-center rounded-xl border border-border bg-card"
             >
-              <span
-                class="i-lucide-instagram size-6 text-[#E1306C] opacity-90"
+              <img
+                src="https://upload.wikimedia.org/wikipedia/commons/e/e7/Instagram_logo_2016.svg"
+                :alt="t('INBOX.EMPTY.INSTAGRAM')"
+                class="size-6 opacity-90 transition-opacity dark:opacity-80"
               />
             </div>
-            <span class="text-xs font-normal text-muted-foreground">
+            <span class="text-sm font-normal text-muted-foreground">
               {{ t('INBOX.EMPTY.INSTAGRAM') }}
             </span>
           </div>
 
           <!-- Live Chat -->
-          <div class="flex flex-col items-center gap-2 cursor-default">
+          <div class="flex cursor-default flex-col items-center gap-2">
             <div
-              class="size-12 rounded-xl border border-border/60 bg-card flex items-center justify-center shadow-xs"
+              class="flex size-12 items-center justify-center rounded-xl border border-border bg-card"
             >
               <span
-                class="i-lucide-message-square size-6 text-primary opacity-90"
+                class="i-lucide-message-circle size-6 text-[#6366F1] opacity-90 transition-opacity dark:opacity-80"
               />
             </div>
-            <span class="text-xs font-normal text-muted-foreground">
+            <span class="text-sm font-normal text-muted-foreground">
               {{ t('INBOX.EMPTY.LIVE_CHAT') }}
             </span>
           </div>

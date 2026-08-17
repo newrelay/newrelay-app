@@ -1,6 +1,5 @@
 <script setup>
 import { computed } from 'vue';
-import { useToggle } from '@vueuse/core';
 import { useI18n } from 'vue-i18n';
 import { dynamicTime } from 'shared/helpers/timeHelper';
 import {
@@ -13,8 +12,11 @@ import { useMapGetter } from 'dashboard/composables/store.js';
 import { useConfig } from 'dashboard/composables/useConfig';
 import { FEATURE_FLAGS } from 'dashboard/featureFlags';
 import Icon from 'dashboard/components-next/icon/Icon.vue';
-import DropdownMenu from 'dashboard/components-next/dropdown-menu/DropdownMenu.vue';
-import { RelayButton, RelayCheckbox } from 'dashboard/components-next/relay';
+import {
+  RelayButton,
+  RelayCheckbox,
+  RelayActionDropdown,
+} from 'dashboard/components-next/relay';
 
 const props = defineProps({
   id: {
@@ -67,8 +69,6 @@ const emit = defineEmits([
 ]);
 
 const { t } = useI18n();
-
-const [showActionsDropdown, toggleDropdown] = useToggle();
 
 const currentAccountId = useMapGetter('getCurrentAccountId');
 const isFeatureEnabledonAccount = useMapGetter(
@@ -168,7 +168,6 @@ const lastUpdatedAt = computed(() => {
 });
 
 const handleArticleAction = ({ action, value }) => {
-  toggleDropdown(false);
   emit('articleAction', { action, value, id: props.id });
 };
 
@@ -240,25 +239,22 @@ const handleClick = id => {
         >
           {{ statusText }}
         </span>
-        <div
-          v-on-clickaway="() => toggleDropdown(false)"
-          class="relative"
-          @click.stop
-        >
-          <RelayButton
-            variant="ghost"
-            size="icon"
-            class="size-7 border border-border text-muted-foreground hover:border-transparent hover:bg-muted hover:text-foreground"
-            @click="toggleDropdown()"
-          >
-            <span class="i-lucide-ellipsis-vertical size-3.5" />
-          </RelayButton>
-          <DropdownMenu
-            v-if="showActionsDropdown"
+        <div class="relative" @click.stop>
+          <RelayActionDropdown
             :menu-items="articleMenuItems"
-            class="top-full mt-1 ltr:right-0 rtl:left-0 xl:ltr:left-0 xl:rtl:right-0"
+            align="end"
             @action="handleArticleAction($event)"
-          />
+          >
+            <template #trigger>
+              <RelayButton
+                variant="ghost"
+                size="icon"
+                class="size-7 border border-border text-muted-foreground hover:border-transparent hover:bg-muted hover:text-foreground"
+              >
+                <span class="i-lucide-ellipsis-vertical size-3.5" />
+              </RelayButton>
+            </template>
+          </RelayActionDropdown>
         </div>
       </div>
       <span class="text-right text-[12.5px] text-muted-foreground">

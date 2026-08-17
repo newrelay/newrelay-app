@@ -1,4 +1,5 @@
 <script setup>
+import { RelayTooltip } from 'dashboard/components-next/relay';
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import Icon from 'next/icon/Icon.vue';
@@ -106,15 +107,16 @@ const toggleOption = option => {
           <Icon v-if="item.icon" :icon="item.icon" class="flex-shrink-0" />
           <span class="truncate">{{ item.name }}</span>
         </div>
-        <div
-          v-if="remainingItems.length > 0"
-          v-tooltip.top="remainingTooltip"
-          class="px-3 border-r rtl:border-l rtl:border-r-0 border-border text-foreground text-sm flex gap-2 items-center max-w-[100px]"
-        >
-          <span class="truncate">{{
-            t('COMBOBOX.MORE', { count: remainingItems.length })
-          }}</span>
-        </div>
+        <RelayTooltip :content="remainingTooltip" side="top">
+          <div
+            v-if="remainingItems.length > 0"
+            class="px-3 border-r rtl:border-l rtl:border-r-0 border-border text-foreground text-sm flex gap-2 items-center max-w-[100px]"
+          >
+            <span class="truncate">{{
+              t('COMBOBOX.MORE', { count: remainingItems.length })
+            }}</span>
+          </div>
+        </RelayTooltip>
         <div class="flex items-center border-none px-3 gap-2">
           <Icon icon="i-lucide-plus" />
         </div>

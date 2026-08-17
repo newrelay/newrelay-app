@@ -1,4 +1,5 @@
 <script setup>
+import { RelayTooltip } from 'dashboard/components-next/relay';
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { CSAT_RATINGS } from 'shared/constants/messages';
@@ -74,19 +75,20 @@ const getRatingCount = value => {
     </div>
 
     <template v-else>
-      <div class="h-3 w-full bg-muted/40 rounded-full overflow-hidden flex">
-        <div
+      <div class="flex h-3 w-full overflow-hidden rounded-full bg-muted/40">
+        <RelayTooltip
           v-for="rating in sortedRatings"
           :key="rating.value"
-          v-tooltip="
-            `${getRatingLabel(rating.value)}: ${formatPercent(ratingPercentage[rating.value])} (${getRatingCount(rating.value)})`
-          "
-          :style="{
-            width: `${ratingPercentage[rating.value] || 0}%`,
-            backgroundColor: rating.color,
-          }"
-          class="h-full transition-all duration-300"
-        />
+          :content="`${getRatingLabel(rating.value)}: ${formatPercent(ratingPercentage[rating.value])} (${getRatingCount(rating.value)})`"
+        >
+          <div
+            :style="{
+              width: `${ratingPercentage[rating.value] || 0}%`,
+              backgroundColor: rating.color,
+            }"
+            class="h-full transition-all duration-300"
+          />
+        </RelayTooltip>
       </div>
 
       <div class="flex flex-col sm:flex-row items-stretch w-full">

@@ -135,6 +135,7 @@ export default {
       showContentTemplatesModal: false,
       showLogCallModal: false,
       showMeetingModal: false,
+      isEditorExpanded: false,
       updateEditorSelectionWith: '',
       undefinedVariableMessage: '',
       showMentions: false,
@@ -228,6 +229,9 @@ export default {
       }
       if (this.isInboxVariant && this.isOnPrivateNote) {
         return this.$t('CONVERSATION.REPLYBOX.INTERNAL_NOTE_INPUT');
+      }
+      if (this.isInboxVariant && !this.isPrivate) {
+        return this.$t('CONVERSATION.FOOTER.INBOX_MSG_INPUT');
       }
       return this.isPrivate
         ? this.$t('CONVERSATION.FOOTER.PRIVATE_MSG_INPUT')
@@ -340,7 +344,9 @@ export default {
       return {
         'is-private': this.isPrivate,
         'is-focused': this.isFocused || this.hasAttachments,
-        'flex flex-col': this.isInboxVariant,
+        'flex flex-col overflow-hidden shadow-sm': this.isInboxVariant,
+        'focus-within:ring-1 focus-within:ring-primary focus-within:border-primary':
+          !this.isInboxVariant,
       };
     },
     hasAttachments() {
@@ -1276,6 +1282,7 @@ export default {
       );
     },
     toggleEditorSize() {
+      this.isEditorExpanded = !this.isEditorExpanded;
       this.$emit('toggleEditorSize');
       this.$nextTick(() => this.messageEditor?.focusEditorInputField());
     },
@@ -1324,7 +1331,7 @@ export default {
   <ReplyBoxBanner :message="message" :is-on-private-note="isOnPrivateNote" />
   <div
     ref="replyEditor"
-    class="reply-box bg-card border border-border rounded-xl shadow-xs overflow-visible transition-shadow focus-within:ring-1 focus-within:ring-primary focus-within:border-primary"
+    class="reply-box bg-card border border-border rounded-xl shadow-xs overflow-visible transition-shadow"
     :class="replyBoxClass"
   >
     <InboxReplyTopPanel
@@ -1332,6 +1339,7 @@ export default {
       :mode="replyType"
       :contact-name="currentContact?.name"
       :is-reply-restricted="isReplyRestricted"
+      :is-editor-expanded="isEditorExpanded"
       :disabled="
         (copilot.isActive.value && copilot.isGenerating.value) ||
         showAudioRecorderEditor
@@ -1488,11 +1496,7 @@ export default {
             !isSignatureAvailable &&
             isDefaultEditorMode
           "
-          :class="
-            isInboxVariant
-              ? 'text-xs text-amber-600 bg-amber-500/10 px-3 py-1.5 border-t border-amber-500/20'
-              : 'mb-2'
-          "
+          :variant="isInboxVariant ? 'inbox' : 'default'"
         />
       </div>
     </Transition>
@@ -1646,6 +1650,10 @@ export default {
 
 .reply-box__top--inbox {
   @apply px-0;
+
+  :deep(.ProseMirror) {
+    @apply min-h-[100px] bg-transparent px-4 py-3 text-sm;
+  }
 }
 
 .inbox-note-editor :deep(.ProseMirror) {

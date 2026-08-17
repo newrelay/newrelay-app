@@ -1,4 +1,5 @@
 <script setup>
+import { RelayTooltip } from 'dashboard/components-next/relay';
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 
@@ -200,11 +201,12 @@ const handleRegisterWebhook = () => {
             <span class="text-body-main font-medium text-muted-foreground">
               {{ item.label }}
             </span>
-            <Icon
-              v-tooltip.top="item.tooltip"
-              icon="i-lucide-info"
-              class="flex-shrink-0 w-4 h-4 cursor-help text-muted-foreground"
-            />
+            <RelayTooltip :content="item.tooltip" side="top">
+              <Icon
+                icon="i-lucide-info"
+                class="flex-shrink-0 w-4 h-4 cursor-help text-muted-foreground"
+              />
+            </RelayTooltip>
           </div>
           <div class="flex items-center">
             <span
@@ -249,11 +251,15 @@ const handleRegisterWebhook = () => {
             <span class="text-body-main font-medium text-muted-foreground">
               {{ t('INBOX_MGMT.ACCOUNT_HEALTH.WEBHOOK.TITLE') }}
             </span>
-            <Icon
-              v-tooltip.top="t('INBOX_MGMT.ACCOUNT_HEALTH.WEBHOOK.DESCRIPTION')"
-              icon="i-lucide-info"
-              class="flex-shrink-0 w-4 h-4 cursor-help text-muted-foreground"
-            />
+            <RelayTooltip
+              :content="t('INBOX_MGMT.ACCOUNT_HEALTH.WEBHOOK.DESCRIPTION')"
+              side="top"
+            >
+              <Icon
+                icon="i-lucide-info"
+                class="flex-shrink-0 w-4 h-4 cursor-help text-muted-foreground"
+              />
+            </RelayTooltip>
           </div>
           <div class="flex items-center justify-between gap-3">
             <span

@@ -1,4 +1,5 @@
 <script setup>
+import { RelayTooltip } from 'dashboard/components-next/relay';
 defineProps({
   label: {
     type: String,
@@ -35,10 +36,9 @@ defineProps({
         class="text-[14px] text-muted-foreground font-medium flex items-center gap-1.5"
       >
         {{ label }}
-        <span
-          v-tooltip.right="tooltip"
-          class="i-lucide-info size-3.5 opacity-60"
-        />
+        <RelayTooltip :content="tooltip" side="right">
+          <span class="i-lucide-info size-3.5 opacity-60" />
+        </RelayTooltip>
       </div>
       <div
         v-if="isLoading"

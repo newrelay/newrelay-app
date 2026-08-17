@@ -1,8 +1,6 @@
 <script setup>
 import { CALENDAR_PERIODS } from '../helpers/DatePickerHelper';
 
-import NextButton from 'dashboard/components-next/button/Button.vue';
-
 defineProps({
   calendarType: {
     type: String,
@@ -21,57 +19,52 @@ defineProps({
     default: '',
   },
 });
+
 const emit = defineEmits(['prev', 'next', 'setView']);
 
 const { YEAR } = CALENDAR_PERIODS;
-
-const onClickPrev = type => {
-  emit('prev', type);
-};
-
-const onClickNext = type => {
-  emit('next', type);
-};
-
-const onClickSetView = (type, mode) => {
-  emit('setView', type, mode);
-};
 </script>
 
 <template>
-  <div class="flex items-start justify-between w-full h-9">
-    <NextButton
-      slate
-      ghost
-      xs
-      icon="i-lucide-chevron-left"
-      class="rtl:rotate-180"
-      @click.stop="onClickPrev(calendarType)"
-    />
+  <div class="mb-6 flex w-full items-center justify-between px-2">
+    <button
+      type="button"
+      class="rounded-full p-1 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+      @click.stop="emit('prev', calendarType)"
+    >
+      <span class="i-lucide-chevron-left size-4 rtl:rotate-180" />
+    </button>
     <div class="flex items-center gap-1">
       <button
         v-if="firstButtonLabel"
-        class="p-0 text-sm font-medium text-center text-foreground hover:text-primary"
-        @click.stop="onClickSetView(calendarType, viewMode)"
+        type="button"
+        class="p-0 text-sm font-medium text-foreground hover:text-primary"
+        @click.stop="emit('setView', calendarType, viewMode)"
       >
         {{ firstButtonLabel }}
       </button>
       <button
         v-if="buttonLabel"
-        class="p-0 text-sm font-medium text-center text-foreground"
+        type="button"
+        class="p-0 text-sm font-medium text-foreground"
         :class="{ 'hover:text-primary': viewMode }"
-        @click.stop="onClickSetView(calendarType, YEAR)"
+        @click.stop="emit('setView', calendarType, YEAR)"
       >
         {{ buttonLabel }}
       </button>
+      <span
+        v-if="!firstButtonLabel && buttonLabel"
+        class="text-sm font-medium text-foreground"
+      >
+        {{ buttonLabel }}
+      </span>
     </div>
-    <NextButton
-      slate
-      ghost
-      xs
-      icon="i-lucide-chevron-right"
-      class="rtl:rotate-180"
-      @click.stop="onClickNext(calendarType)"
-    />
+    <button
+      type="button"
+      class="rounded-full p-1 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+      @click.stop="emit('next', calendarType)"
+    >
+      <span class="i-lucide-chevron-right size-4 rtl:rotate-180" />
+    </button>
   </div>
 </template>

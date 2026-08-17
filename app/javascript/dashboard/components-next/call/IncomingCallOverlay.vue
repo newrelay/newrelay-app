@@ -1,4 +1,5 @@
 <script setup>
+import { RelayTooltip } from 'dashboard/components-next/relay';
 import Avatar from 'dashboard/components-next/avatar/Avatar.vue';
 import Icon from 'dashboard/components-next/icon/Icon.vue';
 
@@ -29,13 +30,14 @@ defineEmits(['accept', 'reject', 'dismiss']);
       class="flex relative z-10 flex-col w-full max-w-4xl min-h-[340px] rounded-3xl border shadow-2xl sm:flex-row sm:aspect-[2.2/1] bg-card border-border/80 ring-1 ring-border/50 overflow-hidden"
     >
       <!-- Dismiss (removes the notification without declining) -->
-      <button
-        v-tooltip.bottom="$t('CONVERSATION.VOICE_WIDGET.DISMISS_CALL')"
-        class="flex absolute top-4 z-20 justify-center items-center rounded-full ltr:right-4 rtl:left-4 size-8 text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
-        @click="$emit('dismiss')"
-      >
-        <Icon class="size-4" icon="i-ph-x-bold" />
-      </button>
+      <RelayTooltip :content="$t('CONVERSATION.VOICE_WIDGET.DISMISS_CALL')">
+        <button
+          class="flex absolute top-4 z-20 justify-center items-center rounded-full ltr:right-4 rtl:left-4 size-8 text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
+          @click="$emit('dismiss')"
+        >
+          <Icon class="size-4" icon="i-ph-x-bold" />
+        </button>
+      </RelayTooltip>
 
       <!-- Left: caller info -->
       <div

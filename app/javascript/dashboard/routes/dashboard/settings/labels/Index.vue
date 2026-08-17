@@ -11,6 +11,7 @@ import SettingsLayout from '../SettingsLayout.vue';
 import {
   RelayButton,
   RelayConfirmModal,
+  RelayTooltip,
 } from 'dashboard/components-next/relay';
 import Icon from 'dashboard/components-next/icon/Icon.vue';
 
@@ -177,26 +178,34 @@ onBeforeMount(() => {
                   <div
                     class="flex items-center gap-1.5 opacity-0 transition-opacity group-hover:opacity-100"
                   >
-                    <RelayButton
-                      v-tooltip.top="$t('LABEL_MGMT.FORM.EDIT')"
-                      variant="ghost"
-                      size="icon"
-                      class="size-8 border border-transparent text-muted-foreground shadow-xs hover:border-border hover:bg-background hover:text-foreground border border-border hover:border-transparent"
-                      :disabled="loading[label.id]"
-                      @click="openEditPopup(label)"
+                    <RelayTooltip
+                      :content="$t('LABEL_MGMT.FORM.EDIT')"
+                      side="top"
                     >
-                      <Icon icon="i-lucide-pencil" class="size-3.5" />
-                    </RelayButton>
-                    <RelayButton
-                      v-tooltip.top="$t('LABEL_MGMT.FORM.DELETE')"
-                      variant="ghost"
-                      size="icon"
-                      class="size-8 border border-transparent text-muted-foreground shadow-xs hover:border-destructive/20 hover:bg-destructive/10 hover:text-destructive border border-border hover:border-transparent"
-                      :disabled="loading[label.id]"
-                      @click="openDeletePopup(label)"
+                      <RelayButton
+                        variant="ghost"
+                        size="icon"
+                        class="size-8 border border-transparent text-muted-foreground shadow-xs hover:border-border hover:bg-background hover:text-foreground border border-border hover:border-transparent"
+                        :disabled="loading[label.id]"
+                        @click="openEditPopup(label)"
+                      >
+                        <Icon icon="i-lucide-pencil" class="size-3.5" />
+                      </RelayButton>
+                    </RelayTooltip>
+                    <RelayTooltip
+                      :content="$t('LABEL_MGMT.FORM.DELETE')"
+                      side="top"
                     >
-                      <Icon icon="i-lucide-trash-2" class="size-3.5" />
-                    </RelayButton>
+                      <RelayButton
+                        variant="ghost"
+                        size="icon"
+                        class="size-8 border border-transparent text-muted-foreground shadow-xs hover:border-destructive/20 hover:bg-destructive/10 hover:text-destructive border border-border hover:border-transparent"
+                        :disabled="loading[label.id]"
+                        @click="openDeletePopup(label)"
+                      >
+                        <Icon icon="i-lucide-trash-2" class="size-3.5" />
+                      </RelayButton>
+                    </RelayTooltip>
                   </div>
                 </td>
               </tr>

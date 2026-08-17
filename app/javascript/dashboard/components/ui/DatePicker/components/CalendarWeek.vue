@@ -1,4 +1,6 @@
 <script setup>
+import { computed } from 'vue';
+import { isSameDay } from 'date-fns';
 import {
   monthName,
   yearName,
@@ -6,9 +8,6 @@ import {
   isToday,
   dayIsInRange,
   isCurrentMonth,
-  isLastDayOfMonth,
-  isHoveringDayInRange,
-  isHoveringNextDayInRange,
   CALENDAR_TYPES,
   CALENDAR_PERIODS,
 } from '../helpers/DatePickerHelper';
@@ -41,13 +40,23 @@ const emit = defineEmits([
 const { START_CALENDAR } = CALENDAR_TYPES;
 const { MONTH } = CALENDAR_PERIODS;
 
-const emitHoveredEndDate = day => {
-  emit('updateHoveredEndDate', day);
+const referenceDate = calendarType =>
+  calendarType === START_CALENDAR
+    ? props.startCurrentDate
+    : props.endCurrentDate;
+
+const effectiveEndDate = computed(() => {
+  if (props.selectedEndDate) return props.selectedEndDate;
+  if (props.selectingEndDate && props.hoveredEndDate) {
+    return props.hoveredEndDate;
+  }
+  return null;
+});
+
+const setViewMode = (type, mode) => {
+  emit('setView', type, mode);
 };
 
-const emitSelectDate = day => {
-  emit('selectDate', day);
-};
 const onClickPrev = () => {
   emit('prev');
 };
@@ -56,73 +65,45 @@ const onClickNext = () => {
   emit('next');
 };
 
-const setViewMode = (type, mode) => {
-  emit('setView', type, mode);
-};
+const weeks = calendarType => getWeeksForMonth(referenceDate(calendarType));
 
-const weeks = calendarType => {
-  return getWeeksForMonth(
-    calendarType === START_CALENDAR
-      ? props.startCurrentDate
-      : props.endCurrentDate
-  );
-};
+const isInCurrentMonth = (day, calendarType) =>
+  isCurrentMonth(day, referenceDate(calendarType));
 
-const isSelectedStartOrEndDate = day => {
-  return (
-    dayIsInRange(day, props.selectedStartDate, props.selectedStartDate) ||
-    dayIsInRange(day, props.selectedEndDate, props.selectedEndDate)
-  );
-};
+const isStartEdge = day =>
+  props.selectedStartDate && isSameDay(day, props.selectedStartDate);
+
+const isEndEdge = day =>
+  effectiveEndDate.value && isSameDay(day, effectiveEndDate.value);
 
 const isInRange = day => {
-  return dayIsInRange(day, props.selectedStartDate, props.selectedEndDate);
+  if (!props.selectedStartDate || !effectiveEndDate.value) return false;
+  return dayIsInRange(day, props.selectedStartDate, effectiveEndDate.value);
 };
 
-const isInCurrentMonth = day => {
-  return isCurrentMonth(
-    day,
-    props.calendarType === START_CALENDAR
-      ? props.startCurrentDate
-      : props.endCurrentDate
-  );
+const isRangeBackgroundDay = (day, calendarType) => {
+  if (!isInCurrentMonth(day, calendarType)) return false;
+  if (isStartEdge(day) || isEndEdge(day)) return false;
+  return isInRange(day);
 };
 
-const isHoveringInRange = day => {
-  return isHoveringDayInRange(
-    day,
-    props.selectedStartDate,
-    props.selectingEndDate,
-    props.hoveredEndDate
-  );
-};
+const dayButtonClass = (day, calendarType) => {
+  const inCurrentMonth = isInCurrentMonth(day, calendarType);
+  const edge = (isStartEdge(day) || isEndEdge(day)) && inCurrentMonth;
+  const today = isToday(props.currentDate, day) && inCurrentMonth && !edge;
 
-const isNextDayInRange = day => {
-  return isHoveringNextDayInRange(
-    day,
-    props.selectedStartDate,
-    props.selectedEndDate,
-    props.hoveredEndDate
-  );
+  return [
+    'relative z-10 flex size-8 items-center justify-center rounded-full text-[13px] transition-colors',
+    !inCurrentMonth && 'pointer-events-none text-muted-foreground/30',
+    inCurrentMonth && !edge && 'text-foreground hover:bg-muted/80',
+    edge && 'bg-primary font-semibold text-primary-foreground shadow-sm',
+    today && 'ring-1 ring-primary/40',
+  ];
 };
-
-const dayClasses = day => ({
-  'text-muted-foreground pointer-events-none': !isInCurrentMonth(day),
-  'text-foreground hover:text-foreground hover:bg-primary/30 dark:hover:bg-primary/40':
-    isInCurrentMonth(day),
-  'bg-primary text-white':
-    isSelectedStartOrEndDate(day) && isInCurrentMonth(day),
-  'bg-primary/20 dark:bg-primary/20':
-    (isInRange(day) || isHoveringInRange(day)) &&
-    !isSelectedStartOrEndDate(day) &&
-    isInCurrentMonth(day),
-  'outline outline-1 outline-primary -outline-offset-1 !text-primary':
-    isToday(props.currentDate, day) && !isSelectedStartOrEndDate(day),
-});
 </script>
 
 <template>
-  <div class="flex flex-col w-full gap-2 max-h-[312px]">
+  <div class="flex w-full max-h-[312px] flex-col gap-2">
     <CalendarAction
       :view-mode="MONTH"
       :calendar-type="calendarType"
@@ -144,27 +125,32 @@ const dayClasses = day => ({
     <div
       v-for="week in weeks(calendarType)"
       :key="week[0].getTime()"
-      class="grid max-w-md grid-cols-7 gap-2 mx-auto overflow-hidden rounded-lg"
+      class="grid grid-cols-7 gap-y-2"
     >
       <div
         v-for="day in week"
         :key="day.getTime()"
-        class="flex relative items-center justify-center w-9 h-8 py-1.5 px-2 font-medium text-sm rounded-lg cursor-pointer"
-        :class="dayClasses(day)"
-        @mouseenter="emitHoveredEndDate(day)"
-        @mouseleave="emitHoveredEndDate(null)"
-        @click="emitSelectDate(day)"
+        class="relative flex h-9 items-center justify-center"
+        @mouseenter="emit('updateHoveredEndDate', day)"
+        @mouseleave="emit('updateHoveredEndDate', null)"
+        @click="emit('selectDate', day)"
       >
-        {{ day.getDate() }}
-        <span
-          v-if="
-            (isInRange(day) || isHoveringInRange(day)) &&
-            isNextDayInRange(day) &&
-            !isLastDayOfMonth(day) &&
-            isInCurrentMonth(day)
-          "
-          class="absolute bottom-0 w-6 h-8 ltr:-right-4 rtl:-left-4 bg-primary/20 dark:bg-primary/20 -z-10"
+        <div
+          v-if="isStartEdge(day) && isInCurrentMonth(day, calendarType)"
+          class="absolute inset-y-0 right-0 w-[85%] rounded-l-full bg-primary/10"
         />
+        <div
+          v-else-if="isEndEdge(day) && isInCurrentMonth(day, calendarType)"
+          class="absolute inset-y-0 left-0 w-[85%] rounded-r-full bg-primary/10"
+        />
+        <div
+          v-else-if="isRangeBackgroundDay(day, calendarType)"
+          class="absolute inset-y-0 w-full bg-primary/10"
+        />
+
+        <button type="button" :class="dayButtonClass(day, calendarType)">
+          {{ day.getDate() }}
+        </button>
       </div>
     </div>
   </div>

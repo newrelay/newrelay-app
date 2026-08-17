@@ -82,21 +82,17 @@ const onFilterChange = option => {
 
 <template>
   <div
-    class="flex items-center justify-between w-full gap-1 h-14 border-b border-border/60 px-4 shrink-0 bg-card"
+    class="flex h-14 shrink-0 items-center justify-between border-b border-border p-4"
   >
-    <div class="flex items-center min-w-0 flex-1">
-      <h1
-        class="capitalize text-[16px] font-[500] text-foreground truncate min-w-0"
-      >
-        {{ t('INBOX.LIST.TITLE') }}
-      </h1>
-    </div>
-    <div class="relative flex items-center gap-2">
+    <h1 class="text-[16px] font-[500] text-foreground">
+      {{ t('INBOX.LIST.TITLE') }}
+    </h1>
+    <div class="flex items-center gap-2">
       <div class="relative">
         <RelayButton
           variant="outline"
           size="sm"
-          class="h-8 gap-1 px-3"
+          class="h-8 gap-1 px-3 text-xs"
           @click="openInboxDisplayMenu"
         >
           {{ t('INBOX.LIST.DISPLAY_DROPDOWN') }}

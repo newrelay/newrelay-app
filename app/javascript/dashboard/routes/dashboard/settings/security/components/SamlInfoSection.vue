@@ -1,4 +1,5 @@
 <script setup>
+import { RelayTooltip } from 'dashboard/components-next/relay';
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { copyTextToClipboard } from 'shared/helpers/clipboard';
@@ -65,10 +66,12 @@ const handleCopy = async text => {
       class="capitalize mb-3 flex items-center gap-1.5 text-[13px] font-semibold text-foreground"
     >
       {{ t('SECURITY_SETTINGS.SAML.INFO_SECTION.TITLE') }}
-      <i
-        v-tooltip.top="t('SECURITY_SETTINGS.SAML.INFO_SECTION.TOOLTIP')"
-        class="i-lucide-info size-3.5 cursor-help text-muted-foreground"
-      />
+      <RelayTooltip
+        :content="t('SECURITY_SETTINGS.SAML.INFO_SECTION.TOOLTIP')"
+        side="top"
+      >
+        <i class="i-lucide-info size-3.5 cursor-help text-muted-foreground" />
+      </RelayTooltip>
     </h4>
     <div
       class="divide-y divide-border overflow-hidden rounded-lg border border-border bg-background"
@@ -82,10 +85,9 @@ const handleCopy = async text => {
           class="flex w-[160px] shrink-0 items-center gap-1 text-[13px] text-muted-foreground"
         >
           {{ item.label }}
-          <i
-            v-tooltip.top="item.tooltip"
-            class="i-lucide-info inline size-3.5 cursor-help"
-          />
+          <RelayTooltip :content="item.tooltip" side="top">
+            <i class="i-lucide-info inline size-3.5 cursor-help" />
+          </RelayTooltip>
         </span>
         <div class="flex w-full items-center gap-3 sm:w-auto">
           <span

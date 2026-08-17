@@ -1,4 +1,5 @@
 <script setup>
+import { RelayTooltip } from 'dashboard/components-next/relay';
 import { useI18n } from 'vue-i18n';
 import Icon from 'next/icon/Icon.vue';
 
@@ -66,13 +67,14 @@ const { t } = useI18n();
       <h3 class="text-[15px] font-semibold capitalize text-foreground">
         {{ title }}
       </h3>
-      <span
-        v-if="isBeta && !isComingSoon"
-        v-tooltip.top="t('GENERAL.BETA_DESCRIPTION')"
-        class="ml-auto rounded px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wider bg-primary/10 text-primary"
-      >
-        {{ t('GENERAL.BETA') }}
-      </span>
+      <RelayTooltip :content="t('GENERAL.BETA_DESCRIPTION')" side="top">
+        <span
+          v-if="isBeta && !isComingSoon"
+          class="ml-auto rounded px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wider bg-primary/10 text-primary"
+        >
+          {{ t('GENERAL.BETA') }}
+        </span>
+      </RelayTooltip>
     </div>
     <p class="text-[13px] leading-relaxed text-muted-foreground">
       {{ description }}

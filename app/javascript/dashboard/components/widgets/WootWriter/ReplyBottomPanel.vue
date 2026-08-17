@@ -1,4 +1,5 @@
 <script>
+import { RelayButton, RelayTooltip } from 'dashboard/components-next/relay';
 import { ref } from 'vue';
 import { useUISettings } from 'dashboard/composables/useUISettings';
 import { useKeyboardEvents } from 'dashboard/composables/useKeyboardEvents';
@@ -10,7 +11,6 @@ import { getAllowedFileTypesByChannel } from '@chatwoot/utils';
 import VideoCallButton from '../VideoCallButton.vue';
 import { INBOX_TYPES } from 'dashboard/helper/inbox';
 import { mapGetters } from 'vuex';
-import { RelayButton } from 'dashboard/components-next/relay';
 import CannedResponsesDropdown from '../conversation/CannedResponsesDropdown.vue';
 import EmojiInput from 'shared/components/emoji/EmojiInput.vue';
 import { vOnClickOutside } from '@vueuse/components';
@@ -18,6 +18,7 @@ import { vOnClickOutside } from '@vueuse/components';
 export default {
   name: 'ReplyBottomPanel',
   components: {
+    RelayTooltip,
     RelayButton,
     FileUpload,
     VideoCallButton,
@@ -343,7 +344,6 @@ export default {
       <FileUpload
         v-if="showAttachButton"
         ref="uploadRef"
-        v-tooltip.top-end="$t('CONVERSATION.REPLYBOX.TIP_ATTACH_ICON')"
         input-id="conversationAttachment"
         :size="4096 * 4096"
         :accept="allowedFileTypes"
@@ -357,14 +357,16 @@ export default {
         class="inline-flex"
         @input-file="onFileUpload"
       >
-        <RelayButton
+        <RelayTooltip
           v-if="!isEditorDisabled"
-          v-tooltip.top-end="$t('CONVERSATION.REPLYBOX.TIP_ATTACH_ICON')"
-          variant="ghost"
-          :class="toolbarIconButtonClass"
+          :content="$t('CONVERSATION.REPLYBOX.TIP_ATTACH_ICON')"
+          side="top"
+          align="end"
         >
-          <span class="i-lucide-paperclip size-4 shrink-0" />
-        </RelayButton>
+          <RelayButton variant="ghost" :class="toolbarIconButtonClass">
+            <span class="i-lucide-paperclip size-4 shrink-0" />
+          </RelayButton>
+        </RelayTooltip>
       </FileUpload>
 
       <!-- Emoji -->
@@ -372,14 +374,19 @@ export default {
         v-if="!isEditorDisabled"
         class="relative flex items-center justify-center"
       >
-        <RelayButton
-          v-tooltip.top-end="$t('CONVERSATION.REPLYBOX.TIP_EMOJI_ICON')"
-          variant="ghost"
-          :class="toolbarIconButtonClass"
-          @click="handleEmojiPickerClick"
+        <RelayTooltip
+          :content="$t('CONVERSATION.REPLYBOX.TIP_EMOJI_ICON')"
+          side="top"
+          align="end"
         >
-          <span class="i-lucide-smile size-4 shrink-0" />
-        </RelayButton>
+          <RelayButton
+            variant="ghost"
+            :class="toolbarIconButtonClass"
+            @click="handleEmojiPickerClick"
+          >
+            <span class="i-lucide-smile size-4 shrink-0" />
+          </RelayButton>
+        </RelayTooltip>
         <EmojiInput
           v-if="showEmojiPicker"
           v-on-click-outside="hideEmojiPicker"
@@ -389,26 +396,32 @@ export default {
       </div>
 
       <!-- WhatsApp Templates -->
-      <RelayButton
-        v-if="enableWhatsAppTemplates"
-        v-tooltip.top-end="$t('CONVERSATION.FOOTER.WHATSAPP_TEMPLATES')"
-        variant="ghost"
-        :class="toolbarIconButtonClass"
-        @click="$emit('selectWhatsappTemplate')"
+      <RelayTooltip
+        :content="$t('CONVERSATION.FOOTER.WHATSAPP_TEMPLATES')"
+        side="top"
+        align="end"
       >
-        <span class="i-lucide-file-text size-4 shrink-0" />
-      </RelayButton>
+        <RelayButton
+          v-if="enableWhatsAppTemplates"
+          variant="ghost"
+          :class="toolbarIconButtonClass"
+          @click="$emit('selectWhatsappTemplate')"
+        >
+          <span class="i-lucide-file-text size-4 shrink-0" />
+        </RelayButton>
+      </RelayTooltip>
 
       <!-- Content Templates -->
-      <RelayButton
-        v-if="enableContentTemplates"
-        v-tooltip.top-end="'Content Templates'"
-        variant="ghost"
-        :class="toolbarIconButtonClass"
-        @click="$emit('selectContentTemplate')"
-      >
-        <span class="i-lucide-file-text size-4 shrink-0" />
-      </RelayButton>
+      <RelayTooltip content="Content Templates" side="top" align="end">
+        <RelayButton
+          v-if="enableContentTemplates"
+          variant="ghost"
+          :class="toolbarIconButtonClass"
+          @click="$emit('selectContentTemplate')"
+        >
+          <span class="i-lucide-file-text size-4 shrink-0" />
+        </RelayButton>
+      </RelayTooltip>
 
       <!-- Canned Responses -->
       <CannedResponsesDropdown
@@ -418,45 +431,60 @@ export default {
       />
 
       <!-- Log Call -->
-      <RelayButton
-        v-if="!isEditorDisabled"
-        v-tooltip.top-end="$t('CONVERSATION.REPLYBOX.TIP_LOG_CALL')"
-        variant="ghost"
-        :class="toolbarIconButtonClass"
-        @click="$emit('openLogCall')"
+      <RelayTooltip
+        :content="$t('CONVERSATION.REPLYBOX.TIP_LOG_CALL')"
+        side="top"
+        align="end"
       >
-        <span class="i-lucide-phone size-4 shrink-0" />
-      </RelayButton>
+        <RelayButton
+          v-if="!isEditorDisabled"
+          variant="ghost"
+          :class="toolbarIconButtonClass"
+          @click="$emit('openLogCall')"
+        >
+          <span class="i-lucide-phone size-4 shrink-0" />
+        </RelayButton>
+      </RelayTooltip>
 
       <!-- Meeting -->
-      <RelayButton
-        v-if="!isEditorDisabled"
-        v-tooltip.top-end="$t('CONVERSATION.REPLYBOX.TIP_MEETING')"
-        variant="ghost"
-        :class="toolbarIconButtonClass"
-        @click="$emit('openMeeting')"
+      <RelayTooltip
+        :content="$t('CONVERSATION.REPLYBOX.TIP_MEETING')"
+        side="top"
+        align="end"
       >
-        <span class="i-lucide-calendar size-4 shrink-0" />
-      </RelayButton>
+        <RelayButton
+          v-if="!isEditorDisabled"
+          variant="ghost"
+          :class="toolbarIconButtonClass"
+          @click="$emit('openMeeting')"
+        >
+          <span class="i-lucide-calendar size-4 shrink-0" />
+        </RelayButton>
+      </RelayTooltip>
 
       <!-- Audio Recorder -->
-      <RelayButton
-        v-if="showAudioRecorderButton"
-        v-tooltip.top-end="$t('CONVERSATION.REPLYBOX.TIP_AUDIORECORDER_ICON')"
-        variant="ghost"
-        :class="[
-          toolbarIconButtonClass,
-          isRecordingAudio
-            ? 'bg-red-500/10 text-red-500 hover:bg-red-500/20 hover:text-red-600'
-            : '',
-        ]"
-        @click="toggleAudioRecorder"
+      <RelayTooltip
+        :content="$t('CONVERSATION.REPLYBOX.TIP_AUDIORECORDER_ICON')"
+        side="top"
+        align="end"
       >
-        <span
-          class="size-4 shrink-0"
-          :class="!isRecordingAudio ? 'i-lucide-mic' : 'i-lucide-mic-off'"
-        />
-      </RelayButton>
+        <RelayButton
+          v-if="showAudioRecorderButton"
+          variant="ghost"
+          :class="[
+            toolbarIconButtonClass,
+            isRecordingAudio
+              ? 'bg-red-500/10 text-red-500 hover:bg-red-500/20 hover:text-red-600'
+              : '',
+          ]"
+          @click="toggleAudioRecorder"
+        >
+          <span
+            class="size-4 shrink-0"
+            :class="!isRecordingAudio ? 'i-lucide-mic' : 'i-lucide-mic-off'"
+          />
+        </RelayButton>
+      </RelayTooltip>
 
       <!-- Audio Play/Pause -->
       <RelayButton
@@ -470,15 +498,16 @@ export default {
       </RelayButton>
 
       <!-- Signature -->
-      <RelayButton
-        v-if="showMessageSignatureButton"
-        v-tooltip.top-end="signatureToggleTooltip"
-        variant="ghost"
-        :class="toolbarIconButtonClass"
-        @click="toggleMessageSignature"
-      >
-        <span class="i-lucide-pen-line size-4 shrink-0" />
-      </RelayButton>
+      <RelayTooltip :content="signatureToggleTooltip" side="top" align="end">
+        <RelayButton
+          v-if="showMessageSignatureButton"
+          variant="ghost"
+          :class="toolbarIconButtonClass"
+          @click="toggleMessageSignature"
+        >
+          <span class="i-lucide-pen-line size-4 shrink-0" />
+        </RelayButton>
+      </RelayTooltip>
 
       <!-- Video Call -->
       <VideoCallButton
@@ -488,46 +517,57 @@ export default {
       />
 
       <!-- Quoted Reply -->
-      <RelayButton
-        v-if="showQuotedReplyToggle"
-        v-tooltip.top-end="quotedReplyToggleTooltip"
-        :variant="quotedReplyEnabled ? 'secondary' : 'ghost'"
-        :class="[
-          toolbarIconButtonClass,
-          quotedReplyEnabled ? 'bg-muted text-foreground' : '',
-        ]"
-        :aria-pressed="quotedReplyEnabled"
-        @click="$emit('toggleQuotedReply')"
-      >
-        <span class="i-lucide-quote size-4 shrink-0" />
-      </RelayButton>
+      <RelayTooltip :content="quotedReplyToggleTooltip" side="top" align="end">
+        <RelayButton
+          v-if="showQuotedReplyToggle"
+          :variant="quotedReplyEnabled ? 'secondary' : 'ghost'"
+          :class="[
+            toolbarIconButtonClass,
+            quotedReplyEnabled ? 'bg-muted text-foreground' : '',
+          ]"
+          :aria-pressed="quotedReplyEnabled"
+          @click="$emit('toggleQuotedReply')"
+        >
+          <span class="i-lucide-quote size-4 shrink-0" />
+        </RelayButton>
+      </RelayTooltip>
 
       <!-- Insert Article -->
-      <RelayButton
-        v-if="enableInsertArticleInReply && !isEditorDisabled"
-        v-tooltip.top-end="$t('HELP_CENTER.ARTICLE_SEARCH.OPEN_ARTICLE_SEARCH')"
-        variant="ghost"
-        :class="toolbarIconButtonClass"
-        @click="toggleInsertArticle"
+      <RelayTooltip
+        :content="$t('HELP_CENTER.ARTICLE_SEARCH.OPEN_ARTICLE_SEARCH')"
+        side="top"
+        align="end"
       >
-        <span class="i-lucide-file-text size-4 shrink-0" />
-      </RelayButton>
+        <RelayButton
+          v-if="enableInsertArticleInReply && !isEditorDisabled"
+          variant="ghost"
+          :class="toolbarIconButtonClass"
+          @click="toggleInsertArticle"
+        >
+          <span class="i-lucide-file-text size-4 shrink-0" />
+        </RelayButton>
+      </RelayTooltip>
 
       <!-- Private Note -->
-      <RelayButton
-        v-tooltip.top-end="$t('CONVERSATION.REPLYBOX.PRIVATE_NOTE')"
-        variant="ghost"
-        :class="[
-          toolbarIconButtonClass,
-          isOnPrivateNote
-            ? 'bg-amber-500/10 text-amber-600 hover:bg-amber-500/20 hover:text-amber-700'
-            : '',
-        ]"
-        :aria-pressed="isOnPrivateNote"
-        @click="togglePrivateNote"
+      <RelayTooltip
+        :content="$t('CONVERSATION.REPLYBOX.PRIVATE_NOTE')"
+        side="top"
+        align="end"
       >
-        <span class="i-lucide-sticky-note size-4 shrink-0" />
-      </RelayButton>
+        <RelayButton
+          variant="ghost"
+          :class="[
+            toolbarIconButtonClass,
+            isOnPrivateNote
+              ? 'bg-amber-500/10 text-amber-600 hover:bg-amber-500/20 hover:text-amber-700'
+              : '',
+          ]"
+          :aria-pressed="isOnPrivateNote"
+          @click="togglePrivateNote"
+        >
+          <span class="i-lucide-sticky-note size-4 shrink-0" />
+        </RelayButton>
+      </RelayTooltip>
 
       <transition name="modal-fade">
         <div

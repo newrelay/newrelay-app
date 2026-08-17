@@ -1,15 +1,12 @@
 <script setup>
 import { ref, computed } from 'vue';
 import { useAlert } from 'dashboard/composables';
-import { useToggle } from '@vueuse/core';
 import { useI18n } from 'vue-i18n';
 import { useStore, useStoreGetters } from 'dashboard/composables/store';
 import { useEmitter } from 'dashboard/composables/emitter';
 import { useKeyboardEvents } from 'dashboard/composables/useKeyboardEvents';
 import { useConversationRequiredAttributes } from 'dashboard/composables/useConversationRequiredAttributes';
 
-import WootDropdownItem from 'shared/components/ui/dropdown/DropdownItem.vue';
-import WootDropdownMenu from 'shared/components/ui/dropdown/DropdownMenu.vue';
 import wootConstants from 'dashboard/constants/globals';
 import {
   CMD_REOPEN_CONVERSATION,
@@ -18,6 +15,7 @@ import {
 
 import ButtonGroup from 'dashboard/components-next/buttonGroup/ButtonGroup.vue';
 import Button from 'dashboard/components-next/button/Button.vue';
+import { RelayActionDropdown } from 'dashboard/components-next/relay';
 import ConversationResolveAttributesModal from 'dashboard/components-next/ConversationWorkflow/ConversationResolveAttributesModal.vue';
 
 const store = useStore();
@@ -28,10 +26,6 @@ const { checkMissingAttributes } = useConversationRequiredAttributes();
 const arrowDownButtonRef = ref(null);
 const isLoading = ref(false);
 const resolveAttributesModalRef = ref(null);
-
-const [showActionsDropdown, toggleDropdown] = useToggle();
-const closeDropdown = () => toggleDropdown(false);
-const openDropdown = () => toggleDropdown(true);
 
 const currentChat = computed(() => getters.getSelectedChat.value);
 
@@ -54,6 +48,25 @@ const showAdditionalActions = computed(
 
 const showOpenButton = computed(() => {
   return isPending.value || isSnoozed.value;
+});
+
+const additionalActionItems = computed(() => {
+  const items = [];
+  if (!isPending.value) {
+    items.push({
+      icon: 'i-lucide-alarm-clock-minus',
+      label: t('CONVERSATION.RESOLVE_DROPDOWN.SNOOZE_UNTIL'),
+      action: 'snooze',
+      value: 'snooze',
+    });
+    items.push({
+      icon: 'i-lucide-circle-dot-dashed',
+      label: t('CONVERSATION.RESOLVE_DROPDOWN.MARK_PENDING'),
+      action: 'pending',
+      value: 'pending',
+    });
+  }
+  return items;
 });
 
 const getConversationParams = () => {
@@ -82,7 +95,6 @@ const openSnoozeModal = () => {
 };
 
 const toggleStatus = (status, snoozedUntil, customAttributes = null) => {
-  closeDropdown();
   isLoading.value = true;
 
   const payload = {
@@ -168,6 +180,14 @@ useKeyboardEvents(keyboardEvents);
 
 useEmitter(CMD_REOPEN_CONVERSATION, onCmdOpenConversation);
 useEmitter(CMD_RESOLVE_CONVERSATION, onCmdResolveConversation);
+
+const handleAdditionalAction = ({ action }) => {
+  if (action === 'snooze') {
+    openSnoozeModal();
+  } else if (action === 'pending') {
+    toggleStatus(wootConstants.STATUS_TYPE.PENDING);
+  }
+};
 </script>
 
 <template>
@@ -205,51 +225,27 @@ useEmitter(CMD_RESOLVE_CONVERSATION, onCmdResolveConversation);
         :is-loading="isLoading"
         @click="onCmdOpenConversation"
       />
-      <Button
+      <RelayActionDropdown
         v-if="showAdditionalActions"
-        ref="arrowDownButtonRef"
-        icon="i-lucide-chevron-down"
-        :disabled="isLoading"
-        size="sm"
-        no-animation
-        class="ltr:rounded-l-none rtl:rounded-r-none !outline-0"
-        color="slate"
-        trailing-icon
-        @click="openDropdown"
-      />
+        :menu-items="additionalActionItems"
+        align="end"
+        content-class="min-w-[9.75rem] max-w-[12.5rem]"
+        @action="handleAdditionalAction"
+      >
+        <template #trigger>
+          <Button
+            ref="arrowDownButtonRef"
+            icon="i-lucide-chevron-down"
+            :disabled="isLoading"
+            size="sm"
+            no-animation
+            class="ltr:rounded-l-none rtl:rounded-r-none !outline-0"
+            color="slate"
+            trailing-icon
+          />
+        </template>
+      </RelayActionDropdown>
     </ButtonGroup>
-    <div
-      v-if="showActionsDropdown"
-      v-on-clickaway="closeDropdown"
-      class="border rounded-lg shadow-lg border-border dark:border-border box-content p-2 w-fit z-10 bg-accent backdrop-blur-[100px] absolute block left-auto top-full mt-0.5 start-0 xl:start-auto xl:end-0 max-w-[12.5rem] min-w-[9.75rem] [&_ul>li]:mb-0"
-    >
-      <WootDropdownMenu class="mb-0">
-        <WootDropdownItem v-if="!isPending">
-          <Button
-            :label="t('CONVERSATION.RESOLVE_DROPDOWN.SNOOZE_UNTIL')"
-            ghost
-            slate
-            sm
-            start
-            icon="i-lucide-alarm-clock-minus"
-            class="w-full"
-            @click="() => openSnoozeModal()"
-          />
-        </WootDropdownItem>
-        <WootDropdownItem v-if="!isPending">
-          <Button
-            :label="t('CONVERSATION.RESOLVE_DROPDOWN.MARK_PENDING')"
-            ghost
-            slate
-            sm
-            start
-            icon="i-lucide-circle-dot-dashed"
-            class="w-full"
-            @click="() => toggleStatus(wootConstants.STATUS_TYPE.PENDING)"
-          />
-        </WootDropdownItem>
-      </WootDropdownMenu>
-    </div>
     <ConversationResolveAttributesModal
       ref="resolveAttributesModalRef"
       @submit="handleResolveWithAttributes"

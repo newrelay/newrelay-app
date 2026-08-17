@@ -3,9 +3,12 @@ import { computed, reactive, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useStore } from 'dashboard/composables/store';
 
-import { RelayButton, RelayLabel } from 'dashboard/components-next/relay';
+import {
+  RelayButton,
+  RelayLabel,
+  RelayActionDropdown,
+} from 'dashboard/components-next/relay';
 import Icon from 'dashboard/components-next/icon/Icon.vue';
-import DropdownMenu from 'dashboard/components-next/dropdown-menu/DropdownMenu.vue';
 import ComboBox from 'dashboard/components-next/combobox/ComboBox.vue';
 
 const props = defineProps({
@@ -76,7 +79,6 @@ const state = reactive({
   liveChatWidgetInboxId: '',
 });
 const visiblePlatforms = ref([]);
-const showAddMenu = ref(false);
 
 const liveChatWidgets = computed(() => {
   const inboxes = store.getters['inboxes/getInboxes'];
@@ -140,7 +142,6 @@ const addPlatform = ({ value }) => {
   if (!visiblePlatforms.value.includes(value)) {
     visiblePlatforms.value.push(value);
   }
-  showAddMenu.value = false;
 };
 
 const removePlatform = key => {
@@ -414,29 +415,22 @@ defineExpose({
           </div>
         </div>
 
-        <div
+        <RelayActionDropdown
           v-if="addablePlatforms.length"
-          v-on-clickaway="() => (showAddMenu = false)"
-          class="relative pt-1"
+          :menu-items="addablePlatforms"
+          align="start"
+          content-class="w-52"
+          @action="addPlatform"
         >
-          <RelayButton
-            variant="outline"
-            size="sm"
-            class="h-8"
-            @click="showAddMenu = !showAddMenu"
-          >
-            <span class="i-lucide-plus size-3.5 opacity-70" />
-            {{
-              t('HELP_CENTER.PORTAL_SETTINGS.LAYOUT_CONTENT.SOCIAL_LINKS.ADD')
-            }}
-          </RelayButton>
-          <DropdownMenu
-            v-if="showAddMenu"
-            :menu-items="addablePlatforms"
-            class="top-full mt-1 w-52 ltr:left-0 rtl:right-0"
-            @action="addPlatform"
-          />
-        </div>
+          <template #trigger>
+            <RelayButton variant="outline" size="sm" class="mt-2 h-8">
+              <span class="i-lucide-plus size-3.5 opacity-70" />
+              {{
+                t('HELP_CENTER.PORTAL_SETTINGS.LAYOUT_CONTENT.SOCIAL_LINKS.ADD')
+              }}
+            </RelayButton>
+          </template>
+        </RelayActionDropdown>
       </div>
     </div>
   </div>

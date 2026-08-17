@@ -1,4 +1,5 @@
 <script setup>
+import { RelayTooltip } from 'dashboard/components-next/relay';
 import { computed } from 'vue';
 import { VOICE_CALL_DIRECTION } from 'dashboard/components-next/message/constants';
 import Avatar from 'dashboard/components-next/avatar/Avatar.vue';
@@ -54,13 +55,14 @@ const isOngoing = computed(() => props.state === VOICE_CALL_DIRECTION.ONGOING);
       class="flex relative z-10 flex-col w-full max-w-4xl min-h-[340px] rounded-3xl border shadow-2xl sm:flex-row sm:aspect-[2.2/1] bg-card border-border/80 ring-1 ring-border/50 overflow-hidden"
     >
       <!-- Minimize to the compact widget -->
-      <button
-        v-tooltip.bottom="$t('CONVERSATION.VOICE_WIDGET.MINIMIZE')"
-        class="flex absolute top-4 z-20 justify-center items-center rounded-full ltr:right-4 rtl:left-4 size-8 text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
-        @click="$emit('minimize')"
-      >
-        <Icon class="size-4" icon="i-ph-arrows-in-bold" />
-      </button>
+      <RelayTooltip :content="$t('CONVERSATION.VOICE_WIDGET.MINIMIZE')">
+        <button
+          class="flex absolute top-4 z-20 justify-center items-center rounded-full ltr:right-4 rtl:left-4 size-8 text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
+          @click="$emit('minimize')"
+        >
+          <Icon class="size-4" icon="i-ph-arrows-in-bold" />
+        </button>
+      </RelayTooltip>
 
       <!-- Left: caller info -->
       <div

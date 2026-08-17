@@ -8,6 +8,7 @@ import { vOnClickOutside } from '@vueuse/components';
 import NextButton from 'dashboard/components-next/button/Button.vue';
 import Icon from 'dashboard/components-next/icon/Icon.vue';
 import DropdownMenu from 'dashboard/components-next/dropdown-menu/DropdownMenu.vue';
+import { RelayTooltip } from 'dashboard/components-next/relay';
 
 const props = defineProps({
   type: {
@@ -119,22 +120,23 @@ const handleDismiss = () => {
 
 <template>
   <div ref="containerRef" class="relative">
-    <NextButton
-      v-tooltip="tooltipLabel"
-      :label="buttonLabel"
-      :icon="isRemoveAction ? 'i-woot-tag-remove' : 'i-lucide-tag'"
-      slate
-      :size="isTypeContact ? 'sm' : 'xs'"
-      ghost
-      :class="{
-        'bg-accent': showDropdown,
-        '[&>span:nth-child(2)]:hidden md:[&>span:nth-child(2)]:inline w-fit !text-primary [&>span]:!text-primary !px-2':
-          isTypeContact,
-      }"
-      :disabled="disabled || isLoading"
-      :is-loading="isLoading"
-      @click="toggleDropdown()"
-    />
+    <RelayTooltip :content="tooltipLabel">
+      <NextButton
+        :label="buttonLabel"
+        :icon="isRemoveAction ? 'i-woot-tag-remove' : 'i-lucide-tag'"
+        slate
+        :size="isTypeContact ? 'sm' : 'xs'"
+        ghost
+        :class="{
+          'bg-accent': showDropdown,
+          '[&>span:nth-child(2)]:hidden md:[&>span:nth-child(2)]:inline w-fit !text-primary [&>span]:!text-primary !px-2':
+            isTypeContact,
+        }"
+        :disabled="disabled || isLoading"
+        :is-loading="isLoading"
+        @click="toggleDropdown()"
+      />
+    </RelayTooltip>
     <Transition
       :enter-active-class="
         !isTypeContact

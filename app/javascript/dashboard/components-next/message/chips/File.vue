@@ -1,4 +1,5 @@
 <script setup>
+import { RelayTooltip } from 'dashboard/components-next/relay';
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { getFileInfo } from '@chatwoot/utils';
@@ -67,14 +68,15 @@ const textColorClass = computed(() => {
     >
       {{ displayFileName }}
     </span>
-    <a
-      v-tooltip="t('CONVERSATION.DOWNLOAD')"
-      class="flex-shrink-0 size-9 grid place-content-center cursor-pointer text-muted-foreground hover:text-foreground transition-colors"
-      :href="attachment.dataUrl"
-      rel="noreferrer noopener nofollow"
-      target="_blank"
-    >
-      <Icon icon="i-lucide-download" />
-    </a>
+    <RelayTooltip :content="t('CONVERSATION.DOWNLOAD')">
+      <a
+        class="flex-shrink-0 size-9 grid place-content-center cursor-pointer text-muted-foreground hover:text-foreground transition-colors"
+        :href="attachment.dataUrl"
+        rel="noreferrer noopener nofollow"
+        target="_blank"
+      >
+        <Icon icon="i-lucide-download" />
+      </a>
+    </RelayTooltip>
   </div>
 </template>

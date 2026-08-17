@@ -32,8 +32,6 @@ const sortOrder = ref(wootConstants.INBOX_SORT_BY.NEWEST);
 const isInboxContextMenuOpen = ref(false);
 const activeView = ref('all');
 const activeStatusTab = ref('new');
-const showListFilterMenu = ref(false);
-const showTabMoreMenu = ref(false);
 const selectedIds = ref(new Set());
 
 // Starred conversation ids are persisted in UI settings so favourites survive
@@ -391,20 +389,6 @@ const openConversation = async notificationItem => {
   }
 };
 
-const applyListFilter = key => {
-  showListFilterMenu.value = false;
-  if (key === 'assigned') onSelectView('assigned');
-  if (key === 'oldest') {
-    onFilterChange({
-      type: wootConstants.INBOX_FILTER_TYPE.SORT_ORDER,
-      key: wootConstants.INBOX_SORT_BY.OLDEST,
-    });
-  }
-  if (key === 'archived') onSelectView('archived');
-  if (key === 'snoozed') onSelectView('snoozed');
-  if (key === 'spam') onSelectView('spam');
-};
-
 watch(
   inboxFilters,
   (newVal, oldVal) => {
@@ -486,7 +470,7 @@ onMounted(() => {
               v-if="filteredNotifications.length"
               variant="ghost"
               size="sm"
-              class="h-8 text-xs text-muted-foreground hover:text-foreground border border-border hover:border-transparent"
+              class="h-8 border-transparent text-xs text-muted-foreground hover:border-transparent hover:text-foreground"
               @click="toggleSelectAll"
             >
               {{
@@ -499,7 +483,7 @@ onMounted(() => {
               <RelayButton
                 variant="ghost"
                 size="sm"
-                class="h-8 text-xs text-muted-foreground hover:text-foreground border border-border hover:border-transparent"
+                class="h-8 border-transparent text-xs text-muted-foreground hover:border-transparent hover:text-foreground"
                 @click="markSelectedAsRead"
               >
                 <span class="i-lucide-check-check size-3.5 mr-1" />
@@ -508,118 +492,13 @@ onMounted(() => {
               <RelayButton
                 variant="ghost"
                 size="sm"
-                class="h-8 text-xs text-destructive hover:text-destructive hover:bg-destructive/10 border border-border hover:border-transparent"
+                class="h-8 border-transparent text-xs text-destructive hover:border-transparent hover:bg-destructive/10 hover:text-destructive"
                 @click="deleteSelected"
               >
                 <span class="i-lucide-trash-2 size-3.5 mr-1" />
                 {{ t('INBOX.LIST.DELETE') }}
               </RelayButton>
             </template>
-            <div class="relative">
-              <RelayButton
-                variant="outline"
-                size="icon"
-                class="h-8 w-8 shrink-0"
-                :aria-label="t('INBOX.LIST.FILTER_TOOLTIP')"
-                @click="showListFilterMenu = !showListFilterMenu"
-              >
-                <span class="i-lucide-list-filter size-4" />
-              </RelayButton>
-              <div
-                v-if="showListFilterMenu"
-                v-on-clickaway="() => (showListFilterMenu = false)"
-                class="absolute right-0 mt-1.5 z-50 w-48 rounded-md border border-border bg-popover p-1 shadow-md"
-              >
-                <button
-                  type="button"
-                  class="w-full flex items-center gap-2 px-2 py-1.5 text-sm rounded-sm hover:bg-muted text-foreground"
-                  @click="applyListFilter('assigned')"
-                >
-                  <span class="i-lucide-user size-4 text-muted-foreground" />
-                  {{ t('INBOX.FILTER_MENU.ASSIGNED_TO_ME') }}
-                </button>
-                <button
-                  type="button"
-                  class="w-full flex items-center gap-2 px-2 py-1.5 text-sm rounded-sm hover:bg-muted text-foreground"
-                  @click="applyListFilter('oldest')"
-                >
-                  <span class="i-lucide-clock size-4 text-muted-foreground" />
-                  {{ t('INBOX.FILTER_MENU.OLDEST_FIRST') }}
-                </button>
-                <div class="my-1 h-px bg-border" />
-                <button
-                  type="button"
-                  class="w-full flex items-center gap-2 px-2 py-1.5 text-sm rounded-sm hover:bg-muted text-foreground"
-                  @click="applyListFilter('archived')"
-                >
-                  <span class="i-lucide-archive size-4 text-muted-foreground" />
-                  {{ t('INBOX.FILTER_MENU.ARCHIVED') }}
-                </button>
-                <button
-                  type="button"
-                  class="w-full flex items-center gap-2 px-2 py-1.5 text-sm rounded-sm hover:bg-muted text-foreground"
-                  @click="applyListFilter('snoozed')"
-                >
-                  <span
-                    class="i-lucide-alarm-clock size-4 text-muted-foreground"
-                  />
-                  {{ t('INBOX.FILTER_MENU.SNOOZED') }}
-                </button>
-              </div>
-            </div>
-            <div class="relative shrink-0">
-              <RelayButton
-                variant="ghost"
-                size="icon"
-                class="h-8 w-8 text-muted-foreground border border-border hover:border-transparent"
-                :aria-label="t('INBOX.LIST.MORE_OPTIONS')"
-                @click="showTabMoreMenu = !showTabMoreMenu"
-              >
-                <span class="i-lucide-ellipsis size-4" />
-              </RelayButton>
-              <div
-                v-if="showTabMoreMenu"
-                v-on-clickaway="() => (showTabMoreMenu = false)"
-                class="absolute right-0 mt-1.5 z-50 w-40 rounded-md border border-border bg-popover p-1 shadow-md"
-              >
-                <button
-                  type="button"
-                  class="w-full flex items-center gap-2 px-2 py-1.5 text-sm rounded-sm hover:bg-muted"
-                  @click="
-                    applyListFilter('archived');
-                    showTabMoreMenu = false;
-                  "
-                >
-                  <span class="i-lucide-archive size-4 text-muted-foreground" />
-                  {{ t('INBOX.FILTER_MENU.ARCHIVED') }}
-                </button>
-                <button
-                  type="button"
-                  class="w-full flex items-center gap-2 px-2 py-1.5 text-sm rounded-sm hover:bg-muted"
-                  @click="
-                    applyListFilter('snoozed');
-                    showTabMoreMenu = false;
-                  "
-                >
-                  <span
-                    class="i-lucide-alarm-clock size-4 text-muted-foreground"
-                  />
-                  {{ t('INBOX.FILTER_MENU.SNOOZED') }}
-                </button>
-                <div class="my-1 h-px bg-border" />
-                <button
-                  type="button"
-                  class="w-full flex items-center gap-2 px-2 py-1.5 text-sm rounded-sm hover:bg-muted"
-                  @click="
-                    applyListFilter('spam');
-                    showTabMoreMenu = false;
-                  "
-                >
-                  <span class="i-lucide-ban size-4 text-muted-foreground" />
-                  {{ t('INBOX.FILTER_MENU.SPAM') }}
-                </button>
-              </div>
-            </div>
           </div>
         </div>
 
@@ -627,29 +506,31 @@ onMounted(() => {
           ref="notificationList"
           class="flex-1 overflow-y-auto overflow-x-hidden min-h-0"
         >
-          <InboxCard
-            v-for="notificationItem in filteredNotifications"
-            :key="notificationItem.id"
-            :inbox-item="notificationItem"
-            :is-active="
-              currentConversationId === notificationItem.primaryActor?.id
-            "
-            :is-starred="isStarred(notificationItem)"
-            :is-selected="selectedIds.has(notificationItem.id)"
-            class="inbox-card"
-            :class="{
-              active:
-                currentConversationId === notificationItem.primaryActor?.id,
-            }"
-            @mark-notification-as-read="markNotificationAsRead"
-            @mark-notification-as-un-read="markNotificationAsUnRead"
-            @delete-notification="deleteNotification"
-            @toggle-star="toggleStar"
-            @toggle-select="toggleSelect"
-            @context-menu-open="isInboxContextMenuOpen = true"
-            @context-menu-close="isInboxContextMenuOpen = false"
-            @click="openConversation(notificationItem)"
-          />
+          <div class="flex flex-col">
+            <InboxCard
+              v-for="notificationItem in filteredNotifications"
+              :key="notificationItem.id"
+              :inbox-item="notificationItem"
+              :is-active="
+                currentConversationId === notificationItem.primaryActor?.id
+              "
+              :is-starred="isStarred(notificationItem)"
+              :is-selected="selectedIds.has(notificationItem.id)"
+              class="inbox-card"
+              :class="{
+                active:
+                  currentConversationId === notificationItem.primaryActor?.id,
+              }"
+              @mark-notification-as-read="markNotificationAsRead"
+              @mark-notification-as-un-read="markNotificationAsUnRead"
+              @delete-notification="deleteNotification"
+              @toggle-star="toggleStar"
+              @toggle-select="toggleSelect"
+              @context-menu-open="isInboxContextMenuOpen = true"
+              @context-menu-close="isInboxContextMenuOpen = false"
+              @click="openConversation(notificationItem)"
+            />
+          </div>
 
           <div v-if="uiFlags.isFetching" class="flex justify-center my-4">
             <Spinner class="text-primary" />

@@ -73,8 +73,9 @@ const selectMonth = index => {
         :key="index"
         class="p-2 text-sm font-medium text-center text-foreground w-[92px] h-10 rounded-lg py-2.5 px-2"
         :class="{
-          'bg-primary text-white hover:bg-primary': index === activeMonthIndex,
-          'hover:bg-accent dark:hover:bg-accent': index !== activeMonthIndex,
+          'bg-primary text-primary-foreground hover:bg-primary/90':
+            index === activeMonthIndex,
+          'hover:bg-muted/80': index !== activeMonthIndex,
         }"
         @click.stop="selectMonth(index)"
       >

@@ -153,11 +153,7 @@ const filteredNotifications = computed(() => {
     view !== 'starred'
   ) {
     items = items.filter(n => {
-      const conversationStatus =
-        n.primaryActor?.conversation?.status ||
-        (n.primaryActor?.status !== 'sent' && n.primaryActor?.status !== 'delivered'
-          ? n.primaryActor?.status
-          : null);
+      const conversationStatus = n.primaryActor?.status;
       if (!conversationStatus) return activeStatusTab.value === 'new';
       return conversationStatus === statusKey;
     });

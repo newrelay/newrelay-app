@@ -21,7 +21,7 @@ const connectChannel = () => {
 };
 
 const goToConversations = () => {
-  router.push(accountScopedRoute('dashboard'));
+  router.push(accountScopedRoute('home'));
 };
 
 const learnMore = () => {
@@ -49,10 +49,10 @@ const learnMore = () => {
         </div>
       </div>
       <h2 class="text-xl font-semibold text-foreground mb-2 tracking-tight">
-        {{ $t('INBOX.LIST.NO_NOTIFICATIONS') }}
+        {{ t('INBOX.LIST.NO_NOTIFICATIONS') }}
       </h2>
       <p class="text-sm text-muted-foreground leading-relaxed mb-6">
-        {{ $t('INBOX.LIST.404') }}
+        {{ t('INBOX.LIST.404') }}
       </p>
 
       <RelayButton
@@ -60,7 +60,7 @@ const learnMore = () => {
         @click="goToConversations"
       >
         <span class="i-lucide-message-square size-4 mr-2" />
-        {{ $t('INBOX.LIST.CONVERSATIONS') }}
+        {{ t('INBOX.LIST.CONVERSATIONS') }}
       </RelayButton>
     </div>
 

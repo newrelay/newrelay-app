@@ -9,7 +9,9 @@ RSpec.describe Reputation::Providers do
 
     it 'returns the Google adapter for google integrations by default' do
       integration = instance_double(Reputation::Integration, provider: 'google')
-      expect(described_class.adapter_for(integration)).to be_a(described_class::Google)
+      with_modified_env(REPUTATION_GOOGLE_PROVIDER: 'google') do
+        expect(described_class.adapter_for(integration)).to be_a(described_class::Google)
+      end
     end
 
     it 'returns the GMBapi adapter when REPUTATION_GOOGLE_PROVIDER=gmbapi' do

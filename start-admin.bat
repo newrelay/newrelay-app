@@ -22,14 +22,23 @@ if errorlevel 1 (
   exit /b 1
 )
 
+echo  Waiting for Docker to be ready...
+set /a _tries=0
+:waitdocker
 docker info >nul 2>&1
-if errorlevel 1 (
-  echo  ERROR: Docker Desktop is installed but not running.
-  echo  Open Docker Desktop, wait until it says "Running", then double-click this file again.
+if not errorlevel 1 goto dockerready
+set /a _tries+=1
+if %_tries% geq 12 (
+  echo  ERROR: Docker Desktop is not responding.
+  echo  Open Docker Desktop, wait until it says "Running" (green), then double-click this file again.
   echo.
   pause
   exit /b 1
 )
+timeout /t 5 /nobreak >nul
+goto waitdocker
+:dockerready
+echo  Docker is ready.
 
 if not exist ".env" (
   echo  Creating local config from .env.example ...

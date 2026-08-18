@@ -12,7 +12,7 @@ defineProps({
 
 const emit = defineEmits(['retry']);
 
-const { orientation, status, createdAt, content, attachments } =
+const { orientation, status, createdAt, content, attachments, isInboxView } =
   useMessageContext();
 
 const { t } = useI18n();
@@ -25,15 +25,24 @@ const canRetry = computed(() => {
 </script>
 
 <template>
-  <div class="text-xs text-destructive flex items-center gap-1.5">
+  <div
+    class="flex items-center gap-1.5 text-destructive"
+    :class="isInboxView?.value ? 'gap-2 text-[13px]' : 'text-xs'"
+  >
     <span>{{ t('CHAT_LIST.FAILED_TO_SEND') }}</span>
     <div class="relative group">
       <div
-        class="bg-accent rounded-md size-5 grid place-content-center cursor-pointer"
+        class="grid cursor-pointer place-content-center"
+        :class="
+          isInboxView?.value
+            ? 'size-[22px] rounded-full bg-destructive/10'
+            : 'size-5 rounded-md bg-accent'
+        "
       >
         <Icon
           icon="i-lucide-alert-triangle"
-          class="text-destructive size-[14px]"
+          class="text-destructive"
+          :class="isInboxView?.value ? 'size-3' : 'size-[14px]'"
         />
       </div>
       <div
@@ -50,10 +59,19 @@ const canRetry = computed(() => {
       v-if="canRetry"
       type="button"
       :disabled="status !== MESSAGE_STATUS.FAILED"
-      class="bg-accent rounded-md size-5 grid place-content-center cursor-pointer"
+      class="grid cursor-pointer place-content-center transition-colors"
+      :class="
+        isInboxView?.value
+          ? 'size-[22px] rounded-full bg-destructive/10 hover:bg-destructive/20'
+          : 'size-5 rounded-md bg-accent'
+      "
       @click="emit('retry')"
     >
-      <Icon icon="i-lucide-refresh-ccw" class="text-destructive size-[14px]" />
+      <Icon
+        icon="i-lucide-refresh-ccw"
+        class="text-destructive"
+        :class="isInboxView?.value ? 'size-3' : 'size-[14px]'"
+      />
     </button>
   </div>
 </template>

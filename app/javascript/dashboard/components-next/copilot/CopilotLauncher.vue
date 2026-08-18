@@ -1,6 +1,7 @@
 <script setup>
 import { ref, computed } from 'vue';
 import { useUISettings } from 'dashboard/composables/useUISettings';
+import { useHasActiveOverlay } from 'dashboard/composables/useHasActiveOverlay';
 import { useMapGetter } from 'dashboard/composables/store';
 import { FEATURE_FLAGS } from 'dashboard/featureFlags';
 import { useDraggable, useWindowSize } from '@vueuse/core';
@@ -12,12 +13,18 @@ const isFeatureEnabledonAccount = useMapGetter(
   'accounts/isFeatureEnabledonAccount'
 );
 
+const { hasActiveOverlay } = useHasActiveOverlay();
+
 const showCopilotLauncher = computed(() => {
   const isCaptainEnabled = isFeatureEnabledonAccount.value(
     currentAccountId.value,
     FEATURE_FLAGS.CAPTAIN
   );
-  return isCaptainEnabled && !uiSettings.value.is_copilot_panel_open;
+  return (
+    isCaptainEnabled &&
+    !uiSettings.value.is_copilot_panel_open &&
+    !hasActiveOverlay.value
+  );
 });
 
 const toggleSidebar = () => {

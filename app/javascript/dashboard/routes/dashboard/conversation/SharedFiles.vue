@@ -21,6 +21,13 @@ import FileIcon from 'next/icon/FileIcon.vue';
 import NextButton from 'dashboard/components-next/button/Button.vue';
 import Spinner from 'dashboard/components-next/spinner/Spinner.vue';
 
+defineProps({
+  compact: {
+    type: Boolean,
+    default: false,
+  },
+});
+
 const MEDIA_PEEK_LIMIT = 6;
 const FILES_PEEK_LIMIT = 3;
 
@@ -180,242 +187,330 @@ const displayTime = attachment => {
   if (!attachment.created_at) return '';
   return shortTimestamp(dynamicTime(attachment.created_at), true);
 };
+
+const isPdfFile = attachment => attachment.extension?.toLowerCase() === 'pdf';
 </script>
 
 <template>
-  <div class="flex flex-col gap-5 p-2">
+  <div :class="compact ? 'flex flex-col gap-2' : 'flex flex-col gap-5 p-2'">
     <div v-if="!attachmentsLoaded" class="flex justify-center p-3">
       <Spinner class="size-5" />
     </div>
     <div
       v-else-if="!mediaAttachments.length && !fileAttachments.length"
-      class="flex flex-col items-center justify-center px-6 py-8 gap-3"
+      class="flex flex-col items-center justify-center gap-2 py-3 text-muted-foreground"
     >
-      <span class="i-lucide-paperclip size-8 text-muted-foreground/50" />
-      <p class="text-[13.5px] text-center text-muted-foreground">
+      <span
+        class="i-lucide-paperclip opacity-40"
+        :class="compact ? 'mb-2 size-4' : 'size-8 text-muted-foreground/50'"
+      />
+      <p :class="compact ? 'text-[11px]' : 'text-[13.5px] text-center'">
         {{ t('CONVERSATION_SIDEBAR.SHARED_FILES.EMPTY', 'No attachments yet') }}
       </p>
     </div>
 
-    <section v-if="mediaAttachments.length" class="flex flex-col gap-2.5">
-      <header class="flex items-center justify-between px-0.5">
-        <h4
-          class="capitalize text-xs font-semibold tracking-wider uppercase text-muted-foreground"
+    <template v-else-if="compact">
+      <div v-if="fileAttachments.length" class="mt-1 flex flex-col gap-2">
+        <div
+          v-for="attachment in visibleFiles"
+          :key="attachment.id"
+          role="button"
+          tabindex="0"
+          class="flex cursor-pointer items-center gap-3 rounded-lg border border-border/50 bg-muted/30 p-2 transition-colors hover:bg-muted/50"
+          @click="onDownloadFile(attachment)"
+          @keydown.enter="onDownloadFile(attachment)"
         >
-          {{ t('CONVERSATION_SIDEBAR.SHARED_FILES.MEDIA_HEADING') }}
-          <span
-            class="ms-1 font-medium tracking-normal normal-case text-muted-foreground"
+          <div
+            class="flex size-8 shrink-0 items-center justify-center rounded-lg"
+            :class="
+              isPdfFile(attachment)
+                ? 'bg-destructive/10 text-destructive'
+                : 'bg-primary/10 text-primary'
+            "
           >
-            {{ mediaAttachments.length }}
-          </span>
-        </h4>
-        <NextButton
-          v-if="mediaOverflow > 0"
-          ghost
-          slate
-          xs
-          trailing-icon
-          :icon="
-            showAllMedia ? 'i-lucide-chevron-up' : 'i-lucide-chevron-right'
-          "
-          :label="
-            showAllMedia
-              ? t('CONVERSATION_SIDEBAR.SHARED_FILES.SHOW_LESS')
-              : t('CONVERSATION_SIDEBAR.SHARED_FILES.VIEW_ALL')
-          "
-          @click="showAllMedia = !showAllMedia"
-        />
-      </header>
-      <div class="grid grid-cols-3 gap-2">
+            <span v-if="isPdfFile(attachment)" class="text-[9px] font-bold">
+              {{ t('CONVERSATION.SHARED_FILES.PDF_LABEL') }}
+            </span>
+            <FileIcon
+              v-else
+              :file-type="attachment.extension?.toLowerCase() || ''"
+              class="size-4"
+            />
+          </div>
+          <div class="flex min-w-0 flex-1 flex-col">
+            <span class="truncate text-[13px] font-medium text-foreground">
+              {{ displayName(attachment) }}
+            </span>
+            <div
+              class="mt-0.5 flex items-center gap-2 text-[10px] text-muted-foreground"
+            >
+              <span>{{ displaySize(attachment) }}</span>
+              <template v-if="displayTime(attachment)">
+                <span class="size-1 rounded-full bg-muted-foreground/30" />
+                <span>{{ displayTime(attachment) }}</span>
+              </template>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div
+        v-if="!fileAttachments.length && mediaAttachments.length"
+        class="mt-1 flex flex-col gap-2"
+      >
         <div
           v-for="(attachment, index) in visibleMedia"
           :key="attachment.id"
           role="button"
           tabindex="0"
-          class="relative w-full overflow-hidden transition-all duration-200 rounded-lg cursor-pointer aspect-square bg-muted shadow-sm hover:shadow-md hover:-translate-y-px group focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+          class="flex cursor-pointer items-center gap-3 rounded-lg border border-border/50 bg-muted/30 p-2 transition-colors hover:bg-muted/50"
           @click="onTileActivate(attachment, index)"
           @keydown.enter="onTileActivate(attachment, index)"
-          @keydown.space.prevent="onTileActivate(attachment, index)"
         >
-          <template v-if="!isOverflowTile(index)">
-            <img
-              v-if="hasPreview(attachment)"
-              :src="imagePreviewSrc(attachment)"
-              class="object-cover w-full h-full transition-transform duration-300 group-hover:scale-110"
-              loading="lazy"
-              :alt="fileNameFromUrl(attachment.data_url)"
-              @error="onPreviewError(attachment)"
-            />
-            <video
-              v-else-if="hasVideoPreview(attachment)"
-              :src="`${attachment.data_url}#t=0.1`"
-              preload="metadata"
-              muted
-              playsinline
-              class="object-cover w-full h-full transition-transform duration-300 group-hover:scale-110 pointer-events-none"
-              @loadedmetadata="onLoadedMetadata(attachment, $event)"
-              @error="onPreviewError(attachment)"
-            />
-            <div
-              v-else
-              class="flex items-center justify-center w-full h-full bg-gradient-to-br from-muted to-muted"
-            >
-              <Icon
-                :icon="fallbackIcon(attachment.file_type)"
-                class="size-6 text-muted-foreground"
-              />
-            </div>
-
-            <audio
-              v-if="isAudioType(attachment.file_type) && attachment.data_url"
-              :src="attachment.data_url"
-              preload="metadata"
-              class="hidden"
-              @loadedmetadata="onLoadedMetadata(attachment, $event)"
-            />
-
-            <div
-              class="absolute inset-0 transition-opacity duration-200 opacity-0 pointer-events-none group-hover:opacity-100 bg-gradient-to-t from-black/40 via-transparent to-transparent"
-            />
-
-            <div
-              v-if="hasVideoPreview(attachment)"
-              class="absolute inset-0 flex items-center justify-center pointer-events-none bg-gradient-to-t from-black/30 via-transparent to-transparent"
-            >
-              <div
-                class="flex items-center justify-center rounded-full size-7 bg-white/95 shadow-md"
-              >
-                <Icon icon="i-lucide-play" class="ms-0.5 size-3.5 text-black" />
-              </div>
-            </div>
-
-            <span
-              v-if="
-                isPlayableType(attachment.file_type) &&
-                displayDuration(attachment)
-              "
-              class="absolute text-xxs font-medium tabular-nums transition-opacity bottom-1.5 ltr:right-1.5 rtl:left-1.5 text-white [text-shadow:_0_1px_3px_rgba(0,0,0,0.95),_0_0_10px_rgba(0,0,0,0.7)] group-hover:opacity-0"
-            >
-              {{ displayDuration(attachment) }}
+          <div
+            class="flex size-8 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary"
+          >
+            <Icon :icon="fallbackIcon(attachment.file_type)" class="size-4" />
+          </div>
+          <div class="flex min-w-0 flex-1 flex-col">
+            <span class="truncate text-[13px] font-medium text-foreground">
+              {{ displayName(attachment) }}
             </span>
-
-            <span
+            <div
               v-if="displayTime(attachment)"
-              class="absolute text-xxs font-medium transition-opacity opacity-0 bottom-1.5 ltr:left-1.5 rtl:right-1.5 text-white [text-shadow:_0_1px_3px_rgba(0,0,0,0.95),_0_0_10px_rgba(0,0,0,0.7)] group-hover:opacity-100"
+              class="mt-0.5 text-[10px] text-muted-foreground"
             >
               {{ displayTime(attachment) }}
-            </span>
-
-            <button
-              type="button"
-              class="absolute flex items-center justify-center !p-px transition-all rounded-full opacity-0 bottom-1.5 ltr:right-1.5 rtl:left-1.5 size-6 bg-white/95 shadow-md group-hover:opacity-100 hover:bg-white disabled:opacity-50"
-              :disabled="downloadingId === attachment.id"
-              :aria-label="t('CONVERSATION_SIDEBAR.SHARED_FILES.DOWNLOAD')"
-              @click.stop="onDownloadFile(attachment)"
-              @keydown.enter.stop
-              @keydown.space.stop
-            >
-              <Icon icon="i-lucide-download" class="size-3 text-black" />
-            </button>
-          </template>
-
-          <div
-            v-if="isOverflowTile(index)"
-            class="absolute inset-0 flex items-center justify-center bg-accent"
-          >
-            <span class="text-base font-semibold text-foreground">
-              {{
-                t('CONVERSATION_SIDEBAR.SHARED_FILES.MORE_COUNT', {
-                  count: mediaOverflow,
-                })
-              }}
-            </span>
+            </div>
           </div>
         </div>
       </div>
-    </section>
+    </template>
 
-    <section v-if="fileAttachments.length" class="flex flex-col gap-2.5">
-      <header class="flex items-center justify-between px-0.5">
-        <h4
-          class="capitalize text-xs font-semibold tracking-wider uppercase text-muted-foreground"
-        >
-          {{ t('CONVERSATION_SIDEBAR.SHARED_FILES.FILES_HEADING') }}
-          <span
-            class="ms-1 font-medium tracking-normal normal-case text-muted-foreground"
+    <template v-else>
+      <section v-if="mediaAttachments.length" class="flex flex-col gap-2.5">
+        <header class="flex items-center justify-between px-0.5">
+          <h4
+            class="capitalize text-xs font-semibold tracking-wider uppercase text-muted-foreground"
           >
-            {{ fileAttachments.length }}
-          </span>
-        </h4>
-        <NextButton
-          v-if="fileAttachments.length > FILES_PEEK_LIMIT"
-          ghost
-          slate
-          xs
-          trailing-icon
-          :icon="
-            showAllFiles ? 'i-lucide-chevron-up' : 'i-lucide-chevron-right'
-          "
-          :label="
-            showAllFiles
-              ? t('CONVERSATION_SIDEBAR.SHARED_FILES.SHOW_LESS')
-              : t('CONVERSATION_SIDEBAR.SHARED_FILES.VIEW_ALL')
-          "
-          @click="showAllFiles = !showAllFiles"
-        />
-      </header>
-      <ul class="flex flex-col gap-0.5">
-        <li
-          v-for="attachment in visibleFiles"
-          :key="attachment.id"
-          class="flex items-center gap-3 px-2 py-2 transition-colors rounded-lg hover:bg-muted group"
-        >
-          <div
-            class="flex items-center justify-center rounded-lg size-9 shrink-0 bg-gradient-to-br from-muted to-muted ring-1 ring-inset ring-muted/40"
-          >
-            <FileIcon
-              :file-type="attachment.extension?.toLowerCase() || ''"
-              class="size-4 text-muted-foreground"
-            />
-          </div>
-          <a
-            :href="attachment.data_url"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="flex-1 min-w-0"
-            :title="displayName(attachment)"
-          >
-            <p class="text-sm font-medium truncate text-foreground mb-1">
-              {{ displayName(attachment) }}
-            </p>
-            <p class="text-xs text-muted-foreground">
-              {{ displaySize(attachment) }}
-              <template v-if="displayTime(attachment)">
-                · {{ displayTime(attachment) }}
-              </template>
-            </p>
-          </a>
+            {{ t('CONVERSATION_SIDEBAR.SHARED_FILES.MEDIA_HEADING') }}
+            <span
+              class="ms-1 font-medium tracking-normal normal-case text-muted-foreground"
+            >
+              {{ mediaAttachments.length }}
+            </span>
+          </h4>
           <NextButton
+            v-if="mediaOverflow > 0"
             ghost
             slate
-            sm
-            icon="i-lucide-download"
-            class="opacity-0 group-hover:opacity-100"
-            :is-loading="downloadingId === attachment.id"
-            :aria-label="t('CONVERSATION_SIDEBAR.SHARED_FILES.DOWNLOAD')"
-            @click="onDownloadFile(attachment)"
+            xs
+            trailing-icon
+            :icon="
+              showAllMedia ? 'i-lucide-chevron-up' : 'i-lucide-chevron-right'
+            "
+            :label="
+              showAllMedia
+                ? t('CONVERSATION_SIDEBAR.SHARED_FILES.SHOW_LESS')
+                : t('CONVERSATION_SIDEBAR.SHARED_FILES.VIEW_ALL')
+            "
+            @click="showAllMedia = !showAllMedia"
           />
-        </li>
-      </ul>
-    </section>
+        </header>
+        <div class="grid grid-cols-3 gap-2">
+          <div
+            v-for="(attachment, index) in visibleMedia"
+            :key="attachment.id"
+            role="button"
+            tabindex="0"
+            class="relative w-full overflow-hidden transition-all duration-200 rounded-lg cursor-pointer aspect-square bg-muted shadow-sm hover:shadow-md hover:-translate-y-px group focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+            @click="onTileActivate(attachment, index)"
+            @keydown.enter="onTileActivate(attachment, index)"
+            @keydown.space.prevent="onTileActivate(attachment, index)"
+          >
+            <template v-if="!isOverflowTile(index)">
+              <img
+                v-if="hasPreview(attachment)"
+                :src="imagePreviewSrc(attachment)"
+                class="object-cover w-full h-full transition-transform duration-300 group-hover:scale-110"
+                loading="lazy"
+                :alt="fileNameFromUrl(attachment.data_url)"
+                @error="onPreviewError(attachment)"
+              />
+              <video
+                v-else-if="hasVideoPreview(attachment)"
+                :src="`${attachment.data_url}#t=0.1`"
+                preload="metadata"
+                muted
+                playsinline
+                class="object-cover w-full h-full transition-transform duration-300 group-hover:scale-110 pointer-events-none"
+                @loadedmetadata="onLoadedMetadata(attachment, $event)"
+                @error="onPreviewError(attachment)"
+              />
+              <div
+                v-else
+                class="flex items-center justify-center w-full h-full bg-gradient-to-br from-muted to-muted"
+              >
+                <Icon
+                  :icon="fallbackIcon(attachment.file_type)"
+                  class="size-6 text-muted-foreground"
+                />
+              </div>
 
-    <GalleryView
-      v-if="showGallery && selectedAttachment"
-      v-model:show="showGallery"
-      :attachment="selectedAttachment"
-      :all-attachments="mediaAttachments"
-      auto-play
-      @close="showGallery = false"
-    />
+              <audio
+                v-if="isAudioType(attachment.file_type) && attachment.data_url"
+                :src="attachment.data_url"
+                preload="metadata"
+                class="hidden"
+                @loadedmetadata="onLoadedMetadata(attachment, $event)"
+              />
+
+              <div
+                class="absolute inset-0 transition-opacity duration-200 opacity-0 pointer-events-none group-hover:opacity-100 bg-gradient-to-t from-black/40 via-transparent to-transparent"
+              />
+
+              <div
+                v-if="hasVideoPreview(attachment)"
+                class="absolute inset-0 flex items-center justify-center pointer-events-none bg-gradient-to-t from-black/30 via-transparent to-transparent"
+              >
+                <div
+                  class="flex items-center justify-center rounded-full size-7 bg-white/95 shadow-md"
+                >
+                  <Icon
+                    icon="i-lucide-play"
+                    class="ms-0.5 size-3.5 text-black"
+                  />
+                </div>
+              </div>
+
+              <span
+                v-if="
+                  isPlayableType(attachment.file_type) &&
+                  displayDuration(attachment)
+                "
+                class="absolute text-xxs font-medium tabular-nums transition-opacity bottom-1.5 ltr:right-1.5 rtl:left-1.5 text-white [text-shadow:_0_1px_3px_rgba(0,0,0,0.95),_0_0_10px_rgba(0,0,0,0.7)] group-hover:opacity-0"
+              >
+                {{ displayDuration(attachment) }}
+              </span>
+
+              <span
+                v-if="displayTime(attachment)"
+                class="absolute text-xxs font-medium transition-opacity opacity-0 bottom-1.5 ltr:left-1.5 rtl:right-1.5 text-white [text-shadow:_0_1px_3px_rgba(0,0,0,0.95),_0_0_10px_rgba(0,0,0,0.7)] group-hover:opacity-100"
+              >
+                {{ displayTime(attachment) }}
+              </span>
+
+              <button
+                type="button"
+                class="absolute flex items-center justify-center !p-px transition-all rounded-full opacity-0 bottom-1.5 ltr:right-1.5 rtl:left-1.5 size-6 bg-white/95 shadow-md group-hover:opacity-100 hover:bg-white disabled:opacity-50"
+                :disabled="downloadingId === attachment.id"
+                :aria-label="t('CONVERSATION_SIDEBAR.SHARED_FILES.DOWNLOAD')"
+                @click.stop="onDownloadFile(attachment)"
+                @keydown.enter.stop
+                @keydown.space.stop
+              >
+                <Icon icon="i-lucide-download" class="size-3 text-black" />
+              </button>
+            </template>
+
+            <div
+              v-if="isOverflowTile(index)"
+              class="absolute inset-0 flex items-center justify-center bg-accent"
+            >
+              <span class="text-base font-semibold text-foreground">
+                {{
+                  t('CONVERSATION_SIDEBAR.SHARED_FILES.MORE_COUNT', {
+                    count: mediaOverflow,
+                  })
+                }}
+              </span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section v-if="fileAttachments.length" class="flex flex-col gap-2.5">
+        <header class="flex items-center justify-between px-0.5">
+          <h4
+            class="capitalize text-xs font-semibold tracking-wider uppercase text-muted-foreground"
+          >
+            {{ t('CONVERSATION_SIDEBAR.SHARED_FILES.FILES_HEADING') }}
+            <span
+              class="ms-1 font-medium tracking-normal normal-case text-muted-foreground"
+            >
+              {{ fileAttachments.length }}
+            </span>
+          </h4>
+          <NextButton
+            v-if="fileAttachments.length > FILES_PEEK_LIMIT"
+            ghost
+            slate
+            xs
+            trailing-icon
+            :icon="
+              showAllFiles ? 'i-lucide-chevron-up' : 'i-lucide-chevron-right'
+            "
+            :label="
+              showAllFiles
+                ? t('CONVERSATION_SIDEBAR.SHARED_FILES.SHOW_LESS')
+                : t('CONVERSATION_SIDEBAR.SHARED_FILES.VIEW_ALL')
+            "
+            @click="showAllFiles = !showAllFiles"
+          />
+        </header>
+        <ul class="flex flex-col gap-0.5">
+          <li
+            v-for="attachment in visibleFiles"
+            :key="attachment.id"
+            class="flex items-center gap-3 px-2 py-2 transition-colors rounded-lg hover:bg-muted group"
+          >
+            <div
+              class="flex items-center justify-center rounded-lg size-9 shrink-0 bg-gradient-to-br from-muted to-muted ring-1 ring-inset ring-muted/40"
+            >
+              <FileIcon
+                :file-type="attachment.extension?.toLowerCase() || ''"
+                class="size-4 text-muted-foreground"
+              />
+            </div>
+            <a
+              :href="attachment.data_url"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="flex-1 min-w-0"
+              :title="displayName(attachment)"
+            >
+              <p class="text-sm font-medium truncate text-foreground mb-1">
+                {{ displayName(attachment) }}
+              </p>
+              <p class="text-xs text-muted-foreground">
+                {{ displaySize(attachment) }}
+                <template v-if="displayTime(attachment)">
+                  · {{ displayTime(attachment) }}
+                </template>
+              </p>
+            </a>
+            <NextButton
+              ghost
+              slate
+              sm
+              icon="i-lucide-download"
+              class="opacity-0 group-hover:opacity-100"
+              :is-loading="downloadingId === attachment.id"
+              :aria-label="t('CONVERSATION_SIDEBAR.SHARED_FILES.DOWNLOAD')"
+              @click="onDownloadFile(attachment)"
+            />
+          </li>
+        </ul>
+      </section>
+
+      <GalleryView
+        v-if="showGallery && selectedAttachment"
+        v-model:show="showGallery"
+        :attachment="selectedAttachment"
+        :all-attachments="mediaAttachments"
+        auto-play
+        @close="showGallery = false"
+      />
+    </template>
   </div>
 </template>

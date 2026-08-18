@@ -21,14 +21,12 @@ const showDropdown = ref(false);
 <template>
   <div class="relative">
     <button
-      class="flex items-center gap-1 px-2 py-1 rounded-md outline-dashed h-6 outline-1 outline-border hover:bg-accent"
-      :class="{ 'bg-accent': showDropdown }"
+      type="button"
+      class="reset-base flex w-fit cursor-pointer items-center gap-1.5 text-[12px] font-medium text-primary transition-colors hover:text-primary/80"
       @click="showDropdown = !showDropdown"
     >
-      <span class="i-lucide-plus" />
-      <span class="text-sm text-muted-foreground">
-        {{ t('LABEL.TAG_BUTTON') }}
-      </span>
+      <span class="i-lucide-plus size-3.5" />
+      {{ t('LABEL.TAG_BUTTON') }}
     </button>
     <DropdownMenu
       v-if="showDropdown"

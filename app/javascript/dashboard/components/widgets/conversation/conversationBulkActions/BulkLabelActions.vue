@@ -120,23 +120,32 @@ const handleDismiss = () => {
 
 <template>
   <div ref="containerRef" class="relative">
-    <RelayTooltip :content="tooltipLabel">
+    <RelayTooltip v-if="!isTypeContact" :content="tooltipLabel">
       <NextButton
         :label="buttonLabel"
         :icon="isRemoveAction ? 'i-woot-tag-remove' : 'i-lucide-tag'"
         slate
-        :size="isTypeContact ? 'sm' : 'xs'"
+        size="xs"
         ghost
-        :class="{
-          'bg-accent': showDropdown,
-          '[&>span:nth-child(2)]:hidden md:[&>span:nth-child(2)]:inline w-fit !text-primary [&>span]:!text-primary !px-2':
-            isTypeContact,
-        }"
         :disabled="disabled || isLoading"
         :is-loading="isLoading"
         @click="toggleDropdown()"
       />
     </RelayTooltip>
+    <button
+      v-else
+      type="button"
+      class="flex items-center gap-1.5 text-[13px] font-medium transition-opacity hover:opacity-80 disabled:cursor-not-allowed disabled:opacity-40"
+      :class="isRemoveAction ? 'text-muted-foreground' : 'text-primary'"
+      :disabled="disabled || isLoading"
+      @click="toggleDropdown()"
+    >
+      <span
+        :class="isRemoveAction ? 'i-woot-tag-remove' : 'i-lucide-tag'"
+        class="size-3.5 shrink-0"
+      />
+      {{ buttonLabel }}
+    </button>
     <Transition
       :enter-active-class="
         !isTypeContact

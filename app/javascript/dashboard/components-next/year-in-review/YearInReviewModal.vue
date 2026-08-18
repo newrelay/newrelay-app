@@ -190,10 +190,7 @@ watch(
 
 <template>
   <Teleport to="body">
-    <div
-      v-if="isOpen"
-      class="fixed inset-0 z-[9999] bg-black font-interDisplay"
-    >
+    <div v-if="isOpen" class="fixed inset-0 z-[9999] bg-black font-geist">
       <div class="relative w-full h-full overflow-hidden">
         <div
           v-if="isLoading"

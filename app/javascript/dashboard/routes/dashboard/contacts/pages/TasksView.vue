@@ -533,307 +533,318 @@ onMounted(() => {
 <template>
   <div
     v-on-click-outside="closeMenus"
-    class="relative flex h-full flex-1 flex-col overflow-y-auto bg-background p-6"
+    class="relative flex h-full min-h-0 flex-1 flex-col overflow-hidden bg-background"
   >
-    <div class="w-full">
-      <!-- Header -->
-      <div class="mb-6 flex items-center justify-between">
-        <div class="flex items-center gap-3">
-          <h2
-            class="capitalize text-base font-semibold tracking-tight text-foreground"
+    <div class="flex-1 overflow-y-auto p-6">
+      <div class="w-full">
+        <!-- Header -->
+        <div class="mb-6 flex items-center justify-between">
+          <div class="flex items-center gap-3">
+            <h2
+              class="capitalize text-base font-semibold tracking-tight text-foreground"
+            >
+              {{ t('CONTACTS_LAYOUT.TASKS_VIEW.TITLE') }}
+            </h2>
+            <RelayBadge
+              class="rounded-full bg-primary px-2.5 py-0.5 text-xs font-semibold text-primary-foreground hover:bg-primary/90"
+            >
+              {{
+                t('CONTACTS_LAYOUT.TASKS_VIEW.TASKS_COUNT', {
+                  count: displayedTasks.length,
+                })
+              }}
+            </RelayBadge>
+          </div>
+          <RelayButton
+            class="h-9 gap-1.5 rounded-lg px-4 text-sm font-medium shadow-sm"
+            @click="openAddTaskDialog"
           >
-            {{ t('CONTACTS_LAYOUT.TASKS_VIEW.TITLE') }}
-          </h2>
-          <RelayBadge
-            class="rounded-full bg-primary px-2.5 py-0.5 text-xs font-semibold text-primary-foreground hover:bg-primary/90"
-          >
-            {{
-              t('CONTACTS_LAYOUT.TASKS_VIEW.TASKS_COUNT', {
-                count: displayedTasks.length,
-              })
-            }}
-          </RelayBadge>
+            <span class="i-lucide-plus size-4" />
+            {{ t('CONTACTS_LAYOUT.TASKS_VIEW.ADD_TASK') }}
+          </RelayButton>
         </div>
-        <RelayButton
-          class="h-9 gap-1.5 rounded-lg px-4 text-sm font-medium shadow-sm"
-          @click="openAddTaskDialog"
-        >
-          <span class="i-lucide-plus size-4" />
-          {{ t('CONTACTS_LAYOUT.TASKS_VIEW.ADD_TASK') }}
-        </RelayButton>
-      </div>
 
-      <!-- Timeframe tabs: absolute bar — global button { border-0 } kills border-b-2 -->
-      <div class="mb-4 border-b border-border/60">
-        <div class="flex items-center gap-6" role="tablist">
-          <button
-            v-for="tab in timeframeTabs"
-            :key="tab.value"
-            type="button"
-            role="tab"
-            :aria-selected="activeTab === tab.value"
-            class="relative -mb-px rounded-none px-1 pb-2.5 text-[14px] font-medium transition-colors"
-            :class="
-              activeTab === tab.value
-                ? 'text-foreground'
-                : 'text-muted-foreground hover:text-foreground'
-            "
-            @click="setTab(tab.value)"
-          >
-            {{ tab.label }}
-            <span
-              v-if="activeTab === tab.value"
-              class="absolute inset-x-0 bottom-0 h-0.5 bg-primary"
-              aria-hidden="true"
-            />
-          </button>
-        </div>
-      </div>
-
-      <!-- Filters -->
-      <div class="mb-6 flex items-center justify-between gap-4 py-2">
-        <div class="flex flex-wrap items-center gap-3">
-          <div class="relative">
-            <RelayButton
-              variant="outline"
-              class="h-9 gap-2 rounded-lg border-border bg-background px-3 text-[13px] font-medium text-foreground shadow-sm hover:bg-muted/50"
-              @click="toggleFilter('assignee')"
+        <!-- Timeframe tabs: absolute bar — global button { border-0 } kills border-b-2 -->
+        <div class="mb-4 border-b border-border/60">
+          <div class="flex items-center gap-6" role="tablist">
+            <button
+              v-for="tab in timeframeTabs"
+              :key="tab.value"
+              type="button"
+              role="tab"
+              :aria-selected="activeTab === tab.value"
+              class="relative -mb-px rounded-none px-1 pb-2.5 text-[14px] font-medium transition-colors"
+              :class="
+                activeTab === tab.value
+                  ? 'text-foreground'
+                  : 'text-muted-foreground hover:text-foreground'
+              "
+              @click="setTab(tab.value)"
             >
-              <span class="font-normal text-muted-foreground">
-                {{ t('CONTACTS_LAYOUT.TASKS_VIEW.FILTER.ASSIGNEE_LABEL') }}
-              </span>
-              {{ assigneeFilterLabel }}
+              {{ tab.label }}
               <span
-                class="i-lucide-chevron-down size-3.5 text-muted-foreground opacity-50"
+                v-if="activeTab === tab.value"
+                class="absolute inset-x-0 bottom-0 h-0.5 bg-primary"
+                aria-hidden="true"
               />
-            </RelayButton>
-            <div
-              v-if="openFilter === 'assignee'"
-              class="absolute left-0 top-full z-50 mt-1 max-h-64 w-[220px] overflow-y-auto rounded-md border border-border bg-popover p-1 text-popover-foreground shadow-md"
-            >
-              <button
-                v-for="option in assigneeFilterOptions"
-                :key="option.value"
-                type="button"
-                class="flex w-full cursor-pointer items-center rounded-sm px-3 py-2 text-left text-[13px] text-foreground hover:bg-muted"
-                :class="{ 'bg-muted': assigneeFilter === option.value }"
-                @click="selectAssignee(option.value)"
-              >
-                {{ option.label }}
-              </button>
-            </div>
-          </div>
-
-          <div class="relative">
-            <RelayButton
-              variant="outline"
-              class="h-9 gap-2 rounded-lg border-border bg-background px-3 text-[13px] font-medium text-foreground shadow-sm hover:bg-muted/50"
-              @click="toggleFilter('status')"
-            >
-              <span class="font-normal text-muted-foreground">
-                {{ t('CONTACTS_LAYOUT.TASKS_VIEW.FILTER.STATUS_LABEL') }}
-              </span>
-              {{ statusFilterLabel }}
-              <span
-                class="i-lucide-chevron-down size-3.5 text-muted-foreground opacity-50"
-              />
-            </RelayButton>
-            <div
-              v-if="openFilter === 'status'"
-              class="absolute left-0 top-full z-50 mt-1 w-[200px] overflow-hidden rounded-md border border-border bg-popover p-1 text-popover-foreground shadow-md"
-            >
-              <button
-                v-for="option in statusFilterOptions"
-                :key="option.value"
-                type="button"
-                class="flex w-full cursor-pointer items-center rounded-sm px-3 py-2 text-left text-[13px] text-foreground hover:bg-muted"
-                :class="{ 'bg-muted': statusFilter === option.value }"
-                @click="selectStatus(option.value)"
-              >
-                {{ option.label }}
-              </button>
-            </div>
-          </div>
-
-          <div class="relative">
-            <RelayButton
-              variant="outline"
-              class="h-9 gap-2 rounded-lg border-border bg-background px-3 text-[13px] font-medium text-foreground shadow-sm hover:bg-muted/50"
-              @click="toggleFilter('dueDate')"
-            >
-              <span class="font-normal text-muted-foreground">
-                {{ t('CONTACTS_LAYOUT.TASKS_VIEW.FILTER.DUE_LABEL') }}
-              </span>
-              {{ dueDateFilterLabel }}
-              <span
-                class="i-lucide-chevron-down size-3.5 text-muted-foreground opacity-50"
-              />
-            </RelayButton>
-            <div
-              v-if="openFilter === 'dueDate'"
-              class="absolute left-0 top-full z-50 mt-1 w-[200px] overflow-hidden rounded-md border border-border bg-popover p-1 text-popover-foreground shadow-md"
-            >
-              <button
-                v-for="option in dueDateFilterOptions"
-                :key="option.value"
-                type="button"
-                class="flex w-full cursor-pointer items-center rounded-sm px-3 py-2 text-left text-[13px] text-foreground hover:bg-muted"
-                :class="{ 'bg-muted': dueDateFilter === option.value }"
-                @click="selectDueDate(option.value)"
-              >
-                {{ option.label }}
-              </button>
-            </div>
-          </div>
-
-          <div class="ml-2 flex items-center gap-1">
-            <RelayButton
-              variant="ghost"
-              size="icon"
-              class="size-8 rounded-md text-muted-foreground hover:text-foreground border border-border hover:border-transparent"
-            >
-              <span class="i-lucide-list-filter size-4" />
-            </RelayButton>
-            <RelayButton
-              variant="ghost"
-              size="icon"
-              class="size-8 rounded-md text-muted-foreground hover:text-foreground border border-border hover:border-transparent"
-            >
-              <span class="i-lucide-arrow-up-down size-4" />
-            </RelayButton>
+            </button>
           </div>
         </div>
 
-        <div class="relative w-64 shrink-0">
-          <span
-            class="i-lucide-search pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground"
-          />
-          <RelayInput
-            v-model="searchQuery"
-            type="search"
-            :placeholder="t('CONTACTS_LAYOUT.TASKS_VIEW.SEARCH_PLACEHOLDER')"
-            class-name="h-9 rounded-lg border-border/80 bg-muted/20 pl-9 text-[13px] shadow-sm"
-          />
-        </div>
-      </div>
-
-      <!-- Content -->
-      <div v-if="isFetching" class="flex h-[350px] items-center justify-center">
-        <Spinner />
-      </div>
-
-      <div v-else-if="displayedTasks.length" class="flex flex-col gap-3">
-        <div
-          v-for="task in displayedTasks"
-          :key="task.id"
-          class="flex items-start gap-4 rounded-xl border border-border/60 bg-card p-4 shadow-sm transition-shadow hover:shadow-md"
-        >
-          <RelayCheckbox
-            :model-value="!!task.completed"
-            class="mt-1 border-muted-foreground/30"
-            @update:model-value="value => setTaskCompleted(task, value)"
-          />
-          <div class="flex flex-1 flex-col gap-1.5">
-            <div class="flex items-start justify-between gap-4">
-              <div>
-                <h3
-                  class="capitalize text-[15px] font-semibold tracking-tight text-foreground"
+        <!-- Filters -->
+        <div class="mb-6 flex items-center justify-between gap-4 py-3">
+          <div class="flex flex-wrap items-center gap-4">
+            <div class="relative">
+              <button
+                type="button"
+                class="reset-base flex cursor-pointer items-center gap-1 text-[13px] text-muted-foreground transition-colors hover:text-foreground"
+                @click="toggleFilter('assignee')"
+              >
+                <span>
+                  {{ t('CONTACTS_LAYOUT.TASKS_VIEW.FILTER.ASSIGNEE_LABEL') }}
+                  {{ assigneeFilterLabel }}
+                </span>
+                <span class="i-lucide-chevron-down size-3.5 opacity-50" />
+              </button>
+              <div
+                v-if="openFilter === 'assignee'"
+                class="absolute left-0 top-full z-50 mt-1 max-h-64 min-w-48 overflow-y-auto rounded-md border border-border bg-popover p-1 shadow-md [&::-webkit-scrollbar]:hidden"
+              >
+                <button
+                  v-for="option in assigneeFilterOptions"
+                  :key="option.value"
+                  type="button"
+                  class="reset-base flex w-full cursor-default items-center rounded-sm px-2 py-1.5 text-left text-sm text-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
                   :class="{
-                    'line-through text-muted-foreground': task.completed,
+                    'bg-accent font-medium text-accent-foreground':
+                      assigneeFilter === option.value,
                   }"
+                  @click="selectAssignee(option.value)"
                 >
-                  {{ task.title }}
-                </h3>
-                <p
-                  v-if="task.description"
-                  class="mt-1 line-clamp-2 text-[13.5px] text-muted-foreground"
-                >
-                  {{ task.description }}
-                </p>
+                  {{ option.label }}
+                </button>
               </div>
-              <div class="flex items-center gap-2">
-                <RelayBadge
-                  variant="outline"
-                  class="bg-muted/30 text-xs font-medium"
+            </div>
+
+            <div class="relative">
+              <button
+                type="button"
+                class="reset-base flex cursor-pointer items-center gap-1 text-[13px] text-muted-foreground transition-colors hover:text-foreground"
+                @click="toggleFilter('status')"
+              >
+                <span>
+                  {{ t('CONTACTS_LAYOUT.TASKS_VIEW.FILTER.STATUS_LABEL') }}
+                  {{ statusFilterLabel }}
+                </span>
+                <span class="i-lucide-chevron-down size-3.5 opacity-50" />
+              </button>
+              <div
+                v-if="openFilter === 'status'"
+                class="absolute left-0 top-full z-50 mt-1 min-w-48 overflow-hidden rounded-md border border-border bg-popover p-1 shadow-md"
+              >
+                <button
+                  v-for="option in statusFilterOptions"
+                  :key="option.value"
+                  type="button"
+                  class="reset-base flex w-full cursor-default items-center rounded-sm px-2 py-1.5 text-left text-sm text-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
+                  :class="{
+                    'bg-accent font-medium text-accent-foreground':
+                      statusFilter === option.value,
+                  }"
+                  @click="selectStatus(option.value)"
                 >
-                  {{ statusLabelFor(task) }}
-                </RelayBadge>
-                <div class="relative">
-                  <RelayButton
-                    variant="ghost"
-                    size="icon"
-                    class="size-7 text-muted-foreground hover:text-foreground border border-border hover:border-transparent"
-                    @click="toggleTaskMenu(task.id)"
+                  {{ option.label }}
+                </button>
+              </div>
+            </div>
+
+            <div class="relative">
+              <button
+                type="button"
+                class="reset-base flex cursor-pointer items-center gap-1 text-[13px] text-muted-foreground transition-colors hover:text-foreground"
+                @click="toggleFilter('dueDate')"
+              >
+                <span>
+                  {{ t('CONTACTS_LAYOUT.TASKS_VIEW.FILTER.DUE_LABEL') }}
+                  {{ dueDateFilterLabel }}
+                </span>
+                <span class="i-lucide-chevron-down size-3.5 opacity-50" />
+              </button>
+              <div
+                v-if="openFilter === 'dueDate'"
+                class="absolute left-0 top-full z-50 mt-1 min-w-48 overflow-hidden rounded-md border border-border bg-popover p-1 shadow-md"
+              >
+                <button
+                  v-for="option in dueDateFilterOptions"
+                  :key="option.value"
+                  type="button"
+                  class="reset-base flex w-full cursor-default items-center rounded-sm px-2 py-1.5 text-left text-sm text-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
+                  :class="{
+                    'bg-accent font-medium text-accent-foreground':
+                      dueDateFilter === option.value,
+                  }"
+                  @click="selectDueDate(option.value)"
+                >
+                  {{ option.label }}
+                </button>
+              </div>
+            </div>
+
+            <div class="flex items-center gap-1">
+              <RelayButton
+                variant="ghost"
+                size="icon"
+                class="size-8 rounded-md text-muted-foreground hover:text-foreground border border-border hover:border-transparent"
+              >
+                <span class="i-lucide-list-filter size-4" />
+              </RelayButton>
+              <RelayButton
+                variant="ghost"
+                size="icon"
+                class="size-8 rounded-md text-muted-foreground hover:text-foreground border border-border hover:border-transparent"
+              >
+                <span class="i-lucide-arrow-up-down size-4" />
+              </RelayButton>
+            </div>
+          </div>
+
+          <div class="relative w-64 shrink-0">
+            <span
+              class="i-lucide-search pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground"
+            />
+            <RelayInput
+              v-model="searchQuery"
+              type="search"
+              :placeholder="t('CONTACTS_LAYOUT.TASKS_VIEW.SEARCH_PLACEHOLDER')"
+              class-name="h-9 rounded-lg border-border/80 bg-muted/20 pl-9 text-[13px] shadow-sm"
+            />
+          </div>
+        </div>
+
+        <!-- Content -->
+        <div
+          v-if="isFetching"
+          class="flex h-[350px] items-center justify-center"
+        >
+          <Spinner />
+        </div>
+
+        <div v-else-if="displayedTasks.length" class="flex flex-col gap-3">
+          <div
+            v-for="task in displayedTasks"
+            :key="task.id"
+            class="flex items-start gap-4 rounded-xl border border-border/60 bg-card p-4 shadow-sm transition-shadow hover:shadow-md"
+          >
+            <RelayCheckbox
+              :model-value="!!task.completed"
+              class="mt-1 border-muted-foreground/30"
+              @update:model-value="value => setTaskCompleted(task, value)"
+            />
+            <div class="flex flex-1 flex-col gap-1.5">
+              <div class="flex items-start justify-between gap-4">
+                <div>
+                  <h3
+                    class="capitalize text-[15px] font-semibold tracking-tight text-foreground"
+                    :class="{
+                      'line-through text-muted-foreground': task.completed,
+                    }"
                   >
-                    <span class="i-lucide-more-horizontal size-4" />
-                  </RelayButton>
-                  <div
-                    v-if="openTaskMenu === task.id"
-                    class="absolute right-0 top-full z-50 mt-1 w-[160px] overflow-hidden rounded-md border border-border bg-popover p-1 text-popover-foreground shadow-md"
+                    {{ task.title }}
+                  </h3>
+                  <p
+                    v-if="task.description"
+                    class="mt-1 line-clamp-2 text-[13.5px] text-muted-foreground"
                   >
-                    <button
-                      type="button"
-                      class="flex w-full cursor-pointer items-center gap-2 rounded-sm px-3 py-2 text-left text-[13px] text-foreground hover:bg-muted"
-                      @click="openEditTaskDialog(task)"
+                    {{ task.description }}
+                  </p>
+                </div>
+                <div class="flex items-center gap-2">
+                  <RelayBadge
+                    variant="outline"
+                    class="bg-muted/30 text-xs font-medium"
+                  >
+                    {{ statusLabelFor(task) }}
+                  </RelayBadge>
+                  <div class="relative">
+                    <RelayButton
+                      variant="ghost"
+                      size="icon"
+                      class="size-7 text-muted-foreground hover:text-foreground border border-border hover:border-transparent"
+                      @click="toggleTaskMenu(task.id)"
                     >
-                      <span class="i-lucide-pencil size-3.5" />
-                      {{ t('CONTACTS_LAYOUT.TASKS_VIEW.EDIT_TASK') }}
-                    </button>
-                    <button
-                      type="button"
-                      class="flex w-full cursor-pointer items-center gap-2 rounded-sm px-3 py-2 text-left text-[13px] text-destructive hover:bg-destructive/10"
-                      @click="handleDeleteTask(task.id)"
+                      <span class="i-lucide-more-horizontal size-4" />
+                    </RelayButton>
+                    <div
+                      v-if="openTaskMenu === task.id"
+                      class="absolute right-0 top-full z-50 mt-1 w-[160px] overflow-hidden rounded-md border border-border bg-popover p-1 text-popover-foreground shadow-md"
                     >
-                      <span class="i-lucide-trash size-3.5" />
-                      {{ t('CONTACTS_LAYOUT.TASKS_VIEW.DELETE_TASK') }}
-                    </button>
+                      <button
+                        type="button"
+                        class="flex w-full cursor-pointer items-center gap-2 rounded-sm px-3 py-2 text-left text-[13px] text-foreground hover:bg-muted"
+                        @click="openEditTaskDialog(task)"
+                      >
+                        <span class="i-lucide-pencil size-3.5" />
+                        {{ t('CONTACTS_LAYOUT.TASKS_VIEW.EDIT_TASK') }}
+                      </button>
+                      <button
+                        type="button"
+                        class="flex w-full cursor-pointer items-center gap-2 rounded-sm px-3 py-2 text-left text-[13px] text-destructive hover:bg-destructive/10"
+                        @click="handleDeleteTask(task.id)"
+                      >
+                        <span class="i-lucide-trash size-3.5" />
+                        {{ t('CONTACTS_LAYOUT.TASKS_VIEW.DELETE_TASK') }}
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
 
-            <div class="mt-2 flex flex-wrap items-center gap-4">
-              <div
-                v-if="task.due_at"
-                class="flex items-center gap-1.5 rounded-md px-2 py-0.5 text-[12px] font-medium"
-                :class="
-                  isOverdue(task)
-                    ? 'bg-destructive/10 text-destructive'
-                    : 'bg-muted/40 text-muted-foreground'
-                "
-              >
-                <span class="i-lucide-calendar size-3.5" />
-                {{ formatDate(task.due_at) }}
-              </div>
-              <div
-                v-if="task.assignee_id"
-                class="flex items-center gap-1.5 text-[12px] font-medium text-muted-foreground"
-              >
-                <span class="i-lucide-user size-3.5" />
-                {{ getAgentName(task.assignee_id) }}
-              </div>
-              <div
-                v-if="task.contacts?.length"
-                class="flex items-center gap-1.5 text-[12px] font-medium text-muted-foreground"
-              >
-                <span class="i-lucide-link-2 size-3.5" />
-                {{ task.contacts[0].name }}
+              <div class="mt-2 flex flex-wrap items-center gap-4">
+                <div
+                  v-if="task.due_at"
+                  class="flex items-center gap-1.5 rounded-md px-2 py-0.5 text-[12px] font-medium"
+                  :class="
+                    isOverdue(task)
+                      ? 'bg-destructive/10 text-destructive'
+                      : 'bg-muted/40 text-muted-foreground'
+                  "
+                >
+                  <span class="i-lucide-calendar size-3.5" />
+                  {{ formatDate(task.due_at) }}
+                </div>
+                <div
+                  v-if="task.assignee_id"
+                  class="flex items-center gap-1.5 text-[12px] font-medium text-muted-foreground"
+                >
+                  <span class="i-lucide-user size-3.5" />
+                  {{ getAgentName(task.assignee_id) }}
+                </div>
+                <div
+                  v-if="task.contacts?.length"
+                  class="flex items-center gap-1.5 text-[12px] font-medium text-muted-foreground"
+                >
+                  <span class="i-lucide-link-2 size-3.5" />
+                  {{ task.contacts[0].name }}
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
 
-      <div
-        v-else
-        class="relative flex h-[350px] flex-col items-center justify-center rounded-xl border border-border/60 bg-card shadow-sm"
-      >
-        <h3 class="capitalize mb-1 text-[20px] font-semibold text-foreground">
-          {{ t('CONTACTS_LAYOUT.TASKS_VIEW.NO_TASKS') }}
-        </h3>
-        <p class="text-[14px] font-medium text-muted-foreground">
-          {{ t('CONTACTS_LAYOUT.TASKS_VIEW.NO_TASKS_SUBTITLE') }}
-        </p>
+        <div
+          v-else
+          class="flex flex-col items-center justify-center gap-3 py-16 text-center"
+        >
+          <span
+            class="i-lucide-clipboard-list mb-2 size-10 text-muted-foreground/40"
+          />
+          <h3 class="text-[20px] font-[600] text-foreground">
+            {{ t('CONTACTS_LAYOUT.TASKS_VIEW.NO_TASKS') }}
+          </h3>
+          <p class="max-w-xs text-[14px] leading-relaxed text-muted-foreground">
+            {{ t('CONTACTS_LAYOUT.TASKS_VIEW.NO_TASKS_SUBTITLE') }}
+          </p>
+        </div>
       </div>
     </div>
 
@@ -861,7 +872,7 @@ onMounted(() => {
 
           <div class="space-y-5 p-6" @click="closeMenus">
             <div class="flex flex-col gap-1.5">
-              <label class="text-[13.5px] text-foreground font-[500]">
+              <label class="text-[13.5px] font-medium text-foreground">
                 {{ t('CONTACTS_LAYOUT.TASKS_VIEW.FORM_TITLE') }}
               </label>
               <RelayInput
@@ -869,12 +880,12 @@ onMounted(() => {
                 :placeholder="
                   t('CONTACTS_LAYOUT.TASKS_VIEW.FORM_TITLE_PLACEHOLDER')
                 "
-                class-name="h-10 rounded-md border-border bg-background text-[14px] shadow-sm focus-visible:ring-primary/30"
+                class-name="h-10 w-full px-3 text-[14px] rounded-md border border-border/80 bg-background placeholder:text-muted-foreground/60 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary/30"
               />
             </div>
 
             <div class="flex flex-col gap-1.5">
-              <label class="text-[13.5px] text-foreground font-[500]">
+              <label class="text-[13.5px] font-medium text-foreground">
                 {{ t('CONTACTS_LAYOUT.TASKS_VIEW.FORM_DESCRIPTION') }}
               </label>
               <textarea
@@ -882,13 +893,13 @@ onMounted(() => {
                 :placeholder="
                   t('CONTACTS_LAYOUT.TASKS_VIEW.FORM_DESCRIPTION_PLACEHOLDER')
                 "
-                class="min-h-[100px] w-full resize-y border border-solid border-border bg-background p-3 text-[14px] text-foreground outline-none placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary/30 border-border/80 shadow-sm rounded-md"
+                class="reset-base no-margin min-h-[100px] w-full resize-none rounded-md border border-border/80 bg-background px-3 py-2.5 text-[14px] placeholder:text-muted-foreground/60 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary/30"
               />
             </div>
 
             <div class="grid grid-cols-2 gap-4">
               <div class="relative flex flex-col gap-1.5">
-                <label class="text-[13.5px] text-foreground font-[500]">
+                <label class="text-[13.5px] font-medium text-foreground">
                   {{ t('CONTACTS_LAYOUT.TASKS_VIEW.FORM_ASSIGNEE') }}
                 </label>
                 <RelayButton
@@ -903,14 +914,18 @@ onMounted(() => {
                 </RelayButton>
                 <div
                   v-if="openFilter === 'formAssignee'"
-                  class="absolute left-0 right-0 top-full z-[70] mt-1 max-h-48 overflow-y-auto rounded-md border border-border bg-popover p-1 shadow-md"
+                  class="absolute left-0 right-0 top-full z-[70] mt-1 max-h-48 overflow-y-auto rounded-md border border-border bg-popover p-1 shadow-md [&::-webkit-scrollbar]:hidden"
                   @click.stop
                 >
                   <button
                     v-for="option in agentOptions"
                     :key="`assignee-${option.value || 'none'}`"
                     type="button"
-                    class="flex w-full cursor-pointer items-center rounded-sm px-3 py-2 text-left text-[13px] hover:bg-muted"
+                    class="reset-base flex w-full cursor-default items-center rounded-sm px-2 py-1.5 text-left text-sm text-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
+                    :class="{
+                      'bg-accent font-medium text-accent-foreground':
+                        taskForm.assigneeId === option.value,
+                    }"
                     @click="
                       taskForm.assigneeId = option.value;
                       closeMenus();
@@ -922,7 +937,7 @@ onMounted(() => {
               </div>
 
               <div class="relative flex flex-col gap-1.5">
-                <label class="text-[13.5px] text-foreground font-[500]">
+                <label class="text-[13.5px] font-medium text-foreground">
                   {{ t('CONTACTS_LAYOUT.TASKS_VIEW.FORM_CONTACT') }}
                 </label>
                 <RelayButton
@@ -942,14 +957,18 @@ onMounted(() => {
                 </RelayButton>
                 <div
                   v-if="openFilter === 'formContact'"
-                  class="absolute left-0 right-0 top-full z-[70] mt-1 max-h-48 overflow-y-auto rounded-md border border-border bg-popover p-1 shadow-md"
+                  class="absolute left-0 right-0 top-full z-[70] mt-1 max-h-48 overflow-y-auto rounded-md border border-border bg-popover p-1 shadow-md [&::-webkit-scrollbar]:hidden"
                   @click.stop
                 >
                   <button
                     v-for="option in contactOptions"
                     :key="`contact-${option.value || 'none'}`"
                     type="button"
-                    class="flex w-full cursor-pointer items-center rounded-sm px-3 py-2 text-left text-[13px] hover:bg-muted"
+                    class="reset-base flex w-full cursor-default items-center rounded-sm px-2 py-1.5 text-left text-sm text-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
+                    :class="{
+                      'bg-accent font-medium text-accent-foreground':
+                        taskForm.contactId === option.value,
+                    }"
                     @click="
                       taskForm.contactId = option.value;
                       closeMenus();
@@ -962,7 +981,7 @@ onMounted(() => {
             </div>
 
             <div class="relative flex flex-col gap-1.5">
-              <label class="text-[13.5px] text-foreground font-[500]">
+              <label class="text-[13.5px] font-medium text-foreground">
                 {{ t('CONTACTS_LAYOUT.TASKS_VIEW.FORM_DUE_DATE') }}
               </label>
               <RelayButton
@@ -977,7 +996,7 @@ onMounted(() => {
               >
                 <span class="truncate">{{ dueDateTriggerLabel }}</span>
                 <span
-                  class="i-lucide-calendar size-4 text-foreground opacity-50"
+                  class="i-lucide-calendar-days size-4 text-muted-foreground"
                 />
               </RelayButton>
 
@@ -1098,7 +1117,7 @@ onMounted(() => {
                         class="w-full rounded py-1.5 text-center text-[13px] font-medium transition-colors"
                         :class="
                           taskForm.dueTimeMinute === minute
-                            ? 'bg-primary/20 text-primary'
+                            ? 'bg-primary font-medium text-primary-foreground shadow-sm'
                             : 'text-foreground hover:bg-muted'
                         "
                         @click="taskForm.dueTimeMinute = minute"

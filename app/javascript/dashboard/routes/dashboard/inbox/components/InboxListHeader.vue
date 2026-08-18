@@ -82,7 +82,7 @@ const onFilterChange = option => {
 
 <template>
   <div
-    class="flex h-14 shrink-0 items-center justify-between border-b border-border p-4"
+    class="flex h-14 shrink-0 items-center justify-between border-b border-border bg-card/50 p-4"
   >
     <h1 class="text-[16px] font-[500] text-foreground">
       {{ t('INBOX.LIST.TITLE') }}
@@ -108,8 +108,8 @@ const onFilterChange = option => {
       <div class="relative">
         <RelayButton
           variant="outline"
-          size="icon"
-          class="size-8 shrink-0"
+          size="sm"
+          class="h-8 w-8 min-h-8 min-w-8 shrink-0 px-0 py-0 leading-none"
           @click="openInboxOptionsMenu"
         >
           <span

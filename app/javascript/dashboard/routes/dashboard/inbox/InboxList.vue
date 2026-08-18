@@ -12,7 +12,7 @@ import { INBOX_TYPES } from 'dashboard/helper/inbox';
 import InboxCard from 'dashboard/components-next/Inbox/InboxCard.vue';
 import InboxListHeader from './components/InboxListHeader.vue';
 import InboxSidebarNav from './components/InboxSidebarNav.vue';
-import InboxEmptyState from './InboxEmptyState.vue';
+import { RelayMessagesEmptyState } from 'dashboard/components-next/relay';
 import IntersectionObserver from 'dashboard/components/IntersectionObserver.vue';
 import CmdBarConversationSnooze from 'dashboard/routes/dashboard/commands/CmdBarConversationSnooze.vue';
 import Spinner from 'dashboard/components-next/spinner/Spinner.vue';
@@ -164,12 +164,12 @@ const showEndOfList = computed(() => {
   return uiFlags.value.isAllNotificationsLoaded && !uiFlags.value.isFetching;
 });
 
-const showEmptyState = computed(() => {
-  return !uiFlags.value.isFetching && !allNotifications.value.length;
+const showViewEmptyState = computed(() => {
+  return !uiFlags.value.isFetching && !filteredNotifications.value.length;
 });
 
 const showFilledList = computed(() => {
-  return !currentConversationId.value && !showEmptyState.value;
+  return !currentConversationId.value && !showViewEmptyState.value;
 });
 
 const statusTabs = computed(() => [
@@ -435,9 +435,16 @@ onMounted(() => {
 
     <!-- Main content -->
     <div class="flex-1 flex flex-col min-w-0 h-full overflow-hidden">
+      <RelayMessagesEmptyState
+        v-if="showViewEmptyState && !currentConversationId"
+        class="flex-1"
+        :title="t('INBOX.LIST.EMPTY_STATE.TITLE')"
+        :description="t('INBOX.LIST.EMPTY_STATE.DESCRIPTION')"
+      />
+
       <!-- Filled conversations list -->
       <div
-        v-if="showFilledList"
+        v-else-if="showFilledList"
         class="flex-1 flex flex-col bg-card overflow-hidden"
       >
         <div
@@ -536,13 +543,6 @@ onMounted(() => {
             <Spinner class="text-primary" />
           </div>
 
-          <p
-            v-if="!uiFlags.isFetching && !filteredNotifications.length"
-            class="p-4 text-sm font-medium text-center text-muted-foreground"
-          >
-            {{ t('INBOX.LIST.NO_NOTIFICATIONS') }}
-          </p>
-
           <div
             v-if="!showEndOfList && !uiFlags.isFetching"
             class="py-4 flex justify-center"
@@ -561,9 +561,6 @@ onMounted(() => {
           </div>
         </div>
       </div>
-
-      <!-- Empty state (no notifications) -->
-      <InboxEmptyState v-else-if="!currentConversationId && showEmptyState" />
 
       <!-- Conversation detail -->
       <router-view v-else-if="currentConversationId" />

@@ -3,6 +3,11 @@ import { ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useAlert } from 'dashboard/composables';
 import { RelayButton } from 'dashboard/components-next/relay';
+import {
+  RELAY_DIALOG_OVERLAY_CLASS,
+  RELAY_MODAL_BODY_CLASS,
+} from 'dashboard/components-next/relay/modal/constants';
+import RelayModalHeader from 'dashboard/components-next/relay/modal/RelayModalHeader.vue';
 
 defineProps({
   open: { type: Boolean, default: false },
@@ -24,32 +29,20 @@ const onUploadClick = () => {
     <div
       v-if="open"
       data-relay
-      class="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm transition-all duration-300"
+      class="flex items-center justify-center transition-all duration-300"
+      :class="[RELAY_DIALOG_OVERLAY_CLASS]"
       @click.self="close"
     >
       <div
-        class="relative w-full max-w-md overflow-hidden rounded-xl border border-border bg-card shadow-2xl"
+        class="relative flex w-full max-w-md flex-col overflow-hidden rounded-xl border border-border bg-card shadow-2xl"
       >
-        <div class="p-6">
-          <div class="mb-4 flex items-center justify-between">
-            <h2
-              class="capitalize text-lg font-semibold tracking-tight text-foreground"
-            >
-              {{ t('COMPANIES.IMPORT.TITLE') }}
-            </h2>
-            <RelayButton
-              variant="ghost"
-              size="icon"
-              class="size-8 text-muted-foreground hover:text-foreground border border-border hover:border-transparent"
-              @click="close"
-            >
-              <span class="i-lucide-x size-4" />
-            </RelayButton>
-          </div>
-          <p class="mb-6 text-sm text-muted-foreground">
-            {{ t('COMPANIES.IMPORT.DESCRIPTION') }}
-          </p>
+        <RelayModalHeader
+          :title="t('COMPANIES.IMPORT.TITLE')"
+          :description="t('COMPANIES.IMPORT.DESCRIPTION')"
+          @close="close"
+        />
 
+        <div :class="RELAY_MODAL_BODY_CLASS">
           <button
             type="button"
             class="flex w-full cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-muted-foreground/20 p-10 text-center transition-colors hover:bg-muted/50"

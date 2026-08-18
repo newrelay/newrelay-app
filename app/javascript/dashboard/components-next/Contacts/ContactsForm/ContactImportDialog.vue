@@ -3,8 +3,9 @@ import { ref, computed } from 'vue';
 import { useMapGetter } from 'dashboard/composables/store';
 import { useI18n } from 'vue-i18n';
 
-import Dialog from 'dashboard/components-next/dialog/Dialog.vue';
-import Button from 'dashboard/components-next/button/Button.vue';
+import TeleportWithDirection from 'dashboard/components-next/TeleportWithDirection.vue';
+import { RelayButton } from 'dashboard/components-next/relay';
+import { RELAY_DIALOG_OVERLAY_CLASS } from 'dashboard/components-next/relay/modal/constants';
 
 const emit = defineEmits(['import']);
 const { t } = useI18n();
@@ -12,16 +13,29 @@ const { t } = useI18n();
 const uiFlags = useMapGetter('contacts/getUIFlags');
 const isImportingContact = computed(() => uiFlags.value.isImporting);
 
-const innerDialogRef = ref(null);
+const isOpen = ref(false);
 const fileInput = ref(null);
-
-const dialogRef = {
-  open: () => innerDialogRef.value?.open(),
-  close: () => innerDialogRef.value?.close(),
-};
 
 const hasSelectedFile = ref(null);
 const selectedFileName = ref('');
+
+const handleRemoveFile = () => {
+  hasSelectedFile.value = null;
+  if (fileInput.value) {
+    fileInput.value.value = null;
+  }
+  selectedFileName.value = '';
+};
+
+const dialogRef = {
+  open: () => {
+    isOpen.value = true;
+  },
+  close: () => {
+    isOpen.value = false;
+    handleRemoveFile();
+  },
+};
 
 const handleFileClick = () => fileInput.value?.click();
 
@@ -41,14 +55,6 @@ const handleFileChange = () => {
   selectedFileName.value = file ? processFileName(file.name) : '';
 };
 
-const handleRemoveFile = () => {
-  hasSelectedFile.value = null;
-  if (fileInput.value) {
-    fileInput.value.value = null;
-  }
-  selectedFileName.value = '';
-};
-
 const handleFileDrop = event => {
   const file = event.dataTransfer?.files?.[0];
   if (!file) return;
@@ -66,83 +72,121 @@ defineExpose({ dialogRef });
 </script>
 
 <template>
-  <Dialog
-    ref="innerDialogRef"
-    :title="t('CONTACTS_LAYOUT.HEADER.ACTIONS.IMPORT_CONTACT.TITLE')"
-    :confirm-button-label="
-      t('CONTACTS_LAYOUT.HEADER.ACTIONS.IMPORT_CONTACT.IMPORT')
-    "
-    :is-loading="isImportingContact"
-    :disable-confirm-button="isImportingContact || !hasSelectedFile"
-    @confirm="uploadFile"
-  >
-    <template #description>
-      <p class="mb-0 text-sm text-muted-foreground">
-        {{ t('CONTACTS_LAYOUT.HEADER.ACTIONS.IMPORT_CONTACT.DESCRIPTION') }}
-      </p>
-    </template>
-
+  <TeleportWithDirection to="body">
     <div
-      class="mt-4 flex flex-col items-center justify-center rounded-xl border-2 border-dashed border-border bg-card p-10 transition-colors hover:bg-muted/50 cursor-pointer"
-      @click="handleFileClick"
-      @dragover.prevent
-      @drop.prevent="handleFileDrop"
+      v-if="isOpen"
+      class="flex items-center justify-center bg-n-alpha-black2 p-4 backdrop-blur-[4px]"
+      :class="[RELAY_DIALOG_OVERLAY_CLASS]"
+      @click.self="dialogRef.close()"
     >
       <div
-        v-if="!hasSelectedFile"
-        class="flex flex-col items-center gap-3 text-center"
+        data-relay
+        class="mx-4 flex w-full max-w-[480px] flex-col rounded-xl border border-border/80 bg-background p-6 shadow-xl"
+        @click.stop
       >
-        <div class="rounded-full bg-muted/50 p-3">
-          <span class="i-lucide-upload size-6 text-foreground" />
-        </div>
-        <div class="space-y-1">
-          <p class="text-sm font-medium text-foreground">
-            Click to upload or drag and drop
+        <div class="flex flex-col">
+          <h2 class="text-[16px] font-medium text-foreground">
+            {{ t('CONTACTS_LAYOUT.HEADER.ACTIONS.IMPORT_CONTACT.TITLE') }}
+          </h2>
+          <p class="mt-1 text-[14px] text-muted-foreground">
+            {{ t('CONTACTS_LAYOUT.HEADER.ACTIONS.IMPORT_CONTACT.DESCRIPTION') }}
           </p>
-          <p class="text-xs text-muted-foreground">CSV up to 10MB</p>
         </div>
-      </div>
 
-      <div v-else class="flex w-full items-center justify-between gap-4">
-        <div class="flex items-center gap-3">
-          <div class="rounded-lg border border-border bg-muted/50 p-2">
-            <span class="i-lucide-file-spreadsheet size-5 text-primary" />
-          </div>
-          <div class="flex flex-col text-start">
-            <span class="text-sm font-medium text-foreground">{{
-              selectedFileName
-            }}</span>
-            <span class="text-xs text-muted-foreground">Ready to upload</span>
+        <div
+          class="mt-5 flex cursor-pointer flex-col items-center gap-3 rounded-xl border border-dashed border-border/80 bg-muted/10 p-10 transition-colors hover:bg-muted/30"
+          @click="handleFileClick"
+          @dragover.prevent
+          @drop.prevent="handleFileDrop"
+        >
+          <template v-if="!hasSelectedFile">
+            <span class="i-lucide-upload size-8 text-muted-foreground" />
+            <div class="space-y-1 text-center">
+              <p class="text-[14px] font-medium text-foreground">
+                {{
+                  t(
+                    'CONTACTS_LAYOUT.HEADER.ACTIONS.IMPORT_CONTACT.DROPZONE_TITLE'
+                  )
+                }}
+              </p>
+              <p class="text-[13px] text-muted-foreground">
+                {{
+                  t(
+                    'CONTACTS_LAYOUT.HEADER.ACTIONS.IMPORT_CONTACT.DROPZONE_HINT'
+                  )
+                }}
+              </p>
+            </div>
+          </template>
+
+          <div v-else class="flex w-full items-center justify-between gap-4">
+            <div class="flex min-w-0 items-center gap-3">
+              <span
+                class="i-lucide-file-spreadsheet size-5 shrink-0 text-primary"
+              />
+              <div class="flex min-w-0 flex-col text-start">
+                <span class="truncate text-[14px] font-medium text-foreground">
+                  {{ selectedFileName }}
+                </span>
+                <span class="text-[13px] text-muted-foreground">
+                  {{
+                    t(
+                      'CONTACTS_LAYOUT.HEADER.ACTIONS.IMPORT_CONTACT.READY_TO_UPLOAD'
+                    )
+                  }}
+                </span>
+              </div>
+            </div>
+            <div class="flex shrink-0 items-center gap-2">
+              <RelayButton
+                type="button"
+                variant="outline"
+                size="sm"
+                class="h-8 border-border text-[13px] hover:border-transparent"
+                @click.stop="handleFileClick"
+              >
+                {{ t('CONTACTS_LAYOUT.HEADER.ACTIONS.IMPORT_CONTACT.CHANGE') }}
+              </RelayButton>
+              <RelayButton
+                type="button"
+                variant="outline"
+                size="sm"
+                class="h-8 border-border text-[13px] hover:border-transparent"
+                @click.stop="handleRemoveFile"
+              >
+                <span class="i-lucide-trash size-3.5" />
+              </RelayButton>
+            </div>
           </div>
         </div>
-        <div class="flex items-center gap-1">
-          <Button
-            label="Change"
-            color="slate"
-            variant="ghost"
-            size="sm"
-            class="border border-border hover:border-transparent"
-            @click.stop="handleFileClick"
-          />
-          <div class="h-3 w-px bg-border mx-1" />
-          <Button
-            icon="i-lucide-trash"
-            color="slate"
-            variant="ghost"
-            size="sm"
-            class="border border-border hover:border-transparent"
-            @click.stop="handleRemoveFile"
-          />
+
+        <input
+          ref="fileInput"
+          type="file"
+          accept="text/csv"
+          class="hidden"
+          @change="handleFileChange"
+        />
+
+        <div class="mt-6 flex gap-3">
+          <RelayButton
+            type="button"
+            variant="outline"
+            class="h-10 flex-1 rounded-xl border border-border bg-background text-[14px] font-medium shadow-sm hover:border-transparent"
+            @click="dialogRef.close()"
+          >
+            {{ t('DIALOG.BUTTONS.CANCEL') }}
+          </RelayButton>
+          <RelayButton
+            type="button"
+            class="h-10 flex-1 rounded-xl bg-primary text-[14px] font-medium text-primary-foreground shadow-sm hover:bg-primary/90"
+            :disabled="isImportingContact || !hasSelectedFile"
+            @click="uploadFile"
+          >
+            {{ t('CONTACTS_LAYOUT.HEADER.ACTIONS.IMPORT_CONTACT.IMPORT') }}
+          </RelayButton>
         </div>
       </div>
     </div>
-
-    <input
-      ref="fileInput"
-      type="file"
-      accept="text/csv"
-      class="hidden text-[14px] shadow-sm rounded-md border-border/80 bg-background focus-visible:ring-1 focus-visible:ring-primary/30"
-      @change="handleFileChange"
-    />
-  </Dialog>
+  </TeleportWithDirection>
 </template>

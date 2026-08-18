@@ -1331,7 +1331,7 @@ export default {
   <ReplyBoxBanner :message="message" :is-on-private-note="isOnPrivateNote" />
   <div
     ref="replyEditor"
-    class="reply-box bg-card border border-border rounded-xl shadow-xs overflow-visible transition-shadow"
+    class="reply-box bg-contact-panel border border-border rounded-xl shadow-xs overflow-visible transition-shadow"
     :class="replyBoxClass"
   >
     <InboxReplyTopPanel

@@ -89,7 +89,7 @@ defineExpose({ focusInput, blurInput });
     />
     <kbd
       v-if="kbd"
-      class="shrink-0 inline-flex items-center text-xs font-medium text-n-slate-11 bg-n-alpha-2 border border-solid border-n-weak rounded px-1.5 py-0.5 font-inter"
+      class="shrink-0 inline-flex items-center text-xs font-medium text-n-slate-11 bg-n-alpha-2 border border-solid border-n-weak rounded px-1.5 py-0.5 font-geist"
     >
       {{ kbd }}
     </kbd>

@@ -3,10 +3,10 @@ import { useKeyboardEvents } from 'dashboard/composables/useKeyboardEvents';
 export function useChatListKeyboardEvents(listRef) {
   const getKeyboardListenerParams = () => {
     const allConversations = listRef.value.querySelectorAll(
-      'div.conversations-list div.conversation'
+      'div.conversations-list .conversation'
     );
     const activeConversation = listRef.value.querySelector(
-      'div.conversations-list div.conversation.active'
+      'div.conversations-list .conversation.active'
     );
     const activeConversationIndex = [...allConversations].indexOf(
       activeConversation

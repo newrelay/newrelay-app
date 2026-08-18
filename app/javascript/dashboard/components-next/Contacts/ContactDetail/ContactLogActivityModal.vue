@@ -3,6 +3,11 @@ import { reactive, computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useAlert } from 'dashboard/composables';
 import { RelayButton, RelayDatePicker } from 'dashboard/components-next/relay';
+import {
+  RELAY_DIALOG_OVERLAY_CLASS,
+  RELAY_MODAL_BODY_CLASS,
+} from 'dashboard/components-next/relay/modal/constants';
+import RelayModalHeader from 'dashboard/components-next/relay/modal/RelayModalHeader.vue';
 
 const props = defineProps({
   contactName: {
@@ -90,31 +95,24 @@ const submit = () => {
 <template>
   <div
     v-if="variant === 'composer'"
-    class="fixed inset-0 z-[100] flex items-center justify-center bg-black/10 p-4 backdrop-blur-[4px] animate-in fade-in duration-200"
+    class="flex items-center justify-center p-4 animate-in fade-in duration-200"
+    :class="[RELAY_DIALOG_OVERLAY_CLASS]"
     @click.self="emit('close')"
   >
     <div
       class="flex w-full max-w-md flex-col overflow-hidden rounded-xl border border-border bg-card shadow-lg"
     >
-      <div
-        class="flex items-center justify-between border-b border-border bg-muted/30 px-6 py-4"
-      >
-        <h2
-          class="capitalize flex items-center gap-2 text-lg font-semibold text-foreground"
-        >
-          <span class="i-lucide-phone size-5 text-primary" />
-          {{ t('CONVERSATION.REPLYBOX.LOG_CALL.TITLE') }}
-        </h2>
-        <RelayButton
-          variant="ghost"
-          size="icon"
-          class="size-8 text-muted-foreground hover:text-foreground border border-border hover:border-transparent"
-          @click="emit('close')"
-        >
-          <span class="i-lucide-x size-4" />
-        </RelayButton>
-      </div>
-      <div class="flex flex-col gap-5 p-6">
+      <RelayModalHeader @close="emit('close')">
+        <template #title>
+          <h2
+            class="flex items-center gap-2 capitalize text-[18px] font-[600] tracking-tight text-foreground"
+          >
+            <span class="i-lucide-phone size-5 text-primary" />
+            {{ t('CONVERSATION.REPLYBOX.LOG_CALL.TITLE') }}
+          </h2>
+        </template>
+      </RelayModalHeader>
+      <div class="flex flex-col gap-5" :class="[RELAY_MODAL_BODY_CLASS]">
         <div class="flex flex-col gap-2">
           <label class="text-foreground text-[13.5px] font-[500]">{{
             t('CONVERSATION.REPLYBOX.LOG_CALL.OUTCOME')
@@ -163,40 +161,29 @@ const submit = () => {
   </div>
   <div
     v-else
-    class="fixed inset-0 z-[60] flex items-center justify-center bg-black/10 p-4 backdrop-blur-[4px]"
+    class="flex items-center justify-center p-4"
+    :class="[RELAY_DIALOG_OVERLAY_CLASS]"
     @click.self="emit('close')"
   >
     <div
       class="flex max-h-[90vh] w-full max-w-lg flex-col overflow-hidden rounded-xl border border-border bg-card shadow-2xl animate-in fade-in zoom-in-95 duration-200"
     >
-      <div
-        class="flex shrink-0 items-center justify-between border-b border-border/40 px-8 pb-0 pt-8"
+      <RelayModalHeader
+        :title="t('CONTACTS_LAYOUT.DETAIL.LOG_ACTIVITY.TITLE')"
+        @close="emit('close')"
       >
-        <div>
-          <h2
-            class="capitalize text-base font-medium leading-6 text-foreground"
-          >
-            {{ t('CONTACTS_LAYOUT.DETAIL.LOG_ACTIVITY.TITLE') }}
-          </h2>
-          <p class="mt-1 text-sm text-muted-foreground">
+        <template #description>
+          <p class="mt-0.5 text-[13px] text-muted-foreground">
             {{
               t('CONTACTS_LAYOUT.DETAIL.LOG_ACTIVITY.SUBTITLE', {
                 name: contactName,
               })
             }}
           </p>
-        </div>
-        <RelayButton
-          variant="ghost"
-          size="icon"
-          class="size-8 rounded-full text-muted-foreground hover:text-foreground border border-border hover:border-transparent"
-          @click="emit('close')"
-        >
-          <span class="i-lucide-x size-4" />
-        </RelayButton>
-      </div>
+        </template>
+      </RelayModalHeader>
 
-      <div class="flex-1 space-y-6 overflow-y-auto px-8 pb-8 pt-4">
+      <div class="space-y-6" :class="[RELAY_MODAL_BODY_CLASS]">
         <div class="flex flex-col gap-1.5">
           <label class="text-[13.5px] text-foreground font-[500]">
             {{ t('CONTACTS_LAYOUT.DETAIL.LOG_ACTIVITY.TYPE') }}
@@ -226,6 +213,7 @@ const submit = () => {
             value-format="dd-MM-yyyy"
             display-format="MMM d, yyyy"
             :placeholder="t('CONTACTS_LAYOUT.DETAIL.LOG_ACTIVITY.DATE')"
+            trigger-class="h-10 w-full cursor-pointer px-3 text-[14px] rounded-md border border-border/80 bg-background placeholder:text-muted-foreground/60 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary/30"
           />
         </div>
 
@@ -238,7 +226,7 @@ const submit = () => {
             :placeholder="
               t('CONTACTS_LAYOUT.DETAIL.LOG_ACTIVITY.NOTES_PLACEHOLDER')
             "
-            class="min-h-[120px] w-full resize-none border border-input bg-background px-3 py-2 text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary/30 text-[14px] shadow-sm rounded-md border-border/80"
+            class="min-h-[100px] w-full resize-none rounded-md border border-border/80 bg-background px-3 py-2.5 text-[14px] placeholder:text-muted-foreground/60 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary/30"
           />
         </div>
       </div>

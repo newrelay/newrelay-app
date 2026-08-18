@@ -18,6 +18,7 @@ import {
   RelayButton,
   RelayActionDropdown,
 } from 'dashboard/components-next/relay';
+import ConversationProfileSummary from 'dashboard/components/widgets/conversation/ConversationProfileSummary.vue';
 
 export default {
   components: {
@@ -25,6 +26,7 @@ export default {
     RelayButton,
     RelayActionDropdown,
     CustomSnoozeModal,
+    ConversationProfileSummary,
   },
   props: {
     totalLength: {
@@ -52,6 +54,9 @@ export default {
   },
   computed: {
     ...mapGetters({ meta: 'notifications/getMeta' }),
+    currentChat() {
+      return this.$store.getters.getSelectedChat;
+    },
     isContactSidebarOpen() {
       return this.uiSettings.is_contact_sidebar_open;
     },
@@ -214,19 +219,25 @@ export default {
 
 <template>
   <div
-    class="flex h-14 shrink-0 items-center justify-between border-b border-border bg-card/50 px-4"
+    class="flex h-14 shrink-0 items-center gap-3 border-b border-border bg-card/50 px-4"
   >
     <RelayButton
       variant="ghost"
       size="icon"
-      class="size-9 border-transparent text-muted-foreground hover:border-transparent hover:text-foreground"
+      class="size-9 shrink-0 border-transparent text-muted-foreground hover:border-transparent hover:text-foreground"
       :aria-label="$t('INBOX.ACTION_HEADER.BACK')"
       @click="onClickGoToInboxList"
     >
       <span class="i-lucide-arrow-left size-4" />
     </RelayButton>
 
-    <div class="flex items-center gap-1">
+    <ConversationProfileSummary
+      v-if="currentChat?.id"
+      :chat="currentChat"
+      class="min-w-0 flex-1"
+    />
+
+    <div class="flex shrink-0 items-center gap-1">
       <PaginationButton
         :total-length="totalLength || 1"
         :current-index="currentIndex + 1"

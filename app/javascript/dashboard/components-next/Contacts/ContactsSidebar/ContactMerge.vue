@@ -9,7 +9,17 @@ import { debounce } from '@chatwoot/utils';
 import { CONTACTS_EVENTS } from 'dashboard/helper/AnalyticsHelper/events';
 
 import Avatar from 'dashboard/components-next/avatar/Avatar.vue';
-import { RelayButton, RelayInput } from 'dashboard/components-next/relay';
+import {
+  RelayButton,
+  RelayInput,
+  RELAY_FORM_FIELD_CLASS,
+  RELAY_FORM_LABEL_CLASS,
+} from 'dashboard/components-next/relay';
+import {
+  RELAY_DIALOG_OVERLAY_CLASS,
+  RELAY_MODAL_BODY_CLASS,
+} from 'dashboard/components-next/relay/modal/constants';
+import RelayModalHeader from 'dashboard/components-next/relay/modal/RelayModalHeader.vue';
 
 const props = defineProps({
   selectedContact: {
@@ -122,8 +132,8 @@ const initials = name => {
     <div
       class="mb-4 flex w-full flex-col rounded-xl border border-border bg-card p-5 shadow-sm"
     >
-      <div class="mb-6 flex flex-col gap-1.5">
-        <label class="text-[13.5px] text-foreground font-[500]">
+      <div :class="RELAY_FORM_FIELD_CLASS">
+        <label :class="RELAY_FORM_LABEL_CLASS">
           {{ t('CONTACTS_LAYOUT.SIDEBAR.MERGE.SELECT_LABEL') }}
         </label>
         <div class="relative">
@@ -133,7 +143,7 @@ const initials = name => {
           <RelayInput
             :model-value="mergeSearchQuery"
             :placeholder="t('CONTACTS_LAYOUT.SIDEBAR.MERGE.SEARCH_BY')"
-            class-name="pl-9 h-10 w-full text-[14px] shadow-sm rounded-md border-border/80 bg-background focus-visible:ring-1 focus-visible:ring-primary/30"
+            class-name="h-10 pl-9"
             @update:model-value="onContactSearch"
           />
         </div>
@@ -145,36 +155,43 @@ const initials = name => {
 
         <div
           v-if="isSearching || searchResults.length"
-          class="mt-2 max-h-48 overflow-y-auto rounded-md border border-border bg-popover shadow-md"
+          class="mt-2 max-h-48 overflow-y-auto rounded-md border border-border bg-popover p-1 shadow-md"
         >
-          <p v-if="isSearching" class="px-3 py-2 text-sm text-muted-foreground">
+          <p
+            v-if="isSearching"
+            class="mb-0 px-2 py-1.5 text-sm leading-tight text-muted-foreground"
+          >
             {{ t('CONTACTS_LAYOUT.SIDEBAR.MERGE.IS_SEARCHING') }}
           </p>
           <button
             v-for="contact in searchResults"
             :key="contact.id"
             type="button"
-            class="flex w-full items-center gap-3 px-3 py-2 text-left text-sm hover:bg-accent hover:text-accent-foreground"
+            class="flex w-full items-center gap-2.5 rounded-sm px-2 py-1.5 text-left text-sm transition-colors hover:bg-accent hover:text-accent-foreground"
             @click="selectDuplicate(contact)"
           >
             <Avatar
               :name="contact.name || ''"
               :src="contact.thumbnail || ''"
-              :size="28"
+              :size="24"
               rounded-full
             />
-            <div class="min-w-0">
-              <p class="truncate font-medium text-foreground">
+            <div class="flex min-w-0 flex-col gap-0">
+              <span
+                class="truncate text-sm font-medium leading-tight text-foreground"
+              >
                 {{ contact.name }}
-              </p>
-              <p class="truncate text-xs text-muted-foreground">
+              </span>
+              <span
+                class="truncate text-xs leading-tight text-muted-foreground"
+              >
                 {{ contact.email }}
-              </p>
+              </span>
             </div>
           </button>
           <p
             v-if="!isSearching && searchResults.length === 0"
-            class="px-3 py-2 text-sm text-muted-foreground"
+            class="mb-0 px-2 py-1.5 text-sm leading-tight text-muted-foreground"
           >
             {{ t('CONTACTS_LAYOUT.SIDEBAR.MERGE.EMPTY_STATE') }}
           </p>
@@ -213,111 +230,162 @@ const initials = name => {
     <!-- Preview merge modal -->
     <div
       v-if="isPreviewOpen"
-      class="fixed inset-0 z-[60] flex items-center justify-center bg-black/10 p-4 backdrop-blur-[4px]"
+      class="flex items-center justify-center p-4"
+      :class="[RELAY_DIALOG_OVERLAY_CLASS]"
       @click.self="isPreviewOpen = false"
     >
       <div
         class="flex max-h-[90vh] w-full max-w-2xl flex-col overflow-hidden rounded-xl border border-border bg-card shadow-2xl animate-in fade-in zoom-in-95 duration-200"
       >
-        <div class="shrink-0 border-b border-border/40 p-6">
-          <h2
-            class="capitalize text-lg font-semibold tracking-tight text-foreground"
-          >
-            {{ t('CONTACTS_LAYOUT.SIDEBAR.MERGE.PREVIEW_TITLE') }}
-          </h2>
-          <p class="mt-1 text-sm text-muted-foreground">
-            {{ t('CONTACTS_LAYOUT.SIDEBAR.MERGE.PREVIEW_SUBTITLE') }}
-          </p>
-        </div>
-
-        <div
-          class="grid grid-cols-1 gap-6 overflow-y-auto bg-muted/10 p-6 sm:grid-cols-2"
+        <RelayModalHeader
+          :title="t('CONTACTS_LAYOUT.SIDEBAR.MERGE.PREVIEW_TITLE')"
+          @close="isPreviewOpen = false"
         >
-          <div
-            class="relative flex flex-col gap-4 overflow-hidden rounded-lg border border-border bg-card p-4"
-          >
-            <div
-              class="absolute right-0 top-0 rounded-bl-lg bg-primary px-2 py-0.5 text-[10px] font-bold text-primary-foreground"
-            >
-              {{ t('CONTACTS_LAYOUT.SIDEBAR.MERGE.PRIMARY_BADGE') }}
-            </div>
-            <div class="flex items-center gap-3 border-b border-border/40 pb-3">
-              <div
-                class="flex size-10 shrink-0 items-center justify-center rounded-full bg-primary/10 font-medium text-primary"
-              >
-                {{ initials(selectedContact.name) }}
-              </div>
-              <div class="min-w-0">
-                <h4
-                  class="capitalize truncate text-sm font-medium text-foreground"
-                >
-                  {{ selectedContact.name }}
-                </h4>
-                <p class="truncate text-xs text-muted-foreground">
-                  {{ selectedContact.email }}
-                </p>
-              </div>
-            </div>
-            <div class="flex flex-col gap-3">
-              <div>
-                <span
-                  class="text-[11px] font-medium uppercase tracking-wider text-muted-foreground"
-                >
-                  {{ t('CONTACTS_LAYOUT.DETAIL.ABOUT.PHONE') }}
-                </span>
-                <p class="truncate text-sm text-foreground">
-                  {{ selectedContact.phoneNumber || '—' }}
-                </p>
-              </div>
-            </div>
-          </div>
+          <template #description>
+            <p class="mt-0.5 text-[13px] text-muted-foreground">
+              {{ t('CONTACTS_LAYOUT.SIDEBAR.MERGE.PREVIEW_SUBTITLE') }}
+            </p>
+          </template>
+        </RelayModalHeader>
 
-          <div
-            class="relative flex flex-col gap-4 overflow-hidden rounded-lg border border-destructive/30 bg-destructive/5 p-4"
-          >
+        <div class="pt-4" :class="[RELAY_MODAL_BODY_CLASS]">
+          <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div
-              class="absolute right-0 top-0 rounded-bl-lg bg-destructive px-2 py-0.5 text-[10px] font-bold text-destructive-foreground"
+              class="flex flex-col gap-4 rounded-lg border border-border bg-card p-4"
             >
-              {{ t('CONTACTS_LAYOUT.SIDEBAR.MERGE.DELETED_BADGE') }}
-            </div>
-            <div
-              class="flex items-center gap-3 border-b border-destructive/10 pb-3"
-            >
-              <div
-                class="flex size-10 shrink-0 items-center justify-center rounded-full bg-destructive/10 font-medium text-destructive"
-              >
-                {{ initials(selectedDuplicate?.name) }}
-              </div>
-              <div class="min-w-0">
-                <h4
-                  class="capitalize truncate text-sm font-medium text-foreground"
-                >
-                  {{ selectedDuplicate?.name }}
-                </h4>
-                <p class="truncate text-xs text-muted-foreground">
-                  {{ selectedDuplicate?.email }}
-                </p>
-              </div>
-            </div>
-            <div class="flex flex-col gap-3">
-              <div>
+              <div class="flex justify-end">
                 <span
-                  class="text-[11px] font-medium uppercase tracking-wider text-muted-foreground"
+                  class="rounded-md bg-primary px-2 py-0.5 text-[10px] font-bold text-primary-foreground"
                 >
-                  {{ t('CONTACTS_LAYOUT.DETAIL.ABOUT.PHONE') }}
+                  {{ t('CONTACTS_LAYOUT.SIDEBAR.MERGE.PRIMARY_BADGE') }}
                 </span>
-                <p
-                  class="truncate text-sm text-foreground line-through opacity-60"
+              </div>
+              <div
+                class="flex items-center gap-3 border-b border-border/40 pb-3"
+              >
+                <div
+                  class="flex size-10 shrink-0 items-center justify-center rounded-full bg-muted text-sm font-semibold text-muted-foreground"
                 >
-                  {{ selectedDuplicate?.phoneNumber || '—' }}
-                </p>
+                  {{ initials(selectedContact.name) }}
+                </div>
+                <div class="min-w-0">
+                  <h4
+                    class="truncate text-[14px] font-medium capitalize text-foreground"
+                  >
+                    {{ selectedContact.name }}
+                  </h4>
+                  <p
+                    class="mb-0 truncate text-xs leading-normal text-muted-foreground"
+                  >
+                    {{ selectedContact.email }}
+                  </p>
+                </div>
+              </div>
+              <div class="flex flex-col gap-3">
+                <div>
+                  <span
+                    class="text-[11px] font-medium uppercase tracking-wider text-muted-foreground"
+                  >
+                    {{ t('CONTACTS_LAYOUT.SIDEBAR.MERGE.PHONE') }}
+                  </span>
+                  <p
+                    class="mb-0 truncate text-sm leading-normal text-foreground"
+                  >
+                    {{
+                      selectedContact.phone_number ||
+                      selectedContact.phoneNumber ||
+                      t('CONTACT_PANEL.PHONE_NOT_PROVIDED')
+                    }}
+                  </p>
+                </div>
+                <div>
+                  <span
+                    class="text-[11px] font-medium uppercase tracking-wider text-muted-foreground"
+                  >
+                    {{ t('CONTACTS_LAYOUT.SIDEBAR.MERGE.EMAIL') }}
+                  </span>
+                  <p
+                    class="mb-0 truncate text-sm leading-normal text-foreground"
+                  >
+                    {{
+                      selectedContact.email ||
+                      t('CONTACT_PANEL.EMAIL_NOT_PROVIDED')
+                    }}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div
+              class="flex flex-col gap-4 rounded-lg border border-destructive/30 bg-destructive/5 p-4"
+            >
+              <div class="flex justify-end">
+                <span
+                  class="rounded-md bg-destructive px-2 py-0.5 text-[10px] font-bold text-destructive-foreground"
+                >
+                  {{ t('CONTACTS_LAYOUT.SIDEBAR.MERGE.DELETED_BADGE') }}
+                </span>
+              </div>
+              <div
+                class="flex items-center gap-3 border-b border-destructive/10 pb-3"
+              >
+                <div
+                  class="flex size-10 shrink-0 items-center justify-center rounded-full bg-destructive/10 text-sm font-semibold text-destructive"
+                >
+                  {{ initials(selectedDuplicate?.name) }}
+                </div>
+                <div class="min-w-0">
+                  <h4
+                    class="truncate text-[14px] font-medium capitalize text-foreground"
+                  >
+                    {{ selectedDuplicate?.name }}
+                  </h4>
+                  <p
+                    class="mb-0 truncate text-xs leading-normal text-muted-foreground"
+                  >
+                    {{ selectedDuplicate?.email }}
+                  </p>
+                </div>
+              </div>
+              <div class="flex flex-col gap-3">
+                <div>
+                  <span
+                    class="text-[11px] font-medium uppercase tracking-wider text-muted-foreground"
+                  >
+                    {{ t('CONTACTS_LAYOUT.SIDEBAR.MERGE.PHONE') }}
+                  </span>
+                  <p
+                    class="mb-0 truncate text-sm leading-normal text-foreground line-through opacity-60"
+                  >
+                    {{
+                      selectedDuplicate?.phone_number ||
+                      selectedDuplicate?.phoneNumber ||
+                      t('CONTACT_PANEL.PHONE_NOT_PROVIDED')
+                    }}
+                  </p>
+                </div>
+                <div>
+                  <span
+                    class="text-[11px] font-medium uppercase tracking-wider text-muted-foreground"
+                  >
+                    {{ t('CONTACTS_LAYOUT.SIDEBAR.MERGE.EMAIL') }}
+                  </span>
+                  <p
+                    class="mb-0 truncate text-sm leading-normal text-foreground line-through opacity-60"
+                  >
+                    {{
+                      selectedDuplicate?.email ||
+                      t('CONTACT_PANEL.EMAIL_NOT_PROVIDED')
+                    }}
+                  </p>
+                </div>
               </div>
             </div>
           </div>
         </div>
 
         <div
-          class="flex shrink-0 items-center justify-end gap-3 border-t border-border bg-card px-6 py-4"
+          class="flex shrink-0 items-center justify-end gap-3 border-t border-border px-6 py-4"
         >
           <RelayButton variant="outline" @click="isPreviewOpen = false">
             {{ t('CONTACTS_LAYOUT.SIDEBAR.MERGE.BUTTONS.CANCEL') }}

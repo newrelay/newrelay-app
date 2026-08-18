@@ -10,16 +10,15 @@ import {
 import ChatListHeader from './ChatListHeader.vue';
 import ConversationList from './ConversationList.vue';
 import {
-  RelayButton,
   RelayTabs,
   RelayTabsList,
   RelayTabsTrigger,
+  RelayMessagesEmptyState,
 } from 'dashboard/components-next/relay';
 import Dialog from 'dashboard/components-next/dialog/Dialog.vue';
 import ConversationFilter from 'next/filter/ConversationFilter.vue';
 import SaveCustomView from 'next/filter/SaveCustomView.vue';
 import DeleteCustomViews from 'dashboard/routes/dashboard/customviews/DeleteCustomViews.vue';
-import ConversationBulkActions from './widgets/conversation/conversationBulkActions/Index.vue';
 import TeleportWithDirection from 'dashboard/components-next/TeleportWithDirection.vue';
 import ConversationResolveAttributesModal from 'dashboard/components-next/ConversationWorkflow/ConversationResolveAttributesModal.vue';
 
@@ -126,11 +125,8 @@ const getTeamFn = useMapGetter('teams/getTeam');
 const getConversationById = useMapGetter('getConversationById');
 
 const {
-  selectedConversations,
-  selectedInboxes,
   selectConversation,
   deSelectConversation,
-  selectAllConversations,
   resetBulkActions,
   isConversationSelected,
   onAssignAgent,
@@ -290,32 +286,17 @@ const searchQuery = ref('');
 const showSearchInput = ref(false);
 const searchInputRef = ref(null);
 
-const toggleSearchInput = () => {
-  showSearchInput.value = !showSearchInput.value;
-  if (showSearchInput.value) {
-    nextTick(() => {
-      searchInputRef.value?.focus();
-    });
-  }
+const openSearchInput = () => {
+  showSearchInput.value = true;
+  nextTick(() => {
+    searchInputRef.value?.focus();
+  });
 };
 
-const filteredConversationList = computed(() => {
-  if (!searchQuery.value.trim()) return conversationList.value;
-  const query = searchQuery.value.toLowerCase().trim();
-  return conversationList.value.filter(c => {
-    const name = c.meta?.sender?.name?.toLowerCase() || '';
-    const email = c.meta?.sender?.email?.toLowerCase() || '';
-    const phone = c.meta?.sender?.phone_number || '';
-    const lastMsg =
-      c.messages?.[c.messages.length - 1]?.content?.toLowerCase() || '';
-    return (
-      name.includes(query) ||
-      email.includes(query) ||
-      phone.includes(query) ||
-      lastMsg.includes(query)
-    );
-  });
-});
+const closeSearchInput = () => {
+  showSearchInput.value = false;
+  searchQuery.value = '';
+};
 
 const pageSubtitle = computed(() => {
   if (hasAppliedFilters.value) {
@@ -391,25 +372,30 @@ const conversationList = computed(() => {
   return localConversationList;
 });
 
+const filteredConversationList = computed(() => {
+  if (!searchQuery.value.trim()) return conversationList.value;
+  const query = searchQuery.value.toLowerCase().trim();
+  return conversationList.value.filter(c => {
+    const name = c.meta?.sender?.name?.toLowerCase() || '';
+    const email = c.meta?.sender?.email?.toLowerCase() || '';
+    const phone = c.meta?.sender?.phone_number || '';
+    const lastMsg =
+      c.messages?.[c.messages.length - 1]?.content?.toLowerCase() || '';
+    return (
+      name.includes(query) ||
+      email.includes(query) ||
+      phone.includes(query) ||
+      lastMsg.includes(query)
+    );
+  });
+});
+
 const showEndOfListMessage = computed(() => {
   return !!(
     conversationList.value.length &&
     hasCurrentPageEndReached.value &&
     !chatListLoading.value
   );
-});
-
-const allConversationsSelected = computed(() => {
-  return (
-    conversationList.value.length === selectedConversations.value.length &&
-    conversationList.value.every(el =>
-      selectedConversations.value.includes(el.id)
-    )
-  );
-});
-
-const uniqueInboxes = computed(() => {
-  return [...new Set(selectedInboxes.value)];
 });
 
 // ---------------------- Methods -----------------------
@@ -834,17 +820,6 @@ function handleResolveWithAttributes({ attributes, context }) {
   }
 }
 
-function allSelectedConversationsStatus(status) {
-  if (!selectedConversations.value.length) return false;
-  return selectedConversations.value.every(item => {
-    return getConversationById.value(item)?.status === status;
-  });
-}
-
-function toggleSelectAll(check) {
-  selectAllConversations(check, conversationList);
-}
-
 useEmitter('fetch_conversation_stats', () => {
   if (hasAppliedFiltersOrActiveFolders.value) return;
   store.dispatch('conversationStats/get', conversationFilters.value);
@@ -929,7 +904,7 @@ watch(conversationFilters, (newVal, oldVal) => {
 
 <template>
   <div
-    class="flex flex-col flex-shrink-0 conversations-list-wrap bg-card relative border-r border-border"
+    class="conversations-list-wrap relative flex h-full min-h-0 shrink-0 flex-col border-r border-border bg-card"
     :class="[
       { hidden: !showConversationList },
       isOnExpandedLayout ? 'basis-full' : 'w-[300px] lg:w-[320px]',
@@ -937,32 +912,19 @@ watch(conversationFilters, (newVal, oldVal) => {
   >
     <slot />
     <div
-      class="flex items-center justify-between px-4 h-14 shrink-0 border-b border-border"
+      class="flex h-16 shrink-0 items-center justify-between border-b border-border bg-card px-4"
     >
-      <h1
-        class="capitalize text-[16px] font-[500] truncate text-foreground flex items-center gap-1.5 min-w-0"
-        :title="pageSubtitle ? `${pageTitle} / ${pageSubtitle}` : pageTitle"
-      >
-        <span class="truncate">{{ pageTitle }}</span>
-        <span class="text-[14px] font-medium text-muted-foreground truncate">
-          / {{ pageSubtitle || t('CHAT_LIST.ALL_CONVERSATION_SUBTITLE') }}
-        </span>
-      </h1>
-
-      <div class="flex items-center gap-2 pl-4 shrink-0">
-        <RelayButton
-          v-if="false"
-          variant="ghost"
-          size="sm"
-          class="text-xs h-8 text-muted-foreground hover:text-foreground border border-border hover:border-transparent"
-          @click="toggleSelectAll(!allConversationsSelected)"
+      <template v-if="!showSearchInput">
+        <h1
+          class="flex min-w-0 flex-1 items-center gap-1.5 truncate text-base font-medium text-foreground"
+          :title="pageSubtitle ? `${pageTitle} / ${pageSubtitle}` : pageTitle"
         >
-          {{
-            allConversationsSelected
-              ? t('CHAT_LIST.DESELECT_ALL')
-              : t('CHAT_LIST.SELECT_ALL')
-          }}
-        </RelayButton>
+          <span class="truncate">{{ pageTitle }}</span>
+          <span class="truncate text-[14px] font-medium text-muted-foreground">
+            / {{ pageSubtitle || t('CHAT_LIST.ALL_CONVERSATION_SUBTITLE') }}
+          </span>
+        </h1>
+
         <ChatListHeader
           :has-applied-filters="hasAppliedFilters"
           :has-active-folders="hasActiveFolders"
@@ -975,15 +937,34 @@ watch(conversationFilters, (newVal, oldVal) => {
           @reset-filters="resetAndFetchData"
           @basic-filter-change="onBasicFilterChange"
           @status-change="onStatusTabChange"
-          @toggle-search="toggleSearchInput"
+          @open-search="openSearchInput"
         />
+      </template>
+
+      <div v-else class="relative flex w-full items-center">
+        <span
+          class="i-lucide-search pointer-events-none absolute left-2.5 top-1/2 size-4 -translate-y-1/2 text-muted-foreground"
+        />
+        <input
+          ref="searchInputRef"
+          v-model="searchQuery"
+          type="text"
+          :placeholder="t('CHAT_LIST.SEARCH.INPUT')"
+          class="reset-base no-margin box-border h-8 w-full rounded-md border border-border/80 bg-muted/30 pl-8 pr-8 text-[13px] text-foreground placeholder:text-muted-foreground/70 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary/30"
+          @keydown.esc="closeSearchInput"
+        />
+        <button
+          type="button"
+          class="absolute right-1 top-1/2 -translate-y-1/2 rounded-sm p-1.5 text-muted-foreground transition-colors hover:bg-muted/50 hover:text-foreground"
+          :aria-label="t('CHAT_LIST.SEARCH.CLOSE')"
+          @click="closeSearchInput"
+        >
+          <span class="i-lucide-x size-3.5" />
+        </button>
       </div>
     </div>
 
-    <div
-      v-if="!hasAppliedFiltersOrActiveFolders"
-      class="px-4 pt-1 pb-0 shrink-0"
-    >
+    <div v-if="!hasAppliedFiltersOrActiveFolders" class="shrink-0 p-4 pt-2">
       <RelayTabs
         :model-value="activeAssigneeTab"
         class="w-full"
@@ -991,13 +972,13 @@ watch(conversationFilters, (newVal, oldVal) => {
       >
         <div class="flex items-center">
           <RelayTabsList
-            class="h-9 !p-0 !bg-transparent gap-4 overflow-hidden flex-1 !justify-start !rounded-none"
+            class="h-9 flex-1 gap-4 overflow-hidden !justify-start !rounded-none !bg-transparent !p-0"
           >
             <RelayTabsTrigger
               v-for="tab in assigneeTabItems"
               :key="tab.key"
               :value="tab.key"
-              class="!px-0 !py-2 border-b-2 border-transparent text-sm font-medium text-muted-foreground hover:text-foreground aria-selected:border-primary aria-selected:text-foreground aria-selected:!shadow-none !rounded-none !bg-transparent"
+              class="!rounded-none !bg-transparent !px-0 !py-2 text-sm font-medium text-muted-foreground hover:text-foreground aria-selected:!font-medium aria-selected:!shadow-none aria-selected:border-primary aria-selected:text-foreground border-b-2 border-transparent"
             >
               {{ tab.name }}
             </RelayTabsTrigger>
@@ -1005,42 +986,6 @@ watch(conversationFilters, (newVal, oldVal) => {
         </div>
       </RelayTabs>
     </div>
-
-    <!-- Search Input (Slide & Fade in/out) -->
-    <transition
-      enter-active-class="transition-all duration-200 ease-out"
-      enter-from-class="opacity-0 -translate-y-2 max-h-0"
-      enter-to-class="opacity-100 translate-y-0 max-h-12"
-      leave-active-class="transition-all duration-150 ease-in"
-      leave-from-class="opacity-100 translate-y-0 max-h-12"
-      leave-to-class="opacity-0 -translate-y-2 max-h-0"
-    >
-      <div
-        v-if="showSearchInput"
-        class="px-4 py-2 shrink-0 border-b border-border/60 overflow-hidden"
-      >
-        <div class="relative flex items-center">
-          <span
-            class="i-lucide-search absolute left-2.5 size-4 text-muted-foreground"
-          />
-          <input
-            ref="searchInputRef"
-            v-model="searchQuery"
-            type="text"
-            :placeholder="t('CHAT_LIST.SEARCH.INPUT')"
-            class="w-full h-8 pl-8 pr-7 bg-muted/50 border border-input focus:outline-none focus:ring-1 focus:ring-primary text-foreground placeholder:text-muted-foreground transition-colors text-[14px] shadow-sm rounded-md border-border/80 bg-background focus-visible:ring-1 focus-visible:ring-primary/30"
-          />
-          <button
-            v-if="searchQuery"
-            type="button"
-            class="absolute right-2 text-muted-foreground hover:text-foreground p-0.5"
-            @click="searchQuery = ''"
-          >
-            <span class="i-lucide-x size-3.5" />
-          </button>
-        </div>
-      </div>
-    </transition>
 
     <TeleportWithDirection
       v-if="showAddFoldersModal"
@@ -1063,13 +1008,15 @@ watch(conversationFilters, (newVal, oldVal) => {
       @close="onCloseDeleteFoldersModal"
     />
 
-    <p
+    <RelayMessagesEmptyState
       v-if="!chatListLoading && !filteredConversationList.length"
-      class="flex overflow-auto justify-center items-center p-4 text-sm text-muted-foreground"
-    >
-      {{ $t('CHAT_LIST.LIST.404') }}
-    </p>
+      class="min-h-0 flex-1"
+      icon="i-lucide-rocket"
+      :title="$t('CONVERSATION.NO_MESSAGE_1')"
+      :description="$t('CONVERSATION.NO_MESSAGE_1_DESCRIPTION')"
+    />
     <ConversationList
+      v-else
       :conversation-list="filteredConversationList"
       :is-loading="chatListLoading"
       :show-end-of-list-message="showEndOfListMessage"

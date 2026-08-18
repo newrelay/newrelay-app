@@ -139,14 +139,14 @@ defineExpose({ toggleEditorExpand, resetEditorHeight });
     }"
   >
     <div
-      class="group absolute inset-x-0 -top-4 z-10 flex h-4 cursor-row-resize select-none items-center justify-center bg-gradient-to-b from-transparent from-10% dark:to-muted/80 to-muted/90 backdrop-blur-[0.01875rem]"
+      class="group absolute inset-x-0 -top-3 z-10 flex h-3 cursor-row-resize select-none items-center justify-center"
       @mousedown="onResizeStart"
       @touchstart.prevent="onResizeStart"
       @dblclick="resetEditorHeight"
     >
       <div
-        class="w-8 h-0.5 mt-1 rounded-full bg-border group-hover:bg-border transition-all duration-200 motion-safe:group-hover:animate-bounce"
-        :class="{ 'bg-border animate-bounce': isResizing }"
+        class="mt-0.5 h-0.5 w-8 rounded-full bg-border opacity-0 transition-all duration-200 group-hover:opacity-100 motion-safe:group-hover:animate-bounce"
+        :class="{ 'opacity-100 animate-bounce': isResizing }"
       />
     </div>
     <slot />

@@ -8,6 +8,9 @@ import Editor from 'dashboard/components-next/Editor/Editor.vue';
 import NextButton from 'dashboard/components-next/button/Button.vue';
 import ContactNoteItem from 'next/Contacts/ContactsSidebar/components/ContactNoteItem.vue';
 import Spinner from 'dashboard/components-next/spinner/Spinner.vue';
+import RelayModalHeader from 'dashboard/components-next/relay/modal/RelayModalHeader.vue';
+import { RELAY_MODAL_BODY_CLASS } from 'dashboard/components-next/relay/modal/constants';
+import { RELAY_SIDEBAR_TEXT_ACTION_CLASS } from 'dashboard/components-next/relay/sidebar/constants';
 
 const props = defineProps({
   contactId: { type: [String, Number], required: true },
@@ -97,32 +100,31 @@ watch(
 </script>
 
 <template>
-  <div>
-    <div class="px-4 pt-3 pb-2">
-      <NextButton
-        ghost
-        xs
-        icon="i-lucide-plus"
-        :label="$t('CONTACTS_LAYOUT.SIDEBAR.NOTES.ADD_NOTE')"
-        :disabled="!contactId || isFetchingNotes"
-        @click="openCreateModal"
-      />
-    </div>
+  <div class="w-full">
+    <button
+      type="button"
+      :class="RELAY_SIDEBAR_TEXT_ACTION_CLASS"
+      :disabled="!contactId || isFetchingNotes"
+      @click="openCreateModal"
+    >
+      <span class="i-lucide-plus size-3.5" />
+      {{ t('CONTACTS_LAYOUT.SIDEBAR.NOTES.ADD_NOTE') }}
+    </button>
 
     <div
       v-if="isFetchingNotes"
-      class="flex items-center justify-center py-8 text-muted-foreground"
+      class="flex items-center justify-center py-3 text-muted-foreground"
     >
       <Spinner />
     </div>
     <div
       v-else-if="notes.length"
-      class="flex flex-col max-h-[300px] overflow-y-auto"
+      class="mt-1 flex max-h-[300px] flex-col gap-3 overflow-y-auto"
     >
       <ContactNoteItem
         v-for="note in notes"
         :key="note.id"
-        class="py-4 last-of-type:border-b-0 px-4"
+        class="rounded-lg border border-yellow-200/60 bg-yellow-50/50 px-2.5 py-2.5 last-of-type:border-b dark:border-yellow-900/30 dark:bg-yellow-900/10"
         :note="note"
         :written-by="getWrittenBy(note)"
         allow-delete
@@ -132,17 +134,17 @@ watch(
     </div>
     <div
       v-else
-      class="flex flex-col items-center justify-center px-6 py-8 gap-3"
+      class="flex flex-col items-center justify-center py-2 text-muted-foreground"
     >
-      <span class="i-lucide-file-text size-8 text-muted-foreground/50" />
-      <p class="text-[13.5px] text-center text-muted-foreground">
+      <span class="i-lucide-file-text mb-2 size-4 opacity-40" />
+      <span class="text-[11px]">
         {{
           t(
             'CONTACTS_LAYOUT.SIDEBAR.NOTES.CONVERSATION_EMPTY_STATE',
             'No notes yet'
           )
         }}
-      </p>
+      </span>
     </div>
 
     <woot-modal
@@ -151,25 +153,28 @@ watch(
       :close-on-backdrop-click="false"
       class="!items-start [&>div]:!top-12 [&>div]:sticky"
     >
-      <div class="flex w-full flex-col gap-6 px-6 py-6">
-        <h3 class="capitalize text-lg font-semibold text-foreground">
-          {{ t('CONTACTS_LAYOUT.SIDEBAR.NOTES.ADD_NOTE') }}
-        </h3>
-        <Editor
-          v-model="noteContent"
-          focus-on-mount
-          :placeholder="t('CONTACTS_LAYOUT.SIDEBAR.NOTES.PLACEHOLDER')"
-          class="[&>div]:!border-transparent [&>div]:px-4 [&>div]:py-4"
+      <div class="flex w-full flex-col overflow-hidden">
+        <RelayModalHeader
+          :title="t('CONTACTS_LAYOUT.SIDEBAR.NOTES.ADD_NOTE')"
+          :show-close="false"
         />
-        <div class="flex items-center justify-end gap-3">
-          <NextButton
-            solid
-            blue
-            :label="t('CONTACTS_LAYOUT.SIDEBAR.NOTES.SAVE')"
-            :is-loading="isCreatingNote"
-            :disabled="!noteContent || isCreatingNote"
-            @click="onAdd"
+        <div class="flex flex-col gap-6" :class="[RELAY_MODAL_BODY_CLASS]">
+          <Editor
+            v-model="noteContent"
+            focus-on-mount
+            :placeholder="t('CONTACTS_LAYOUT.SIDEBAR.NOTES.PLACEHOLDER')"
+            class="[&>div]:!border-transparent [&>div]:px-4 [&>div]:py-4"
           />
+          <div class="flex items-center justify-end gap-3">
+            <NextButton
+              solid
+              blue
+              :label="t('CONTACTS_LAYOUT.SIDEBAR.NOTES.SAVE')"
+              :is-loading="isCreatingNote"
+              :disabled="!noteContent || isCreatingNote"
+              @click="onAdd"
+            />
+          </div>
         </div>
       </div>
     </woot-modal>

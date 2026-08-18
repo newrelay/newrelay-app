@@ -32,14 +32,13 @@ const onMenuItemClick = key => {
     @close="handleClose"
   >
     <div
-      class="p-1 rounded-md shadow-xl bg-accent/50 backdrop-blur-[100px] outline-1 outline outline-border/50"
+      class="z-50 min-w-56 overflow-hidden rounded-md border border-border bg-popover p-1 text-popover-foreground shadow-md"
     >
       <MenuItem
         v-for="item in menuItems"
         :key="item.key"
         :option="item"
         variant="icon"
-        class="!w-48"
         @click.stop="onMenuItemClick(item.key)"
       />
     </div>

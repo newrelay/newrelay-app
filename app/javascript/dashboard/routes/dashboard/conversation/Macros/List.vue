@@ -7,7 +7,7 @@ import { useUISettings } from 'dashboard/composables/useUISettings';
 import Draggable from 'vuedraggable';
 import Spinner from 'dashboard/components-next/spinner/Spinner.vue';
 import MacroItem from './MacroItem.vue';
-import NextButton from 'dashboard/components-next/button/Button.vue';
+import { RELAY_SIDEBAR_TEXT_ACTION_CLASS } from 'dashboard/components-next/relay/sidebar/constants';
 
 defineProps({
   conversationId: {
@@ -67,18 +67,19 @@ onMounted(() => {
 
 <template>
   <div>
-    <div v-if="!uiFlags.isFetching && !macros.length" class="p-3">
-      <p class="flex flex-col items-center justify-center h-full">
+    <div
+      v-if="!uiFlags.isFetching && !macros.length"
+      class="flex w-full flex-col items-stretch gap-2"
+    >
+      <p class="text-[13px] text-muted-foreground">
         {{ $t('MACROS.LIST.404') }}
       </p>
-      <router-link :to="accountScopedUrl('settings/macros')">
-        <NextButton
-          faded
-          xs
-          icon="i-lucide-plus"
-          class="mt-1"
-          :label="$t('MACROS.HEADER_BTN_TXT')"
-        />
+      <router-link
+        :to="accountScopedUrl('settings/macros')"
+        :class="RELAY_SIDEBAR_TEXT_ACTION_CLASS"
+      >
+        <span class="i-lucide-plus size-3.5" />
+        {{ $t('MACROS.HEADER_BTN_TXT') }}
       </router-link>
     </div>
     <div
@@ -91,7 +92,7 @@ onMounted(() => {
     <Draggable
       v-if="!uiFlags.isFetching && macros.length"
       v-model="orderedMacros"
-      class="p-1"
+      class="p-0"
       animation="200"
       ghost-class="ghost"
       handle=".drag-handle"

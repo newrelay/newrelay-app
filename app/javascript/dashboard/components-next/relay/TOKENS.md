@@ -21,7 +21,8 @@ Inside `[data-relay]`, prefer semantic Tailwind classes (`bg-primary`, `border-i
 | Destructive | `bg-destructive` / `text-destructive-foreground` | `--destructive` |
 | Border | `border-border` | `--border` |
 | Input border | `border-input` | `--input` |
-| Focus ring | `ring-ring` / `focus-visible:ring-ring` | `--ring` |
+| Focus ring (forms) | `focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary/30` | `--primary` at 30% opacity |
+| Focus ring (chrome) | `focus-visible:ring-ring` | `--ring` |
 | Sidebar | `bg-sidebar` / `text-sidebar-foreground` | `--sidebar` |
 | Sidebar accent | `bg-sidebar-accent` / `text-sidebar-accent-foreground` | `--sidebar-accent` |
 | Sidebar primary (active) | `text-sidebar-primary` / `bg-sidebar-primary` | `--sidebar-primary` |
@@ -71,5 +72,45 @@ Inside `[data-relay]`, prefer semantic Tailwind classes (`bg-primary`, `border-i
 | `--input` | `#e4e7ee` | `#ffffff26` |
 | `--sidebar` | `#f9fafd` | `#181d27` |
 | `--radius` | `0.75rem` | same |
+
+## Border radius (semantic)
+
+Base token: `--radius: 0.75rem` (12px). Tailwind `rounded-sm` … `rounded-xl` map to:
+
+| Token | CSS variable | Tailwind class | Computed (default) |
+| --- | --- | --- | --- |
+| Small | `--radius-sm` | `rounded-sm` | `8px` |
+| Medium | `--radius-md` | `rounded-md` | `10px` |
+| Large (base) | `--radius-lg` | `rounded-lg` | `12px` |
+| Extra large | `--radius-xl` | `rounded-xl` | `16px` |
+
+Defined in `_relay-theme.scss` `:root` and wired in `tailwind.config.js` `theme.extend.borderRadius`.
+
+## Form fields (inputs, textareas, search)
+
+Default styling — no browser outlines, no hardcoded hex focus colors:
+
+```
+text-[14px] shadow-sm rounded-md border-border/80 bg-background focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary/30
+```
+
+Import from `dashboard/components-next/relay`:
+
+- `RelayInput` / `RelayTextarea` — preferred primitives
+- `RELAY_FORM_INPUT_CLASS`, `RELAY_FORM_TEXTAREA_CLASS`, `RELAY_FORM_INLINE_INPUT_WRAPPER_CLASS` — for raw `<input>` / TagInput wrappers
+
+## Border opacity utilities
+
+`--border` is a hex token (`#e4e7ee` light / `#ffffff1a` dark), so Tailwind opacity modifiers like `bg-border/60` use `color-mix` via a Tailwind plugin (matches Design-System-NR):
+
+```css
+.bg-border/60 {
+  background-color: color-mix(in oklab, var(--border) 60%, transparent);
+}
+```
+
+Supported opacities: `30`, `40`, `50`, `60`, `70`, `80` for `bg-border/*` and `border-border/*`.
+
+The default border color in `_relay-theme.scss` uses `:where([data-relay] *)` so these opacity utilities override the base `border-color: var(--border)` rule (same as Design-System-NR).
 
 Do **not** invent alternate purple palettes — use these indigo primary tokens.

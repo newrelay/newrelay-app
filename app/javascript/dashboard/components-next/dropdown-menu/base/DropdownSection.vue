@@ -20,7 +20,7 @@ defineProps({
       {{ title }}
     </div>
     <ul
-      class="gap-2 grid reset-base list-none px-2 overflow-y-auto"
+      class="grid list-none gap-2 overflow-y-auto px-2 reset-base no-scrollbar [&::-webkit-scrollbar]:hidden"
       :class="height"
     >
       <slot />

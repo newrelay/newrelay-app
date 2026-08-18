@@ -3,8 +3,8 @@ import { computed, reactive, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useAlert } from 'dashboard/composables';
 import { useStore } from 'dashboard/composables/store';
+import { removeEmoji } from 'shared/helpers/emoji';
 
-import Avatar from 'dashboard/components-next/avatar/Avatar.vue';
 import ContactLabels from 'dashboard/components-next/Contacts/ContactLabels/ContactLabels.vue';
 import {
   RelayButton,
@@ -89,6 +89,18 @@ const localSocialLinks = computed(() =>
     })
   )
 );
+
+const contactInitials = computed(() => {
+  if (!form.name) return '';
+  const words = removeEmoji(form.name).trim().split(/\s+/);
+  return words.length === 1
+    ? words[0].charAt(0).toUpperCase()
+    : words
+        .slice(0, 2)
+        .map(word => word.charAt(0))
+        .join('')
+        .toUpperCase();
+});
 
 const syncForm = contact => {
   const a = contact?.additionalAttributes || {};
@@ -184,103 +196,94 @@ const saveAbout = async () => {
 
         <!-- View mode -->
         <div v-if="!isEditing" class="flex flex-col">
-          <div class="flex items-start gap-4 border-b border-border/30 pb-4">
-            <div
-              class="flex size-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary"
-            >
-              <span class="i-lucide-mail size-5" />
-            </div>
+          <div class="flex items-start gap-3 border-b border-border/30 py-3">
+            <span class="i-lucide-mail size-4 shrink-0 text-muted-foreground" />
             <div class="flex min-w-0 flex-col gap-0.5">
-              <span class="text-[13px] text-muted-foreground">
+              <span class="text-[12px] font-medium text-muted-foreground">
                 {{ t('CONTACTS_LAYOUT.DETAIL.ABOUT.EMAIL') }}
               </span>
               <a
                 v-if="contact?.email"
                 :href="`mailto:${contact.email}`"
-                class="truncate text-[14px] font-medium text-primary hover:underline"
+                class="truncate text-[13px] text-foreground hover:text-primary hover:underline"
               >
                 {{ contact.email }}
               </a>
-              <span
-                v-else
-                class="text-[14px] font-medium text-muted-foreground"
-              >
-                {{ emptyValue }}
+              <span v-else class="text-[13px] text-foreground">
+                {{ t('CONTACTS_LAYOUT.DETAIL.ABOUT.EMAIL_NOT_PROVIDED') }}
               </span>
             </div>
           </div>
 
-          <div class="flex items-start gap-4 border-b border-border/30 py-4">
-            <div
-              class="flex size-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary"
-            >
-              <span class="i-lucide-phone size-5" />
-            </div>
+          <div class="flex items-start gap-3 border-b border-border/30 py-3">
+            <span
+              class="i-lucide-phone size-4 shrink-0 text-muted-foreground"
+            />
             <div class="flex min-w-0 flex-col gap-0.5">
-              <span class="text-[13px] text-muted-foreground">
+              <span class="text-[12px] font-medium text-muted-foreground">
                 {{ t('CONTACTS_LAYOUT.DETAIL.ABOUT.PHONE') }}
               </span>
               <a
                 v-if="contact?.phoneNumber"
                 :href="`tel:${contact.phoneNumber}`"
-                class="truncate text-[14px] font-medium text-foreground transition-colors hover:text-primary"
+                class="truncate text-[13px] text-foreground transition-colors hover:text-primary"
               >
                 {{ contact.phoneNumber }}
               </a>
-              <span
-                v-else
-                class="text-[14px] font-medium text-muted-foreground"
-              >
-                {{ emptyValue }}
+              <span v-else class="text-[13px] text-foreground">
+                {{ t('CONTACTS_LAYOUT.DETAIL.ABOUT.PHONE_NOT_PROVIDED') }}
               </span>
             </div>
           </div>
 
-          <div class="flex items-start gap-4 border-b border-border/30 py-4">
-            <div
-              class="flex size-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary"
-            >
-              <span class="i-lucide-map-pin size-5" />
-            </div>
+          <div class="flex items-start gap-3 border-b border-border/30 py-3">
+            <span
+              class="i-lucide-map-pin size-4 shrink-0 text-muted-foreground"
+            />
             <div class="flex min-w-0 flex-col gap-0.5">
-              <span class="text-[13px] text-muted-foreground">
+              <span class="text-[12px] font-medium text-muted-foreground">
                 {{ t('CONTACTS_LAYOUT.DETAIL.ABOUT.ADDRESS') }}
               </span>
-              <span class="text-[14px] font-medium text-foreground">
-                {{ addressDisplay || emptyValue }}
+              <span v-if="addressDisplay" class="text-[13px] text-foreground">
+                {{ addressDisplay }}
+              </span>
+              <span v-else class="text-[13px] text-foreground">
+                {{ t('CONTACTS_LAYOUT.DETAIL.ABOUT.ADDRESS_NOT_PROVIDED') }}
               </span>
             </div>
           </div>
 
-          <div v-if="socialEntries.length" class="flex items-center gap-4 pt-4">
-            <div class="flex gap-3">
-              <a
-                v-for="social in socialEntries"
-                :key="social.id"
-                :href="`https://${social.prefix}${social.handle}`"
-                target="_blank"
-                rel="noopener noreferrer"
-                class="flex size-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary transition-colors hover:bg-primary/20"
-                :title="social.handle"
-              >
-                <span class="size-5" :class="[social.icon]" />
-              </a>
-            </div>
-            <span class="text-[14px] text-muted-foreground">
-              {{ t('CONTACTS_LAYOUT.DETAIL.ABOUT.SOCIALS') }}
-            </span>
-          </div>
-          <div v-else class="flex items-start gap-4 pt-4">
-            <div
-              class="flex size-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary"
-            >
-              <span class="i-ri-linkedin-box-fill size-5" />
-            </div>
-            <div class="flex flex-col gap-0.5">
-              <span class="text-[13px] text-muted-foreground">
+          <div v-if="socialEntries.length" class="flex items-start gap-3 py-3">
+            <span
+              class="i-ri-linkedin-box-fill size-4 shrink-0 text-muted-foreground"
+            />
+            <div class="flex min-w-0 flex-col gap-1">
+              <span class="text-[12px] font-medium text-muted-foreground">
                 {{ t('CONTACTS_LAYOUT.DETAIL.ABOUT.SOCIALS') }}
               </span>
-              <span class="text-[14px] font-medium text-muted-foreground">
+              <div class="flex flex-wrap gap-2">
+                <a
+                  v-for="social in socialEntries"
+                  :key="social.id"
+                  :href="`https://${social.prefix}${social.handle}`"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="text-[13px] text-foreground transition-colors hover:text-primary hover:underline"
+                >
+                  {{ social.id.charAt(0).toUpperCase() + social.id.slice(1) }}
+                </a>
+              </div>
+            </div>
+          </div>
+          <div v-else class="flex items-start gap-3 py-3">
+            <span
+              class="i-ri-linkedin-box-fill size-4 shrink-0 text-muted-foreground"
+            />
+            <div class="flex flex-col gap-0.5">
+              <span class="text-[12px] font-medium text-muted-foreground">
+                {{ t('CONTACTS_LAYOUT.DETAIL.ABOUT.SOCIALS') }}
+              </span>
+              <span class="text-[13px] text-foreground">
                 {{ emptyValue }}
               </span>
             </div>
@@ -289,19 +292,14 @@ const saveAbout = async () => {
 
         <!-- Edit mode -->
         <div v-else class="space-y-3">
-          <div
-            class="mb-4 flex items-center gap-3 border-b border-border/40 pb-4"
-          >
-            <Avatar
-              :src="contact?.thumbnail || ''"
-              :name="form.name || ''"
-              :size="40"
-              rounded-full
-            />
-            <div class="flex flex-1 flex-col gap-1.5">
-              <label
-                class="text-[12px] text-foreground text-[13.5px] font-[500]"
-              >
+          <div class="mb-4 flex flex-col gap-4 border-b border-border/40 pb-4">
+            <div
+              class="flex size-14 items-center justify-center rounded-full bg-muted text-sm font-semibold text-muted-foreground"
+            >
+              {{ contactInitials }}
+            </div>
+            <div class="flex flex-col gap-1.5">
+              <label class="text-[13.5px] font-medium text-foreground">
                 {{ t('CONTACTS_LAYOUT.DETAIL.ABOUT.FULL_NAME') }}
               </label>
               <RelayInput
@@ -363,7 +361,7 @@ const saveAbout = async () => {
                   </div>
                   <input
                     :value="link.handle"
-                    class="h-full min-w-0 flex-1 border-none bg-transparent px-1 text-foreground placeholder:text-muted-foreground focus:outline-none text-[14px] shadow-sm rounded-md border-border/80 bg-background focus-visible:ring-1 focus-visible:ring-primary/30"
+                    class="h-full min-w-0 flex-1 border-none bg-transparent px-1 text-[14px] text-foreground placeholder:text-muted-foreground focus:outline-none"
                     :placeholder="t('CONTACTS_LAYOUT.DETAIL.ABOUT.HANDLE')"
                     @input="updateSocialHandle(link.id, $event.target.value)"
                   />
@@ -382,18 +380,23 @@ const saveAbout = async () => {
                 v-if="availableNetworks.length"
                 :menu-items="availableNetworks"
                 align="start"
-                content-class="w-48"
+                content-class="min-w-44"
                 @action="addSocialLink"
               >
                 <template #trigger>
-                  <RelayButton
-                    variant="outline"
-                    size="sm"
-                    class="mt-2 h-8 gap-2 rounded-md text-xs font-medium text-foreground shadow-sm"
+                  <button
+                    type="button"
+                    class="reset-base mt-1 flex w-fit cursor-pointer items-center gap-1.5 text-[13px] font-medium text-primary transition-colors hover:underline"
                   >
                     <span class="i-lucide-plus size-3.5" />
                     {{ t('CONTACTS_LAYOUT.DETAIL.ABOUT.ADD_SOCIAL') }}
-                  </RelayButton>
+                  </button>
+                </template>
+                <template #icon="{ item }">
+                  <span
+                    class="size-4 shrink-0 text-muted-foreground"
+                    :class="[item.icon]"
+                  />
                 </template>
               </RelayActionDropdown>
             </div>

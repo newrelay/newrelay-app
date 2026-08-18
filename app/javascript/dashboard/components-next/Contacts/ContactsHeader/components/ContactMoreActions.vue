@@ -1,10 +1,7 @@
 <script setup>
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
-import {
-  RelayActionDropdown,
-  RelayButton,
-} from 'dashboard/components-next/relay';
+import { RelayActionDropdown } from 'dashboard/components-next/relay';
 import { usePolicy } from 'dashboard/composables/usePolicy';
 
 const emit = defineEmits(['add', 'import', 'export']);
@@ -51,17 +48,16 @@ const handleContactAction = ({ action }) => {
     v-if="contactMenuItems.length"
     :menu-items="contactMenuItems"
     align="end"
-    content-class="w-52"
+    content-class="min-w-48"
     @action="handleContactAction"
   >
     <template #trigger>
-      <RelayButton
-        variant="outline"
-        size="icon"
-        class="size-10 rounded-lg shadow-sm"
+      <button
+        type="button"
+        class="flex size-9 items-center justify-center rounded-lg border border-border bg-background text-muted-foreground shadow-sm transition-all hover:border-transparent hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-0"
       >
         <span class="i-lucide-ellipsis-vertical size-4" />
-      </RelayButton>
+      </button>
     </template>
   </RelayActionDropdown>
 </template>

@@ -61,7 +61,7 @@ const emit = defineEmits([
             <template #trigger>
               <RelayButton
                 variant="outline"
-                class="h-9 rounded-lg px-3 text-sm font-medium shadow-sm"
+                class="h-9 rounded-lg border border-border bg-background px-4 text-[13px] font-medium shadow-sm transition-all hover:border-transparent hover:bg-muted"
               >
                 {{ buttonLabel }}
               </RelayButton>
@@ -87,16 +87,14 @@ const emit = defineEmits([
       </div>
 
       <!-- Bottom: Search + Columns + Filters toolbar -->
-      <div
-        class="flex items-center justify-between gap-3 border-t border-border/30 px-6 py-3"
-      >
+      <div class="flex items-center justify-between gap-3 px-6 py-3">
         <div class="relative w-full max-w-sm">
           <span
             class="i-lucide-search pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground"
           />
           <RelayInput
             type="search"
-            class-name="h-9 rounded-lg border-border/60 bg-card pl-9 text-sm shadow-sm"
+            class-name="h-9 w-full rounded-md border border-border/80 bg-background pl-9 text-[13px] placeholder:text-muted-foreground/60 focus-visible:ring-1 focus-visible:ring-primary/30"
             :model-value="searchValue"
             :placeholder="$t('CONTACTS_LAYOUT.HEADER.SEARCH_PLACEHOLDER')"
             @update:model-value="emit('search', $event)"
@@ -108,7 +106,7 @@ const emit = defineEmits([
             v-if="!isLabelView && !isActiveView"
             id="toggleContactsFilterButton"
             variant="outline"
-            class="h-9 gap-2 rounded-lg px-3 text-sm font-medium shadow-sm"
+            class="flex h-9 items-center gap-2 rounded-lg border border-border bg-background px-3 text-[13px] font-medium shadow-sm transition-all hover:border-transparent hover:bg-muted"
             @click="emit('filter')"
           >
             <span class="i-lucide-list-filter size-4" />
@@ -175,7 +173,7 @@ const emit = defineEmits([
             <template #trigger>
               <RelayButton
                 variant="outline"
-                class="h-9 rounded-lg px-3 text-sm font-medium shadow-sm"
+                class="h-9 rounded-lg border border-border bg-background px-4 text-[13px] font-medium shadow-sm transition-all hover:border-transparent hover:bg-muted"
               >
                 {{ buttonLabel }}
               </RelayButton>

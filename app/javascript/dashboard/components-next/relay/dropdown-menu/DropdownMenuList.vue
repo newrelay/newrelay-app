@@ -1,7 +1,6 @@
 <script setup>
 import { computed, onMounted, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
-import Icon from 'dashboard/components-next/icon/Icon.vue';
 import Avatar from 'dashboard/components-next/avatar/Avatar.vue';
 import Spinner from 'dashboard/components-next/spinner/Spinner.vue';
 import { cn } from '../utils/cn';
@@ -10,6 +9,7 @@ import {
   DROPDOWN_MENU_LABEL_CLASS,
   DROPDOWN_MENU_SEPARATOR_CLASS,
   getDropdownItemInteractionClass,
+  isDestructiveDropdownItem,
 } from './constants';
 
 const props = defineProps({
@@ -132,6 +132,15 @@ const itemClass = item =>
     item.isSelected && 'bg-accent/50'
   );
 
+const iconClass = item =>
+  cn(
+    item.icon,
+    'size-4 shrink-0',
+    isDestructiveDropdownItem(item)
+      ? 'text-destructive'
+      : 'text-muted-foreground'
+  );
+
 const shouldShowEmptyState = computed(() => {
   if (hasSections.value) {
     return filteredMenuSections.value.length === 0;
@@ -200,7 +209,7 @@ onMounted(() => {
           />
         </slot>
         <slot name="icon" :item="item">
-          <Icon v-if="item.icon" :icon="item.icon" />
+          <span v-if="item.icon" :class="iconClass(item)" />
         </slot>
         <span v-if="item.emoji" class="flex-shrink-0">{{ item.emoji }}</span>
         <slot name="label" :item="item">
@@ -242,7 +251,7 @@ onMounted(() => {
         />
       </slot>
       <slot name="icon" :item="item">
-        <Icon v-if="item.icon" :icon="item.icon" />
+        <span v-if="item.icon" :class="iconClass(item)" />
       </slot>
       <span v-if="item.emoji" class="flex-shrink-0">{{ item.emoji }}</span>
       <slot name="label" :item="item">

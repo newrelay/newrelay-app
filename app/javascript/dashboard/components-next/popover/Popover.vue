@@ -108,10 +108,10 @@ defineExpose({ show, hide, toggle });
           { ignore: clickOutsideIgnore },
         ]"
         data-popover-content
-        class="relative flex flex-col w-full max-w-lg max-h-[calc(100vh-4rem)] mx-4 bg-accent backdrop-blur-[100px] shadow-xl rounded-xl"
+        class="relative mx-4 flex max-h-[calc(100vh-4rem)] w-full max-w-lg flex-col overflow-hidden rounded-md border border-border bg-popover text-popover-foreground shadow-md"
       >
         <div
-          class="flex-1 min-h-0 overflow-y-auto overscroll-contain rounded-xl"
+          class="min-h-0 flex-1 overflow-y-auto overscroll-contain rounded-md no-scrollbar"
         >
           <slot name="content" :hide="hide" />
         </div>
@@ -126,10 +126,10 @@ defineExpose({ show, hide, toggle });
       data-popover-content
       :class="fixedPosition.class"
       :style="fixedPosition.style"
-      class="flex flex-col bg-accent backdrop-blur-[100px] shadow-xl rounded-xl"
+      class="flex flex-col rounded-md border border-border bg-popover text-popover-foreground shadow-md"
     >
       <div
-        class="flex-1 min-h-0 overflow-y-auto overscroll-contain rounded-xl"
+        class="min-h-0 flex-1 overflow-y-auto overscroll-contain rounded-md no-scrollbar"
         :class="{ 'border border-border': showContentBorder }"
       >
         <slot name="content" :hide="hide" />

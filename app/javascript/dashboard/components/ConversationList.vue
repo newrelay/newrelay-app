@@ -60,24 +60,25 @@ defineExpose({ conversationListRef });
 <template>
   <div
     ref="conversationListRef"
-    class="flex-1 min-h-0 overflow-y-auto conversations-list"
+    class="conversations-list min-h-0 flex-1 overflow-y-auto px-2 pb-4 pt-2"
     :class="{ '!overflow-hidden': isContextMenuOpen }"
   >
     <Virtualizer
       ref="virtualListRef"
       v-slot="{ item }"
       :data="conversationList"
-      class="pt-1 pb-2"
     >
-      <ConversationItem
-        :source="item"
-        :label="label"
-        :team-id="teamId"
-        :folders-id="foldersId"
-        :conversation-type="conversationType"
-        :show-assignee="showAssignee"
-        :show-expanded="showExpandedCards"
-      />
+      <div class="pb-4">
+        <ConversationItem
+          :source="item"
+          :label="label"
+          :team-id="teamId"
+          :folders-id="foldersId"
+          :conversation-type="conversationType"
+          :show-assignee="showAssignee"
+          :show-expanded="showExpandedCards"
+        />
+      </div>
     </Virtualizer>
     <div v-if="isLoading" class="flex justify-center my-4">
       <Spinner class="text-primary" />

@@ -3,11 +3,13 @@ import { mapGetters } from 'vuex';
 import { useAdmin } from 'dashboard/composables/useAdmin';
 import OnboardingView from '../OnboardingView.vue';
 import EmptyStateMessage from './EmptyStateMessage.vue';
+import { RelayMessagesEmptyState } from 'dashboard/components-next/relay';
 
 export default {
   components: {
     OnboardingView,
     EmptyStateMessage,
+    RelayMessagesEmptyState,
   },
   props: {
     isOnExpandedLayout: {
@@ -72,32 +74,40 @@ export default {
     >
       <EmptyStateMessage :message="$t('CONVERSATION.NO_INBOX_AGENT')" />
     </div>
-    <!-- Show empty state images if not loading -->
 
-    <div
-      v-else-if="!uiFlags.isFetching && !loadingChatList"
-      class="flex flex-col items-center justify-center h-full w-full"
-    >
-      <!-- No conversations available -->
-      <EmptyStateMessage
-        v-if="!allConversations.length"
-        variant="select"
-        icon="i-lucide-inbox"
-        :message="$t('CONVERSATION.NO_MESSAGE_1')"
-        :description="$t('CONVERSATION.NO_MESSAGE_1_DESCRIPTION')"
-      />
-      <EmptyStateMessage
-        v-else-if="
-          allConversations.length && !currentChat.id && isOnExpandedLayout
-        "
-        :message="$t('CONVERSATION.404')"
-      />
-      <EmptyStateMessage
-        v-else-if="allConversations.length && !currentChat.id"
-        variant="select"
-        :message="$t('CONVERSATION.SELECT_A_CONVERSATION')"
-        :description="$t('CONVERSATION.SELECT_A_CONVERSATION_DESCRIPTION')"
-      />
-    </div>
+    <RelayMessagesEmptyState
+      v-else-if="
+        !uiFlags.isFetching && !loadingChatList && !allConversations.length
+      "
+      class="h-full w-full"
+      icon="i-lucide-rocket"
+      :title="$t('CONVERSATION.NO_MESSAGE_1')"
+      :description="$t('CONVERSATION.NO_MESSAGE_1_DESCRIPTION')"
+    />
+    <RelayMessagesEmptyState
+      v-else-if="
+        !uiFlags.isFetching &&
+        !loadingChatList &&
+        allConversations.length &&
+        !currentChat.id &&
+        isOnExpandedLayout
+      "
+      class="h-full w-full"
+      icon="i-lucide-rocket"
+      :title="$t('CONVERSATION.404')"
+      description=""
+    />
+    <RelayMessagesEmptyState
+      v-else-if="
+        !uiFlags.isFetching &&
+        !loadingChatList &&
+        allConversations.length &&
+        !currentChat.id
+      "
+      class="h-full w-full"
+      icon="i-lucide-rocket"
+      :title="$t('CONVERSATION.SELECT_A_CONVERSATION')"
+      :description="$t('CONVERSATION.SELECT_A_CONVERSATION_DESCRIPTION')"
+    />
   </div>
 </template>

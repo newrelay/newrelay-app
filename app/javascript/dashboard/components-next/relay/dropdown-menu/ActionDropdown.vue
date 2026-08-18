@@ -51,7 +51,7 @@ defineEmits(['action', 'search', 'empty']);
     <RelayDropdownMenuContent
       :align="align"
       :side="side"
-      :class="cn('w-48', contentClass)"
+      :class="cn('min-w-48', contentClass)"
     >
       <DropdownMenuList
         v-bind="$props"

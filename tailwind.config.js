@@ -25,6 +25,7 @@ const defaultSansFonts = [
 
 const tailwindConfig = {
   darkMode: 'class',
+  safelist: ['backdrop-blur-[8px]', 'bg-background/80'],
   content: [
     './enterprise/app/views/**/*.erb',
     './app/javascript/widget/**/*.vue',
@@ -45,17 +46,18 @@ const tailwindConfig = {
       // Matches Tailwind v4 / shadcn `shadow-xs` (same value as TW3 `shadow-sm`)
       boxShadow: {
         xs: '0 1px 2px 0 rgb(0 0 0 / 0.05)',
+        sm: '0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1)',
       },
       borderRadius: {
-        lg: 'var(--radius)',
-        md: 'calc(var(--radius) - 2px)',
-        sm: 'calc(var(--radius) - 4px)',
-        xl: 'calc(var(--radius) + 4px)',
+        sm: 'var(--radius-sm)',
+        md: 'var(--radius-md)',
+        lg: 'var(--radius-lg)',
+        xl: 'var(--radius-xl)',
       },
       fontFamily: {
         sans: ['Geist', ...defaultSansFonts],
-        inter: ['Inter', ...defaultSansFonts],
-        interDisplay: ['InterDisplay', ...defaultSansFonts],
+        inter: ['Geist', ...defaultSansFonts],
+        interDisplay: ['Geist', ...defaultSansFonts],
         // new-ui default `--font-sans`
         geist: [
           'Geist',
@@ -311,7 +313,10 @@ const tailwindConfig = {
         'tree-dot': 'var(--sidebar-tree-dot)',
         ring: withAlpha('--sidebar-ring'),
       },
+      'contact-panel': withAlpha('--contact-panel'),
+      'conversation-list-highlight': withAlpha('--conversation-list-highlight'),
       success: withAlpha('--success'),
+      'conversation-score': withAlpha('--conversation-score'),
       warning: withAlpha('--warning'),
       priority: {
         1: withAlpha('--priority-1'),
@@ -400,6 +405,22 @@ const tailwindConfig = {
         };
       });
       addUtilities(utilities);
+    }),
+    tailwindPlugin(({ addUtilities }) => {
+      const borderMixOpacities = [30, 40, 50, 60, 70, 80];
+      const borderMixUtilities = {};
+
+      borderMixOpacities.forEach(opacity => {
+        const mixValue = `color-mix(in oklab, var(--border) ${opacity}%, transparent)`;
+        borderMixUtilities[`.bg-border\\/${opacity}`] = {
+          backgroundColor: mixValue,
+        };
+        borderMixUtilities[`.border-border\\/${opacity}`] = {
+          borderColor: mixValue,
+        };
+      });
+
+      addUtilities(borderMixUtilities);
     }),
   ],
 };

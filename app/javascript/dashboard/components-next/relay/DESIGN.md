@@ -11,7 +11,7 @@ When building or migrating a Vue page/component under the Relay shell (`[data-re
 1. **Composition API** — `<script setup>` only.
 2. **Tailwind only** — no scoped CSS, no inline `style=`, no custom CSS files for new UI.
 3. **Semantic tokens** — use `bg-background`, `text-foreground`, `bg-primary`, `border-input`, `text-muted-foreground`, `bg-sidebar`, etc. Never hardcode hex / invent purple/indigo one-offs (`bg-[#4f46e5]`, `bg-violet-*`). Primary is already indigo `#4f46e5` / dark `#4F46E5` via CSS vars.
-4. **Relay primitives** — `RelayButton`, `RelayInput`, `RelayLabel`, `RelayCheckbox`, `RelaySwitch`, `RelayBadge`, `RelayTabs*` from `dashboard/components-next/relay`. Do **not** use legacy `Button` / `Input` / form chrome for new Relay pages.
+4. **Relay primitives** — `RelayButton`, `RelayInput`, `RelayTextarea`, `RelayLabel`, `RelayCheckbox`, `RelaySwitch`, `RelayBadge`, `RelayTabs*` from `dashboard/components-next/relay`. Do **not** use legacy `Button` / `Input` / form chrome for new Relay pages.
 5. **i18n** — no bare strings in templates; update **EN only** (`en.json` / `en.yml`).
 6. **Icons** — Lucide via Uno/iconify classes (`i-lucide-*`) or existing icon patterns. Size with `size-4` / `size-5`; inherit `currentColor`.
 7. **Dark mode** — class-based (`.dark` on `<html>`). Prefer token colors that auto-flip; avoid `dark:` color overrides unless a one-off is required.
@@ -48,7 +48,7 @@ Full hex + dark values: [TOKENS.md](./TOKENS.md) and `_relay-theme.scss`.
 | Cards | `bg-card`, `border-border` / `border-border/60` |
 | Primary CTA | `bg-primary text-primary-foreground` |
 | Borders / inputs | `border-border`, `border-input` |
-| Focus ring | `focus-visible:ring-1 focus-visible:ring-ring` (or `ring-primary/30` on dense forms) |
+| Focus ring | `focus-visible:ring-1 focus-visible:ring-primary/30` on inputs/textareas/search (see `relay/form/constants.js`); `ring-ring` for non-form chrome |
 | Destructive | `bg-destructive text-destructive-foreground` / `text-destructive` |
 | Sidebar | `bg-sidebar`, `text-sidebar-foreground`, `border-sidebar-border`, active `text-sidebar-primary` |
 | Soft elevation | `shadow-xs` (not heavy multi-layer shadows) |
@@ -193,11 +193,19 @@ Prefer sharp, calm empty states (`PremiumEmptyState` pattern):
 
 Dev-only “show working state” toggles are fine in prototypes; do not ship them to production.
 
+### Modals / header
+
+- Header wrapper: `RELAY_MODAL_HEADER_CLASS` — `flex shrink-0 items-center justify-between border-b border-border/80 p-6`.
+- Title: `text-[18px] font-[600] text-foreground` (`RELAY_MODAL_TITLE_CLASS`).
+- Description under title: `text-[14px] font-normal leading-normal text-muted-foreground` (`RELAY_MODAL_DESCRIPTION_CLASS`).
+- Form body starts **below** the header divider (separate scroll/content block with `p-6`).
+
 ### Modals / forms
 
-- Field stack: `flex flex-col gap-1.5`.
-- Label: `text-[13.5px] font-medium text-foreground`.
-- Input: `text-[14px] shadow-sm rounded-md border-border/80 bg-background focus-visible:ring-1 focus-visible:ring-primary/30`.
+- Field stack: `flex flex-col gap-1.5` (`RELAY_FORM_FIELD_CLASS`).
+- Label: `text-[13.5px] font-medium leading-normal text-foreground` (`RELAY_FORM_LABEL_CLASS`). Override global `leading-7` on `<label>` with `leading-normal` — avoid `leading-none` (too tight) and bare labels (too loose).
+- Input / textarea / search: `text-[14px] shadow-sm rounded-md border-border/80 bg-background focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary/30` — use `RelayInput`, `RelayTextarea`, or `RELAY_FORM_INPUT_CLASS` from `relay/form/constants.js`. No browser default outlines or hardcoded hex focus colors.
+- Checkbox + label row: `flex items-center gap-3` (`RELAY_FORM_CHECKBOX_ROW_CLASS`). Do not use manual top margins (e.g. `mt-0.5`) to align checkboxes.
 - Primary submit stays **disabled** until required fields are valid.
 
 ### Overlays

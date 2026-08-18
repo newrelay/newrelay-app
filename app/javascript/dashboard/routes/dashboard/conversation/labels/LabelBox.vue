@@ -6,13 +6,20 @@ import { useConversationLabels } from 'dashboard/composables/useConversationLabe
 import { useKeyboardEvents } from 'dashboard/composables/useKeyboardEvents';
 import Spinner from 'shared/components/Spinner.vue';
 import LabelDropdown from 'shared/components/ui/label/LabelDropdown.vue';
-import AddLabel from 'shared/components/ui/dropdown/AddLabel.vue';
+import {
+  RelayDropdownMenu,
+  RelayDropdownMenuTrigger,
+  RelayDropdownMenuContent,
+} from 'dashboard/components-next/relay';
+import { RELAY_SIDEBAR_TEXT_ACTION_CLASS } from 'dashboard/components-next/relay/sidebar/constants';
 
 export default {
   components: {
     Spinner,
     LabelDropdown,
-    AddLabel,
+    RelayDropdownMenu,
+    RelayDropdownMenuTrigger,
+    RelayDropdownMenuContent,
   },
   setup() {
     const { isAdmin } = useAdmin();
@@ -62,6 +69,7 @@ export default {
       showSearchDropdownLabel,
       closeDropdownLabel,
       toggleLabels,
+      sidebarTextActionClass: RELAY_SIDEBAR_TEXT_ACTION_CLASS,
     };
   },
   data() {
@@ -79,17 +87,42 @@ export default {
 </script>
 
 <template>
-  <div class="sidebar-labels-wrap">
+  <div class="flex w-full flex-col items-stretch gap-2">
     <div
       v-if="!conversationUiFlags.isFetching"
-      class="contact-conversation--list"
+      class="flex w-full flex-col items-stretch gap-2"
     >
-      <div
-        v-on-clickaway="closeDropdownLabel"
-        class="label-wrap flex flex-wrap"
-        @keyup.esc="closeDropdownLabel"
-      >
-        <AddLabel @add="toggleLabels" />
+      <div class="w-full">
+        <RelayDropdownMenu v-model:open="showSearchDropdownLabel">
+          <RelayDropdownMenuTrigger as-child>
+            <button
+              type="button"
+              :class="sidebarTextActionClass"
+              @keyup.esc="closeDropdownLabel"
+            >
+              <span class="i-lucide-plus size-3.5" />
+              {{ $t('CONTACT_PANEL.LABELS.CONVERSATION.ADD_BUTTON') }}
+            </button>
+          </RelayDropdownMenuTrigger>
+          <RelayDropdownMenuContent
+            align="start"
+            :side-offset="4"
+            :class="DROPDOWN_MENU_MODAL_SEARCHABLE_CONTENT_CLASS"
+          >
+            <LabelDropdown
+              v-if="showSearchDropdownLabel"
+              :account-labels="accountLabels"
+              :selected-labels="savedLabels"
+              :allow-creation="isAdmin"
+              @add="addLabelToConversation"
+              @remove="removeLabelFromConversation"
+              @close="closeDropdownLabel"
+            />
+          </RelayDropdownMenuContent>
+        </RelayDropdownMenu>
+      </div>
+
+      <div v-if="activeLabels.length" class="flex flex-wrap items-center gap-2">
         <woot-label
           v-for="label in activeLabels"
           :key="label.id"
@@ -98,42 +131,11 @@ export default {
           show-close
           :color="label.color"
           variant="smooth"
-          class="max-w-[calc(100%-0.5rem)] !bg-primary/10 !text-primary !border-none !rounded-full !px-3 !py-1 !h-6 !text-[11px] !font-normal"
+          class="max-w-[calc(100%-0.5rem)] !h-6 !rounded-full !border-none !bg-primary/10 !px-3 !py-1 !text-[11px] !font-normal !text-primary"
           @remove="removeLabelFromConversation"
         />
-
-        <div
-          :class="{
-            'block visible': showSearchDropdownLabel,
-            'hidden invisible': !showSearchDropdownLabel,
-          }"
-          class="absolute top-6 w-full rounded-md border border-border bg-popover text-popover-foreground shadow-md p-2 box-border z-[9999]"
-        >
-          <LabelDropdown
-            v-if="showSearchDropdownLabel"
-            :account-labels="accountLabels"
-            :selected-labels="savedLabels"
-            :allow-creation="isAdmin"
-            @add="addLabelToConversation"
-            @remove="removeLabelFromConversation"
-          />
-        </div>
       </div>
     </div>
     <Spinner v-else />
   </div>
 </template>
-
-<style lang="scss" scoped>
-.sidebar-labels-wrap {
-  margin-bottom: 0;
-}
-.contact-conversation--list {
-  width: 100%;
-
-  .label-wrap {
-    line-height: 1.5rem;
-    position: relative;
-  }
-}
-</style>

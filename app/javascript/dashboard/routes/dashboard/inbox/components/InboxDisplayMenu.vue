@@ -8,8 +8,6 @@ import {
   RelayCheckbox,
   RelayLabel,
   DROPDOWN_MENU_CONTENT_CLASS,
-  DROPDOWN_MENU_ITEM_BASE_CLASS,
-  DROPDOWN_MENU_ITEM_CLASS,
 } from 'dashboard/components-next/relay';
 import { cn } from 'dashboard/components-next/relay/utils/cn';
 
@@ -133,11 +131,8 @@ const onSortOptionClick = option => {
   emit('filter', option);
 };
 
-const SORT_OPTION_CLASSES = cn(
-  DROPDOWN_MENU_ITEM_BASE_CLASS,
-  DROPDOWN_MENU_ITEM_CLASS,
-  'justify-between text-xs'
-);
+const SORT_OPTION_CLASSES =
+  'flex w-full cursor-pointer select-none items-center justify-between rounded-sm px-2 py-1.5 text-left text-xs text-foreground outline-none transition-colors hover:bg-accent hover:text-accent-foreground';
 
 onMounted(() => {
   setSavedFilter();
@@ -159,6 +154,9 @@ onMounted(() => {
           variant="outline"
           size="sm"
           class="h-7 gap-1 px-2 text-xs outline-none"
+          :class="
+            showSortMenu ? 'bg-background hover:bg-background' : undefined
+          "
           @click="toggleSortMenu"
         >
           {{ activeSortOption }}

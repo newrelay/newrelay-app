@@ -85,6 +85,6 @@ const tooltipText = computed(() => {
       :icon="progessIcon"
       class="text-current"
     />
-    <Icon v-else :icon="statusIcon" :class="statusColor" class="size-[14px]" />
+    <Icon v-else :icon="statusIcon" :class="statusColor" class="size-3.5" />
   </RelayTooltip>
 </template>

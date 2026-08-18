@@ -47,13 +47,16 @@ export const CALENDAR_FOOTER_ACTION_CLASS =
   'text-xs font-medium text-primary hover:text-primary/80';
 
 export const TIME_PICKER_CONTENT_CLASS =
-  'anim-pop bg-popover text-popover-foreground z-50 max-h-[280px] w-48 overflow-y-auto overflow-x-hidden rounded-md border border-border p-1 shadow-md';
+  'anim-pop bg-popover text-popover-foreground z-50 w-[220px] overflow-hidden rounded-md border border-border p-2 shadow-md';
+
+export const TIME_PICKER_COLUMN_CLASS =
+  'max-h-[220px] overflow-y-auto no-scrollbar';
 
 export const TIME_PICKER_ITEM_CLASS =
-  'relative flex w-full cursor-pointer items-center rounded-sm px-2 py-1.5 text-sm outline-none select-none hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground data-[highlighted]:bg-accent data-[highlighted]:text-accent-foreground';
+  'relative flex w-full cursor-pointer items-center rounded-sm px-2 py-1.5 text-sm outline-none select-none text-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground data-[highlighted]:bg-accent data-[highlighted]:text-accent-foreground';
 
 export const TIME_PICKER_ITEM_SELECTED_CLASS =
-  'bg-primary/10 font-medium text-primary hover:bg-primary/10 hover:text-primary focus:bg-primary/10 focus:text-primary';
+  'bg-primary font-medium text-primary-foreground hover:bg-primary hover:text-primary-foreground focus:bg-primary focus:text-primary-foreground data-[highlighted]:bg-primary data-[highlighted]:text-primary-foreground';
 
 export const DATE_PICKER_TRIGGER_CLASS =
-  'flex h-9 w-full items-center justify-between rounded-md border border-border/80 bg-background px-3 text-[14px] text-foreground shadow-sm transition-colors hover:bg-muted/50 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary/30';
+  'flex h-10 w-full cursor-pointer items-center justify-between rounded-md border border-border/80 bg-background px-3 text-[14px] text-foreground transition-colors hover:bg-muted/50 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary/30';

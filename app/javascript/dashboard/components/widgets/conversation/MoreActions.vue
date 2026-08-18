@@ -3,9 +3,19 @@ import { computed } from 'vue';
 import { useStore } from 'vuex';
 import { useAlert } from 'dashboard/composables';
 import { useI18n } from 'vue-i18n';
-import ButtonV4 from 'dashboard/components-next/button/Button.vue';
-import { RelayActionDropdown } from 'dashboard/components-next/relay';
+import {
+  RelayButton,
+  RelayActionDropdown,
+} from 'dashboard/components-next/relay';
 import wootConstants from 'dashboard/constants/globals';
+
+defineProps({
+  buttonClass: {
+    type: String,
+    default:
+      'size-8 shrink-0 text-muted-foreground hover:text-foreground focus-visible:ring-0',
+  },
+});
 
 const store = useStore();
 const { t } = useI18n();
@@ -107,14 +117,14 @@ const handleActionClick = ({ action }) => {
     @action="handleActionClick"
   >
     <template #trigger>
-      <ButtonV4
-        size="sm"
+      <RelayButton
         variant="ghost"
-        color="slate"
-        icon="i-lucide-more-horizontal"
-        class="rounded-md"
-        :title="$t('CONVERSATION.HEADER.MORE_ACTIONS')"
-      />
+        size="icon"
+        :class="buttonClass"
+        :aria-label="$t('CONVERSATION.HEADER.MORE_ACTIONS')"
+      >
+        <span class="i-lucide-more-horizontal size-4" />
+      </RelayButton>
     </template>
   </RelayActionDropdown>
 </template>

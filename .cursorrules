@@ -9,14 +9,15 @@
 - **Headings**: Section/Page Headings use `text-base font-medium` (16px, 500w). Empty State Headings strictly use `text-[20px] font-[600]`.
 - **Ghost Buttons**: Always add a subtle gray border to define boundaries (e.g., `border border-border`). On hover, remove it (`hover:border-transparent`).
 - **Modals/Popups**: 
-  - Backdrop: `bg-n-alpha-black2 backdrop-blur-[4px]`.
-  - Header (`woot-modal-header`): `px-8 pt-8 pb-0`. Title is `text-base font-semibold leading-6 text-foreground`.
-  - Content Wrapper (`.modal-content`): `pt-4 pb-8 px-8`.
+  - Backdrop: `bg-background/80 backdrop-blur-[8px]` (prefer `RELAY_DIALOG_OVERLAY_CLASS` from `relay/modal/constants.js`).
+  - Header: `RELAY_MODAL_HEADER_CLASS` — title `text-[18px] font-[600]`, description `text-[14px] font-normal text-muted-foreground`, then `border-b border-border/80`. Form fields start below the divider in the body.
+  - Content body: `p-6` (or `pt-4 pb-8 px-8` for legacy woot-modal-content migration).
 - **Forms (in Modals)**:
-  - Spacing: `flex flex-col gap-1.5` between Label and Input.
-  - Labels: `text-[13.5px] font-medium text-foreground`.
-  - Inputs: `text-[14px] shadow-sm rounded-md border-border/80 bg-background focus-visible:ring-1 focus-visible:ring-primary/30`.
-  - Checkboxes: `flex items-center gap-3` (no manual top margins like `mt-0.5`).
+  - Field wrapper: `flex flex-col gap-1.5` between label and input/textarea.
+  - Labels: `text-[13.5px] font-medium leading-normal text-foreground`.
+  - Inputs / textareas: `text-[14px] shadow-sm rounded-md border-border/80 bg-background focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary/30`.
+  - Checkboxes: wrapper `flex items-center gap-3` — strictly no manual top margins (e.g. `mt-0.5`).
+  - Prefer `RelayInput`, `RelayTextarea`, and `relay/form/constants.js` tokens.
   - Validation: The primary submit action button MUST remain disabled unless all required fields are correctly filled.
 - **Tabs**: 
   - Container uses `border-b border-border` or `border-b-n-weak`.

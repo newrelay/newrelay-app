@@ -1,7 +1,11 @@
 <script setup>
 import { computed } from 'vue';
-import Icon from 'dashboard/components-next/icon/Icon.vue';
 import TeleportWithDirection from 'dashboard/components-next/TeleportWithDirection.vue';
+import RelayModalHeader from './RelayModalHeader.vue';
+import {
+  RELAY_DIALOG_OVERLAY_CLASS,
+  RELAY_MODAL_BODY_CLASS,
+} from './constants';
 
 const props = defineProps({
   show: {
@@ -34,37 +38,22 @@ const maxWidthClass = computed(() =>
   <TeleportWithDirection to="body">
     <div
       v-if="show"
-      class="fixed inset-0 z-50 flex items-center justify-center bg-modal-backdrop-light backdrop-blur-[4px] dark:bg-modal-backdrop-dark"
+      class="flex items-center justify-center bg-background/80 p-4 backdrop-blur-[8px]"
+      :class="[RELAY_DIALOG_OVERLAY_CLASS]"
       @click.self="emit('close')"
     >
       <div
-        class="mx-4 flex w-full flex-col overflow-hidden rounded-[10px] border border-border/40 bg-card shadow-xl"
+        data-relay
+        class="font-geist mx-4 flex max-h-[90vh] w-full flex-col overflow-hidden rounded-xl border border-border/80 bg-background shadow-xl"
         :class="maxWidthClass"
         @click.stop
       >
-        <div class="px-8 pt-8" :class="description ? 'pb-0' : 'pb-4'">
-          <div class="flex items-start justify-between">
-            <div class="space-y-1.5">
-              <h2 class="capitalize text-base font-medium text-foreground">
-                {{ title }}
-              </h2>
-              <p
-                v-if="description"
-                class="pr-6 text-[13px] leading-relaxed text-muted-foreground"
-              >
-                {{ description }}
-              </p>
-            </div>
-            <button
-              type="button"
-              class="-mr-2 shrink-0 rounded-md border border-border p-1.5 text-muted-foreground transition-colors hover:border-transparent hover:bg-muted hover:text-foreground"
-              @click="emit('close')"
-            >
-              <Icon icon="i-lucide-x" class="size-4" />
-            </button>
-          </div>
-        </div>
-        <div class="px-8 pb-8 pt-4">
+        <RelayModalHeader
+          :title="title"
+          :description="description"
+          @close="emit('close')"
+        />
+        <div :class="RELAY_MODAL_BODY_CLASS">
           <slot />
         </div>
       </div>

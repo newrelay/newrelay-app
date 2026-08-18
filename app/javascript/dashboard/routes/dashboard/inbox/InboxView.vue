@@ -10,7 +10,7 @@ import { emitter } from 'shared/helpers/mitt';
 
 import InboxItemHeader from './components/InboxItemHeader.vue';
 import ConversationBox from 'dashboard/components/widgets/conversation/ConversationBox.vue';
-import InboxEmptyState from './InboxEmptyState.vue';
+import { RelayMessagesEmptyState } from 'dashboard/components-next/relay';
 import Spinner from 'dashboard/components-next/spinner/Spinner.vue';
 import ConversationSidebar from 'dashboard/components/widgets/conversation/ConversationSidebar.vue';
 
@@ -186,8 +186,10 @@ onMounted(async () => {
 <template>
   <div class="h-full w-full flex-1">
     <div v-if="showEmptyState" class="flex w-full h-full">
-      <InboxEmptyState
-        :empty-state-message="$t('INBOX.LIST.NO_MESSAGES_AVAILABLE')"
+      <RelayMessagesEmptyState
+        class="flex-1"
+        :title="$t('INBOX.LIST.EMPTY_STATE.TITLE')"
+        :description="$t('INBOX.LIST.EMPTY_STATE.DESCRIPTION')"
       />
     </div>
     <div v-else class="flex flex-row w-full h-full min-w-0">

@@ -4,6 +4,11 @@ import { useI18n } from 'vue-i18n';
 import { vOnClickOutside } from '@vueuse/components';
 import { useMapGetter } from 'dashboard/composables/store';
 import { RelayButton, RelayInput } from 'dashboard/components-next/relay';
+import {
+  RELAY_DIALOG_OVERLAY_CLASS,
+  RELAY_MODAL_BODY_CLASS,
+} from 'dashboard/components-next/relay/modal/constants';
+import RelayModalHeader from 'dashboard/components-next/relay/modal/RelayModalHeader.vue';
 
 defineProps({
   isLoading: { type: Boolean, default: false },
@@ -131,38 +136,23 @@ defineExpose({ dialogRef, open, close, onSuccess });
     <div
       v-if="isOpen"
       data-relay
-      class="fixed inset-0 z-[60] flex items-center justify-center bg-background/80 p-4 backdrop-blur-sm transition-all duration-300"
+      class="flex items-center justify-center p-4 transition-all duration-300"
+      :class="[RELAY_DIALOG_OVERLAY_CLASS]"
       @click.self="close"
     >
       <div
         class="flex max-h-[90vh] w-full max-w-2xl animate-in fade-in zoom-in-95 flex-col overflow-hidden rounded-xl border border-border bg-card shadow-2xl duration-200"
         @click="openMenu = null"
       >
-        <div
-          class="flex shrink-0 items-center justify-between border-b border-border px-8 pt-8 pb-0"
-        >
-          <div>
-            <h2
-              class="capitalize text-base font-medium tracking-tight text-foreground"
-            >
-              {{ t('COMPANIES.CREATE.TITLE') }}
-            </h2>
-            <p class="mt-1 text-sm text-muted-foreground">
-              {{ t('COMPANIES.CREATE.SUBTITLE') }}
-            </p>
-          </div>
-          <RelayButton
-            variant="ghost"
-            size="icon"
-            class="size-8 rounded-full text-muted-foreground hover:text-foreground border border-border hover:border-transparent"
-            @click="close"
-          >
-            <span class="i-lucide-x size-4" />
-          </RelayButton>
-        </div>
+        <RelayModalHeader
+          :title="t('COMPANIES.CREATE.TITLE')"
+          :description="t('COMPANIES.CREATE.SUBTITLE')"
+          @close="close"
+        />
 
         <div
-          class="hide-scrollbar grid flex-1 grid-cols-2 gap-x-6 gap-y-5 overflow-y-auto px-8 pb-8 pt-4"
+          class="hide-scrollbar grid grid-cols-2 gap-x-6 gap-y-5"
+          :class="[RELAY_MODAL_BODY_CLASS]"
         >
           <div class="col-span-2 flex flex-col gap-1.5">
             <label class="text-[13.5px] text-foreground font-[500]">

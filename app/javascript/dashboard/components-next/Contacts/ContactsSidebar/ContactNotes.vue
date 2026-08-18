@@ -119,35 +119,35 @@ useKeyboardEvents(keyboardEvents);
       <RelayButton
         v-if="!isAddingNote"
         variant="outline"
-        class="h-8 text-xs font-medium"
+        class="flex h-9 items-center gap-1.5 rounded-lg border border-border bg-background px-4 text-[13px] font-medium shadow-sm transition-all hover:border-transparent hover:bg-muted"
         @click="startAddNote"
       >
-        <span class="i-lucide-plus size-3" />
+        <span class="i-lucide-plus size-4" />
         {{ t('CONTACTS_LAYOUT.SIDEBAR.NOTES.ADD_NOTE_BUTTON') }}
       </RelayButton>
     </div>
 
     <div
       v-if="isAddingNote"
-      class="mb-6 space-y-3 rounded-xl border border-border/50 bg-muted/30 p-4"
+      class="mb-6 flex flex-col gap-3 rounded-xl border border-border/80 bg-background p-4 shadow-sm"
     >
       <textarea
         v-model="newNoteContent"
         :placeholder="t('CONTACTS_LAYOUT.SIDEBAR.NOTES.PLACEHOLDER')"
-        class="min-h-[100px] w-full resize-none border border-input bg-background px-3 py-2 text-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary/30 text-[14px] shadow-sm rounded-md border-border/80"
+        class="min-h-[100px] w-full resize-none border-none bg-transparent text-[14px] text-foreground outline-none placeholder:text-muted-foreground/60 focus:ring-0"
       />
-      <div class="flex justify-end gap-2">
+      <div
+        class="flex items-center justify-end gap-2 border-t border-border/50 pt-2"
+      >
         <RelayButton
-          variant="ghost"
-          size="sm"
-          class="h-8 text-xs font-medium border border-border hover:border-transparent"
+          variant="outline"
+          class="h-8 rounded-lg border border-border px-4 text-[13px] font-medium hover:border-transparent"
           @click="cancelAddNote"
         >
           {{ t('CONTACTS_LAYOUT.SIDEBAR.NOTES.CANCEL') }}
         </RelayButton>
         <RelayButton
-          size="sm"
-          class="h-8 text-xs font-medium"
+          class="h-8 rounded-lg bg-primary px-4 text-[13px] font-medium text-primary-foreground shadow-sm hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-50"
           :disabled="!newNoteContent.trim() || isCreatingNote"
           @click="onAdd"
         >

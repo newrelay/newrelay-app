@@ -356,7 +356,7 @@ const closeDatePicker = () => {
 </script>
 
 <template>
-  <div class="relative flex-shrink-0 font-inter">
+  <div class="relative flex-shrink-0 font-sans">
     <DatePickerButton
       :selected-start-date="selectedStartDate"
       :selected-end-date="selectedEndDate"

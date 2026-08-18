@@ -3,8 +3,10 @@ import { onMounted, computed, ref, toRefs } from 'vue';
 import { useTimeoutFn } from '@vueuse/core';
 import { provideMessageContext } from './provider.js';
 import { useTrack } from 'dashboard/composables';
+import { useMapGetter } from 'dashboard/composables/store';
 import { emitter } from 'shared/helpers/mitt';
 import { useRoute } from 'vue-router';
+import { useI18n } from 'vue-i18n';
 import { LocalStorage } from 'shared/helpers/localStorage';
 import { ACCOUNT_EVENTS } from 'dashboard/helper/AnalyticsHelper/events';
 import { LOCAL_STORAGE_KEYS } from 'dashboard/constants/localStorage';
@@ -124,6 +126,7 @@ const props = defineProps({
   inboxSupportsReplyTo: { type: Object, default: () => ({}) },
   inReplyTo: { type: Object, default: null }, // eslint-disable-line vue/no-unused-properties
   isEmailInbox: { type: Boolean, default: false },
+  isInboxView: { type: Boolean, default: false },
   private: { type: Boolean, default: false },
   additionalAttributes: { type: Object, default: () => ({}) }, // eslint-disable-line vue/no-unused-properties
   sender: { type: Object, default: null },
@@ -134,10 +137,12 @@ const props = defineProps({
 
 const emit = defineEmits(['retry']);
 
+const { t } = useI18n();
 const contextMenuPosition = ref({});
 const showBackgroundHighlight = ref(false);
 const showContextMenu = ref(false);
 const route = useRoute();
+const currentUser = useMapGetter('getCurrentUser');
 
 /**
  * Computes the message variant based on props
@@ -372,6 +377,39 @@ const shouldRenderMessage = computed(() => {
   );
 });
 
+const showInboxAvatar = computed(
+  () => props.isInboxView && variant.value !== MESSAGE_VARIANTS.ACTIVITY
+);
+
+const inboxAvatarSrc = computed(() => {
+  if (props.sender?.thumbnail) return props.sender.thumbnail;
+  if (
+    orientation.value === ORIENTATION.RIGHT &&
+    currentUser.value?.avatar_url
+  ) {
+    return currentUser.value.avatar_url;
+  }
+  return '';
+});
+
+const inboxAvatarName = computed(
+  () => props.sender?.name || currentUser.value?.name || ''
+);
+
+const inboxAvatarInitial = computed(() =>
+  inboxAvatarName.value ? inboxAvatarName.value.charAt(0).toUpperCase() : '?'
+);
+
+const inboxRowClass = computed(() => {
+  if (!props.isInboxView || variant.value === MESSAGE_VARIANTS.ACTIVITY) {
+    return '';
+  }
+
+  return orientation.value === ORIENTATION.RIGHT
+    ? 'ml-auto flex-row-reverse self-end'
+    : '';
+});
+
 function openContextMenu(e) {
   const shouldSkipContextMenu =
     e.target?.classList.contains('skip-context-menu') ||
@@ -421,6 +459,7 @@ onMounted(setupHighlightTimer);
 provideMessageContext({
   ...toRefs(props),
   isPrivate: computed(() => props.private),
+  isInboxView: computed(() => props.isInboxView),
   variant,
   orientation,
   isBotOrAgentMessage,
@@ -433,31 +472,72 @@ provideMessageContext({
   <div
     v-if="shouldRenderMessage"
     :id="`message${props.id}`"
-    class="flex w-full mb-2 message-bubble-container"
-    :data-message-id="props.id"
+    class="message-bubble-container flex w-full"
     :class="[
-      flexOrientationClass,
+      isInboxView ? '' : 'mb-2',
+      isInboxView ? '' : flexOrientationClass,
       {
         'group-with-next': shouldGroupWithNext,
         'bg-muted': showBackgroundHighlight,
       },
     ]"
+    :data-message-id="props.id"
   >
     <div v-if="variant === MESSAGE_VARIANTS.ACTIVITY">
       <ActivityBubble :content="content" />
     </div>
     <div
       v-else
-      class="flex flex-col w-full min-w-0"
+      class="min-w-0"
+      :class="
+        isInboxView
+          ? ['flex max-w-[80%] gap-3', inboxRowClass]
+          : 'flex w-full flex-col'
+      "
       @contextmenu="openContextMenu($event)"
     >
-      <Component :is="componentToRender" />
-      <MessageError
-        v-if="contentAttributes.externalError"
-        class="flex justify-start w-full mt-2"
-        :error="contentAttributes.externalError"
-        @retry="emit('retry')"
+      <img
+        v-if="showInboxAvatar && inboxAvatarSrc"
+        :src="inboxAvatarSrc"
+        :alt="inboxAvatarName"
+        class="mt-auto size-8 shrink-0 rounded-full border border-border/50 object-cover"
       />
+      <div
+        v-else-if="showInboxAvatar"
+        class="mt-auto flex size-8 shrink-0 items-center justify-center rounded-full border border-border/50 bg-muted text-[11px] font-medium text-muted-foreground"
+      >
+        {{ inboxAvatarInitial }}
+      </div>
+      <div
+        class="min-w-0"
+        :class="[
+          isInboxView ? 'flex w-full flex-col gap-1' : 'flex w-full flex-col',
+          isInboxView && orientation === ORIENTATION.RIGHT
+            ? 'items-end'
+            : isInboxView
+              ? 'items-start'
+              : '',
+        ]"
+      >
+        <Component :is="componentToRender" />
+        <MessageError
+          v-if="
+            status === MESSAGE_STATUS.FAILED || contentAttributes.externalError
+          "
+          class="flex w-full"
+          :class="[
+            isInboxView
+              ? orientation === ORIENTATION.RIGHT
+                ? 'justify-end mr-1'
+                : 'justify-start ml-1'
+              : 'mt-2 justify-start',
+          ]"
+          :error="
+            contentAttributes.externalError || t('CHAT_LIST.FAILED_TO_SEND')
+          "
+          @retry="emit('retry')"
+        />
+      </div>
     </div>
     <div v-if="shouldShowContextMenu" class="context-menu-wrap">
       <ContextMenu

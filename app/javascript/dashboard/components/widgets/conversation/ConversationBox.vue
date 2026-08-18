@@ -93,9 +93,10 @@ export default {
 
 <template>
   <div
-    class="conversation-details-wrap flex flex-col min-w-0 w-full bg-background relative"
+    class="conversation-details-wrap relative flex min-w-0 w-full flex-col"
     :class="{
-      'border-l rtl:border-l-0 rtl:border-r border-border': !isOnExpandedLayout,
+      'bg-muted/10 dark:bg-background': !currentChat.id && !isInboxView,
+      'bg-background': currentChat.id || isInboxView,
     }"
   >
     <ConversationHeader

@@ -30,6 +30,10 @@ const props = defineProps({
     type: String,
     default: null,
   },
+  panelClass: {
+    type: String,
+    default: 'min-w-48',
+  },
 });
 
 const selected = defineModel({
@@ -87,11 +91,14 @@ const updateSelected = newValue => {
     </template>
     <DropdownBody
       ref="dropdownRef"
-      class="z-[70] min-w-56"
+      :content-class="panelClass"
+      class="z-[70]"
       :class="dropdownPosition"
       strong
     >
-      <DropdownSection class="[&>ul]:max-h-72">
+      <DropdownSection
+        class="[&>ul]:max-h-72 [&>ul]:no-scrollbar [&>ul]:[&::-webkit-scrollbar]:hidden"
+      >
         <template v-for="option in options" :key="option.value">
           <li
             v-if="option.disabled"

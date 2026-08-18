@@ -16,16 +16,22 @@ defineProps({
   },
   sideOffset: { type: Number, default: 4 },
   avoidCollisions: { type: Boolean, default: true },
+  collisionPadding: { type: Number, default: undefined },
+  collisionBoundary: { type: [Object, null], default: undefined },
+  portalTo: { type: [Object, String], default: undefined },
+  disablePortal: { type: Boolean, default: false },
 });
 </script>
 
 <template>
-  <DropdownMenuPortal>
+  <DropdownMenuPortal :to="portalTo" :disabled="disablePortal">
     <DropdownMenuContent
       :align="align"
       :side="side"
       :side-offset="sideOffset"
       :avoid-collisions="avoidCollisions"
+      :collision-padding="collisionPadding"
+      :collision-boundary="collisionBoundary"
       :class="cn(DROPDOWN_MENU_CONTENT_CLASS, $attrs.class)"
     >
       <slot />

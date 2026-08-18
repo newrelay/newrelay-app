@@ -11,7 +11,7 @@ defineProps({
     :for="htmlFor"
     :class="
       cn(
-        'text-[13.5px] font-medium leading-none text-foreground',
+        'text-[13.5px] font-medium leading-normal text-foreground',
         'peer-disabled:cursor-not-allowed peer-disabled:opacity-70'
       )
     "

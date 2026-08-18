@@ -1,14 +1,14 @@
 {
   "CONVERSATION": {
     "SELECT_A_CONVERSATION": "No conversation selected",
-    "SELECT_A_CONVERSATION_DESCRIPTION": "Choose a conversation from the list to start messaging or view history.",
+    "SELECT_A_CONVERSATION_DESCRIPTION": "Nothing to see here… yet.\nYour next great conversation is just one message away.",
     "CSAT_REPLY_MESSAGE": "Please rate the conversation",
     "404": "Sorry, we cannot find the conversation. Please try again",
     "SWITCH_VIEW_LAYOUT": "Switch the layout",
     "DASHBOARD_APP_TAB_MESSAGES": "Messages",
     "UNVERIFIED_SESSION": "The identity of this user is not verified",
     "NO_MESSAGE_1": "No messages found",
-    "NO_MESSAGE_1_DESCRIPTION": "There are currently no messages in this view. Take a breather, you're all caught up for now!",
+    "NO_MESSAGE_1_DESCRIPTION": "Nothing to see here… yet.\nYour next great conversation is just one message away.",
     "NO_MESSAGE_2": " to send a message to your page!",
     "NO_INBOX_1": "Hola! Looks like you haven't added any inboxes yet.",
     "NO_INBOX_2": " to get started",
@@ -109,6 +109,8 @@
       "REOPEN_ACTION": "Reopen",
       "OPEN_ACTION": "Open",
       "MORE_ACTIONS": "More actions",
+      "SEARCH_ACTION": "Search messages",
+      "SEARCH_PLACEHOLDER": "Search in conversation...",
       "OPEN": "More",
       "CLOSE": "Close",
       "DETAILS": "details",
@@ -358,11 +360,15 @@
         "CANCEL": "Cancel"
       }
     },
+    "DATE_SEPARATOR": {
+      "TODAY": "Today",
+      "YESTERDAY": "Yesterday"
+    },
     "SIDEBAR": {
       "CONTACT": "Contact",
       "COPILOT": "RelayAI",
       "OVERVIEW": "Overview",
-      "VIEW_FULL_PROFILE": "View full profile"
+      "VIEW_FULL_PROFILE": "View Profile"
     },
     "AI_SUMMARY": {
       "TITLE": "AI Summary",
@@ -502,6 +508,7 @@
       "CONTACT_DETAILS": "Contact Details",
       "CONVERSATION_ACTIONS": "Conversation Management",
       "CONVERSATION_LABELS": "Conversation Labels",
+      "LABELS": "Labels",
       "CONVERSATION_INFO": "Conversation Information",
       "CONTACT_NOTES": "Contact Notes",
       "CONTACT_ATTRIBUTES": "Contact Attributes",
@@ -520,7 +527,8 @@
       "VIEW_ALL": "View all",
       "SHOW_LESS": "Show less",
       "MORE_COUNT": "+{count}",
-      "UNTITLED_FILE": "Untitled file"
+      "UNTITLED_FILE": "Untitled file",
+      "PDF_LABEL": "PDF"
     },
     "SHOPIFY": {
       "ORDER_ID": "Order #{id}",

@@ -18,31 +18,28 @@ const props = defineProps({
 defineOptions({ inheritAttrs: false });
 
 const attrs = useAttrs();
-const { variant, inReplyTo, shouldGroupWithNext, orientation } =
+const { variant, inReplyTo, shouldGroupWithNext, orientation, isInboxView } =
   useMessageContext();
 const { t } = useI18n();
 
 // Colored fill lives ONLY on the inner surface (never the meta wrapper).
 // Agent/bot/template text: solid primary + white. Media/email override via attrs.
-const varaintBaseMap = {
-  [MESSAGE_VARIANTS.AGENT]:
-    'bg-primary text-primary-foreground shadow-xs border-transparent w-fit max-w-[85%]',
-  [MESSAGE_VARIANTS.PRIVATE]:
-    'bg-amber-100 dark:bg-amber-900/40 text-amber-900 dark:text-amber-100 border-transparent w-fit max-w-[85%]',
-  [MESSAGE_VARIANTS.USER]:
-    'bg-card border border-border shadow-xs text-foreground w-fit max-w-[85%]',
+const maxWidthClass = computed(() =>
+  isInboxView?.value ? 'max-w-full' : 'max-w-[85%]'
+);
+
+const varaintBaseMap = computed(() => ({
+  [MESSAGE_VARIANTS.AGENT]: `bg-primary text-primary-foreground shadow-xs border-transparent w-fit ${maxWidthClass.value}`,
+  [MESSAGE_VARIANTS.PRIVATE]: `bg-amber-100 dark:bg-amber-900/40 text-amber-900 dark:text-amber-100 border-transparent w-fit ${maxWidthClass.value}`,
+  [MESSAGE_VARIANTS.USER]: `bg-card border border-border shadow-xs text-foreground w-fit ${maxWidthClass.value}`,
   [MESSAGE_VARIANTS.ACTIVITY]:
     'bg-muted/50 text-muted-foreground text-sm w-full',
-  [MESSAGE_VARIANTS.BOT]:
-    'bg-primary text-primary-foreground shadow-xs border-transparent w-fit max-w-[85%]',
-  [MESSAGE_VARIANTS.TEMPLATE]:
-    'bg-card border border-border shadow-xs text-foreground w-fit max-w-[85%]',
-  [MESSAGE_VARIANTS.ERROR]:
-    'bg-destructive/10 text-destructive w-fit max-w-[85%]',
-  [MESSAGE_VARIANTS.EMAIL]: 'w-fit max-w-[85%]',
-  [MESSAGE_VARIANTS.UNSUPPORTED]:
-    'bg-amber-500/10 border border-dashed border-amber-500/50 text-amber-500 w-fit max-w-[85%]',
-};
+  [MESSAGE_VARIANTS.BOT]: `bg-primary text-primary-foreground shadow-xs border-transparent w-fit ${maxWidthClass.value}`,
+  [MESSAGE_VARIANTS.TEMPLATE]: `bg-card border border-border shadow-xs text-foreground w-fit ${maxWidthClass.value}`,
+  [MESSAGE_VARIANTS.ERROR]: `bg-destructive/10 text-destructive border border-destructive/20 w-fit ${maxWidthClass.value}`,
+  [MESSAGE_VARIANTS.EMAIL]: `w-fit ${maxWidthClass.value}`,
+  [MESSAGE_VARIANTS.UNSUPPORTED]: `bg-amber-500/10 border border-dashed border-amber-500/50 text-amber-500 w-fit ${maxWidthClass.value}`,
+}));
 
 const flexOrientationClass = computed(() => {
   return orientation.value === ORIENTATION.RIGHT
@@ -57,7 +54,7 @@ const wrapperAlignClass = computed(() => {
 });
 
 const messageClass = computed(() => {
-  const classToApply = [varaintBaseMap[variant.value]];
+  const classToApply = [varaintBaseMap.value[variant.value]];
 
   if (variant.value === MESSAGE_VARIANTS.ACTIVITY) {
     classToApply.push('rounded-lg px-4 py-2 my-2');
@@ -105,8 +102,8 @@ const replyToPreview = computed(() => {
 
 <template>
   <div
-    class="text-sm min-w-0 flex flex-col gap-1.5 bg-transparent w-full"
-    :class="[wrapperAlignClass]"
+    class="flex min-w-0 w-full flex-col bg-transparent text-sm"
+    :class="[wrapperAlignClass, isInboxView?.value ? 'gap-1' : 'gap-1.5']"
   >
     <div v-bind="attrs" :class="messageClass">
       <div

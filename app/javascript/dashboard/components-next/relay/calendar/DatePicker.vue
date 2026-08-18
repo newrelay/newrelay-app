@@ -98,10 +98,14 @@ const updateValue = date => {
           type="button"
           :class="cn(DATE_PICKER_TRIGGER_CLASS, triggerClass)"
         >
-          <span :class="!parsedValue ? 'text-muted-foreground' : ''">
+          <span
+            :class="
+              !parsedValue ? 'text-muted-foreground/60' : 'text-foreground'
+            "
+          >
             {{ displayLabel || placeholder }}
           </span>
-          <span class="i-lucide-calendar size-4 text-muted-foreground" />
+          <span class="i-lucide-calendar-days size-4 text-muted-foreground" />
         </button>
       </slot>
     </RelayDropdownMenuTrigger>

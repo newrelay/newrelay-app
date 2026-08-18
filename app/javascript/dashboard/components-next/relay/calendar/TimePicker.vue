@@ -1,11 +1,12 @@
 <script setup>
-import { computed } from 'vue';
+import { computed, ref, watch } from 'vue';
 import { cn } from '../utils/cn';
 import RelayDropdownMenu from '../dropdown-menu/DropdownMenu.vue';
 import RelayDropdownMenuTrigger from '../dropdown-menu/DropdownMenuTrigger.vue';
 import RelayDropdownMenuContent from '../dropdown-menu/DropdownMenuContent.vue';
 import {
   DATE_PICKER_TRIGGER_CLASS,
+  TIME_PICKER_COLUMN_CLASS,
   TIME_PICKER_CONTENT_CLASS,
   TIME_PICKER_ITEM_CLASS,
   TIME_PICKER_ITEM_SELECTED_CLASS,
@@ -19,18 +20,6 @@ const props = defineProps({
   placeholder: {
     type: String,
     default: '--:-- --',
-  },
-  intervalMinutes: {
-    type: Number,
-    default: 30,
-  },
-  startHour: {
-    type: Number,
-    default: 9,
-  },
-  endHour: {
-    type: Number,
-    default: 17,
   },
   align: {
     type: String,
@@ -48,33 +37,64 @@ const props = defineProps({
 
 const emit = defineEmits(['update:modelValue']);
 
-const timeSlots = computed(() => {
-  const slots = [];
-  const startMinutes = props.startHour * 60;
-  const endMinutes = props.endHour * 60;
+const HOURS = Array.from({ length: 12 }, (_, index) => index + 1);
+const MINUTES = Array.from({ length: 60 }, (_, index) => index);
+const PERIODS = ['AM', 'PM'];
 
-  for (
-    let minutes = startMinutes;
-    minutes <= endMinutes;
-    minutes += props.intervalMinutes
-  ) {
-    const hour24 = Math.floor(minutes / 60);
-    const minute = minutes % 60;
-    const period = hour24 >= 12 ? 'PM' : 'AM';
-    const hour12 = hour24 % 12 || 12;
-    slots.push(
-      `${hour12.toString().padStart(2, '0')}:${minute
-        .toString()
-        .padStart(2, '0')} ${period}`
-    );
-  }
+const selectedHour = ref(12);
+const selectedMinute = ref(0);
+const selectedPeriod = ref('AM');
 
-  return slots;
-});
+const pad = value => String(value).padStart(2, '0');
 
-const selectTime = slot => {
-  emit('update:modelValue', slot);
+const formattedValue = computed(
+  () =>
+    `${pad(selectedHour.value)}:${pad(selectedMinute.value)} ${selectedPeriod.value}`
+);
+
+const parseValue = value => {
+  if (!value?.trim()) return;
+
+  const match = value.trim().match(/^(\d{1,2}):(\d{2})\s*(AM|PM)$/i);
+  if (!match) return;
+
+  selectedHour.value = Number(match[1]) || 12;
+  selectedMinute.value = Number(match[2]) || 0;
+  selectedPeriod.value = match[3].toUpperCase();
 };
+
+watch(
+  () => props.modelValue,
+  value => parseValue(value),
+  { immediate: true }
+);
+
+const emitValue = () => {
+  emit('update:modelValue', formattedValue.value);
+};
+
+const selectHour = hour => {
+  selectedHour.value = hour;
+  emitValue();
+};
+
+const selectMinute = minute => {
+  selectedMinute.value = minute;
+  emitValue();
+};
+
+const selectPeriod = period => {
+  selectedPeriod.value = period;
+  emitValue();
+};
+
+const columnItemClass = (isSelected, extraClass = '') =>
+  cn(
+    TIME_PICKER_ITEM_CLASS,
+    'justify-center px-2 py-1.5 text-center',
+    isSelected && TIME_PICKER_ITEM_SELECTED_CLASS,
+    extraClass
+  );
 </script>
 
 <template>
@@ -85,7 +105,11 @@ const selectTime = slot => {
           type="button"
           :class="cn(DATE_PICKER_TRIGGER_CLASS, triggerClass)"
         >
-          <span :class="!modelValue ? 'text-muted-foreground' : ''">
+          <span
+            :class="
+              !modelValue ? 'text-muted-foreground/60' : 'text-foreground'
+            "
+          >
             {{ modelValue || placeholder }}
           </span>
           <span class="i-lucide-clock size-4 text-muted-foreground" />
@@ -97,20 +121,41 @@ const selectTime = slot => {
       :side="side"
       :class="TIME_PICKER_CONTENT_CLASS"
     >
-      <button
-        v-for="slot in timeSlots"
-        :key="slot"
-        type="button"
-        :class="
-          cn(
-            TIME_PICKER_ITEM_CLASS,
-            modelValue === slot && TIME_PICKER_ITEM_SELECTED_CLASS
-          )
-        "
-        @click="selectTime(slot)"
-      >
-        {{ slot }}
-      </button>
+      <div class="grid grid-cols-3 gap-1">
+        <div :class="TIME_PICKER_COLUMN_CLASS">
+          <button
+            v-for="hour in HOURS"
+            :key="`hour-${hour}`"
+            type="button"
+            :class="columnItemClass(selectedHour === hour)"
+            @click="selectHour(hour)"
+          >
+            {{ pad(hour) }}
+          </button>
+        </div>
+        <div :class="TIME_PICKER_COLUMN_CLASS">
+          <button
+            v-for="minute in MINUTES"
+            :key="`minute-${minute}`"
+            type="button"
+            :class="columnItemClass(selectedMinute === minute)"
+            @click="selectMinute(minute)"
+          >
+            {{ pad(minute) }}
+          </button>
+        </div>
+        <div :class="TIME_PICKER_COLUMN_CLASS">
+          <button
+            v-for="period in PERIODS"
+            :key="period"
+            type="button"
+            :class="columnItemClass(selectedPeriod === period)"
+            @click="selectPeriod(period)"
+          >
+            {{ period }}
+          </button>
+        </div>
+      </div>
     </RelayDropdownMenuContent>
   </RelayDropdownMenu>
 </template>

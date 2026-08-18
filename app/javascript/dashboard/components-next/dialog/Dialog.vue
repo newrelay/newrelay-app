@@ -5,6 +5,8 @@ import { useI18n } from 'vue-i18n';
 
 import Button from 'dashboard/components-next/button/Button.vue';
 import TeleportWithDirection from 'dashboard/components-next/TeleportWithDirection.vue';
+import RelayModalHeader from 'dashboard/components-next/relay/modal/RelayModalHeader.vue';
+import { RELAY_MODAL_BODY_CLASS } from 'dashboard/components-next/relay/modal/constants';
 
 const props = defineProps({
   type: {
@@ -121,7 +123,7 @@ defineExpose({ open, close });
   <TeleportWithDirection to="body">
     <dialog
       ref="dialogRef"
-      class="w-full transition-all duration-300 ease-in-out shadow-xl rounded-xl bg-transparent border-0 p-0 outline-none backdrop:bg-black/50 backdrop:backdrop-blur-[4px]"
+      class="w-full transition-all duration-300 ease-in-out shadow-xl rounded-xl bg-transparent border-0 p-0 outline-none backdrop:bg-black/50 backdrop:backdrop-blur-[8px]"
       :class="[
         maxWidthClass,
         positionClass,
@@ -137,26 +139,21 @@ defineExpose({ open, close });
           @submit.prevent="confirm"
           @click.stop
         >
-          <div
-            v-if="title || description"
-            class="flex flex-col gap-2 px-8 pt-8 pb-0"
+          <RelayModalHeader
+            v-if="title || description || $slots.description"
+            :title="title"
+            :description="description"
+            :show-close="false"
           >
-            <h3
-              class="capitalize text-base font-medium leading-6 text-foreground"
-            >
-              {{ title }}
-            </h3>
-            <slot name="description">
-              <p v-if="description" class="mb-0 text-sm text-muted-foreground">
-                {{ description }}
-              </p>
-            </slot>
-          </div>
+            <template v-if="$slots.description" #description>
+              <slot name="description" />
+            </template>
+          </RelayModalHeader>
           <div
-            class="px-8 pt-4"
             :class="[
+              RELAY_MODAL_BODY_CLASS,
               overflowYAuto ? 'overflow-y-auto' : 'overflow-visible',
-              showCancelButton || showConfirmButton ? 'pb-0' : 'pb-8',
+              showCancelButton || showConfirmButton ? 'pb-0' : '',
             ]"
           >
             <slot v-if="isOpen" />
@@ -165,7 +162,7 @@ defineExpose({ open, close });
           <slot name="footer">
             <div
               v-if="showCancelButton || showConfirmButton"
-              class="flex items-center justify-between w-full gap-3 px-8 pb-8 pt-4"
+              class="flex items-center justify-between w-full gap-3 px-6 pb-6 pt-4"
             >
               <Button
                 v-if="showCancelButton"

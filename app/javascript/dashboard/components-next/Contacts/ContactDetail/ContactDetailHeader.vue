@@ -122,18 +122,17 @@ const handleMoreAction = ({ action }) => {
           >
             {{ contact?.name || t('CONTACTS_LAYOUT.CARD.UNNAMED_CONTACT') }}
           </h1>
-          <p class="truncate text-xs text-muted-foreground">
-            <template v-if="subtitle">
-              {{ subtitle }}
-              <span
-                v-if="lastActiveLabel"
-                class="mx-1.5 text-muted-foreground/50"
-                aria-hidden="true"
-              >
-                &bull;
-              </span>
-            </template>
-            <span v-if="lastActiveLabel">{{ lastActiveLabel }}</span>
+          <p
+            v-if="subtitle"
+            class="truncate text-[12px] font-normal text-muted-foreground"
+          >
+            {{ subtitle }}
+          </p>
+          <p
+            v-if="lastActiveLabel"
+            class="truncate text-[12px] font-normal text-muted-foreground"
+          >
+            {{ lastActiveLabel }}
           </p>
         </div>
       </div>
@@ -171,18 +170,17 @@ const handleMoreAction = ({ action }) => {
       <RelayActionDropdown
         :menu-items="moreMenuItems"
         align="end"
-        content-class="w-48"
+        content-class="min-w-48"
         @action="handleMoreAction"
       >
         <template #trigger>
-          <RelayButton
-            variant="outline"
-            size="icon"
-            class="size-9 rounded-lg text-muted-foreground shadow-sm hover:text-foreground"
+          <button
+            type="button"
+            class="reset-base flex size-9 items-center justify-center rounded-lg border border-border bg-background text-muted-foreground shadow-sm transition-all hover:border-transparent hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-0"
             :aria-label="t('CONVERSATION.HEADER.MORE_ACTIONS')"
           >
             <span class="i-lucide-ellipsis-vertical size-4" />
-          </RelayButton>
+          </button>
         </template>
       </RelayActionDropdown>
     </div>

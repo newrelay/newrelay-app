@@ -1,4 +1,10 @@
 <script>
+import {
+  RELAY_MODAL_HEADER_CLASS,
+  RELAY_MODAL_TITLE_CLASS,
+  RELAY_MODAL_DESCRIPTION_CLASS,
+} from 'dashboard/components-next/relay/modal/constants';
+
 export default {
   props: {
     headerTitle: {
@@ -18,33 +24,37 @@ export default {
       default: '',
     },
   },
+  computed: {
+    RELAY_MODAL_HEADER_CLASS: () => RELAY_MODAL_HEADER_CLASS,
+    RELAY_MODAL_TITLE_CLASS: () => RELAY_MODAL_TITLE_CLASS,
+    RELAY_MODAL_DESCRIPTION_CLASS: () => RELAY_MODAL_DESCRIPTION_CLASS,
+  },
 };
 </script>
 
 <!-- eslint-disable vue/no-unused-refs -->
 <!-- Added ref for writing specs -->
 <template>
-  <div class="flex flex-col items-start px-8 pt-8 pb-0">
-    <img v-if="headerImage" :src="headerImage" alt="No image" />
-    <h2
-      data-test-id="modal-header-title"
-      class="capitalize text-base font-semibold leading-6 text-foreground"
-    >
-      {{ headerTitle }}
-    </h2>
-    <p
-      v-if="headerContent"
-      data-test-id="modal-header-content"
-      class="w-full mt-2 text-sm leading-5 break-words text-muted-foreground"
-    >
-      {{ headerContent }}
-      <span
-        v-if="headerContentValue"
-        class="text-sm font-semibold text-muted-foreground"
+  <div :class="RELAY_MODAL_HEADER_CLASS">
+    <div class="min-w-0 flex-1">
+      <img v-if="headerImage" :src="headerImage" alt="No image" />
+      <h2 data-test-id="modal-header-title" :class="RELAY_MODAL_TITLE_CLASS">
+        {{ headerTitle }}
+      </h2>
+      <p
+        v-if="headerContent"
+        data-test-id="modal-header-content"
+        :class="RELAY_MODAL_DESCRIPTION_CLASS"
       >
-        {{ headerContentValue }}
-      </span>
-    </p>
-    <slot />
+        {{ headerContent }}
+        <span
+          v-if="headerContentValue"
+          class="font-semibold text-muted-foreground"
+        >
+          {{ headerContentValue }}
+        </span>
+      </p>
+      <slot />
+    </div>
   </div>
 </template>

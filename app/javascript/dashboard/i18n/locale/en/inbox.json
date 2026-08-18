@@ -19,7 +19,11 @@
       "DESELECT_ALL": "Deselect All",
       "SELECT_CONVERSATION": "Select conversation",
       "MARK_READ": "Mark as Read",
-      "DELETE": "Delete"
+      "DELETE": "Delete",
+      "EMPTY_STATE": {
+        "TITLE": "No messages found",
+        "DESCRIPTION": "No messages here. Not even a \"hey.\"\nEnjoy the rare moment of inbox peace."
+      }
     },
     "VIEWS": {
       "TITLE": "Views",

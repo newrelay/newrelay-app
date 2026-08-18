@@ -17,10 +17,12 @@ import ContactEmptyState from 'dashboard/components-next/Contacts/EmptyState/Con
 import Spinner from 'dashboard/components-next/spinner/Spinner.vue';
 import ContactsTable from 'dashboard/components-next/Contacts/Pages/ContactsTable.vue';
 import ContactsBulkActionBar from '../components/ContactsBulkActionBar.vue';
-import Dialog from 'dashboard/components-next/dialog/Dialog.vue';
 import Popover from 'dashboard/components-next/popover/Popover.vue';
 import ColumnManager from 'dashboard/components-next/Contacts/ColumnManager.vue';
-import { RelayButton } from 'dashboard/components-next/relay';
+import {
+  RelayButton,
+  RelayDeleteConfirmModal,
+} from 'dashboard/components-next/relay';
 import BulkActionsAPI from 'dashboard/api/bulkActions';
 
 const DEFAULT_SORT_FIELD = 'last_activity_at';
@@ -94,7 +96,7 @@ const isSearchView = computed(() => !!searchQuery.value);
 
 const selectedContactIds = ref([]);
 const isBulkActionLoading = ref(false);
-const bulkDeleteDialogRef = ref(null);
+const showBulkDeleteDialog = ref(false);
 const selectedCount = computed(() => selectedContactIds.value.length);
 const bulkDeleteDialogTitle = computed(() =>
   selectedCount.value > 1
@@ -171,7 +173,7 @@ const clearSelection = () => {
 
 const openBulkDeleteDialog = () => {
   if (!selectedContactIds.value.length || isBulkActionLoading.value) return;
-  bulkDeleteDialogRef.value?.open?.();
+  showBulkDeleteDialog.value = true;
 };
 
 const toggleSelectAll = shouldSelect => {
@@ -412,7 +414,7 @@ const deleteContacts = async () => {
     useAlert(t('CONTACTS_BULK_ACTIONS.DELETE_SUCCESS'));
     clearSelection();
     await fetchContactsBasedOnContext(pageNumber.value);
-    bulkDeleteDialogRef.value?.close?.();
+    showBulkDeleteDialog.value = false;
   } catch (error) {
     useAlert(t('CONTACTS_BULK_ACTIONS.DELETE_FAILED'));
   } finally {
@@ -472,7 +474,7 @@ const createContact = async contact => {
 
 watch(hasSelection, value => {
   if (!value) {
-    bulkDeleteDialogRef.value?.close?.();
+    showBulkDeleteDialog.value = false;
   }
 });
 
@@ -537,7 +539,7 @@ onMounted(async () => {
 
 <template>
   <div
-    class="flex flex-col justify-between flex-1 h-full m-0 overflow-auto bg-transparent"
+    class="m-0 flex h-full min-h-0 flex-1 flex-col justify-between overflow-hidden bg-transparent"
   >
     <ContactsListLayout
       :search-value="searchValue"
@@ -562,10 +564,10 @@ onMounted(async () => {
       @load-more="loadMoreSearchResults"
     >
       <template #columns>
-        <Popover align="end">
+        <Popover align="end" :show-content-border="false">
           <RelayButton
             variant="outline"
-            class="h-10 gap-2 rounded-lg px-3 text-sm font-medium shadow-sm"
+            class="flex h-9 items-center gap-2 rounded-lg border border-border px-3 text-[13px] font-medium shadow-sm transition-all hover:border-transparent hover:bg-muted"
           >
             <span class="i-lucide-columns-3 size-4" />
             {{ t('CONTACTS_LAYOUT.HEADER.COLUMNS_BUTTON') }}
@@ -631,14 +633,15 @@ onMounted(async () => {
             @toggle-all="toggleSelectAll"
             @update:sort="handleSort"
           />
-          <Dialog
+          <RelayDeleteConfirmModal
             v-if="selectedCount"
-            ref="bulkDeleteDialogRef"
-            type="alert"
+            :show="showBulkDeleteDialog"
             :title="bulkDeleteDialogTitle"
             :description="bulkDeleteDialogDescription"
-            :confirm-button-label="bulkDeleteDialogConfirmLabel"
+            :confirm-text="bulkDeleteDialogConfirmLabel"
+            :cancel-text="t('CONTACTS_LAYOUT.DETAILS.DELETE_DIALOG.CANCEL')"
             :is-loading="isBulkActionLoading"
+            @update:show="showBulkDeleteDialog = $event"
             @confirm="deleteContacts"
           />
         </div>

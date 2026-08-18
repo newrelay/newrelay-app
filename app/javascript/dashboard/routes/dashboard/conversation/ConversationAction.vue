@@ -3,7 +3,6 @@
 import { mapGetters } from 'vuex';
 import { useAlert } from 'dashboard/composables';
 import { useAgentsList } from 'dashboard/composables/useAgentsList';
-import ContactDetailsItem from './ContactDetailsItem.vue';
 import MultiselectDropdown from 'shared/components/ui/MultiselectDropdown.vue';
 import ConversationLabels from './labels/LabelBox.vue';
 import { CONVERSATION_PRIORITY } from '../../../../shared/constants/messages';
@@ -13,7 +12,6 @@ import NextButton from 'dashboard/components-next/button/Button.vue';
 
 export default {
   components: {
-    ContactDetailsItem,
     MultiselectDropdown,
     ConversationLabels,
     NextButton,
@@ -36,27 +34,32 @@ export default {
         {
           id: null,
           name: this.$t('CONVERSATION.PRIORITY.OPTIONS.NONE'),
-          icon: 'i-woot-priority-empty',
+          icon: 'i-woot-flag-solid',
+          iconClass: 'text-muted-foreground',
         },
         {
           id: CONVERSATION_PRIORITY.URGENT,
           name: this.$t('CONVERSATION.PRIORITY.OPTIONS.URGENT'),
-          icon: 'i-woot-priority-urgent',
+          icon: 'i-woot-flag-solid',
+          iconClass: 'text-warning',
         },
         {
           id: CONVERSATION_PRIORITY.HIGH,
           name: this.$t('CONVERSATION.PRIORITY.OPTIONS.HIGH'),
-          icon: 'i-woot-priority-high',
+          icon: 'i-woot-flag-solid',
+          iconClass: 'text-destructive',
         },
         {
           id: CONVERSATION_PRIORITY.MEDIUM,
           name: this.$t('CONVERSATION.PRIORITY.OPTIONS.MEDIUM'),
-          icon: 'i-woot-priority-medium',
+          icon: 'i-woot-flag-solid',
+          iconClass: 'text-warning',
         },
         {
           id: CONVERSATION_PRIORITY.LOW,
           name: this.$t('CONVERSATION.PRIORITY.OPTIONS.LOW'),
-          icon: 'i-woot-priority-low',
+          icon: 'i-woot-flag-solid',
+          iconClass: 'text-success',
         },
       ],
     };
@@ -212,24 +215,24 @@ export default {
 </script>
 
 <template>
-  <div class="flex flex-col gap-4 w-full">
-    <div class="flex flex-col gap-1.5 w-full">
-      <ContactDetailsItem
-        compact
-        :title="$t('CONVERSATION_SIDEBAR.ASSIGNEE_LABEL')"
-      >
-        <template #button>
-          <NextButton
-            v-if="showSelfAssign"
-            link
-            xs
-            icon="i-lucide-arrow-right"
-            class="!gap-1"
-            :label="$t('CONVERSATION_SIDEBAR.SELF_ASSIGN')"
-            @click="onSelfAssign"
-          />
-        </template>
-      </ContactDetailsItem>
+  <div class="flex w-full flex-col gap-3">
+    <div class="flex w-full flex-col items-stretch gap-1.5">
+      <div class="flex items-center justify-between">
+        <label
+          class="m-0 px-0 text-[12px] font-semibold leading-normal text-foreground"
+        >
+          {{ $t('CONVERSATION_SIDEBAR.ASSIGNEE_LABEL') }}
+        </label>
+        <NextButton
+          v-if="showSelfAssign"
+          link
+          xs
+          icon="i-lucide-arrow-right"
+          class="!gap-1"
+          :label="$t('CONVERSATION_SIDEBAR.SELF_ASSIGN')"
+          @click="onSelfAssign"
+        />
+      </div>
       <MultiselectDropdown
         :options="agentsList"
         :selected-item="assignedAgent"
@@ -244,14 +247,16 @@ export default {
         @select="onClickAssignAgent"
       />
     </div>
-    <div class="flex flex-col gap-1.5 w-full">
-      <ContactDetailsItem
-        compact
-        :title="$t('CONVERSATION_SIDEBAR.TEAM_LABEL')"
-      />
+    <div class="flex w-full flex-col items-stretch gap-1.5">
+      <label
+        class="m-0 px-0 text-[12px] font-semibold leading-normal text-foreground"
+      >
+        {{ $t('CONVERSATION_SIDEBAR.TEAM_LABEL') }}
+      </label>
       <MultiselectDropdown
         :options="teamsList"
         :selected-item="assignedTeam"
+        :has-thumbnail="false"
         :multiselector-title="$t('AGENT_MGMT.MULTI_SELECTOR.TITLE.TEAM')"
         :multiselector-placeholder="$t('AGENT_MGMT.MULTI_SELECTOR.PLACEHOLDER')"
         :no-search-result="
@@ -263,11 +268,16 @@ export default {
         @select="onClickAssignTeam"
       />
     </div>
-    <div class="flex flex-col gap-1.5 w-full">
-      <ContactDetailsItem compact :title="$t('CONVERSATION.PRIORITY.TITLE')" />
+    <div class="flex w-full flex-col items-stretch gap-1.5">
+      <label
+        class="m-0 px-0 text-[12px] font-semibold leading-normal text-foreground"
+      >
+        {{ $t('CONVERSATION.PRIORITY.TITLE') }}
+      </label>
       <MultiselectDropdown
         :options="priorityOptions"
         :selected-item="assignedPriority"
+        :has-thumbnail="false"
         :multiselector-title="$t('CONVERSATION.PRIORITY.TITLE')"
         :multiselector-placeholder="
           $t('CONVERSATION.PRIORITY.CHANGE_PRIORITY.SELECT_PLACEHOLDER')
@@ -281,11 +291,12 @@ export default {
         @select="onClickAssignPriority"
       />
     </div>
-    <div class="flex flex-col gap-2 w-full mt-1">
-      <ContactDetailsItem
-        compact
-        :title="$t('CONVERSATION_SIDEBAR.ACCORDION.CONVERSATION_LABELS')"
-      />
+    <div class="mt-1 flex w-full flex-col items-stretch gap-2">
+      <label
+        class="m-0 px-0 text-[12px] font-semibold leading-normal text-foreground"
+      >
+        {{ $t('CONVERSATION_SIDEBAR.ACCORDION.LABELS', 'Labels') }}
+      </label>
       <ConversationLabels :conversation-id="conversationId" />
     </div>
   </div>

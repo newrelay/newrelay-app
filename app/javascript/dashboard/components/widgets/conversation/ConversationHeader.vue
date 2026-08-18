@@ -1,167 +1,95 @@
 <script setup>
-import { computed } from 'vue';
-import { useStore } from 'vuex';
+import { ref, nextTick } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { useMapGetter } from 'dashboard/composables/store';
-import Avatar from 'next/avatar/Avatar.vue';
 import { useUISettings } from 'dashboard/composables/useUISettings';
 import MoreActions from './MoreActions.vue';
+import ConversationProfileSummary from './ConversationProfileSummary.vue';
 import { RelayButton } from 'dashboard/components-next/relay';
 
-const props = defineProps({
+defineProps({
   chat: {
     type: Object,
     default: () => ({}),
   },
 });
 
-const store = useStore();
-const { uiSettings, updateUISettings } = useUISettings();
 const { t } = useI18n();
-const accountLabels = useMapGetter('labels/getLabels');
+const { uiSettings, updateUISettings } = useUISettings();
+
+const isMessageSearchOpen = ref(false);
+const messageSearchQuery = ref('');
+const messageSearchInput = ref(null);
+
+const headerIconButtonClass =
+  'size-8 shrink-0 border-transparent text-muted-foreground shadow-none hover:border-transparent hover:text-foreground focus-visible:ring-0';
+
+const openMessageSearch = () => {
+  isMessageSearchOpen.value = true;
+  nextTick(() => {
+    messageSearchInput.value?.focus();
+  });
+};
+
+const closeMessageSearch = () => {
+  isMessageSearchOpen.value = false;
+  messageSearchQuery.value = '';
+};
 
 const toggleSidebar = () => {
   updateUISettings({
     is_contact_sidebar_open: !uiSettings.value.is_contact_sidebar_open,
   });
 };
-
-const currentContact = computed(() =>
-  store.getters['contacts/getContact'](props.chat.meta.sender.id)
-);
-
-const customerSince = computed(() => {
-  const createdAt = currentContact.value?.created_at;
-  if (!createdAt) return '';
-  const date = new Date(createdAt * 1000);
-  return date.toLocaleDateString(undefined, {
-    month: 'short',
-    day: 'numeric',
-    year: 'numeric',
-  });
-});
-
-const unreadCount = computed(() => props.chat.unread_count);
-const hasUnread = computed(() => unreadCount.value > 0);
-
-const primaryLabel = computed(() => {
-  const titles = props.chat.labels || [];
-  if (!titles.length) return null;
-  return (
-    accountLabels.value.find(label => label.title === titles[0]) || {
-      title: titles[0],
-      color: null,
-    }
-  );
-});
-
-const statusBadge = computed(() => {
-  if (primaryLabel.value) {
-    return { text: primaryLabel.value.title, variant: 'label' };
-  }
-  const status = props.chat.status;
-  if (status === 'pending') {
-    return {
-      text: t('CHAT_LIST.STATUS_TABS.IN_PROGRESS'),
-      variant: 'secondary',
-    };
-  }
-  if (status === 'snoozed') {
-    return { text: t('CHAT_LIST.STATUS_TABS.ON_HOLD'), variant: 'warning' };
-  }
-  if (props.chat.priority === 'urgent' || props.chat.priority === 'high') {
-    return {
-      text: t(
-        `CONVERSATION.PRIORITY.OPTIONS.${props.chat.priority.toUpperCase()}`
-      ),
-      variant: 'default',
-    };
-  }
-  return null;
-});
-
-const badgeClass = computed(() => {
-  const variant = statusBadge.value?.variant;
-  if (variant === 'default') {
-    return 'bg-primary text-primary-foreground border-transparent';
-  }
-  if (variant === 'secondary') {
-    return 'bg-primary/10 text-primary border-primary/20';
-  }
-  if (variant === 'warning') {
-    return 'bg-background text-foreground border-border';
-  }
-  return 'bg-primary text-primary-foreground border-transparent';
-});
-
-const statusDotClass = computed(() => {
-  const priority = props.chat?.priority;
-  if (priority === 'urgent') return 'bg-destructive';
-  if (priority === 'high') return 'bg-primary';
-  if (priority === 'medium') return 'bg-warning';
-  if (priority === 'low') return 'bg-success';
-  if (hasUnread.value) return 'bg-primary';
-  return 'bg-muted-foreground/30';
-});
-
-const statusTextColorClass = computed(() => {
-  return (
-    statusDotClass.value?.replace('bg-', 'text-').split('/')[0] || 'bg-white'
-  );
-});
 </script>
 
 <template>
   <div
-    class="h-16 px-6 border-b border-border bg-card flex items-center justify-between shrink-0"
+    class="flex h-16 shrink-0 items-center justify-between border-b border-border bg-card px-6"
   >
-    <div class="flex items-center gap-3 min-w-0">
-      <Avatar
-        :name="currentContact.name"
-        :src="currentContact.thumbnail"
-        :size="40"
-        :status="currentContact.availability_status"
-        hide-offline-status
-        rounded-full
-        class="border border-border/50 shrink-0"
-      />
-      <div class="flex flex-col min-w-0">
-        <div class="flex items-center gap-2">
-          <span
-            class="font-semibold text-foreground hover:text-primary transition-colors cursor-pointer text-base truncate"
-          >
-            {{ currentContact.name }}
-          </span>
-          <span
-            v-if="statusBadge"
-            class="inline-flex items-center border transition-colors focus:outline-hidden focus:ring-1 focus:ring-ring border-transparent bg-primary text-primary-foreground text-[10px] font-medium px-1.5 py-0 rounded-sm"
-            :class="badgeClass"
-          >
-            {{ statusBadge.text }}
-          </span>
-          <span
-            class="text-[11px] font-medium flex items-center gap-1 shrink-0"
-            :class="statusTextColorClass"
-          >
-            <span class="size-1.5 rounded-full" :class="statusDotClass" />
-            {{ chat.id }}
-          </span>
-        </div>
-        <div
-          class="flex items-center gap-2 text-[13px] text-muted-foreground mt-0.5"
-        >
-          <!-- eslint-disable-next-line @intlify/vue-i18n/no-raw-text, vue/no-bare-strings-in-template -->
-          <span class="truncate">Customer Since {{ customerSince }}</span>
-        </div>
-      </div>
-    </div>
+    <ConversationProfileSummary :chat="chat" class="min-w-0 flex-1" />
 
-    <div class="flex items-center gap-1 shrink-0">
-      <MoreActions />
+    <div class="flex shrink-0 items-center gap-1">
+      <div v-if="isMessageSearchOpen" class="relative mr-2 flex items-center">
+        <span
+          class="i-lucide-search pointer-events-none absolute left-2.5 top-1/2 size-4 -translate-y-1/2 text-muted-foreground"
+        />
+        <input
+          ref="messageSearchInput"
+          v-model="messageSearchQuery"
+          type="text"
+          :placeholder="t('CONVERSATION.HEADER.SEARCH_PLACEHOLDER')"
+          class="h-9 w-[220px] rounded-md border border-border/80 bg-muted/30 pl-8 pr-8 text-[13px] transition-all duration-300 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary/30"
+          @keydown.esc="closeMessageSearch"
+        />
+        <button
+          type="button"
+          class="absolute right-1 top-1/2 flex size-7 -translate-y-1/2 items-center justify-center rounded-sm text-muted-foreground transition-colors hover:bg-muted/50 hover:text-foreground"
+          :aria-label="t('CONVERSATION.HEADER.CLOSE')"
+          @click="closeMessageSearch"
+        >
+          <span class="i-lucide-x size-3.5" />
+        </button>
+      </div>
+
+      <RelayButton
+        v-if="!isMessageSearchOpen"
+        variant="ghost"
+        size="icon"
+        :class="headerIconButtonClass"
+        :aria-label="t('CONVERSATION.HEADER.SEARCH_ACTION')"
+        @click="openMessageSearch"
+      >
+        <span class="i-lucide-search size-4" />
+      </RelayButton>
+
+      <MoreActions :button-class="headerIconButtonClass" />
+
       <RelayButton
         variant="ghost"
         size="icon"
-        class="text-muted-foreground shrink-0 focus-visible:ring-0 border border-border hover:border-transparent"
+        class="ml-1"
+        :class="[headerIconButtonClass]"
+        :aria-label="t('CONVERSATION.SIDEBAR.CONTACT')"
         @click="toggleSidebar"
       >
         <span class="i-lucide-panel-right size-4" />

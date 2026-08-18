@@ -35,12 +35,12 @@ export default {
     >
       <span :class="icon" class="size-8 text-primary" />
     </div>
-    <h3 class="capitalize text-[20px] font-[600] text-foreground mb-3">
+    <h3 class="mb-3 text-[20px] font-[600] text-foreground">
       {{ message }}
     </h3>
     <p
       v-if="description"
-      class="text-sm text-muted-foreground max-w-[280px] leading-relaxed"
+      class="mb-8 max-w-[280px] text-[14.5px] leading-relaxed text-muted-foreground"
     >
       {{ description }}
     </p>

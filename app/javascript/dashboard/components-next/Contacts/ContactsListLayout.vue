@@ -104,7 +104,7 @@ const showPagination = computed(() => {
         @open-filter="openFilter"
       />
 
-      <main class="flex-1 overflow-y-auto">
+      <main class="no-scrollbar flex-1 overflow-y-auto">
         <div class="flex h-full w-full flex-col px-6 py-6">
           <slot name="default" />
           <ContactsLoadMore

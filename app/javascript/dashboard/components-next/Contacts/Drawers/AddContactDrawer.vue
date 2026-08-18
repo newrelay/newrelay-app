@@ -1,19 +1,48 @@
 <script setup>
 import { computed, reactive, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { vOnClickOutside } from '@vueuse/components';
 import { useMapGetter } from 'dashboard/composables/store';
 import {
   RelayButton,
   RelayCheckbox,
   RelayInput,
+  RelayDropdownMenu,
+  RelayDropdownMenuTrigger,
+  RelayDropdownMenuContent,
+  RelayDropdownMenuItem,
+  RELAY_FORM_FIELD_CLASS,
+  RELAY_FORM_LABEL_CLASS,
+  DROPDOWN_MENU_SEARCH_HEADER_CLASS,
+  DROPDOWN_MENU_SEARCH_WRAPPER_CLASS,
+  DROPDOWN_MENU_SEARCH_ICON_CLASS,
+  DROPDOWN_MENU_MODAL_CONTENT_CLASS,
 } from 'dashboard/components-next/relay';
+import RelayModalHeader from 'dashboard/components-next/relay/modal/RelayModalHeader.vue';
+import { RELAY_MODAL_BODY_CLASS } from 'dashboard/components-next/relay/modal/constants';
 import timezones from 'dashboard/routes/dashboard/settings/inbox/helpers/timezones.json';
 
 const emit = defineEmits(['create', 'update']);
+const FORM_INPUT_CLASS =
+  'h-10 w-full px-3 text-[14px] placeholder:text-muted-foreground/60 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary/30';
+const FORM_INPUT_ERROR_CLASS = 'border-destructive';
+const DROPDOWN_TRIGGER_CLASS =
+  'h-10 w-full justify-between rounded-md border border-border/80 bg-background px-4 text-[14px] font-normal text-foreground shadow-sm hover:bg-background focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary/30';
+const MODAL_DROPDOWN_SEARCH_INPUT_CLASS =
+  'h-9 w-full pl-9 text-[13px] rounded-md border border-border/80 bg-background placeholder:text-muted-foreground/60 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary/30';
+const MODAL_DROPDOWN_ITEM_CLASS =
+  'flex cursor-default items-center justify-between rounded-sm px-3 py-2 text-[13px] text-foreground transition-colors hover:bg-accent hover:text-accent-foreground data-[highlighted]:bg-accent data-[highlighted]:text-accent-foreground';
+const MODAL_DROPDOWN_CONTENT_CLASS =
+  'z-[250] flex max-h-[var(--reka-dropdown-menu-content-available-height)] w-[var(--reka-dropdown-menu-trigger-width)] max-w-[var(--reka-dropdown-menu-trigger-width)] flex-col overflow-hidden rounded-md border border-border bg-popover shadow-md';
+const MODAL_DROPDOWN_LIST_CLASS = 'min-h-0 flex-1 overflow-y-auto p-1';
+const REMOVE_FIELD_BUTTON_CLASS =
+  'flex size-10 shrink-0 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-destructive/10 hover:text-destructive';
+const ADD_FIELD_BUTTON_CLASS =
+  'flex w-fit cursor-pointer items-center gap-1.5 p-0 text-[13px] font-medium text-primary hover:underline';
+
 const { t } = useI18n();
 
 const agents = useMapGetter('agents/getAgents');
+const modalPanelRef = ref(null);
 const isOpen = ref(false);
 const editId = ref(null);
 const existingAdditional = ref({});
@@ -22,7 +51,6 @@ const showErrors = ref(false);
 const avatarInput = ref(null);
 const avatarPreview = ref('');
 const moreDetailsOpen = ref(false);
-const openMenu = ref(null);
 const contactTypeSearch = ref('');
 const timeZoneSearch = ref('');
 
@@ -144,7 +172,6 @@ const resetForm = () => {
   avatarPreview.value = '';
   showErrors.value = false;
   moreDetailsOpen.value = false;
-  openMenu.value = null;
   contactTypeSearch.value = '';
   timeZoneSearch.value = '';
   editId.value = null;
@@ -184,25 +211,18 @@ const handleAvatarUpload = event => {
   avatarPreview.value = URL.createObjectURL(file);
 };
 
-const toggleMenu = key => {
-  openMenu.value = openMenu.value === key ? null : key;
-};
-
 const selectContactType = value => {
   form.contactType = value;
-  openMenu.value = null;
   contactTypeSearch.value = '';
 };
 
 const selectTimezone = value => {
   form.timezone = value;
-  openMenu.value = null;
   timeZoneSearch.value = '';
 };
 
 const selectOwner = name => {
   form.owner = name;
-  openMenu.value = null;
 };
 
 const handleDisabledSubmitClick = () => {
@@ -283,51 +303,32 @@ defineExpose({ open, close });
   <Teleport to="body">
     <div
       v-if="isOpen"
-      data-relay
-      class="fixed inset-0 z-[60] flex items-center justify-center bg-background/80 p-4 backdrop-blur-sm transition-all duration-300"
+      class="fixed inset-0 z-[200] flex items-center justify-center bg-background/80 p-4 backdrop-blur-sm transition-all duration-300"
       @click.self="close"
     >
       <div
-        class="flex max-h-[90vh] w-full max-w-lg animate-in fade-in zoom-in-95 flex-col overflow-hidden rounded-xl border border-border bg-card shadow-2xl duration-200"
-        @click="openMenu = null"
+        ref="modalPanelRef"
+        data-relay
+        class="font-geist relative flex max-h-[90vh] w-full max-w-lg animate-in fade-in zoom-in-95 flex-col overflow-hidden rounded-xl border border-border/80 bg-background shadow-xl duration-200"
       >
         <!-- Header -->
-        <div
-          class="flex shrink-0 items-center justify-between border-b border-border px-8 pt-8 pb-0"
-        >
-          <div>
-            <h2
-              class="capitalize text-base font-medium tracking-tight text-foreground"
-            >
-              {{ headerTitle }}
-            </h2>
-            <p class="mt-1 text-sm text-muted-foreground">
-              {{ headerSubtitle }}
-            </p>
-          </div>
-          <RelayButton
-            variant="ghost"
-            size="icon"
-            class="size-8 rounded-full text-muted-foreground hover:text-foreground border border-border hover:border-transparent"
-            @click="close"
-          >
-            <span class="i-lucide-x size-4" />
-          </RelayButton>
-        </div>
+        <RelayModalHeader
+          :title="headerTitle"
+          :description="headerSubtitle"
+          @close="close"
+        />
 
         <!-- Body -->
-        <div
-          class="hide-scrollbar flex-1 space-y-6 overflow-y-auto px-8 pb-8 pt-4"
-        >
+        <div class="hide-scrollbar space-y-6" :class="[RELAY_MODAL_BODY_CLASS]">
           <!-- Profile picture -->
-          <div class="flex flex-col gap-1.5">
-            <label class="text-[13.5px] text-foreground font-[500]">
+          <div :class="RELAY_FORM_FIELD_CLASS">
+            <label :class="RELAY_FORM_LABEL_CLASS">
               {{ t('CONTACTS_LAYOUT.ADD_CONTACT_DRAWER.PROFILE_PICTURE') }}
             </label>
-            <div class="mb-2 flex items-center gap-4">
+            <div class="flex items-center gap-4">
               <button
                 type="button"
-                class="flex size-16 shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-xl border border-dashed border-border bg-muted/30 transition-colors hover:bg-muted/50"
+                class="flex size-16 shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-xl border border-dashed border-border/80 bg-muted/30 transition-colors hover:bg-muted/50"
                 @click="avatarInput?.click()"
               >
                 <img
@@ -338,18 +339,18 @@ defineExpose({ open, close });
                 />
                 <span
                   v-else
-                  class="i-lucide-upload size-5 text-muted-foreground/70"
+                  class="i-lucide-upload size-6 text-muted-foreground/70"
+                  aria-hidden="true"
                 />
               </button>
               <div class="flex flex-col gap-1.5">
-                <RelayButton
-                  variant="outline"
-                  size="sm"
-                  class="h-8 w-fit text-xs"
+                <button
+                  type="button"
+                  class="inline-flex h-8 w-fit items-center justify-center rounded-md border border-input bg-background px-3 text-xs font-medium shadow-xs transition-colors hover:border-transparent hover:bg-accent hover:text-accent-foreground"
                   @click="avatarInput?.click()"
                 >
                   {{ t('CONTACTS_LAYOUT.ADD_CONTACT_DRAWER.UPLOAD_PICTURE') }}
-                </RelayButton>
+                </button>
                 <span class="text-[11px] text-muted-foreground">
                   {{ t('CONTACTS_LAYOUT.ADD_CONTACT_DRAWER.AVATAR_HINT') }}
                 </span>
@@ -366,8 +367,8 @@ defineExpose({ open, close });
 
           <!-- Name -->
           <div class="grid grid-cols-2 gap-4">
-            <div class="flex flex-col gap-1.5">
-              <label class="text-[13.5px] text-foreground font-[500]">
+            <div :class="RELAY_FORM_FIELD_CLASS">
+              <label :class="RELAY_FORM_LABEL_CLASS">
                 {{ t('CONTACTS_LAYOUT.ADD_CONTACT_DRAWER.FIRST_NAME') }}
                 <span class="text-destructive">{{
                   t('CONTACTS_LAYOUT.ADD_CONTACT_DRAWER.REQUIRED_MARK')
@@ -380,8 +381,8 @@ defineExpose({ open, close });
                 "
                 :class-name="
                   showErrors && !form.firstName.trim()
-                    ? 'h-9 w-full rounded-md border-destructive bg-background px-4 text-[14px] shadow-sm'
-                    : 'h-9 w-full rounded-md border-border bg-background px-4 text-[14px] shadow-sm'
+                    ? `${FORM_INPUT_CLASS} ${FORM_INPUT_ERROR_CLASS}`
+                    : FORM_INPUT_CLASS
                 "
                 @update:model-value="showErrors = false"
               />
@@ -394,8 +395,8 @@ defineExpose({ open, close });
                 }}
               </span>
             </div>
-            <div class="flex flex-col gap-1.5">
-              <label class="text-[13.5px] text-foreground font-[500]">
+            <div :class="RELAY_FORM_FIELD_CLASS">
+              <label :class="RELAY_FORM_LABEL_CLASS">
                 {{ t('CONTACTS_LAYOUT.ADD_CONTACT_DRAWER.LAST_NAME') }}
                 <span class="text-destructive">{{
                   t('CONTACTS_LAYOUT.ADD_CONTACT_DRAWER.REQUIRED_MARK')
@@ -408,8 +409,8 @@ defineExpose({ open, close });
                 "
                 :class-name="
                   showErrors && !form.lastName.trim()
-                    ? 'h-9 w-full rounded-md border-destructive bg-background px-4 text-[14px] shadow-sm'
-                    : 'h-9 w-full rounded-md border-border bg-background px-4 text-[14px] shadow-sm'
+                    ? `${FORM_INPUT_CLASS} ${FORM_INPUT_ERROR_CLASS}`
+                    : FORM_INPUT_CLASS
                 "
                 @update:model-value="showErrors = false"
               />
@@ -423,8 +424,8 @@ defineExpose({ open, close });
           </div>
 
           <!-- Email -->
-          <div class="flex flex-col gap-1.5">
-            <label class="text-[13.5px] text-foreground font-[500]">
+          <div :class="RELAY_FORM_FIELD_CLASS">
+            <label :class="RELAY_FORM_LABEL_CLASS">
               {{ t('CONTACTS_LAYOUT.ADD_CONTACT_DRAWER.EMAIL') }}
               <span class="text-destructive">{{
                 t('CONTACTS_LAYOUT.ADD_CONTACT_DRAWER.REQUIRED_MARK')
@@ -438,8 +439,8 @@ defineExpose({ open, close });
               "
               :class-name="
                 showErrors && !form.email.trim()
-                  ? 'h-9 w-full rounded-md border-destructive bg-background px-4 text-[14px] shadow-sm'
-                  : 'h-9 w-full rounded-md border-border bg-background px-4 text-[14px] shadow-sm'
+                  ? `${FORM_INPUT_CLASS} ${FORM_INPUT_ERROR_CLASS}`
+                  : FORM_INPUT_CLASS
               "
               @update:model-value="showErrors = false"
             />
@@ -462,20 +463,19 @@ defineExpose({ open, close });
                     'CONTACTS_LAYOUT.ADD_CONTACT_DRAWER.ADDITIONAL_EMAIL_PLACEHOLDER'
                   )
                 "
-                class-name="h-9 flex-1 rounded-md border-border bg-background px-4 text-[14px] shadow-sm"
+                class-name="h-10 flex-1 px-3 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary/30"
               />
-              <RelayButton
-                variant="ghost"
-                size="icon"
-                class="size-10 shrink-0 text-muted-foreground hover:text-destructive border border-border hover:border-transparent"
+              <button
+                type="button"
+                :class="REMOVE_FIELD_BUTTON_CLASS"
                 @click="additionalEmails.splice(index, 1)"
               >
                 <span class="i-lucide-trash-2 size-4" />
-              </RelayButton>
+              </button>
             </div>
             <button
               type="button"
-              class="mt-1 flex items-center gap-1 self-start text-[13px] font-medium text-primary transition-colors hover:underline"
+              :class="ADD_FIELD_BUTTON_CLASS"
               @click="additionalEmails.push('')"
             >
               <span class="i-lucide-plus size-3.5" />
@@ -484,8 +484,8 @@ defineExpose({ open, close });
           </div>
 
           <!-- Phone -->
-          <div class="flex flex-col gap-1.5">
-            <label class="text-[13.5px] text-foreground font-[500]">
+          <div :class="RELAY_FORM_FIELD_CLASS">
+            <label :class="RELAY_FORM_LABEL_CLASS">
               {{ t('CONTACTS_LAYOUT.ADD_CONTACT_DRAWER.PHONE') }}
             </label>
             <RelayInput
@@ -494,7 +494,7 @@ defineExpose({ open, close });
               :placeholder="
                 t('CONTACTS_LAYOUT.ADD_CONTACT_DRAWER.PHONE_PLACEHOLDER')
               "
-              class-name="h-9 w-full rounded-md border-border bg-background px-4 text-[14px] shadow-sm"
+              :class-name="FORM_INPUT_CLASS"
             />
             <div
               v-for="(_, index) in additionalPhones"
@@ -509,20 +509,19 @@ defineExpose({ open, close });
                     'CONTACTS_LAYOUT.ADD_CONTACT_DRAWER.ADDITIONAL_PHONE_PLACEHOLDER'
                   )
                 "
-                class-name="h-9 flex-1 rounded-md border-border bg-background px-4 text-[14px] shadow-sm"
+                class-name="h-10 flex-1 px-3 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary/30"
               />
-              <RelayButton
-                variant="ghost"
-                size="icon"
-                class="size-10 shrink-0 text-muted-foreground hover:text-destructive border border-border hover:border-transparent"
+              <button
+                type="button"
+                :class="REMOVE_FIELD_BUTTON_CLASS"
                 @click="additionalPhones.splice(index, 1)"
               >
                 <span class="i-lucide-trash-2 size-4" />
-              </RelayButton>
+              </button>
             </div>
             <button
               type="button"
-              class="mt-1 flex items-center gap-1 self-start text-[13px] font-medium text-primary transition-colors hover:underline"
+              :class="ADD_FIELD_BUTTON_CLASS"
               @click="additionalPhones.push('')"
             >
               <span class="i-lucide-plus size-3.5" />
@@ -531,8 +530,8 @@ defineExpose({ open, close });
           </div>
 
           <!-- Company -->
-          <div class="flex flex-col gap-1.5">
-            <label class="text-[13.5px] text-foreground font-[500]">
+          <div class="relative" :class="[RELAY_FORM_FIELD_CLASS]">
+            <label :class="RELAY_FORM_LABEL_CLASS">
               {{ t('CONTACTS_LAYOUT.ADD_CONTACT_DRAWER.COMPANY') }}
             </label>
             <div class="relative">
@@ -544,12 +543,12 @@ defineExpose({ open, close });
                 :placeholder="
                   t('CONTACTS_LAYOUT.ADD_CONTACT_DRAWER.COMPANY_PLACEHOLDER')
                 "
-                class-name="h-9 w-full rounded-md border-border bg-background pl-9 pr-4 text-[14px] shadow-sm"
+                class-name="h-10 w-full pl-9 pr-3 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary/30"
               />
             </div>
           </div>
 
-          <hr class="my-2 border-border" />
+          <hr class="my-6 border-border/50" />
 
           <!-- More details -->
           <div>
@@ -569,122 +568,126 @@ defineExpose({ open, close });
 
             <div v-if="moreDetailsOpen" class="space-y-6 pb-2 pt-2">
               <!-- Contact type -->
-              <div
-                v-on-click-outside="
-                  () => openMenu === 'contactType' && (openMenu = null)
-                "
-                class="relative flex flex-col gap-1.5"
-                @click.stop
-              >
-                <label class="text-[13.5px] text-foreground font-[500]">
+              <div :class="RELAY_FORM_FIELD_CLASS">
+                <label :class="RELAY_FORM_LABEL_CLASS">
                   {{ t('CONTACTS_LAYOUT.ADD_CONTACT_DRAWER.CONTACT_TYPE') }}
                 </label>
-                <RelayButton
-                  variant="outline"
-                  class="h-9 w-full justify-between rounded-md border-border bg-background px-4 text-[14px] font-normal shadow-sm hover:bg-background"
-                  @click="toggleMenu('contactType')"
-                >
-                  {{ selectedContactTypeLabel }}
-                  <span class="i-lucide-chevron-down size-4 opacity-50" />
-                </RelayButton>
-                <div
-                  v-if="openMenu === 'contactType'"
-                  class="absolute left-0 top-full z-[70] mt-1 w-full overflow-hidden rounded-md border border-border bg-popover shadow-md"
-                >
-                  <div class="flex items-center border-b border-border px-3">
-                    <span
-                      class="i-lucide-search mr-2 size-4 shrink-0 opacity-50"
-                    />
-                    <input
-                      v-model="contactTypeSearch"
-                      type="text"
-                      :placeholder="
-                        t(
-                          'CONTACTS_LAYOUT.ADD_CONTACT_DRAWER.SEARCH_PLACEHOLDER'
-                        )
-                      "
-                      class="h-9 w-full border-0 bg-transparent py-3 outline-none placeholder:text-muted-foreground focus:ring-0 text-[14px] shadow-sm rounded-md border-border/80 bg-background focus-visible:ring-1 focus-visible:ring-primary/30"
-                    />
-                  </div>
-                  <div class="max-h-[240px] overflow-y-auto p-1">
-                    <button
-                      v-for="opt in filteredContactTypes"
-                      :key="opt.value"
-                      type="button"
-                      class="flex w-full cursor-pointer items-center justify-between rounded-sm px-2 py-1.5 text-left text-sm hover:bg-accent hover:text-accent-foreground"
-                      @click="selectContactType(opt.value)"
+                <RelayDropdownMenu :modal="false">
+                  <RelayDropdownMenuTrigger as-child>
+                    <RelayButton
+                      variant="outline"
+                      :class="DROPDOWN_TRIGGER_CLASS"
                     >
-                      <span>{{ opt.label }}</span>
-                      <span
-                        v-if="form.contactType === opt.value"
-                        class="i-lucide-check size-4 text-primary"
-                      />
-                    </button>
-                  </div>
-                </div>
+                      {{ selectedContactTypeLabel }}
+                      <span class="i-lucide-chevron-down size-4 opacity-50" />
+                    </RelayButton>
+                  </RelayDropdownMenuTrigger>
+                  <RelayDropdownMenuContent
+                    align="start"
+                    :portal-to="modalPanelRef"
+                    :collision-boundary="modalPanelRef"
+                    :collision-padding="12"
+                    :class="MODAL_DROPDOWN_CONTENT_CLASS"
+                  >
+                    <div :class="DROPDOWN_MENU_SEARCH_HEADER_CLASS">
+                      <div :class="DROPDOWN_MENU_SEARCH_WRAPPER_CLASS">
+                        <span :class="DROPDOWN_MENU_SEARCH_ICON_CLASS" />
+                        <input
+                          v-model="contactTypeSearch"
+                          type="text"
+                          :placeholder="
+                            t(
+                              'CONTACTS_LAYOUT.ADD_CONTACT_DRAWER.SEARCH_PLACEHOLDER'
+                            )
+                          "
+                          :class="MODAL_DROPDOWN_SEARCH_INPUT_CLASS"
+                        />
+                      </div>
+                    </div>
+                    <div :class="MODAL_DROPDOWN_LIST_CLASS">
+                      <RelayDropdownMenuItem
+                        v-for="opt in filteredContactTypes"
+                        :key="opt.value"
+                        :class="[
+                          MODAL_DROPDOWN_ITEM_CLASS,
+                          form.contactType === opt.value ? 'font-medium' : '',
+                        ]"
+                        @click="selectContactType(opt.value)"
+                      >
+                        <span>{{ opt.label }}</span>
+                        <span
+                          v-if="form.contactType === opt.value"
+                          class="i-lucide-check size-4 text-primary"
+                        />
+                      </RelayDropdownMenuItem>
+                    </div>
+                  </RelayDropdownMenuContent>
+                </RelayDropdownMenu>
               </div>
 
               <!-- Time zone -->
-              <div
-                v-on-click-outside="
-                  () => openMenu === 'timezone' && (openMenu = null)
-                "
-                class="relative flex flex-col gap-1.5"
-                @click.stop
-              >
-                <label class="text-[13.5px] text-foreground font-[500]">
+              <div :class="RELAY_FORM_FIELD_CLASS">
+                <label :class="RELAY_FORM_LABEL_CLASS">
                   {{ t('CONTACTS_LAYOUT.ADD_CONTACT_DRAWER.TIMEZONE') }}
                 </label>
-                <RelayButton
-                  variant="outline"
-                  class="h-9 w-full justify-between rounded-md border-border bg-background px-4 text-[14px] font-normal shadow-sm hover:bg-background"
-                  @click="toggleMenu('timezone')"
-                >
-                  <span class="truncate">{{ selectedTimezoneLabel }}</span>
-                  <span
-                    class="i-lucide-chevron-down size-4 shrink-0 opacity-50"
-                  />
-                </RelayButton>
-                <div
-                  v-if="openMenu === 'timezone'"
-                  class="absolute left-0 top-full z-[70] mt-1 w-full overflow-hidden rounded-md border border-border bg-popover shadow-md"
-                >
-                  <div class="flex items-center border-b border-border px-3">
-                    <span
-                      class="i-lucide-search mr-2 size-4 shrink-0 opacity-50"
-                    />
-                    <input
-                      v-model="timeZoneSearch"
-                      type="text"
-                      :placeholder="
-                        t(
-                          'CONTACTS_LAYOUT.ADD_CONTACT_DRAWER.SEARCH_PLACEHOLDER'
-                        )
-                      "
-                      class="h-9 w-full border-0 bg-transparent py-3 outline-none placeholder:text-muted-foreground focus:ring-0 text-[14px] shadow-sm rounded-md border-border/80 bg-background focus-visible:ring-1 focus-visible:ring-primary/30"
-                    />
-                  </div>
-                  <div class="max-h-[240px] overflow-y-auto p-1">
-                    <button
-                      v-for="opt in filteredTimezones"
-                      :key="opt.value"
-                      type="button"
-                      class="flex w-full cursor-pointer items-center justify-between rounded-sm px-2 py-1.5 text-left text-sm hover:bg-accent hover:text-accent-foreground"
-                      @click="selectTimezone(opt.value)"
+                <RelayDropdownMenu :modal="false">
+                  <RelayDropdownMenuTrigger as-child>
+                    <RelayButton
+                      variant="outline"
+                      :class="DROPDOWN_TRIGGER_CLASS"
                     >
-                      <span class="truncate">{{ opt.label }}</span>
+                      <span class="truncate">{{ selectedTimezoneLabel }}</span>
                       <span
-                        v-if="form.timezone === opt.value"
-                        class="ml-2 i-lucide-check size-4 shrink-0 text-primary"
+                        class="i-lucide-chevron-down size-4 shrink-0 opacity-50"
                       />
-                    </button>
-                  </div>
-                </div>
+                    </RelayButton>
+                  </RelayDropdownMenuTrigger>
+                  <RelayDropdownMenuContent
+                    align="start"
+                    :portal-to="modalPanelRef"
+                    :collision-boundary="modalPanelRef"
+                    :collision-padding="12"
+                    :class="MODAL_DROPDOWN_CONTENT_CLASS"
+                  >
+                    <div :class="DROPDOWN_MENU_SEARCH_HEADER_CLASS">
+                      <div :class="DROPDOWN_MENU_SEARCH_WRAPPER_CLASS">
+                        <span :class="DROPDOWN_MENU_SEARCH_ICON_CLASS" />
+                        <input
+                          v-model="timeZoneSearch"
+                          type="text"
+                          :placeholder="
+                            t(
+                              'CONTACTS_LAYOUT.ADD_CONTACT_DRAWER.SEARCH_PLACEHOLDER'
+                            )
+                          "
+                          :class="MODAL_DROPDOWN_SEARCH_INPUT_CLASS"
+                        />
+                      </div>
+                    </div>
+                    <div :class="MODAL_DROPDOWN_LIST_CLASS">
+                      <RelayDropdownMenuItem
+                        v-for="opt in filteredTimezones"
+                        :key="opt.value"
+                        :class="[
+                          MODAL_DROPDOWN_ITEM_CLASS,
+                          form.timezone === opt.value ? 'font-medium' : '',
+                        ]"
+                        @click="selectTimezone(opt.value)"
+                      >
+                        <span class="truncate">{{ opt.label }}</span>
+                        <span
+                          v-if="form.timezone === opt.value"
+                          class="i-lucide-check ml-2 size-4 shrink-0 text-primary"
+                        />
+                      </RelayDropdownMenuItem>
+                    </div>
+                  </RelayDropdownMenuContent>
+                </RelayDropdownMenu>
               </div>
 
               <!-- Tags -->
-              <div class="flex flex-col gap-1.5">
-                <label class="text-[13.5px] text-foreground font-[500]">
+              <div :class="RELAY_FORM_FIELD_CLASS">
+                <label :class="RELAY_FORM_LABEL_CLASS">
                   {{ t('CONTACTS_LAYOUT.ADD_CONTACT_DRAWER.TAGS') }}
                 </label>
                 <RelayInput
@@ -692,109 +695,106 @@ defineExpose({ open, close });
                   :placeholder="
                     t('CONTACTS_LAYOUT.ADD_CONTACT_DRAWER.TAGS_PLACEHOLDER')
                   "
-                  class-name="h-9 w-full rounded-md border-border bg-background px-4 text-[14px] shadow-sm"
+                  :class-name="FORM_INPUT_CLASS"
                 />
               </div>
 
               <!-- Owner -->
-              <div
-                v-on-click-outside="
-                  () => openMenu === 'owner' && (openMenu = null)
-                "
-                class="relative flex flex-col gap-1.5"
-                @click.stop
-              >
-                <label class="text-[13.5px] text-foreground font-[500]">
+              <div :class="RELAY_FORM_FIELD_CLASS">
+                <label :class="RELAY_FORM_LABEL_CLASS">
                   {{ t('CONTACTS_LAYOUT.ADD_CONTACT_DRAWER.OWNER') }}
                 </label>
-                <RelayButton
-                  variant="outline"
-                  class="h-9 w-full justify-between rounded-md border-border bg-background px-4 text-[14px] font-normal shadow-sm hover:bg-background"
-                  :class="
-                    form.owner ? 'text-foreground' : 'text-muted-foreground'
-                  "
-                  @click="toggleMenu('owner')"
-                >
-                  {{
-                    form.owner ||
-                    t('CONTACTS_LAYOUT.ADD_CONTACT_DRAWER.OWNER_PLACEHOLDER')
-                  }}
-                  <span class="i-lucide-chevron-down size-4 opacity-50" />
-                </RelayButton>
-                <div
-                  v-if="openMenu === 'owner'"
-                  class="absolute left-0 top-full z-[70] mt-1 max-h-48 w-full overflow-y-auto rounded-md border border-border bg-popover p-1 shadow-md"
-                >
-                  <button
-                    type="button"
-                    class="flex w-full cursor-pointer items-center justify-between rounded-sm px-2 py-1.5 text-left text-sm hover:bg-accent"
-                    @click="selectOwner('')"
+                <RelayDropdownMenu :modal="false">
+                  <RelayDropdownMenuTrigger as-child>
+                    <RelayButton
+                      variant="outline"
+                      :class="[
+                        DROPDOWN_TRIGGER_CLASS,
+                        form.owner
+                          ? 'text-foreground'
+                          : 'text-muted-foreground',
+                      ]"
+                    >
+                      {{
+                        form.owner ||
+                        t(
+                          'CONTACTS_LAYOUT.ADD_CONTACT_DRAWER.OWNER_PLACEHOLDER'
+                        )
+                      }}
+                      <span class="i-lucide-chevron-down size-4 opacity-50" />
+                    </RelayButton>
+                  </RelayDropdownMenuTrigger>
+                  <RelayDropdownMenuContent
+                    align="start"
+                    :portal-to="modalPanelRef"
+                    :collision-boundary="modalPanelRef"
+                    :collision-padding="12"
+                    :class="DROPDOWN_MENU_MODAL_CONTENT_CLASS"
                   >
-                    <span>{{
-                      t('CONTACTS_LAYOUT.ADD_CONTACT_DRAWER.OWNER_UNASSIGNED')
-                    }}</span>
-                    <span
-                      v-if="!form.owner"
-                      class="i-lucide-check size-4 text-primary"
-                    />
-                  </button>
-                  <button
-                    v-for="name in agentNames"
-                    :key="`owner-${name}`"
-                    type="button"
-                    class="flex w-full cursor-pointer items-center justify-between rounded-sm px-2 py-1.5 text-left text-sm hover:bg-accent"
-                    @click="selectOwner(name)"
-                  >
-                    <span>{{ name }}</span>
-                    <span
-                      v-if="form.owner === name"
-                      class="i-lucide-check size-4 text-primary"
-                    />
-                  </button>
-                </div>
+                    <RelayDropdownMenuItem
+                      :class="MODAL_DROPDOWN_ITEM_CLASS"
+                      @click="selectOwner('')"
+                    >
+                      <span>{{
+                        t('CONTACTS_LAYOUT.ADD_CONTACT_DRAWER.OWNER_UNASSIGNED')
+                      }}</span>
+                      <span
+                        v-if="!form.owner"
+                        class="i-lucide-check size-4 text-primary"
+                      />
+                    </RelayDropdownMenuItem>
+                    <RelayDropdownMenuItem
+                      v-for="name in agentNames"
+                      :key="`owner-${name}`"
+                      :class="[
+                        MODAL_DROPDOWN_ITEM_CLASS,
+                        form.owner === name ? 'font-medium' : '',
+                      ]"
+                      @click="selectOwner(name)"
+                    >
+                      <span>{{ name }}</span>
+                      <span
+                        v-if="form.owner === name"
+                        class="i-lucide-check size-4 text-primary"
+                      />
+                    </RelayDropdownMenuItem>
+                  </RelayDropdownMenuContent>
+                </RelayDropdownMenu>
               </div>
 
               <!-- Communication preferences -->
-              <div class="flex flex-col gap-3">
-                <label class="text-[13.5px] text-foreground font-[500]">
+              <div :class="RELAY_FORM_FIELD_CLASS">
+                <label :class="RELAY_FORM_LABEL_CLASS">
                   {{
                     t(
                       'CONTACTS_LAYOUT.ADD_CONTACT_DRAWER.COMMUNICATION_PREFERENCES'
                     )
                   }}
                 </label>
-                <div class="grid grid-cols-2 gap-3">
-                  <label
-                    class="flex cursor-pointer items-center gap-3 text-[13.5px] font-[500] text-foreground"
-                  >
+                <div class="grid grid-cols-2 gap-x-6 gap-y-3">
+                  <label class="flex cursor-pointer items-center gap-3">
                     <RelayCheckbox v-model="form.prefs.email" />
-                    <span class="text-sm text-foreground">
+                    <span class="text-[13.5px] font-medium text-foreground">
                       {{ t('CONTACTS_LAYOUT.ADD_CONTACT_DRAWER.PREF_EMAIL') }}
                     </span>
                   </label>
-                  <label
-                    class="flex cursor-pointer items-center gap-3 text-[13.5px] font-[500] text-foreground"
-                  >
+                  <label class="flex cursor-pointer items-center gap-3">
                     <RelayCheckbox v-model="form.prefs.sms" />
-                    <span class="text-sm text-foreground">
+                    <span class="text-[13.5px] font-medium text-foreground">
                       {{ t('CONTACTS_LAYOUT.ADD_CONTACT_DRAWER.PREF_SMS') }}
                     </span>
                   </label>
-                  <label
-                    class="flex cursor-pointer items-center gap-3 text-[13.5px] font-[500] text-foreground"
-                  >
+                  <label class="flex cursor-pointer items-center gap-3">
                     <RelayCheckbox v-model="form.prefs.whatsapp" />
-                    <span class="text-sm text-foreground">
+                    <span class="text-[13.5px] font-medium text-foreground">
                       {{
                         t('CONTACTS_LAYOUT.ADD_CONTACT_DRAWER.PREF_WHATSAPP')
                       }}
                     </span>
                   </label>
-                  <label
-                    class="flex cursor-pointer items-center gap-3 text-[13.5px] font-[500] text-foreground"
-                  >
+                  <label class="flex cursor-pointer items-center gap-3">
                     <RelayCheckbox v-model="form.prefs.marketingEmails" />
-                    <span class="text-sm text-foreground">
+                    <span class="text-[13.5px] font-medium text-foreground">
                       {{
                         t(
                           'CONTACTS_LAYOUT.ADD_CONTACT_DRAWER.PREF_MARKETING_EMAILS'
@@ -810,18 +810,25 @@ defineExpose({ open, close });
 
         <!-- Footer -->
         <div
-          class="mt-auto flex shrink-0 gap-3 border-t border-border bg-muted/10 px-8 pb-8 pt-4"
+          class="mt-auto flex shrink-0 gap-3 border-t border-border/80 p-6 pt-5"
         >
           <RelayButton
-            variant="outline"
-            class="w-full text-sm font-medium"
+            type="button"
+            variant="ghost"
+            class="h-10 flex-1 rounded-xl border border-border bg-background text-[14px] font-medium shadow-sm transition-all hover:border-transparent hover:bg-muted"
             @click="close"
           >
             {{ t('CONTACTS_LAYOUT.ADD_CONTACT_DRAWER.CANCEL') }}
           </RelayButton>
-          <div class="w-full" @click="handleDisabledSubmitClick">
+          <div class="flex-1" @click="handleDisabledSubmitClick">
             <RelayButton
-              class="w-full text-sm font-medium"
+              type="button"
+              class="h-10 w-full rounded-xl text-[14px] font-medium shadow-sm"
+              :class="
+                !isFormValid || isSaving
+                  ? 'cursor-not-allowed bg-primary/50 text-primary-foreground opacity-50 hover:bg-primary/50'
+                  : 'bg-primary text-primary-foreground hover:bg-primary/90'
+              "
               :disabled="!isFormValid || isSaving"
               @click="handleSubmit"
             >

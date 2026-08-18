@@ -75,7 +75,7 @@ const getConversationParams = () => {
   );
 
   const activeConversation = document.querySelector(
-    'div.conversations-list div.conversation.active'
+    '.conversations-list .conversation.active'
   );
   const activeConversationIndex = [...allConversations].indexOf(
     activeConversation

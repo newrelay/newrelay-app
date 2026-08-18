@@ -1,6 +1,7 @@
 <script setup>
 import { computed, reactive } from 'vue';
 import Message from './Message.vue';
+import InboxMessageDateSeparator from './InboxMessageDateSeparator.vue';
 import { MESSAGE_TYPES } from './constants.js';
 import { useCamelCase } from 'dashboard/composables/useTransformKeys';
 import { useMapGetter } from 'dashboard/composables/store.js';
@@ -36,6 +37,10 @@ const props = defineProps({
   messages: {
     type: Array,
     default: () => [],
+  },
+  isInboxView: {
+    type: Boolean,
+    default: false,
   },
 });
 
@@ -160,10 +165,46 @@ const getInReplyToMessage = parentMessage => {
 
   return replyMessage ? useCamelCase(replyMessage) : null;
 };
+
+const shouldShowDateSeparator = index => {
+  if (index === 0) return true;
+
+  const current = allMessages.value[index];
+  const previous = allMessages.value[index - 1];
+  const currentDay = new Date(current.createdAt * 1000).toDateString();
+  const previousDay = new Date(previous.createdAt * 1000).toDateString();
+
+  return currentDay !== previousDay;
+};
 </script>
 
 <template>
-  <ul class="px-4 bg-transparent">
+  <div v-if="isInboxView" class="flex flex-col gap-4 bg-transparent px-6 py-6">
+    <slot name="beforeAll" />
+    <template v-for="(message, index) in allMessages" :key="message.id">
+      <InboxMessageDateSeparator
+        v-if="shouldShowDateSeparator(index)"
+        :timestamp="message.createdAt"
+      />
+      <slot
+        v-if="firstUnreadId && message.id === firstUnreadId"
+        name="unreadBadge"
+      />
+      <Message
+        v-bind="message"
+        :is-email-inbox="isAnEmailChannel"
+        :in-reply-to="getInReplyToMessage(message)"
+        :group-with-next="shouldGroupWithNext(index, allMessages)"
+        :inbox-supports-reply-to="inboxSupportsReplyTo"
+        :current-user-id="currentUserId"
+        is-inbox-view
+        data-clarity-mask="True"
+        @retry="emit('retry', message)"
+      />
+    </template>
+    <slot name="after" />
+  </div>
+  <ul v-else class="bg-transparent px-4">
     <slot name="beforeAll" />
     <template v-for="(message, index) in allMessages" :key="message.id">
       <slot

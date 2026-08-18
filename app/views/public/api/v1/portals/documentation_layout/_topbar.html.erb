@@ -1,7 +1,7 @@
 <%# locals: (portal:, locale:, article: nil, category: nil) %>
 <% home_url = public_portal_locale_path(portal.slug, locale) %>
 <% current = article ? :article : (category ? :category : :home) %>
-<header class="sticky top-0 z-40 w-full bg-white dark:bg-n-slate-1 border-b border-solid border-n-weak font-inter tracking-normal [font-optical-sizing:auto]">
+<header class="sticky top-0 z-40 w-full bg-white dark:bg-n-slate-1 border-b border-solid border-n-weak font-geist tracking-normal [font-optical-sizing:auto]">
   <div class="max-w-screen-2xl w-full mx-auto flex items-center h-16 px-4 md:px-6 gap-4">
     <label for="sidebar-drawer-checkbox" class="md:hidden -ms-1 p-2 rounded-lg text-n-slate-11 hover:bg-n-alpha-2 cursor-pointer" aria-label="<%= I18n.t('public_portal.sidebar.open_sidebar') %>">
       <span class="i-lucide-panel-left-open size-5 block" aria-hidden="true"></span>

@@ -3,6 +3,8 @@ import { computed, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { vOnClickOutside } from '@vueuse/components';
 import { RelayButton, RelayInput } from 'dashboard/components-next/relay';
+import { RELAY_DIALOG_OVERLAY_CLASS } from 'dashboard/components-next/relay/modal/constants';
+import RelayModalHeader from 'dashboard/components-next/relay/modal/RelayModalHeader.vue';
 
 const props = defineProps({
   open: { type: Boolean, default: false },
@@ -113,29 +115,18 @@ const applyFilters = () => {
     <div
       v-if="open"
       data-relay
-      class="fixed inset-0 z-[60] bg-background/80 backdrop-blur-sm transition-all duration-300"
+      :class="RELAY_DIALOG_OVERLAY_CLASS"
       @click.self="close"
     >
       <div
-        class="fixed inset-y-0 right-0 z-[60] flex w-full max-w-[450px] translate-x-0 animate-in slide-in-from-right flex-col border-l border-border bg-card p-6 shadow-2xl duration-300"
+        class="fixed inset-y-0 right-0 z-[60] flex w-full max-w-[450px] translate-x-0 animate-in slide-in-from-right flex-col border-l border-border bg-card p-0 shadow-2xl duration-300"
       >
-        <div class="mb-6 flex shrink-0 items-center justify-between">
-          <h2
-            class="capitalize text-base font-medium tracking-tight text-foreground"
-          >
-            {{ t('COMPANIES.FILTERS.TITLE') }}
-          </h2>
-          <RelayButton
-            variant="ghost"
-            size="icon"
-            class="size-8 text-muted-foreground hover:text-foreground border border-border hover:border-transparent"
-            @click="close"
-          >
-            <span class="i-lucide-x size-4" />
-          </RelayButton>
-        </div>
+        <RelayModalHeader
+          :title="t('COMPANIES.FILTERS.TITLE')"
+          @close="close"
+        />
 
-        <div class="hide-scrollbar flex-1 overflow-y-auto pr-2">
+        <div class="hide-scrollbar flex-1 overflow-y-auto px-6">
           <div class="mb-6 space-y-4">
             <div
               v-for="(draft, index) in filterDrafts"
@@ -259,7 +250,7 @@ const applyFilters = () => {
           </RelayButton>
         </div>
 
-        <div class="mt-6 flex shrink-0 gap-3 border-t border-border pt-6">
+        <div class="mt-6 flex shrink-0 gap-3 border-t border-border px-6 py-6">
           <RelayButton
             variant="outline"
             class="h-9 flex-1 text-sm font-medium"

@@ -215,6 +215,11 @@ export const icons = {
   /** Ends */
 
   /** Conversation Priority Starts */
+  'flag-solid': {
+    body: `<rect x="3.5" y="3" width="1.5" height="18" rx="0.5" fill="currentColor"/><path fill="currentColor" d="M8 2c3 0 5 2 7.333 2q2 0 3.067-.8A1 1 0 0 1 20 4v10a1 1 0 0 1-.4.8A6 6 0 0 1 16 16c-3 0-5-2-8-2a6 6 0 0 0-4 1.528"/>`,
+    width: 24,
+    height: 24,
+  },
   'priority-empty': {
     body: `<mask id="a" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="24" height="24"><path fill="currentColor" d="M0 0h24v24H0z"/></mask><g mask="url(#a)" fill="currentColor"><rect x="4" y="12" width="4" height="8" rx="2"/><rect x="10" y="8" width="4" height="12" rx="2"/><rect x="16" y="4" width="4" height="16" rx="2"/></g>`,
     width: 24,

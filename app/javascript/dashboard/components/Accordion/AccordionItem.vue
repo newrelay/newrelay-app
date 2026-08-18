@@ -6,10 +6,6 @@ defineProps({
     type: String,
     required: true,
   },
-  compact: {
-    type: Boolean,
-    default: false,
-  },
   icon: {
     type: String,
     default: '',
@@ -33,13 +29,16 @@ const onToggle = () => {
 
 <template>
   <div
-    class="text-sm bg-card border border-border/60 rounded-xl shadow-sm flex flex-col overflow-hidden"
+    class="flex flex-col overflow-visible rounded-xl border border-border/60 bg-card shadow-sm"
+    :class="isOpen ? 'p-4' : 'px-4 py-2.5'"
   >
     <button
-      class="flex items-center select-none w-full m-0 cursor-grab justify-between py-4 px-5 drag-handle hover:opacity-80 transition-opacity"
+      type="button"
+      class="drag-handle group flex min-h-0 w-full cursor-grab select-none items-center justify-between border-0 bg-transparent px-0 py-0 shadow-none focus-visible:outline-none"
+      :class="isOpen ? 'mb-3' : ''"
       @click.stop="onToggle"
     >
-      <div class="flex items-center gap-2">
+      <div class="flex min-w-0 items-center gap-2">
         <span
           v-if="icon && icon.startsWith('i-')"
           class="inline-block size-4 shrink-0 text-primary"
@@ -47,25 +46,25 @@ const onToggle = () => {
         />
         <EmojiOrIcon
           v-else-if="icon || emoji"
-          class="inline-block w-5"
+          class="inline-block size-4 shrink-0 text-primary"
           :icon="icon"
           :emoji="emoji"
         />
-        <h5
-          class="text-foreground text-[15px] font-semibold mb-0 py-0 pr-2 pl-0"
+        <h3
+          class="mb-0 truncate text-[14px] font-medium leading-none text-foreground"
         >
           {{ title }}
-        </h5>
+        </h3>
       </div>
-      <div class="flex flex-row items-center gap-2">
+      <div class="flex shrink-0 flex-row items-center gap-2">
         <slot name="button" />
         <span
-          class="size-[18px] text-primary transition-transform duration-200"
+          class="size-4 shrink-0 text-primary transition-transform duration-200"
           :class="isOpen ? 'i-lucide-chevron-up' : 'i-lucide-chevron-down'"
         />
       </div>
     </button>
-    <div v-if="isOpen" :class="compact ? 'p-0 px-5 pb-5' : 'px-5 pb-5'">
+    <div v-if="isOpen">
       <slot />
     </div>
   </div>

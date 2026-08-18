@@ -337,7 +337,7 @@ export default {
 
 <template>
   <div
-    class="px-3 py-2 flex items-center justify-between border-t border-border bg-muted/20 overflow-visible"
+    class="px-3 py-2 flex items-center justify-between border-t border-border bg-transparent overflow-visible"
   >
     <div class="flex items-center gap-1 flex-wrap">
       <!-- Attach -->

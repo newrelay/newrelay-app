@@ -281,7 +281,7 @@ export default {
 
 <template>
   <div
-    class="z-50 min-w-[12rem] p-1 rounded-md border border-border bg-popover text-foreground shadow-md"
+    class="z-50 min-w-56 overflow-visible rounded-md border border-border bg-popover p-1 text-popover-foreground shadow-md"
   >
     <template v-if="isAllowed([MENU.MARK_AS_READ, MENU.MARK_AS_UNREAD])">
       <MenuItem
@@ -296,7 +296,7 @@ export default {
         variant="icon"
         @click.stop="$emit('markAsRead')"
       />
-      <hr class="my-1 mx-0 border-b border-border" />
+      <div class="my-1 -mx-1 h-px bg-border" />
     </template>
     <template v-if="isAllowed([MENU.STATUS, MENU.SNOOZE])">
       <template v-for="option in statusMenuConfig">
@@ -314,7 +314,7 @@ export default {
         variant="icon"
         @click.stop="snoozeConversation()"
       />
-      <hr class="my-1 mx-0 border-b border-border" />
+      <div class="my-1 -mx-1 h-px bg-border" />
     </template>
     <template
       v-if="isAllowed([MENU.PRIORITY, MENU.LABEL, MENU.AGENT, MENU.TEAM])"
@@ -379,7 +379,7 @@ export default {
           @click.stop="$emit('assignTeam', team)"
         />
       </MenuItemWithSubmenu>
-      <hr class="my-1 mx-0 border-b border-border" />
+      <div class="my-1 -mx-1 h-px bg-border" />
     </template>
     <template v-if="isAllowed([MENU.OPEN_NEW_TAB, MENU.COPY_LINK])">
       <MenuItem
@@ -396,7 +396,7 @@ export default {
       />
     </template>
     <template v-if="isAdmin && isAllowed([MENU.DELETE])">
-      <hr class="my-1 mx-0 border-b border-border" />
+      <div class="my-1 -mx-1 h-px bg-border" />
       <MenuItem
         :option="deleteOption"
         variant="icon"

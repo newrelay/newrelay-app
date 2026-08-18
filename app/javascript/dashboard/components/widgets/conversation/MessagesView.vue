@@ -479,35 +479,37 @@ export default {
     </div>
     <MessageList
       ref="conversationPanelRef"
-      class="conversation-panel flex-shrink flex-grow basis-px flex flex-col overflow-y-auto relative h-full m-0 pb-4"
+      class="conversation-panel relative m-0 flex h-full flex-shrink flex-grow basis-px flex-col overflow-y-auto"
+      :class="[isInboxView ? 'pb-0' : 'pb-4']"
       :current-user-id="currentUserId"
       :first-unread-id="unReadMessages[0]?.id"
       :is-an-email-channel="isAnEmailChannel"
       :inbox-supports-reply-to="inboxSupportsReplyTo"
+      :is-inbox-view="isInboxView"
       :messages="getMessages"
       @retry="handleMessageRetry"
     >
       <template #beforeAll>
         <transition name="slide-up">
           <!-- eslint-disable-next-line vue/require-toggle-inside-transition -->
-          <li
-            class="min-h-[4rem] flex flex-shrink-0 flex-grow-0 items-center flex-auto justify-center max-w-full mt-0 mr-0 mb-1 ml-0 relative first:mt-auto last:mb-0"
+          <div
+            class="relative mb-1 ml-0 mr-0 mt-0 flex min-h-[4rem] max-w-full flex-auto flex-shrink-0 flex-grow-0 items-center justify-center last:mb-0 first:mt-auto"
           >
             <Spinner v-if="shouldShowSpinner" class="text-primary" />
-          </li>
+          </div>
         </transition>
       </template>
       <template #unreadBadge>
-        <li
+        <div
           v-show="unreadMessageCount != 0"
-          class="list-none flex justify-center items-center"
+          class="flex items-center justify-center"
         >
           <span
-            class="shadow-lg rounded-full bg-primary text-primary-foreground text-xs font-medium my-2.5 mx-auto px-2.5 py-1.5"
+            class="mx-auto my-2.5 rounded-full bg-primary px-2.5 py-1.5 text-xs font-medium text-primary-foreground shadow-lg"
           >
             {{ unreadMessageLabel }}
           </span>
-        </li>
+        </div>
       </template>
       <template #after>
         <ConversationLabelSuggestion
@@ -544,7 +546,7 @@ export default {
           </ResizableEditorWrapper>
         </div>
       </div>
-      <div v-else class="p-4 bg-muted/10 shrink-0 border-t border-border">
+      <div v-else class="p-4 bg-contact-panel shrink-0 border-t border-border">
         <ResizableEditorWrapper
           ref="resizableEditorWrapperRef"
           :container-height="Math.max(0, containerHeight - topBannerHeight)"

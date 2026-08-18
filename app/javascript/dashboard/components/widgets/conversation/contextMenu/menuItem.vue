@@ -1,67 +1,91 @@
 <script setup>
+import { computed } from 'vue';
 import Avatar from 'dashboard/components-next/avatar/Avatar.vue';
 import Icon from 'dashboard/components-next/icon/Icon.vue';
 
-defineProps({
+const props = defineProps({
   option: {
     type: Object,
-    default: () => {},
+    default: () => ({}),
   },
   variant: {
     type: String,
     default: 'default',
   },
 });
+
+const ICON_MAP = {
+  mail: 'i-lucide-mail',
+  'mail-unread': 'i-lucide-mail',
+  checkmark: 'i-lucide-check',
+  'arrow-redo': 'i-lucide-rotate-ccw',
+  'book-clock': 'i-lucide-hourglass',
+  snooze: 'i-lucide-alarm-clock',
+  warning: 'i-lucide-triangle-alert',
+  tag: 'i-lucide-tag',
+  'person-add': 'i-lucide-user-plus',
+  'people-team-add': 'i-lucide-users',
+  delete: 'i-lucide-trash-2',
+  open: 'i-lucide-external-link',
+  copy: 'i-lucide-copy',
+};
+
+const isDestructive = computed(() => props.option.key === 'delete');
+
+const iconClass = computed(() => {
+  if (props.variant === 'icon' && props.option.icon) {
+    return ICON_MAP[props.option.icon] || 'i-lucide-circle';
+  }
+  return null;
+});
+
+const itemClass = computed(() => {
+  if (isDestructive.value) {
+    return 'text-destructive hover:bg-destructive/10 hover:text-destructive focus:bg-destructive/10 focus:text-destructive';
+  }
+  return 'text-foreground hover:bg-accent hover:text-accent-foreground';
+});
 </script>
 
 <template>
-  <div
-    class="flex items-center min-w-[12rem] min-h-8 px-2 py-1.5 rounded-sm cursor-pointer text-sm font-medium transition-colors"
-    :class="
-      option.key === 'delete'
-        ? 'text-destructive hover:bg-destructive/10'
-        : 'text-foreground hover:bg-muted'
-    "
-    role="button"
+  <button
+    type="button"
+    class="flex w-full min-w-0 cursor-default items-center gap-2 rounded-sm px-2 py-1.5 text-left text-sm outline-none transition-colors"
+    :class="itemClass"
   >
-    <fluent-icon
-      v-if="variant === 'icon' && option.icon"
-      :icon="option.icon"
-      size="14"
-      class="flex-shrink-0 opacity-70"
+    <span
+      v-if="iconClass"
+      :class="[
+        iconClass,
+        isDestructive ? 'text-destructive' : 'text-muted-foreground',
+      ]"
+      class="size-4 shrink-0"
+      aria-hidden="true"
     />
+
     <span
       v-if="
         (variant === 'label' || variant === 'label-assigned') && option.color
       "
-      class="label-pill flex-shrink-0"
+      class="size-4 shrink-0 rounded-full border border-border"
       :style="{ backgroundColor: option.color }"
     />
+
     <Avatar
       v-if="variant === 'agent'"
       :name="option.label"
       :src="option.thumbnail"
       :status="option.status === 'online' ? option.status : null"
       :size="20"
-      class="flex-shrink-0"
+      class="shrink-0"
     />
-    <p class="my-0 mx-2 text-xs flex-shrink-0 min-w-0 flex-1 truncate">
-      {{ option.label }}
-    </p>
+
+    <span class="min-w-0 flex-1 truncate">{{ option.label }}</span>
+
     <Icon
       v-if="variant === 'label-assigned'"
       icon="i-lucide-check"
-      class="flex-shrink-0 size-3.5 mr-1"
+      class="size-3.5 shrink-0"
     />
-  </div>
+  </button>
 </template>
-
-<style scoped lang="scss">
-.agent-thumbnail {
-  margin-top: 0 !important;
-}
-
-.label-pill {
-  @apply w-4 h-4 rounded-full border border-border border-solid flex-shrink-0;
-}
-</style>

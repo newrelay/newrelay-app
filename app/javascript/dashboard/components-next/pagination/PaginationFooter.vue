@@ -3,7 +3,7 @@ import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useNumberFormatter } from 'shared/composables/useNumberFormatter';
 
-import Button from 'dashboard/components-next/button/Button.vue';
+import { RelayButton } from 'dashboard/components-next/relay';
 
 const props = defineProps({
   currentPage: {
@@ -61,70 +61,62 @@ const pageInfo = computed(() => {
   return t(
     'PAGINATION_FOOTER.CURRENT_PAGE_INFO',
     {
-      currentPage: '',
+      currentPage: formatFullNumber(props.currentPage),
       totalPages: formatCompactNumber(totalPages.value),
     },
     Number(totalPages.value)
   );
 });
+
+const paginationButtonClass =
+  'size-7 rounded-md border border-border hover:border-transparent hover:bg-muted transition-colors disabled:opacity-40 disabled:cursor-not-allowed';
 </script>
 
 <template>
   <div
-    class="flex justify-between h-[3.375rem] w-full border-t border-border mx-auto bg-muted py-3 px-6 items-center before:absolute before:inset-x-0 before:-top-4 before:bg-gradient-to-t before:from-muted before:from-0% before:to-transparent before:h-4 before:pointer-events-none"
+    class="mx-auto flex w-full items-center justify-between border-t border-border bg-background px-4 py-3 text-[13px] text-muted-foreground"
   >
-    <div class="flex items-center gap-3">
-      <span class="min-w-0 text-body-main line-clamp-1 text-muted-foreground">
-        {{ currentPageInformation }}
-      </span>
-    </div>
+    <span class="min-w-0 truncate">
+      {{ currentPageInformation }}
+    </span>
     <div class="flex items-center gap-2">
-      <Button
-        icon="i-lucide-chevrons-left"
-        variant="ghost"
-        size="sm"
-        color="slate"
-        class="!w-8 !h-6 border border-border hover:border-transparent"
+      <RelayButton
+        variant="outline"
+        size="icon"
+        :class="paginationButtonClass"
         :disabled="isFirstPage"
         @click="changePage(1)"
-      />
-      <Button
-        icon="i-lucide-chevron-left"
-        variant="ghost"
-        color="slate"
-        size="sm"
-        class="!w-8 !h-6 border border-border hover:border-transparent"
+      >
+        <span class="i-lucide-chevrons-left size-3.5" />
+      </RelayButton>
+      <RelayButton
+        variant="outline"
+        size="icon"
+        :class="paginationButtonClass"
         :disabled="isFirstPage"
         @click="changePage(currentPage - 1)"
-      />
-      <div class="inline-flex items-center gap-2 text-sm">
-        <span
-          class="px-3 tabular-nums py-0.5 font-420 bg-background text-body-main text-foreground rounded-md"
-        >
-          {{ formatFullNumber(currentPage) }}
-        </span>
-        <span class="truncate text-body-main text-muted-foreground">
-          {{ pageInfo }}
-        </span>
-      </div>
-      <Button
-        icon="i-lucide-chevron-right"
-        variant="ghost"
-        color="slate"
-        size="sm"
-        class="!w-8 !h-6 border border-border hover:border-transparent"
+      >
+        <span class="i-lucide-chevron-left size-3.5" />
+      </RelayButton>
+      <span class="truncate tabular-nums">{{ pageInfo }}</span>
+      <RelayButton
+        variant="outline"
+        size="icon"
+        :class="paginationButtonClass"
         :disabled="isLastPage"
         @click="changePage(currentPage + 1)"
-      />
-      <Button
-        icon="i-lucide-chevrons-right"
-        variant="ghost"
-        color="slate"
-        size="sm"
-        class="!w-8 !h-6 border border-border hover:border-transparent"
+      >
+        <span class="i-lucide-chevron-right size-3.5" />
+      </RelayButton>
+      <RelayButton
+        variant="outline"
+        size="icon"
+        :class="paginationButtonClass"
         :disabled="isLastPage"
         @click="changePage(totalPages)"
-      />
+      >
+        <span class="i-lucide-chevrons-right size-3.5" />
+      </RelayButton>
     </div>
   </div>
 </template>

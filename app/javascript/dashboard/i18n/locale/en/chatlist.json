@@ -12,9 +12,13 @@
     "MENTION_HEADING": "Mentions",
     "UNATTENDED_HEADING": "Unattended",
     "SEARCH": {
-      "INPUT": "Search for People, Chats, Saved Replies .."
+      "INPUT": "Search conversations...",
+      "CLOSE": "Close search"
     },
     "FILTER_ALL": "All",
+    "EMPTY_STATE": {
+      "DEV_MOCK_DATA": "Populate Mock Data"
+    },
     "MORE_OPTIONS": "More options",
     "SELECT_ALL": "Select All",
     "DESELECT_ALL": "Deselect All",

@@ -187,11 +187,7 @@ watch(
       :is-on-expanded-layout="isOnExpandedLayout"
       class="flex-1 bg-background border-0"
     />
-    <ConversationSidebar
-      v-if="shouldShowSidebar"
-      :current-chat="currentChat"
-      class="w-[320px] bg-card border-l border-border/60 shrink-0"
-    />
+    <ConversationSidebar v-if="shouldShowSidebar" :current-chat="currentChat" />
     <CmdBarConversationSnooze />
   </section>
 </template>

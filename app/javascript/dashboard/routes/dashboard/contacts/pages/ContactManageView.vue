@@ -176,10 +176,9 @@ onMounted(() => {
       <div
         class="flex min-h-0 min-w-0 flex-1 flex-col bg-background lg:overflow-hidden"
       >
-        <!-- Detail tabs: absolute bar — global button { border-0 } kills border-b-2 -->
-        <div class="shrink-0 border-b border-border/40 bg-card px-6">
+        <div class="shrink-0 px-6">
           <div
-            class="flex h-12 w-full items-center justify-start gap-6"
+            class="flex items-center gap-6 border-b border-border"
             role="tablist"
           >
             <button
@@ -188,20 +187,15 @@ onMounted(() => {
               type="button"
               role="tab"
               :aria-selected="activeTab === tab.value"
-              class="relative -mb-px h-full px-1 text-sm font-medium transition-colors"
+              class="reset-base shrink-0 !border-b-2 px-1 pb-2 text-sm transition-colors"
               :class="
                 activeTab === tab.value
-                  ? 'text-foreground'
-                  : 'text-muted-foreground hover:text-foreground'
+                  ? 'border-primary font-medium text-foreground'
+                  : 'border-transparent text-muted-foreground hover:text-foreground'
               "
               @click="activeTab = tab.value"
             >
               {{ t(tab.labelKey) }}
-              <span
-                v-if="activeTab === tab.value"
-                class="absolute inset-x-0 bottom-0 h-0.5 bg-primary"
-                aria-hidden="true"
-              />
             </button>
           </div>
         </div>

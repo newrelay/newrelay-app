@@ -8,6 +8,11 @@ import Spinner from 'dashboard/components-next/spinner/Spinner.vue';
 import Avatar from 'dashboard/components-next/avatar/Avatar.vue';
 import PhoneNumberInput from 'dashboard/components-next/phonenumberinput/PhoneNumberInput.vue';
 import CompanyAPI from 'dashboard/api/companies';
+import RelayModalHeader from 'dashboard/components-next/relay/modal/RelayModalHeader.vue';
+import {
+  RELAY_DIALOG_OVERLAY_CLASS,
+  RELAY_MODAL_BODY_CLASS,
+} from 'dashboard/components-next/relay/modal/constants';
 
 const { t } = useI18n();
 
@@ -366,38 +371,30 @@ onMounted(() => {
     <!-- Add/Edit Company Slide-over Drawer -->
     <div
       v-show="isDrawerOpen"
-      class="fixed inset-0 z-[100] flex justify-end bg-black/10 backdrop-blur-sm"
+      class="flex justify-end"
+      :class="[RELAY_DIALOG_OVERLAY_CLASS]"
       @click.self="closeDrawer"
     >
       <div
         class="w-full max-w-lg h-full bg-muted shadow-2xl flex flex-col transition-transform duration-300 transform translate-x-0"
       >
-        <!-- Header -->
-        <div
-          class="p-6 border-b border-muted flex items-center justify-between"
-        >
-          <h2
-            class="capitalize text-lg font-semibold text-foreground flex items-center gap-2"
-          >
-            <span class="i-lucide-plus-circle text-primary size-5" />
-            {{
-              editingCompany
-                ? t('CONTACTS_LAYOUT.COMPANIES_VIEW.EDIT_COMPANY')
-                : t('CONTACTS_LAYOUT.COMPANIES_VIEW.ADD_NEW_COMPANY')
-            }}
-          </h2>
-          <Button
-            icon="i-lucide-x"
-            variant="ghost"
-            color="slate"
-            size="sm"
-            class="border border-border hover:border-transparent"
-            @click="closeDrawer"
-          />
-        </div>
+        <RelayModalHeader @close="closeDrawer">
+          <template #title>
+            <h2
+              class="flex items-center gap-2 text-[18px] font-[600] capitalize tracking-tight text-foreground"
+            >
+              <span class="i-lucide-plus-circle size-5 text-primary" />
+              {{
+                editingCompany
+                  ? t('CONTACTS_LAYOUT.COMPANIES_VIEW.EDIT_COMPANY')
+                  : t('CONTACTS_LAYOUT.COMPANIES_VIEW.ADD_NEW_COMPANY')
+              }}
+            </h2>
+          </template>
+        </RelayModalHeader>
 
         <!-- Form Content -->
-        <div class="flex-1 overflow-y-auto p-6 space-y-6">
+        <div class="flex-1 space-y-6" :class="[RELAY_MODAL_BODY_CLASS]">
           <div>
             <label
               class="block text-foreground mb-1.5 text-[13.5px] font-[500]"

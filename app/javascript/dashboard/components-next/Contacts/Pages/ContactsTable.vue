@@ -160,260 +160,294 @@ const handleColumnSort = sortKey => {
   }
   emit('update:sort', { sort: sortKey, order: '' });
 };
+
+const emptyPlaceholderClass = 'text-muted-foreground/50 text-[13px]';
 </script>
 
 <template>
-  <div
-    class="w-full overflow-hidden rounded-xl border border-border/60 bg-card shadow-xs"
-  >
-    <div class="w-full overflow-x-auto">
-      <table class="w-full text-left text-sm">
-        <thead class="border-b border-border/50 bg-muted/30">
-          <tr>
-            <th class="w-12 px-4 py-3 align-middle">
-              <RelayCheckbox
-                :model-value="isAllSelected"
-                :indeterminate="isSomeSelected"
-                class="border-muted-foreground/30"
-                @update:model-value="handleSelectAll"
-              />
-            </th>
-            <th
-              class="whitespace-nowrap px-4 py-3 font-medium text-muted-foreground"
-              :aria-sort="sortAriaValue(SORTABLE_COLUMNS.name)"
-            >
-              <button
-                type="button"
-                class="inline-flex items-center gap-1 transition-colors hover:text-foreground"
-                @click="handleColumnSort(SORTABLE_COLUMNS.name)"
-              >
-                {{ t('CONTACTS_LAYOUT.FILTER.NAME') }}
-                <span
-                  class="size-3.5 shrink-0"
-                  :class="sortIconClass(SORTABLE_COLUMNS.name)"
-                />
-              </button>
-            </th>
-            <th
-              v-if="visibleColumns.includes('email')"
-              class="whitespace-nowrap px-4 py-3 font-medium text-muted-foreground"
-              :aria-sort="sortAriaValue(SORTABLE_COLUMNS.email)"
-            >
-              <button
-                type="button"
-                class="inline-flex items-center gap-1 transition-colors hover:text-foreground"
-                @click="handleColumnSort(SORTABLE_COLUMNS.email)"
-              >
-                {{ t('CONTACTS_LAYOUT.FILTER.EMAIL') }}
-                <span
-                  class="size-3.5 shrink-0"
-                  :class="sortIconClass(SORTABLE_COLUMNS.email)"
-                />
-              </button>
-            </th>
-            <th
-              v-if="visibleColumns.includes('phoneNumber')"
-              class="whitespace-nowrap px-4 py-3 font-medium text-muted-foreground"
-              :aria-sort="sortAriaValue(SORTABLE_COLUMNS.phoneNumber)"
-            >
-              <button
-                type="button"
-                class="inline-flex items-center gap-1 transition-colors hover:text-foreground"
-                @click="handleColumnSort(SORTABLE_COLUMNS.phoneNumber)"
-              >
-                {{ t('CONTACTS_LAYOUT.FILTER.PHONE_NUMBER') }}
-                <span
-                  class="size-3.5 shrink-0"
-                  :class="sortIconClass(SORTABLE_COLUMNS.phoneNumber)"
-                />
-              </button>
-            </th>
-            <th
-              v-if="visibleColumns.includes('company')"
-              class="whitespace-nowrap px-4 py-3 font-medium text-muted-foreground"
-              :aria-sort="sortAriaValue(SORTABLE_COLUMNS.company)"
-            >
-              <button
-                type="button"
-                class="inline-flex items-center gap-1 transition-colors hover:text-foreground"
-                @click="handleColumnSort(SORTABLE_COLUMNS.company)"
-              >
-                {{ t('CONTACTS_LAYOUT.FILTER.COMPANY') }}
-                <span
-                  class="size-3.5 shrink-0"
-                  :class="sortIconClass(SORTABLE_COLUMNS.company)"
-                />
-              </button>
-            </th>
-            <th
-              v-if="visibleColumns.includes('createdAt')"
-              class="hidden whitespace-nowrap px-4 py-3 font-medium text-muted-foreground lg:table-cell"
-              :aria-sort="sortAriaValue(SORTABLE_COLUMNS.createdAt)"
-            >
-              <button
-                type="button"
-                class="inline-flex items-center gap-1 transition-colors hover:text-foreground"
-                @click="handleColumnSort(SORTABLE_COLUMNS.createdAt)"
-              >
-                {{ t('CONTACTS_LAYOUT.FILTER.CREATED_AT') }}
-                <span
-                  class="size-3.5 shrink-0"
-                  :class="sortIconClass(SORTABLE_COLUMNS.createdAt)"
-                />
-              </button>
-            </th>
-            <th
-              v-if="visibleColumns.includes('lastActivity')"
-              class="hidden whitespace-nowrap px-4 py-3 font-medium text-muted-foreground lg:table-cell"
-              :aria-sort="sortAriaValue(SORTABLE_COLUMNS.lastActivity)"
-            >
-              <button
-                type="button"
-                class="inline-flex items-center gap-1 transition-colors hover:text-foreground"
-                @click="handleColumnSort(SORTABLE_COLUMNS.lastActivity)"
-              >
-                {{ t('CONTACTS_LAYOUT.FILTER.LAST_ACTIVITY') }}
-                <span
-                  class="size-3.5 shrink-0"
-                  :class="sortIconClass(SORTABLE_COLUMNS.lastActivity)"
-                />
-              </button>
-            </th>
-            <th
-              v-if="visibleColumns.includes('tags')"
-              class="whitespace-nowrap px-4 py-3 font-medium text-muted-foreground"
-            >
-              {{ t('CONTACTS_LAYOUT.FILTER.TAGS') }}
-            </th>
-            <th
-              v-for="col in visibleCustomColumns"
-              :key="col.key"
-              class="whitespace-nowrap px-4 py-3 font-medium text-muted-foreground"
-            >
-              {{ col.label }}
-            </th>
-          </tr>
-        </thead>
-        <tbody class="divide-y divide-border/40">
-          <tr
-            v-for="contact in contacts"
-            :key="contact.id"
-            class="group cursor-pointer transition-colors hover:bg-muted/30"
-            :class="{ 'bg-muted/20': isSelected(contact.id) }"
-            @click="onClickViewDetails(contact.id)"
+  <div class="w-full overflow-x-auto">
+    <table class="w-full text-left text-sm">
+      <thead class="border-b border-border bg-muted/30">
+        <tr>
+          <th class="w-12 px-4 py-3 text-left align-middle">
+            <RelayCheckbox
+              :model-value="isAllSelected"
+              :indeterminate="isSomeSelected"
+              @update:model-value="handleSelectAll"
+            />
+          </th>
+          <th
+            class="whitespace-nowrap px-4 py-3 text-left text-[12px] font-medium text-muted-foreground"
+            :aria-sort="sortAriaValue(SORTABLE_COLUMNS.name)"
           >
-            <td class="px-4 py-4 align-middle" @click.stop>
-              <RelayCheckbox
-                :model-value="isSelected(contact.id)"
-                class="border-muted-foreground/30"
-                @update:model-value="
-                  checked => handleSelectRow(contact.id, checked)
-                "
-              />
-            </td>
-
-            <td class="min-w-[200px] px-4 py-4 align-middle">
-              <div class="flex items-center gap-3">
-                <Avatar
-                  :name="contact.name"
-                  :src="contact.thumbnail"
-                  :size="36"
-                  rounded-full
-                  hide-offline-status
-                  class="shadow-sm ring-1 ring-border/50"
-                />
-                <button
-                  type="button"
-                  class="truncate text-left font-medium text-foreground hover:underline"
-                  @click.stop="onClickViewDetails(contact.id)"
-                >
-                  {{
-                    contact.name || t('CONTACTS_LAYOUT.CARD.UNNAMED_CONTACT')
-                  }}
-                </button>
-              </div>
-            </td>
-
-            <td
-              v-if="visibleColumns.includes('email')"
-              class="px-4 py-4 align-middle"
-              @click.stop
+            <button
+              type="button"
+              class="inline-flex items-center gap-1 transition-colors hover:text-foreground"
+              @click="handleColumnSort(SORTABLE_COLUMNS.name)"
             >
-              <ComposeConversation
-                v-if="contact.email"
-                :initial-contact="contact"
-                align="start"
-              >
-                <template #trigger>
-                  <span
-                    class="cursor-pointer truncate text-sm text-foreground hover:text-primary hover:underline"
-                  >
-                    {{ contact.email }}
-                  </span>
-                </template>
-              </ComposeConversation>
-              <span v-else class="text-sm text-muted-foreground">—</span>
-            </td>
+              {{ t('CONTACTS_LAYOUT.FILTER.NAME') }}
+              <span
+                class="size-3.5 shrink-0"
+                :class="sortIconClass(SORTABLE_COLUMNS.name)"
+              />
+            </button>
+          </th>
+          <th
+            v-if="visibleColumns.includes('email')"
+            class="whitespace-nowrap px-4 py-3 text-left text-[12px] font-medium text-muted-foreground"
+            :aria-sort="sortAriaValue(SORTABLE_COLUMNS.email)"
+          >
+            <button
+              type="button"
+              class="inline-flex items-center gap-1 transition-colors hover:text-foreground"
+              @click="handleColumnSort(SORTABLE_COLUMNS.email)"
+            >
+              {{ t('CONTACTS_LAYOUT.FILTER.EMAIL') }}
+              <span
+                class="size-3.5 shrink-0"
+                :class="sortIconClass(SORTABLE_COLUMNS.email)"
+              />
+            </button>
+          </th>
+          <th
+            v-if="visibleColumns.includes('phoneNumber')"
+            class="whitespace-nowrap px-4 py-3 text-left text-[12px] font-medium text-muted-foreground"
+            :aria-sort="sortAriaValue(SORTABLE_COLUMNS.phoneNumber)"
+          >
+            <button
+              type="button"
+              class="inline-flex items-center gap-1 transition-colors hover:text-foreground"
+              @click="handleColumnSort(SORTABLE_COLUMNS.phoneNumber)"
+            >
+              {{ t('CONTACTS_LAYOUT.FILTER.PHONE_NUMBER') }}
+              <span
+                class="size-3.5 shrink-0"
+                :class="sortIconClass(SORTABLE_COLUMNS.phoneNumber)"
+              />
+            </button>
+          </th>
+          <th
+            v-if="visibleColumns.includes('company')"
+            class="whitespace-nowrap px-4 py-3 text-left text-[12px] font-medium text-muted-foreground"
+            :aria-sort="sortAriaValue(SORTABLE_COLUMNS.company)"
+          >
+            <button
+              type="button"
+              class="inline-flex items-center gap-1 transition-colors hover:text-foreground"
+              @click="handleColumnSort(SORTABLE_COLUMNS.company)"
+            >
+              {{ t('CONTACTS_LAYOUT.FILTER.COMPANY') }}
+              <span
+                class="size-3.5 shrink-0"
+                :class="sortIconClass(SORTABLE_COLUMNS.company)"
+              />
+            </button>
+          </th>
+          <th
+            v-if="visibleColumns.includes('createdAt')"
+            class="hidden whitespace-nowrap px-4 py-3 text-left text-[12px] font-medium text-muted-foreground lg:table-cell"
+            :aria-sort="sortAriaValue(SORTABLE_COLUMNS.createdAt)"
+          >
+            <button
+              type="button"
+              class="inline-flex items-center gap-1 transition-colors hover:text-foreground"
+              @click="handleColumnSort(SORTABLE_COLUMNS.createdAt)"
+            >
+              {{ t('CONTACTS_LAYOUT.FILTER.CREATED_AT') }}
+              <span
+                class="size-3.5 shrink-0"
+                :class="sortIconClass(SORTABLE_COLUMNS.createdAt)"
+              />
+            </button>
+          </th>
+          <th
+            v-if="visibleColumns.includes('lastActivity')"
+            class="hidden whitespace-nowrap px-4 py-3 text-left text-[12px] font-medium text-muted-foreground lg:table-cell"
+            :aria-sort="sortAriaValue(SORTABLE_COLUMNS.lastActivity)"
+          >
+            <button
+              type="button"
+              class="inline-flex items-center gap-1 transition-colors hover:text-foreground"
+              @click="handleColumnSort(SORTABLE_COLUMNS.lastActivity)"
+            >
+              {{ t('CONTACTS_LAYOUT.FILTER.LAST_ACTIVITY') }}
+              <span
+                class="size-3.5 shrink-0"
+                :class="sortIconClass(SORTABLE_COLUMNS.lastActivity)"
+              />
+            </button>
+          </th>
+          <th
+            v-if="visibleColumns.includes('tags')"
+            class="whitespace-nowrap px-4 py-3 text-left text-[12px] font-medium text-muted-foreground"
+          >
+            {{ t('CONTACTS_LAYOUT.FILTER.TAGS') }}
+          </th>
+          <th
+            v-for="col in visibleCustomColumns"
+            :key="col.key"
+            class="whitespace-nowrap px-4 py-3 text-left text-[12px] font-medium text-muted-foreground"
+          >
+            {{ col.label }}
+          </th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-border/40">
+        <tr
+          v-for="contact in contacts"
+          :key="contact.id"
+          class="group cursor-pointer transition-colors hover:bg-muted/30"
+          :class="{ 'bg-muted/20': isSelected(contact.id) }"
+          @click="onClickViewDetails(contact.id)"
+        >
+          <td class="px-4 py-4 align-middle" @click.stop>
+            <RelayCheckbox
+              :model-value="isSelected(contact.id)"
+              @update:model-value="
+                checked => handleSelectRow(contact.id, checked)
+              "
+            />
+          </td>
 
-            <td
-              v-if="visibleColumns.includes('phoneNumber')"
-              class="whitespace-nowrap px-4 py-4 align-middle text-sm text-muted-foreground"
+          <td class="min-w-[200px] px-4 py-4 align-middle">
+            <div class="flex items-center gap-3">
+              <Avatar
+                :name="contact.name"
+                :src="contact.thumbnail"
+                :size="36"
+                rounded-full
+                hide-offline-status
+                class="shadow-sm ring-1 ring-border/50"
+              />
+              <button
+                type="button"
+                class="truncate text-left font-medium text-foreground hover:underline"
+                @click.stop="onClickViewDetails(contact.id)"
+              >
+                {{ contact.name || t('CONTACTS_LAYOUT.CARD.UNNAMED_CONTACT') }}
+              </button>
+            </div>
+          </td>
+
+          <td
+            v-if="visibleColumns.includes('email')"
+            class="px-4 py-4 align-middle"
+            @click.stop
+          >
+            <ComposeConversation
+              v-if="contact.email"
+              :initial-contact="contact"
+              align="start"
+            >
+              <template #trigger>
+                <span
+                  class="cursor-pointer truncate text-sm text-foreground hover:text-primary hover:underline"
+                >
+                  {{ contact.email }}
+                </span>
+              </template>
+            </ComposeConversation>
+            <span v-else :class="emptyPlaceholderClass">—</span>
+          </td>
+
+          <td
+            v-if="visibleColumns.includes('phoneNumber')"
+            class="whitespace-nowrap px-4 py-4 align-middle"
+          >
+            <span
+              :class="
+                contact.phoneNumber
+                  ? 'text-sm text-muted-foreground'
+                  : emptyPlaceholderClass
+              "
             >
               {{ contact.phoneNumber || '—' }}
-            </td>
+            </span>
+          </td>
 
-            <td
-              v-if="visibleColumns.includes('company')"
-              class="px-4 py-4 align-middle text-sm text-foreground"
+          <td
+            v-if="visibleColumns.includes('company')"
+            class="px-4 py-4 align-middle"
+          >
+            <span
+              :class="
+                contact.additionalAttributes?.companyName
+                  ? 'text-sm text-foreground'
+                  : emptyPlaceholderClass
+              "
             >
               {{ contact.additionalAttributes?.companyName || '—' }}
-            </td>
+            </span>
+          </td>
 
-            <td
-              v-if="visibleColumns.includes('createdAt')"
-              class="hidden whitespace-nowrap px-4 py-4 align-middle text-sm text-muted-foreground lg:table-cell"
+          <td
+            v-if="visibleColumns.includes('createdAt')"
+            class="hidden whitespace-nowrap px-4 py-4 align-middle lg:table-cell"
+          >
+            <span
+              :class="
+                formatDate(contact.createdAt)
+                  ? 'text-sm text-muted-foreground'
+                  : emptyPlaceholderClass
+              "
             >
               {{ formatDate(contact.createdAt) || '—' }}
-            </td>
+            </span>
+          </td>
 
-            <td
-              v-if="visibleColumns.includes('lastActivity')"
-              class="hidden whitespace-nowrap px-4 py-4 align-middle text-sm text-muted-foreground lg:table-cell"
+          <td
+            v-if="visibleColumns.includes('lastActivity')"
+            class="hidden whitespace-nowrap px-4 py-4 align-middle lg:table-cell"
+          >
+            <span
+              :class="
+                getRelativeTime(contact.lastActivityAt)
+                  ? 'text-sm text-muted-foreground'
+                  : emptyPlaceholderClass
+              "
             >
               {{ getRelativeTime(contact.lastActivityAt) || '—' }}
-            </td>
+            </span>
+          </td>
 
-            <td
-              v-if="visibleColumns.includes('tags')"
-              class="px-4 py-4 align-middle"
-            >
-              <div class="flex flex-wrap gap-1.5">
-                <span
-                  v-for="label in (contact.labels || []).slice(0, 3)"
-                  :key="label"
-                  class="inline-flex items-center rounded-md border border-border/50 bg-muted px-2 py-0.5 text-[11px] font-medium text-muted-foreground"
-                >
-                  {{ label }}
-                </span>
-                <span
-                  v-if="(contact.labels || []).length > 3"
-                  class="inline-flex items-center rounded-md border border-border/50 bg-muted px-2 py-0.5 text-[11px] font-medium text-muted-foreground"
-                >
-                  +{{ contact.labels.length - 3 }}
-                </span>
-              </div>
-            </td>
+          <td
+            v-if="visibleColumns.includes('tags')"
+            class="px-4 py-4 align-middle"
+          >
+            <div class="flex flex-wrap gap-1.5">
+              <span
+                v-for="label in (contact.labels || []).slice(0, 3)"
+                :key="label"
+                class="inline-flex items-center rounded-md border border-border/50 bg-muted px-2 py-0.5 text-[11px] font-medium text-muted-foreground"
+              >
+                {{ label }}
+              </span>
+              <span
+                v-if="(contact.labels || []).length > 3"
+                class="inline-flex items-center rounded-md border border-border/50 bg-muted px-2 py-0.5 text-[11px] font-medium text-muted-foreground"
+              >
+                +{{ contact.labels.length - 3 }}
+              </span>
+            </div>
+          </td>
 
-            <td
-              v-for="col in visibleCustomColumns"
-              :key="col.key"
-              class="px-4 py-4 align-middle text-sm text-muted-foreground"
+          <td
+            v-for="col in visibleCustomColumns"
+            :key="col.key"
+            class="px-4 py-4 align-middle"
+          >
+            <span
+              :class="
+                contact.customAttributes?.[col.attributeKey]
+                  ? 'text-sm text-muted-foreground'
+                  : emptyPlaceholderClass
+              "
             >
               {{ contact.customAttributes?.[col.attributeKey] || '—' }}
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
+            </span>
+          </td>
+        </tr>
+      </tbody>
+    </table>
   </div>
 </template>

@@ -1,13 +1,11 @@
 <script setup>
-import { computed } from 'vue';
+import { ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useStore } from 'vuex';
 import { useRoute, useRouter } from 'vue-router';
 import { useAlert } from 'dashboard/composables';
 import { useMapGetter } from 'dashboard/composables/store';
-
-import Popover from 'dashboard/components-next/popover/Popover.vue';
-import Button from 'dashboard/components-next/button/Button.vue';
+import { RelayDeleteConfirmModal } from 'dashboard/components-next/relay';
 
 import {
   isAConversationRoute,
@@ -30,16 +28,17 @@ const route = useRoute();
 const router = useRouter();
 
 const uiFlags = useMapGetter('contacts/getUIFlags');
+const showDeleteModal = ref(false);
 
-const confirmMessage = computed(
-  () => `${t('DELETE_CONTACT.CONFIRM.MESSAGE')} ${props.contact.name}?`
-);
+const openDeleteModal = () => {
+  showDeleteModal.value = true;
+};
 
-const onDelete = async hide => {
+const onDelete = async () => {
   try {
     await store.dispatch('contacts/delete', props.contact.id);
     useAlert(t('DELETE_CONTACT.API.SUCCESS_MESSAGE'));
-    hide();
+    showDeleteModal.value = false;
     emit('deleted');
     emit('close');
 
@@ -57,38 +56,19 @@ const onDelete = async hide => {
 </script>
 
 <template>
-  <Popover @hide="$emit('close')">
-    <slot name="trigger" />
-    <template #content="{ hide }">
-      <div class="w-full md:w-80 p-6 flex flex-col gap-4">
-        <div class="flex flex-col gap-2">
-          <h3
-            class="capitalize text-base font-medium leading-6 text-foreground"
-          >
-            {{ $t('DELETE_CONTACT.CONFIRM.TITLE') }}
-          </h3>
-          <p class="mb-0 text-sm text-muted-foreground">
-            {{ confirmMessage }}
-          </p>
-        </div>
-        <div class="flex items-center justify-end gap-2">
-          <Button
-            faded
-            slate
-            sm
-            :label="$t('DELETE_CONTACT.CONFIRM.NO')"
-            @click="hide"
-          />
-          <Button
-            ruby
-            sm
-            :label="$t('DELETE_CONTACT.CONFIRM.YES')"
-            :is-loading="uiFlags.isDeleting"
-            :disabled="uiFlags.isDeleting"
-            @click="onDelete(hide)"
-          />
-        </div>
-      </div>
-    </template>
-  </Popover>
+  <div class="contents">
+    <slot name="trigger" :open="openDeleteModal" />
+    <RelayDeleteConfirmModal
+      :show="showDeleteModal"
+      :title="t('DELETE_CONTACT.CONFIRM.TITLE')"
+      :highlight-name="contact.name"
+      :description-prefix="t('DELETE_CONTACT.CONFIRM.DESCRIPTION_PREFIX')"
+      :description-suffix="t('DELETE_CONTACT.CONFIRM.DESCRIPTION_SUFFIX')"
+      :confirm-text="t('DELETE_CONTACT.CONFIRM.YES')"
+      :cancel-text="t('DELETE_CONTACT.CONFIRM.NO')"
+      :is-loading="uiFlags.isDeleting"
+      @update:show="showDeleteModal = $event"
+      @confirm="onDelete"
+    />
+  </div>
 </template>

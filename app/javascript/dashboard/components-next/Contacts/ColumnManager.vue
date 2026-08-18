@@ -41,14 +41,17 @@ const toggleColumn = (key, checked) => {
   }
   emit('update:visibleColumns', updated);
 };
+
+const itemClass =
+  'flex w-full cursor-default items-center gap-2 rounded-sm px-2 py-1.5 text-left text-sm text-foreground transition-colors hover:bg-accent hover:text-accent-foreground';
 </script>
 
 <template>
-  <div class="flex max-h-96 w-56 flex-col gap-1 p-2">
+  <div class="min-w-48 p-1">
     <div
-      class="flex cursor-not-allowed items-center gap-2 rounded-md px-2 py-1.5 text-sm text-foreground opacity-70"
+      class="flex cursor-not-allowed items-center gap-2 rounded-sm px-2 py-1.5 text-sm text-muted-foreground opacity-70"
     >
-      <span class="i-lucide-check size-4 opacity-100" />
+      <span class="i-lucide-check size-4 text-foreground" />
       <span>{{ t('CONTACTS_LAYOUT.FILTER.NAME') }}</span>
     </div>
 
@@ -56,11 +59,11 @@ const toggleColumn = (key, checked) => {
       v-for="col in allColumns"
       :key="col.key"
       type="button"
-      class="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-sm text-foreground hover:bg-accent"
+      :class="itemClass"
       @click="toggleColumn(col.key, !visibleColumns.includes(col.key))"
     >
       <span
-        class="i-lucide-check size-4"
+        class="i-lucide-check size-4 text-foreground"
         :class="visibleColumns.includes(col.key) ? 'opacity-100' : 'opacity-0'"
       />
       <span>{{ col.label }}</span>

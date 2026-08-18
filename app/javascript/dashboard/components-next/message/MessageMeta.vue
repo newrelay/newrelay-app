@@ -1,9 +1,12 @@
 <script setup>
 import { computed } from 'vue';
+import format from 'date-fns/format';
+import fromUnixTime from 'date-fns/fromUnixTime';
 import { messageTimestamp } from 'shared/helpers/timeHelper';
 
 import MessageStatus from './MessageStatus.vue';
 import Icon from 'next/icon/Icon.vue';
+import IconWhatsApp from 'dashboard/components-next/icons/IconWhatsApp.vue';
 import { useInbox } from 'dashboard/composables/useInbox';
 import { useMessageContext } from './provider.js';
 
@@ -30,10 +33,23 @@ const {
   sourceId,
   messageType,
   contentAttributes,
+  orientation,
+  isInboxView,
 } = useMessageContext();
 
-const readableTime = computed(() =>
-  messageTimestamp(createdAt.value, 'LLL d, h:mm a')
+const readableTime = computed(() => {
+  if (isInboxView?.value) {
+    return format(fromUnixTime(createdAt.value), 'h:mm a');
+  }
+
+  return messageTimestamp(createdAt.value, 'LLL d, h:mm a');
+});
+
+const showWhatsAppIcon = computed(
+  () =>
+    isInboxView?.value &&
+    messageType.value === MESSAGE_TYPES.INCOMING &&
+    isAWhatsAppChannel.value
 );
 
 const showStatusIndicator = computed(() => {
@@ -132,11 +148,19 @@ const statusToShow = computed(() => {
 </script>
 
 <template>
-  <div class="text-xs flex items-center gap-1.5">
+  <div
+    class="flex items-center gap-1.5"
+    :class="[
+      isInboxView?.value ? 'text-[11px]' : 'text-xs',
+      isInboxView?.value && orientation?.value === 'right' ? 'mr-1' : '',
+      isInboxView?.value && orientation?.value === 'left' ? 'ml-1' : '',
+    ]"
+  >
     <div class="inline">
       <time class="inline">{{ readableTime }}</time>
     </div>
     <Icon v-if="isPrivate" icon="i-lucide-lock-keyhole" class="size-3" />
+    <IconWhatsApp v-if="showWhatsAppIcon" class="size-3 text-emerald-500" />
     <MessageStatus v-if="showStatusIndicator" :status="statusToShow" />
   </div>
 </template>

@@ -67,6 +67,9 @@ const currentOperator = computed(() =>
   getOperator(currentFilter.value, filterOperator.value)
 );
 
+const FILTER_DROPDOWN_TRIGGER_CLASS =
+  'flex h-9 w-full items-center justify-between rounded-md border border-border/80 bg-background px-3 text-[13px] text-foreground transition-colors hover:bg-muted/30';
+
 const stackedOperatorLabel = computed(() => {
   const label = currentOperator.value?.label;
   if (!label) return '';
@@ -198,16 +201,16 @@ defineExpose({ validate, resetValidation });
             @update:model-value="resetModelOnAttributeKeyChange"
           >
             <template #trigger="{ toggle }">
-              <RelayButton
-                variant="outline"
-                class="h-9 w-full justify-between border-border/80 bg-background px-3 text-sm font-medium shadow-sm hover:border-border/80 hover:bg-muted/50"
+              <button
+                type="button"
+                :class="FILTER_DROPDOWN_TRIGGER_CLASS"
                 @click="toggle"
               >
                 <span class="truncate">{{ currentFilter?.label }}</span>
                 <span
                   class="i-lucide-chevron-down size-4 shrink-0 opacity-50"
                 />
-              </RelayButton>
+              </button>
             </template>
           </FilterSelect>
         </div>
@@ -222,17 +225,18 @@ defineExpose({ validate, resetValidation });
       </div>
       <FilterSelect
         v-model="filterOperator"
+        panel-class="min-w-40"
         :options="currentFilter?.filterOperators"
       >
         <template #trigger="{ toggle }">
-          <RelayButton
-            variant="outline"
-            class="h-9 w-full justify-between border-border/80 bg-background px-3 text-sm font-medium text-primary shadow-sm hover:border-border/80 hover:bg-muted/50 hover:text-primary"
+          <button
+            type="button"
+            :class="FILTER_DROPDOWN_TRIGGER_CLASS"
             @click="toggle"
           >
             <span class="truncate">{{ stackedOperatorLabel }}</span>
             <span class="i-lucide-chevron-down size-4 shrink-0 opacity-50" />
-          </RelayButton>
+          </button>
         </template>
       </FilterSelect>
       <template v-if="currentOperator?.hasInput">

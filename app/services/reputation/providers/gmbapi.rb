@@ -17,7 +17,7 @@ class Reputation::Providers::Gmbapi
 
   # Returns normalized review hashes: { external_id:, rating:, body:, reviewer_name:, reviewed_at: }
   def list_reviews
-    response = post('/review/location', location_id: @integration.location_id, per_page: 250)
+    response = post('/review/location', location_id: @integration.location_id, per_page: 50)
     raise "GMBapi reviews fetch failed: #{response.body}" unless response.success?
 
     extract_reviews(response.parsed_response).map { |raw| normalize(raw) }

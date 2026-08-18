@@ -185,7 +185,6 @@ class Conversation < ApplicationRecord
   def notifiable_assignee_change?
     return false unless saved_change_to_assignee_id?
     return false if assignee_id.blank?
-    return false if self_assign?(assignee_id)
 
     true
   end

@@ -38,6 +38,10 @@ module SwitchLocale
     return if DomainHelper.chatwoot_domain?(domain)
 
     @portal = Portal.find_by(custom_domain: domain)
+    if @portal.blank?
+      account = Account.find_by(custom_domain: domain)
+      @portal = account&.portals&.active&.first
+    end
     return unless @portal
 
     @portal.default_locale

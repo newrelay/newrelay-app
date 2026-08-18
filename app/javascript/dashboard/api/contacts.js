@@ -32,7 +32,15 @@ class ContactAPI extends ApiClient {
   }
 
   update(id, data) {
-    return axios.patch(`${this.url}/${id}?include_contact_inboxes=false`, data);
+    const config =
+      data instanceof FormData
+        ? { headers: { 'Content-Type': 'multipart/form-data' } }
+        : {};
+    return axios.patch(
+      `${this.url}/${id}?include_contact_inboxes=false`,
+      data,
+      config
+    );
   }
 
   getConversations(contactId, { inboxId } = {}) {

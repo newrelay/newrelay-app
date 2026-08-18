@@ -50,7 +50,18 @@ docker image inspect chatwoot-rails:development >nul 2>&1
 if errorlevel 1 (
   echo.
   echo  First start takes 15-20 minutes. Later starts are much faster.
-  echo  Building the app...
+  echo  Building the app (step 1 of 2: base image)...
+  echo.
+  docker compose build base
+  if errorlevel 1 (
+    echo.
+    echo  ERROR: Base build failed. Screenshot this window and send it.
+    echo.
+    pause
+    exit /b 1
+  )
+  echo.
+  echo  Building the app (step 2 of 2: services)...
   echo.
   docker compose build
   if errorlevel 1 (

@@ -8,6 +8,10 @@ class NotificationsAPI extends ApiClient {
 
   get({ page, status, type, sortOrder }) {
     const includesFilter = [status, type].filter(value => !!value);
+    // Keep read/snoozed records so Inbox "All Messages" is not wiped after
+    // opening a notification. Unread views filter client-side.
+    if (!includesFilter.includes('read')) includesFilter.push('read');
+    if (!includesFilter.includes('snoozed')) includesFilter.push('snoozed');
 
     return axios.get(this.url, {
       params: {

@@ -21,7 +21,9 @@ const meta = useMapGetter('notifications/getMeta');
 const uiFlags = useMapGetter('notifications/getUIFlags');
 
 const hasUnread = computed(() => Boolean(meta.value?.unreadCount));
-const previewNotifications = computed(() => notifications.value.slice(0, 8));
+const previewNotifications = computed(() =>
+  notifications.value.filter(item => !item.read_at).slice(0, 8)
+);
 const isLoading = computed(() => uiFlags.value?.isFetching);
 const showLoading = computed(
   () => isLoading.value && previewNotifications.value.length === 0
@@ -52,9 +54,16 @@ const closeMenu = () => {
 
 const toggleMenu = () => {
   isOpen.value = !isOpen.value;
-  if (isOpen.value) {
-    store.dispatch('notifications/get', { page: 1 });
-  }
+  if (!isOpen.value) return;
+
+  // `notifications/get` clears the shared store, which empties the Inbox list.
+  // Merge a page of records instead so opening the bell keeps inbox history.
+  store.dispatch('notifications/index', {
+    page: 1,
+    status: 'snoozed',
+    type: 'read',
+    sortOrder: 'desc',
+  });
 };
 
 const onMarkAllRead = () => {

@@ -54,7 +54,21 @@ describe('#NotificationAPI', () => {
           params: {
             page: 1,
             sort_order: 'desc',
-            includes: ['read'],
+            includes: ['read', 'snoozed'],
+          },
+        });
+      });
+
+      it('includes read and snoozed when no display filters are passed', () => {
+        notificationsAPI.get({
+          page: 1,
+          sortOrder: 'desc',
+        });
+        expect(axiosMock.get).toHaveBeenCalledWith('/api/v1/notifications', {
+          params: {
+            page: 1,
+            sort_order: 'desc',
+            includes: ['read', 'snoozed'],
           },
         });
       });

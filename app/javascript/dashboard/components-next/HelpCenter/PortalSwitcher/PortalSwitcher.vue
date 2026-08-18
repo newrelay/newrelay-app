@@ -27,8 +27,15 @@ const portals = useMapGetter('portals/allPortals');
 
 const currentPortalSlug = computed(() => route.params.portalSlug);
 
+const currentPortal = computed(() =>
+  portals.value.find(portal => portal.slug === currentPortalSlug.value)
+);
+
 const portalLink = computed(() => {
-  return buildPortalURL(currentPortalSlug.value);
+  return buildPortalURL(
+    currentPortalSlug.value,
+    currentPortal.value?.resolved_custom_domain
+  );
 });
 
 const isPortalActive = portal => {

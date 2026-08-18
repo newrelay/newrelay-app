@@ -41,7 +41,7 @@ export default {
       return this.portalBySlug(this.selectedPortalSlug);
     },
     portalCustomDomain() {
-      return this.portal?.custom_domain;
+      return this.portal?.resolved_custom_domain;
     },
     articleViewerUrl() {
       const article = this.activeArticle(this.activeId);

@@ -181,12 +181,6 @@ const filteredConversations = computed(() => {
 
 const showEndOfList = computed(() => isAllLoaded.value && !isFetching.value);
 
-const showEmptyState = computed(() => !isFetching.value && !items.value.length);
-
-const showFilledList = computed(() => {
-  return !currentConversationId.value && !showEmptyState.value;
-});
-
 const statusTabs = computed(() => [
   { value: 'new', label: t('INBOX.TABS.NEW') },
   { value: 'in-progress', label: t('INBOX.TABS.IN_PROGRESS') },
@@ -315,9 +309,10 @@ onMounted(() => {
 
     <!-- Main content -->
     <div class="flex-1 flex flex-col min-w-0 h-full overflow-hidden">
-      <!-- Filled conversations list -->
+      <!-- Conversations list: the status tabs stay mounted even when a tab has
+           no conversations, so the empty state never hides them. -->
       <div
-        v-if="showFilledList"
+        v-if="!currentConversationId"
         class="flex-1 flex flex-col bg-card overflow-hidden"
       >
         <div
@@ -484,12 +479,12 @@ onMounted(() => {
             <Spinner class="text-primary" />
           </div>
 
-          <p
+          <div
             v-if="!isFetching && !filteredConversations.length"
-            class="p-4 text-sm font-medium text-center text-muted-foreground"
+            class="flex items-center justify-center py-16"
           >
-            {{ t('INBOX.LIST.NO_NOTIFICATIONS') }}
-          </p>
+            <InboxEmptyState />
+          </div>
 
           <div
             v-if="!showEndOfList && !isFetching"
@@ -510,19 +505,8 @@ onMounted(() => {
         </div>
       </div>
 
-      <!-- Empty state (no conversations) -->
-      <InboxEmptyState v-else-if="!currentConversationId && showEmptyState" />
-
       <!-- Conversation detail -->
-      <router-view v-else-if="currentConversationId" />
-
-      <!-- Loading while first fetch -->
-      <div
-        v-else-if="isFetching"
-        class="flex-1 flex items-center justify-center"
-      >
-        <Spinner class="text-primary" />
-      </div>
+      <router-view v-else />
     </div>
 
     <CmdBarConversationSnooze />

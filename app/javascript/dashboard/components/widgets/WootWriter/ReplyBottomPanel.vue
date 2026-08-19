@@ -209,7 +209,7 @@ export default {
       handleEmojiPickerClick,
       hideEmojiPicker,
       toolbarIconButtonClass:
-        'h-8 w-8 shrink-0 p-0 min-h-8 min-w-8 text-muted-foreground hover:text-foreground',
+        'h-8 w-8 shrink-0 p-0 min-h-8 min-w-8 border-transparent text-muted-foreground hover:border-transparent hover:bg-muted hover:text-foreground focus-visible:outline-none',
     };
   },
   computed: {

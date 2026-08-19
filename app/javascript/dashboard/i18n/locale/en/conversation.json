@@ -126,6 +126,7 @@
       "VOICE_CALL_FAILED": "Could not start the call.",
       "WHATSAPP_CALL_PERMISSION_REQUESTED": "Sent a call permission request to the contact. Try again once they accept.",
       "WHATSAPP_CALL_PERMISSION_PENDING": "Call permission request already sent recently. Try again once the contact accepts.",
+      "SIMULATE_INCOMING_CALL": "Simulate incoming call",
       "SLA_STATUS": {
         "FRT": "FRT {status}",
         "NRT": "NRT {status}",
@@ -387,8 +388,8 @@
       }
     },
     "VOICE_WIDGET": {
-      "INCOMING_CALL": "Incoming call",
-      "INCOMING_CALL_RINGING": "Incoming call…",
+      "INCOMING_CALL": "Incoming Call",
+      "INCOMING_CALL_RINGING": "Incoming Call…",
       "OUTGOING_CALL": "Outgoing call",
       "CALL_IN_PROGRESS": "Call in progress",
       "NOT_ANSWERED_YET": "Not answered yet",
@@ -399,13 +400,23 @@
       "MINIMIZE": "Minimize",
       "EXPAND": "Expand",
       "ON_CALL": "On call",
+      "ON_CALL_SEPARATOR": "•",
+      "ON_CALL_PHONE_SEPARATOR": "|",
       "REJECT_CALL": "Reject",
       "DISMISS_CALL": "Dismiss",
       "JOIN_CALL": "Join call",
       "END_CALL": "End call",
-      "MUTE": "Mute mic",
+      "MUTE": "Mute",
       "UNMUTE": "Unmute mic",
       "VIEW_CHAT_HISTORY": "View chat history",
+      "RINGING": "Ringing…",
+      "NOTE": "Note",
+      "SPEAKER": "Speaker",
+      "ADD": "Add",
+      "QUICK_NOTE": "Quick Note",
+      "NOTE_PLACEHOLDER": "Add a note about this call…",
+      "SAVE_NOTE": "Save note",
+      "CLOSE_NOTE": "Close note",
       "GO_TO_CONVERSATION": "Go to conversation thread"
     }
   },

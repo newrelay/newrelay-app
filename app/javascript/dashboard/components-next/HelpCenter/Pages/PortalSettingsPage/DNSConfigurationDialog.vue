@@ -35,7 +35,7 @@ const validationRules = {
 const v$ = useVuelidate(validationRules, state, { $scope: false });
 
 const domain = computed(() => {
-  const { hostURL, helpCenterURL } = window?.chatwootConfig || {};
+  const { hostURL, helpCenterURL } = window?.newrelayConfig || {};
   return getHostNameFromURL(helpCenterURL) || getHostNameFromURL(hostURL) || '';
 });
 

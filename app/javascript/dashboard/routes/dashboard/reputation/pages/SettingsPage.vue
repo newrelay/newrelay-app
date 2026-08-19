@@ -116,7 +116,7 @@ async function oauthState() {
 }
 
 const connectFacebook = async () => {
-  const appId = window.chatwootConfig?.reputationFacebookAppId;
+  const appId = window.newrelayConfig?.reputationFacebookAppId;
   if (!appId) {
     alert('Facebook App ID is not configured in the environment.');
     return;
@@ -129,7 +129,7 @@ const connectFacebook = async () => {
 
 const connectGoogle = async () => {
   // GMBapi mode: no Google OAuth — connect with just the client's location id.
-  if (window.chatwootConfig?.reputationGoogleViaGmbapi) {
+  if (window.newrelayConfig?.reputationGoogleViaGmbapi) {
     const locationId = window.prompt('Enter the GMBapi location ID for this business:');
     if (!locationId) return;
     try {
@@ -143,7 +143,7 @@ const connectGoogle = async () => {
     return;
   }
 
-  const clientId = window.chatwootConfig?.reputationGoogleClientId;
+  const clientId = window.newrelayConfig?.reputationGoogleClientId;
   if (!clientId) {
     alert('Google Client ID is not configured in the environment. Please add REPUTATION_GOOGLE_CLIENT_ID to your .env file and restart the server.');
     return;

@@ -238,7 +238,7 @@
 # ------- End of Context.dev Config ------- #
 
 # ------- Chatwoot Internal Config for Cloud ----#
-- name: CHATWOOT_INBOX_TOKEN
+- name: NEWRELAY_INBOX_TOKEN
   value:
   display_title: 'Inbox Token'
   description: 'The Chatwoot Inbox Token for Contact Support in Cloud'

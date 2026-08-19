@@ -3,7 +3,7 @@
  * @returns {Object} An object containing configuration values.
  */
 export function useConfig() {
-  const config = window.chatwootConfig || {};
+  const config = window.newrelayConfig || {};
 
   /**
    * The host URL of the Chatwoot instance.

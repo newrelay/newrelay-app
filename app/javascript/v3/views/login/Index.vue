@@ -66,7 +66,7 @@ const installationDisplayName = computed(() =>
   formatInstallationDisplayName(globalConfig.value.installationName)
 );
 const allowedLoginMethods = computed(
-  () => window.chatwootConfig.allowedLoginMethods || ['email']
+  () => window.newrelayConfig.allowedLoginMethods || ['email']
 );
 const showSamlLogin = computed(() =>
   allowedLoginMethods.value.includes('saml')

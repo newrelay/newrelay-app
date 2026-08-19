@@ -118,7 +118,7 @@ export default {
     }
     // If user locale is set, use it; otherwise use account locale
     this.setLocale(
-      this.uiSettings?.locale || window.chatwootConfig.selectedLocale
+      this.uiSettings?.locale || window.newrelayConfig.selectedLocale
     );
     window.addEventListener('theme-changed', this.handleThemeChange);
   },

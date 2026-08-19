@@ -70,7 +70,7 @@ BACKEND_URL=https://api.yourdomain.com pnpm dev:ui
                └──────────────────────────────────────────┘
 ```
 
-1. **`index.html`**: Entrypoint for Vite standalone development, bootstrapping `window.chatwootConfig` and `dashboard.js`.
+1. **`index.html`**: Entrypoint for Vite standalone development, bootstrapping `window.newrelayConfig` and `dashboard.js`.
 2. **`vite.config.mts`**: Configured with proxy rules for `/api`, `/auth`, `/cable`, and `/rails` pointing to `BACKEND_URL`.
 3. **CORS (`config/initializers/cors.rb`)**: Configured on the Rails backend to allow cross-origin requests and credentials from `http://localhost:5173` (or any custom `FRONTEND_URL`).
 

@@ -70,7 +70,7 @@ const isPending = computed(
 
 const cnameTarget = computed(() => {
   const hostURL =
-    window.chatwootConfig?.hostURL || 'https://domains.newrelay.com';
+    window.newrelayConfig?.hostURL || 'https://domains.newrelay.com';
   try {
     return new URL(hostURL).hostname;
   } catch (e) {

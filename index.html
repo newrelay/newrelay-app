@@ -20,13 +20,13 @@
       // NOTE: the fake auth cookie is injected ONLY in mock mode by
       // mockApiPlugin (vite.config.mts). In server mode (pnpm dev:server) no
       // cookie is seeded, so the app falls through to the real login page.
-      window.chatwootConfig = {
+      window.newrelayConfig = {
         hostURL: window.location.origin,
         helpCenterURL: '',
         apiHost: '',
         signupEnabled: 'true',
         // isEnterprise gates ENTERPRISE-only nav (e.g. Companies). useConfig()
-        // reads THIS key (chatwootConfig.isEnterprise), not globalConfig.
+        // reads THIS key (newrelayConfig.isEnterprise), not globalConfig.
         isEnterprise: 'true',
         enabledLanguages: [
           { name: "English", iso_639_1_code: "en" }

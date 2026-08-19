@@ -26,7 +26,7 @@ async function oauthState() {
 const connectGoogle = async () => {
   // GMBapi mode: Google auth lives on GMBapi's side, so we skip OAuth and just
   // record the client's location id. Reviews then sync via the GMBapi adapter.
-  if (window.chatwootConfig?.reputationGoogleViaGmbapi) {
+  if (window.newrelayConfig?.reputationGoogleViaGmbapi) {
     const locationId = window.prompt('Enter the GMBapi location ID for this business:');
     if (!locationId) return;
     try {
@@ -40,7 +40,7 @@ const connectGoogle = async () => {
     return;
   }
 
-  const clientId = window.chatwootConfig?.reputationGoogleClientId;
+  const clientId = window.newrelayConfig?.reputationGoogleClientId;
   const redirect = `${window.location.origin}/reputation/oauth/callback?provider=google`;
   const state = await oauthState();
   window.location.href =
@@ -48,7 +48,7 @@ const connectGoogle = async () => {
 };
 
 const connectFacebook = async () => {
-  const appId = window.chatwootConfig?.reputationFacebookAppId;
+  const appId = window.newrelayConfig?.reputationFacebookAppId;
   const redirect = `${window.location.origin}/reputation/oauth/callback?provider=facebook`;
   const state = await oauthState();
   window.location.href =

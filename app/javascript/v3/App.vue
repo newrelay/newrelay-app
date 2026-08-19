@@ -14,7 +14,7 @@ export default {
     this.applyTheme();
     this.listenToThemeChanges();
     window.addEventListener('theme-changed', this.onThemeChanged);
-    this.setLocale(window.chatwootConfig.selectedLocale);
+    this.setLocale(window.newrelayConfig.selectedLocale);
     if (window.globalConfig && window.globalConfig.BRAND_COLORS) {
       this.applyBrandColors(window.globalConfig.BRAND_COLORS);
     }

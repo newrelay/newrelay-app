@@ -9,7 +9,7 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Deploy to VPN server
+      - name: Deploy to ui.newrelay.com
         uses: appleboy/ssh-action@master
         with:
           host: 187.127.153.133
@@ -17,18 +17,21 @@ jobs:
           key: ${{ secrets.DEPLOY_SSH_KEY }}
           script: |
             set -e
-            cd /home/app/chatwoot || mkdir -p /home/app/chatwoot
+            DEPLOY_DIR="/var/www/ui"
+            mkdir -p $DEPLOY_DIR
 
             # Clone or pull latest code
-            if [ -d .git ]; then
+            if [ -d "$DEPLOY_DIR/.git" ]; then
               echo "📥 Pulling latest code..."
+              cd $DEPLOY_DIR
               git pull origin feature/pranjal-ui-changes
             else
               echo "🔄 Cloning repository..."
-              git clone --branch feature/pranjal-ui-changes https://github.com/auzadev/NewRelay.git .
+              git clone --branch feature/pranjal-ui-changes https://github.com/auzadev/NewRelay.git $DEPLOY_DIR
             fi
 
             # Start services
+            cd $DEPLOY_DIR
             echo "🐳 Starting Docker services..."
             docker compose down 2>/dev/null || true
             docker compose up -d --build
@@ -38,4 +41,4 @@ jobs:
             docker compose exec -T rails bundle exec rails db:migrate
 
             # Done
-            echo "✅ Deployment complete! Access at http://187.127.153.133:3000"
+            echo "✅ Deployment complete! Access at https://ui.newrelay.com"

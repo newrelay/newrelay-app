@@ -39,8 +39,15 @@ export default {
   computed: {
     ...mapGetters({
       currentChat: 'getSelectedChat',
+      conversationList: 'getAllConversations',
       dashboardApps: 'dashboardApps/getRecords',
     }),
+    // When the list itself is empty (e.g. a channel with no conversations), the
+    // list panel already shows its own empty state, so we suppress this
+    // "no conversation selected" panel to avoid showing two identical ones.
+    hasConversations() {
+      return (this.conversationList || []).length > 0;
+    },
     dashboardAppTabs() {
       return [
         {
@@ -127,7 +134,7 @@ export default {
         :is-inbox-view="isInboxView"
       />
       <EmptyState
-        v-if="!currentChat.id && !isInboxView"
+        v-if="!currentChat.id && !isInboxView && hasConversations"
         :is-on-expanded-layout="isOnExpandedLayout"
       />
       <slot />

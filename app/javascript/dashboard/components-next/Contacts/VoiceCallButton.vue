@@ -214,18 +214,24 @@ const onPickInbox = async inbox => {
 </script>
 
 <template>
-  <span class="contents">
+  <span v-if="shouldRender" class="contents">
     <RelayTooltip :content="tooltipLabel || null" side="top" align="end">
-      <Button
-        v-if="shouldRender"
-        v-bind="attrs"
+      <slot
+        name="trigger"
+        :on-click="onClick"
         :disabled="isCallButtonDisabled"
         :is-loading="isInitiatingCall"
-        :label="label"
-        :icon="icon"
-        :size="size"
-        @click="onClick"
-      />
+      >
+        <Button
+          v-bind="attrs"
+          :disabled="isCallButtonDisabled"
+          :is-loading="isInitiatingCall"
+          :label="label"
+          :icon="icon"
+          :size="size"
+          @click="onClick"
+        />
+      </slot>
     </RelayTooltip>
 
     <Dialog

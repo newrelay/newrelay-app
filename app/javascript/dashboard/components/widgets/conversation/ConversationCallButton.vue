@@ -17,7 +17,7 @@ import { useMapGetter } from 'dashboard/composables/store';
 import { useAccount } from 'dashboard/composables/useAccount';
 import { FEATURE_FLAGS } from 'dashboard/featureFlags';
 import { useAlert } from 'dashboard/composables';
-import NextButton from 'dashboard/components-next/button/Button.vue';
+import { RelayButton } from 'dashboard/components-next/relay';
 
 const props = defineProps({
   inbox: {
@@ -27,6 +27,10 @@ const props = defineProps({
   chat: {
     type: Object,
     default: () => ({}),
+  },
+  buttonClass: {
+    type: [String, Array, Object],
+    default: '',
   },
 });
 
@@ -126,14 +130,19 @@ const startCall = () => {
 
 <template>
   <RelayTooltip v-if="isVoiceCallInbox" :content="callButtonTooltip">
-    <NextButton
-      sm
-      ghost
-      slate
-      icon="i-lucide-phone"
-      :is-loading="isCallButtonLoading"
-      :disabled="isCallButtonDisabled"
+    <RelayButton
+      variant="ghost"
+      size="icon"
+      :class="buttonClass"
+      :disabled="isCallButtonDisabled || isCallButtonLoading"
+      :aria-label="callButtonTooltip"
       @click="startCall"
-    />
+    >
+      <span
+        v-if="isCallButtonLoading"
+        class="i-lucide-loader-circle size-4 animate-spin"
+      />
+      <span v-else class="i-lucide-phone size-4" />
+    </RelayButton>
   </RelayTooltip>
 </template>

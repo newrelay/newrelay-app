@@ -21,7 +21,7 @@ import { useAlert } from 'dashboard/composables';
 
 import Icon from 'dashboard/components-next/icon/Icon.vue';
 import BaseBubble from 'next/message/bubbles/Base.vue';
-import AudioChip from 'next/message/chips/Audio.vue';
+import VoiceCallRecordingPlayer from 'next/message/chips/VoiceCallRecordingPlayer.vue';
 import NextButton from 'dashboard/components-next/button/Button.vue';
 
 const LABEL_MAP = {
@@ -30,10 +30,10 @@ const LABEL_MAP = {
 };
 
 const ICON_MAP = {
-  [VOICE_CALL_STATUS.IN_PROGRESS]: 'i-ph-phone-call-bold',
-  [VOICE_CALL_STATUS.COMPLETED]: 'i-ph-phone-bold',
-  [VOICE_CALL_STATUS.NO_ANSWER]: 'i-ph-phone-x-bold',
-  [VOICE_CALL_STATUS.FAILED]: 'i-ph-phone-x-bold',
+  [VOICE_CALL_STATUS.IN_PROGRESS]: 'i-lucide-phone-call',
+  [VOICE_CALL_STATUS.COMPLETED]: 'i-lucide-phone',
+  [VOICE_CALL_STATUS.NO_ANSWER]: 'i-lucide-phone-off',
+  [VOICE_CALL_STATUS.FAILED]: 'i-lucide-phone-off',
 };
 
 const { t } = useI18n();
@@ -58,12 +58,78 @@ const isInitiatingCall = computed(
   () => contactsUiFlags.value?.isInitiatingCall || false
 );
 
-const status = computed(() => call.value?.status);
+// Merge top-level call payload (API) with content_attributes.data.call (seeders / legacy).
+const callData = computed(() => {
+  const dataBlock = contentAttributes?.value?.data || {};
+  const nestedCall = dataBlock.call || {};
+  const fromProp = call.value || {};
+
+  return {
+    ...nestedCall,
+    ...fromProp,
+    status: fromProp.status ?? nestedCall.status ?? dataBlock.status ?? null,
+    direction:
+      fromProp.direction ??
+      nestedCall.direction ??
+      dataBlock.callDirection ??
+      dataBlock.call_direction ??
+      null,
+    durationSeconds:
+      fromProp.durationSeconds ??
+      fromProp.duration_seconds ??
+      nestedCall.durationSeconds ??
+      nestedCall.duration_seconds ??
+      dataBlock.durationSeconds ??
+      dataBlock.duration_seconds ??
+      null,
+    recordingUrl:
+      fromProp.recordingUrl ??
+      fromProp.recording_url ??
+      nestedCall.recordingUrl ??
+      nestedCall.recording_url ??
+      null,
+    acceptedByAgentId:
+      fromProp.acceptedByAgentId ??
+      fromProp.accepted_by_agent_id ??
+      nestedCall.acceptedByAgentId ??
+      nestedCall.accepted_by_agent_id ??
+      null,
+    acceptedByAgentName:
+      fromProp.acceptedByAgentName ??
+      fromProp.accepted_by_agent_name ??
+      nestedCall.acceptedByAgentName ??
+      nestedCall.accepted_by_agent_name ??
+      null,
+    providerCallId:
+      fromProp.providerCallId ??
+      fromProp.provider_call_id ??
+      nestedCall.providerCallId ??
+      nestedCall.provider_call_id ??
+      dataBlock.callSid ??
+      dataBlock.call_sid ??
+      null,
+    endReason:
+      fromProp.endReason ??
+      fromProp.end_reason ??
+      nestedCall.endReason ??
+      nestedCall.end_reason ??
+      null,
+    provider:
+      fromProp.provider ??
+      nestedCall.provider ??
+      dataBlock.callSource ??
+      dataBlock.call_source ??
+      null,
+    transcript: fromProp.transcript ?? nestedCall.transcript ?? null,
+  };
+});
+
+const status = computed(() => callData.value?.status);
 // Server-side call records use `outgoing`/`incoming`, while the Pinia store
 // and a few API hops normalise to `outbound`/`inbound`. Accept either so the
 // bubble label matches the message orientation no matter the source.
 const isOutbound = computed(() => {
-  const dir = call.value?.direction;
+  const dir = callData.value?.direction;
   if (
     dir === VOICE_CALL_DIRECTION.OUTGOING ||
     dir === VOICE_CALL_DIRECTION.OUTBOUND
@@ -79,19 +145,19 @@ const isOutbound = computed(() => {
   return messageType.value === MESSAGE_TYPES.OUTGOING;
 });
 const isWhatsapp = computed(
-  () => call.value?.provider === VOICE_CALL_PROVIDERS.WHATSAPP
+  () => callData.value?.provider === VOICE_CALL_PROVIDERS.WHATSAPP
 );
 const isFailed = computed(() =>
   [VOICE_CALL_STATUS.NO_ANSWER, VOICE_CALL_STATUS.FAILED].includes(status.value)
 );
 const isMissedInbound = computed(() => isFailed.value && !isOutbound.value);
-const endReason = computed(() => call.value?.endReason);
+const endReason = computed(() => callData.value?.endReason);
 const wasDeclinedByAgent = computed(
   () =>
     isMissedInbound.value &&
     endReason.value === VOICE_CALL_END_REASON.AGENT_REJECTED
 );
-const acceptedByAgentId = computed(() => call.value?.acceptedByAgentId);
+const acceptedByAgentId = computed(() => callData.value?.acceptedByAgentId);
 const conversationAssignee = computed(() => {
   const conversation = store.getters.getConversationById?.(
     conversationId?.value
@@ -99,7 +165,8 @@ const conversationAssignee = computed(() => {
   return conversation?.meta?.assignee || null;
 });
 const displayAgentName = computed(() => {
-  if (call.value?.acceptedByAgentName) return call.value.acceptedByAgentName;
+  if (callData.value?.acceptedByAgentName)
+    return callData.value.acceptedByAgentName;
   if (acceptedByAgentId.value) {
     const agent = store.getters['agents/getAgentById'](acceptedByAgentId.value);
     if (agent?.available_name) return agent.available_name;
@@ -113,7 +180,7 @@ const audioAttachment = computed(() =>
 );
 
 const durationSeconds = computed(() => {
-  const fromCall = call.value?.durationSeconds || call.value?.duration_seconds;
+  const fromCall = callData.value?.durationSeconds;
   if (fromCall != null) return fromCall;
   const data = contentAttributes?.value?.data;
   return data?.durationSeconds || data?.duration_seconds;
@@ -139,14 +206,15 @@ const callTypeLabel = computed(() =>
 );
 
 const callTypeIcon = computed(() =>
-  isOutbound.value ? 'i-ph-arrow-up-right-bold' : 'i-ph-arrow-down-left-bold'
+  isOutbound.value ? 'i-lucide-corner-down-left' : 'i-lucide-corner-down-right'
 );
 
 // Agent who handled the call (initiator on outbound, answerer on inbound), taken
 // strictly from the persisted accept fields — never the conversation's current
 // assignee, which would mis-attribute a historical call after a reassignment.
 const handlerName = computed(() => {
-  if (call.value?.acceptedByAgentName) return call.value.acceptedByAgentName;
+  if (callData.value?.acceptedByAgentName)
+    return callData.value.acceptedByAgentName;
   if (!acceptedByAgentId.value) return null;
   const agent = store.getters['agents/getAgentById'](acceptedByAgentId.value);
   return agent?.available_name || agent?.name || null;
@@ -202,8 +270,8 @@ const subtext = computed(() => {
 const iconName = computed(() => {
   if (ICON_MAP[status.value]) return ICON_MAP[status.value];
   return isOutbound.value
-    ? 'i-ph-phone-outgoing-bold'
-    : 'i-ph-phone-incoming-bold';
+    ? 'i-lucide-phone-outgoing'
+    : 'i-lucide-phone-incoming';
 });
 
 // Subtle icon container — matches the design's tonal swatch over the bubble bg.
@@ -221,7 +289,7 @@ const iconContainerClass = computed(() => {
   return 'bg-primary/10 text-primary';
 });
 
-const callSid = computed(() => call.value?.providerCallId);
+const callSid = computed(() => callData.value?.providerCallId);
 
 const canJoinCall = computed(() => {
   if (status.value !== VOICE_CALL_STATUS.RINGING) return false;
@@ -237,13 +305,13 @@ const canJoinCall = computed(() => {
 
 const recordingAttachment = computed(() => {
   if (audioAttachment.value) return audioAttachment.value;
-  const url = call.value?.recordingUrl;
+  const url = callData.value?.recordingUrl;
   if (!url) return null;
   return {
     dataUrl: url,
     fileType: ATTACHMENT_TYPES.AUDIO,
     extension: 'wav',
-    transcribedText: call.value?.transcript || '',
+    transcribedText: callData.value?.transcript || '',
   };
 });
 
@@ -321,50 +389,45 @@ const handleCallBack = async () => {
 
 <template>
   <BaseBubble
-    class="!p-3.5 !w-[360px] !max-w-full !bg-card !text-card-foreground border border-border shadow-xs"
+    class="relative w-[360px] max-w-full overflow-hidden !border !border-border !bg-card !p-3.5 !text-foreground shadow-xs"
     hide-meta
   >
-    <div class="flex flex-col gap-3 w-full">
-      <!-- Header row: icon + title + duration/subtext -->
-      <div class="flex gap-3 items-center">
+    <div class="flex w-full flex-col gap-3">
+      <div class="flex items-center gap-3">
         <div
-          class="flex justify-center items-center rounded-xl size-10 shrink-0"
+          class="flex size-10 shrink-0 items-center justify-center rounded-xl"
           :class="iconContainerClass"
         >
           <Icon class="size-5" :icon="iconName" />
         </div>
-        <div class="flex flex-col flex-1 min-w-0 self-center">
-          <span
-            class="font-display text-sm font-medium leading-tight truncate tracking-tight"
-          >
+        <div class="flex min-w-0 flex-1 flex-col">
+          <span class="truncate text-[14px] font-semibold text-foreground">
             {{ $t(labelKey) }}
           </span>
           <span
             v-if="subtext"
-            class="text-sm leading-tight truncate tracking-tight opacity-75"
+            class="truncate text-[13px] text-muted-foreground"
           >
             {{ subtext }}
           </span>
         </div>
       </div>
 
-      <!-- Audio player (when there's a recording) -->
-      <AudioChip
-        v-if="recordingAttachment"
+      <VoiceCallRecordingPlayer
+        v-if="isCompleted"
         :attachment="recordingAttachment"
-        show-transcribed-text
+        :has-recording="!!recordingAttachment"
       />
 
-      <!-- Metadata grid (completed calls): ended-at time, handler, direction -->
       <div
         v-if="isCompleted"
-        class="grid grid-cols-3 gap-2 pt-2.5 text-[11px] border-t border-border/50"
+        class="grid grid-cols-3 gap-2 border-t border-border/50 pt-2.5 text-[11px]"
       >
-        <div class="flex flex-col gap-0.5 min-w-0">
+        <div class="flex flex-col gap-0.5">
           <span class="font-medium text-muted-foreground">
             {{ $t('CONVERSATION.VOICE_CALL.ENDED_AT') }}
           </span>
-          <span class="truncate text-foreground">{{ endedAt || '—' }}</span>
+          <span class="text-foreground">{{ endedAt || '—' }}</span>
         </div>
         <div class="flex flex-col gap-0.5 min-w-0">
           <span class="font-medium text-muted-foreground">
@@ -376,7 +439,7 @@ const handleCallBack = async () => {
           <span class="font-medium text-muted-foreground">
             {{ $t('CONVERSATION.VOICE_CALL.CALL_TYPE') }}
           </span>
-          <span class="flex gap-1 items-center truncate text-foreground">
+          <span class="flex items-center gap-1 truncate text-foreground">
             <Icon class="size-3 text-primary/70" :icon="callTypeIcon" />
             {{ callTypeLabel }}
           </span>

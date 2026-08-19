@@ -1,7 +1,7 @@
 <script setup>
 import { computed } from 'vue';
 import { useCallActions } from 'dashboard/composables/useCallSession';
-import Icon from 'dashboard/components-next/icon/Icon.vue';
+import { useI18n } from 'vue-i18n';
 
 const props = defineProps({
   conversationId: {
@@ -21,8 +21,8 @@ const {
   endCall,
 } = useCallActions();
 
-// Only surface the bar in the conversation the live call belongs to, and only
-// while the immersive overlay is minimized (otherwise the overlay is showing).
+const { t } = useI18n();
+
 const show = computed(
   () =>
     hasActiveCall.value &&
@@ -34,7 +34,7 @@ const phone = computed(() => activeCall.value?.caller?.phone || '');
 
 const handleEnd = () => {
   const call = activeCall.value;
-  if (!call?.inboxId || !call?.callSid) return;
+  if (!call?.callSid) return;
   endCall({
     conversationId: call.conversationId,
     inboxId: call.inboxId,
@@ -46,60 +46,67 @@ const handleEnd = () => {
 <template>
   <div
     v-if="show"
-    class="flex justify-between items-center px-6 py-2.5 w-full border-b shadow-sm shrink-0 bg-success/5 border-success/20"
+    class="flex w-full shrink-0 items-center justify-between border-b border-emerald-500/20 bg-emerald-500/5 px-6 py-2.5 shadow-sm"
   >
     <button
-      class="flex gap-3 items-center min-w-0"
+      type="button"
+      class="flex min-w-0 items-center gap-3"
       @click="setCallOverlayExpanded(true)"
     >
       <div
-        class="flex justify-center items-center rounded-full size-7 bg-success/15 text-success shrink-0"
+        class="flex size-7 shrink-0 items-center justify-center rounded-full bg-emerald-500/15 text-emerald-600 dark:text-emerald-400"
       >
-        <Icon class="size-3.5" icon="i-ph-phone-fill" />
+        <span class="i-lucide-phone size-3.5 fill-current" />
       </div>
       <div
-        class="flex gap-2 items-center text-[13px] font-medium text-foreground"
+        class="flex items-center gap-2 text-[13px] font-medium text-foreground"
       >
-        <span>{{ $t('CONVERSATION.VOICE_WIDGET.ON_CALL') }} &bull;</span>
-        <span class="font-semibold tabular-nums text-success">
+        <span>{{ t('CONVERSATION.VOICE_WIDGET.ON_CALL') }}</span>
+        <span class="text-muted-foreground">{{
+          t('CONVERSATION.VOICE_WIDGET.ON_CALL_SEPARATOR')
+        }}</span>
+        <span
+          class="font-semibold tabular-nums text-emerald-600 dark:text-emerald-400"
+        >
           {{ formattedCallDuration }}
         </span>
-        <span v-if="phone" class="hidden ml-1 text-muted-foreground sm:inline">
-          | {{ phone }}
+        <span v-if="phone" class="ml-1 hidden text-muted-foreground sm:inline">
+          {{ t('CONVERSATION.VOICE_WIDGET.ON_CALL_PHONE_SEPARATOR') }}
+          {{ phone }}
         </span>
       </div>
     </button>
 
-    <div class="flex gap-2 items-center shrink-0">
+    <div class="flex shrink-0 items-center gap-2">
       <button
-        class="flex gap-1.5 items-center px-3 py-1.5 rounded-full text-[12px] font-medium transition-colors"
+        type="button"
+        class="flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[12px] font-medium transition-colors"
         :class="
           isMuted
-            ? 'bg-warning/10 text-warning hover:bg-warning/20'
-            : 'text-success hover:bg-success/10'
+            ? 'bg-amber-500/10 text-amber-500 hover:bg-amber-500/20'
+            : 'text-emerald-600 hover:bg-emerald-500/10 dark:text-emerald-400'
         "
         @click="toggleMute"
       >
-        <Icon
+        <span
           class="size-3.5"
-          :icon="
-            isMuted ? 'i-ph-microphone-slash-bold' : 'i-ph-microphone-bold'
-          "
+          :class="isMuted ? 'i-lucide-mic-off' : 'i-lucide-mic'"
         />
         <span>
           {{
             isMuted
-              ? $t('CONVERSATION.VOICE_WIDGET.UNMUTE')
-              : $t('CONVERSATION.VOICE_WIDGET.MUTE')
+              ? t('CONVERSATION.VOICE_WIDGET.UNMUTE')
+              : t('CONVERSATION.VOICE_WIDGET.MUTE')
           }}
         </span>
       </button>
       <button
-        class="flex gap-1.5 items-center px-3 py-1.5 rounded-full border text-[12px] font-medium transition-colors bg-destructive/10 text-destructive border-destructive/20 hover:bg-destructive/20 hover:border-destructive/30"
+        type="button"
+        class="flex items-center gap-1.5 rounded-full border border-destructive/20 bg-destructive/10 px-3 py-1.5 text-[12px] font-medium text-destructive transition-colors hover:border-destructive/30 hover:bg-destructive/20"
         @click="handleEnd"
       >
-        <Icon class="size-3.5 rotate-[135deg]" icon="i-ph-phone-bold" />
-        <span>{{ $t('CONVERSATION.VOICE_WIDGET.END_CALL') }}</span>
+        <span class="i-lucide-phone size-3.5 rotate-[135deg]" />
+        <span>{{ t('CONVERSATION.VOICE_WIDGET.END_CALL') }}</span>
       </button>
     </div>
   </div>

@@ -170,6 +170,10 @@ const variant = computed(() => {
     return MESSAGE_VARIANTS.AGENT;
   }
 
+  if (props.contentType === CONTENT_TYPES.VOICE_CALL) {
+    return MESSAGE_VARIANTS.USER;
+  }
+
   const isBot =
     props.sender?.type === SENDER_TYPES.AGENT_BOT ||
     props.senderType === SENDER_TYPES.AGENT_BOT ||
@@ -223,6 +227,10 @@ const isBotOrAgentMessage = computed(() => {
  * @returns {import('vue').ComputedRef<'left'|'right'|'center'>} The computed orientation
  */
 const orientation = computed(() => {
+  if (props.contentType === CONTENT_TYPES.VOICE_CALL) {
+    return ORIENTATION.LEFT;
+  }
+
   if (isBotOrAgentMessage.value) {
     return ORIENTATION.RIGHT;
   }
@@ -402,6 +410,10 @@ const inboxAvatarInitial = computed(() =>
 
 const inboxRowClass = computed(() => {
   if (!props.isInboxView || variant.value === MESSAGE_VARIANTS.ACTIVITY) {
+    return '';
+  }
+
+  if (props.contentType === CONTENT_TYPES.VOICE_CALL) {
     return '';
   }
 

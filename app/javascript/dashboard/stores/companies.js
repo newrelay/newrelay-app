@@ -9,6 +9,7 @@ const createInitialUIFlags = () => ({
   fetchingItem: false,
   updatingItem: false,
   creatingItem: false,
+  isImporting: false,
   deletingItem: false,
   deletingAvatar: false,
   deletingCustomAttributes: false,
@@ -199,6 +200,18 @@ export const useCompaniesStore = createStore({
       } finally {
         this.setUIFlag({ creatingItem: false });
       }
+    },
+
+    async import(file) {
+      this.setUIFlag({ isImporting: true });
+      try {
+        await CompanyAPI.importCompanies(file);
+      } catch (error) {
+        return throwErrorMessage(error);
+      } finally {
+        this.setUIFlag({ isImporting: false });
+      }
+      return null;
     },
 
     async delete(id) {

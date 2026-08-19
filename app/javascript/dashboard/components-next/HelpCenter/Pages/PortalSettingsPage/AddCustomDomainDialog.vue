@@ -41,7 +41,9 @@ const rules = {
   },
 };
 
-const v$ = useVuelidate(rules, formState);
+// $scope: false keeps this dialog's validation isolated from the parent portal
+// settings form so it can't affect the Save button's enabled state.
+const v$ = useVuelidate(rules, formState, { $scope: false });
 
 watch(
   () => props.customDomain,

@@ -87,7 +87,10 @@
       "DROPZONE_HINT": "CSV up to 10MB",
       "CANCEL": "Cancel",
       "UPLOAD": "Upload",
-      "UNAVAILABLE": "Company import is not available yet."
+      "MESSAGES": {
+        "SUCCESS": "Company import has started. We'll process your file in the background.",
+        "ERROR": "Could not import companies. Please check your file and try again."
+      }
     },
     "FILTERS": {
       "TITLE": "Filter companies",

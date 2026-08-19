@@ -76,6 +76,7 @@ const visibleColumns = computed({
 
 const isFetchingList = computed(() => uiFlags.value.fetchingList);
 const isCreatingCompany = computed(() => uiFlags.value.creatingItem);
+const isImportingCompany = computed(() => uiFlags.value.isImporting);
 
 const buildSortAttr = () =>
   `${sortState.activeOrdering}${sortState.activeSort}`;
@@ -210,6 +211,16 @@ const openImportDialog = () => {
   isImportOpen.value = true;
 };
 
+const importCompanies = async file => {
+  try {
+    await companiesStore.import(file);
+    isImportOpen.value = false;
+    useAlert(t('COMPANIES.IMPORT.MESSAGES.SUCCESS'));
+  } catch (error) {
+    useAlert(error?.message || t('COMPANIES.IMPORT.MESSAGES.ERROR'));
+  }
+};
+
 const openFilters = () => {
   isFilterOpen.value = true;
 };
@@ -311,7 +322,11 @@ onMounted(() => {
       :is-loading="isCreatingCompany"
       @create="createCompany"
     />
-    <CompanyImportDialog v-model:open="isImportOpen" />
+    <CompanyImportDialog
+      v-model:open="isImportOpen"
+      :is-loading="isImportingCompany"
+      @import="importCompanies"
+    />
     <CompanyFiltersDrawer
       v-model:open="isFilterOpen"
       :active-filters="activeFilters"

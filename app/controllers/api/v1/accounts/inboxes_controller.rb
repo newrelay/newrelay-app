@@ -41,6 +41,7 @@ class Api::V1::Accounts::InboxesController < Api::V1::Accounts::BaseController
         )
       )
       @inbox.save!
+      @inbox.add_members([Current.user.id]) if Current.user.present?
     end
   end
 

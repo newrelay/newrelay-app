@@ -21,10 +21,14 @@ const buildContactFormData = contactParams => {
   const { social_profiles, ...additionalAttributesProperties } =
     additional_attributes;
   Object.keys(additionalAttributesProperties).forEach(key => {
-    formData.append(
-      `additional_attributes[${key}]`,
-      additionalAttributesProperties[key]
-    );
+    const value = additionalAttributesProperties[key];
+    if (Array.isArray(value)) {
+      value.forEach(item =>
+        formData.append(`additional_attributes[${key}][]`, item)
+      );
+    } else {
+      formData.append(`additional_attributes[${key}]`, value);
+    }
   });
   Object.keys(social_profiles).forEach(key => {
     formData.append(

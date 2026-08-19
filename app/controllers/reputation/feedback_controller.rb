@@ -16,5 +16,7 @@ class Reputation::FeedbackController < ApplicationController
     )
 
     head :created
+  rescue ActiveRecord::RecordInvalid
+    render json: { error: 'Invalid feedback submission' }, status: :unprocessable_entity
   end
 end

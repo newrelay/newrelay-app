@@ -30,7 +30,7 @@ const isSaved = ref(false);
 const articleLink = computed(() => {
   const { slug: categorySlug, locale: categoryLocale } = article.value.category;
   const { slug: articleSlugValue } = article.value;
-  const portalCustomDomain = portal.value?.custom_domain;
+  const portalCustomDomain = portal.value?.resolved_custom_domain;
   return buildPortalArticleURL(
     portalSlug,
     categorySlug,

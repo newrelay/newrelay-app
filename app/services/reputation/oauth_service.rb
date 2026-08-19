@@ -36,34 +36,12 @@ class Reputation::OauthService
 
   private
 
+  # Google uses the two-step flow in the callback (exchange_google_code_for_tokens +
+  # explicit location selection), so connect! only handles Facebook.
   def exchange_code_for_tokens
     case @provider
-    when 'google'  then exchange_google
     when 'facebook' then exchange_facebook
     end
-  end
-
-  def exchange_google
-    response = HTTParty.post('https://oauth2.googleapis.com/token', body: {
-                               code: @code,
-                               client_id: ENV.fetch('REPUTATION_GOOGLE_CLIENT_ID', nil),
-                               client_secret: ENV.fetch('REPUTATION_GOOGLE_CLIENT_SECRET', nil),
-                               redirect_uri: "#{ENV.fetch('FRONTEND_URL', '')}/reputation/oauth/callback?provider=google",
-                               grant_type: 'authorization_code'
-                             })
-    raise "Google token error: #{response.body}" unless response.success?
-
-    location = fetch_gbp_location(response['access_token'])
-    response.parsed_response.merge('location_id' => location['name'], 'location_name' => location['title'])
-  end
-
-  def fetch_gbp_location(access_token)
-    resp = HTTParty.get(
-      'https://mybusinessbusinessinformation.googleapis.com/v1/accounts/-/locations',
-      headers: { 'Authorization' => "Bearer #{access_token}" }
-    )
-    # ponytail: picks first location; multi-location selection UI in Phase 5
-    resp.parsed_response.dig('locations', 0) || {}
   end
 
   def exchange_facebook

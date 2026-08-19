@@ -58,6 +58,14 @@ class CompanyAPI extends ApiClient {
   destroyAvatar(id) {
     return axios.delete(`${this.url}/${id}/avatar`);
   }
+
+  importCompanies(file) {
+    const formData = new FormData();
+    formData.append('import_file', file);
+    return axios.post(`${this.url}/import`, formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
+  }
 }
 
 export default new CompanyAPI();

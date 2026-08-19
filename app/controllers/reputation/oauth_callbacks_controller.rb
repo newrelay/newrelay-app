@@ -52,7 +52,17 @@ class Reputation::OauthCallbacksController < ApplicationController
   end
 
   def current_account
-    @current_account ||= Account.find(params[:state] || params[:account_id])
+    @current_account ||= Account.find(verified_account_id)
+  end
+
+  # The OAuth `state` is a signed token issued by integrations#oauth_state to the
+  # authenticated initiator. Verifying it here prevents an attacker from binding
+  # the OAuth result to an arbitrary account via a forged state param.
+  def verified_account_id
+    Rails.application.message_verifier('reputation_oauth')
+         .verify(params[:state], purpose: :reputation_oauth)
+  rescue ActiveSupport::MessageVerifier::InvalidSignature
+    raise ActiveRecord::RecordNotFound, 'Invalid or expired OAuth state'
   end
 end
 # rubocop:enable Rails/I18nLocaleTexts

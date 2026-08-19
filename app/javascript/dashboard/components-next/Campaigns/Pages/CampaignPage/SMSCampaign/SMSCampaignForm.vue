@@ -110,65 +110,69 @@ const handleSubmit = async () => {
 </script>
 
 <template>
-  <form class="flex flex-col gap-4" @submit.prevent="handleSubmit">
-    <Input
-      v-model="state.title"
-      :label="t('CAMPAIGN.SMS.CREATE.FORM.TITLE.LABEL')"
-      :placeholder="t('CAMPAIGN.SMS.CREATE.FORM.TITLE.PLACEHOLDER')"
-      :message="formErrors.title"
-      :message-type="formErrors.title ? 'error' : 'info'"
-    />
+  <form class="flex flex-col gap-4 h-full" @submit.prevent="handleSubmit">
+    <div class="overflow-y-auto flex-1 min-h-0">
+      <div class="flex flex-col gap-4">
+        <Input
+          v-model="state.title"
+          :label="t('CAMPAIGN.SMS.CREATE.FORM.TITLE.LABEL')"
+          :placeholder="t('CAMPAIGN.SMS.CREATE.FORM.TITLE.PLACEHOLDER')"
+          :message="formErrors.title"
+          :message-type="formErrors.title ? 'error' : 'info'"
+        />
 
-    <TextArea
-      v-model="state.message"
-      :label="t('CAMPAIGN.SMS.CREATE.FORM.MESSAGE.LABEL')"
-      :placeholder="t('CAMPAIGN.SMS.CREATE.FORM.MESSAGE.PLACEHOLDER')"
-      show-character-count
-      :message="formErrors.message"
-      :message-type="formErrors.message ? 'error' : 'info'"
-    />
+        <TextArea
+          v-model="state.message"
+          :label="t('CAMPAIGN.SMS.CREATE.FORM.MESSAGE.LABEL')"
+          :placeholder="t('CAMPAIGN.SMS.CREATE.FORM.MESSAGE.PLACEHOLDER')"
+          show-character-count
+          :message="formErrors.message"
+          :message-type="formErrors.message ? 'error' : 'info'"
+        />
 
-    <div class="flex flex-col gap-1.5">
-      <label for="inbox" class="text-foreground text-[13.5px] font-medium">
-        {{ t('CAMPAIGN.SMS.CREATE.FORM.INBOX.LABEL') }}
-      </label>
-      <ComboBox
-        id="inbox"
-        v-model="state.inboxId"
-        :options="inboxOptions"
-        :has-error="!!formErrors.inbox"
-        :placeholder="t('CAMPAIGN.SMS.CREATE.FORM.INBOX.PLACEHOLDER')"
-        :message="formErrors.inbox"
-        class="[&>div>button]:bg-black/10 [&>div>button:not(.focused)]:dark:outline-border [&>div>button:not(.focused)]:hover:!outline-border"
-      />
+        <div class="flex flex-col gap-1">
+          <label for="inbox" class="mb-0.5 text-sm font-medium text-foreground">
+            {{ t('CAMPAIGN.SMS.CREATE.FORM.INBOX.LABEL') }}
+          </label>
+          <ComboBox
+            id="inbox"
+            v-model="state.inboxId"
+            :options="inboxOptions"
+            :has-error="!!formErrors.inbox"
+            :placeholder="t('CAMPAIGN.SMS.CREATE.FORM.INBOX.PLACEHOLDER')"
+            :message="formErrors.inbox"
+            class="[&>div>button]:bg-black/10 [&>div>button:not(.focused)]:dark:outline-border [&>div>button:not(.focused)]:hover:!outline-border"
+          />
+        </div>
+
+        <div class="flex flex-col gap-1">
+          <label for="audience" class="mb-0.5 text-sm font-medium text-foreground">
+            {{ t('CAMPAIGN.SMS.CREATE.FORM.AUDIENCE.LABEL') }}
+          </label>
+          <TagMultiSelectComboBox
+            v-model="state.selectedAudience"
+            :options="audienceList"
+            :label="t('CAMPAIGN.SMS.CREATE.FORM.AUDIENCE.LABEL')"
+            :placeholder="t('CAMPAIGN.SMS.CREATE.FORM.AUDIENCE.PLACEHOLDER')"
+            :has-error="!!formErrors.audience"
+            :message="formErrors.audience"
+            class="[&>div>button]:bg-black/10"
+          />
+        </div>
+
+        <Input
+          v-model="state.scheduledAt"
+          :label="t('CAMPAIGN.SMS.CREATE.FORM.SCHEDULED_AT.LABEL')"
+          type="datetime-local"
+          :min="currentDateTime"
+          :placeholder="t('CAMPAIGN.SMS.CREATE.FORM.SCHEDULED_AT.PLACEHOLDER')"
+          :message="formErrors.scheduledAt"
+          :message-type="formErrors.scheduledAt ? 'error' : 'info'"
+        />
+      </div>
     </div>
 
-    <div class="flex flex-col gap-1.5">
-      <label for="audience" class="text-foreground text-[13.5px] font-medium">
-        {{ t('CAMPAIGN.SMS.CREATE.FORM.AUDIENCE.LABEL') }}
-      </label>
-      <TagMultiSelectComboBox
-        v-model="state.selectedAudience"
-        :options="audienceList"
-        :label="t('CAMPAIGN.SMS.CREATE.FORM.AUDIENCE.LABEL')"
-        :placeholder="t('CAMPAIGN.SMS.CREATE.FORM.AUDIENCE.PLACEHOLDER')"
-        :has-error="!!formErrors.audience"
-        :message="formErrors.audience"
-        class="[&>div>button]:bg-black/10"
-      />
-    </div>
-
-    <Input
-      v-model="state.scheduledAt"
-      :label="t('CAMPAIGN.SMS.CREATE.FORM.SCHEDULED_AT.LABEL')"
-      type="datetime-local"
-      :min="currentDateTime"
-      :placeholder="t('CAMPAIGN.SMS.CREATE.FORM.SCHEDULED_AT.PLACEHOLDER')"
-      :message="formErrors.scheduledAt"
-      :message-type="formErrors.scheduledAt ? 'error' : 'info'"
-    />
-
-    <div class="flex items-center justify-between w-full gap-3">
+    <div class="flex items-center justify-between w-full gap-3 flex-shrink-0 pt-4 border-t border-border">
       <Button
         variant="faded"
         color="slate"

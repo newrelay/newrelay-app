@@ -14,11 +14,9 @@ class Api::V1::Accounts::BulkActionAuditsController < Api::V1::Accounts::BaseCon
   private
 
   def fetch_bulk_action_audits
-    @bulk_action_audits = Current.account.bulk_action_audits
+    @bulk_action_audits = Current.account.bulk_action_audits.order(created_at: :desc)
     @bulk_action_audits = @bulk_action_audits.where(status: permitted_params[:status]) if permitted_params[:status].present?
-    return if permitted_params[:operation_type].blank?
-
-    @bulk_action_audits = @bulk_action_audits.where(operation_type: permitted_params[:operation_type])
+    @bulk_action_audits = @bulk_action_audits.where(operation_type: permitted_params[:operation_type]) if permitted_params[:operation_type].present?
   end
 
   def fetch_bulk_action_audit

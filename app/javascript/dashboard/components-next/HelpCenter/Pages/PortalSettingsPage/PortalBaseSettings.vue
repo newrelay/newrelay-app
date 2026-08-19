@@ -294,7 +294,7 @@ defineExpose({
             class="truncate px-1 text-[12.5px]"
             :class="slugError ? 'text-destructive' : 'text-muted-foreground'"
           >
-            {{ slugError || buildPortalURL(state.slug) }}
+            {{ slugError || buildPortalURL(state.slug, activePortal?.resolved_custom_domain) }}
           </p>
         </div>
 

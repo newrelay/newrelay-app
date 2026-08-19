@@ -165,43 +165,39 @@ const handleBreadcrumbClick = () => {
       @click="handleBreadcrumbClick"
     />
     <div v-if="!hasSelectedCategory" class="relative shrink-0">
-      <OnClickOutside @trigger="isCreateCategoryDialogOpen = false">
-        <RelayButton
-          class="h-9 shadow-xs"
-          @click="isCreateCategoryDialogOpen = !isCreateCategoryDialogOpen"
-        >
-          <span class="i-lucide-plus size-4" aria-hidden="true" />
-          {{ t('HELP_CENTER.CATEGORY_PAGE.CATEGORY_HEADER.NEW_CATEGORY') }}
-        </RelayButton>
-        <CategoryDialog
-          v-if="isCreateCategoryDialogOpen"
-          mode="create"
-          :portal-name="currentPortalName"
-          :active-locale-name="activeLocaleName"
-          :active-locale-code="activeLocaleCode"
-          @close="isCreateCategoryDialogOpen = false"
-        />
-      </OnClickOutside>
+      <RelayButton
+        class="h-9 shadow-xs"
+        @click="isCreateCategoryDialogOpen = !isCreateCategoryDialogOpen"
+      >
+        <span class="i-lucide-plus size-4" aria-hidden="true" />
+        {{ t('HELP_CENTER.CATEGORY_PAGE.CATEGORY_HEADER.NEW_CATEGORY') }}
+      </RelayButton>
+      <CategoryDialog
+        v-if="isCreateCategoryDialogOpen"
+        mode="create"
+        :portal-name="currentPortalName"
+        :active-locale-name="activeLocaleName"
+        :active-locale-code="activeLocaleCode"
+        @close="isCreateCategoryDialogOpen = false"
+      />
     </div>
     <div v-else class="relative flex shrink-0 items-center gap-2">
-      <OnClickOutside @trigger="isEditCategoryDialogOpen = false">
-        <RelayButton
-          variant="outline"
-          size="sm"
-          class="h-8"
-          @click="isEditCategoryDialogOpen = !isEditCategoryDialogOpen"
-        >
-          {{ t('HELP_CENTER.CATEGORY_PAGE.CATEGORY_HEADER.EDIT_CATEGORY') }}
-        </RelayButton>
-        <CategoryDialog
-          v-if="isEditCategoryDialogOpen"
-          :selected-category="selectedCategory"
-          :portal-name="currentPortalName"
-          :active-locale-name="activeLocaleName"
-          :active-locale-code="activeLocaleCode"
-          @close="isEditCategoryDialogOpen = false"
-        />
-      </OnClickOutside>
+      <RelayButton
+        variant="outline"
+        size="sm"
+        class="h-8"
+        @click="isEditCategoryDialogOpen = !isEditCategoryDialogOpen"
+      >
+        {{ t('HELP_CENTER.CATEGORY_PAGE.CATEGORY_HEADER.EDIT_CATEGORY') }}
+      </RelayButton>
+      <CategoryDialog
+        v-if="isEditCategoryDialogOpen"
+        :selected-category="selectedCategory"
+        :portal-name="currentPortalName"
+        :active-locale-name="activeLocaleName"
+        :active-locale-code="activeLocaleCode"
+        @close="isEditCategoryDialogOpen = false"
+      />
       <RelayButton class="h-9 shadow-xs" @click="emit('newArticle')">
         <span class="i-lucide-plus size-4" aria-hidden="true" />
         {{ t('HELP_CENTER.ARTICLES_PAGE.ARTICLES_HEADER.NEW_ARTICLE') }}

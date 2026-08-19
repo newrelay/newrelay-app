@@ -63,6 +63,7 @@ const defaultState = {
     countryCode: '',
     country: '',
     city: '',
+    additionalPhoneNumbers: [],
     socialProfiles: {
       facebook: '',
       github: '',
@@ -105,6 +106,7 @@ const prepareStateBasedOnProps = () => {
     countryCode = '',
     country = '',
     city = '',
+    additionalPhoneNumbers = [],
     socialTelegramUserName = '',
     socialProfiles = {},
   } = additionalAttributes || {};
@@ -125,6 +127,7 @@ const prepareStateBasedOnProps = () => {
       countryCode,
       country,
       city,
+      additionalPhoneNumbers: [...additionalPhoneNumbers],
       socialProfiles: {
         ...socialProfiles,
         telegram: telegramUsername,
@@ -221,6 +224,15 @@ const handleCountrySelection = value => {
   emit('update', state);
 };
 
+const addPhoneNumber = () => {
+  state.additionalAttributes.additionalPhoneNumbers.push('');
+};
+
+const removePhoneNumber = index => {
+  state.additionalAttributes.additionalPhoneNumbers.splice(index, 1);
+  emit('update', state);
+};
+
 const resetValidation = () => {
   v$.value.$reset();
 };
@@ -295,6 +307,59 @@ defineExpose({
           />
         </template>
       </div>
+    </div>
+    <div class="flex flex-col items-start w-full gap-2">
+      <span class="py-1 text-sm font-medium text-foreground">
+        {{
+          t(
+            'CONTACTS_LAYOUT.CARD.EDIT_DETAILS_FORM.ADDITIONAL_PHONE_NUMBERS.TITLE'
+          )
+        }}
+      </span>
+      <div class="flex flex-col w-full gap-2">
+        <div
+          v-for="(phone, index) in state.additionalAttributes
+            .additionalPhoneNumbers"
+          :key="index"
+          class="flex items-center w-full gap-2"
+        >
+          <PhoneNumberInput
+            v-model="state.additionalAttributes.additionalPhoneNumbers[index]"
+            :placeholder="
+              t(
+                'CONTACTS_LAYOUT.CARD.EDIT_DETAILS_FORM.ADDITIONAL_PHONE_NUMBERS.PLACEHOLDER'
+              )
+            "
+            :show-border="isDetailsView"
+            class="flex-1"
+            @update:model-value="emit('update', state)"
+          />
+          <button
+            type="button"
+            class="flex items-center justify-center flex-shrink-0 rounded-lg size-8 text-muted-foreground hover:text-destructive hover:bg-accent"
+            :title="
+              t(
+                'CONTACTS_LAYOUT.CARD.EDIT_DETAILS_FORM.ADDITIONAL_PHONE_NUMBERS.REMOVE'
+              )
+            "
+            @click="removePhoneNumber(index)"
+          >
+            <Icon icon="i-lucide-trash-2" class="size-4" />
+          </button>
+        </div>
+      </div>
+      <button
+        type="button"
+        class="flex items-center gap-1 py-1 text-sm font-medium text-primary hover:underline"
+        @click="addPhoneNumber"
+      >
+        <Icon icon="i-lucide-plus" class="size-4" />
+        {{
+          t(
+            'CONTACTS_LAYOUT.CARD.EDIT_DETAILS_FORM.ADDITIONAL_PHONE_NUMBERS.ADD'
+          )
+        }}
+      </button>
     </div>
     <div class="flex flex-col items-start gap-2">
       <span class="py-1 text-sm font-medium text-foreground">

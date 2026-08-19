@@ -1,6 +1,7 @@
 json.id portal.id
 json.color portal.color
 json.custom_domain portal.custom_domain
+json.resolved_custom_domain portal.custom_domain.presence || portal.account&.custom_domain.presence
 json.header_text portal.header_text
 json.homepage_link portal.homepage_link
 json.name portal.name

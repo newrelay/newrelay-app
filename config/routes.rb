@@ -180,6 +180,7 @@ Rails.application.routes.draw do
           resources :companies, only: [:index, :show, :create, :update, :destroy] do
             collection do
               get :search
+              post :import
             end
             member do
               post :destroy_custom_attributes
@@ -208,6 +209,7 @@ Rails.application.routes.draw do
             resources :integrations, only: [:index, :create, :destroy] do
               collection do
                 get :google_locations
+                get :oauth_state
               end
             end
             resources :templates, only: [:index, :create, :update, :destroy]
@@ -636,6 +638,11 @@ Rails.application.routes.draw do
     end
   end
 
+  # Custom domain root routes (no slug required)
+  get '/', to: 'public/api/v1/portals#show_root', constraints: ->(req) { !req.host.start_with?('app.') && !req.host.include?('localhost') }
+  get '/hc', to: 'public/api/v1/portals#show_root', constraints: ->(req) { !req.host.start_with?('app.') && !req.host.include?('localhost') }
+  get '/hc/:locale', to: 'public/api/v1/portals#show_root', constraints: ->(req) { !req.host.start_with?('app.') && !req.host.include?('localhost') }
+
   get 'hc/:slug', to: 'public/api/v1/portals#show'
   get 'hc/:slug/sitemap.xml', to: 'public/api/v1/portals#sitemap'
   get 'hc/:slug/:locale', to: 'public/api/v1/portals#show', as: :public_portal_locale
@@ -736,6 +743,8 @@ Rails.application.routes.draw do
       resources :accounts, only: [:index, :new, :create, :show, :edit, :update, :destroy] do
         post :seed, on: :member
         post :reset_cache, on: :member
+        post :clear_custom_domain, on: :member
+        post :clear_portal_custom_domain, on: :member
       end
       resources :enterprise_contracts
       resources :enterprise_inquiries, only: %i[index destroy], controller: :enterprise_inquiries do
@@ -765,6 +774,9 @@ Rails.application.routes.draw do
       resources :platform_apps, only: [:index, :new, :create, :show, :edit, :update, :destroy]
       resources :platform_banners
       resource :instance_status, only: [:show]
+
+      get 'cloudflare_domains', to: 'cloudflare_domains#show'
+      delete 'cloudflare_domains', to: 'cloudflare_domains#destroy'
 
       resource :settings, only: [:show] do
         get :refresh, on: :collection

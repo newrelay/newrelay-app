@@ -3,16 +3,18 @@ import { computed, ref, watch, onMounted, nextTick } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRoute, useRouter } from 'vue-router';
 import { useStore, useMapGetter } from 'dashboard/composables/store';
-import { useAlert, useTrack } from 'dashboard/composables';
+import { useTrack } from 'dashboard/composables';
 import { useUISettings } from 'dashboard/composables/useUISettings';
+import { useCamelCase } from 'dashboard/composables/useTransformKeys';
 import wootConstants from 'dashboard/constants/globals';
 import { INBOX_EVENTS } from 'dashboard/helper/AnalyticsHelper/events';
 import { INBOX_TYPES } from 'dashboard/helper/inbox';
+import ConversationApi from 'dashboard/api/inbox/conversation';
 
 import InboxCard from 'dashboard/components-next/Inbox/InboxCard.vue';
 import InboxListHeader from './components/InboxListHeader.vue';
 import InboxSidebarNav from './components/InboxSidebarNav.vue';
-import { RelayMessagesEmptyState } from 'dashboard/components-next/relay';
+import InboxEmptyState from './InboxEmptyState.vue';
 import IntersectionObserver from 'dashboard/components/IntersectionObserver.vue';
 import CmdBarConversationSnooze from 'dashboard/routes/dashboard/commands/CmdBarConversationSnooze.vue';
 import Spinner from 'dashboard/components-next/spinner/Spinner.vue';
@@ -26,13 +28,18 @@ const { uiSettings, updateUISettings } = useUISettings();
 
 const notificationList = ref(null);
 const page = ref(1);
-const status = ref('');
-const type = ref('');
 const sortOrder = ref(wootConstants.INBOX_SORT_BY.NEWEST);
-const isInboxContextMenuOpen = ref(false);
 const activeView = ref('all');
 const activeStatusTab = ref('new');
-const selectedIds = ref(new Set());
+const showListFilterMenu = ref(false);
+const showTabMoreMenu = ref(false);
+
+// The Inbox lists the current user's assigned conversations. We keep the list in
+// local state (not the global `conversations` store) so this view never clobbers
+// the main Conversations page's filters/list, and vice versa.
+const items = ref([]);
+const isFetching = ref(false);
+const totalCount = ref(0);
 
 // Starred conversation ids are persisted in UI settings so favourites survive
 // reloads and stay in sync across the agent's sessions.
@@ -41,10 +48,10 @@ const starredIds = computed(
 );
 
 const STATUS_TAB_MAP = {
-  new: 'open',
-  'in-progress': 'pending',
-  'on-hold': 'snoozed',
-  closed: 'resolved',
+  new: wootConstants.STATUS_TYPE.OPEN,
+  'in-progress': wootConstants.STATUS_TYPE.PENDING,
+  'on-hold': wootConstants.STATUS_TYPE.SNOOZED,
+  closed: wootConstants.STATUS_TYPE.RESOLVED,
 };
 
 const infiniteLoaderOptions = computed(() => ({
@@ -52,22 +59,67 @@ const infiniteLoaderOptions = computed(() => ({
   rootMargin: '100px 0px 100px 0px',
 }));
 
-const meta = useMapGetter('notifications/getMeta');
-const uiFlags = useMapGetter('notifications/getUIFlags');
-const records = useMapGetter('notifications/getFilteredNotificationsV4');
 const inboxesList = useMapGetter('inboxes/getInboxes');
-const currentUser = useMapGetter('getCurrentUser');
 
 const currentConversationId = computed(() => Number(route.params.id));
 
-const inboxFilters = computed(() => ({
-  page: page.value,
-  status: status.value,
-  type: type.value,
-  sortOrder: sortOrder.value,
-}));
+const statusForFetch = computed(
+  () => STATUS_TAB_MAP[activeStatusTab.value] || wootConstants.STATUS_TYPE.OPEN
+);
 
-const allNotifications = computed(() => records.value(inboxFilters.value));
+const sortByParam = computed(() =>
+  sortOrder.value === wootConstants.INBOX_SORT_BY.OLDEST
+    ? wootConstants.SORT_BY_TYPE.LAST_ACTIVITY_AT_ASC
+    : wootConstants.SORT_BY_TYPE.LAST_ACTIVITY_AT_DESC
+);
+
+const isAllLoaded = computed(() => items.value.length >= totalCount.value);
+
+// Adapt an API conversation into the shape InboxCard expects (the conversation
+// is the notification's "primary actor" in the original notification-driven UI).
+const adaptConversation = conversation => {
+  const camelized = useCamelCase(conversation, { deep: true });
+  return {
+    id: camelized.id,
+    primaryActorId: camelized.id,
+    primaryActorType: 'Conversation',
+    primaryActor: camelized,
+    notificationType: 'conversation_assignment',
+    lastActivityAt: camelized.lastActivityAt,
+    readAt: camelized.unreadCount ? null : new Date().toISOString(),
+  };
+};
+
+const fetchConversations = async ({ append = false } = {}) => {
+  isFetching.value = true;
+  try {
+    const {
+      data: { data: { payload = [], meta = {} } = {} },
+    } = await ConversationApi.get({
+      assigneeType: wootConstants.ASSIGNEE_TYPE.ME,
+      status: statusForFetch.value,
+      page: page.value,
+      sortBy: sortByParam.value,
+    });
+    const adapted = payload.map(adaptConversation);
+    items.value = append ? [...items.value, ...adapted] : adapted;
+    // An empty appended page means we've reached the end regardless of what the
+    // server's mine_count says, so clamp to what we actually loaded.
+    totalCount.value =
+      append && !payload.length
+        ? items.value.length
+        : (meta.mine_count ?? items.value.length);
+  } catch (error) {
+    if (!append) items.value = [];
+  } finally {
+    isFetching.value = false;
+  }
+};
+
+const reloadConversations = () => {
+  page.value = 1;
+  fetchConversations();
+};
 
 const channelsForNav = computed(() => {
   const preferred = [
@@ -84,7 +136,7 @@ const channelsForNav = computed(() => {
   });
 
   return list.map(inbox => {
-    const count = allNotifications.value.filter(
+    const count = items.value.filter(
       n => n.primaryActor?.inboxId === inbox.id
     ).length;
     return { ...inbox, count };
@@ -92,84 +144,47 @@ const channelsForNav = computed(() => {
 });
 
 const viewCounts = computed(() => {
-  const items = allNotifications.value;
-  const currentUserId = currentUser.value?.id;
+  const list = items.value;
+
   return {
-    all: meta.value?.count ?? items.length,
-    unread: meta.value?.unreadCount ?? items.filter(n => !n.readAt).length,
-    assigned: items.filter(
-      n =>
-        n.notificationType === 'conversation_assignment' ||
-        n.primaryActor?.meta?.assignee?.id === currentUserId
-    ).length,
-    // Counted from the loaded list rather than the saved id set, so the badge
-    // always matches what the Starred view actually renders.
-    starred: items.filter(n => starredIds.value.has(n.primaryActor?.id)).length,
-    snoozed: items.filter(
-      n => n.snoozedUntil || n.primaryActor?.status === 'snoozed'
-    ).length,
-    archived: items.filter(n => n.primaryActor?.status === 'resolved').length,
+    // All the loaded rows are the current user's conversations for the active
+    // status tab; the total comes from the API's `mine_count`.
+    all: totalCount.value || list.length,
+    unread: list.filter(n => !n.readAt).length,
+    assigned: list.length,
+    starred: list.filter(n => starredIds.value.has(n.primaryActor?.id)).length,
+    snoozed: list.filter(n => n.primaryActor?.status === 'snoozed').length,
+    archived: list.filter(n => n.primaryActor?.status === 'resolved').length,
     spam: 0,
   };
 });
 
-const filteredNotifications = computed(() => {
-  let items = allNotifications.value;
+const filteredConversations = computed(() => {
+  let list = items.value;
   const view = activeView.value;
-  const currentUserId = currentUser.value?.id;
 
   if (view === 'unread') {
-    items = items.filter(n => !n.readAt);
-  } else if (view === 'assigned') {
-    items = items.filter(
-      n =>
-        n.notificationType === 'conversation_assignment' ||
-        n.primaryActor?.meta?.assignee?.id === currentUserId
-    );
+    list = list.filter(n => !n.readAt);
   } else if (view === 'starred') {
-    items = items.filter(n => starredIds.value.has(n.primaryActor?.id));
-  } else if (view === 'snoozed') {
-    items = items.filter(
-      n => n.snoozedUntil || n.primaryActor?.status === 'snoozed'
-    );
-  } else if (view === 'archived') {
-    items = items.filter(n => n.primaryActor?.status === 'resolved');
+    list = list.filter(n => starredIds.value.has(n.primaryActor?.id));
   } else if (view === 'spam') {
-    items = [];
+    list = [];
   } else if (view.startsWith('inbox:')) {
     const inboxId = Number(view.replace('inbox:', ''));
-    items = items.filter(n => n.primaryActor?.inboxId === inboxId);
+    list = list.filter(n => n.primaryActor?.inboxId === inboxId);
   }
+  // 'all'/'assigned' show every loaded row; 'snoozed'/'archived' are handled by
+  // the status tab, which refetches with the matching conversation status.
 
-  // Starred is an explicit user-curated view: showing it through the status
-  // tabs would hide favourites whose conversation sits in another status.
-  const statusKey = STATUS_TAB_MAP[activeStatusTab.value];
-  if (
-    statusKey &&
-    view !== 'snoozed' &&
-    view !== 'archived' &&
-    view !== 'starred'
-  ) {
-    items = items.filter(n => {
-      const conversationStatus = n.primaryActor?.status;
-      if (!conversationStatus) return activeStatusTab.value === 'new';
-      return conversationStatus === statusKey;
-    });
-  }
-
-  return items;
+  return list;
 });
 
-const showEndOfList = computed(() => {
-  return uiFlags.value.isAllNotificationsLoaded && !uiFlags.value.isFetching;
-});
+const showEndOfList = computed(() => isAllLoaded.value && !isFetching.value);
 
-const showViewEmptyState = computed(() => {
-  return !uiFlags.value.isFetching && !filteredNotifications.value.length;
-});
+const showEmptyState = computed(() => !isFetching.value && !items.value.length);
 
 const showFilledList = computed(() => {
-  return !currentConversationId.value && !showViewEmptyState.value;
+  return !currentConversationId.value && !showEmptyState.value;
 });
 
 const statusTabs = computed(() => [
@@ -192,72 +207,6 @@ const toggleStar = notificationItem => {
   updateUISettings({ starred_conversation_ids: [...next] });
 };
 
-const toggleSelect = notificationItem => {
-  const next = new Set(selectedIds.value);
-  if (next.has(notificationItem.id)) next.delete(notificationItem.id);
-  else next.add(notificationItem.id);
-  selectedIds.value = next;
-};
-
-const selectedCount = computed(() => selectedIds.value.size);
-
-const allSelected = computed(
-  () =>
-    filteredNotifications.value.length > 0 &&
-    selectedCount.value === filteredNotifications.value.length
-);
-
-const toggleSelectAll = () => {
-  selectedIds.value = allSelected.value
-    ? new Set()
-    : new Set(filteredNotifications.value.map(item => item.id));
-};
-
-const selectedNotifications = () =>
-  filteredNotifications.value.filter(item => selectedIds.value.has(item.id));
-
-// The store derives the next unread count from the value handed to it, so these
-// run sequentially and re-read `meta` each pass; dispatching in parallel would
-// make every call start from the same stale count.
-const markSelectedAsRead = async () => {
-  const items = selectedNotifications().filter(item => !item.readAt);
-  // eslint-disable-next-line no-restricted-syntax
-  for (const { id, primaryActorId, primaryActorType } of items) {
-    // eslint-disable-next-line no-await-in-loop
-    await store.dispatch('notifications/read', {
-      id,
-      primaryActorId,
-      primaryActorType,
-      unreadCount: meta.value.unreadCount,
-    });
-  }
-  selectedIds.value = new Set();
-  store.dispatch('notifications/unReadCount');
-  useAlert(t('INBOX.ALERTS.MARK_AS_READ'));
-};
-
-const deleteSelected = async () => {
-  const items = selectedNotifications();
-  // eslint-disable-next-line no-restricted-syntax
-  for (const notification of items) {
-    // eslint-disable-next-line no-await-in-loop
-    await store.dispatch('notifications/delete', {
-      notification,
-      count: meta.value.count,
-      unreadCount: meta.value.unreadCount,
-    });
-  }
-  selectedIds.value = new Set();
-  store.dispatch('notifications/unReadCount');
-  useAlert(t('INBOX.ALERTS.DELETE'));
-};
-
-const fetchNotifications = () => {
-  page.value = 1;
-  store.dispatch('notifications/clear');
-  store.dispatch('notifications/index', inboxFilters.value);
-};
-
 const scrollActiveIntoView = () => {
   const activeEl = notificationList.value?.querySelector('.inbox-card.active');
   activeEl?.scrollIntoView({ block: 'center', behavior: 'smooth' });
@@ -268,83 +217,27 @@ const redirectToInbox = () => {
   router.replace({ name: 'inbox_view' });
 };
 
-const loadMoreNotifications = () => {
-  if (uiFlags.value.isAllNotificationsLoaded) return;
+const loadMoreConversations = () => {
+  if (isAllLoaded.value || isFetching.value) return;
   page.value += 1;
-  store.dispatch('notifications/index', {
-    page: page.value,
-    status: status.value,
-    type: type.value,
-    sortOrder: sortOrder.value,
-  });
-};
-
-const markNotificationAsRead = async notificationItem => {
-  useTrack(INBOX_EVENTS.MARK_NOTIFICATION_AS_READ);
-  const { id, primaryActorId, primaryActorType } = notificationItem;
-  try {
-    await store.dispatch('notifications/read', {
-      id,
-      primaryActorId,
-      primaryActorType,
-      unreadCount: meta.value.unreadCount,
-    });
-    useAlert(t('INBOX.ALERTS.MARK_AS_READ'));
-    store.dispatch('notifications/unReadCount');
-  } catch {
-    // error
-  }
-};
-
-const markNotificationAsUnRead = async notificationItem => {
-  useTrack(INBOX_EVENTS.MARK_NOTIFICATION_AS_UNREAD);
-  redirectToInbox();
-  const { id } = notificationItem;
-  try {
-    await store.dispatch('notifications/unread', { id });
-    useAlert(t('INBOX.ALERTS.MARK_AS_UNREAD'));
-    store.dispatch('notifications/unReadCount');
-  } catch {
-    // error
-  }
-};
-
-const deleteNotification = async notificationItem => {
-  useTrack(INBOX_EVENTS.DELETE_NOTIFICATION);
-  redirectToInbox();
-  try {
-    await store.dispatch('notifications/delete', {
-      notification: notificationItem,
-      unreadCount: meta.value.unreadCount,
-      count: meta.value.count,
-    });
-    useAlert(t('INBOX.ALERTS.DELETE'));
-  } catch {
-    // error
-  }
+  fetchConversations({ append: true });
 };
 
 const onFilterChange = option => {
-  const { STATUS, TYPE, SORT_ORDER } = wootConstants.INBOX_FILTER_TYPE;
-  if (option.type === STATUS) {
-    status.value = option.selected ? option.key : '';
-  }
-  if (option.type === TYPE) {
-    type.value = option.selected ? option.key : '';
-  }
+  const { SORT_ORDER } = wootConstants.INBOX_FILTER_TYPE;
   if (option.type === SORT_ORDER) {
     sortOrder.value = option.key;
+    reloadConversations();
   }
-  fetchNotifications();
 };
 
 const setSavedFilter = () => {
   const { inbox_filter_by: filterBy = {} } = uiSettings.value;
-  const { status: savedStatus, type: savedType, sort_by: sortBy } = filterBy;
-  status.value = savedStatus;
-  type.value = savedType;
-  sortOrder.value = sortBy || wootConstants.INBOX_SORT_BY.NEWEST;
-  store.dispatch('notifications/setNotificationFilters', inboxFilters.value);
+  const { sort_by: sortBy } = filterBy;
+  sortOrder.value =
+    sortBy === wootConstants.INBOX_SORT_BY.OLDEST
+      ? wootConstants.INBOX_SORT_BY.OLDEST
+      : wootConstants.INBOX_SORT_BY.NEWEST;
 };
 
 const onSelectView = viewId => {
@@ -357,47 +250,38 @@ const onSelectView = viewId => {
   redirectToInbox();
 };
 
-const openConversation = async notificationItem => {
+const openConversation = notificationItem => {
   const {
-    id,
-    primaryActorId,
-    primaryActorType,
-    primaryActor: { inboxId, id: conversationId },
+    primaryActor: { inboxId, id: conversationId } = {},
     notificationType,
   } = notificationItem;
 
-  if (route.params.id === String(conversationId)) return;
+  if (!conversationId || route.params.id === String(conversationId)) return;
 
-  useTrack(INBOX_EVENTS.OPEN_CONVERSATION_VIA_INBOX, {
-    notificationType,
+  useTrack(INBOX_EVENTS.OPEN_CONVERSATION_VIA_INBOX, { notificationType });
+
+  router.push({
+    name: 'inbox_view_conversation',
+    params: { inboxId, type: 'conversation', id: conversationId },
   });
-
-  try {
-    await store.dispatch('notifications/read', {
-      id,
-      primaryActorId,
-      primaryActorType,
-      unreadCount: meta.value.unreadCount,
-    });
-    store.dispatch('notifications/unReadCount');
-    router.push({
-      name: 'inbox_view_conversation',
-      params: { inboxId, type: 'conversation', id: conversationId },
-    });
-  } catch {
-    // error
-  }
 };
 
-watch(
-  inboxFilters,
-  (newVal, oldVal) => {
-    if (newVal !== oldVal) {
-      store.dispatch('notifications/updateNotificationFilters', newVal);
-    }
-  },
-  { deep: true }
-);
+const applyListFilter = key => {
+  showListFilterMenu.value = false;
+  if (key === 'assigned') onSelectView('assigned');
+  if (key === 'oldest') {
+    onFilterChange({
+      type: wootConstants.INBOX_FILTER_TYPE.SORT_ORDER,
+      key: wootConstants.INBOX_SORT_BY.OLDEST,
+    });
+  }
+  if (key === 'archived') onSelectView('archived');
+  if (key === 'snoozed') onSelectView('snoozed');
+  if (key === 'spam') onSelectView('spam');
+};
+
+// Switching the status tab changes which conversation status we fetch.
+watch(activeStatusTab, () => reloadConversations());
 
 watch(currentConversationId, () => {
   nextTick(scrollActiveIntoView);
@@ -406,7 +290,7 @@ watch(currentConversationId, () => {
 onMounted(() => {
   scrollActiveIntoView();
   setSavedFilter();
-  fetchNotifications();
+  reloadConversations();
   store.dispatch('inboxes/get');
 });
 </script>
@@ -420,11 +304,7 @@ onMounted(() => {
       class="w-[260px] border-r border-border flex flex-col shrink-0 bg-card"
       :class="currentConversationId ? 'hidden xl:flex' : 'flex'"
     >
-      <InboxListHeader
-        :is-context-menu-open="isInboxContextMenuOpen"
-        @filter="onFilterChange"
-        @redirect="redirectToInbox"
-      />
+      <InboxListHeader @filter="onFilterChange" @redirect="redirectToInbox" />
       <InboxSidebarNav
         :active-view="activeView"
         :view-counts="viewCounts"
@@ -435,16 +315,9 @@ onMounted(() => {
 
     <!-- Main content -->
     <div class="flex-1 flex flex-col min-w-0 h-full overflow-hidden">
-      <RelayMessagesEmptyState
-        v-if="showViewEmptyState && !currentConversationId"
-        class="flex-1"
-        :title="t('INBOX.LIST.EMPTY_STATE.TITLE')"
-        :description="t('INBOX.LIST.EMPTY_STATE.DESCRIPTION')"
-      />
-
       <!-- Filled conversations list -->
       <div
-        v-else-if="showFilledList"
+        v-if="showFilledList"
         class="flex-1 flex flex-col bg-card overflow-hidden"
       >
         <div
@@ -460,52 +333,129 @@ onMounted(() => {
               type="button"
               role="tab"
               :aria-selected="activeStatusTab === tab.value"
-              class="inline-flex h-14 shrink-0 items-center justify-center whitespace-nowrap rounded-none border-b-2 px-0 text-sm font-medium transition-colors"
+              class="relative h-14 px-1 text-sm font-medium transition-colors shrink-0"
               :class="
                 activeStatusTab === tab.value
-                  ? 'border-primary bg-transparent text-foreground shadow-none'
-                  : 'border-transparent text-muted-foreground hover:text-foreground'
+                  ? 'text-foreground font-semibold'
+                  : 'text-muted-foreground hover:text-foreground'
               "
               @click="activeStatusTab = tab.value"
             >
               {{ tab.label }}
+              <!-- Active Bottom Border Indicator -->
+              <span
+                v-if="activeStatusTab === tab.value"
+                class="absolute bottom-0 left-0 right-0 h-0.5 rounded-t-full bg-primary"
+              />
             </button>
           </div>
 
           <div class="flex items-center gap-1 pl-4 shrink-0">
-            <RelayButton
-              v-if="filteredNotifications.length"
-              variant="ghost"
-              size="sm"
-              class="h-8 border-transparent text-xs text-muted-foreground hover:border-transparent hover:text-foreground"
-              @click="toggleSelectAll"
-            >
-              {{
-                allSelected
-                  ? t('INBOX.LIST.DESELECT_ALL')
-                  : t('INBOX.LIST.SELECT_ALL')
-              }}
-            </RelayButton>
-            <template v-if="selectedCount > 0">
+            <div class="relative">
+              <RelayButton
+                variant="outline"
+                size="icon"
+                class="h-8 w-8 shrink-0"
+                :aria-label="t('INBOX.LIST.FILTER_TOOLTIP')"
+                @click="showListFilterMenu = !showListFilterMenu"
+              >
+                <span class="i-lucide-list-filter size-4" />
+              </RelayButton>
+              <div
+                v-if="showListFilterMenu"
+                v-on-clickaway="() => (showListFilterMenu = false)"
+                class="absolute right-0 mt-1.5 z-50 w-48 rounded-md border border-border bg-popover p-1 shadow-md"
+              >
+                <button
+                  type="button"
+                  class="w-full flex items-center gap-2 px-2 py-1.5 text-sm rounded-sm hover:bg-muted text-foreground"
+                  @click="applyListFilter('assigned')"
+                >
+                  <span class="i-lucide-user size-4 text-muted-foreground" />
+                  {{ t('INBOX.FILTER_MENU.ASSIGNED_TO_ME') }}
+                </button>
+                <button
+                  type="button"
+                  class="w-full flex items-center gap-2 px-2 py-1.5 text-sm rounded-sm hover:bg-muted text-foreground"
+                  @click="applyListFilter('oldest')"
+                >
+                  <span class="i-lucide-clock size-4 text-muted-foreground" />
+                  {{ t('INBOX.FILTER_MENU.OLDEST_FIRST') }}
+                </button>
+                <div class="my-1 h-px bg-border" />
+                <button
+                  type="button"
+                  class="w-full flex items-center gap-2 px-2 py-1.5 text-sm rounded-sm hover:bg-muted text-foreground"
+                  @click="applyListFilter('archived')"
+                >
+                  <span class="i-lucide-archive size-4 text-muted-foreground" />
+                  {{ t('INBOX.FILTER_MENU.ARCHIVED') }}
+                </button>
+                <button
+                  type="button"
+                  class="w-full flex items-center gap-2 px-2 py-1.5 text-sm rounded-sm hover:bg-muted text-foreground"
+                  @click="applyListFilter('snoozed')"
+                >
+                  <span
+                    class="i-lucide-alarm-clock size-4 text-muted-foreground"
+                  />
+                  {{ t('INBOX.FILTER_MENU.SNOOZED') }}
+                </button>
+              </div>
+            </div>
+            <div class="relative shrink-0">
               <RelayButton
                 variant="ghost"
-                size="sm"
-                class="h-8 border-transparent text-xs text-muted-foreground hover:border-transparent hover:text-foreground"
-                @click="markSelectedAsRead"
+                size="icon"
+                class="h-8 w-8 text-muted-foreground"
+                :aria-label="t('INBOX.LIST.MORE_OPTIONS')"
+                @click="showTabMoreMenu = !showTabMoreMenu"
               >
-                <span class="i-lucide-check-check size-3.5 mr-1" />
-                {{ t('INBOX.LIST.MARK_READ') }}
+                <span class="i-lucide-ellipsis size-4" />
               </RelayButton>
-              <RelayButton
-                variant="ghost"
-                size="sm"
-                class="h-8 border-transparent text-xs text-destructive hover:border-transparent hover:bg-destructive/10 hover:text-destructive"
-                @click="deleteSelected"
+              <div
+                v-if="showTabMoreMenu"
+                v-on-clickaway="() => (showTabMoreMenu = false)"
+                class="absolute right-0 mt-1.5 z-50 w-40 rounded-md border border-border bg-popover p-1 shadow-md"
               >
-                <span class="i-lucide-trash-2 size-3.5 mr-1" />
-                {{ t('INBOX.LIST.DELETE') }}
-              </RelayButton>
-            </template>
+                <button
+                  type="button"
+                  class="w-full flex items-center gap-2 px-2 py-1.5 text-sm rounded-sm hover:bg-muted"
+                  @click="
+                    applyListFilter('archived');
+                    showTabMoreMenu = false;
+                  "
+                >
+                  <span class="i-lucide-archive size-4 text-muted-foreground" />
+                  {{ t('INBOX.FILTER_MENU.ARCHIVED') }}
+                </button>
+                <button
+                  type="button"
+                  class="w-full flex items-center gap-2 px-2 py-1.5 text-sm rounded-sm hover:bg-muted"
+                  @click="
+                    applyListFilter('snoozed');
+                    showTabMoreMenu = false;
+                  "
+                >
+                  <span
+                    class="i-lucide-alarm-clock size-4 text-muted-foreground"
+                  />
+                  {{ t('INBOX.FILTER_MENU.SNOOZED') }}
+                </button>
+                <div class="my-1 h-px bg-border" />
+                <button
+                  type="button"
+                  class="w-full flex items-center gap-2 px-2 py-1.5 text-sm rounded-sm hover:bg-muted"
+                  @click="
+                    applyListFilter('spam');
+                    showTabMoreMenu = false;
+                  "
+                >
+                  <span class="i-lucide-ban size-4 text-muted-foreground" />
+                  {{ t('INBOX.FILTER_MENU.SPAM') }}
+                </button>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -513,61 +463,62 @@ onMounted(() => {
           ref="notificationList"
           class="flex-1 overflow-y-auto overflow-x-hidden min-h-0"
         >
-          <div class="flex flex-col">
-            <InboxCard
-              v-for="notificationItem in filteredNotifications"
-              :key="notificationItem.id"
-              :inbox-item="notificationItem"
-              :is-active="
-                currentConversationId === notificationItem.primaryActor?.id
-              "
-              :is-starred="isStarred(notificationItem)"
-              :is-selected="selectedIds.has(notificationItem.id)"
-              class="inbox-card"
-              :class="{
-                active:
-                  currentConversationId === notificationItem.primaryActor?.id,
-              }"
-              @mark-notification-as-read="markNotificationAsRead"
-              @mark-notification-as-un-read="markNotificationAsUnRead"
-              @delete-notification="deleteNotification"
-              @toggle-star="toggleStar"
-              @toggle-select="toggleSelect"
-              @context-menu-open="isInboxContextMenuOpen = true"
-              @context-menu-close="isInboxContextMenuOpen = false"
-              @click="openConversation(notificationItem)"
-            />
-          </div>
+          <InboxCard
+            v-for="notificationItem in filteredConversations"
+            :key="notificationItem.id"
+            :inbox-item="notificationItem"
+            :is-active="
+              currentConversationId === notificationItem.primaryActor?.id
+            "
+            :is-starred="isStarred(notificationItem)"
+            class="inbox-card"
+            :class="{
+              active:
+                currentConversationId === notificationItem.primaryActor?.id,
+            }"
+            @toggle-star="toggleStar"
+            @click="openConversation(notificationItem)"
+          />
 
-          <div v-if="uiFlags.isFetching" class="flex justify-center my-4">
+          <div v-if="isFetching" class="flex justify-center my-4">
             <Spinner class="text-primary" />
           </div>
 
+          <p
+            v-if="!isFetching && !filteredConversations.length"
+            class="p-4 text-sm font-medium text-center text-muted-foreground"
+          >
+            {{ t('INBOX.LIST.NO_NOTIFICATIONS') }}
+          </p>
+
           <div
-            v-if="!showEndOfList && !uiFlags.isFetching"
+            v-if="!showEndOfList && !isFetching"
             class="py-4 flex justify-center"
           >
             <button
               type="button"
               class="text-xs font-medium text-muted-foreground hover:text-foreground hover:underline transition-colors"
-              @click="loadMoreNotifications"
+              @click="loadMoreConversations"
             >
               {{ t('INBOX.LIST.LOAD_MORE') }}
             </button>
             <IntersectionObserver
               :options="infiniteLoaderOptions"
-              @observed="loadMoreNotifications"
+              @observed="loadMoreConversations"
             />
           </div>
         </div>
       </div>
+
+      <!-- Empty state (no conversations) -->
+      <InboxEmptyState v-else-if="!currentConversationId && showEmptyState" />
 
       <!-- Conversation detail -->
       <router-view v-else-if="currentConversationId" />
 
       <!-- Loading while first fetch -->
       <div
-        v-else-if="uiFlags.isFetching"
+        v-else-if="isFetching"
         class="flex-1 flex items-center justify-center"
       >
         <Spinner class="text-primary" />

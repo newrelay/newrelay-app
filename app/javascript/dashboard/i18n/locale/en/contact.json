@@ -468,6 +468,12 @@
             "PLACEHOLDER": "Enter the company name"
           }
         },
+        "ADDITIONAL_PHONE_NUMBERS": {
+          "TITLE": "Additional phone numbers",
+          "PLACEHOLDER": "Enter an additional phone number",
+          "ADD": "Add phone number",
+          "REMOVE": "Remove phone number"
+        },
         "UPDATE_BUTTON": "Update contact",
         "SUCCESS_MESSAGE": "Contact updated successfully",
         "ERROR_MESSAGE": "Unable to update contact. Please try again later."

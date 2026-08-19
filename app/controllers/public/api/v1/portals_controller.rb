@@ -38,14 +38,18 @@ class Public::Api::V1::PortalsController < Public::Api::V1::Portals::BaseControl
   end
 
   def redirect_to_portal_with_locale
-    return if params[:locale].present?
-
     portal
     if custom_domain_request?
-      redirect_to "/#{@portal.default_locale}"
-    else
-      redirect_to "/hc/#{@portal.slug}/#{@portal.default_locale}"
+      if params[:slug].present? || params[:locale].blank?
+        return redirect_to "/#{@portal.default_locale}", status: :moved_permanently
+      end
+
+      return
     end
+
+    return if params[:locale].present?
+
+    redirect_to "/hc/#{@portal.slug}/#{@portal.default_locale}"
   end
 
   def custom_domain_request?

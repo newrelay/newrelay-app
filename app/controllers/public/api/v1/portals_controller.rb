@@ -32,8 +32,9 @@ class Public::Api::V1::PortalsController < Public::Api::V1::Portals::BaseControl
   private
 
   def portal
-    @portal ||= Portal.find_by!(slug: params[:slug], archived: false)
+    super
     @locale = params[:locale] || @portal.default_locale
+    @portal
   end
 
   def redirect_to_portal_with_locale

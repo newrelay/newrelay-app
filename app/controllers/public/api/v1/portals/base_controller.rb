@@ -28,7 +28,16 @@ class Public::Api::V1::Portals::BaseController < PublicController
   end
 
   def portal
-    @portal ||= Portal.find_by!(slug: params[:slug], archived: false)
+    @portal ||= if params[:slug].present?
+                  Portal.find_by!(slug: params[:slug], archived: false)
+                else
+                  domain = request.host
+                  p = Portal.find_by(custom_domain: domain, archived: false)
+                  p ||= Account.find_by(custom_domain: domain)&.portals&.active&.first
+                  raise ActiveRecord::RecordNotFound, "Portal not found for domain: #{domain}" if p.blank?
+
+                  p
+                end
   end
 
   def set_locale(&)

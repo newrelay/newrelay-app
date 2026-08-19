@@ -39,7 +39,20 @@ const globalCallDuration = ref(0);
 // (immersive overlay, compact card, in-header banner), so they live at module
 // scope like the duration timer.
 const globalIsMuted = ref(false);
+const globalIsSpeakerOn = ref(false);
+const globalIsNoteModalOpen = ref(false);
+const globalNoteText = ref('');
 const globalOverlayExpanded = ref(true);
+const globalCallWidgetPos = ref({ x: 0, y: 0 });
+
+const resetNote = () => {
+  globalNoteText.value = '';
+  globalIsNoteModalOpen.value = false;
+};
+
+const resetCallWidgetPos = () => {
+  globalCallWidgetPos.value = { x: 0, y: 0 };
+};
 let storedCallsStoreRef = null;
 // Shared join lock so two surfaces (bubble + widget) clicking concurrently
 // see one in-flight join, not two unrelated isJoining refs.
@@ -90,11 +103,17 @@ const detachGlobalsOnLastUnmount = () => {
 // Build the action surface used by both the root session composable and the
 // lighter useCallActions consumer. All state is module-scoped — the actions
 // don't depend on per-instance refs, so they're cheap to call from anywhere.
-const buildCallActions = ({ callsStore, whatsappSession, t }) => {
+const buildCallActions = ({ callsStore, whatsappSession, t, store }) => {
   const findCall = callSid => callsStore.calls.find(c => c.callSid === callSid);
 
   const endCall = async ({ conversationId, inboxId, callSid }) => {
     const call = findCall(callSid);
+    if (call?.isSimulated) {
+      globalDurationTimer?.stop();
+      callsStore.removeCall(callSid);
+      resetNote();
+      return;
+    }
     if (isWhatsappCall(call)) {
       // Pass call.callId so a wiped module state (e.g. a prior accept attempt
       // tore down the WebRTC session) doesn't stop us hitting /terminate.
@@ -192,6 +211,11 @@ const buildCallActions = ({ callsStore, whatsappSession, t }) => {
   // disappearing while the backend still rings.
   const rejectIncomingCall = async callSid => {
     const call = findCall(callSid);
+    if (call?.isSimulated) {
+      markDismissed(callSid);
+      callsStore.dismissCall(callSid);
+      return;
+    }
     try {
       if (isWhatsappCall(call) && call?.callId) {
         if (call.callDirection === VOICE_CALL_DIRECTION.OUTBOUND) {
@@ -236,8 +260,62 @@ const buildCallActions = ({ callsStore, whatsappSession, t }) => {
     }
   };
 
+  const toggleSpeaker = () => {
+    globalIsSpeakerOn.value = !globalIsSpeakerOn.value;
+  };
+
+  const triggerNote = () => {
+    globalIsNoteModalOpen.value = !globalIsNoteModalOpen.value;
+  };
+
+  const closeNote = () => {
+    globalIsNoteModalOpen.value = false;
+  };
+
+  const saveQuickNote = async ({ conversationId, content }) => {
+    const trimmed = content?.trim();
+    if (!trimmed || !conversationId) return;
+
+    await store.dispatch('createPendingMessageAndSend', {
+      conversationId,
+      message: trimmed,
+      private: true,
+    });
+    resetNote();
+  };
+
   const setCallOverlayExpanded = value => {
     globalOverlayExpanded.value = value;
+  };
+
+  const simulateIncomingCall = ({
+    conversationId,
+    inboxId,
+    caller,
+    callSid = `sim-incoming-${Date.now()}`,
+  }) => {
+    if (callsStore.hasActiveCall || callsStore.hasIncomingCall) return null;
+
+    callsStore.addCall({
+      callSid,
+      conversationId,
+      inboxId,
+      callDirection: VOICE_CALL_DIRECTION.INCOMING,
+      caller,
+      isSimulated: true,
+    });
+    globalOverlayExpanded.value = true;
+    return callSid;
+  };
+
+  const acceptSimulatedCall = callSid => {
+    const call = findCall(callSid);
+    if (!call?.isSimulated) return false;
+
+    callsStore.setCallActive(callSid);
+    globalDurationTimer?.start();
+    globalOverlayExpanded.value = false;
+    return true;
   };
 
   return {
@@ -246,7 +324,14 @@ const buildCallActions = ({ callsStore, whatsappSession, t }) => {
     rejectIncomingCall,
     dismissCall,
     toggleMute,
+    toggleSpeaker,
+    triggerNote,
+    closeNote,
+    resetNote,
+    saveQuickNote,
     setCallOverlayExpanded,
+    simulateIncomingCall,
+    acceptSimulatedCall,
   };
 };
 
@@ -267,6 +352,10 @@ const buildReactiveSurface = callsStore => {
     isJoining: globalIsJoiningReadonly,
     formattedCallDuration,
     isMuted: globalIsMuted,
+    isSpeakerOn: globalIsSpeakerOn,
+    isNoteModalOpen: globalIsNoteModalOpen,
+    noteText: globalNoteText,
+    callWidgetPos: globalCallWidgetPos,
     isCallOverlayExpanded: globalOverlayExpanded,
   };
 };
@@ -313,7 +402,10 @@ export function useCallSession() {
         globalCallDuration.value = 0;
         // Reset shared UI flags so the next call starts unmuted and expanded.
         globalIsMuted.value = false;
+        globalIsSpeakerOn.value = false;
         globalOverlayExpanded.value = true;
+        resetNote();
+        resetCallWidgetPos();
       }
     },
     { immediate: true }
@@ -333,7 +425,7 @@ export function useCallSession() {
 
   onUnmounted(() => detachGlobalsOnLastUnmount());
 
-  const actions = buildCallActions({ callsStore, whatsappSession, t });
+  const actions = buildCallActions({ callsStore, whatsappSession, t, store });
 
   return { ...reactive, ...actions };
 }
@@ -343,12 +435,13 @@ export function useCallSession() {
 // rendered in a thread). Reads from the same module-level state that
 // useCallSession owns, so the duration timer and dismissed set stay coherent.
 export function useCallActions() {
+  const store = useStore();
   const callsStore = useCallsStore();
   const whatsappSession = useWhatsappCallSession();
   const { t } = useI18n();
 
   const reactive = buildReactiveSurface(callsStore);
-  const actions = buildCallActions({ callsStore, whatsappSession, t });
+  const actions = buildCallActions({ callsStore, whatsappSession, t, store });
 
   return { ...reactive, ...actions };
 }

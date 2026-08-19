@@ -1,7 +1,5 @@
 <script setup>
-import { RelayTooltip } from 'dashboard/components-next/relay';
-import Avatar from 'dashboard/components-next/avatar/Avatar.vue';
-import Icon from 'dashboard/components-next/icon/Icon.vue';
+import CallOverlayAvatar from 'dashboard/components-next/call/CallOverlayAvatar.vue';
 
 defineProps({
   callInfo: {
@@ -10,127 +8,101 @@ defineProps({
   },
 });
 
-defineEmits(['accept', 'reject', 'dismiss']);
+defineEmits(['accept', 'reject', 'minimize']);
 </script>
 
 <template>
   <div
-    class="flex fixed inset-0 z-[400] justify-center items-center p-4 sm:p-8 bg-background/80 backdrop-blur-md"
+    class="fixed inset-0 z-[400] flex animate-in fade-in items-center justify-center bg-background/80 p-4 backdrop-blur-md duration-300 sm:p-8"
+    @click.self="$emit('minimize')"
   >
-    <!-- Glow behind the card -->
     <div
-      class="flex absolute inset-0 justify-center items-center pointer-events-none"
+      class="pointer-events-none absolute inset-0 flex items-center justify-center"
     >
       <div
-        class="w-[60%] h-[60%] rounded-full blur-[100px] bg-primary/20 animate-pulse"
+        class="h-[60%] w-[60%] animate-pulse rounded-full bg-primary/20 blur-[100px]"
       />
     </div>
 
     <div
-      class="flex relative z-10 flex-col w-full max-w-4xl min-h-[340px] rounded-3xl border shadow-2xl sm:flex-row sm:aspect-[2.2/1] bg-card border-border/80 ring-1 ring-border/50 overflow-hidden"
+      class="relative z-10 flex aspect-auto min-h-[340px] w-full max-w-4xl animate-in zoom-in-95 flex-col overflow-hidden rounded-3xl bg-card shadow-2xl duration-300 sm:aspect-[2.2/1] sm:flex-row"
+      @click.stop
     >
-      <!-- Dismiss (removes the notification without declining) -->
-      <RelayTooltip :content="$t('CONVERSATION.VOICE_WIDGET.DISMISS_CALL')">
-        <button
-          class="flex absolute top-4 z-20 justify-center items-center rounded-full ltr:right-4 rtl:left-4 size-8 text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
-          @click="$emit('dismiss')"
-        >
-          <Icon class="size-4" icon="i-ph-x-bold" />
-        </button>
-      </RelayTooltip>
-
-      <!-- Left: caller info -->
       <div
-        class="flex overflow-hidden relative flex-col flex-1 justify-center items-center p-10 sm:items-start sm:p-14 bg-muted/10"
+        class="relative flex flex-1 flex-col items-center justify-center overflow-hidden bg-muted/10 p-10 sm:items-start sm:p-14"
       >
         <div
-          class="flex relative z-10 flex-col gap-6 items-center w-full sm:items-start"
+          class="relative z-10 flex w-full flex-col items-center gap-6 sm:items-start"
         >
-          <div class="relative">
-            <div
-              class="absolute inset-0 rounded-full opacity-60 scale-150 bg-primary/20 animate-ping"
-            />
-            <div
-              class="absolute inset-0 rounded-full opacity-40 scale-[2] bg-primary/10 animate-ping"
-            />
-            <div
-              class="relative z-10 rounded-full border-4 shadow-lg border-background"
-            >
-              <Avatar
-                :src="callInfo.avatar"
-                :name="callInfo.contactName"
-                :size="112"
-              />
-            </div>
-            <div
-              class="flex absolute bottom-1 z-20 justify-center items-center rounded-full border-[3px] ltr:right-1 rtl:left-1 size-6 bg-success border-background"
-            >
-              <Icon class="size-3 text-white" icon="i-ph-phone-fill" />
-            </div>
-          </div>
+          <CallOverlayAvatar
+            :avatar="callInfo.avatar"
+            :name="callInfo.contactName"
+          />
 
-          <div class="flex flex-col gap-2 items-center w-full sm:items-start">
+          <div class="flex w-full flex-col items-center gap-2 sm:items-start">
             <h2
-              class="capitalize text-3xl font-semibold tracking-tight sm:text-4xl text-foreground"
+              class="text-3xl font-semibold capitalize tracking-tight text-foreground sm:text-4xl"
             >
               {{ callInfo.contactName }}
             </h2>
-            <div class="flex gap-2 items-center">
-              <span class="w-2 h-2 rounded-full bg-warning animate-pulse" />
-              <span class="text-lg font-medium text-warning">
+            <div class="flex items-center gap-2">
+              <span
+                class="flex h-2 w-2 animate-pulse rounded-full bg-amber-500"
+              />
+              <span class="text-lg font-medium text-amber-500">
                 {{ $t('CONVERSATION.VOICE_WIDGET.INCOMING_CALL_RINGING') }}
               </span>
             </div>
-            <p v-if="callInfo.phoneNumber" class="mt-1 text-muted-foreground">
+            <p
+              v-if="callInfo.phoneNumber"
+              class="mt-1 text-[15px] text-muted-foreground"
+            >
               {{ callInfo.phoneNumber }}
             </p>
           </div>
         </div>
 
-        <!-- Background decoration -->
         <div
-          class="absolute -bottom-20 rounded-full blur-3xl pointer-events-none ltr:-left-20 rtl:-right-20 size-64 bg-primary/5"
+          class="pointer-events-none absolute -bottom-20 size-64 rounded-full bg-primary/5 blur-3xl ltr:-left-20 rtl:-right-20"
         />
       </div>
 
-      <!-- Right: accept / decline -->
       <div
-        class="flex flex-col justify-center items-center p-8 w-full border-t sm:w-[320px] sm:border-t-0 sm:border-l bg-background/50 border-border backdrop-blur-sm"
+        class="flex w-full flex-col items-center justify-center border-t border-border bg-background/50 p-8 backdrop-blur-sm sm:w-[320px] sm:border-l sm:border-t-0"
       >
-        <div class="flex flex-col gap-8 items-center w-full max-w-[220px]">
-          <span class="text-lg font-semibold text-foreground animate-pulse">
+        <div class="flex w-full max-w-[220px] flex-col items-center gap-8">
+          <span class="animate-pulse text-lg font-semibold text-foreground">
             {{ $t('CONVERSATION.VOICE_WIDGET.INCOMING_CALL') }}
           </span>
-          <div class="flex gap-6 justify-between items-center px-2 w-full">
-            <!-- Decline -->
+          <div class="flex w-full items-center justify-between gap-6 px-2">
             <button
-              class="flex flex-col gap-3 items-center group"
+              type="button"
+              class="group flex flex-col items-center gap-3"
               @click="$emit('reject')"
             >
               <div
-                class="flex justify-center items-center rounded-full shadow-lg transition-all size-16 bg-destructive ring-4 ring-destructive/20 group-hover:bg-destructive/90 group-hover:scale-105"
+                class="flex size-16 items-center justify-center rounded-full bg-destructive shadow-lg ring-4 ring-destructive/20 transition-all group-hover:scale-105 group-hover:bg-destructive/90"
               >
-                <Icon
-                  class="text-white size-7 rotate-[135deg]"
-                  icon="i-ph-phone-bold"
+                <span
+                  class="i-lucide-phone size-7 rotate-[135deg] text-white"
                 />
               </div>
-              <span class="text-sm font-medium text-destructive">
+              <span class="text-[13px] font-medium text-destructive">
                 {{ $t('CONVERSATION.VOICE_WIDGET.DECLINE_CALL') }}
               </span>
             </button>
 
-            <!-- Accept -->
             <button
-              class="flex flex-col gap-3 items-center group"
+              type="button"
+              class="group flex flex-col items-center gap-3"
               @click="$emit('accept')"
             >
               <div
-                class="flex justify-center items-center rounded-full shadow-lg transition-all size-16 bg-success ring-4 ring-success/20 group-hover:bg-success/90 group-hover:scale-105"
+                class="flex size-16 items-center justify-center rounded-full bg-emerald-500 shadow-lg ring-4 ring-emerald-500/20 transition-all group-hover:scale-105 group-hover:bg-emerald-600"
               >
-                <Icon class="text-white size-7" icon="i-ph-phone-bold" />
+                <span class="i-lucide-phone size-7 text-white" />
               </div>
-              <span class="text-sm font-medium text-success">
+              <span class="text-[13px] font-medium text-emerald-600">
                 {{ $t('CONVERSATION.VOICE_WIDGET.ACCEPT_CALL') }}
               </span>
             </button>

@@ -1,16 +1,15 @@
 <script setup>
-import { RelayTooltip } from 'dashboard/components-next/relay';
 import { computed } from 'vue';
+import { useI18n } from 'vue-i18n';
 import { VOICE_CALL_DIRECTION } from 'dashboard/components-next/message/constants';
-import Avatar from 'dashboard/components-next/avatar/Avatar.vue';
-import Icon from 'dashboard/components-next/icon/Icon.vue';
+import CallOverlayAvatar from 'dashboard/components-next/call/CallOverlayAvatar.vue';
+import CallQuickNoteWidget from 'dashboard/components-next/call/CallQuickNoteWidget.vue';
 
 const props = defineProps({
   callInfo: {
     type: Object,
     required: true,
   },
-  // 'outgoing' (ringing) | 'ongoing' (connected)
   state: {
     type: String,
     required: true,
@@ -23,181 +22,231 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
-  showMute: {
+  isSpeakerOn: {
     type: Boolean,
     default: false,
   },
-  showGoToConversation: {
+  isNoteModalOpen: {
     type: Boolean,
     default: false,
+  },
+  noteText: {
+    type: String,
+    default: '',
   },
 });
 
-defineEmits(['end', 'toggleMute', 'minimize', 'goToConversation']);
+const emit = defineEmits([
+  'end',
+  'toggleMute',
+  'toggleSpeaker',
+  'triggerNote',
+  'closeNote',
+  'saveNote',
+  'update:noteText',
+  'minimize',
+]);
+
+const { t } = useI18n();
 
 const isOngoing = computed(() => props.state === VOICE_CALL_DIRECTION.ONGOING);
+
+const statusDotClass = computed(() =>
+  isOngoing.value ? 'bg-emerald-500' : 'bg-amber-500'
+);
+
+const statusTextClass = computed(() =>
+  isOngoing.value ? 'text-emerald-600 dark:text-emerald-400' : 'text-amber-500'
+);
+
+const statusLabel = computed(() => {
+  if (isOngoing.value) return props.duration;
+  return t('CONVERSATION.VOICE_WIDGET.RINGING');
+});
 </script>
 
 <template>
   <div
-    class="flex fixed inset-0 z-[400] justify-center items-center p-4 sm:p-8 bg-background/80 backdrop-blur-md"
+    class="fixed inset-0 z-[400] flex animate-in fade-in items-center justify-center bg-background/80 p-4 backdrop-blur-md duration-300 sm:p-8"
+    @click.self="emit('minimize')"
   >
-    <!-- Glow behind the card -->
     <div
-      class="flex absolute inset-0 justify-center items-center pointer-events-none"
+      class="pointer-events-none absolute inset-0 flex items-center justify-center"
     >
       <div
-        class="w-[60%] h-[60%] rounded-full blur-[100px] bg-primary/20 animate-pulse"
+        class="h-[60%] w-[60%] animate-pulse rounded-full bg-primary/20 blur-[100px]"
       />
     </div>
 
     <div
-      class="flex relative z-10 flex-col w-full max-w-4xl min-h-[340px] rounded-3xl border shadow-2xl sm:flex-row sm:aspect-[2.2/1] bg-card border-border/80 ring-1 ring-border/50 overflow-hidden"
+      class="relative z-10 flex aspect-auto min-h-[340px] w-full max-w-4xl animate-in zoom-in-95 flex-col overflow-hidden rounded-3xl bg-card shadow-2xl duration-300 sm:aspect-[2.2/1] sm:flex-row"
+      @click.stop
     >
-      <!-- Minimize to the compact widget -->
-      <RelayTooltip :content="$t('CONVERSATION.VOICE_WIDGET.MINIMIZE')">
-        <button
-          class="flex absolute top-4 z-20 justify-center items-center rounded-full ltr:right-4 rtl:left-4 size-8 text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
-          @click="$emit('minimize')"
-        >
-          <Icon class="size-4" icon="i-ph-arrows-in-bold" />
-        </button>
-      </RelayTooltip>
-
-      <!-- Left: caller info -->
       <div
-        class="flex overflow-hidden relative flex-col flex-1 justify-center items-center p-10 sm:items-start sm:p-14 bg-muted/10"
+        class="relative flex flex-1 flex-col items-center justify-center overflow-hidden bg-muted/10 p-10 sm:items-start sm:p-14"
       >
         <div
-          class="flex relative z-10 flex-col gap-6 items-center w-full sm:items-start"
+          class="relative z-10 flex w-full flex-col items-center gap-6 sm:items-start"
         >
-          <div class="relative">
-            <div
-              class="absolute inset-0 rounded-full opacity-60 scale-150 bg-primary/20 animate-ping"
-            />
-            <div
-              class="relative z-10 rounded-full border-4 shadow-lg border-background"
-            >
-              <Avatar
-                :src="callInfo.avatar"
-                :name="callInfo.contactName"
-                :size="112"
-              />
-            </div>
-            <div
-              class="flex absolute bottom-1 z-20 justify-center items-center rounded-full border-[3px] ltr:right-1 rtl:left-1 size-6 bg-success border-background"
-            >
-              <Icon class="size-3 text-white" icon="i-ph-phone-fill" />
-            </div>
-          </div>
+          <CallOverlayAvatar
+            :avatar="callInfo.avatar"
+            :name="callInfo.contactName"
+          />
 
-          <div class="flex flex-col gap-2 items-center w-full sm:items-start">
+          <div class="flex w-full flex-col items-center gap-2 sm:items-start">
             <h2
-              class="capitalize text-3xl font-semibold tracking-tight sm:text-4xl text-foreground"
+              class="text-3xl font-semibold capitalize tracking-tight text-foreground sm:text-4xl"
             >
               {{ callInfo.contactName }}
             </h2>
-            <div class="flex gap-2 items-center">
+            <div class="flex items-center gap-2">
               <span
-                class="w-2 h-2 rounded-full animate-pulse"
-                :class="isOngoing ? 'bg-success' : 'bg-warning'"
+                class="flex h-2 w-2 animate-pulse rounded-full"
+                :class="statusDotClass"
               />
               <span
                 class="text-lg font-medium tabular-nums"
-                :class="isOngoing ? 'text-success' : 'text-warning'"
+                :class="statusTextClass"
               >
-                {{
-                  isOngoing ? duration : $t('CONVERSATION.VOICE_WIDGET.CALLING')
-                }}
+                {{ statusLabel }}
               </span>
             </div>
-            <p v-if="callInfo.phoneNumber" class="mt-1 text-muted-foreground">
+            <p
+              v-if="callInfo.phoneNumber"
+              class="mt-1 text-[15px] text-muted-foreground"
+            >
               {{ callInfo.phoneNumber }}
             </p>
           </div>
         </div>
 
-        <!-- Go to conversation thread -->
-        <button
-          v-if="showGoToConversation"
-          class="flex relative z-10 gap-1.5 items-center mt-8 text-sm font-medium transition-colors text-primary hover:text-primary/80"
-          @click="$emit('goToConversation')"
-        >
-          <Icon class="size-4" icon="i-ph-chat-circle-text-bold" />
-          {{ $t('CONVERSATION.VOICE_WIDGET.GO_TO_CONVERSATION') }}
-          <Icon class="size-3.5" icon="i-ph-caret-right-bold" />
-        </button>
-
-        <!-- Background decoration -->
         <div
-          class="absolute -bottom-20 rounded-full blur-3xl pointer-events-none ltr:-left-20 rtl:-right-20 size-64 bg-primary/5"
+          class="pointer-events-none absolute -bottom-20 size-64 rounded-full bg-primary/5 blur-3xl ltr:-left-20 rtl:-right-20"
         />
       </div>
 
-      <!-- Right: call controls -->
       <div
-        class="flex flex-col justify-center items-center p-8 w-full border-t sm:w-[320px] sm:border-t-0 sm:border-l bg-background/50 border-border backdrop-blur-sm"
+        class="flex w-full flex-col items-center justify-center border-t border-border bg-background/50 p-8 backdrop-blur-sm sm:w-[320px] sm:border-l sm:border-t-0"
       >
-        <!-- Mute (only once connected) -->
-        <button
-          v-if="showMute"
-          class="flex flex-col gap-3 items-center group"
-          @click="$emit('toggleMute')"
-        >
-          <div
-            class="flex justify-center items-center rounded-full border transition-all size-14 group-hover:scale-105"
-            :class="
-              isMuted
-                ? 'bg-warning/10 border-warning/20 text-warning'
-                : 'bg-muted/60 border-border/50 text-foreground/80 group-hover:bg-muted group-hover:border-border group-hover:text-foreground'
-            "
-          >
-            <Icon
-              class="size-6"
-              :icon="
-                isMuted ? 'i-ph-microphone-slash-bold' : 'i-ph-microphone-bold'
-              "
-            />
-          </div>
-          <span
-            class="text-xs font-medium transition-colors"
-            :class="
-              isMuted
-                ? 'text-warning'
-                : 'text-muted-foreground group-hover:text-foreground'
-            "
-          >
-            {{
-              isMuted
-                ? $t('CONVERSATION.VOICE_WIDGET.UNMUTE')
-                : $t('CONVERSATION.VOICE_WIDGET.MUTE')
-            }}
-          </span>
-        </button>
-
-        <!-- End Call -->
-        <div
-          class="flex justify-center w-full"
-          :class="showMute ? 'mt-10 pt-8 border-t border-border/50' : ''"
-        >
+        <div class="grid w-full max-w-[200px] grid-cols-2 gap-6">
           <button
-            class="flex flex-col gap-3 items-center group"
-            @click="$emit('end')"
+            type="button"
+            class="group flex flex-col items-center gap-3"
+            @click="emit('toggleMute')"
           >
             <div
-              class="flex justify-center items-center rounded-full shadow-lg transition-all size-16 bg-destructive ring-4 ring-destructive/20 group-hover:bg-destructive/90 group-hover:scale-105"
+              class="flex size-14 items-center justify-center rounded-full border transition-all group-hover:scale-105"
+              :class="
+                isMuted
+                  ? 'border-amber-500/20 bg-amber-500/10 text-amber-500'
+                  : 'border-border/50 bg-muted/60 text-foreground/80 group-hover:border-border group-hover:bg-muted group-hover:text-foreground'
+              "
             >
-              <Icon
-                class="text-white size-7 rotate-[135deg]"
-                icon="i-ph-phone-bold"
+              <span
+                class="size-6"
+                :class="isMuted ? 'i-lucide-mic-off' : 'i-lucide-mic'"
               />
             </div>
-            <span class="text-sm font-medium text-destructive">
-              {{ $t('CONVERSATION.VOICE_WIDGET.END_CALL') }}
+            <span
+              class="text-xs font-medium"
+              :class="
+                isMuted
+                  ? 'text-amber-500'
+                  : 'text-muted-foreground group-hover:text-foreground'
+              "
+            >
+              {{
+                isMuted
+                  ? t('CONVERSATION.VOICE_WIDGET.UNMUTE')
+                  : t('CONVERSATION.VOICE_WIDGET.MUTE')
+              }}
+            </span>
+          </button>
+
+          <button
+            type="button"
+            class="group flex flex-col items-center gap-3"
+            @click="emit('triggerNote')"
+          >
+            <div
+              class="flex size-14 items-center justify-center rounded-full border border-border/50 bg-muted/60 text-foreground/80 transition-all group-hover:scale-105 group-hover:border-border group-hover:bg-muted group-hover:text-foreground"
+            >
+              <span class="i-lucide-sticky-note size-6" />
+            </div>
+            <span
+              class="text-xs font-medium text-muted-foreground transition-colors group-hover:text-foreground"
+            >
+              {{ t('CONVERSATION.VOICE_WIDGET.NOTE') }}
+            </span>
+          </button>
+
+          <button
+            type="button"
+            class="group flex flex-col items-center gap-3"
+            @click="emit('toggleSpeaker')"
+          >
+            <div
+              class="flex size-14 items-center justify-center rounded-full border transition-all group-hover:scale-105"
+              :class="
+                isSpeakerOn
+                  ? 'border-primary/20 bg-primary/10 text-primary'
+                  : 'border-border/50 bg-muted/60 text-foreground/80 group-hover:border-border group-hover:bg-muted group-hover:text-foreground'
+              "
+            >
+              <span class="i-lucide-volume-2 size-6" />
+            </div>
+            <span
+              class="text-xs font-medium"
+              :class="
+                isSpeakerOn
+                  ? 'text-primary'
+                  : 'text-muted-foreground group-hover:text-foreground'
+              "
+            >
+              {{ t('CONVERSATION.VOICE_WIDGET.SPEAKER') }}
+            </span>
+          </button>
+
+          <button type="button" class="group flex flex-col items-center gap-3">
+            <div
+              class="flex size-14 items-center justify-center rounded-full border border-border/50 bg-muted/60 text-foreground/80 transition-all group-hover:scale-105 group-hover:border-border group-hover:bg-muted group-hover:text-foreground"
+            >
+              <span
+                class="i-lucide-user-plus size-6 text-foreground/80 group-hover:text-foreground"
+              />
+            </div>
+            <span
+              class="text-xs font-medium text-muted-foreground transition-colors group-hover:text-foreground"
+            >
+              {{ t('CONVERSATION.VOICE_WIDGET.ADD') }}
             </span>
           </button>
         </div>
+
+        <div
+          class="mt-10 flex w-full justify-center border-t border-border/50 pt-8"
+        >
+          <button
+            type="button"
+            class="group flex flex-col items-center gap-3"
+            @click="emit('end')"
+          >
+            <div
+              class="flex size-16 items-center justify-center rounded-full bg-destructive shadow-lg ring-4 ring-destructive/20 transition-all group-hover:scale-105 group-hover:bg-destructive/90"
+            >
+              <span class="i-lucide-phone size-7 rotate-[135deg] text-white" />
+            </div>
+          </button>
+        </div>
       </div>
+
+      <CallQuickNoteWidget
+        :is-open="isNoteModalOpen"
+        :note-text="noteText"
+        @update:note-text="emit('update:noteText', $event)"
+        @close="emit('closeNote')"
+        @save="emit('saveNote')"
+      />
     </div>
   </div>
 </template>

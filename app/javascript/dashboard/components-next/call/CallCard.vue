@@ -1,12 +1,8 @@
 <script setup>
-import { RelayTooltip } from 'dashboard/components-next/relay';
-import { computed } from 'vue';
+import { computed, onBeforeUnmount, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { VOICE_CALL_DIRECTION } from 'dashboard/components-next/message/constants';
-import { VOICE_CALL_PROVIDERS } from 'dashboard/helper/inbox';
 import Avatar from 'dashboard/components-next/avatar/Avatar.vue';
-import NextButton from 'dashboard/components-next/button/Button.vue';
-import Icon from 'dashboard/components-next/icon/Icon.vue';
 
 const props = defineProps({
   call: {
@@ -17,7 +13,6 @@ const props = defineProps({
     type: Object,
     required: true,
   },
-  // 'incoming' | 'outgoing' | 'ongoing'
   state: {
     type: String,
     required: true,
@@ -34,16 +29,19 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  widgetPos: {
+    type: Object,
+    default: () => ({ x: 0, y: 0 }),
+  },
 });
 
-defineEmits([
+const emit = defineEmits([
   'accept',
   'reject',
   'end',
   'toggleMute',
   'goToConversation',
-  'dismiss',
-  'expand',
+  'update:widgetPos',
 ]);
 
 const { t } = useI18n();
@@ -52,221 +50,151 @@ const isOngoing = computed(() => props.state === VOICE_CALL_DIRECTION.ONGOING);
 const isIncoming = computed(
   () => props.state === VOICE_CALL_DIRECTION.INCOMING
 );
-const isOutgoing = computed(
-  () => props.state === VOICE_CALL_DIRECTION.OUTGOING
-);
 
-const statusIcon = computed(() => {
-  if (isOngoing.value) return 'i-ph-phone-call-bold';
-  if (isOutgoing.value) return 'i-ph-phone-outgoing-bold';
-  return 'i-ph-phone-incoming-bold';
-});
+const isDragging = ref(false);
+const dragOffset = ref({ x: 0, y: 0 });
 
-const statusLabel = computed(() => {
-  if (isOngoing.value) return t('CONVERSATION.VOICE_WIDGET.CALL_IN_PROGRESS');
-  if (isOutgoing.value) return t('CONVERSATION.VOICE_WIDGET.OUTGOING_CALL');
-  return t('CONVERSATION.VOICE_WIDGET.INCOMING_CALL');
-});
+const widgetStyle = computed(() => ({
+  transform: `translate(${props.widgetPos.x}px, ${props.widgetPos.y}px)`,
+}));
 
-const channelIcon = computed(() => {
-  if (props.call?.provider === VOICE_CALL_PROVIDERS.WHATSAPP)
-    return 'i-ri-whatsapp-fill';
-  return 'i-ph-phone-bold';
-});
+const onDrag = event => {
+  emit('update:widgetPos', {
+    x: event.clientX - dragOffset.value.x,
+    y: event.clientY - dragOffset.value.y,
+  });
+};
+
+const onDragEnd = () => {
+  isDragging.value = false;
+  document.removeEventListener('mousemove', onDrag);
+  document.removeEventListener('mouseup', onDragEnd);
+};
+
+const onDragStart = event => {
+  isDragging.value = true;
+  dragOffset.value = {
+    x: event.clientX - props.widgetPos.x,
+    y: event.clientY - props.widgetPos.y,
+  };
+  document.addEventListener('mousemove', onDrag);
+  document.addEventListener('mouseup', onDragEnd);
+};
+
+onBeforeUnmount(onDragEnd);
 </script>
 
 <template>
   <div
-    class="flex flex-col gap-2 pt-4 bg-secondary/95 rounded-2xl shadow-xl outline outline-1 outline-border backdrop-blur-md"
-    :class="call?.conversationId ? 'pb-2' : 'pb-4'"
+    class="fixed bottom-6 right-6 z-[300] w-[320px] animate-in slide-in-from-bottom-5 rounded-2xl border border-border bg-background p-4 shadow-xl duration-300"
+    :class="isDragging ? 'cursor-grabbing' : ''"
+    :style="widgetStyle"
   >
-    <!-- Top section: status badge + location/inbox + duration -->
-    <div class="flex flex-col gap-3">
-      <div class="flex items-center gap-2 px-4">
-        <!-- Ongoing: status badge on left -->
-        <div v-if="isOngoing" class="flex items-center gap-1.5 shrink-0">
-          <Icon :icon="statusIcon" class="size-3.5 text-success shrink-0" />
-          <span class="text-xs font-medium text-success tracking-tight">
-            {{ statusLabel }}
-          </span>
+    <div
+      class="mb-4 flex select-none items-center justify-between"
+      :class="isOngoing ? 'cursor-grab' : ''"
+      @mousedown="isOngoing ? onDragStart($event) : null"
+    >
+      <div class="flex items-center gap-2">
+        <div
+          class="flex size-8 items-center justify-center rounded-full bg-emerald-100 text-emerald-600 dark:bg-emerald-900/40 dark:text-emerald-400"
+        >
+          <span class="i-lucide-phone size-4 fill-current" />
         </div>
+        <span
+          class="text-[10px] font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400"
+        >
+          {{ t('CONVERSATION.VOICE_WIDGET.CALL_IN_PROGRESS') }}
+        </span>
+      </div>
+      <span
+        v-if="isOngoing"
+        class="text-lg font-semibold tabular-nums text-foreground"
+      >
+        {{ duration }}
+      </span>
+      <span
+        v-else-if="isIncoming"
+        class="text-[10px] font-bold uppercase tracking-wider text-amber-500"
+      >
+        {{ t('CONVERSATION.VOICE_WIDGET.INCOMING_CALL') }}
+      </span>
+    </div>
 
-        <!-- Caller location (city, country) or fallback to channel + inbox name -->
-        <div class="flex items-center gap-1.5 min-w-0 flex-1">
-          <span
-            v-if="callInfo.hasLocation && callInfo.countryFlag"
-            class="text-sm leading-none shrink-0"
-          >
-            {{ callInfo.countryFlag }}
-          </span>
-          <Icon
-            v-else-if="!isOngoing"
-            :icon="channelIcon"
-            class="size-3.5 text-muted-foreground shrink-0"
-          />
-          <span
-            class="text-xs font-medium text-muted-foreground tracking-tight truncate"
-          >
-            {{ callInfo.location }}
-          </span>
-        </div>
-
-        <!-- Ongoing: duration + expand-to-overlay on right -->
-        <template v-if="isOngoing">
-          <p
-            class="font-display text-base font-medium text-muted-foreground shrink-0 mb-0 tabular-nums tracking-tight"
-          >
-            {{ duration }}
-          </p>
-          <RelayTooltip
-            :content="$t('CONVERSATION.VOICE_WIDGET.EXPAND')"
-            side="top"
-          >
-            <NextButton
-              icon="i-ph-arrows-out-bold"
-              slate
-              ghost
-              xs
-              class="!rounded-full -my-1"
-              @click="$emit('expand')"
-            />
-          </RelayTooltip>
-        </template>
-        <!-- Incoming/Outgoing: status badge on right -->
-        <div v-else class="flex items-center gap-1.5 shrink-0">
-          <Icon :icon="statusIcon" class="size-3.5 text-success shrink-0" />
-          <span class="text-xs font-medium text-success tracking-tight">
-            {{ statusLabel }}
-          </span>
-          <!-- Dismiss: removes the notification from the UI without declining.
-               Incoming only — outgoing/ongoing calls are ended via the call
-               controls, not silently dismissed. -->
-          <RelayTooltip
-            v-if="isIncoming"
-            :content="$t('CONVERSATION.VOICE_WIDGET.DISMISS_CALL')"
-            side="top"
-          >
-            <NextButton
-              icon="i-ph-x-bold"
-              slate
-              ghost
-              xs
-              class="!rounded-full -my-1"
-              @click="$emit('dismiss')"
-            />
-          </RelayTooltip>
-        </div>
+    <div class="mb-4 flex items-center gap-3">
+      <Avatar :src="callInfo.avatar" :name="callInfo.contactName" :size="40" />
+      <div class="min-w-0 flex-1">
+        <p class="truncate text-[14px] font-semibold text-foreground">
+          {{ callInfo.contactName }}
+        </p>
+        <p
+          v-if="callInfo.phoneNumber"
+          class="truncate text-[12px] text-muted-foreground"
+        >
+          {{ callInfo.phoneNumber }}
+        </p>
       </div>
 
-      <!-- Main row: avatar + name/phone + actions -->
-      <div class="flex items-center gap-3 px-4">
-        <div class="shrink-0">
-          <Avatar
-            :src="callInfo.avatar"
-            :name="callInfo.contactName"
-            :size="40"
+      <div class="flex shrink-0 items-center gap-2">
+        <button
+          v-if="isIncoming"
+          type="button"
+          class="flex size-9 items-center justify-center rounded-lg bg-emerald-500 text-white transition-colors hover:bg-emerald-600"
+          :aria-label="t('CONVERSATION.VOICE_WIDGET.ACCEPT_CALL')"
+          @click="emit('accept')"
+        >
+          <span class="i-lucide-phone size-4" />
+        </button>
+
+        <button
+          v-if="isOngoing && showMute"
+          type="button"
+          class="flex size-9 items-center justify-center rounded-lg bg-muted text-foreground transition-colors hover:bg-muted/80"
+          :aria-label="
+            isMuted
+              ? t('CONVERSATION.VOICE_WIDGET.UNMUTE')
+              : t('CONVERSATION.VOICE_WIDGET.MUTE')
+          "
+          @click="emit('toggleMute')"
+        >
+          <span
+            class="size-4"
+            :class="isMuted ? 'i-lucide-mic-off' : 'i-lucide-mic'"
           />
-        </div>
-        <div class="flex-1 min-w-0">
-          <p
-            class="font-display text-sm font-medium text-foreground truncate mb-0.5 tracking-tight leading-tight"
-          >
-            {{ callInfo.contactName }}
-          </p>
-          <p
-            v-if="callInfo.phoneNumber"
-            class="text-sm text-muted-foreground truncate mb-0 tracking-tight leading-tight"
-          >
-            {{ callInfo.phoneNumber }}
-          </p>
-        </div>
+        </button>
 
-        <!-- Actions -->
-        <div class="flex items-center gap-2 shrink-0">
-          <!-- Mute toggle (WhatsApp ongoing only) -->
-          <RelayTooltip
-            v-if="isOngoing && showMute"
-            :content="
-              isMuted
-                ? $t('CONVERSATION.VOICE_WIDGET.UNMUTE')
-                : $t('CONVERSATION.VOICE_WIDGET.MUTE')
-            "
-            side="top"
-          >
-            <NextButton
-              :icon="
-                isMuted ? 'i-ph-microphone-slash-bold' : 'i-ph-microphone-bold'
-              "
-              :variant="isMuted ? 'solid' : 'faded'"
-              :color="isMuted ? 'amber' : 'teal'"
-              class="!rounded-full"
-              @click="$emit('toggleMute')"
-            />
-          </RelayTooltip>
-
-          <RelayTooltip
-            v-if="isIncoming"
-            :content="$t('CONVERSATION.VOICE_WIDGET.JOIN_CALL')"
-            side="top"
-          >
-            <NextButton
-              icon="i-ph-phone-bold"
-              teal
-              class="!rounded-full"
-              @click="$emit('accept')"
-            />
-          </RelayTooltip>
-
-          <RelayTooltip
-            :content="
-              isOngoing
-                ? $t('CONVERSATION.VOICE_WIDGET.END_CALL')
-                : $t('CONVERSATION.VOICE_WIDGET.REJECT_CALL')
-            "
-            side="top"
-          >
-            <NextButton
-              icon="i-ph-phone-bold"
-              ruby
-              class="!rounded-full rotate-[135deg]"
-              @click="isOngoing ? $emit('end') : $emit('reject')"
-            />
-          </RelayTooltip>
-        </div>
+        <button
+          type="button"
+          class="flex size-9 items-center justify-center rounded-lg bg-destructive text-white transition-colors hover:bg-destructive/90"
+          :aria-label="
+            isOngoing
+              ? t('CONVERSATION.VOICE_WIDGET.END_CALL')
+              : t('CONVERSATION.VOICE_WIDGET.DECLINE_CALL')
+          "
+          @click="isOngoing ? emit('end') : emit('reject')"
+        >
+          <span class="i-lucide-phone size-4 rotate-[135deg]" />
+        </button>
       </div>
     </div>
 
-    <!-- Footer: go to conversation thread -->
-    <NextButton
-      v-if="call?.conversationId"
-      slate
-      ghost
-      trailing-icon
-      class="!justify-between !px-2 !mx-2"
-      @click="$emit('goToConversation')"
-    >
-      <template #icon>
-        <span
-          class="flex items-center gap-1 text-muted-foreground group-hover:text-foreground"
-        >
-          <Icon
-            icon="i-ph-chat-circle-text-bold"
-            class="size-3.5 text-muted-foreground shrink-0"
-          />
-          <span class="text-sm tracking-tight tabular-nums">
-            #{{ call.conversationId }}
-          </span>
-          <Icon
-            icon="i-ph-caret-right-bold"
-            class="size-3 text-muted-foreground shrink-0"
-          />
-        </span>
-      </template>
-      <span
-        class="text-sm text-muted-foreground tracking-tight group-hover:text-foreground"
+    <template v-if="call?.conversationId">
+      <div class="mb-3 h-px w-full bg-border/60" />
+      <button
+        type="button"
+        class="group flex w-full items-center justify-between rounded-lg px-3 py-2 transition-colors hover:bg-muted/50"
+        @click="emit('goToConversation')"
       >
-        {{ $t('CONVERSATION.VOICE_WIDGET.GO_TO_CONVERSATION') }}
-      </span>
-    </NextButton>
+        <span class="flex items-center gap-2 text-primary">
+          <span class="i-lucide-message-square size-4" />
+          <span class="text-[13px] font-medium">
+            {{ t('CONVERSATION.VOICE_WIDGET.GO_TO_CONVERSATION') }}
+          </span>
+        </span>
+        <span
+          class="i-lucide-chevron-right size-4 text-muted-foreground transition-colors group-hover:text-foreground"
+        />
+      </button>
+    </template>
   </div>
 </template>

@@ -40,7 +40,16 @@ class Public::Api::V1::PortalsController < Public::Api::V1::Portals::BaseControl
     return if params[:locale].present?
 
     portal
-    redirect_to "/hc/#{@portal.slug}/#{@portal.default_locale}"
+    if custom_domain_request?
+      redirect_to "/#{@portal.default_locale}"
+    else
+      redirect_to "/hc/#{@portal.slug}/#{@portal.default_locale}"
+    end
+  end
+
+  def custom_domain_request?
+    domain = request.host
+    !DomainHelper.chatwoot_domain?(domain)
   end
 
   def load_home_data

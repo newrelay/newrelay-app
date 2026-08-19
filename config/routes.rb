@@ -638,10 +638,15 @@ Rails.application.routes.draw do
     end
   end
 
-  # Custom domain root routes (no slug required)
-  get '/', to: 'public/api/v1/portals#show_root', constraints: ->(req) { !req.host.start_with?('app.') && !req.host.include?('localhost') }
-  get '/hc', to: 'public/api/v1/portals#show_root', constraints: ->(req) { !req.host.start_with?('app.') && !req.host.include?('localhost') }
-  get '/hc/:locale', to: 'public/api/v1/portals#show_root', constraints: ->(req) { !req.host.start_with?('app.') && !req.host.include?('localhost') }
+  # Custom domain root & clean routes (no /hc/:slug required on custom domains)
+  constraints ->(req) { !req.host.start_with?('app.') && !req.host.include?('localhost') } do
+    get '/', to: 'public/api/v1/portals#show_root'
+    get '/hc', to: 'public/api/v1/portals#show_root'
+    get '/:locale/search', to: 'public/api/v1/portals/search#index', constraints: { locale: /[a-z]{2}(?:_[A-Z]{2})?/ }
+    get '/:locale/categories/:category_slug', to: 'public/api/v1/portals/categories#show', constraints: { locale: /[a-z]{2}(?:_[A-Z]{2})?/ }
+    get '/articles/:article_slug', to: 'public/api/v1/portals/articles#show'
+    get '/:locale', to: 'public/api/v1/portals#show_root', constraints: { locale: /[a-z]{2}(?:_[A-Z]{2})?/ }
+  end
 
   get 'hc/:slug', to: 'public/api/v1/portals#show'
   get 'hc/:slug/sitemap.xml', to: 'public/api/v1/portals#sitemap'

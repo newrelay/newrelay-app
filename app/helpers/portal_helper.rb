@@ -52,12 +52,16 @@ module PortalHelper
     query_params.present? ? "?#{query_params.to_query}" : ''
   end
 
+  def custom_domain_request?
+    return false unless respond_to?(:controller) && controller&.respond_to?(:request) && controller.request.present?
+
+    domain = controller.request.host
+    !DomainHelper.chatwoot_domain?(domain)
+  end
+
   def generate_home_link(portal_slug, portal_locale, theme, is_plain_layout_enabled)
-    if is_plain_layout_enabled
-      "/hc/#{portal_slug}/#{portal_locale}#{portal_query_string(theme, is_plain_layout_enabled)}"
-    else
-      "/hc/#{portal_slug}/#{portal_locale}"
-    end
+    base_path = custom_domain_request? ? "/#{portal_locale}" : "/hc/#{portal_slug}/#{portal_locale}"
+    "#{base_path}#{portal_query_string(theme, is_plain_layout_enabled)}"
   end
 
   def generate_category_link(params)
@@ -67,19 +71,13 @@ module PortalHelper
     theme = params[:theme]
     is_plain_layout_enabled = params[:is_plain_layout_enabled]
 
-    if is_plain_layout_enabled
-      "/hc/#{portal_slug}/#{category_locale}/categories/#{category_slug}#{portal_query_string(theme, is_plain_layout_enabled)}"
-    else
-      "/hc/#{portal_slug}/#{category_locale}/categories/#{category_slug}"
-    end
+    base_path = custom_domain_request? ? "/#{category_locale}/categories/#{category_slug}" : "/hc/#{portal_slug}/#{category_locale}/categories/#{category_slug}"
+    "#{base_path}#{portal_query_string(theme, is_plain_layout_enabled)}"
   end
 
   def generate_article_link(portal_slug, article_slug, theme, is_plain_layout_enabled)
-    if is_plain_layout_enabled
-      "/hc/#{portal_slug}/articles/#{article_slug}#{portal_query_string(theme, is_plain_layout_enabled)}"
-    else
-      "/hc/#{portal_slug}/articles/#{article_slug}"
-    end
+    base_path = custom_domain_request? ? "/articles/#{article_slug}" : "/hc/#{portal_slug}/articles/#{article_slug}"
+    "#{base_path}#{portal_query_string(theme, is_plain_layout_enabled)}"
   end
 
   def generate_portal_brand_url(brand_url, referer)

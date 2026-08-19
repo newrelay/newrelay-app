@@ -41,7 +41,6 @@ const handleClose = () => emit('close');
   <div
     class="w-[26rem] z-50 min-w-0 absolute top-12 ltr:right-0 rtl:left-0 bg-popover text-popover-foreground rounded-xl border border-border shadow-xl flex flex-col max-h-[calc(100vh-4rem)]"
   >
-<<<<<<< HEAD
     <div class="p-6 pb-0">
       <h3 class="text-base font-semibold text-foreground">
         {{ t(`CAMPAIGN.SMS.CREATE.TITLE`) }}
@@ -50,15 +49,5 @@ const handleClose = () => emit('close');
     <div class="overflow-y-auto flex-1 px-6 py-4">
       <SMSCampaignForm @submit="handleSubmit" @cancel="handleClose" />
     </div>
-=======
-    <div class="p-6 pb-0">
-      <h3 class="text-base font-semibold text-foreground">
-        {{ t(`CAMPAIGN.SMS.CREATE.TITLE`) }}
-      </h3>
-    </div>
-    <div class="overflow-y-auto flex-1 px-6 py-4">
-      <SMSCampaignForm @submit="handleSubmit" @cancel="handleClose" />
-    </div>
->>>>>>> feature/ui-changes
   </div>
 </template>

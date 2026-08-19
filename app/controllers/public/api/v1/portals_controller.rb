@@ -12,6 +12,17 @@ class Public::Api::V1::PortalsController < Public::Api::V1::Portals::BaseControl
     @og_image_url = helpers.set_og_image_url('', @portal.localized_value('header_text', @locale))
   end
 
+  def show_root
+    ensure_custom_domain_request
+    @locale = params[:locale] || @portal.default_locale
+    @portal_layout = @portal.layout
+    set_view_variant
+    ensure_portal_feature_enabled
+    load_home_data if @portal_layout == 'documentation'
+    @og_image_url = helpers.set_og_image_url('', @portal.localized_value('header_text', @locale))
+    render :show
+  end
+
   def sitemap
     @help_center_url = @portal.custom_domain || ChatwootApp.help_center_root
     # if help_center_url does not contain a protocol, prepend it with https

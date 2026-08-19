@@ -638,6 +638,11 @@ Rails.application.routes.draw do
     end
   end
 
+  # Custom domain root routes (no slug required)
+  get '/', to: 'public/api/v1/portals#show_root', constraints: ->(req) { !req.host.start_with?('app.') && !req.host.include?('localhost') }
+  get '/hc', to: 'public/api/v1/portals#show_root', constraints: ->(req) { !req.host.start_with?('app.') && !req.host.include?('localhost') }
+  get '/hc/:locale', to: 'public/api/v1/portals#show_root', constraints: ->(req) { !req.host.start_with?('app.') && !req.host.include?('localhost') }
+
   get 'hc/:slug', to: 'public/api/v1/portals#show'
   get 'hc/:slug/sitemap.xml', to: 'public/api/v1/portals#sitemap'
   get 'hc/:slug/:locale', to: 'public/api/v1/portals#show', as: :public_portal_locale

@@ -11,7 +11,7 @@
 #  homepage_link         :string
 #  name                  :string           not null
 #  page_title            :string
-#  slug                  :string           not null
+#  slug                  :string
 #  ssl_settings          :jsonb            not null
 #  created_at            :datetime         not null
 #  updated_at            :datetime         not null
@@ -42,8 +42,9 @@ class Portal < ApplicationRecord
   before_validation -> { self.custom_domain = custom_domain&.downcase }
   validates :account_id, presence: true
   validates :name, presence: true
-  validates :slug, presence: true, uniqueness: true
+  validates :slug, uniqueness: true, allow_nil: true
   validates :custom_domain, uniqueness: true, allow_nil: true
+  validate :slug_or_custom_domain_required
   validates :color, format: { with: /\A#(?:\h{3}|\h{6})\z/ }, allow_blank: true
   before_validation :normalize_config
   validate :validate_config
@@ -121,6 +122,10 @@ class Portal < ApplicationRecord
   end
 
   private
+
+  def slug_or_custom_domain_required
+    errors.add(:base, 'Slug or custom domain is required') if slug.blank? && custom_domain.blank?
+  end
 
   def normalize_config
     self.config = persisted_config.merge((config || {}).deep_stringify_keys)

@@ -35,11 +35,11 @@ const rules = {
   slug: {
     required: helpers.withMessage(
       () => t('HELP_CENTER.CREATE_PORTAL_DIALOG.SLUG.ERROR'),
-      required
+      () => state.slug || state.domain
     ),
     isValidSlug: helpers.withMessage(
       () => t('HELP_CENTER.CREATE_PORTAL_DIALOG.SLUG.FORMAT_ERROR'),
-      isValidSlug
+      (val) => !val || isValidSlug(val)
     ),
   },
 };
@@ -148,11 +148,19 @@ defineExpose({ dialogRef });
         v-model="state.slug"
         type="text"
         :placeholder="t('HELP_CENTER.CREATE_PORTAL_DIALOG.SLUG.PLACEHOLDER')"
-        :label="t('HELP_CENTER.CREATE_PORTAL_DIALOG.SLUG.LABEL')"
+        :label="`${t('HELP_CENTER.CREATE_PORTAL_DIALOG.SLUG.LABEL')}${state.domain ? ' (optional)' : ''}`"
         :message-type="slugError ? 'error' : 'info'"
         :message="slugError || buildPortalURL(state.slug)"
         @input="v$.slug.$touch()"
         @blur="v$.slug.$touch()"
+      />
+      <Input
+        id="portal-domain"
+        v-model="state.domain"
+        type="text"
+        :placeholder="t('HELP_CENTER.CREATE_PORTAL_DIALOG.DOMAIN.PLACEHOLDER')"
+        :label="`${t('HELP_CENTER.CREATE_PORTAL_DIALOG.DOMAIN.LABEL')}${state.slug ? ' (optional)' : ''}`"
+        :message="t('HELP_CENTER.CREATE_PORTAL_DIALOG.DOMAIN.MESSAGE')"
       />
     </div>
   </Dialog>

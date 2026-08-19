@@ -13,7 +13,6 @@ import {
   RelayTabs,
   RelayTabsList,
   RelayTabsTrigger,
-  RelayMessagesEmptyState,
 } from 'dashboard/components-next/relay';
 import Dialog from 'dashboard/components-next/dialog/Dialog.vue';
 import ConversationFilter from 'next/filter/ConversationFilter.vue';
@@ -1008,15 +1007,9 @@ watch(conversationFilters, (newVal, oldVal) => {
       @close="onCloseDeleteFoldersModal"
     />
 
-    <RelayMessagesEmptyState
-      v-if="!chatListLoading && !filteredConversationList.length"
-      class="min-h-0 flex-1"
-      icon="i-lucide-rocket"
-      :title="$t('CONVERSATION.NO_MESSAGE_1')"
-      :description="$t('CONVERSATION.NO_MESSAGE_1_DESCRIPTION')"
-    />
+    <!-- The list-empty state lives on the right conversation panel
+         ("No conversation selected"); keeping one here too would duplicate it. -->
     <ConversationList
-      v-else
       :conversation-list="filteredConversationList"
       :is-loading="chatListLoading"
       :show-end-of-list-message="showEndOfListMessage"

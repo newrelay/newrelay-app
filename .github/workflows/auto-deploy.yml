@@ -1,0 +1,41 @@
+name: Auto-Deploy to Dev Server
+
+on:
+  push:
+    branches:
+      - feature/pranjal-ui-changes
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to VPN server
+        uses: appleboy/ssh-action@master
+        with:
+          host: 187.127.153.133
+          username: root
+          key: ${{ secrets.DEPLOY_SSH_KEY }}
+          script: |
+            set -e
+            cd /home/app/chatwoot || mkdir -p /home/app/chatwoot
+
+            # Clone or pull latest code
+            if [ -d .git ]; then
+              echo "📥 Pulling latest code..."
+              git pull origin feature/pranjal-ui-changes
+            else
+              echo "🔄 Cloning repository..."
+              git clone --branch feature/pranjal-ui-changes https://github.com/auzadev/NewRelay.git .
+            fi
+
+            # Start services
+            echo "🐳 Starting Docker services..."
+            docker compose down 2>/dev/null || true
+            docker compose up -d --build
+
+            # Run migrations
+            echo "🗄️  Running database migrations..."
+            docker compose exec -T rails bundle exec rails db:migrate
+
+            # Done
+            echo "✅ Deployment complete! Access at http://187.127.153.133:3000"

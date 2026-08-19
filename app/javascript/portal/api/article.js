@@ -6,8 +6,12 @@ class ArticlesAPI {
   }
 
   searchArticles(portalSlug, locale, query) {
-    let baseUrl = `${this.baseUrl}/hc/${portalSlug}/${locale}/articles.json?query=${query}`;
-    return axios.get(baseUrl);
+    const { customDomain } = window.portalConfig || {};
+    const isCustomDomain = customDomain && customDomain.length > 0;
+    const path = isCustomDomain
+      ? `${this.baseUrl}/${locale}/articles.json?query=${encodeURIComponent(query)}`
+      : `${this.baseUrl}/hc/${portalSlug}/${locale}/articles.json?query=${encodeURIComponent(query)}`;
+    return axios.get(path);
   }
 }
 

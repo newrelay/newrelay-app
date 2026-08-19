@@ -1,5 +1,9 @@
-<%# locals: (input_class:) %>
-<form class="w-full my-4" action="<%= request.path %>" method="GET" data-search-form>
+<%
+  locale_val = params[:locale] || @portal&.default_locale
+  is_custom_domain = respond_to?(:custom_domain_request?) && custom_domain_request?
+  form_action = is_custom_domain ? "/#{locale_val}/search" : "/hc/#{@portal&.slug}/#{locale_val}/search"
+%>
+<form class="w-full my-4" action="<%= form_action %>" method="GET" data-search-form>
   <input type="hidden" name="locale" value="<%= params[:locale] %>">
   <% if @theme_from_params.present? %>
     <input type="hidden" name="theme" value="<%= @theme_from_params %>">

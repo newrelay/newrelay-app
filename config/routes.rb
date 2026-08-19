@@ -644,6 +644,7 @@ Rails.application.routes.draw do
     get '/hc', to: 'public/api/v1/portals#show_root'
     get '/:locale/search', to: 'public/api/v1/portals/search#index', constraints: { locale: /[a-z]{2}(?:_[A-Z]{2})?/ }
     get '/:locale/categories/:category_slug', to: 'public/api/v1/portals/categories#show', constraints: { locale: /[a-z]{2}(?:_[A-Z]{2})?/ }
+    get '/:locale/articles', to: 'public/api/v1/portals/articles#index', constraints: { locale: /[a-z]{2}(?:_[A-Z]{2})?/ }
     get '/articles/:article_slug', to: 'public/api/v1/portals/articles#show'
     get '/:locale', to: 'public/api/v1/portals#show_root', constraints: { locale: /[a-z]{2}(?:_[A-Z]{2})?/ }
   end

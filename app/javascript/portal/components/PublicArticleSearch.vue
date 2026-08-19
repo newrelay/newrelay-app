@@ -143,14 +143,19 @@ export default {
       if (!query) return;
 
       const searchParams = new URLSearchParams({ query });
-      const { theme, isPlainLayoutEnabled } = window.portalConfig;
+      const { theme, isPlainLayoutEnabled, customDomain } = window.portalConfig || {};
 
       if (theme) searchParams.set('theme', theme);
       if (isPlainLayoutEnabled === 'true') {
         searchParams.set('show_plain_layout', 'true');
       }
 
-      window.location.href = `/hc/${this.portalSlug}/${this.localeCode}/search?${searchParams.toString()}`;
+      const isCustomDomain = customDomain && customDomain.length > 0;
+      const searchBasePath = isCustomDomain
+        ? `/${this.localeCode}/search`
+        : `/hc/${this.portalSlug}/${this.localeCode}/search`;
+
+      window.location.href = `${searchBasePath}?${searchParams.toString()}`;
     },
   },
 };

@@ -1,515 +1,964 @@
 <script setup>
 /* eslint-disable */
-import { ref, onMounted } from 'vue';
+import { ref, computed } from 'vue';
+import { RelayInput as Input, RelayBadge as Badge } from 'dashboard/components-next/relay';
+import {
+  Play, MoreHorizontal, MessageSquare, Heart, Share2, 
+  CheckCircle, Search, Filter, Calendar, ExternalLink, 
+  X, Eye, Download, LayoutGrid, List, Sparkles, TrendingUp, TrendingDown,
+  Trash2, Edit, Check, ChevronDown, Clock, Scissors, Quote,
+  Bot, ThumbsUp, Send, Globe, FileText, Plus, Star
+} from 'lucide-vue-next';
+import RequestVideoTestimonialModal from '../components/RequestVideoTestimonialModal.vue';
+import ExportVideoTestimonialsModal from '../components/ExportVideoTestimonialsModal.vue';
 
-const axios = window.axios;
-const accountId =
-  window.__STORE__?.getters['auth/getCurrentAccount']?.id ||
-  window.location.pathname.match(/accounts\/(\d+)/)?.[1];
+// Mock Data
+const mockVideos = ref([
+  {
+    id: 1,
+    author: 'Sarah Johnson',
+    company: 'Marketing Corp',
+    avatar: 'https://i.pravatar.cc/150?u=s1',
+    thumbnail: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=600&auto=format&fit=crop',
+    duration: '0:47',
+    date: '2 hours ago',
+    timelineDate: { title: 'Today', sub: '21 Jul, 2026' },
+    status: 'Approved',
+    platform: 'Google',
+    rating: 5,
+    views: 1240,
+    likes: 45,
+    aiTags: ['Approved', 'Marketing Ready'],
+    topics: ['Support', 'Response Time', 'Ease of Use', 'Customer Service'],
+    transcriptSummary: 'Sarah loved the quick response time and how easy the platform is to use. She mentioned the support team was friendly and resolved her issue in minutes.'
+  },
+  {
+    id: 2,
+    author: 'Michael Brown',
+    company: 'Tech Startup',
+    avatar: 'https://i.pravatar.cc/150?u=m2',
+    thumbnail: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?q=80&w=600&auto=format&fit=crop',
+    duration: '01:12',
+    date: 'Yesterday',
+    timelineDate: { title: 'Yesterday', sub: '20 Jul, 2026' },
+    status: 'Published',
+    platform: 'Facebook',
+    rating: 5,
+    views: 8500,
+    likes: 312,
+    aiTags: ['Published', 'AI Summary'],
+    topics: ['Features', 'Reliability'],
+    transcriptSummary: 'Michael praises the platform\'s reliability and the wide array of features available for enterprise use.'
+  },
+  {
+    id: 3,
+    author: 'Emily Rodriguez',
+    company: 'Startup Hub',
+    avatar: 'https://i.pravatar.cc/150?u=e3',
+    thumbnail: 'https://images.unsplash.com/photo-1573164713988-8665fc963095?q=80&w=600&auto=format&fit=crop',
+    duration: '00:35',
+    date: 'Yesterday',
+    status: 'Approved',
+    platform: 'Yelp',
+    rating: 5,
+    views: 890,
+    likes: 22,
+    aiTags: ['Approved', 'AI Summary'],
+    topics: ['Onboarding', 'Value'],
+    transcriptSummary: 'Emily highlights the smooth onboarding process and the tremendous value the product provides for her team.'
+  },
+  {
+    id: 4,
+    author: 'David Lee',
+    company: 'Tech Solutions',
+    avatar: 'https://i.pravatar.cc/150?u=d4',
+    thumbnail: 'https://images.unsplash.com/photo-1556761175-5973dc0f32d7?q=80&w=600&auto=format&fit=crop',
+    duration: '01:05',
+    date: '5 days ago',
+    status: 'Pending Approval',
+    platform: 'Trustpilot',
+    rating: 5,
+    views: 0,
+    likes: 0,
+    aiTags: ['Pending Approval', 'AI Summary'],
+    topics: ['Pricing', 'Support'],
+    transcriptSummary: 'David mentions the fair pricing structure but would like to see faster support on weekends.'
+  },
+  {
+    id: 5,
+    author: 'James Wilson',
+    company: 'Logistics Pro',
+    avatar: 'https://i.pravatar.cc/150?u=j5',
+    thumbnail: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?q=80&w=600&auto=format&fit=crop',
+    duration: '00:59',
+    date: '18 Jul, 2026',
+    timelineDate: { title: '18 Jul,', sub: '2026' },
+    status: 'Published',
+    platform: 'Google',
+    rating: 5,
+    views: 3200,
+    likes: 110,
+    aiTags: ['Published', 'Marketing Ready'],
+    topics: ['Efficiency', 'Speed'],
+    transcriptSummary: 'James discusses how the system improved their delivery efficiency by over 30% in just two months.'
+  },
+  {
+    id: 6,
+    author: 'Olivia Martinez',
+    company: 'Creative Agency',
+    avatar: 'https://i.pravatar.cc/150?u=o6',
+    thumbnail: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?q=80&w=600&auto=format&fit=crop',
+    duration: '00:41',
+    date: '6 days ago',
+    status: 'Approved',
+    platform: 'Facebook',
+    rating: 5,
+    views: 450,
+    likes: 15,
+    aiTags: ['Approved', 'AI Summary'],
+    topics: ['Design', 'Customization'],
+    transcriptSummary: 'Olivia loves the customization options and how easy it is to match their brand identity.'
+  }
+]);
 
-const testimonials = ref([]);
-const requests = ref([]);
-const templates = ref([]);
-const loading = ref(true);
+const selectedVideo = ref(null);
+const viewMode = ref('grid');
+const activeTab = ref('Overview');
+const searchQuery = ref('');
 
-const showModal = ref(false);
-const sending = ref(false);
-const selectedTemplate = ref(null);
-const requestForm = ref({
-  email: '',
-  subject: '',
-  body: '',
-});
+const showExportDropdown = ref(false);
+const showPlatformDropdown = ref(false);
+const showRatingDropdown = ref(false);
+const showDurationDropdown = ref(false);
+const showStatusDropdown = ref(false);
+const showAiTagsDropdown = ref(false);
+const showSortDropdown = ref(false);
+const showDetailStatusDropdown = ref(false);
 
-const fetchTestimonials = async () => {
-  loading.value = true;
-  try {
-    const [testRes, reqRes, tempRes] = await Promise.all([
-      axios.get(`/api/v1/accounts/${accountId}/reputation/video_testimonials`),
-      axios.get(
-        `/api/v1/accounts/${accountId}/reputation/video_testimonials/requests_index`
-      ),
-      axios
-        .get(`/api/v1/accounts/${accountId}/reputation/templates`)
-        .catch(() => ({ data: [] })),
-    ]);
-    testimonials.value = testRes.data;
-    requests.value = reqRes.data;
-    templates.value = tempRes.data.filter(
-      t => t.active && t.template_type === 'video'
-    );
-  } catch (err) {
-    console.error('Failed to load video testimonials', err);
-  } finally {
-    loading.value = false;
+const toastState = ref({ visible: false, message: '' });
+let toastTimeout = null;
+
+const showToast = (message) => {
+  toastState.value.message = message;
+  toastState.value.visible = true;
+  if (toastTimeout) clearTimeout(toastTimeout);
+  toastTimeout = setTimeout(() => {
+    toastState.value.visible = false;
+  }, 3000);
+};
+
+const platforms = [
+  { name: 'Google', color: '#4285F4', icon: '<svg viewBox="0 0 24 24" width="14" height="14" xmlns="http://www.w3.org/2000/svg"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>' },
+  { name: 'Facebook', color: '#1877F2', icon: '<svg viewBox="0 0 24 24" width="14" height="14" xmlns="http://www.w3.org/2000/svg"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" fill="#1877F2"/></svg>' },
+  { name: 'Yelp', color: '#E00707', icon: '<svg viewBox="0 0 24 24" width="14" height="14" xmlns="http://www.w3.org/2000/svg" fill="#E00707"><path d="M12.271 8.782c-.549-3.804-.822-5.72-.822-5.748 0-.888-.622-1.641-1.537-1.887A2.34 2.34 0 0 0 7.3 2.52L3.473 7.337a2.01 2.01 0 0 0-.302 1.895c.28.72.934 1.218 1.695 1.282l5.894.488c1.038.087 1.871-.767 1.511-2.22zm-8.245 6.253l5.374 2.186c1.004.409 2.084-.332 2.084-1.41V11.38c0-1.088-1.096-1.83-2.104-1.41l-5.374 2.185a1.85 1.85 0 0 0-1.148 1.44 1.855 1.855 0 0 0 1.168 1.44zm6.406 5.978l-3.218-4.874a1.796 1.796 0 0 0-2.97-.095 1.855 1.855 0 0 0-.17 1.98l2.28 4.374a2.316 2.316 0 0 0 2.492 1.208 2.302 2.302 0 0 0 1.586-2.593zm9.56-10.826a2.31 2.31 0 0 0-1.92-1.435l-5.916-.489a1.796 1.796 0 0 0-1.493 2.874l3.42 4.96a1.803 1.803 0 0 0 2.8.217l3.477-4.046a2.02 2.02 0 0 0 .368-.654 2.004 2.004 0 0 0-.736-1.427zm-2.278 7.916l-2.277-4.373a1.804 1.804 0 0 0-3.124.149 1.789 1.789 0 0 0 .057 1.695l3.218 4.874a2.305 2.305 0 0 0 2.534.938 2.316 2.316 0 0 0 1.57-2.593 2.31 2.31 0 0 0-1.978-0.69z"/></svg>' },
+  { name: 'Trustpilot', color: '#00B67A', icon: '<svg viewBox="0 0 24 24" width="14" height="14" xmlns="http://www.w3.org/2000/svg"><rect width="24" height="24" fill="#00B67A" rx="2" ry="2"/><path d="M12 4l2.5 5.2 5.7.8-4.1 4 1 5.7-5.1-2.7-5.1 2.7 1-5.7-4.1-4 5.7-.8L12 4z" fill="#FFF"/></svg>' }
+];
+
+const getPlatformIcon = (name) => platforms.find(p => p.name === name)?.icon || '';
+
+const selectVideo = (video) => {
+  selectedVideo.value = video;
+};
+
+const closePanel = () => {
+  selectedVideo.value = null;
+};
+
+const isExportModalOpen = ref(false);
+const isRequestModalOpen = ref(false);
+
+const handleExportOption = (type) => {
+  showExportDropdown.value = false;
+  if (type === 'zip') {
+    isExportModalOpen.value = true;
+  } else {
+    showToast(`Exporting ${type}...`);
   }
 };
 
-const deleteTestimonial = async id => {
-  if (!confirm('Are you sure you want to delete this video testimonial?'))
-    return;
-  try {
-    await axios.delete(
-      `/api/v1/accounts/${accountId}/reputation/video_testimonials/${id}`
-    );
-    testimonials.value = testimonials.value.filter(t => t.id !== id);
-  } catch (err) {
-    alert('Failed to delete testimonial');
-  }
+const handleRequestTestimonial = () => {
+  isRequestModalOpen.value = true;
 };
 
-const openModal = async () => {
-  showModal.value = true;
-  try {
-    const tempRes = await axios.get(
-      `/api/v1/accounts/${accountId}/reputation/templates`
-    );
-    templates.value = tempRes.data.filter(
-      t => t.active && t.template_type === 'video'
-    );
-  } catch (err) {
-    console.error('Failed to load templates', err);
-  }
-};
-
-const sendRequest = async () => {
-  if (!requestForm.value.email) return;
-  sending.value = true;
-
-  const payload = {
-    ...requestForm.value,
-    template_id: selectedTemplate.value ? selectedTemplate.value.id : null,
+const handleModalSubmit = (payload) => {
+  const newRequest = {
+    id: mockVideos.value.length + 1,
+    author: payload.customers.length > 1 ? `${payload.customers.length} Customers` : 'Requested Customer',
+    company: 'Pending Request',
+    avatar: 'https://i.pravatar.cc/150?u=req',
+    thumbnail: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=600&auto=format&fit=crop',
+    duration: '--:--',
+    date: 'Just now',
+    timelineDate: { title: 'Today', sub: new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) },
+    status: 'Pending Approval',
+    platform: payload.delivery.join(', '),
+    rating: 5,
+    views: 0,
+    likes: 0,
+    aiTags: ['Pending Approval'],
+    topics: ['Customer Service'],
+    transcriptSummary: 'Waiting for the customer to upload a video testimonial.'
   };
+  
+  mockVideos.value.unshift(newRequest);
+  showToast('Request sent successfully.');
+};
 
-  try {
-    await axios.post(
-      `/api/v1/accounts/${accountId}/reputation/video_testimonials/dispatch_request`,
-      payload
-    );
-    showModal.value = false;
-    alert('Request sent successfully!');
-    requestForm.value.email = '';
-    requestForm.value.subject = '';
-    requestForm.value.body = '';
-    selectedTemplate.value = null;
-    fetchTestimonials();
-  } catch (err) {
-    alert('Failed to send request');
-  } finally {
-    sending.value = false;
+const handleReply = () => showToast(`Opening reply composer for ${selectedVideo.value?.author}...`);
+const handleShare = () => showToast('Share link copied to clipboard!');
+const handleDownload = () => showToast('Downloading video...');
+const handleEdit = () => showToast(`Opening editor for ${selectedVideo.value?.author}'s video...`);
+const handleMore = () => showToast('Opening more options...');
+
+const handleStatusChange = (newStatus) => {
+  if (selectedVideo.value) {
+    selectedVideo.value.status = newStatus;
+    const idx = mockVideos.value.findIndex((v) => v.id === selectedVideo.value.id);
+    if (idx !== -1) mockVideos.value[idx].status = newStatus;
+    showToast(`Status changed to ${newStatus}`);
+    showDetailStatusDropdown.value = false;
   }
 };
 
-const handleTemplateChange = () => {
-  if (selectedTemplate.value) {
-    requestForm.value.subject = selectedTemplate.value.subject || '';
-    requestForm.value.body = selectedTemplate.value.body || '';
+const handleDelete = () => {
+  if (selectedVideo.value && confirm('Are you sure you want to delete this video?')) {
+    mockVideos.value = mockVideos.value.filter((v) => v.id !== selectedVideo.value.id);
+    selectedVideo.value = null;
+    showToast('Video deleted successfully.');
   }
 };
 
-const formatDate = timestamp => {
-  return new Date(timestamp * 1000).toLocaleDateString('en-US', {
-    month: 'short',
-    day: 'numeric',
-    year: 'numeric',
-  });
+const handleGenerateNew = () => {
+  if (selectedVideo.value) showToast('Generating new Relay AI suggestions...');
+};
+const handleUseReply = () => {
+  if (selectedVideo.value) showToast('Reply text populated in composer!');
+};
+const handleGenerateClip = () => {
+  if (selectedVideo.value) showToast('Analyzing video and generating highlight clips...');
 };
 
-const statusColor = s => {
-  return (
-    {
-      sent: 'bg-blue-500/15 text-blue-600 dark:text-blue-400 border border-blue-500/20',
-      delivered:
-        'bg-cyan-500/15 text-cyan-600 dark:text-cyan-400 border border-cyan-500/20',
-      clicked:
-        'bg-amber-500/15 text-amber-600 dark:text-amber-400 border border-amber-500/20',
-      completed:
-        'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20',
-    }[s] || 'bg-muted text-muted-foreground'
+const filteredVideos = computed(() => {
+  if (!searchQuery.value) return mockVideos.value;
+  return mockVideos.value.filter(v =>
+    v.author.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
+    v.transcriptSummary.toLowerCase().includes(searchQuery.value.toLowerCase())
   );
-};
-
-onMounted(fetchTestimonials);
+});
 </script>
 
 <template>
-  <div class="p-6 max-w-7xl mx-auto space-y-6">
-    <!-- eslint-disable -->
-    <!-- Header -->
-    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-      <div>
-        <h1 class="text-base font-medium tracking-tight text-foreground">
-          Video Testimonials
-        </h1>
-        <p class="text-sm text-muted-foreground mt-1">
-          Collect, watch and manage authentic video testimonials from your
-          customers.
-        </p>
-      </div>
-
-      <div class="flex items-center gap-3">
-        <a
-          :href="`/reputation/video/${accountId}/new`"
-          target="_blank"
-          class="inline-flex items-center gap-2 rounded-lg border border-border bg-card px-3.5 py-2 text-sm font-medium text-foreground shadow-sm hover:bg-muted/50 transition-colors"
-        >
-          <svg
-            class="size-4"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-            stroke-width="2"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
-            />
-          </svg>
-          Open Form
-        </a>
-        <button
-          class="inline-flex items-center gap-2 rounded-lg bg-primary px-3.5 py-2 text-sm font-medium text-primary-foreground shadow-sm hover:bg-primary/90 transition-colors"
-          @click="openModal"
-        >
-          <svg
-            class="size-4"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-            stroke-width="2"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              d="M12 4v16m8-8H4"
-            />
-          </svg>
-          Send Request
-        </button>
-      </div>
-    </div>
-
-    <!-- Loading -->
-    <div
-      v-if="loading"
-      class="flex items-center justify-center py-20 text-sm text-muted-foreground"
+  <div class="relative flex h-[calc(100vh-4rem)] w-full overflow-hidden bg-background">
+    <!-- Main Content Area (Left) -->
+    <div 
+      class="flex flex-col h-full overflow-y-auto transition-all duration-300 hide-scrollbar"
+      :class="selectedVideo ? 'w-full lg:w-[65%] xl:w-[70%]' : 'w-full'"
     >
-      Loading video testimonials…
-    </div>
-
-    <!-- Empty State -->
-    <div
-      v-else-if="testimonials.length === 0"
-      class="flex flex-col items-center justify-center py-20 bg-card border border-border rounded-xl shadow-sm"
-    >
-      <div class="p-3.5 rounded-full bg-primary/10 text-primary">
-        <svg
-          class="size-7"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-          stroke-width="1.5"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"
-          />
-        </svg>
-      </div>
-      <h3 class="text-[20px] font-[600] text-foreground mt-4">
-        No video testimonials yet
-      </h3>
-      <p class="text-[13.5px] text-muted-foreground mt-1 max-w-sm text-center leading-relaxed mb-4">
-        Share the submission form link with your customers to start collecting
-        video testimonials.
-      </p>
-      <button @click="openModal" class="px-4 py-2 rounded-lg border border-border bg-card text-[13.5px] font-medium text-foreground hover:bg-muted transition-colors border-input hover:border-transparent cursor-pointer">
-        + Request Video Testimonial
-      </button>
-    </div>
-
-    <!-- Grid View -->
-    <div
-      v-else
-      class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
-    >
-      <div
-        v-for="t in testimonials"
-        :key="t.id"
-        class="bg-card border border-border rounded-xl shadow-sm overflow-hidden flex flex-col"
-      >
-        <!-- Video Player -->
-        <div class="aspect-video bg-black relative">
-          <video
-            v-if="t.video_url"
-            :src="t.video_url"
-            controls
-            preload="metadata"
-            class="w-full h-full object-cover"
-          />
-          <div
-            v-else
-            class="w-full h-full flex flex-col items-center justify-center text-muted-foreground"
-          >
-            <svg
-              class="size-8 mb-2 opacity-50"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              stroke-width="1.5"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"
-              />
-            </svg>
-            <span class="text-xs font-medium">Video missing</span>
-          </div>
+      <!-- Page Header matching AGENTS.md Directive (h1 text-xl font-semibold) -->
+      <div class="px-8 py-6 border-b border-border bg-card shrink-0">
+        <div class="flex items-center text-xs text-muted-foreground mb-2">
+          <span>Reputation</span>
+          <span class="mx-2">/</span>
+          <span class="text-foreground font-medium">Video Testimonials</span>
         </div>
-
-        <!-- Details -->
-        <div class="p-5 flex-1 flex flex-col justify-between gap-4">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <h3 class="font-medium text-foreground text-sm line-clamp-2">
-              "{{ t.title }}"
-            </h3>
-            <p class="text-xs text-muted-foreground mt-1">
-              {{ t.email }}
-            </p>
+            <h1 class="text-xl font-semibold text-foreground">Video Testimonials</h1>
+            <p class="text-xs text-muted-foreground mt-1">Collect, manage and share authentic video testimonials from your customers.</p>
           </div>
+          <div class="flex items-center gap-3">
+            <!-- Export Dropdown -->
+            <div class="relative">
+              <button 
+                @click="showExportDropdown = !showExportDropdown"
+                class="h-9 gap-2 shadow-xs bg-card border border-border text-foreground hover:bg-muted text-xs font-semibold px-4 rounded-lg inline-flex items-center cursor-pointer"
+              >
+                <Download class="size-4" /> 
+                Export <ChevronDown class="size-3 opacity-50 ml-1" />
+              </button>
+              <div 
+                v-if="showExportDropdown"
+                class="absolute right-0 mt-1.5 w-48 bg-card border border-border rounded-xl p-1 shadow-xl z-50 space-y-0.5"
+              >
+                <button @click="handleExportOption('PDF Report')" class="w-full text-left px-3 py-1.5 text-xs rounded-md font-medium hover:bg-muted text-foreground cursor-pointer">Export Report (PDF)</button>
+                <button @click="handleExportOption('CSV Data')" class="w-full text-left px-3 py-1.5 text-xs rounded-md font-medium hover:bg-muted text-foreground cursor-pointer">Export Data (CSV)</button>
+                <div class="my-1 border-t border-border"></div>
+                <button @click="handleExportOption('zip')" class="w-full text-left px-3 py-1.5 text-xs rounded-md font-medium hover:bg-muted text-foreground cursor-pointer">Download Videos (ZIP)</button>
+              </div>
+            </div>
 
-          <div
-            class="flex items-center justify-between pt-3 border-t border-border"
-          >
-            <span class="text-xs text-muted-foreground">{{
-              formatDate(t.created_at)
-            }}</span>
-            <button
-              class="text-xs font-medium text-destructive px-2 py-1 hover:bg-destructive/10 rounded-lg transition-colors"
-              @click="deleteTestimonial(t.id)"
+            <!-- Request Video Button -->
+            <button 
+              @click="handleRequestTestimonial" 
+              class="h-9 gap-2 shadow-xs bg-primary hover:bg-primary/90 text-primary-foreground text-xs font-semibold px-4 rounded-lg inline-flex items-center cursor-pointer transition-colors"
             >
-              Delete
+              <Play class="size-4 fill-current" /> 
+              Request Video Testimonial
             </button>
           </div>
         </div>
-      </div>
-    </div>
-
-    <!-- Outbound Logs -->
-    <div
-      v-if="!loading"
-      class="bg-card rounded-xl border border-border shadow-sm overflow-hidden mt-8"
-    >
-      <div class="px-6 py-4 border-b border-border">
-        <h3 class="text-base font-medium text-foreground">
-          Outbound Video Requests
-        </h3>
-      </div>
-
-      <div
-        v-if="requests.length === 0"
-        class="flex flex-col items-center justify-center py-16 gap-2"
-      >
-        <div class="p-3 rounded-full bg-primary/10 text-primary">
-          <svg
-            class="size-6"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-            stroke-width="2"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
-            />
-          </svg>
-        </div>
-        <p class="text-sm font-medium text-foreground">
-          No video requests dispatched
-        </p>
-      </div>
-
-      <div v-else class="overflow-x-auto">
-        <table class="w-full text-left border-collapse">
-          <thead>
-            <tr
-              class="bg-muted/40 text-[11px] font-semibold text-muted-foreground uppercase tracking-wider"
-            >
-              <th class="px-6 py-3.5">Contact Name</th>
-              <th class="px-6 py-3.5">Template</th>
-              <th class="px-6 py-3.5">Channel</th>
-              <th class="px-6 py-3.5">Invite Status</th>
-              <th class="px-6 py-3.5 text-right">Sent Date</th>
-            </tr>
-          </thead>
-          <tbody class="divide-y divide-border">
-            <tr
-              v-for="req in requests"
-              :key="req.id"
-              class="hover:bg-muted/30 text-xs transition-colors"
-            >
-              <td class="px-6 py-4 font-medium text-foreground">
-                <div class="flex flex-col">
-                  <span>{{ req.contact?.name || 'Customer' }}</span>
-                  <span class="text-[11px] text-muted-foreground font-normal mt-0.5">
-                    {{
-                      req.contact?.phone_number ||
-                      req.contact?.email ||
-                      'No credentials'
-                    }}
-                  </span>
-                </div>
-              </td>
-              <td class="px-6 py-4 text-muted-foreground">
-                {{ req.reputation_template?.name || 'Custom' }}
-              </td>
-              <td class="px-6 py-4">
-                <span
-                  class="px-2 py-0.5 text-[10px] font-semibold rounded-lg uppercase bg-muted text-muted-foreground"
-                >
-                  {{ req.channel }}
-                </span>
-              </td>
-              <td class="px-6 py-4">
-                <span
-                  class="px-2 py-0.5 text-[10px] font-semibold rounded-full uppercase"
-                  :class="statusColor(req.status)"
-                >
-                  {{ req.status }}
-                </span>
-              </td>
-              <td class="px-6 py-4 text-right text-muted-foreground">
-                {{ new Date(req.created_at).toLocaleDateString() }}
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-
-    <!-- Request Modal -->
-    <div
-      v-if="showModal"
-      class="fixed inset-0 z-50 overflow-y-auto flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm transition-all"
-    >
-      <div
-        class="relative w-full max-w-lg bg-card rounded-xl border border-border shadow-2xl p-6 space-y-5"
-      >
-        <div
-          class="flex items-center justify-between border-b border-border pb-3"
-        >
-          <h3 class="text-base font-medium text-foreground">
-            Send Video Testimonial Request
-          </h3>
-          <button
-            class="p-1 rounded-lg hover:bg-muted text-muted-foreground"
-            @click="showModal = false"
-          >
-            <svg
-              class="size-5"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              stroke-width="2"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                d="M6 18L18 6M6 6l12 12"
-              />
-            </svg>
-          </button>
-        </div>
-
-        <div class="space-y-4">
-          <div class="space-y-1.5">
-            <label class="block text-sm font-medium text-foreground"
-              >Customer Email</label>
-            <input
-              v-model="requestForm.email"
-              type="email"
-              placeholder="customer@example.com"
-              class="w-full rounded-lg border border-border bg-background p-3 text-sm shadow-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/30"
-            />
+        
+        <!-- Top 5 KPI Cards -->
+        <div class="grid grid-cols-2 md:grid-cols-5 gap-4 mt-8">
+          <div class="bg-card border border-border rounded-xl p-4 shadow-xs flex flex-col justify-between">
+            <div class="flex items-center gap-3 mb-2">
+              <div class="size-8 rounded-full bg-primary/10 text-primary flex items-center justify-center border border-primary/20">
+                <Play class="size-4" />
+              </div>
+              <span class="text-2xl font-bold text-foreground">321</span>
+            </div>
+            <span class="text-xs text-muted-foreground font-medium mb-3">Total Videos</span>
+            <div class="text-[10px] text-emerald-600 font-semibold flex items-center gap-1">
+              <TrendingUp class="size-3" /> 18% vs last month
+            </div>
           </div>
-
-          <div class="space-y-1.5">
-            <label class="block text-sm font-medium text-foreground"
-              >Message Template (Optional)</label>
-            <select
-              v-model="selectedTemplate"
-              class="w-full rounded-lg border border-border bg-background p-3 text-sm shadow-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/30"
-              @change="handleTemplateChange"
-            >
-              <option :value="null">Select a template to autofill...</option>
-              <option v-for="t in templates" :key="t.id" :value="t">
-                {{ t.name }}
-              </option>
-            </select>
+          
+          <div class="bg-card border border-border rounded-xl p-4 shadow-xs flex flex-col justify-between">
+            <div class="flex items-center gap-3 mb-2">
+              <div class="size-8 rounded-full bg-emerald-500/10 text-emerald-600 flex items-center justify-center border border-emerald-500/20">
+                <CheckCircle class="size-4" />
+              </div>
+              <span class="text-2xl font-bold text-foreground">78%</span>
+            </div>
+            <span class="text-xs text-muted-foreground font-medium mb-3">Published</span>
+            <div class="text-[10px] text-emerald-600 font-semibold flex items-center gap-1">
+              <TrendingUp class="size-3" /> 12% vs last month
+            </div>
           </div>
+          
+          <div class="bg-card border border-border rounded-xl p-4 shadow-xs flex flex-col justify-between">
+            <div class="flex items-center gap-3 mb-2">
+              <div class="size-8 rounded-full bg-amber-500/10 text-amber-500 flex items-center justify-center border border-amber-500/20">
+                <Star class="size-4 fill-amber-500 text-amber-500" />
+              </div>
+              <span class="text-2xl font-bold text-foreground">4.9</span>
+            </div>
+            <span class="text-xs text-muted-foreground font-medium mb-3">Average Rating</span>
+            <div class="text-[10px] text-emerald-600 font-semibold flex items-center gap-1">
+              <TrendingUp class="size-3" /> 0.3 vs last month
+            </div>
+          </div>
+          
+          <div class="bg-card border border-border rounded-xl p-4 shadow-xs flex flex-col justify-between">
+            <div class="flex items-center gap-3 mb-2">
+              <div class="size-8 rounded-full bg-rose-500/10 text-rose-500 flex items-center justify-center border border-rose-500/20">
+                <Calendar class="size-4" />
+              </div>
+              <span class="text-2xl font-bold text-foreground">42</span>
+            </div>
+            <span class="text-xs text-muted-foreground font-medium mb-3">Awaiting Approval</span>
+            <div class="text-[10px] text-rose-600 dark:text-rose-400 font-semibold flex items-center gap-1">
+              <TrendingDown class="size-3" /> 8% vs last month
+            </div>
+          </div>
+          
+          <div class="bg-card border border-border rounded-xl p-4 shadow-xs flex flex-col justify-between">
+            <div class="flex items-center gap-3 mb-2">
+              <div class="size-8 rounded-full bg-primary/10 text-primary flex items-center justify-center border border-primary/20">
+                <Sparkles class="size-4" />
+              </div>
+              <span class="text-2xl font-bold text-foreground">146</span>
+            </div>
+            <span class="text-xs text-muted-foreground font-medium mb-3">Relay AI Highlights</span>
+            <div class="text-[10px] text-emerald-600 font-semibold flex items-center gap-1">
+              <TrendingUp class="size-3" /> 24% vs last month
+            </div>
+          </div>
+        </div>
+      </div>
 
-          <div class="space-y-1.5">
-            <label class="block text-sm font-medium text-foreground"
-              >Email Subject</label>
-            <input
-              v-model="requestForm.subject"
+      <!-- Filters & Toolbar -->
+      <div class="px-8 py-5 border-b border-border bg-background shrink-0 sticky top-0 z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div class="flex flex-wrap items-center gap-2">
+          <div class="relative w-48 mr-2">
+            <Search class="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Input
+              v-model="searchQuery"
               type="text"
-              class="w-full rounded-lg border border-border bg-background p-3 text-sm shadow-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/30"
+              placeholder="Search videos..."
+              class="w-full pl-9 bg-card border-border shadow-xs h-9 text-xs rounded-lg"
             />
           </div>
+          
+          <!-- Platform Filter -->
+          <div class="relative">
+            <button 
+              @click="showPlatformDropdown = !showPlatformDropdown"
+              class="h-9 gap-1.5 rounded-lg text-xs font-medium bg-card border border-border shadow-xs px-3 hover:bg-muted inline-flex items-center cursor-pointer text-foreground"
+            >
+              Platform <ChevronDown class="size-3.5 text-muted-foreground shrink-0" />
+            </button>
+            <div v-if="showPlatformDropdown" class="absolute left-0 mt-1.5 w-40 bg-card border border-border rounded-xl p-1 shadow-xl z-50 space-y-0.5">
+              <button v-for="p in ['All Platforms', 'Google', 'Facebook', 'Yelp', 'Trustpilot']" :key="p" @click="showPlatformDropdown = false" class="w-full text-left px-3 py-1.5 text-xs rounded-md font-medium hover:bg-muted text-foreground cursor-pointer">{{ p }}</button>
+            </div>
+          </div>
 
-          <div class="space-y-1.5">
-            <label class="block text-sm font-medium text-foreground"
-              >Message</label>
-            <textarea
-              v-model="requestForm.body"
-              rows="5"
-              class="w-full rounded-lg border border-border bg-background p-3 font-mono text-sm shadow-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/30"
-            />
-            <p class="text-xs text-muted-foreground mt-1">
-              Keep
-              <code class="bg-muted px-1 rounded">{{ video_link }}</code>
-              in the message, it will be replaced by the real link.
-            </p>
+          <!-- Rating Filter -->
+          <div class="relative">
+            <button 
+              @click="showRatingDropdown = !showRatingDropdown"
+              class="h-9 gap-1.5 rounded-lg text-xs font-medium bg-card border border-border shadow-xs px-3 hover:bg-muted inline-flex items-center cursor-pointer text-foreground"
+            >
+              Rating <ChevronDown class="size-3.5 text-muted-foreground shrink-0" />
+            </button>
+            <div v-if="showRatingDropdown" class="absolute left-0 mt-1.5 w-44 bg-card border border-border rounded-xl p-1 shadow-xl z-50 space-y-0.5">
+              <button v-for="r in ['5 Stars', '4 Stars & Up', '3 Stars & Up', '2 Stars & Below']" :key="r" @click="showRatingDropdown = false" class="w-full text-left px-3 py-1.5 text-xs rounded-md font-medium hover:bg-muted text-foreground cursor-pointer">{{ r }}</button>
+            </div>
+          </div>
+
+          <!-- Duration Filter -->
+          <div class="relative">
+            <button 
+              @click="showDurationDropdown = !showDurationDropdown"
+              class="h-9 gap-1.5 rounded-lg text-xs font-medium bg-card border border-border shadow-xs px-3 hover:bg-muted inline-flex items-center cursor-pointer text-foreground"
+            >
+              Duration <ChevronDown class="size-3.5 text-muted-foreground shrink-0" />
+            </button>
+            <div v-if="showDurationDropdown" class="absolute left-0 mt-1.5 w-36 bg-card border border-border rounded-xl p-1 shadow-xl z-50 space-y-0.5">
+              <button v-for="d in ['< 30s', '30s - 1m', '> 1m']" :key="d" @click="showDurationDropdown = false" class="w-full text-left px-3 py-1.5 text-xs rounded-md font-medium hover:bg-muted text-foreground cursor-pointer">{{ d }}</button>
+            </div>
+          </div>
+
+          <!-- Status Filter -->
+          <div class="relative">
+            <button 
+              @click="showStatusDropdown = !showStatusDropdown"
+              class="h-9 gap-1.5 rounded-lg text-xs font-medium bg-card border border-border shadow-xs px-3 hover:bg-muted inline-flex items-center cursor-pointer text-foreground"
+            >
+              Status <ChevronDown class="size-3.5 text-muted-foreground shrink-0" />
+            </button>
+            <div v-if="showStatusDropdown" class="absolute left-0 mt-1.5 w-40 bg-card border border-border rounded-xl p-1 shadow-xl z-50 space-y-0.5">
+              <button v-for="s in ['Approved', 'Pending Approval', 'Published', 'Rejected']" :key="s" @click="showStatusDropdown = false" class="w-full text-left px-3 py-1.5 text-xs rounded-md font-medium hover:bg-muted text-foreground cursor-pointer">{{ s }}</button>
+            </div>
+          </div>
+
+          <!-- AI Tags Filter -->
+          <div class="relative">
+            <button 
+              @click="showAiTagsDropdown = !showAiTagsDropdown"
+              class="h-9 gap-1.5 rounded-lg text-xs font-medium bg-card border border-border shadow-xs px-3 hover:bg-muted inline-flex items-center cursor-pointer text-foreground"
+            >
+              Relay AI Tags <ChevronDown class="size-3.5 text-muted-foreground shrink-0" />
+            </button>
+            <div v-if="showAiTagsDropdown" class="absolute left-0 mt-1.5 w-44 bg-card border border-border rounded-xl p-1 shadow-xl z-50 space-y-0.5">
+              <button v-for="tag in ['AI Summary', 'Marketing Ready', 'Needs Review']" :key="tag" @click="showAiTagsDropdown = false" class="w-full text-left px-3 py-1.5 text-xs rounded-md font-medium hover:bg-muted text-foreground cursor-pointer">{{ tag }}</button>
+            </div>
+          </div>
+        </div>
+        
+        <div class="flex items-center gap-3">
+          <div class="relative">
+            <button 
+              @click="showSortDropdown = !showSortDropdown"
+              class="h-9 gap-1.5 rounded-lg text-xs font-medium bg-card border border-border shadow-xs px-3 hover:bg-muted inline-flex items-center cursor-pointer text-foreground"
+            >
+              Newest First <ChevronDown class="size-3.5 text-muted-foreground shrink-0" />
+            </button>
+            <div v-if="showSortDropdown" class="absolute right-0 mt-1.5 w-40 bg-card border border-border rounded-xl p-1 shadow-xl z-50 space-y-0.5">
+              <button v-for="sort in ['Newest First', 'Oldest First', 'Highest Rating', 'Most Views']" :key="sort" @click="showSortDropdown = false" class="w-full text-left px-3 py-1.5 text-xs rounded-md font-medium hover:bg-muted text-foreground cursor-pointer">{{ sort }}</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="px-8 py-4 flex items-center justify-between text-xs text-muted-foreground font-medium">
+        Showing 1-{{ filteredVideos.length }} of 321 videos
+        <div class="flex bg-card border border-border rounded-lg p-0.5 shadow-xs">
+          <button @click="viewMode = 'grid'" class="p-1.5 rounded-md transition-colors cursor-pointer" :class="viewMode === 'grid' ? 'bg-muted text-foreground' : 'text-muted-foreground hover:text-foreground hover:bg-muted'"><LayoutGrid class="size-4" /></button>
+          <button @click="viewMode = 'list'" class="p-1.5 rounded-md transition-colors cursor-pointer" :class="viewMode === 'list' ? 'bg-muted text-foreground' : 'text-muted-foreground hover:text-foreground hover:bg-muted'"><List class="size-4" /></button>
+          <button @click="viewMode = 'timeline'" class="p-1.5 rounded-md transition-colors cursor-pointer" :class="viewMode === 'timeline' ? 'bg-muted text-foreground' : 'text-muted-foreground hover:text-foreground hover:bg-muted'"><Clock class="size-4" /></button>
+        </div>
+      </div>
+
+      <!-- Video Grid Area -->
+      <div class="px-8 pb-10">
+        <div 
+          class="grid gap-6 transition-all"
+          :class="[
+            viewMode === 'list' ? 'grid-cols-1' : '',
+            viewMode === 'timeline' ? 'grid-cols-1 border-l-2 border-primary/20 ml-[130px] pl-8' : '',
+            viewMode === 'grid' && selectedVideo ? 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3' : '',
+            viewMode === 'grid' && !selectedVideo ? 'grid-cols-1 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4' : ''
+          ]"
+        >
+          <div 
+            v-for="video in filteredVideos" 
+            :key="video.id"
+            class="relative"
+          >
+            <!-- Timeline dot -->
+            <div v-if="viewMode === 'timeline'" class="absolute -left-[38.5px] top-8 size-3.5 rounded-full bg-primary ring-4 ring-background transition-colors z-10" :class="selectedVideo?.id === video.id ? 'ring-primary/20 scale-125' : ''"></div>
+            
+            <!-- Timeline Date Label -->
+            <div v-if="viewMode === 'timeline' && video.timelineDate" class="absolute -left-[145px] top-6 w-[90px] text-left z-10">
+              <div class="font-bold text-foreground text-[13.5px]">{{ video.timelineDate.title }}</div>
+              <div class="text-xs text-muted-foreground mt-0.5">{{ video.timelineDate.sub }}</div>
+            </div>
+            
+            <!-- Card Body -->
+            <div 
+              @click="selectVideo(video)"
+              class="bg-card border rounded-xl overflow-hidden hover:shadow-md transition-all duration-300 group flex cursor-pointer relative"
+              :class="[
+                selectedVideo?.id === video.id ? 'border-primary ring-1 ring-primary shadow-md scale-[1.02]' : 'border-border shadow-xs scale-100',
+                (viewMode === 'list' || viewMode === 'timeline') ? 'flex-col sm:flex-row' : 'flex-col h-full'
+              ]"
+            >
+              <!-- Thumbnail & Player overlay -->
+              <div 
+                class="relative bg-muted overflow-hidden shrink-0 border-b sm:border-b-0 sm:border-r border-border"
+                :class="(viewMode === 'list' || viewMode === 'timeline') ? 'w-full sm:w-56 aspect-video' : 'w-full aspect-[4/3]'"
+              >
+                <img :src="video.thumbnail" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
+                <div class="absolute inset-0 bg-black/10 group-hover:bg-black/30 transition-colors flex items-center justify-center">
+                  <div class="size-12 rounded-full bg-white/90 backdrop-blur-xs flex items-center justify-center text-foreground shadow-lg transform transition-transform group-hover:scale-110">
+                    <Play class="size-5 ml-1 fill-current opacity-80" />
+                  </div>
+                </div>
+                
+                <!-- Top Left Platform Icon (14px SVG) -->
+                <div class="absolute top-3 left-3 bg-white size-7 rounded-full flex items-center justify-center shadow-md overflow-hidden p-1.5" v-html="getPlatformIcon(video.platform)"></div>
+                
+                <!-- Bottom Right Duration -->
+                <div class="absolute bottom-3 right-3 px-2 py-1 bg-black/70 backdrop-blur-xs rounded text-[10px] font-bold text-white tracking-wider shadow-xs">
+                  {{ video.duration }}
+                </div>
+              </div>
+
+              <!-- Content (Grid) -->
+              <div v-if="viewMode === 'grid'" class="p-4 flex flex-col flex-1 min-w-0">
+                <div class="flex items-start justify-between mb-2 gap-2">
+                  <h3 class="font-bold text-[13px] text-foreground truncate flex-1">{{ video.author }}</h3>
+                  <div class="flex text-amber-400 shrink-0 mt-0.5">
+                    <Star v-for="i in 5" :key="i" class="size-3 fill-amber-400 text-amber-400" />
+                  </div>
+                </div>
+                
+                <div class="flex items-center gap-1.5 text-xs text-muted-foreground mb-4">
+                  <span>{{ video.platform }}</span>
+                  <span class="size-1 rounded-full bg-muted-foreground/30"></span>
+                  <span>{{ video.date }}</span>
+                </div>
+                
+                <div class="mt-auto flex items-center justify-between gap-2">
+                  <div class="flex flex-wrap gap-2">
+                    <Badge v-for="tag in video.aiTags.filter(t => t !== 'AI Summary')" :key="tag" 
+                      class="shadow-none font-medium text-[10px] px-2 py-0.5 rounded-md border"
+                      :class="
+                        tag === 'Approved' ? 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 border-emerald-500/20' : 
+                        tag === 'Published' ? 'bg-primary/10 text-primary border-primary/20' : 
+                        'bg-amber-500/15 text-amber-700 dark:text-amber-400 border-amber-500/20'
+                      "
+                    >
+                      {{ tag }}
+                    </Badge>
+                  </div>
+                  
+                  <button class="h-6 text-[10px] text-primary font-semibold opacity-0 group-hover:opacity-100 transition-opacity px-2 gap-1 bg-primary/10 hover:bg-primary/20 rounded-md inline-flex items-center shrink-0 cursor-pointer" @click.stop="selectVideo(video)">
+                    <Sparkles class="size-3" /> Summarize
+                  </button>
+                </div>
+              </div>
+
+              <!-- Content (List / Timeline) -->
+              <div v-else class="p-6 flex flex-col sm:flex-row flex-1 min-w-0 gap-6 items-start relative">
+                <!-- Author Info Column -->
+                <div class="flex flex-col w-[200px] shrink-0">
+                  <h3 class="font-bold text-[14.5px] text-foreground mb-2">{{ video.author }}</h3>
+
+                  <div class="flex text-amber-400 shrink-0 mb-3">
+                    <Star v-for="i in 5" :key="i" class="size-3.5 fill-amber-400 text-amber-400" />
+                  </div>
+                  <Badge
+                    class="shadow-none font-medium text-[10.5px] px-2.5 py-0.5 rounded-full border w-max mb-1"
+                    :class="
+                      video.status === 'Approved' ? 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 border-emerald-500/20' : 
+                      video.status === 'Published' ? 'bg-primary/10 text-primary border-primary/20' : 
+                      'bg-amber-500/15 text-amber-700 dark:text-amber-400 border-amber-500/20'
+                    "
+                  >
+                    {{ video.status }}
+                  </Badge>
+                  <div class="text-[11.5px] text-muted-foreground font-medium mt-2">{{ video.date }}</div>
+                </div>
+                
+                <!-- Transcript Summary Column -->
+                <div class="flex-1 min-w-0 pr-4 mt-1">
+                  <p class="text-[13px] leading-relaxed text-muted-foreground line-clamp-3 italic">
+                    "{{ video.transcriptSummary }}"
+                  </p>
+                </div>
+
+                <!-- Topics Column -->
+                <div class="w-[180px] shrink-0 mt-1">
+                  <h4 class="text-[11px] font-bold text-muted-foreground mb-3">Topics</h4>
+                  <div class="flex flex-wrap gap-2">
+                    <Badge v-for="topic in video.topics.slice(0, 3)" :key="topic" class="bg-muted text-muted-foreground border border-border shadow-none font-medium text-[11px] px-2.5 py-1 rounded-full">
+                      {{ topic }}
+                    </Badge>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 
-        <div
-          class="flex justify-end gap-2 pt-3 border-t border-border"
-        >
-          <button
-            class="rounded-lg border border-border px-4 py-2 text-sm font-medium text-muted-foreground hover:bg-muted/50 transition-colors"
-            @click="showModal = false"
-          >
-            Cancel
+        <!-- Empty State matching AGENTS.md rule 6 (text-[20px] font-[600]) -->
+        <div v-if="filteredVideos.length === 0" class="p-12 text-center text-muted-foreground flex flex-col items-center">
+          <Play class="size-10 opacity-20 mb-3" />
+          <h3 class="text-[20px] font-[600] text-foreground mb-1">No video testimonials found</h3>
+          <p class="text-[13.5px] text-muted-foreground leading-relaxed mb-4">No video testimonials match your search filter.</p>
+          <button @click="searchQuery = ''" class="px-4 py-2 rounded-lg border border-border bg-card text-[13.5px] font-medium text-foreground hover:bg-muted transition-colors border-input hover:border-transparent cursor-pointer">
+            Reset Filters
           </button>
-          <button
-            class="inline-flex items-center gap-1.5 rounded-lg bg-primary px-5 py-2 text-sm font-medium text-primary-foreground shadow-sm hover:bg-primary/90 transition-colors disabled:opacity-50"
-            :disabled="!requestForm.email || sending"
-            @click="sendRequest"
-          >
-            <svg
-              v-if="sending"
-              class="size-3.5 animate-spin"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              stroke-width="2"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                d="M4 4v5h.582m15.356 2A8.001 8.001 0 1121.21 7.89M9 11l3-3 3 3m0 0l-3 3-3-3"
-              />
-            </svg>
-            Send Request
+        </div>
+      </div>
+    </div>
+    
+    <!-- Side Panel (Master-Detail Video Panel) -->
+    <div 
+      class="h-full border-l border-border bg-card transition-all duration-300 shadow-2xl lg:shadow-none absolute lg:relative right-0 flex flex-col z-40"
+      :class="selectedVideo ? 'w-full sm:w-[450px] lg:w-[35%] xl:w-[30%] translate-x-0' : 'w-full sm:w-[450px] lg:w-[35%] xl:w-[30%] translate-x-full lg:hidden hidden'"
+    >
+      <div v-if="selectedVideo" class="flex flex-col h-full overflow-hidden">
+        <!-- Header -->
+        <div class="px-6 py-4 border-b border-border flex items-center justify-between shrink-0 bg-muted/20">
+          <div class="flex items-center gap-3">
+            <div class="size-6 bg-white rounded-full overflow-hidden flex items-center justify-center shrink-0 p-1 border border-border" v-html="getPlatformIcon(selectedVideo.platform)"></div>
+            <h2 class="font-bold text-foreground text-sm">{{ selectedVideo.author }}</h2>
+            <Badge v-if="selectedVideo.aiTags.includes('Marketing Ready')" class="bg-primary/10 text-primary border border-primary/20 shadow-none font-medium text-[10px] px-2 py-0.5 rounded-md ml-1">Marketing Ready</Badge>
+          </div>
+          <button class="p-1.5 text-muted-foreground hover:text-foreground rounded-lg hover:bg-muted cursor-pointer" @click="closePanel">
+            <X class="size-4" />
           </button>
+        </div>
+        
+        <!-- Scrollable Middle Section -->
+        <div class="flex-1 overflow-y-auto bg-card hide-scrollbar">
+          <!-- Video Player Block -->
+          <div class="w-full bg-black relative aspect-video max-h-[240px] shrink-0 group">
+            <img :src="selectedVideo.thumbnail" class="w-full h-full object-cover opacity-80" />
+            <div class="absolute inset-0 flex items-center justify-center">
+              <div class="size-14 rounded-full bg-black/40 backdrop-blur-xs flex items-center justify-center text-white cursor-pointer hover:bg-black/60 transition-colors shadow-lg border border-white/20">
+                <Play class="size-6 ml-1 fill-white" />
+              </div>
+            </div>
+            <!-- Controls overlay -->
+            <div class="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/80 via-black/40 to-transparent flex flex-col gap-3">
+              <div class="flex items-center justify-between text-white text-[11px] font-medium tracking-wider">
+                <div class="flex items-center gap-3">
+                  <span>0:00 / {{ selectedVideo.duration }}</span>
+                </div>
+                <div class="flex items-center gap-3">
+                  <button class="relative group/btn opacity-90 hover:opacity-100 hover:text-primary transition-colors cursor-pointer">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20V10M18 20V4M6 20v-4"/></svg>
+                  </button>
+                  <button class="relative group/btn opacity-90 hover:opacity-100 hover:text-primary transition-colors cursor-pointer">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
+                  </button>
+                </div>
+              </div>
+              <div class="h-1 bg-white/30 rounded-full overflow-hidden cursor-pointer">
+                <div class="h-full bg-white w-1/4 relative rounded-full"></div>
+              </div>
+            </div>
+          </div>
+        
+          <!-- Quick Info Row -->
+          <div class="px-6 py-3 border-b border-border flex items-center justify-between text-xs font-medium text-muted-foreground shrink-0 bg-card">
+            <div class="flex items-center gap-4">
+              <span class="flex items-center gap-1.5"><div class="size-3.5 flex items-center justify-center" v-html="getPlatformIcon(selectedVideo.platform)"></div> {{ selectedVideo.platform }}</span>
+              <span class="flex items-center gap-1.5"><Calendar class="size-3.5 opacity-70" /> {{ selectedVideo.date }}</span>
+              <span class="flex items-center gap-1.5"><Clock class="size-3.5 opacity-70" /> {{ selectedVideo.duration }}</span>
+            </div>
+            <div class="flex text-amber-400">
+              <Star v-for="i in 5" :key="i" class="size-3 fill-amber-400 text-amber-400" />
+            </div>
+          </div>
+        
+          <!-- Tabs Nav -->
+          <div class="px-6 border-b border-border flex gap-5 text-xs font-semibold shrink-0 pt-2 bg-card">
+            <button 
+              v-for="tab in ['Overview', 'Transcript', 'AI Insights', 'Activity', 'Notes']" :key="tab"
+              @click="activeTab = tab"
+              class="py-3 border-b-2 transition-colors -mb-[1px] whitespace-nowrap cursor-pointer"
+              :class="activeTab === tab ? 'border-primary text-primary' : 'border-transparent text-muted-foreground hover:text-foreground'"
+            >{{ tab }}</button>
+          </div>
+        
+          <!-- Tab Content -->
+          <div class="p-6 space-y-6">
+            <div v-if="activeTab === 'Overview'" class="space-y-6">
+              <!-- AI Summary Box -->
+              <div class="space-y-2.5">
+                <h3 class="text-xs font-bold tracking-wide text-foreground flex items-center gap-2">
+                  <div class="size-5 rounded-full bg-primary/10 text-primary flex items-center justify-center"><Sparkles class="size-3" /></div>
+                  Relay AI Summary
+                </h3>
+                <div class="bg-muted/30 border border-border/50 rounded-xl p-4 text-[13px] text-muted-foreground leading-relaxed">
+                  {{ selectedVideo.transcriptSummary }}
+                </div>
+              </div>
+              
+              <!-- Topics Box -->
+              <div class="space-y-3">
+                <h3 class="text-xs font-bold tracking-wide text-foreground">Topics</h3>
+                <div class="flex flex-wrap gap-2">
+                  <Badge v-for="topic in selectedVideo.topics" :key="topic" class="bg-muted text-muted-foreground border border-border shadow-none font-medium text-xs px-3 py-1 rounded-full">
+                    {{ topic }}
+                  </Badge>
+                </div>
+              </div>
+              
+              <!-- AI Magic Clips -->
+              <div class="space-y-2.5">
+                <div class="flex items-center justify-between">
+                  <h3 class="text-xs font-bold tracking-wide text-foreground flex items-center gap-2">
+                    <div class="size-5 rounded-full bg-primary/10 text-primary flex items-center justify-center"><Scissors class="size-3" /></div>
+                    Generate Clips
+                  </h3>
+                </div>
+                <div class="bg-muted/30 border border-border/50 rounded-xl p-4 flex flex-col items-center justify-center text-center gap-2">
+                  <div class="size-10 rounded-full bg-primary/10 text-primary flex items-center justify-center mb-1">
+                    <Sparkles class="size-5" />
+                  </div>
+                  <h4 class="text-[13px] font-semibold text-foreground">Extract Highlights</h4>
+                  <p class="text-[11.5px] text-muted-foreground mb-2 px-2 leading-relaxed">Let Relay AI automatically find and clip the best moments from this testimonial for social media.</p>
+                  <button @click="handleGenerateClip" class="h-8 gap-1.5 text-xs w-full max-w-[200px] shadow-xs bg-primary text-primary-foreground font-semibold rounded-lg inline-flex items-center justify-center cursor-pointer hover:bg-primary/90">
+                    <Scissors class="size-3.5" /> Generate Clips
+                  </button>
+                </div>
+              </div>
+              
+              <!-- Suggested Reply Box -->
+              <div class="space-y-2.5">
+                <div class="flex items-center justify-between">
+                  <h3 class="text-xs font-bold tracking-wide text-primary flex items-center gap-1.5">
+                    <div class="size-5 rounded-full bg-primary/10 text-primary flex items-center justify-center"><Sparkles class="size-3 fill-current" /></div>
+                    Suggested Reply
+                  </h3>
+                  <button @click="handleGenerateNew" class="text-[11px] font-semibold text-primary hover:text-primary/90 cursor-pointer">Generate New</button>
+                </div>
+                <div class="bg-card border border-primary/20 rounded-xl p-4 shadow-xs relative group">
+                  <p class="text-[13px] text-muted-foreground leading-relaxed mb-4">
+                    Thank you so much, {{ selectedVideo.author.split(' ')[0] }}! 😊<br><br>
+                    We're thrilled to hear our team was able to resolve your issue quickly and that you're enjoying the platform. We're always here if you need anything!
+                  </p>
+                  <div class="flex justify-end">
+                    <button @click="handleUseReply" class="h-7 text-xs font-semibold border border-primary/30 text-primary hover:bg-primary/10 rounded-md px-3 cursor-pointer">
+                      Use this Reply
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <div v-else-if="activeTab === 'Transcript'" class="space-y-1 pr-2">
+              <div class="flex gap-4 group cursor-pointer hover:bg-muted/50 p-2.5 rounded-lg transition-colors -mx-2.5" @click="showToast('Jumping to 0:00 in video...')">
+                <div class="w-10 shrink-0 pt-0.5">
+                  <span class="text-[11px] font-semibold text-primary bg-primary/10 px-1.5 py-0.5 rounded transition-colors group-hover:bg-primary group-hover:text-primary-foreground">0:00</span>
+                </div>
+                <div class="flex-1">
+                  <p class="text-[13px] leading-relaxed text-foreground transition-colors">
+                    Hi everyone, I wanted to quickly share my experience with the platform over the last few months.
+                  </p>
+                </div>
+              </div>
+              
+              <div class="flex gap-4 group cursor-pointer hover:bg-muted/50 p-2.5 rounded-lg transition-colors -mx-2.5" @click="showToast('Jumping to 0:07 in video...')">
+                <div class="w-10 shrink-0 pt-0.5">
+                  <span class="text-[11px] font-semibold text-muted-foreground bg-muted group-hover:bg-primary group-hover:text-primary-foreground px-1.5 py-0.5 rounded transition-colors">0:07</span>
+                </div>
+                <div class="flex-1">
+                  <p class="text-[13px] leading-relaxed text-muted-foreground group-hover:text-foreground transition-colors">
+                    I recently started using it for our daily operations, and the difference is night and day.
+                  </p>
+                </div>
+              </div>
+              
+              <div class="flex gap-4 group cursor-pointer hover:bg-muted/50 p-2.5 rounded-lg transition-colors -mx-2.5" @click="showToast('Jumping to 0:15 in video...')">
+                <div class="w-10 shrink-0 pt-0.5">
+                  <span class="text-[11px] font-semibold text-muted-foreground bg-muted group-hover:bg-primary group-hover:text-primary-foreground px-1.5 py-0.5 rounded transition-colors">0:15</span>
+                </div>
+                <div class="flex-1">
+                  <p class="text-[13px] leading-relaxed text-muted-foreground group-hover:text-foreground transition-colors">
+                    The support team has also been incredibly responsive whenever we hit a snag. Highly recommend!
+                  </p>
+                </div>
+              </div>
+            </div>
+            
+            <div v-else-if="activeTab === 'AI Insights'" class="space-y-6">
+              <div class="grid grid-cols-2 gap-4">
+                <div class="bg-muted/30 border border-border rounded-xl p-4">
+                  <div class="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider mb-2">Sentiment</div>
+                  <div class="flex items-center gap-2">
+                    <span class="text-xl">😊</span>
+                    <span class="font-bold text-foreground">Positive</span>
+                  </div>
+                </div>
+                
+                <div class="bg-muted/30 border border-border rounded-xl p-4">
+                  <div class="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider mb-2">Confidence</div>
+                  <div class="flex items-end gap-1">
+                    <span class="text-xl font-bold text-foreground">97%</span>
+                  </div>
+                </div>
+                
+                <div class="bg-muted/30 border border-border rounded-xl p-4">
+                  <div class="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider mb-2">Marketing Score</div>
+                  <div class="flex items-center gap-2">
+                    <div class="flex-1 h-2 bg-muted rounded-full overflow-hidden">
+                      <div class="h-full bg-emerald-500 rounded-full" style="width: 94%"></div>
+                    </div>
+                    <span class="text-xs font-bold text-foreground">94%</span>
+                  </div>
+                </div>
+                
+                <div class="bg-muted/30 border border-border rounded-xl p-4">
+                  <div class="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider mb-2">Recommendation</div>
+                  <div class="flex text-amber-400 mt-1">
+                    <Star v-for="i in 5" :key="i" class="size-3.5 fill-amber-400 text-amber-400" />
+                  </div>
+                </div>
+              </div>
+              
+              <div class="space-y-2">
+                <div class="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider px-1">Most Quotable Line</div>
+                <div class="bg-primary/5 border border-primary/20 rounded-xl p-4 relative">
+                  <Quote class="absolute top-3 right-3 size-4 text-primary/30" />
+                  <p class="text-[14px] font-medium text-foreground pr-6 leading-relaxed italic">
+                    "The team solved everything within minutes."
+                  </p>
+                </div>
+              </div>
+            </div>
+            
+            <div v-else-if="activeTab === 'Activity'" class="p-2 space-y-6">
+              <div class="bg-primary/5 border border-primary/10 rounded-lg p-3 flex items-center gap-3">
+                <div class="size-8 rounded-full bg-primary/20 flex items-center justify-center shrink-0">
+                  <Bot class="size-4 text-primary" />
+                </div>
+                <div class="text-xs font-medium text-primary">
+                  Relay AI Recommendation: Ready for marketing channels
+                </div>
+              </div>
+
+              <div class="space-y-4">
+                <div class="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Today</div>
+                <div class="relative border-l-2 border-border ml-2.5 pl-6 space-y-6">
+                  <div class="relative">
+                    <div class="absolute -left-[35.5px] top-0 size-6 rounded-full bg-emerald-500/15 flex items-center justify-center ring-4 ring-card">
+                      <Check class="size-3.5 text-emerald-600 dark:text-emerald-400" />
+                    </div>
+                    <div class="font-medium text-[13.5px] text-foreground">Published</div>
+                    <div class="text-[11px] text-muted-foreground mt-0.5">2:34 PM</div>
+                  </div>
+                  
+                  <div class="relative">
+                    <div class="absolute -left-[35.5px] top-0 size-6 rounded-full bg-primary/10 flex items-center justify-center ring-4 ring-card">
+                      <ThumbsUp class="size-3.5 text-primary" />
+                    </div>
+                    <div class="font-medium text-[13.5px] text-foreground">Approved</div>
+                    <div class="text-[11px] text-muted-foreground mt-0.5">2:12 PM</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <div v-else-if="activeTab === 'Notes'" class="p-2">
+              <div class="flex items-center gap-2 text-foreground font-semibold text-sm mb-2">
+                <FileText class="size-4 text-amber-500" /> Notes
+              </div>
+              <p class="text-xs text-muted-foreground mb-6">
+                Collaborate with your team about this testimonial.
+              </p>
+              
+              <div class="border-t border-border pt-6 flex flex-col items-center justify-center text-center">
+                <div class="text-xs text-muted-foreground mb-4">No notes yet.</div>
+                <button class="h-8 px-4 text-xs font-semibold bg-card border border-border rounded-lg text-foreground hover:bg-muted cursor-pointer inline-flex items-center gap-1.5">
+                  <Plus class="size-3.5" /> Add First Note
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Footer Actions -->
+        <div class="p-5 border-t border-border bg-card shrink-0 space-y-3">
+          <div class="flex gap-2">
+            <button @click="handleReply" class="bg-primary hover:bg-primary/90 text-primary-foreground h-9 gap-2 flex-1 shadow-xs font-semibold text-xs rounded-lg inline-flex items-center justify-center cursor-pointer">
+              <MessageSquare class="size-4" /> Reply
+            </button>
+            <button @click="handleShare" class="h-9 gap-1.5 bg-card border border-border hover:bg-muted text-foreground flex-1 shadow-xs font-semibold text-xs rounded-lg inline-flex items-center justify-center cursor-pointer">
+              <Share2 class="size-3.5" /> Share
+            </button>
+            <button @click="handleDownload" class="h-9 gap-1.5 bg-card border border-border hover:bg-muted text-foreground flex-1 shadow-xs font-semibold text-xs rounded-lg inline-flex items-center justify-center cursor-pointer">
+              <Download class="size-3.5" /> Download
+            </button>
+            <button @click="handleMore" class="h-9 w-9 shrink-0 bg-card border border-border hover:bg-muted text-foreground shadow-xs rounded-lg inline-flex items-center justify-center cursor-pointer">
+              <MoreHorizontal class="size-4" />
+            </button>
+          </div>
+          
+          <div class="flex gap-2 justify-between relative">
+            <div class="relative">
+              <button 
+                @click="showDetailStatusDropdown = !showDetailStatusDropdown"
+                class="h-9 gap-1.5 bg-card text-xs font-semibold rounded-lg px-3 border border-border flex items-center cursor-pointer"
+                :class="selectedVideo.status === 'Approved' || selectedVideo.status === 'Published' ? 'text-emerald-600 dark:text-emerald-400 border-emerald-500/20 bg-emerald-500/10' : 'text-amber-600 dark:text-amber-400 border-amber-500/20 bg-amber-500/10'"
+              >
+                {{ selectedVideo.status }} <ChevronDown class="size-3 opacity-50 ml-1" />
+              </button>
+              <div v-if="showDetailStatusDropdown" class="absolute bottom-full mb-1.5 left-0 w-44 bg-card border border-border rounded-xl p-1 shadow-xl z-50 space-y-0.5">
+                <button @click="handleStatusChange('Approved')" class="w-full text-left px-3 py-1.5 text-xs rounded-md font-medium hover:bg-muted text-foreground cursor-pointer flex items-center justify-between">
+                  <span>Approved</span>
+                  <Check v-if="selectedVideo.status === 'Approved'" class="size-3.5 text-emerald-600" />
+                </button>
+                <button @click="handleStatusChange('Published')" class="w-full text-left px-3 py-1.5 text-xs rounded-md font-medium hover:bg-muted text-foreground cursor-pointer flex items-center justify-between">
+                  <span>Published</span>
+                  <Check v-if="selectedVideo.status === 'Published'" class="size-3.5 text-emerald-600" />
+                </button>
+                <button @click="handleStatusChange('Pending Approval')" class="w-full text-left px-3 py-1.5 text-xs rounded-md font-medium hover:bg-muted text-foreground cursor-pointer flex items-center justify-between">
+                  <span>Pending Approval</span>
+                  <Check v-if="selectedVideo.status === 'Pending Approval'" class="size-3.5 text-amber-600" />
+                </button>
+                <button @click="handleStatusChange('Rejected')" class="w-full text-left px-3 py-1.5 text-xs rounded-md font-medium hover:bg-muted text-foreground cursor-pointer flex items-center justify-between">
+                  <span>Rejected</span>
+                  <Check v-if="selectedVideo.status === 'Rejected'" class="size-3.5 text-rose-600" />
+                </button>
+              </div>
+            </div>
+            
+            <div class="flex gap-2">
+              <button @click="handleEdit" class="h-9 gap-1.5 text-xs font-semibold bg-card border border-border rounded-lg px-3 hover:bg-muted inline-flex items-center cursor-pointer">
+                <Edit class="size-3.5" /> Edit
+              </button>
+              <button @click="handleDelete" class="h-9 gap-1.5 text-rose-600 dark:text-rose-400 bg-rose-500/10 border border-rose-500/20 hover:bg-rose-500/20 text-xs font-semibold rounded-lg px-3 inline-flex items-center cursor-pointer">
+                <Trash2 class="size-3.5" /> Delete
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     </div>
   </div>
+
+  <!-- Custom Toast Notification -->
+  <div 
+    class="fixed bottom-6 right-6 z-50 bg-foreground text-background px-4 py-3 rounded-xl shadow-2xl font-medium text-xs transition-all duration-300 transform flex items-center gap-2"
+    :class="toastState.visible ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0 pointer-events-none'"
+  >
+    <CheckCircle class="size-4 text-emerald-400" />
+    {{ toastState.message }}
+  </div>
+
+  <!-- Modals -->
+  <RequestVideoTestimonialModal 
+    v-model:open="isRequestModalOpen" 
+    @submit="handleModalSubmit" 
+  />
+  <ExportVideoTestimonialsModal
+    v-model:open="isExportModalOpen"
+  />
 </template>

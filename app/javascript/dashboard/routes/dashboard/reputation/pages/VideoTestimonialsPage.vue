@@ -264,14 +264,14 @@ const filteredVideos = computed(() => {
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
             <h1 class="text-xl font-semibold text-foreground">Video Testimonials</h1>
-            <p class="text-xs text-muted-foreground mt-1">Collect, manage and share authentic video testimonials from your customers.</p>
+            <p class="text-sm text-muted-foreground mt-1">Collect, manage and share authentic video testimonials from your customers.</p>
           </div>
           <div class="flex items-center gap-3">
             <!-- Export Dropdown -->
             <div class="relative">
               <button 
                 @click="showExportDropdown = !showExportDropdown"
-                class="h-9 gap-2 shadow-xs bg-card border border-border text-foreground hover:bg-muted text-xs font-semibold px-4 rounded-lg inline-flex items-center cursor-pointer"
+                class="h-9 gap-2 shadow-xs bg-card border border-border text-foreground hover:bg-muted text-[13px] font-semibold px-4 rounded-lg inline-flex items-center cursor-pointer"
               >
                 <Download class="size-4" /> 
                 Export <ChevronDown class="size-3 opacity-50 ml-1" />
@@ -290,7 +290,7 @@ const filteredVideos = computed(() => {
             <!-- Request Video Button -->
             <button 
               @click="handleRequestTestimonial" 
-              class="h-9 gap-2 shadow-xs bg-primary hover:bg-primary/90 text-primary-foreground text-xs font-semibold px-4 rounded-lg inline-flex items-center cursor-pointer transition-colors"
+              class="h-9 gap-2 shadow-xs bg-primary hover:bg-primary/90 text-primary-foreground text-[13px] font-semibold px-4 rounded-lg inline-flex items-center cursor-pointer transition-colors"
             >
               <Play class="size-4 fill-current" /> 
               Request Video Testimonial
@@ -315,7 +315,7 @@ const filteredVideos = computed(() => {
           
           <div class="bg-card border border-border rounded-xl p-4 shadow-xs flex flex-col justify-between">
             <div class="flex items-center gap-3 mb-2">
-              <div class="size-8 rounded-full bg-emerald-500/10 text-emerald-600 flex items-center justify-center border border-emerald-500/20">
+              <div class="size-8 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center border border-emerald-100 dark:bg-emerald-900/30 dark:border-emerald-800 dark:text-emerald-400">
                 <CheckCircle class="size-4" />
               </div>
               <span class="text-2xl font-bold text-foreground">78%</span>
@@ -328,7 +328,7 @@ const filteredVideos = computed(() => {
           
           <div class="bg-card border border-border rounded-xl p-4 shadow-xs flex flex-col justify-between">
             <div class="flex items-center gap-3 mb-2">
-              <div class="size-8 rounded-full bg-amber-500/10 text-amber-500 flex items-center justify-center border border-amber-500/20">
+              <div class="size-8 rounded-full bg-amber-50 text-amber-500 flex items-center justify-center border border-amber-100 dark:bg-amber-900/30 dark:border-amber-800 dark:text-amber-400">
                 <Star class="size-4 fill-amber-500 text-amber-500" />
               </div>
               <span class="text-2xl font-bold text-foreground">4.9</span>
@@ -341,7 +341,7 @@ const filteredVideos = computed(() => {
           
           <div class="bg-card border border-border rounded-xl p-4 shadow-xs flex flex-col justify-between">
             <div class="flex items-center gap-3 mb-2">
-              <div class="size-8 rounded-full bg-rose-500/10 text-rose-500 flex items-center justify-center border border-rose-500/20">
+              <div class="size-8 rounded-full bg-rose-50 text-rose-500 flex items-center justify-center border border-rose-100 dark:bg-rose-900/30 dark:border-rose-800 dark:text-rose-400">
                 <Calendar class="size-4" />
               </div>
               <span class="text-2xl font-bold text-foreground">42</span>

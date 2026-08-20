@@ -10,6 +10,7 @@ import {
 
 // Modals
 import RequestReviewsModal from '../components/RequestReviewsModal.vue';
+import ShareReportModal from '../components/ShareReportModal.vue';
 
 const isShareModalOpen = ref(false);
 const isRequestModalOpen = ref(false);
@@ -50,7 +51,7 @@ const showToast = (message) => {
 };
 
 function handleShareReport() {
-  showToast('Share report link copied to clipboard!');
+  isShareModalOpen.value = true;
 }
 
 function handleRequestReviews() {
@@ -61,6 +62,7 @@ function handleRequestReviews() {
 <template>
   <div class="flex-1 overflow-y-auto w-full hide-scrollbar bg-background p-6 lg:p-8">
     <RequestReviewsModal v-model:open="isRequestModalOpen" />
+    <ShareReportModal v-model:open="isShareModalOpen" />
     
     <div class="max-w-7xl mx-auto space-y-6">
       <!-- Header matching AGENTS.md rule (h1 text-xl font-semibold text-foreground) -->

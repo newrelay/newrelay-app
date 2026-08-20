@@ -525,8 +525,8 @@ const primaryMenuItems = computed(() => {
         {
           name: 'Reputation Listings',
           label: t('SIDEBAR.REPUTATION_LISTINGS'),
-          to: accountScopedRoute('reputation_widgets'),
-          activeOn: ['reputation_widgets'],
+          to: accountScopedRoute('reputation_listings'),
+          activeOn: ['reputation_listings'],
         },
         {
           name: 'Reputation Feedback',

@@ -6,6 +6,7 @@ import RequestsPage from './pages/RequestsPage.vue';
 import WidgetsPage from './pages/WidgetsPage.vue';
 import SettingsPage from './pages/SettingsPage.vue';
 import VideoTestimonialsPage from './pages/VideoTestimonialsPage.vue';
+import ListingsPage from './pages/ListingsPage.vue';
 
 const meta = { permissions: ['administrator', 'agent'] };
 
@@ -46,6 +47,12 @@ export const routes = [
         path: 'video_testimonials',
         name: 'reputation_video_testimonials',
         component: VideoTestimonialsPage,
+        meta,
+      },
+      {
+        path: 'listings',
+        name: 'reputation_listings',
+        component: ListingsPage,
         meta,
       },
       {

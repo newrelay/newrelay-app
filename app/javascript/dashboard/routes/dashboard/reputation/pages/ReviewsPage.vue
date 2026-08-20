@@ -464,9 +464,14 @@ function addInternalNote() {
                           <Star v-for="i in 5" :key="i" class="size-[13px]" :class="i <= review.rating ? 'fill-[#FFB020]' : 'text-muted-foreground/30'" />
                         </div>
                         <div 
-                          v-if="review.sentiment" 
-                          class="flex items-center gap-1 text-[10px] font-medium px-1.5 py-0.5 rounded-md"
-                          :class="getSentimentClass(review.sentiment)"
+                          v-if="review.sentiment === 'Positive'" 
+                          class="flex items-center gap-1 text-[10px] font-medium px-1.5 py-0.5 rounded-md bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400"
+                        >
+                          <span>{{ review.sentiment }}</span>
+                        </div>
+                        <div 
+                          v-else-if="review.sentiment" 
+                          class="flex items-center gap-1 text-[10px] font-medium px-1.5 py-0.5 rounded-md bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-400"
                         >
                           <span>{{ review.sentiment }}</span>
                         </div>

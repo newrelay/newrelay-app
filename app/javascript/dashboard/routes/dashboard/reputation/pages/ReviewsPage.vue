@@ -1,348 +1,646 @@
 <script setup>
 /* eslint-disable */
-import { ref, onMounted, computed } from 'vue';
-const axios = window.axios;
+import { ref, computed } from 'vue';
+import { RelayInput as Input, RelayCheckbox as Checkbox } from 'dashboard/components-next/relay';
+import {
+  Search, Filter, ChevronDown, CheckSquare, Sparkles, MessageSquare,
+  Clock, Check, Calendar, Star, MoreHorizontal, X, ArrowRight,
+  UserPlus, Send, Image as ImageIcon, CornerDownRight, FileText,
+  MessageCircle, LayoutGrid, List, Plus
+} from 'lucide-vue-next';
 
-const accountId = window.__STORE__?.getters['auth/getCurrentAccount']?.id || 
-  window.location.pathname.match(/accounts\/(\d+)/)?.[1];
-
-const reviews = ref([]);
-const templates = ref([]);
-const loading = ref(true);
-const activeReview = ref(null);
-const replyBody = ref('');
-const drafting = ref(false);
-
-// Search and Filter States
+// State
 const searchQuery = ref('');
-const statusFilter = ref('all');
-const providerFilter = ref('all');
-const ratingFilter = ref('all'); // all, positive (4-5), neutral (3), negative (1-2)
+const selectedReviews = ref([]);
+const selectedReview = ref(null);
+const internalNote = ref('');
+const replyText = ref('');
+const viewMode = ref('list');
 
-async function loadData() {
-  loading.value = true;
-  try {
-    const [revRes, tempRes] = await Promise.all([
-      axios.get(`/api/v1/accounts/${accountId}/reputation/reviews`),
-      axios.get(`/api/v1/accounts/${accountId}/reputation/templates`).catch(() => ({ data: [] }))
-    ]);
-    reviews.value = revRes.data;
-    templates.value = tempRes.data;
-  } catch (err) {
-    console.error('Failed to load reviews data', err);
-  } finally {
-    loading.value = false;
-  }
-}
-
-async function aiDraft(review) {
-  drafting.value = true;
-  activeReview.value = review;
-  replyBody.value = '';
-  try {
-    const { data } = await axios.get(`/api/v1/accounts/${accountId}/reputation/reviews/${review.id}/ai_draft`);
-    // Simple typewriter effect simulation for premium feel
-    let fullText = data.draft;
-    let currentIdx = 0;
-    const interval = setInterval(() => {
-      if (currentIdx < fullText.length) {
-        replyBody.value += fullText[currentIdx];
-        currentIdx++;
-      } else {
-        clearInterval(interval);
-      }
-    }, 15);
-  } catch (err) {
-    replyBody.value = 'Failed to generate AI reply. Please write your reply manually.';
-  } finally {
-    drafting.value = false;
-  }
-}
-
-async function submitReply(review) {
-  try {
-    await axios.post(`/api/v1/accounts/${accountId}/reputation/reviews/${review.id}/reply`, {
-      body: replyBody.value,
-      publish: true,
-    });
-    review.status = 'replied';
-    activeReview.value = null;
-    replyBody.value = '';
-    loadData();
-  } catch (err) {
-    alert('Failed to publish reply');
-  }
-}
-
-async function ignoreReview(review) {
-  try {
-    await axios.patch(`/api/v1/accounts/${accountId}/reputation/reviews/${review.id}/ignore`);
-    review.status = 'ignored';
-    loadData();
-  } catch (err) {
-    alert('Failed to ignore review');
-  }
-}
-
-function applyTemplate(body) {
-  replyBody.value = body;
-}
-
-onMounted(loadData);
-
-// Sentiment classification
-const getSentiment = rating => {
-  if (rating >= 4) return { label: 'Positive', color: 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/20 dark:text-emerald-450 border border-emerald-200/50 dark:border-emerald-900/30' };
-  if (rating === 3) return { label: 'Neutral', color: 'bg-amber-50 text-amber-700 dark:bg-amber-950/20 dark:text-amber-450 border border-amber-200/50 dark:border-amber-900/30' };
-  return { label: 'Negative', color: 'bg-rose-50 text-rose-700 dark:bg-rose-950/20 dark:text-rose-450 border border-rose-200/50 dark:border-rose-900/30' };
+// Platform SVG Icons map
+const platformIcons = {
+  'Google': '<svg viewBox="0 0 24 24" width="16" height="16" xmlns="http://www.w3.org/2000/svg"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>',
+  'Facebook': '<svg viewBox="0 0 24 24" width="16" height="16" xmlns="http://www.w3.org/2000/svg"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" fill="#1877F2"/></svg>',
+  'Yelp': '<svg viewBox="0 0 24 24" width="16" height="16" xmlns="http://www.w3.org/2000/svg" fill="#E00707"><path d="M12.271 8.782c-.549-3.804-.822-5.72-.822-5.748 0-.888-.622-1.641-1.537-1.887A2.34 2.34 0 0 0 7.3 2.52L3.473 7.337a2.01 2.01 0 0 0-.302 1.895c.28.72.934 1.218 1.695 1.282l5.894.488c1.038.087 1.871-.767 1.511-2.22zm-8.245 6.253l5.374 2.186c1.004.409 2.084-.332 2.084-1.41V11.38c0-1.088-1.096-1.83-2.104-1.41l-5.374 2.185a1.85 1.85 0 0 0-1.148 1.44 1.855 1.855 0 0 0 1.168 1.44zm6.406 5.978l-3.218-4.874a1.796 1.796 0 0 0-2.97-.095 1.855 1.855 0 0 0-.17 1.98l2.28 4.374a2.316 2.316 0 0 0 2.492 1.208 2.302 2.302 0 0 0 1.586-2.593zm9.56-10.826a2.31 2.31 0 0 0-1.92-1.435l-5.916-.489a1.796 1.796 0 0 0-1.493 2.874l3.42 4.96a1.803 1.803 0 0 0 2.8.217l3.477-4.046a2.02 2.02 0 0 0 .368-.654 2.004 2.004 0 0 0-.736-1.427zm-2.278 7.916l-2.277-4.373a1.804 1.804 0 0 0-3.124.149 1.789 1.789 0 0 0 .057 1.695l3.218 4.874a2.305 2.305 0 0 0 2.534.938 2.316 2.316 0 0 0 1.57-2.593 2.31 2.31 0 0 0-1.978-0.69z"/></svg>',
+  'Trustpilot': '<svg viewBox="0 0 24 24" width="16" height="16" xmlns="http://www.w3.org/2000/svg"><rect width="24" height="24" fill="#00B67A" rx="2" ry="2"/><path d="M12 4l2.5 5.2 5.7.8-4.1 4 1 5.7-5.1-2.7-5.1 2.7 1-5.7-4.1-4 5.7-.8L12 4z" fill="#FFF"/></svg>'
 };
 
-const getAvatarBg = name => {
-  const code = (name || 'Anonymous').charCodeAt(0);
-  const colors = [
-    'bg-indigo-500/10 text-indigo-600 dark:text-indigo-400',
-    'bg-rose-500/10 text-rose-600 dark:text-rose-400',
-    'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400',
-    'bg-amber-500/10 text-amber-600 dark:text-amber-400',
-    'bg-sky-500/10 text-sky-600 dark:text-sky-400'
-  ];
-  return colors[code % colors.length];
-};
+// Reviews Dataset matching reference
+const reviews = ref([
+  { 
+    id: 1, 
+    author: 'Sarah Jenkins', 
+    avatar: 'https://i.pravatar.cc/150?u=a042581f4e29026704d', 
+    platform: 'Google', 
+    location: 'New York, USA',
+    rating: 5, 
+    date: '2 hours ago', 
+    content: '"Absolutely incredible service! The team was super responsive and helped me resolve my issue within minutes."',
+    status: 'Needs Reply',
+    assignee: null,
+    notes: [],
+    sentiment: 'Positive',
+    aiDraft: true,
+    history: { conversations: 12, deals: 3, memberSince: '2 years', ltv: '$4,200' },
+    timelineDate: { title: 'Today', sub: '21 Jul, 2026' }
+  },
+  { 
+    id: 2, 
+    author: 'Michael Chang', 
+    avatar: 'https://i.pravatar.cc/150?u=a042581f4e29026704e', 
+    platform: 'Yelp', 
+    location: 'New York, USA',
+    rating: 4, 
+    date: '1 day ago', 
+    content: '"Good overall experience, but the onboarding process could be a little smoother. The product itself is solid."',
+    status: 'Replied',
+    assignee: 'Jane Doe',
+    reply: 'Hi Michael, thanks for the feedback! We are constantly working on improving our onboarding process and your input is invaluable.',
+    notes: [{ author: 'System', text: 'Sentiment flagged as mixed. Assigned to Jane.' }],
+    sentiment: 'Needs Escalation',
+    aiDraft: false,
+    history: { conversations: 4, deals: 1, memberSince: '6 months', ltv: '$800' },
+    timelineDate: { title: 'Yesterday', sub: '20 Jul, 2026' }
+  },
+  { 
+    id: 3, 
+    author: 'Emily Rodriguez', 
+    avatar: 'https://i.pravatar.cc/150?u=a042581f4e29026704f', 
+    platform: 'Facebook', 
+    location: 'New York, USA',
+    rating: 5, 
+    date: '1 day ago', 
+    content: '"We\'ve been using this for 3 months now and it has completely transformed how we handle our customer reviews!"',
+    status: 'Replied',
+    assignee: null,
+    notes: [],
+    sentiment: 'Positive',
+    aiDraft: false,
+    history: { conversations: 28, deals: 5, memberSince: '3 years', ltv: '$12,500' }
+  },
+  { 
+    id: 4, 
+    author: 'David Lee', 
+    avatar: 'https://i.pravatar.cc/150?u=a042581f4e29026704g', 
+    platform: 'Trustpilot', 
+    location: 'New York, USA',
+    rating: 1, 
+    date: '2 days ago', 
+    content: '"Terrible experience. The system crashed and I lost all my data. Support took 3 days to respond to my tickets."',
+    status: 'Needs Reply',
+    assignee: 'John Smith',
+    notes: [{ author: 'John Smith', text: 'Called David on 10/19. Engineering is pushing a hotfix today.' }],
+    sentiment: 'Negative',
+    aiDraft: true,
+    history: { conversations: 3, deals: 1, memberSince: '1 month', ltv: '$150' },
+    timelineDate: { title: '18 Jul', sub: '2026' }
+  },
+]);
 
-// Filtered reviews
+const aiSuggestions = [
+  "Thank you for the review! We're thrilled to hear you had a great experience.",
+  "Hi [Name], we appreciate your feedback! It's great to hear you're enjoying our features.",
+  "Thanks for bringing this to our attention. I apologize for the inconvenience and I've forwarded this to our team."
+];
+
+// Dropdown Toggles
+const showFilterDropdown = ref(false);
+const showPlatformDropdown = ref(false);
+const showSortDropdown = ref(false);
+
 const filteredReviews = computed(() => {
-  return reviews.value.filter(r => {
-    // Search query
-    const text = (r.body || '').toLowerCase();
-    const reviewer = (r.reviewer_name || '').toLowerCase();
-    const matchSearch = text.includes(searchQuery.value.toLowerCase()) || reviewer.includes(searchQuery.value.toLowerCase());
-
-    // Status
-    const matchStatus = statusFilter.value === 'all' || r.status === statusFilter.value;
-
-    // Provider
-    const matchProvider = providerFilter.value === 'all' || r.provider === providerFilter.value;
-
-    // Rating
-    let matchRating = true;
-    if (ratingFilter.value === 'positive') matchRating = r.rating >= 4;
-    else if (ratingFilter.value === 'neutral') matchRating = r.rating === 3;
-    else if (ratingFilter.value === 'negative') matchRating = r.rating <= 2;
-
-    return matchSearch && matchStatus && matchProvider && matchRating;
-  });
+  return reviews.value.filter(r =>
+    r.author.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
+    r.content.toLowerCase().includes(searchQuery.value.toLowerCase())
+  );
 });
+
+const isAllSelected = computed(() => {
+  return filteredReviews.value.length > 0 && selectedReviews.value.length === filteredReviews.value.length;
+});
+
+function toggleSelectAll(checked) {
+  if (checked) {
+    selectedReviews.value = filteredReviews.value.map(r => r.id);
+  } else {
+    selectedReviews.value = [];
+  }
+}
+
+function openReviewDetail(review) {
+  selectedReview.value = review;
+  replyText.value = review.reply || '';
+}
+
+function closeReviewDetail() {
+  selectedReview.value = null;
+  replyText.value = '';
+  internalNote.value = '';
+}
+
+function useAiSuggestion(text) {
+  if (!selectedReview.value) return;
+  replyText.value = text.replace('[Name]', selectedReview.value.author.split(' ')[0]);
+}
+
+function addInternalNote() {
+  if (!internalNote.value.trim() || !selectedReview.value) return;
+  if (!selectedReview.value.notes) selectedReview.value.notes = [];
+  selectedReview.value.notes.push({ author: 'You', text: internalNote.value });
+  internalNote.value = '';
+}
 </script>
 
 <template>
-  <div class="p-6 max-w-7xl mx-auto space-y-6">
-    <!-- eslint-disable -->
-    <!-- Header -->
-    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
-      <div>
-        <h2 class="capitalize text-2xl font-extrabold text-foreground dark:text-white tracking-tight">Customer Reviews</h2>
-        <p class="text-xs text-muted-foreground mt-0.5">Read, filter, and respond to incoming reviews</p>
-      </div>
-    </div>
-
-    <!-- Filter Toolbar -->
-    <div class="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-border/80 dark:border-slate-850 shadow-sm space-y-4">
-      <div class="grid grid-cols-1 md:grid-cols-4 gap-3">
-        <!-- Search -->
-        <div class="relative">
-          <input
-            v-model="searchQuery"
-            type="text"
-            placeholder="Search comment or reviewer..."
-            class="w-full pl-9 pr-4 py-2 rounded-xl border border-border dark:border-slate-800 dark:bg-slate-850 focus:outline-none focus:ring-2 focus:ring-woot-500 text-[14px] border-border/80 bg-background focus-visible:ring-1 focus-visible:ring-primary/30 shadow-sm rounded-md"
-          />
-          <span class="absolute left-3 top-2.5 text-muted-foreground">
-            <svg class="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+  <div class="relative flex h-[calc(100vh-4rem)] w-full overflow-hidden bg-[#FAFAFA] dark:bg-background">
+    <!-- Main Reviews Feed List -->
+    <div class="flex-1 overflow-y-auto w-full hide-scrollbar flex flex-col transition-all duration-300" :class="selectedReview ? 'mr-[400px]' : ''">
+      
+      <!-- Top Toolbar matching 1:1 reference design -->
+      <div class="px-6 py-4 border-b border-border bg-card shrink-0 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div class="flex items-center gap-3">
+          <h1 class="text-xl font-semibold text-foreground">Reviews</h1>
+          <span class="inline-flex items-center rounded-md border px-2 py-0.5 text-xs font-medium transition-colors focus:outline-none focus:ring-1 focus:ring-ring border-transparent bg-primary/10 text-primary dark:bg-primary/10 dark:text-primary">
+            1,096 Reviews
           </span>
         </div>
-
-        <!-- Rating Filter -->
-        <select
-          v-model="ratingFilter"
-          class="px-3 py-2 text-xs rounded-xl border border-border dark:border-slate-800 dark:bg-slate-850 focus:outline-none focus:ring-2 focus:ring-woot-500"
-        >
-          <option value="all">All Ratings</option>
-          <option value="positive">Positive (4-5 ★)</option>
-          <option value="neutral">Neutral (3 ★)</option>
-          <option value="negative">Negative (1-2 ★)</option>
-        </select>
-
-        <!-- Status Filter -->
-        <select
-          v-model="statusFilter"
-          class="px-3 py-2 text-xs rounded-xl border border-border dark:border-slate-800 dark:bg-slate-850 focus:outline-none focus:ring-2 focus:ring-woot-500"
-        >
-          <option value="all">All Statuses</option>
-          <option value="pending">Pending Reply</option>
-          <option value="replied">Replied</option>
-          <option value="ignored">Ignored</option>
-        </select>
-
-        <!-- Provider Filter -->
-        <select
-          v-model="providerFilter"
-          class="px-3 py-2 text-xs rounded-xl border border-border dark:border-slate-800 dark:bg-slate-850 focus:outline-none focus:ring-2 focus:ring-woot-500"
-        >
-          <option value="all">All Platforms</option>
-          <option value="google">Google</option>
-          <option value="facebook">Facebook</option>
-        </select>
-      </div>
-    </div>
-
-    <!-- Reviews Grid -->
-    <div v-if="loading" class="flex flex-col items-center justify-center py-20 space-y-4">
-      <div class="size-10 border-4 border-woot-500 border-t-transparent rounded-full animate-spin"></div>
-      <p class="text-sm font-medium text-muted-foreground dark:text-muted-foreground">Loading reviews feed...</p>
-    </div>
-
-    <div v-else-if="filteredReviews.length === 0" class="flex flex-col items-center justify-center py-20 bg-white dark:bg-slate-900 border border-border/80 dark:border-slate-850 rounded-2xl">
-      <div class="p-3.5 rounded-full bg-muted dark:bg-slate-850 text-muted-foreground">
-        <svg class="size-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0a2 2 0 01-2 2H6a2 2 0 01-2-2m16 0V9a2 2 0 00-2-2H6a2 2 0 00-2 2v2m16 4h-2a2 2 0 00-2 2v3a2 2 0 01-2 2H6a2 2 0 01-2-2v-3a2 2 0 00-2-2H4" /></svg>
-      </div>
-      <h3 class="capitalize font-extrabold text-foreground dark:text-slate-200 mt-4">No reviews found</h3>
-      <p class="text-xs text-muted-foreground mt-1 max-w-sm text-center">Try adjusting your filters or search terms to find specific ratings.</p>
-    </div>
-
-    <div v-else class="space-y-4">
-      <div
-        v-for="review in filteredReviews"
-        :key="review.id"
-        class="bg-white dark:bg-slate-900 rounded-2xl border border-border/80 dark:border-slate-850 p-6 shadow-sm flex flex-col gap-5 transition-all"
-      >
-        <!-- Reviewer Details Header -->
-        <div class="flex items-start justify-between gap-4">
-          <div class="flex items-center gap-3">
-            <!-- Initials Avatar -->
-            <div 
-              class="size-10 rounded-full font-bold text-xs uppercase flex items-center justify-center shrink-0 shadow-sm"
-              :class="getAvatarBg(review.reviewer_name)"
-            >
-              {{ (review.reviewer_name || 'A').substring(0, 2) }}
-            </div>
-            <div>
-              <div class="flex items-center gap-2">
-                <h4 class="capitalize font-bold text-sm text-slate-850 dark:text-slate-200">{{ review.reviewer_name }}</h4>
-                <!-- sentiment tag -->
-                <span class="px-2 py-0.5 text-[9px] font-bold rounded-full uppercase" :class="getSentiment(review.rating).color">
-                  {{ getSentiment(review.rating).label }}
-                </span>
-              </div>
-              <div class="flex items-center gap-1.5 text-xs text-muted-foreground mt-0.5">
-                <span class="capitalize font-semibold text-woot-600 dark:text-woot-450">{{ review.provider }}</span>
-                <span>·</span>
-                <span>{{ new Date(review.reviewed_at).toLocaleDateString() }}</span>
-              </div>
-            </div>
+        
+        <div class="flex flex-col sm:flex-row items-center gap-3">
+          <!-- Search -->
+          <div class="relative w-full sm:w-64">
+            <Search class="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+            <Input
+              v-model="searchQuery"
+              type="text"
+              placeholder="Search reviews..."
+              class="w-full pl-9 bg-background/50 border-border shadow-sm h-9 text-sm rounded-lg"
+            />
           </div>
-
-          <!-- Status badge & action buttons -->
-          <div class="flex items-center gap-2 shrink-0">
-            <span
-              class="text-[10px] uppercase tracking-wider font-extrabold px-2.5 py-0.5 rounded-full"
-              :class="{
-                'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/20 dark:text-emerald-400': review.status === 'replied',
-                'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400': review.status === 'ignored',
-                'bg-amber-50 text-amber-700 dark:bg-amber-950/20 dark:text-amber-450': review.status === 'pending'
-              }"
-            >
-              {{ review.status }}
-            </span>
-          </div>
-        </div>
-
-        <!-- Rating & Body -->
-        <div class="space-y-2">
-          <div class="flex gap-0.5 text-yellow-400">
-            <span v-for="n in 5" :key="n" class="text-base">
-              {{ n <= review.rating ? '★' : '☆' }}
-            </span>
-          </div>
-          <p class="text-foreground dark:text-slate-300 text-sm leading-relaxed whitespace-pre-line font-medium">
-            {{ review.body || '(No comments provided)' }}
-          </p>
-        </div>
-
-        <!-- Reply Trigger Actions if Pending -->
-        <div v-if="review.status === 'pending' && activeReview?.id !== review.id" class="flex gap-2 justify-end border-t border-slate-100 dark:border-slate-850 pt-4">
-          <button
-            class="px-3.5 py-1.5 rounded-xl border border-border dark:border-slate-700 text-xs font-bold text-muted-foreground dark:text-slate-350 hover:bg-background dark:hover:bg-slate-800 transition-colors"
-            @click="ignoreReview(review)"
-          >
-            Ignore review
-          </button>
-          <button
-            class="px-3.5 py-1.5 rounded-xl bg-gradient-to-tr from-woot-600 to-indigo-500 hover:from-woot-700 hover:to-indigo-600 text-white text-xs font-bold shadow-sm transition-colors flex items-center gap-1.5"
-            @click="aiDraft(review)"
-          >
-            <svg class="size-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
-            Draft reply with AI
-          </button>
-        </div>
-
-        <!-- Reply Editing workspace -->
-        <div v-if="activeReview?.id === review.id" class="border-t border-slate-100 dark:border-slate-850 pt-5 space-y-4">
-          <div class="flex items-center justify-between">
-            <label class="text-muted-foreground uppercase tracking-wider text-[13.5px] font-[500] text-foreground">Reply Composer</label>
-            <!-- Quick templates select -->
-            <div v-if="templates.length > 0" class="flex items-center gap-2">
-              <span class="text-xs text-muted-foreground">Templates:</span>
-              <select
-                class="px-2 py-1 text-xs rounded-lg border border-border dark:border-slate-800 dark:bg-slate-850"
-                @change="applyTemplate($event.target.value)"
+          
+          <div class="flex items-center gap-2 w-full sm:w-auto">
+            <!-- Filter Dropdown -->
+            <div class="relative">
+              <button
+                @click="showFilterDropdown = !showFilterDropdown"
+                class="inline-flex items-center gap-2 h-9 px-3.5 rounded-lg border border-border bg-card text-sm font-medium text-foreground hover:bg-muted shadow-sm cursor-pointer"
               >
-                <option value="">Choose standard reply...</option>
-                <option v-for="t in templates" :key="t.id" :value="t.body">{{ t.name }}</option>
+                <Filter class="size-4" />
+                <span class="hidden sm:inline">Filters</span>
+              </button>
+              <div v-if="showFilterDropdown" class="absolute left-0 mt-2 w-64 rounded-xl border border-border bg-card p-2 shadow-xl z-30 space-y-1">
+                <div class="px-2 py-1 text-xs font-bold text-foreground">Filter Reviews</div>
+                <div class="border-t border-border/80 my-1"></div>
+                <div class="max-h-[300px] overflow-y-auto space-y-1">
+                  <div class="px-2 py-1 text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Status</div>
+                  <button class="w-full text-left px-2 py-1.5 text-xs rounded-md hover:bg-muted font-medium text-foreground cursor-pointer">Needs Reply</button>
+                  <button class="w-full text-left px-2 py-1.5 text-xs rounded-md hover:bg-muted font-medium text-foreground cursor-pointer">Replied</button>
+                  <button class="w-full text-left px-2 py-1.5 text-xs rounded-md hover:bg-muted font-medium text-foreground cursor-pointer">Assigned To...</button>
+                  
+                  <div class="my-1 border-t border-border/80"></div>
+                  <div class="px-2 py-1 text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Properties</div>
+                  <button class="w-full text-left px-2 py-1.5 text-xs rounded-md hover:bg-muted font-medium text-foreground flex items-center gap-2 cursor-pointer">
+                    <Star class="size-4 text-[#FFB020]" /> Rating (1-5)
+                  </button>
+                  <button class="w-full text-left px-2 py-1.5 text-xs rounded-md hover:bg-muted font-medium text-foreground flex items-center gap-2 cursor-pointer">
+                    <Calendar class="size-4 text-slate-500" /> Date Range
+                  </button>
+                  
+                  <div class="my-1 border-t border-border/80"></div>
+                  <div class="px-2 py-1 text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Content</div>
+                  <button class="w-full text-left px-2 py-1.5 text-xs rounded-md hover:bg-muted font-medium text-foreground flex items-center gap-2 cursor-pointer">
+                    <ImageIcon class="size-4" /> With Photos
+                  </button>
+                  <button class="w-full text-left px-2 py-1.5 text-xs rounded-md hover:bg-muted font-medium text-foreground flex items-center gap-2 cursor-pointer">
+                    <FileText class="size-4" /> Has Attachments
+                  </button>
+                  <button class="w-full text-left px-2 py-1.5 text-xs rounded-md hover:bg-muted font-medium text-foreground flex items-center gap-2 cursor-pointer">
+                    <Check class="size-4 text-emerald-600" /> Verified Purchase
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Platform Dropdown -->
+            <div class="relative">
+              <button
+                @click="showPlatformDropdown = !showPlatformDropdown"
+                class="inline-flex items-center gap-1.5 h-9 px-3.5 rounded-lg border border-border bg-card text-sm font-medium text-foreground hover:bg-muted shadow-sm cursor-pointer"
+              >
+                Platform
+                <ChevronDown class="size-4 text-muted-foreground ml-0.5 shrink-0" />
+              </button>
+              <div v-if="showPlatformDropdown" class="absolute right-0 mt-2 w-48 rounded-xl border border-border bg-card p-1.5 shadow-xl z-30 space-y-0.5">
+                <button class="w-full text-left px-3 py-1.5 text-xs rounded-md hover:bg-muted font-medium text-foreground cursor-pointer flex items-center gap-2">
+                  All Platforms
+                </button>
+                <button class="w-full text-left px-3 py-1.5 text-xs rounded-md hover:bg-muted font-medium text-foreground cursor-pointer flex items-center gap-2">
+                  <div v-html="platformIcons['Google']" class="size-4 shrink-0 flex items-center justify-center"></div> Google
+                </button>
+                <button class="w-full text-left px-3 py-1.5 text-xs rounded-md hover:bg-muted font-medium text-foreground cursor-pointer flex items-center gap-2">
+                  <div v-html="platformIcons['Yelp']" class="size-4 shrink-0 flex items-center justify-center"></div> Yelp
+                </button>
+                <button class="w-full text-left px-3 py-1.5 text-xs rounded-md hover:bg-muted font-medium text-foreground cursor-pointer flex items-center gap-2">
+                  <div v-html="platformIcons['Facebook']" class="size-4 shrink-0 flex items-center justify-center"></div> Facebook
+                </button>
+                <button class="w-full text-left px-3 py-1.5 text-xs rounded-md hover:bg-muted font-medium text-foreground cursor-pointer flex items-center gap-2">
+                  <div v-html="platformIcons['Trustpilot']" class="size-4 shrink-0 flex items-center justify-center"></div> Trustpilot
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Secondary Sub-header Toolbar -->
+      <div class="px-8 py-4 flex items-center justify-between border-b border-border/50">
+        <div class="flex items-center gap-4">
+          <Checkbox
+            v-if="viewMode === 'list'"
+            :model-value="isAllSelected"
+            @update:model-value="toggleSelectAll"
+            class="rounded-sm"
+          />
+
+          <!-- Inline Bulk Actions Toolbar when reviews are selected -->
+          <div v-if="selectedReviews.length > 0" class="flex items-center gap-2 animate-in fade-in duration-200">
+            <div class="flex items-center gap-1.5 px-3 py-1 bg-primary/10 rounded-lg text-primary text-xs font-semibold">
+              <span>{{ selectedReviews.length }} Selected</span>
+            </div>
+            
+            <div class="flex items-center gap-1">
+              <button class="inline-flex items-center gap-1.5 h-8 px-3 rounded-lg border border-border bg-card text-xs font-medium text-foreground hover:bg-muted shadow-xs transition-colors cursor-pointer">
+                <UserPlus class="size-3.5" /> Assign
+              </button>
+              <button class="inline-flex items-center gap-1.5 h-8 px-3 rounded-lg border border-border bg-card text-xs font-medium text-foreground hover:bg-primary/10 hover:text-primary shadow-xs transition-colors cursor-pointer">
+                <Sparkles class="size-3.5" /> Relay AI Reply
+              </button>
+              <button class="inline-flex items-center gap-1.5 h-8 px-3 rounded-lg border border-border bg-card text-xs font-medium text-foreground hover:bg-emerald-500/10 hover:text-emerald-600 shadow-xs transition-colors cursor-pointer">
+                <CheckSquare class="size-3.5" /> Mark Resolved
+              </button>
+              <button class="inline-flex items-center gap-1.5 h-8 px-3 rounded-lg border border-border bg-card text-xs font-medium text-foreground hover:bg-muted shadow-xs transition-colors cursor-pointer">
+                <CornerDownRight class="size-3.5" /> Export
+              </button>
+              <button class="p-1 text-muted-foreground hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40 rounded-lg transition-colors cursor-pointer" title="Deselect All" @click="selectedReviews = []">
+                <X class="size-4" />
+              </button>
+            </div>
+          </div>
+
+          <!-- Default Sort Dropdown when no reviews selected -->
+          <div v-else class="relative">
+            <button
+              @click="showSortDropdown = !showSortDropdown"
+              class="inline-flex items-center gap-2 h-9 px-4 rounded-lg border border-border/50 bg-card text-sm font-semibold text-foreground shadow-xs hover:bg-muted cursor-pointer"
+            >
+              Newest First
+              <ChevronDown class="size-4 opacity-50" />
+            </button>
+            <div v-if="showSortDropdown" class="absolute left-0 mt-1 w-44 rounded-lg border border-border bg-card p-1 shadow-lg z-30">
+              <button class="w-full text-left px-3 py-1.5 text-xs rounded hover:bg-muted text-foreground cursor-pointer">Newest First</button>
+              <button class="w-full text-left px-3 py-1.5 text-xs rounded hover:bg-muted text-foreground cursor-pointer">Oldest First</button>
+              <button class="w-full text-left px-3 py-1.5 text-xs rounded hover:bg-muted text-foreground cursor-pointer">Highest Rating</button>
+              <button class="w-full text-left px-3 py-1.5 text-xs rounded hover:bg-muted text-foreground cursor-pointer">Lowest Rating</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-4">
+          <span class="text-sm font-semibold text-foreground">1-20 of 1,096</span>
+          
+          <div class="flex bg-card border border-border rounded-lg p-0.5 shadow-sm mr-2">
+            <button @click="viewMode = 'grid'" class="p-1.5 rounded-md transition-colors" :class="viewMode === 'grid' ? 'bg-muted text-foreground' : 'text-muted-foreground hover:text-foreground hover:bg-muted'"><LayoutGrid class="size-4" /></button>
+            <button @click="viewMode = 'list'" class="p-1.5 rounded-md transition-colors" :class="viewMode === 'list' ? 'bg-muted text-foreground' : 'text-muted-foreground hover:text-foreground hover:bg-muted'"><List class="size-4" /></button>
+            <button @click="viewMode = 'timeline'" class="p-1.5 rounded-md transition-colors" :class="viewMode === 'timeline' ? 'bg-muted text-foreground' : 'text-muted-foreground hover:text-foreground hover:bg-muted'"><Clock class="size-4" /></button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Feed Container -->
+      <div class="flex-1 bg-[#FAFAFA] dark:bg-background overflow-y-auto pb-10">
+        <div 
+          class="transition-all duration-300"
+          :class="[
+            viewMode === 'list' ? 'flex flex-col gap-0 bg-card divide-y divide-border/50 border-y border-border/50' : '',
+            viewMode === 'timeline' ? 'flex flex-col gap-6 ml-[130px] border-l-2 border-primary/10 pl-8 pt-8 pr-8' : '',
+            viewMode === 'grid' && selectedReview ? 'grid grid-cols-1 xl:grid-cols-2 gap-6 p-8' : '',
+            viewMode === 'grid' && !selectedReview ? 'grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6 p-8' : ''
+          ]"
+        >
+          <div 
+            v-for="review in filteredReviews" 
+            :key="review.id"
+            class="relative group"
+          >
+            <!-- Timeline elements -->
+            <div v-if="viewMode === 'timeline'" class="absolute -left-[38.5px] top-8 size-3.5 rounded-full bg-primary ring-4 ring-white dark:ring-[#FAFAFA] transition-colors z-10" :class="selectedReview?.id === review.id ? 'ring-primary/20 scale-125' : ''"></div>
+            
+            <div v-if="viewMode === 'timeline' && review.timelineDate" class="absolute -left-[145px] top-6 w-[90px] text-left z-10">
+              <div class="font-bold text-foreground text-[13.5px]">{{ review.timelineDate.title }}</div>
+              <div class="text-xs text-muted-foreground mt-0.5">{{ review.timelineDate.sub }}</div>
+            </div>
+
+            <!-- Review Card Row -->
+            <div
+              @click="openReviewDetail(review)"
+              class="transition-all duration-300 cursor-pointer overflow-hidden relative"
+              :class="[
+                viewMode === 'list' ? 'px-8 py-5 flex items-center gap-6 hover:bg-muted/30' : 'bg-card border rounded-xl hover:shadow-md p-6 flex flex-col h-full',
+                selectedReview?.id === review.id && viewMode === 'list' ? 'bg-primary/10/30 dark:bg-primary/10/10 border-l-[3px] border-l-primary' : viewMode === 'list' ? 'border-l-[3px] border-l-transparent' : '',
+                selectedReview?.id === review.id && viewMode !== 'list' ? 'border-primary ring-1 ring-primary shadow-md scale-[1.02]' : viewMode !== 'list' ? 'border-border shadow-sm scale-100' : ''
+              ]"
+            >
+              <!-- Grid Layout View -->
+              <div v-if="viewMode === 'grid'" class="flex flex-col h-full gap-4">
+                <div class="flex items-start justify-between">
+                  <div class="flex items-center gap-3">
+                    <img :src="review.avatar" class="size-10 rounded-full object-cover" />
+                    <div>
+                      <div class="font-bold text-[14px] text-foreground">{{ review.author }}</div>
+                      <div class="flex items-center gap-1.5 text-xs text-muted-foreground mt-0.5">
+                        <div v-if="platformIcons[review.platform]" v-html="platformIcons[review.platform]" class="shrink-0 flex items-center justify-center"></div>
+                        <span class="font-medium text-foreground/80">{{ review.platform }}</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="flex text-[#FFB020]">
+                    <Star v-for="i in 5" :key="i" class="size-3" :class="i <= review.rating ? 'fill-[#FFB020]' : 'text-muted-foreground/30'" />
+                  </div>
+                </div>
+                
+                <p class="text-[13.5px] font-medium text-muted-foreground leading-relaxed line-clamp-3 flex-1 mt-2">
+                  {{ review.content }}
+                </p>
+                
+                <div class="flex items-center justify-between pt-2 mt-auto">
+                  <span
+                    v-if="review.status === 'Needs Reply' && review.aiDraft"
+                    class="px-2.5 py-1 text-[10px] font-semibold bg-primary/10 border border-primary/20 text-primary dark:bg-primary/10 dark:border-primary/20 rounded-md inline-flex items-center gap-1"
+                  >
+                    <Sparkles class="size-3" /> Relay AI Draft Ready
+                  </span>
+                  <span
+                    v-else-if="review.status === 'Needs Reply'"
+                    class="px-2.5 py-1 text-[10px] font-semibold bg-purple-500/10 border border-purple-500/20 text-purple-600 dark:text-purple-400 rounded-md inline-flex items-center gap-1"
+                  >
+                    Reply <ArrowRight class="size-3" />
+                  </span>
+                  <span
+                    v-else
+                    class="px-2.5 py-1 text-[10px] font-semibold border-0 rounded-md bg-[#DCFCE7] text-[#166534] dark:bg-[#166534]/20 dark:text-[#86EFAC]"
+                  >
+                    {{ review.status }}
+                  </span>
+                  <span class="text-[11px] text-muted-foreground">{{ review.date }}</span>
+                </div>
+              </div>
+
+              <!-- List & Timeline Content View -->
+              <div v-else class="flex w-full min-w-0" :class="viewMode === 'timeline' ? 'flex-row items-start gap-6' : 'items-center gap-6'">
+                <!-- Checkbox -->
+                <div v-if="viewMode === 'list'" class="flex justify-center shrink-0" @click.stop>
+                  <Checkbox
+                    class="rounded-sm"
+                    :model-value="selectedReviews.includes(review.id)"
+                    @update:model-value="(c) => c ? selectedReviews.push(review.id) : selectedReviews.splice(selectedReviews.indexOf(review.id), 1)"
+                  />
+                </div>
+                
+                <!-- Author & Rating Info -->
+                <div class="w-[320px] shrink-0 flex items-center gap-4">
+                  <div class="relative group/avatar cursor-pointer shrink-0">
+                    <img :src="review.avatar" class="size-11 rounded-full object-cover shrink-0" />
+                    <!-- Hover Popover Card -->
+                    <div class="absolute left-0 bottom-full mb-2 hidden group-hover/avatar:block z-50 w-64 p-4 bg-popover border border-border rounded-xl shadow-xl animate-in fade-in zoom-in-95 duration-200 origin-bottom-left">
+                      <div class="font-bold text-foreground mb-3 text-sm flex items-center gap-2">
+                        <img :src="review.avatar" class="size-6 rounded-full object-cover" />
+                        {{ review.author }}
+                      </div>
+                      <div class="space-y-2 text-[13px]">
+                        <div class="flex justify-between items-center text-muted-foreground">
+                          <span>Conversations</span>
+                          <span class="font-semibold text-foreground">{{ review.history?.conversations || 0 }}</span>
+                        </div>
+                        <div class="flex justify-between items-center text-muted-foreground">
+                          <span>Deals</span>
+                          <span class="font-semibold text-foreground">{{ review.history?.deals || 0 }}</span>
+                        </div>
+                        <div class="flex justify-between items-center text-muted-foreground">
+                          <span>Customer Since</span>
+                          <span class="font-semibold text-foreground">{{ review.history?.memberSince || 'New' }}</span>
+                        </div>
+                        <div class="pt-2 mt-2 border-t border-border flex justify-between items-center">
+                          <span class="font-medium text-muted-foreground">Lifetime Value</span>
+                          <span class="font-bold text-emerald-600 dark:text-emerald-400">{{ review.history?.ltv || '$0' }}</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div class="flex flex-col min-w-0">
+                    <div class="flex flex-col gap-1 mb-1">
+                      <div class="flex items-center gap-2">
+                        <span class="font-bold text-[13.5px] text-foreground truncate">{{ review.author }}</span>
+                        <span class="text-[11px] text-muted-foreground whitespace-nowrap">{{ review.date }}</span>
+                      </div>
+                      <div class="flex items-center gap-2">
+                        <div class="flex gap-0.5 text-[#FFB020]">
+                          <Star v-for="i in 5" :key="i" class="size-[13px]" :class="i <= review.rating ? 'fill-[#FFB020]' : 'text-muted-foreground/30'" />
+                        </div>
+                        <span v-if="review.sentiment" class="text-[10px] font-medium px-1.5 py-0.5 rounded-md"
+                              :class="review.sentiment === 'Positive' ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400' : 'bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-400'">
+                          {{ review.sentiment }}
+                        </span>
+                      </div>
+                    </div>
+                    <div class="flex items-center gap-1.5 text-xs text-muted-foreground mt-0.5">
+                      <div v-if="platformIcons[review.platform]" v-html="platformIcons[review.platform]" class="shrink-0 flex items-center justify-center"></div>
+                      <span class="font-medium text-foreground/80">{{ review.platform }}</span>
+                      <span class="opacity-50">&bull;</span>
+                      <span class="truncate">{{ review.location }}</span>
+                    </div>
+                  </div>
+                </div>
+                
+                <!-- Review Content -->
+                <div class="flex-1 min-w-0 pr-8">
+                  <p class="text-[13.5px] font-medium text-muted-foreground leading-relaxed line-clamp-2 pr-4">{{ review.content }}</p>
+                </div>
+
+                <!-- Actions & Status Badges -->
+                <div class="flex items-center gap-3 shrink-0">
+                  <button 
+                    v-if="review.status === 'Needs Reply' && review.aiDraft"
+                    class="h-8 px-3 text-xs font-semibold bg-primary/10 border border-primary/20 text-primary hover:bg-primary/20 rounded-lg inline-flex items-center gap-1.5 transition-colors cursor-pointer"
+                    @click.stop="openReviewDetail(review)"
+                  >
+                    <Sparkles class="size-3.5" /> Relay AI Draft Ready
+                  </button>
+
+                  <button 
+                    v-else-if="review.status === 'Needs Reply'"
+                    class="h-8 px-3 text-xs font-semibold bg-primary/10 border border-primary/20 text-primary hover:bg-primary/20 rounded-lg inline-flex items-center gap-1.5 transition-colors cursor-pointer"
+                    @click.stop="openReviewDetail(review)"
+                  >
+                    Reply <ArrowRight class="size-3.5" />
+                  </button>
+                  
+                  <span 
+                    v-else
+                    class="px-3 py-1.5 text-xs font-semibold border-0 rounded-md bg-[#DCFCE7] text-[#166534] dark:bg-[#166534]/20 dark:text-[#86EFAC]"
+                  >
+                    {{ review.status }}
+                  </span>
+                  
+                  <button class="p-1 text-muted-foreground hover:text-foreground rounded-lg hover:bg-muted shrink-0" @click.stop="openReviewDetail(review)">
+                    <MoreHorizontal class="size-5" />
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Empty State matching AGENTS.md rule 6 (text-[20px] font-[600]) & rule 31 (developer reset button) -->
+        <div v-if="filteredReviews.length === 0" class="p-12 text-center text-muted-foreground flex flex-col items-center">
+          <MessageSquare class="size-10 opacity-20 mb-3" />
+          <h3 class="text-[20px] font-[600] text-foreground mb-1">No reviews found</h3>
+          <p class="text-[13.5px] text-muted-foreground leading-relaxed mb-4">No customer reviews match your search filter.</p>
+          <button @click="searchQuery = ''" class="px-4 py-2 rounded-lg border border-border bg-card text-[13.5px] font-medium text-foreground hover:bg-muted transition-colors border-input hover:border-transparent cursor-pointer">
+            Reset Filters
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Review Details Right Drawer Panel (1:1 from ReviewsView.vue) -->
+    <div 
+      class="fixed top-16 bottom-0 right-0 w-[400px] bg-card border-l border-border shadow-xl transform transition-transform duration-300 ease-in-out z-40 flex flex-col"
+      :class="selectedReview ? 'translate-x-0' : 'translate-x-full'"
+    >
+      <div v-if="selectedReview" class="flex-1 flex flex-col overflow-hidden">
+        <!-- Header -->
+        <div class="px-5 py-4 border-b border-border flex items-center justify-between bg-muted/10 shrink-0">
+          <h2 class="text-base font-semibold text-foreground">Review Details</h2>
+          <button class="p-1 text-muted-foreground hover:text-foreground rounded-lg hover:bg-muted" @click="closeReviewDetail">
+            <X class="size-4" />
+          </button>
+        </div>
+
+        <!-- Scrollable Body -->
+        <div class="flex-1 overflow-y-auto p-5 space-y-6">
+          <!-- Author Header -->
+          <div>
+            <div class="flex items-center justify-between mb-4">
+              <div class="flex items-center gap-3">
+                <img :src="selectedReview.avatar" class="size-10 rounded-full border border-border" />
+                <div>
+                  <h3 class="font-medium text-sm text-foreground">{{ selectedReview.author }}</h3>
+                  <div class="flex items-center gap-2 mt-0.5">
+                    <span class="text-xs text-muted-foreground">{{ selectedReview.date }} on {{ selectedReview.platform }}</span>
+                  </div>
+                </div>
+              </div>
+              <div class="flex gap-0.5 text-[#FFB020]">
+                <Star v-for="i in 5" :key="i" class="size-3.5" :class="i <= selectedReview.rating ? 'fill-[#FFB020]' : 'text-muted-foreground/30'" />
+              </div>
+            </div>
+            <p class="text-sm text-foreground leading-relaxed bg-muted/30 p-4 rounded-xl border border-border/50">
+              {{ selectedReview.content }}
+            </p>
+          </div>
+
+          <!-- Assignee & Status Selectors -->
+          <div class="flex items-center gap-4 bg-muted/20 p-3 rounded-xl border border-border/50">
+            <div class="flex-1">
+              <label class="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-1 block">Assignee</label>
+              <select v-model="selectedReview.assignee" class="w-full text-xs bg-background border border-border rounded-lg p-2 focus:outline-none">
+                <option :value="null">Unassigned</option>
+                <option value="Jane Doe">Jane Doe</option>
+                <option value="John Smith">John Smith</option>
+              </select>
+            </div>
+            <div class="flex-1">
+              <label class="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-1 block">Status</label>
+              <select v-model="selectedReview.status" class="w-full text-xs bg-background border border-border rounded-lg p-2 focus:outline-none">
+                <option value="Needs Reply">Needs Reply</option>
+                <option value="Replied">Replied</option>
               </select>
             </div>
           </div>
 
-          <textarea
-            v-model="replyBody"
-            rows="3"
-            class="w-full rounded-xl border border-border dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200 p-3.5 focus:outline-none focus:ring-2 focus:ring-woot-500 text-[14px] border-border/80 bg-background focus-visible:ring-1 focus-visible:ring-primary/30 shadow-sm rounded-md"
-            :placeholder="drafting ? 'Generating AI suggestion...' : 'Type response details...'"
-          />
+          <!-- Public Reply Section -->
+          <div>
+            <h3 class="text-sm font-semibold text-foreground flex items-center gap-2 mb-3">
+              <MessageCircle class="size-4 text-primary" /> Public Reply
+            </h3>
+            
+            <div v-if="!selectedReview.reply" class="bg-primary/5 rounded-xl p-4 border border-primary/20 mb-4 space-y-3">
+              <div class="flex items-center gap-2 text-primary text-sm font-medium">
+                <Sparkles class="size-4" /> Relay AI Suggestions
+              </div>
+              <div class="space-y-2">
+                <button 
+                  v-for="(sug, idx) in aiSuggestions" 
+                  :key="idx"
+                  @click="useAiSuggestion(sug)"
+                  class="w-full text-left text-xs bg-card hover:bg-primary/10 text-muted-foreground hover:text-primary p-2.5 rounded-lg border border-border shadow-sm transition-colors leading-relaxed cursor-pointer"
+                >
+                  {{ sug.replace('[Name]', selectedReview.author.split(' ')[0]) }}
+                </button>
+              </div>
+            </div>
 
-          <div class="flex justify-between items-center flex-wrap gap-2">
-            <span class="text-[11px] text-muted-foreground">
-              Character count: <strong class="text-muted-foreground dark:text-slate-350">{{ replyBody.length }}</strong>
-            </span>
-            <div class="flex gap-2">
-              <button
-                class="px-3.5 py-1.5 text-xs font-bold text-muted-foreground hover:bg-background dark:hover:bg-slate-800 rounded-xl border border-border dark:border-slate-800"
-                @click="activeReview = null"
-              >
-                Cancel
-              </button>
-              <button
-                class="px-4 py-1.5 text-xs font-bold bg-woot-500 hover:bg-woot-600 text-white rounded-xl transition-colors"
-                :disabled="!replyBody || drafting"
-                @click="submitReply(review)"
-              >
-                Publish response
+            <div class="relative">
+              <textarea 
+                v-model="replyText"
+                rows="4" 
+                class="w-full text-sm bg-background border border-border rounded-xl p-3 pb-12 focus:outline-none focus:ring-2 focus:ring-ring resize-none"
+                placeholder="Write a response..."
+              ></textarea>
+              <div class="absolute bottom-3 left-3 right-3 flex justify-between items-center">
+                <div class="flex items-center gap-1">
+                  <button class="p-1.5 text-muted-foreground hover:text-foreground rounded-lg hover:bg-muted"><ImageIcon class="size-4" /></button>
+                  <button class="p-1.5 text-primary hover:bg-primary/10 rounded-lg" @click="useAiSuggestion(aiSuggestions[0])"><Sparkles class="size-4" /></button>
+                </div>
+                <button class="inline-flex items-center gap-1.5 bg-primary text-primary-foreground px-3.5 py-1.5 rounded-lg text-xs font-semibold hover:bg-primary/90 transition-colors shadow-sm">
+                  Send <Send class="size-3.5" />
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Internal Notes Section -->
+          <div class="pt-4 border-t border-border border-dashed">
+            <h3 class="text-sm font-semibold text-foreground flex items-center gap-2 mb-3">
+              <FileText class="size-4 text-amber-500" /> Internal Notes
+            </h3>
+            
+            <div class="space-y-3 mb-4">
+              <div v-for="(note, idx) in selectedReview.notes || []" :key="idx" class="bg-amber-500/10 border border-amber-500/20 p-3 rounded-lg text-sm">
+                <div class="flex justify-between items-center mb-1">
+                  <span class="font-medium text-xs text-amber-600 dark:text-amber-400">{{ note.author }}</span>
+                  <span class="text-[10px] text-muted-foreground uppercase">Today</span>
+                </div>
+                <p class="text-foreground leading-relaxed">{{ note.text }}</p>
+              </div>
+              <div v-if="!selectedReview.notes || selectedReview.notes.length === 0" class="text-xs text-muted-foreground italic py-2 text-center">
+                No internal notes yet.
+              </div>
+            </div>
+
+            <div class="relative">
+              <input
+                v-model="internalNote"
+                @keyup.enter="addInternalNote"
+                type="text"
+                class="w-full text-sm bg-background border border-border rounded-lg px-3 py-2 pr-10 focus:outline-none"
+                placeholder="Add a private note..."
+              />
+              <button @click="addInternalNote" class="absolute right-1 top-1.5 p-1 text-amber-500 hover:text-amber-600 rounded">
+                <Plus class="size-3.5" />
               </button>
             </div>
           </div>
-        </div>
-
-        <!-- Existing reply timeline -->
-        <div v-else-if="review.reputation_review_reply" class="bg-background dark:bg-slate-850/50 rounded-xl p-4 border border-slate-100 dark:border-slate-800/80 space-y-2">
-          <div class="flex items-center gap-1.5 text-[11px] text-muted-foreground font-bold uppercase tracking-wider">
-            <svg class="size-3.5 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-            Your response
-            <span v-if="review.reputation_review_reply.published_at" class="normal-case font-normal text-muted-foreground">
-              · published {{ new Date(review.reputation_review_reply.published_at).toLocaleDateString() }}
-            </span>
-          </div>
-          <p class="text-sm text-slate-650 dark:text-slate-300 leading-relaxed italic">
-            "{{ review.reputation_review_reply.body }}"
-          </p>
         </div>
       </div>
     </div>

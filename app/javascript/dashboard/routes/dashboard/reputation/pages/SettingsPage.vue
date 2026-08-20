@@ -64,7 +64,7 @@ const baseApi = () => `/api/v1/accounts/${accountId}/reputation`;
 
 const sidebarItems = [
   { id: 'integrations', label: 'Integrations' },
-  { id: 'reviews_ai', label: 'Reviews AI' },
+  { id: 'reviews_ai', label: 'Relay AI Reviews' },
   { id: 'review_link', label: 'Review Link' },
   { id: 'sms_requests', label: 'SMS Requests' },
   { id: 'email_requests', label: 'Email Requests' },
@@ -454,33 +454,35 @@ onMounted(async () => {
   <div class="p-6 max-w-7xl mx-auto space-y-8">
     <!-- eslint-disable -->
     <!-- Header -->
-    <div>
-      <h2 class="capitalize text-2xl font-extrabold text-foreground dark:text-white tracking-tight">Reputation Settings</h2>
-      <p class="text-xs text-muted-foreground mt-0.5">Manage connected listings, review triggers, and outbound channel request templates</p>
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div>
+        <h1 class="text-xl font-semibold text-foreground">Reputation Settings</h1>
+        <p class="text-xs text-muted-foreground mt-0.5">Manage connected listings, review triggers, and outbound channel request templates.</p>
+      </div>
     </div>
 
     <div v-if="loading" class="flex flex-col items-center justify-center py-20 space-y-4">
-      <div class="size-10 border-4 border-woot-500 border-t-transparent rounded-full animate-spin"></div>
-      <p class="text-sm font-medium text-muted-foreground dark:text-muted-foreground">Loading settings panel...</p>
+      <div class="size-10 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+      <p class="text-sm font-medium text-muted-foreground">Loading settings panel...</p>
     </div>
 
     <div v-else class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
       <!-- Left sidebar navigation -->
-      <aside class="lg:col-span-3 bg-white dark:bg-slate-900 border border-border/80 dark:border-slate-850 rounded-2xl p-4 shadow-sm space-y-1">
+      <aside class="lg:col-span-3 bg-card border border-border rounded-xl p-3 shadow-sm space-y-1">
         <button
           v-for="item in sidebarItems"
           :key="item.id"
-          class="w-full text-left px-4 py-2.5 rounded-xl transition-all duration-200 text-xs font-bold flex items-center justify-between"
+          class="w-full text-left px-3.5 py-2.5 rounded-lg transition-all duration-200 text-xs font-semibold flex items-center justify-between"
           :class="currentTab === item.id
-            ? 'bg-woot-500 text-white shadow-md shadow-woot-500/10'
-            : 'hover:bg-slate-50 dark:hover:bg-slate-850 text-slate-700 dark:text-slate-350'"
+            ? 'bg-primary text-primary-foreground shadow-sm'
+            : 'hover:bg-muted/50 text-muted-foreground hover:text-foreground'"
           @click="handleTabChange(item.id)"
         >
           {{ item.label }}
           <span 
             v-if="item.id === 'integrations' && integrations.length > 0"
             class="px-2 py-0.5 text-[10px] rounded-full"
-            :class="currentTab === 'integrations' ? 'bg-white/20 text-white' : 'bg-slate-100 dark:bg-slate-800 text-slate-650 dark:text-slate-300'"
+            :class="currentTab === 'integrations' ? 'bg-primary-foreground/20 text-primary-foreground' : 'bg-muted text-muted-foreground'"
           >
             {{ integrations.length }}
           </span>
@@ -491,10 +493,10 @@ onMounted(async () => {
       <main class="lg:col-span-9">
         <!-- 1. Integrations View -->
         <div v-if="currentTab === 'integrations'" class="space-y-6">
-          <div class="bg-white dark:bg-slate-900 rounded-2xl border border-border/80 dark:border-slate-850 shadow-sm p-6 space-y-6">
+          <div class="bg-card rounded-xl border border-border shadow-sm p-6 space-y-6">
             <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
               <div>
-                <h3 class="capitalize font-extrabold text-foreground dark:text-white text-base">Integrations</h3>
+                <h3 class="font-semibold text-foreground text-base">Integrations</h3>
                 <p class="text-xs text-muted-foreground mt-0.5">Add review platforms by entering the page link to import reviews.</p>
               </div>
               <div class="relative w-full md:w-72">
@@ -502,7 +504,7 @@ onMounted(async () => {
                   v-model="searchQuery"
                   type="text"
                   placeholder="Search platforms..."
-                  class="w-full pl-9 pr-4 py-2 rounded-xl border border-border dark:border-slate-800 dark:bg-slate-850 focus:outline-none focus:ring-2 focus:ring-woot-500 text-[14px] border-border/80 bg-background focus-visible:ring-1 focus-visible:ring-primary/30 shadow-sm rounded-md"
+                  class="w-full pl-9 pr-4 py-2 rounded-lg border border-border bg-background p-3 text-xs text-foreground shadow-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/30"
                 />
                 <span class="absolute left-3 top-2.5 text-muted-foreground">
                   <svg class="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>

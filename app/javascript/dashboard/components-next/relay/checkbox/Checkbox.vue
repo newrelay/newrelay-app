@@ -1,5 +1,6 @@
 <script setup>
 import { computed, useAttrs } from 'vue';
+import { Check, Minus } from 'lucide-vue-next';
 import { cn } from '../utils/cn';
 
 const props = defineProps({
@@ -43,18 +44,18 @@ const toggle = () => {
     :class="
       cn(
         // p-0 overrides legacy @layer base button py-1 px-2.5 that crush size-4
-        'peer inline-flex size-4 shrink-0 items-center justify-center rounded border border-border/80 p-0 transition-colors',
+        'peer inline-flex size-4 shrink-0 items-center justify-center rounded-sm border border-input shadow-xs p-0 transition-colors cursor-pointer',
         'focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring',
         'disabled:cursor-not-allowed disabled:opacity-50',
         isChecked
           ? 'border-primary bg-primary text-primary-foreground'
-          : 'bg-background text-transparent',
+          : 'bg-background hover:bg-muted/50 text-transparent',
         attrs.class
       )
     "
     @click="toggle"
   >
-    <span v-if="isIndeterminate" class="i-lucide-minus size-3.5 shrink-0" />
-    <span v-else-if="isChecked" class="i-lucide-check size-3.5 shrink-0" />
+    <Minus v-if="isIndeterminate" class="size-3.5 shrink-0 text-current" />
+    <Check v-else-if="isChecked" class="size-3.5 shrink-0 text-current" />
   </button>
 </template>

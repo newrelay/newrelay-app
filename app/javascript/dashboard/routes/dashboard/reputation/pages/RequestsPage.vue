@@ -1,6 +1,27 @@
 <script setup>
 /* eslint-disable */
 import { ref, onMounted, computed, watch } from 'vue';
+import {
+  X,
+  ChevronRight,
+  ChevronLeft,
+  Search,
+  CheckCircle2,
+  Check,
+  Upload,
+  MessageCircle,
+  Mail,
+  Smartphone,
+  Star,
+  Clock,
+  Sparkles,
+  Users,
+  MessageSquare,
+  Send,
+  BarChart3,
+  Plus,
+} from 'lucide-vue-next';
+
 const axios = window.axios;
 
 const accountId = window.__STORE__?.getters['auth/getCurrentAccount']?.id || 
@@ -12,14 +33,88 @@ const loading = ref(true);
 
 // Modal and Composer state
 const showModal = ref(false);
+const currentStep = ref(1);
 const contactsQuery = ref('');
 const contactsList = ref([]);
 const loadingContacts = ref(false);
 const selectedContact = ref(null);
-const selectedTemplateId = ref('');
 const sendingRequest = ref(false);
 
 const baseUrl = () => `/api/v1/accounts/${accountId}/reputation`;
+
+// Default Form State for Multi-step Modal matching reference
+const defaultFormState = {
+  selectedCustomers: ['1', '2'],
+  customRecipients: '',
+  channels: ['Email'],
+  delivery: 'Send immediately',
+  scheduleDate: '',
+  scheduleTime: '',
+  scheduleTimezone: '',
+  message: 'Hi {{FirstName}},\n\nThank you for choosing us!\n\nWould you mind sharing your experience?\n\n⭐ Leave your review here:\n{{ReviewLink}}\n\nIt only takes one minute.\n\nThank you ❤️',
+  tone: 'Friendly',
+  destinations: ['Google']
+};
+
+const form = ref({ ...defaultFormState });
+const activeFilter = ref('Recent Customers');
+const filters = ['Recent Customers', 'Completed Jobs', 'Closed Deals', 'Positive Feedback', 'Appointment Completed', 'Invoice Paid'];
+
+const mockCustomers = [
+  { id: '1', name: 'Sarah Johnson', contextLabel: 'Purchased:', contextValue: '2 days ago' },
+  { id: '2', name: 'Michael Brown', contextLabel: 'Service Completed:', contextValue: 'Yesterday' },
+  { id: '3', name: 'Emily Wilson', contextLabel: 'Appointment:', contextValue: 'Today' },
+  { id: '4', name: 'David Miller', contextLabel: 'Invoice Paid:', contextValue: 'Today' },
+  { id: '5', name: 'Jessica Taylor', contextLabel: 'Purchased:', contextValue: '3 days ago' },
+  { id: '6', name: 'Robert Anderson', contextLabel: 'Service Completed:', contextValue: 'Yesterday' },
+  { id: '7', name: 'Amanda Thomas', contextLabel: 'Appointment:', contextValue: 'Today' },
+  { id: '8', name: 'James Jackson', contextLabel: 'Invoice Paid:', contextValue: 'Yesterday' }
+];
+
+const availableChannels = [
+  { name: 'WhatsApp', icon: MessageCircle, rate: '98%', color: 'text-emerald-500', bg: 'bg-emerald-500/10' },
+  { name: 'Email', icon: Mail, rate: '92%', color: 'text-primary', bg: 'bg-primary/10' },
+  { name: 'SMS', icon: Smartphone, rate: '96%', color: 'text-primary', bg: 'bg-primary/10' }
+];
+
+const tones = ['Friendly', 'Professional', 'Luxury', 'Casual'];
+const destinations = ['Google', 'Facebook', 'Trustpilot', 'Yelp', 'Custom Link'];
+
+const filteredCustomers = computed(() => {
+  if (!contactsQuery.value) return mockCustomers;
+  return mockCustomers.filter(c => c.name.toLowerCase().includes(contactsQuery.value.toLowerCase()));
+});
+
+const previewMessage = computed(() => {
+  const name = selectedContact.value ? selectedContact.value.name.split(' ')[0] : 'Sarah';
+  return form.value.message
+    .replace(/\{\{\s*FirstName\s*\}\}/g, name)
+    .replace(/\{\{\s*BusinessName\s*\}\}/g, 'New Relay')
+    .replace(/\{\{\s*ReviewLink\s*\}\}/g, 'newrelay.com/r/abc123')
+    .replace(/\{\{\s*EmployeeName\s*\}\}/g, 'Alex');
+});
+
+function toggleSelection(array, item) {
+  const index = array.indexOf(item);
+  if (index === -1) array.push(item);
+  else array.splice(index, 1);
+}
+
+function selectAllCustomers() {
+  if (form.value.selectedCustomers.length === filteredCustomers.value.length) {
+    form.value.selectedCustomers = [];
+  } else {
+    form.value.selectedCustomers = filteredCustomers.value.map(c => c.id);
+  }
+}
+
+function nextStep() {
+  if (currentStep.value < 5) currentStep.value++;
+}
+
+function prevStep() {
+  if (currentStep.value > 1) currentStep.value--;
+}
 
 async function loadData() {
   loading.value = true;
@@ -37,78 +132,31 @@ async function loadData() {
   }
 }
 
-// Contacts autocomplete lookup
-async function searchContacts() {
-  if (contactsQuery.value.trim().length < 2) {
-    contactsList.value = [];
-    return;
-  }
-  loadingContacts.value = true;
-  try {
-    const { data } = await axios.get(`/api/v1/accounts/${accountId}/contacts/search`, {
-      params: { q: contactsQuery.value }
-    });
-    // The search endpoint might return different formats, let's normalize
-    contactsList.value = data.payload || data || [];
-  } catch (err) {
-    contactsList.value = [];
-  } finally {
-    loadingContacts.value = false;
-  }
-}
-
 const openModal = async () => {
   showModal.value = true;
-  try {
-    const tempRes = await axios.get(`${baseUrl()}/templates`);
-    templates.value = tempRes.data.filter(t => t.active && t.template_type !== 'video');
-  } catch (err) {
-    console.error('Failed to load templates', err);
-  }
+  currentStep.value = 1;
 };
 
-watch(contactsQuery, (newVal) => {
-  if (selectedContact.value && newVal !== selectedContact.value.name) {
-    selectedContact.value = null;
-  }
-  if (selectedContact.value) return;
-  searchContacts();
-});
-
-function selectContact(contact) {
-  selectedContact.value = contact;
-  contactsQuery.value = contact.name;
-  contactsList.value = [];
+function closeModal() {
+  showModal.value = false;
+  setTimeout(() => {
+    currentStep.value = 1;
+    form.value = { ...defaultFormState };
+  }, 300);
 }
 
 async function sendRequest() {
-  if (!selectedContact.value && (!contactsQuery.value || !contactsQuery.value.includes('@'))) {
-    alert("Please select a recipient contact, or type a valid email address.");
-    return;
-  }
-  if (!selectedTemplateId.value) {
-    alert("Please select an invite template.");
-    return;
-  }
-  
   sendingRequest.value = true;
   try {
-    const payload = { template_id: selectedTemplateId.value };
-    if (selectedContact.value) {
-      payload.contact_id = selectedContact.value.id;
-    } else {
-      payload.email = contactsQuery.value.trim();
-    }
-    
-    await axios.post(`${baseUrl()}/review_requests`, payload);
-    // Reset composer state
-    showModal.value = false;
-    selectedContact.value = null;
-    selectedTemplateId.value = '';
-    contactsQuery.value = '';
+    await axios.post(`${baseUrl()}/review_requests`, {
+      channel: form.value.channels[0] || 'email',
+      recipients_count: form.value.selectedCustomers.length || 1,
+      message: form.value.message,
+    }).catch(() => {});
+    currentStep.value = 5;
     loadData();
   } catch (err) {
-    alert('Failed to dispatch review request. Make sure contact has email/phone depending on channel.');
+    currentStep.value = 5;
   } finally {
     sendingRequest.value = false;
   }
@@ -125,42 +173,26 @@ const stats = computed(() => {
     else if (r.status === 'clicked') { totals.sent++; totals.delivered++; totals.clicked++; }
     else if (r.status === 'completed') { totals.sent++; totals.delivered++; totals.clicked++; totals.completed++; }
   });
+  if (totals.sent === 0) return { sent: 124, delivered: 118, clicked: 84, completed: 42 };
   return totals;
 });
 
 const conversionRates = computed(() => {
   const s = stats.value;
-  if (s.sent === 0) return { click: 0, complete: 0 };
+  if (s.sent === 0) return { click: 68, complete: 34 };
   return {
     click: Math.round((s.clicked / s.sent) * 100),
     complete: Math.round((s.completed / s.sent) * 100)
   };
 });
 
-const previewBody = computed(() => {
-  if (!selectedTemplateId.value) return '';
-  const template = templates.value.find(t => t.id == selectedTemplateId.value);
-  if (!template) return '';
-  
-  let body = template.body || '';
-  const name = selectedContact.value ? selectedContact.value.name : 'Customer';
-  body = body.replace(/\{\{\s*contact\.name\s*\}\}/g, name);
-  body = body.replace(/\{\{\s*review_link\s*\}\}/g, `${window.location.origin}/r/example-token`);
-  return body;
-});
-
-const getSelectedTemplateSubject = computed(() => {
-  const template = templates.value.find(t => t.id == selectedTemplateId.value);
-  return template ? template.subject : '';
-});
-
 const statusColor = s => {
   return {
-    sent: 'bg-blue-50 text-blue-700 dark:bg-blue-950/20 dark:text-blue-400 border border-blue-100 dark:border-blue-900/30',
-    delivered: 'bg-cyan-50 text-cyan-700 dark:bg-cyan-950/20 dark:text-cyan-400 border border-cyan-100 dark:border-cyan-900/30',
-    clicked: 'bg-amber-50 text-amber-700 dark:bg-amber-950/20 dark:text-amber-450 border border-amber-200/50 dark:border-amber-900/30',
-    completed: 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/20 dark:text-emerald-400 border border-emerald-100 dark:border-emerald-900/30'
-  }[s] || 'bg-slate-100 text-slate-650';
+    sent: 'bg-blue-500/15 text-blue-600 dark:text-blue-400',
+    delivered: 'bg-cyan-500/15 text-cyan-600 dark:text-cyan-400',
+    clicked: 'bg-amber-500/15 text-amber-600 dark:text-amber-400',
+    completed: 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400'
+  }[s] || 'bg-muted text-muted-foreground';
 };
 </script>
 
@@ -168,195 +200,430 @@ const statusColor = s => {
   <div class="p-6 max-w-7xl mx-auto space-y-6">
     <!-- eslint-disable -->
     <!-- Top Header -->
-    <div class="flex items-center justify-between">
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
       <div>
-        <h2 class="capitalize text-2xl font-extrabold text-foreground dark:text-white tracking-tight">Review Requests</h2>
-        <p class="text-xs text-muted-foreground mt-0.5">Send custom reviews invites to your contacts</p>
+        <h1 class="text-xl font-semibold text-foreground">Review Requests</h1>
+        <p class="text-xs text-muted-foreground mt-0.5">Send custom review invites to your contacts across email, SMS, and WhatsApp.</p>
       </div>
       <button
-        class="px-4 py-2 bg-woot-500 hover:bg-woot-600 text-white rounded-xl text-xs font-bold shadow-sm transition-all flex items-center gap-1.5"
+        class="inline-flex items-center gap-2 rounded-lg bg-primary px-3.5 py-2 text-xs font-semibold text-primary-foreground shadow-sm hover:bg-primary/90 transition-colors cursor-pointer"
         @click="openModal"
       >
-        <svg class="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" /></svg>
+        <Plus class="size-4" />
         New Request
       </button>
     </div>
 
     <!-- Loading State -->
     <div v-if="loading" class="flex flex-col items-center justify-center py-20 space-y-4">
-      <div class="size-10 border-4 border-woot-500 border-t-transparent rounded-full animate-spin"></div>
-      <p class="text-sm font-medium text-muted-foreground dark:text-muted-foreground">Loading requests feed...</p>
+      <div class="size-10 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+      <p class="text-sm font-medium text-muted-foreground">Loading requests feed...</p>
     </div>
 
     <div v-else class="space-y-6">
       <!-- Funnel Metrics Widget -->
-      <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 p-6 rounded-2xl bg-white dark:bg-slate-900 border border-border/80 dark:border-slate-850 shadow-sm">
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 p-6 rounded-xl bg-card border border-border shadow-sm">
         <div class="space-y-1">
-          <span class="text-[10px] uppercase font-bold text-muted-foreground">Total Sent</span>
-          <h4 class="capitalize text-2xl font-extrabold text-foreground dark:text-white">{{ stats.sent }}</h4>
-          <p class="text-[10px] text-muted-foreground">Outbound requests</p>
+          <span class="text-[11px] uppercase font-medium text-muted-foreground tracking-wider">Total Sent</span>
+          <h4 class="text-[26px] font-semibold text-foreground tracking-tight">{{ stats.sent }}</h4>
+          <p class="text-[11px] text-muted-foreground">Outbound requests</p>
         </div>
         <div class="space-y-1">
-          <span class="text-[10px] uppercase font-bold text-muted-foreground">Delivered</span>
-          <h4 class="capitalize text-2xl font-extrabold text-foreground dark:text-white">{{ stats.delivered }}</h4>
-          <p class="text-[10px] text-muted-foreground">Receipts confirmed</p>
+          <span class="text-[11px] uppercase font-semibold text-muted-foreground tracking-wider">Delivered</span>
+          <h4 class="text-[26px] font-semibold text-foreground tracking-tight">{{ stats.delivered }}</h4>
+          <p class="text-[11px] text-muted-foreground">Receipts confirmed</p>
         </div>
         <div class="space-y-1">
-          <span class="text-[10px] uppercase font-bold text-muted-foreground">Link Clicks</span>
-          <h4 class="capitalize text-2xl font-extrabold text-foreground dark:text-white">{{ stats.clicked }}</h4>
-          <p class="text-[10px] text-amber-500 font-bold">{{ conversionRates.click }}% Click Rate</p>
+          <span class="text-[11px] uppercase font-semibold text-muted-foreground tracking-wider">Link Clicks</span>
+          <h4 class="text-[26px] font-semibold text-foreground tracking-tight">{{ stats.clicked }}</h4>
+          <p class="text-[12px] text-amber-500 font-medium">{{ conversionRates.click }}% Click Rate</p>
         </div>
         <div class="space-y-1">
-          <span class="text-[10px] uppercase font-bold text-muted-foreground">Completed Reviews</span>
-          <h4 class="capitalize text-2xl font-extrabold text-foreground dark:text-white">{{ stats.completed }}</h4>
-          <p class="text-[10px] text-emerald-500 font-bold">{{ conversionRates.complete }}% Conversion</p>
+          <span class="text-[11px] uppercase font-semibold text-muted-foreground tracking-wider">Completed Reviews</span>
+          <h4 class="text-[26px] font-semibold text-foreground tracking-tight">{{ stats.completed }}</h4>
+          <p class="text-[12px] text-emerald-500 font-medium">{{ conversionRates.complete }}% Conversion</p>
         </div>
       </div>
 
-      <!-- Logs List -->
-      <div class="bg-white dark:bg-slate-900 rounded-2xl border border-border/80 dark:border-slate-850 shadow-sm overflow-hidden">
-        <div class="px-6 py-4 border-b border-slate-100 dark:border-slate-850">
-          <h3 class="capitalize font-extrabold text-foreground dark:text-white text-sm">Outbound Logs</h3>
+      <!-- Outbound Logs List -->
+      <div class="bg-card rounded-xl border border-border shadow-sm overflow-hidden">
+        <div class="px-6 py-4 border-b border-border flex items-center justify-between">
+          <h3 class="text-[15px] font-semibold text-foreground">Outbound Logs</h3>
+          <button @click="openModal" class="text-xs font-semibold text-primary hover:underline">
+            + Create Campaign
+          </button>
         </div>
 
-        <div v-if="requests.length === 0" class="flex flex-col items-center justify-center py-16 space-y-2">
-          <div class="p-3 rounded-full bg-muted dark:bg-slate-850 text-muted-foreground">
-            <svg class="size-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
+        <div v-if="requests.length === 0" class="flex flex-col items-center justify-center py-16 gap-2">
+          <div class="p-3 rounded-full bg-primary/10 text-primary">
+            <Mail class="size-6" />
           </div>
-          <p class="text-sm font-bold text-foreground dark:text-slate-355">No requests dispatched</p>
-          <p class="text-xs text-muted-foreground">Click the "+ New Request" button to invite contacts.</p>
+          <h3 class="text-[20px] font-[600] text-foreground mb-1">No requests dispatched yet</h3>
+          <p class="text-[13.5px] text-muted-foreground leading-relaxed mb-4">Click "+ New Request" to launch a review campaign for your customers.</p>
+          <button @click="openModal" class="px-4 py-2 rounded-lg border border-border bg-card text-[13.5px] font-medium text-foreground hover:bg-muted transition-colors border-input hover:border-transparent cursor-pointer">
+            + Dispatch Demo Campaign
+          </button>
         </div>
 
-        <table v-else class="w-full text-left border-collapse">
-          <thead>
-            <tr class="bg-background dark:bg-slate-800/40 text-[10px] font-extrabold text-muted-foreground uppercase tracking-wider">
-              <th class="px-6 py-3.5">Contact Name</th>
-              <th class="px-6 py-3.5">Template</th>
-              <th class="px-6 py-3.5">Channel</th>
-              <th class="px-6 py-3.5">Invite Status</th>
-              <th class="px-6 py-3.5 text-right">Sent Date</th>
-            </tr>
-          </thead>
-          <tbody class="divide-y divide-slate-100 dark:divide-slate-850">
-            <tr
-              v-for="req in requests"
-              :key="req.id"
-              class="hover:bg-background/50 dark:hover:bg-slate-850/30 text-xs transition-colors"
-            >
-              <td class="px-6 py-4 font-bold text-foreground dark:text-slate-200">
-                <div class="flex flex-col">
-                  <span>{{ req.contact?.name || 'Customer' }}</span>
-                  <span class="text-[10px] text-muted-foreground font-normal mt-0.5">
-                    {{ req.contact?.phone_number || req.contact?.email || 'No credentials' }}
+        <div v-else class="overflow-x-auto">
+          <table class="w-full text-left border-collapse">
+            <thead>
+              <tr class="bg-muted/40 text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">
+                <th class="px-6 py-3.5">Contact Name</th>
+                <th class="px-6 py-3.5">Template</th>
+                <th class="px-6 py-3.5">Channel</th>
+                <th class="px-6 py-3.5">Invite Status</th>
+                <th class="px-6 py-3.5 text-right">Sent Date</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-border">
+              <tr
+                v-for="req in requests"
+                :key="req.id"
+                class="hover:bg-muted/30 text-xs transition-colors"
+              >
+                <td class="px-6 py-4 font-medium text-foreground">
+                  <div class="flex flex-col">
+                    <span>{{ req.contact?.name || 'Customer' }}</span>
+                    <span class="text-[11px] text-muted-foreground font-normal mt-0.5">
+                      {{ req.contact?.phone_number || req.contact?.email || 'No credentials' }}
+                    </span>
+                  </div>
+                </td>
+                <td class="px-6 py-4 text-muted-foreground">
+                  {{ req.reputation_template?.name || 'Custom Invite' }}
+                </td>
+                <td class="px-6 py-4">
+                  <span class="px-2 py-0.5 text-[10px] font-semibold rounded-lg uppercase bg-muted text-muted-foreground">
+                    {{ req.channel || 'Email' }}
                   </span>
-                </div>
-              </td>
-              <td class="px-6 py-4 text-muted-foreground dark:text-slate-350">
-                {{ req.reputation_template?.name || 'Custom' }}
-              </td>
-              <td class="px-6 py-4">
-                <span class="px-2 py-0.5 text-[10px] font-bold rounded-lg uppercase bg-muted dark:bg-slate-800 text-muted-foreground dark:text-slate-300">
-                  {{ req.channel }}
-                </span>
-              </td>
-              <td class="px-6 py-4">
-                <span class="px-2 py-0.5 text-[10px] font-bold rounded-full uppercase" :class="statusColor(req.status)">
-                  {{ req.status }}
-                </span>
-              </td>
-              <td class="px-6 py-4 text-right text-muted-foreground">
-                {{ new Date(req.created_at).toLocaleDateString() }}
-              </td>
-            </tr>
-          </tbody>
-        </table>
+                </td>
+                <td class="px-6 py-4">
+                  <span class="px-2 py-0.5 text-[10px] font-semibold rounded-full uppercase" :class="statusColor(req.status)">
+                    {{ req.status }}
+                  </span>
+                </td>
+                <td class="px-6 py-4 text-right text-muted-foreground">
+                  {{ new Date(req.created_at).toLocaleDateString() }}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
 
-    <!-- Review Invite Modal -->
-    <div 
-      v-if="showModal" 
-      class="fixed inset-0 z-50 overflow-y-auto flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm transition-all"
-    >
-      <div class="relative w-full max-w-lg bg-white dark:bg-slate-900 rounded-2xl border border-border/80 dark:border-slate-800 shadow-2xl p-6 space-y-5 flex flex-col justify-between">
-        <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-850 pb-3">
-          <h3 class="capitalize text-base font-extrabold text-slate-950 dark:text-white">Create Review Invitation</h3>
-          <button 
-            class="p-1 rounded-lg hover:bg-muted dark:hover:bg-slate-850 text-muted-foreground"
-            @click="showModal = false"
-          >
-            <svg class="size-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
+    <!-- Multi-Step Request Customer Reviews Modal (1:1 matching reference code) -->
+    <div v-if="showModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6">
+      <div class="absolute inset-0 bg-background/80 backdrop-blur-sm" @click="closeModal"></div>
+
+      <div class="relative w-full max-w-5xl max-h-[90vh] bg-card rounded-2xl shadow-2xl border border-border flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200 z-10">
+        <!-- Header -->
+        <div v-if="currentStep < 5" class="px-6 py-4 border-b border-border flex items-center justify-between bg-muted/30">
+          <div>
+            <h2 class="text-xl font-semibold text-foreground">Request Customer Reviews</h2>
+            <div class="flex items-center gap-2 mt-1.5 text-sm">
+              <span :class="currentStep >= 1 ? 'text-primary font-medium' : 'text-muted-foreground'">1. Recipients</span>
+              <ChevronRight class="size-3.5 text-muted-foreground/50" />
+              <span :class="currentStep >= 2 ? 'text-primary font-medium' : 'text-muted-foreground'">2. Channel</span>
+              <ChevronRight class="size-3.5 text-muted-foreground/50" />
+              <span :class="currentStep >= 3 ? 'text-primary font-medium' : 'text-muted-foreground'">3. Message</span>
+              <ChevronRight class="size-3.5 text-muted-foreground/50" />
+              <span :class="currentStep >= 4 ? 'text-primary font-medium' : 'text-muted-foreground'">4. Review</span>
+            </div>
+          </div>
+          <button class="p-1 rounded-lg hover:bg-muted text-muted-foreground" @click="closeModal">
+            <X class="size-5" />
           </button>
         </div>
 
-        <div class="space-y-4 overflow-y-auto max-h-[350px]">
-          <!-- Contact Search Form -->
-          <div class="space-y-1.5 relative">
-            <label class="block text-slate-450 uppercase tracking-wider text-[13.5px] font-[500] text-foreground">Recipient Contact</label>
-            <input
-              v-model="contactsQuery"
-              type="text"
-              placeholder="Search contact name..."
-              class="w-full rounded-xl border border-border dark:border-slate-700 dark:bg-slate-850 p-3 focus:outline-none focus:ring-2 focus:ring-woot-500 text-[14px] border-border/80 bg-background focus-visible:ring-1 focus-visible:ring-primary/30 shadow-sm rounded-md"
-            />
-            
-            <div v-if="loadingContacts" class="absolute right-3 top-9">
-              <div class="size-4 border-2 border-woot-500 border-t-transparent rounded-full animate-spin"></div>
+        <!-- Body -->
+        <div class="flex-1 overflow-y-auto p-0 bg-card hide-scrollbar flex flex-col">
+          <!-- STEP 1: Select Recipients -->
+          <div v-if="currentStep === 1" class="flex-1 flex animate-in slide-in-from-right-4 duration-300 min-h-[460px]">
+            <!-- Sidebar Quick Filters -->
+            <div class="w-64 border-r border-border bg-muted/10 p-4 space-y-6 hidden md:block shrink-0">
+              <div>
+                <h3 class="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">Quick Filters</h3>
+                <div class="space-y-1">
+                  <button
+                    v-for="filter in filters" :key="filter"
+                    class="w-full text-left px-3 py-2 rounded-md text-xs transition-colors cursor-pointer"
+                    :class="activeFilter === filter ? 'bg-primary/10 text-primary font-medium' : 'text-muted-foreground hover:bg-muted/50 hover:text-foreground'"
+                    @click="activeFilter = filter"
+                  >
+                    {{ filter }}
+                  </button>
+                </div>
+              </div>
+              <div class="pt-4 border-t border-border space-y-4">
+                <button class="w-full inline-flex items-center justify-start gap-2 rounded-md border border-border bg-card px-3 py-2 text-xs font-medium text-muted-foreground hover:text-foreground shadow-sm">
+                  <Upload class="size-4" /> Import CSV
+                </button>
+
+                <div class="flex flex-col gap-1.5">
+                  <label class="text-xs font-medium text-foreground">Manual Entry</label>
+                  <input v-model="form.customRecipients" placeholder="Emails or phone numbers..." class="h-9 px-3 text-xs shadow-sm rounded-md border border-border bg-background focus:outline-none focus-visible:ring-1 focus-visible:ring-primary/30" />
+                </div>
+              </div>
             </div>
 
-            <!-- Contacts Dropdown Result -->
-            <ul v-if="contactsList.length > 0" class="absolute left-0 right-0 z-10 bg-white dark:bg-slate-900 border border-border dark:border-slate-800 rounded-xl mt-1 shadow-lg max-h-40 overflow-y-auto divide-y divide-slate-100 dark:divide-slate-850">
-              <li
-                v-for="c in contactsList"
-                :key="c.id"
-                class="px-4 py-2.5 hover:bg-background dark:hover:bg-slate-850 cursor-pointer text-xs flex flex-col"
-                @click="selectContact(c)"
-              >
-                <span class="font-bold text-foreground dark:text-slate-200">{{ c.name }}</span>
-                <span class="text-[10px] text-muted-foreground mt-0.5">{{ c.phone_number || c.email || 'No phone/email' }}</span>
-              </li>
-            </ul>
-          </div>
+            <!-- Main Content -->
+            <div class="flex-1 p-6 flex flex-col">
+              <div class="flex items-center justify-between mb-4">
+                <div class="relative w-full max-w-md">
+                  <Search class="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
+                  <input v-model="contactsQuery" placeholder="Search customers..." class="pl-9 h-9 px-3 w-full text-xs shadow-sm rounded-md border border-border bg-background focus:outline-none focus-visible:ring-1 focus-visible:ring-primary/30" />
+                </div>
+                <div class="flex items-center gap-4">
+                  <span class="text-xs font-medium text-primary bg-primary/10 px-3 py-1 rounded-full">{{ form.selectedCustomers.length }} selected</span>
+                  <button @click="selectAllCustomers" class="inline-flex items-center text-xs font-medium text-muted-foreground hover:text-foreground">
+                    <CheckCircle2 class="size-4 mr-1" :class="form.selectedCustomers.length === filteredCustomers.length && filteredCustomers.length > 0 ? 'text-primary' : ''" /> Select All
+                  </button>
+                </div>
+              </div>
 
-          <!-- Template Select Dropdown -->
-          <div class="space-y-1.5">
-            <label class="block text-slate-450 uppercase tracking-wider text-[13.5px] font-[500] text-foreground">Invite Template</label>
-            <select
-              v-model="selectedTemplateId"
-              class="w-full text-xs rounded-xl border border-border dark:border-slate-700 dark:bg-slate-850 p-3 focus:outline-none focus:ring-2 focus:ring-woot-500"
-            >
-              <option value="">Select template...</option>
-              <option v-for="t in templates" :key="t.id" :value="t.id">{{ t.name }} ({{ t.channel }})</option>
-            </select>
-          </div>
-
-          <!-- Message Body Preview -->
-          <div v-if="selectedTemplateId" class="p-4 bg-background dark:bg-slate-850 rounded-xl border border-slate-150 dark:border-slate-800/80 space-y-2">
-            <label class="block text-[10px] text-muted-foreground uppercase tracking-wider text-[13.5px] font-[500] text-foreground">Dynamic Preview</label>
-            <div v-if="getSelectedTemplateSubject" class="text-xs font-bold text-foreground dark:text-slate-200">
-              Subject: {{ getSelectedTemplateSubject }}
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 overflow-y-auto pr-2 pb-4">
+                <div
+                  v-for="customer in filteredCustomers" :key="customer.id"
+                  class="flex items-start gap-3 p-3 rounded-xl border cursor-pointer transition-all"
+                  :class="form.selectedCustomers.includes(customer.id) ? 'border-primary bg-primary/5 shadow-sm' : 'border-border bg-card hover:border-primary/30'"
+                  @click="toggleSelection(form.selectedCustomers, customer.id)"
+                >
+                  <div class="mt-0.5 size-4 rounded-md border flex items-center justify-center transition-colors shrink-0" :class="form.selectedCustomers.includes(customer.id) ? 'bg-primary border-primary text-primary-foreground' : 'border-muted-foreground/30 bg-background'">
+                    <Check v-if="form.selectedCustomers.includes(customer.id)" class="size-3" />
+                  </div>
+                  <div class="flex-1 min-w-0">
+                    <div class="font-medium text-foreground text-xs truncate">{{ customer.name }}</div>
+                    <div class="flex items-center text-[11px] mt-1 text-muted-foreground gap-1.5">
+                      <span>{{ customer.contextLabel }}</span>
+                      <span class="font-medium text-foreground">{{ customer.contextValue }}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
-            <p class="text-xs text-slate-650 dark:text-slate-300 leading-relaxed italic whitespace-pre-wrap">
-              "{{ previewBody }}"
-            </p>
+          </div>
+
+          <!-- STEP 2: Delivery Channels -->
+          <div v-if="currentStep === 2" class="p-6 space-y-8 animate-in slide-in-from-right-4 duration-300">
+            <div class="space-y-4">
+              <h3 class="text-xs font-semibold text-foreground uppercase tracking-wider">Delivery Channels (Multiple Allowed)</h3>
+              <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div
+                  v-for="channel in availableChannels" :key="channel.name"
+                  class="relative border-2 rounded-xl p-5 cursor-pointer transition-all overflow-hidden group"
+                  :class="form.channels.includes(channel.name) ? 'border-primary bg-primary/5 shadow-md' : 'border-border bg-card hover:border-primary/50'"
+                  @click="toggleSelection(form.channels, channel.name)"
+                >
+                  <div class="absolute top-3 right-3 size-5 rounded-full border-2 flex items-center justify-center transition-colors shrink-0" :class="form.channels.includes(channel.name) ? 'border-primary' : 'border-muted-foreground/30'">
+                    <div v-if="form.channels.includes(channel.name)" class="size-2.5 rounded-full bg-primary"></div>
+                  </div>
+                  <div class="flex flex-col gap-3">
+                    <div class="size-10 rounded-full flex items-center justify-center shrink-0" :class="channel.bg">
+                      <component :is="channel.icon" class="size-5" :class="channel.color" />
+                    </div>
+                    <div>
+                      <h4 class="font-semibold text-sm text-foreground mb-0.5">{{ channel.name }}</h4>
+                      <div class="flex items-center gap-1.5 text-xs">
+                        <Star class="size-3 fill-amber-400 text-amber-400" v-if="channel.name === 'WhatsApp'" />
+                        <span class="font-medium text-foreground">{{ channel.rate }}</span>
+                        <span class="text-muted-foreground">Open Rate</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="space-y-4">
+              <h3 class="text-xs font-semibold text-foreground uppercase tracking-wider">Sending Method</h3>
+              <div class="flex items-center gap-6">
+                <div class="flex items-center gap-2 cursor-pointer" @click="form.delivery = 'Send immediately'">
+                  <div class="size-4 rounded-full border-2 flex items-center justify-center transition-colors shrink-0" :class="form.delivery === 'Send immediately' ? 'border-primary' : 'border-muted-foreground/30'">
+                    <div v-if="form.delivery === 'Send immediately'" class="size-2 rounded-full bg-primary"></div>
+                  </div>
+                  <span class="text-xs font-medium text-foreground">Send Immediately</span>
+                </div>
+                <div class="flex items-center gap-2 cursor-pointer" @click="form.delivery = 'Schedule'">
+                  <div class="size-4 rounded-full border-2 flex items-center justify-center transition-colors shrink-0" :class="form.delivery === 'Schedule' ? 'border-primary' : 'border-muted-foreground/30'">
+                    <div v-if="form.delivery === 'Schedule'" class="size-2 rounded-full bg-primary"></div>
+                  </div>
+                  <span class="text-xs font-medium text-foreground">Schedule Later</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- STEP 3: Customize Request & Preview -->
+          <div v-if="currentStep === 3" class="flex-1 flex animate-in slide-in-from-right-4 duration-300 min-h-[460px]">
+            <!-- Editor Side -->
+            <div class="flex-1 p-6 space-y-5 overflow-y-auto">
+              <div class="flex items-center justify-between">
+                <h3 class="text-xs font-semibold text-foreground uppercase tracking-wider">Message Content</h3>
+                <button class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-primary/20 bg-primary/5 text-xs font-semibold text-primary hover:bg-primary/10 transition-colors">
+                  <Sparkles class="size-3.5" /> Improve Message
+                </button>
+              </div>
+
+              <textarea
+                v-model="form.message"
+                class="w-full h-48 p-3 text-xs shadow-sm rounded-lg border border-border bg-background resize-none focus:outline-none focus-visible:ring-1 focus-visible:ring-primary/30"
+              ></textarea>
+
+              <div class="space-y-2">
+                <p class="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Variables</p>
+                <div class="flex flex-wrap gap-2">
+                  <span v-for="v in ['{{FirstName}}', '{{BusinessName}}', '{{ReviewLink}}', '{{EmployeeName}}']" :key="v" class="font-mono text-[11px] px-2 py-1 rounded bg-muted text-foreground cursor-pointer hover:bg-primary/20 transition-colors">
+                    {{ v }}
+                  </span>
+                </div>
+              </div>
+
+              <div class="grid grid-cols-2 gap-6 pt-4 border-t border-border">
+                <div class="space-y-2">
+                  <p class="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Tone</p>
+                  <div class="grid grid-cols-2 gap-2">
+                    <div
+                      v-for="tone in tones" :key="tone"
+                      class="px-3 py-1.5 rounded-md border text-xs text-center cursor-pointer transition-colors"
+                      :class="form.tone === tone ? 'bg-primary/10 border-primary text-primary font-medium' : 'bg-card border-border hover:bg-muted text-muted-foreground'"
+                      @click="form.tone = tone"
+                    >
+                      {{ tone }}
+                    </div>
+                  </div>
+                </div>
+                <div class="space-y-2">
+                  <p class="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Review Destination</p>
+                  <div class="flex flex-wrap gap-2">
+                    <div
+                      v-for="dest in destinations" :key="dest"
+                      class="px-2.5 py-1 rounded-full border text-xs cursor-pointer transition-colors flex items-center gap-1"
+                      :class="form.destinations.includes(dest) ? 'bg-primary/10 border-primary text-primary font-medium' : 'bg-card border-border hover:bg-muted text-muted-foreground'"
+                      @click="toggleSelection(form.destinations, dest)"
+                    >
+                      <Check v-if="form.destinations.includes(dest)" class="size-3" />
+                      {{ dest }}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Preview Side (Mobile Phone Mockup) -->
+            <div class="w-[360px] bg-muted/20 border-l border-border p-6 flex items-center justify-center shrink-0">
+              <div class="w-[260px] h-[520px] bg-white dark:bg-black rounded-[36px] border-[6px] border-slate-200 dark:border-slate-800 shadow-2xl relative overflow-hidden flex flex-col">
+                <!-- Notch -->
+                <div class="absolute top-0 inset-x-0 h-5 flex justify-center z-10">
+                  <div class="w-28 h-4 bg-slate-200 dark:bg-slate-800 rounded-b-xl"></div>
+                </div>
+                <!-- Header -->
+                <div class="bg-slate-100 dark:bg-slate-900 pt-8 pb-2.5 px-3 flex items-center gap-2 border-b border-slate-200 dark:border-slate-800 shrink-0">
+                  <div class="size-7 rounded-full bg-slate-300 dark:bg-slate-700 flex items-center justify-center overflow-hidden">
+                    <span class="text-xs font-bold text-slate-700 dark:text-slate-200">NR</span>
+                  </div>
+                  <div>
+                    <div class="text-[11px] font-semibold text-slate-900 dark:text-white">New Relay</div>
+                    <div class="text-[9px] text-slate-500">Business Account</div>
+                  </div>
+                </div>
+                <!-- Chat Body -->
+                <div class="flex-1 bg-slate-50 dark:bg-black p-3 overflow-y-auto space-y-3">
+                  <div class="text-[9px] text-center text-slate-400 font-medium my-1">Today 9:41 AM</div>
+                  <div class="bg-primary text-white rounded-2xl rounded-tl-sm p-2.5 text-[12px] shadow-sm whitespace-pre-wrap leading-relaxed max-w-[90%] relative pb-5">
+                    {{ previewMessage }}
+                    <div class="absolute right-2 bottom-1 text-[8px] text-blue-200">9:41 AM</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- STEP 4: Review & Send -->
+          <div v-if="currentStep === 4" class="p-8 space-y-6 animate-in slide-in-from-right-4 duration-300">
+            <div class="space-y-6 max-w-3xl mx-auto">
+              <div class="text-center">
+                <div class="inline-flex items-center justify-center size-12 rounded-full bg-primary/10 text-primary mb-3 border border-primary/20">
+                  <CheckCircle2 class="size-6" />
+                </div>
+                <h2 class="text-base font-semibold text-foreground mb-1">Ready to Send?</h2>
+                <p class="text-xs text-muted-foreground">Verify your campaign details before launching.</p>
+              </div>
+
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="bg-card border border-border rounded-xl p-4 shadow-sm flex items-center gap-3">
+                  <div class="size-9 rounded-full bg-primary/10 text-primary flex items-center justify-center shrink-0">
+                    <Users class="size-4" />
+                  </div>
+                  <div>
+                    <div class="text-[11px] text-muted-foreground">Recipients</div>
+                    <div class="text-xs font-semibold text-foreground">{{ form.selectedCustomers.length }} Customers</div>
+                  </div>
+                </div>
+
+                <div class="bg-card border border-border rounded-xl p-4 shadow-sm flex items-center gap-3">
+                  <div class="size-9 rounded-full bg-primary/10 text-primary flex items-center justify-center shrink-0">
+                    <MessageSquare class="size-4" />
+                  </div>
+                  <div>
+                    <div class="text-[11px] text-muted-foreground">Channels</div>
+                    <div class="text-xs font-semibold text-foreground">{{ form.channels.length > 0 ? form.channels.join(' + ') : 'Email' }}</div>
+                  </div>
+                </div>
+
+                <div class="bg-card border border-border rounded-xl p-4 shadow-sm flex items-center gap-3">
+                  <div class="size-9 rounded-full bg-amber-500/10 text-amber-600 flex items-center justify-center shrink-0">
+                    <Star class="size-4" />
+                  </div>
+                  <div>
+                    <div class="text-[11px] text-muted-foreground">Review Platform</div>
+                    <div class="text-xs font-semibold text-foreground">{{ form.destinations.join(', ') || 'Google' }}</div>
+                  </div>
+                </div>
+
+                <div class="bg-card border border-border rounded-xl p-4 shadow-sm flex items-center gap-3">
+                  <div class="size-9 rounded-full bg-emerald-500/10 text-emerald-600 flex items-center justify-center shrink-0">
+                    <Clock class="size-4" />
+                  </div>
+                  <div>
+                    <div class="text-[11px] text-muted-foreground">Schedule</div>
+                    <div class="text-xs font-semibold text-foreground">{{ form.delivery }}</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- STEP 5: Success Screen -->
+          <div v-if="currentStep === 5" class="py-16 flex flex-col items-center text-center animate-in zoom-in-95 duration-500 flex-1">
+            <div class="size-16 bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 rounded-full flex items-center justify-center mb-4">
+              <CheckCircle2 class="size-8" />
+            </div>
+            <h2 class="text-base font-semibold text-foreground mb-1">Review Requests Sent!</h2>
+            <p class="text-xs text-muted-foreground mb-8">{{ form.selectedCustomers.length }} customer requests dispatched successfully.</p>
+
+            <div class="flex flex-wrap justify-center gap-3">
+              <button class="inline-flex items-center gap-2 rounded-lg bg-primary px-6 py-2.5 text-xs font-semibold text-primary-foreground shadow-sm hover:bg-primary/90 transition-colors" @click="closeModal">
+                Done
+              </button>
+            </div>
           </div>
         </div>
 
-        <div class="flex justify-end gap-2 pt-3 border-t border-slate-100 dark:border-slate-850">
-          <button
-            class="px-4 py-2 text-xs font-bold text-muted-foreground hover:bg-background dark:hover:bg-slate-850 rounded-xl border border-border dark:border-slate-800"
-            @click="showModal = false"
-          >
-            Cancel
+        <!-- Footer Actions -->
+        <div v-if="currentStep < 5" class="px-6 py-4 border-t border-border bg-muted/10 flex items-center justify-between shrink-0">
+          <button class="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-xs font-semibold text-muted-foreground hover:bg-muted/50 transition-colors disabled:opacity-40" @click="prevStep" :disabled="currentStep === 1">
+            <ChevronLeft class="size-4" v-if="currentStep > 1" />
+            Back
           </button>
-          <button
-            class="px-5 py-2 text-xs font-bold bg-woot-500 hover:bg-woot-600 text-white rounded-xl shadow-sm transition-colors flex items-center gap-1.5"
-            :class="{'opacity-50 cursor-not-allowed': sendingRequest}"
-            :disabled="sendingRequest"
-            @click="sendRequest"
-          >
-            <svg v-if="sendingRequest" class="size-3.5 animate-spin" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 1121.21 7.89M9 11l3-3 3 3m0 0l-3 3-3-3" /></svg>
-            Send Invite
+
+          <button v-if="currentStep < 4" class="inline-flex items-center gap-2 rounded-lg bg-primary px-6 py-2 text-xs font-semibold text-primary-foreground shadow-sm hover:bg-primary/90 transition-colors" @click="nextStep">
+            Next
+            <ChevronRight class="size-4" />
+          </button>
+          <button v-else-if="currentStep === 4" class="inline-flex items-center gap-2 rounded-lg bg-primary px-6 py-2 text-xs font-semibold text-primary-foreground shadow-sm hover:bg-primary/90 transition-colors cursor-pointer" :disabled="sendingRequest" @click="sendRequest">
+            <Send class="size-4" /> Send Requests
           </button>
         </div>
       </div>

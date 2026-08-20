@@ -177,34 +177,16 @@ const previewReviewsList = computed(() => {
   <div class="p-6 max-w-7xl mx-auto space-y-6">
     <!-- eslint-disable -->
     <!-- Header (List Mode) -->
-    <div v-if="!isEditing" class="flex items-center justify-between">
+    <div v-if="!isEditing" class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
       <div>
-        <h2
-          class="capitalize text-2xl font-extrabold text-foreground dark:text-white tracking-tight"
-        >
-          Review Widgets
-        </h2>
-        <p class="text-xs text-muted-foreground mt-0.5">
-          Embed customer ratings directly onto your landing pages
-        </p>
+        <h1 class="text-base font-semibold tracking-tight text-foreground">Review Widgets</h1>
+        <p class="text-xs text-muted-foreground mt-0.5">Embed customer ratings directly onto your landing pages.</p>
       </div>
       <button
-        class="px-4 py-2 bg-woot-500 hover:bg-woot-600 text-white rounded-xl text-xs font-bold shadow-sm transition-all flex items-center gap-1.5"
+        class="inline-flex items-center gap-2 rounded-lg bg-primary px-3.5 py-2 text-xs font-semibold text-primary-foreground shadow-sm hover:bg-primary/90 transition-colors"
         @click="createWidget"
       >
-        <svg
-          class="size-4"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-          stroke-width="2"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            d="M12 4v16m8-8H4"
-          />
-        </svg>
+        <svg class="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" /></svg>
         New Widget
       </button>
     </div>
@@ -214,9 +196,9 @@ const previewReviewsList = computed(() => {
       class="flex flex-col items-center justify-center py-20 space-y-4"
     >
       <div
-        class="size-10 border-4 border-woot-500 border-t-transparent rounded-full animate-spin"
+        class="size-10 border-4 border-primary border-t-transparent rounded-full animate-spin"
       />
-      <p class="text-sm font-medium text-muted-foreground dark:text-muted-foreground">
+      <p class="text-sm font-medium text-muted-foreground">
         Loading widgets list...
       </p>
     </div>
@@ -224,10 +206,10 @@ const previewReviewsList = computed(() => {
     <!-- Empty State -->
     <div
       v-else-if="widgets.length === 0"
-      class="flex flex-col items-center justify-center py-20 bg-white dark:bg-slate-900 border border-border/80 dark:border-slate-850 rounded-2xl"
+      class="flex flex-col items-center justify-center py-20 bg-card border border-border rounded-xl shadow-sm"
     >
       <div
-        class="p-3.5 rounded-full bg-muted dark:bg-slate-850 text-muted-foreground"
+        class="p-3.5 rounded-full bg-muted text-muted-foreground"
       >
         <svg
           class="size-7"
@@ -243,13 +225,15 @@ const previewReviewsList = computed(() => {
           />
         </svg>
       </div>
-      <h3 class="capitalize font-extrabold text-foreground dark:text-slate-200 mt-4">
+      <h3 class="text-[20px] font-[600] text-foreground mt-4">
         No widgets defined
       </h3>
-      <p class="text-xs text-muted-foreground mt-1 max-w-sm text-center">
-        Generate an embeddable badge or review list to showcase your positive
-        reviews.
+      <p class="text-[13.5px] text-muted-foreground mt-1 max-w-sm text-center leading-relaxed mb-4">
+        Generate an embeddable badge or review list to showcase your positive reviews.
       </p>
+      <button @click="createWidget" class="px-4 py-2 rounded-lg border border-border bg-card text-[13.5px] font-medium text-foreground hover:bg-muted transition-colors border-input hover:border-transparent cursor-pointer">
+        + Create First Widget
+      </button>
     </div>
 
     <!-- Widgets List View -->
@@ -257,25 +241,25 @@ const previewReviewsList = computed(() => {
       <div 
         v-for="w in widgets" 
         :key="w.id"
-        class="bg-white dark:bg-slate-900 border border-border/80 dark:border-slate-850 rounded-2xl shadow-sm hover:shadow-md transition-all p-5 flex flex-col space-y-4 cursor-pointer group"
+        class="bg-card border border-border rounded-xl shadow-sm hover:border-primary/40 transition-all p-5 flex flex-col space-y-4 cursor-pointer group"
         @click="activeWidget = { ...w }; isEditing = true;"
       >
         <div class="flex items-start justify-between">
           <div>
-            <h3 class="capitalize font-extrabold text-foreground dark:text-slate-100 text-sm group-hover:text-woot-500 transition-colors">{{ w.name }}</h3>
-            <p class="text-[10px] text-muted-foreground font-normal mt-0.5 capitalize">{{ w.style }} Widget</p>
+            <h3 class="font-semibold text-foreground text-sm group-hover:text-primary transition-colors">{{ w.name }}</h3>
+            <p class="text-[11px] text-muted-foreground font-normal mt-0.5 capitalize">{{ w.style }} Widget</p>
           </div>
           <span 
             class="px-2 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider"
-            :class="w.active ? 'bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600' : 'bg-slate-100 dark:bg-slate-800 text-slate-500'"
+            :class="w.active ? 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400' : 'bg-muted text-muted-foreground'"
           >
             {{ w.active ? 'Active' : 'Inactive' }}
           </span>
         </div>
 
-        <div class="flex items-center gap-4 text-xs font-medium text-muted-foreground pt-2 border-t border-slate-100 dark:border-slate-800/80">
+        <div class="flex items-center gap-4 text-xs font-medium text-muted-foreground pt-2 border-t border-border">
           <div class="flex items-center gap-1.5">
-            <span class="text-yellow-400 text-sm">★</span>
+            <span class="text-amber-500 text-sm">★</span>
             <span>{{ w.min_rating }}+ Stars only</span>
           </div>
         </div>

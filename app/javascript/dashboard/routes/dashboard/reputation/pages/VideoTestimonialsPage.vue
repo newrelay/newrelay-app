@@ -1,4 +1,5 @@
 <script setup>
+/* eslint-disable */
 import { ref, onMounted } from 'vue';
 
 const axios = window.axios;
@@ -117,14 +118,14 @@ const formatDate = timestamp => {
 const statusColor = s => {
   return (
     {
-      sent: 'bg-blue-50 text-blue-700 dark:bg-blue-950/20 dark:text-blue-400 border border-blue-100 dark:border-blue-900/30',
+      sent: 'bg-blue-500/15 text-blue-600 dark:text-blue-400 border border-blue-500/20',
       delivered:
-        'bg-cyan-50 text-cyan-700 dark:bg-cyan-950/20 dark:text-cyan-400 border border-cyan-100 dark:border-cyan-900/30',
+        'bg-cyan-500/15 text-cyan-600 dark:text-cyan-400 border border-cyan-500/20',
       clicked:
-        'bg-amber-50 text-amber-700 dark:bg-amber-950/20 dark:text-amber-450 border border-amber-200/50 dark:border-amber-900/30',
+        'bg-amber-500/15 text-amber-600 dark:text-amber-400 border border-amber-500/20',
       completed:
-        'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/20 dark:text-emerald-400 border border-emerald-100 dark:border-emerald-900/30',
-    }[s] || 'bg-slate-100 text-slate-650'
+        'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20',
+    }[s] || 'bg-muted text-muted-foreground'
   );
 };
 
@@ -133,22 +134,42 @@ onMounted(fetchTestimonials);
 
 <template>
   <div class="p-6 max-w-7xl mx-auto space-y-6">
+    <!-- eslint-disable -->
     <!-- Header -->
-    <div class="flex items-center justify-between">
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
       <div>
-        <h2
-          class="capitalize text-2xl font-extrabold text-foreground dark:text-white tracking-tight"
-        >
+        <h1 class="text-base font-medium tracking-tight text-foreground">
           Video Testimonials
-        </h2>
-        <p class="text-xs text-muted-foreground mt-0.5">
-          Watch and manage the video testimonials submitted by your customers.
+        </h1>
+        <p class="text-sm text-muted-foreground mt-1">
+          Collect, watch and manage authentic video testimonials from your
+          customers.
         </p>
       </div>
 
-      <div class="flex gap-2">
+      <div class="flex items-center gap-3">
+        <a
+          :href="`/reputation/video/${accountId}/new`"
+          target="_blank"
+          class="inline-flex items-center gap-2 rounded-lg border border-border bg-card px-3.5 py-2 text-sm font-medium text-foreground shadow-sm hover:bg-muted/50 transition-colors"
+        >
+          <svg
+            class="size-4"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+            />
+          </svg>
+          Open Form
+        </a>
         <button
-          class="px-4 py-2 bg-woot-500 hover:bg-woot-600 text-white rounded-xl text-xs font-bold shadow-sm transition-all flex items-center gap-1.5"
+          class="inline-flex items-center gap-2 rounded-lg bg-primary px-3.5 py-2 text-sm font-medium text-primary-foreground shadow-sm hover:bg-primary/90 transition-colors"
           @click="openModal"
         >
           <svg
@@ -166,37 +187,23 @@ onMounted(fetchTestimonials);
           </svg>
           Send Request
         </button>
-        <a
-          :href="`/reputation/video/${accountId}/new`"
-          target="_blank"
-          class="px-4 py-2 bg-white dark:bg-slate-800 border border-border dark:border-slate-700 hover:bg-background dark:hover:bg-slate-750 text-foreground dark:text-slate-200 rounded-xl text-xs font-bold shadow-sm transition-all flex items-center gap-1.5"
-        >
-          <svg
-            class="size-4"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-            stroke-width="2"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
-            />
-          </svg>
-          Open Form
-        </a>
       </div>
+    </div>
+
+    <!-- Loading -->
+    <div
+      v-if="loading"
+      class="flex items-center justify-center py-20 text-sm text-muted-foreground"
+    >
+      Loading video testimonials…
     </div>
 
     <!-- Empty State -->
     <div
-      v-if="!loading && testimonials.length === 0"
-      class="flex flex-col items-center justify-center py-20 bg-white dark:bg-slate-900 border border-border/80 dark:border-slate-850 rounded-2xl"
+      v-else-if="testimonials.length === 0"
+      class="flex flex-col items-center justify-center py-20 bg-card border border-border rounded-xl shadow-sm"
     >
-      <div
-        class="p-3.5 rounded-full bg-muted dark:bg-slate-850 text-muted-foreground"
-      >
+      <div class="p-3.5 rounded-full bg-primary/10 text-primary">
         <svg
           class="size-7"
           fill="none"
@@ -211,26 +218,27 @@ onMounted(fetchTestimonials);
           />
         </svg>
       </div>
-      <h3
-        class="capitalize font-extrabold text-foreground dark:text-slate-200 mt-4"
-      >
+      <h3 class="text-[20px] font-[600] text-foreground mt-4">
         No video testimonials yet
       </h3>
-      <p class="text-xs text-muted-foreground mt-1 max-w-sm text-center">
+      <p class="text-[13.5px] text-muted-foreground mt-1 max-w-sm text-center leading-relaxed mb-4">
         Share the submission form link with your customers to start collecting
         video testimonials.
       </p>
+      <button @click="openModal" class="px-4 py-2 rounded-lg border border-border bg-card text-[13.5px] font-medium text-foreground hover:bg-muted transition-colors border-input hover:border-transparent cursor-pointer">
+        + Request Video Testimonial
+      </button>
     </div>
 
     <!-- Grid View -->
     <div
-      v-else-if="!loading && testimonials.length > 0"
+      v-else
       class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
     >
       <div
         v-for="t in testimonials"
         :key="t.id"
-        class="bg-white dark:bg-slate-900 border border-border/80 dark:border-slate-850 rounded-2xl shadow-sm overflow-hidden flex flex-col group"
+        class="bg-card border border-border rounded-xl shadow-sm overflow-hidden flex flex-col"
       >
         <!-- Video Player -->
         <div class="aspect-video bg-black relative">
@@ -263,26 +271,24 @@ onMounted(fetchTestimonials);
         </div>
 
         <!-- Details -->
-        <div class="p-4 flex-1 flex flex-col justify-between space-y-4">
+        <div class="p-5 flex-1 flex flex-col justify-between gap-4">
           <div>
-            <h3
-              class="capitalize font-extrabold text-foreground dark:text-slate-100 text-sm line-clamp-2"
-            >
+            <h3 class="font-medium text-foreground text-sm line-clamp-2">
               "{{ t.title }}"
             </h3>
-            <p class="text-[11px] text-muted-foreground font-medium mt-1">
+            <p class="text-xs text-muted-foreground mt-1">
               {{ t.email }}
             </p>
           </div>
 
           <div
-            class="flex items-center justify-between pt-3 border-t border-slate-100 dark:border-slate-800"
+            class="flex items-center justify-between pt-3 border-t border-border"
           >
-            <span class="text-[10px] text-muted-foreground font-medium">{{
+            <span class="text-xs text-muted-foreground">{{
               formatDate(t.created_at)
             }}</span>
             <button
-              class="text-[10px] uppercase font-bold tracking-wider text-destructive hover:text-destructive px-2 py-1 hover:bg-red-50 dark:hover:bg-red-900/30 rounded-lg transition-colors"
+              class="text-xs font-medium text-destructive px-2 py-1 hover:bg-destructive/10 rounded-lg transition-colors"
               @click="deleteTestimonial(t.id)"
             >
               Delete
@@ -295,23 +301,19 @@ onMounted(fetchTestimonials);
     <!-- Outbound Logs -->
     <div
       v-if="!loading"
-      class="bg-white dark:bg-slate-900 rounded-2xl border border-border/80 dark:border-slate-850 shadow-sm overflow-hidden mt-8"
+      class="bg-card rounded-xl border border-border shadow-sm overflow-hidden mt-8"
     >
-      <div class="px-6 py-4 border-b border-slate-100 dark:border-slate-850">
-        <h3
-          class="capitalize font-extrabold text-foreground dark:text-white text-sm"
-        >
+      <div class="px-6 py-4 border-b border-border">
+        <h3 class="text-base font-medium text-foreground">
           Outbound Video Requests
         </h3>
       </div>
 
       <div
         v-if="requests.length === 0"
-        class="flex flex-col items-center justify-center py-16 space-y-2"
+        class="flex flex-col items-center justify-center py-16 gap-2"
       >
-        <div
-          class="p-3 rounded-full bg-muted dark:bg-slate-850 text-muted-foreground"
-        >
+        <div class="p-3 rounded-full bg-primary/10 text-primary">
           <svg
             class="size-6"
             fill="none"
@@ -326,87 +328,85 @@ onMounted(fetchTestimonials);
             />
           </svg>
         </div>
-        <p class="text-sm font-bold text-foreground dark:text-slate-355">
+        <p class="text-sm font-medium text-foreground">
           No video requests dispatched
         </p>
       </div>
 
-      <table v-else class="w-full text-left border-collapse">
-        <thead>
-          <tr
-            class="bg-background dark:bg-slate-800/40 text-[10px] font-extrabold text-muted-foreground uppercase tracking-wider"
-          >
-            <th class="px-6 py-3.5">Contact Name</th>
-            <th class="px-6 py-3.5">Template</th>
-            <th class="px-6 py-3.5">Channel</th>
-            <th class="px-6 py-3.5">Invite Status</th>
-            <th class="px-6 py-3.5 text-right">Sent Date</th>
-          </tr>
-        </thead>
-        <tbody class="divide-y divide-slate-100 dark:divide-slate-850">
-          <tr
-            v-for="req in requests"
-            :key="req.id"
-            class="hover:bg-background/50 dark:hover:bg-slate-850/30 text-xs transition-colors"
-          >
-            <td class="px-6 py-4 font-bold text-foreground dark:text-slate-200">
-              <div class="flex flex-col">
-                <span>{{ req.contact?.name || 'Customer' }}</span>
+      <div v-else class="overflow-x-auto">
+        <table class="w-full text-left border-collapse">
+          <thead>
+            <tr
+              class="bg-muted/40 text-[11px] font-semibold text-muted-foreground uppercase tracking-wider"
+            >
+              <th class="px-6 py-3.5">Contact Name</th>
+              <th class="px-6 py-3.5">Template</th>
+              <th class="px-6 py-3.5">Channel</th>
+              <th class="px-6 py-3.5">Invite Status</th>
+              <th class="px-6 py-3.5 text-right">Sent Date</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-border">
+            <tr
+              v-for="req in requests"
+              :key="req.id"
+              class="hover:bg-muted/30 text-xs transition-colors"
+            >
+              <td class="px-6 py-4 font-medium text-foreground">
+                <div class="flex flex-col">
+                  <span>{{ req.contact?.name || 'Customer' }}</span>
+                  <span class="text-[11px] text-muted-foreground font-normal mt-0.5">
+                    {{
+                      req.contact?.phone_number ||
+                      req.contact?.email ||
+                      'No credentials'
+                    }}
+                  </span>
+                </div>
+              </td>
+              <td class="px-6 py-4 text-muted-foreground">
+                {{ req.reputation_template?.name || 'Custom' }}
+              </td>
+              <td class="px-6 py-4">
                 <span
-                  class="text-[10px] text-muted-foreground font-normal mt-0.5"
+                  class="px-2 py-0.5 text-[10px] font-semibold rounded-lg uppercase bg-muted text-muted-foreground"
                 >
-                  {{
-                    req.contact?.phone_number ||
-                    req.contact?.email ||
-                    'No credentials'
-                  }}
+                  {{ req.channel }}
                 </span>
-              </div>
-            </td>
-            <td class="px-6 py-4 text-muted-foreground dark:text-slate-350">
-              {{ req.reputation_template?.name || 'Custom' }}
-            </td>
-            <td class="px-6 py-4">
-              <span
-                class="px-2 py-0.5 text-[10px] font-bold rounded-lg uppercase bg-muted dark:bg-slate-800 text-muted-foreground dark:text-slate-300"
-              >
-                {{ req.channel }}
-              </span>
-            </td>
-            <td class="px-6 py-4">
-              <span
-                class="px-2 py-0.5 text-[10px] font-bold rounded-full uppercase"
-                :class="statusColor(req.status)"
-              >
-                {{ req.status }}
-              </span>
-            </td>
-            <td class="px-6 py-4 text-right text-muted-foreground">
-              {{ new Date(req.created_at).toLocaleDateString() }}
-            </td>
-          </tr>
-        </tbody>
-      </table>
+              </td>
+              <td class="px-6 py-4">
+                <span
+                  class="px-2 py-0.5 text-[10px] font-semibold rounded-full uppercase"
+                  :class="statusColor(req.status)"
+                >
+                  {{ req.status }}
+                </span>
+              </td>
+              <td class="px-6 py-4 text-right text-muted-foreground">
+                {{ new Date(req.created_at).toLocaleDateString() }}
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
 
     <!-- Request Modal -->
     <div
       v-if="showModal"
-      class="fixed inset-0 z-50 overflow-y-auto flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm transition-all"
+      class="fixed inset-0 z-50 overflow-y-auto flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm transition-all"
     >
       <div
-        class="relative w-full max-w-lg bg-white dark:bg-slate-900 rounded-2xl border border-border/80 dark:border-slate-800 shadow-2xl p-6 space-y-5"
+        class="relative w-full max-w-lg bg-card rounded-xl border border-border shadow-2xl p-6 space-y-5"
       >
         <div
-          class="flex items-center justify-between border-b border-slate-100 dark:border-slate-850 pb-3"
+          class="flex items-center justify-between border-b border-border pb-3"
         >
-          <h3
-            class="capitalize text-base font-extrabold text-slate-950 dark:text-white"
-          >
+          <h3 class="text-base font-medium text-foreground">
             Send Video Testimonial Request
           </h3>
           <button
-            class="p-1 rounded-lg hover:bg-muted dark:hover:bg-slate-850 text-muted-foreground"
+            class="p-1 rounded-lg hover:bg-muted text-muted-foreground"
             @click="showModal = false"
           >
             <svg
@@ -427,24 +427,22 @@ onMounted(fetchTestimonials);
 
         <div class="space-y-4">
           <div class="space-y-1.5">
-            <label
-              class="block text-slate-450 uppercase tracking-wider text-[13.5px] font-[500] text-foreground"
+            <label class="block text-sm font-medium text-foreground"
               >Customer Email</label>
             <input
               v-model="requestForm.email"
               type="email"
               placeholder="customer@example.com"
-              class="w-full rounded-xl border border-border dark:border-slate-700 dark:bg-slate-850 p-3 focus:outline-none focus:ring-2 focus:ring-woot-500 text-[14px] border-border/80 bg-background focus-visible:ring-1 focus-visible:ring-primary/30 shadow-sm rounded-md"
+              class="w-full rounded-lg border border-border bg-background p-3 text-sm shadow-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/30"
             />
           </div>
 
           <div class="space-y-1.5">
-            <label
-              class="block text-slate-450 uppercase tracking-wider text-[13.5px] font-[500] text-foreground"
+            <label class="block text-sm font-medium text-foreground"
               >Message Template (Optional)</label>
             <select
               v-model="selectedTemplate"
-              class="w-full text-xs rounded-xl border border-border dark:border-slate-700 dark:bg-slate-850 p-3 focus:outline-none focus:ring-2 focus:ring-woot-500"
+              class="w-full rounded-lg border border-border bg-background p-3 text-sm shadow-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/30"
               @change="handleTemplateChange"
             >
               <option :value="null">Select a template to autofill...</option>
@@ -455,46 +453,42 @@ onMounted(fetchTestimonials);
           </div>
 
           <div class="space-y-1.5">
-            <label
-              class="block text-slate-450 uppercase tracking-wider text-[13.5px] font-[500] text-foreground"
+            <label class="block text-sm font-medium text-foreground"
               >Email Subject</label>
             <input
               v-model="requestForm.subject"
               type="text"
-              class="w-full rounded-xl border border-border dark:border-slate-700 dark:bg-slate-850 p-3 focus:outline-none focus:ring-2 focus:ring-woot-500 text-[14px] border-border/80 bg-background focus-visible:ring-1 focus-visible:ring-primary/30 shadow-sm rounded-md"
+              class="w-full rounded-lg border border-border bg-background p-3 text-sm shadow-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/30"
             />
           </div>
 
           <div class="space-y-1.5">
-            <label
-              class="block text-slate-450 uppercase tracking-wider text-[13.5px] font-[500] text-foreground"
+            <label class="block text-sm font-medium text-foreground"
               >Message</label>
             <textarea
               v-model="requestForm.body"
               rows="5"
-              class="w-full rounded-xl border border-border dark:border-slate-700 dark:bg-slate-850 p-3 focus:outline-none focus:ring-2 focus:ring-woot-500 font-mono text-[14px] border-border/80 bg-background focus-visible:ring-1 focus-visible:ring-primary/30 shadow-sm rounded-md"
+              class="w-full rounded-lg border border-border bg-background p-3 font-mono text-sm shadow-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/30"
             />
-            <p class="text-[10px] text-muted-foreground mt-1">
+            <p class="text-xs text-muted-foreground mt-1">
               Keep
-              <code class="bg-muted dark:bg-slate-800 px-1 rounded">{{
-                video_link
-              }}</code>
+              <code class="bg-muted px-1 rounded">{{ video_link }}</code>
               in the message, it will be replaced by the real link.
             </p>
           </div>
         </div>
 
         <div
-          class="flex justify-end gap-2 pt-3 border-t border-slate-100 dark:border-slate-850"
+          class="flex justify-end gap-2 pt-3 border-t border-border"
         >
           <button
-            class="px-4 py-2 text-xs font-bold text-muted-foreground hover:bg-background dark:hover:bg-slate-850 rounded-xl border border-border dark:border-slate-800"
+            class="rounded-lg border border-border px-4 py-2 text-sm font-medium text-muted-foreground hover:bg-muted/50 transition-colors"
             @click="showModal = false"
           >
             Cancel
           </button>
           <button
-            class="px-5 py-2 text-xs font-bold bg-woot-500 hover:bg-woot-600 text-white rounded-xl shadow-sm transition-colors flex items-center gap-1.5"
+            class="inline-flex items-center gap-1.5 rounded-lg bg-primary px-5 py-2 text-sm font-medium text-primary-foreground shadow-sm hover:bg-primary/90 transition-colors disabled:opacity-50"
             :disabled="!requestForm.email || sending"
             @click="sendRequest"
           >

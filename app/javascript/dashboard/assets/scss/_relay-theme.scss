@@ -296,3 +296,12 @@ html {
 .anim-dialog[data-state='closed'] {
   animation: anim-dialog-out 0.15s ease-in;
 }
+
+// Hide scrollbar utility (matches Tailwind v4 hide-scrollbar)
+.hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}

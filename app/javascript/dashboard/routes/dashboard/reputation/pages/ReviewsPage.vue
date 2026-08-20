@@ -656,11 +656,10 @@ function addInternalNote() {
             <div class="relative">
               <textarea 
                 v-model="replyText"
-                rows="4" 
-                class="w-full text-sm bg-background border border-border rounded-2xl p-3.5 pb-12 focus:outline-none focus:ring-1 focus:ring-ring resize-none placeholder:text-muted-foreground/60"
+                class="w-full h-28 text-xs font-normal text-foreground bg-background border border-border rounded-2xl p-3.5 pb-11 focus:outline-none focus:ring-1 focus:ring-primary/40 resize-none placeholder:text-muted-foreground/60 shadow-xs leading-relaxed"
                 placeholder="Write a response..."
               ></textarea>
-              <div class="absolute bottom-3 left-3 right-3 flex justify-between items-center">
+              <div class="absolute bottom-2.5 left-3 right-3 flex justify-between items-center bg-background/80 backdrop-blur-xs pt-1">
                 <div class="flex items-center gap-1">
                   <button class="p-1.5 text-muted-foreground hover:text-foreground rounded-lg hover:bg-muted cursor-pointer"><ImageIcon class="size-4" /></button>
                   <button class="p-1.5 text-primary hover:bg-primary/10 rounded-lg cursor-pointer" @click="useAiSuggestion(aiSuggestions[0])"><Sparkles class="size-4" /></button>

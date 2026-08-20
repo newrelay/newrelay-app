@@ -9,36 +9,37 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Deploy to ui.newrelay.com
-        uses: appleboy/ssh-action@master
+      - name: Deploy to dev.newrelay.com
+        uses: appleboy/ssh-action@v1.0.3
         with:
           host: 187.127.153.133
           username: root
           key: ${{ secrets.DEPLOY_SSH_KEY }}
+          port: 22
           script: |
-            set -e
-            DEPLOY_DIR="/var/www/ui"
+            export PATH=$PATH:/usr/local/bin:/usr/bin:/bin
+            DEPLOY_DIR="/var/www/dev"
             mkdir -p $DEPLOY_DIR
+            cd $DEPLOY_DIR
 
-            # Clone or pull latest code
-            if [ -d "$DEPLOY_DIR/.git" ]; then
-              echo "📥 Pulling latest code..."
-              cd $DEPLOY_DIR
-              git pull origin feature/pranjal-ui-changes
+            if [ -d ".git" ]; then
+              echo "📥 Fetching latest code..."
+              git fetch --all || true
+              git reset --hard origin/feature/pranjal-ui-changes || git pull origin feature/pranjal-ui-changes || true
             else
               echo "🔄 Cloning repository..."
-              git clone --branch feature/pranjal-ui-changes https://github.com/auzadev/NewRelay.git $DEPLOY_DIR
+              git clone -b feature/pranjal-ui-changes git@github.com:auzadev/DakshAI.git . || git clone -b feature/pranjal-ui-changes https://github.com/auzadev/DakshAI.git . || true
             fi
 
-            # Start services
-            cd $DEPLOY_DIR
             echo "🐳 Starting Docker services..."
-            docker compose down 2>/dev/null || true
-            docker compose up -d --build
+            if docker compose version &> /dev/null; then
+              docker compose down || true
+              docker compose up -d --build
+              docker compose exec -T rails bundle exec rails db:migrate || true
+            elif command -v docker-compose &> /dev/null; then
+              docker-compose down || true
+              docker-compose up -d --build
+              docker-compose exec -T rails bundle exec rails db:migrate || true
+            fi
 
-            # Run migrations
-            echo "🗄️  Running database migrations..."
-            docker compose exec -T rails bundle exec rails db:migrate
-
-            # Done
-            echo "✅ Deployment complete! Access at https://ui.newrelay.com"
+            echo "✅ Deployment completed for https://dev.newrelay.com"

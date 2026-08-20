@@ -256,7 +256,7 @@ const filteredVideos = computed(() => {
     >
       <!-- Page Header matching AGENTS.md Directive (h1 text-xl font-semibold) -->
       <div class="px-8 py-6 border-b border-border bg-card shrink-0">
-        <div class="flex items-center text-xs text-muted-foreground mb-2">
+        <div class="flex items-center text-sm text-muted-foreground mb-2">
           <span>Reputation</span>
           <span class="mx-2">/</span>
           <span class="text-foreground font-medium">Video Testimonials</span>
@@ -677,7 +677,7 @@ const filteredVideos = computed(() => {
           </div>
         
           <!-- Tabs Nav -->
-          <div class="px-6 border-b border-border flex gap-5 text-xs font-semibold shrink-0 pt-2 bg-card">
+          <div class="px-6 border-b border-border flex gap-5 text-[13px] font-semibold shrink-0 pt-2 bg-card">
             <button 
               v-for="tab in ['Overview', 'Transcript', 'AI Insights', 'Activity', 'Notes']" :key="tab"
               @click="activeTab = tab"

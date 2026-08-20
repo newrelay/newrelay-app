@@ -110,10 +110,9 @@ const showPlatformDropdown = ref(false);
 const showSortDropdown = ref(false);
 
 const getSentimentClass = (sentiment) => {
-  if (sentiment === 'Positive') return 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 border border-emerald-500/20';
-  if (sentiment === 'Needs Escalation') return 'bg-amber-500/15 text-amber-700 dark:text-amber-400 border border-amber-500/20';
-  if (sentiment === 'Negative') return 'bg-rose-500/15 text-rose-700 dark:text-rose-400 border border-rose-500/20';
-  return 'bg-muted text-muted-foreground border border-border';
+  if (sentiment === 'Positive') return 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400';
+  if (sentiment === 'Needs Escalation' || sentiment === 'Negative') return 'bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-400';
+  return 'bg-muted text-muted-foreground';
 };
 
 const getStatusClass = (status) => {
@@ -464,13 +463,13 @@ function addInternalNote() {
                         <div class="flex gap-0.5 text-[#FFB020]">
                           <Star v-for="i in 5" :key="i" class="size-[13px]" :class="i <= review.rating ? 'fill-[#FFB020]' : 'text-muted-foreground/30'" />
                         </div>
-                        <span 
+                        <div 
                           v-if="review.sentiment" 
-                          class="text-[10px] font-semibold px-1.5 py-0.5 rounded-md shrink-0"
+                          class="flex items-center gap-1 text-[10px] font-medium px-1.5 py-0.5 rounded-md"
                           :class="getSentimentClass(review.sentiment)"
                         >
-                          {{ review.sentiment }}
-                        </span>
+                          <span>{{ review.sentiment }}</span>
+                        </div>
                       </div>
                     </div>
                     <div class="flex items-center gap-1.5 text-xs text-muted-foreground mt-0.5">

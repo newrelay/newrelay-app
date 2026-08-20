@@ -13,6 +13,7 @@ import {
 const searchQuery = ref('');
 const selectedReviews = ref([]);
 const selectedReview = ref(null);
+const activeReviewMenuId = ref(null);
 const internalNote = ref('');
 const replyText = ref('');
 const viewMode = ref('list');
@@ -491,9 +492,46 @@ function addInternalNote() {
                     {{ review.status }}
                   </span>
                   
-                  <button class="p-1 text-muted-foreground hover:text-foreground rounded-lg hover:bg-muted shrink-0" @click.stop="openReviewDetail(review)">
-                    <MoreHorizontal class="size-5" />
-                  </button>
+                  <!-- 3-Dots Action Menu -->
+                  <div class="relative shrink-0" @click.stop>
+                    <button 
+                      class="p-1.5 text-muted-foreground hover:text-foreground rounded-lg hover:bg-muted shrink-0 cursor-pointer" 
+                      @click="activeReviewMenuId = activeReviewMenuId === review.id ? null : review.id"
+                    >
+                      <MoreHorizontal class="size-5" />
+                    </button>
+                    
+                    <div 
+                      v-if="activeReviewMenuId === review.id" 
+                      class="absolute right-0 mt-1 w-48 rounded-xl border border-border bg-card p-1 shadow-xl z-30 space-y-0.5 animate-in fade-in duration-150"
+                    >
+                      <button 
+                        @click="openReviewDetail(review); activeReviewMenuId = null" 
+                        class="w-full text-left px-3 py-1.5 text-xs rounded-md hover:bg-muted font-medium text-foreground flex items-center gap-2 cursor-pointer"
+                      >
+                        <MessageSquare class="size-4" /> View Details
+                      </button>
+                      <button 
+                        @click="activeReviewMenuId = null" 
+                        class="w-full text-left px-3 py-1.5 text-xs rounded-md hover:bg-muted font-medium text-foreground flex items-center gap-2 cursor-pointer"
+                      >
+                        <UserPlus class="size-4" /> Assign
+                      </button>
+                      <div class="my-1 border-t border-border/80"></div>
+                      <button 
+                        @click="review.status = 'Replied'; activeReviewMenuId = null" 
+                        class="w-full text-left px-3 py-1.5 text-xs rounded-md hover:bg-muted font-medium text-foreground flex items-center gap-2 cursor-pointer"
+                      >
+                        <CheckSquare class="size-4 text-emerald-600" /> Mark Resolved
+                      </button>
+                      <button 
+                        @click="reviews = reviews.filter(r => r.id !== review.id); activeReviewMenuId = null" 
+                        class="w-full text-left px-3 py-1.5 text-xs rounded-md hover:bg-rose-500/10 text-rose-600 dark:text-rose-400 font-medium flex items-center gap-2 cursor-pointer"
+                      >
+                        <X class="size-4" /> Delete
+                      </button>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>

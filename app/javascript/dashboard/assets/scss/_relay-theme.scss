@@ -297,6 +297,23 @@ html {
   animation: anim-dialog-out 0.15s ease-in;
 }
 
+// Custom scrollbar styling (thin border-color scrollbars)
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
+  &::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  &::-webkit-scrollbar-thumb {
+    background-color: var(--border);
+    border-radius: 9999px;
+  }
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+}
+
 // Hide scrollbar utility (matches Tailwind v4 hide-scrollbar)
 .hide-scrollbar {
   -ms-overflow-style: none;

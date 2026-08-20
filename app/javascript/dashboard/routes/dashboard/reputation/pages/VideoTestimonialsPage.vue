@@ -543,7 +543,7 @@ const filteredVideos = computed(() => {
                 <div class="mt-auto flex items-center justify-between gap-2">
                   <div class="flex flex-wrap gap-2">
                     <Badge v-for="tag in video.aiTags.filter(t => t !== 'AI Summary')" :key="tag" 
-                      class="shadow-none font-medium text-[10px] px-2 py-0.5 rounded-md border"
+                      class="inline-flex items-center transition-colors focus:outline-none focus:ring-1 focus:ring-ring shadow-none font-medium text-[10px] px-2 py-0.5 rounded-md border"
                       :class="
                         tag === 'Approved' ? 'bg-emerald-50 text-emerald-600 border-emerald-100 dark:bg-emerald-900/30 dark:border-emerald-900/50' : 
                         tag === 'Published' ? 'bg-primary/10 text-primary border-primary/20 dark:bg-primary/10 dark:border-primary/20' : 
@@ -570,7 +570,7 @@ const filteredVideos = computed(() => {
                     <Star v-for="i in 5" :key="i" class="size-3.5 fill-amber-400 text-amber-400" />
                   </div>
                   <Badge
-                    class="shadow-none font-medium text-[10.5px] px-2.5 py-0.5 rounded-full border w-max mb-1"
+                    class="inline-flex items-center transition-colors focus:outline-none focus:ring-1 focus:ring-ring shadow-none font-medium text-[10.5px] px-2.5 py-0.5 rounded-full border w-max mb-1"
                     :class="
                       video.status === 'Approved' ? 'bg-emerald-50 text-emerald-600 border-emerald-100 dark:bg-emerald-900/30 dark:border-emerald-900/50' : 
                       video.status === 'Published' ? 'bg-primary/10 text-primary border-primary/20 dark:bg-primary/10 dark:border-primary/20' : 

@@ -575,16 +575,16 @@ function addInternalNote() {
       </div>
     </div>
 
-    <!-- Review Details Right Drawer Panel (1:1 from ReviewsView.vue) -->
+    <!-- Review Details Right Drawer Panel (1:1 from reference design mockup) -->
     <div 
-      class="fixed top-16 bottom-0 right-0 w-[400px] bg-card border-l border-border shadow-xl transform transition-transform duration-300 ease-in-out z-40 flex flex-col"
+      class="fixed top-0 bottom-0 right-0 w-[400px] bg-card border-l border-border shadow-2xl transform transition-transform duration-300 ease-in-out z-50 flex flex-col"
       :class="selectedReview ? 'translate-x-0' : 'translate-x-full'"
     >
       <div v-if="selectedReview" class="flex-1 flex flex-col overflow-hidden">
         <!-- Header -->
-        <div class="px-5 py-4 border-b border-border flex items-center justify-between bg-muted/10 shrink-0">
-          <h2 class="text-base font-semibold text-foreground">Review Details</h2>
-          <button class="p-1 text-muted-foreground hover:text-foreground rounded-lg hover:bg-muted" @click="closeReviewDetail">
+        <div class="px-5 py-4 border-b border-border flex items-center justify-between bg-card shrink-0">
+          <h2 class="text-[15px] font-semibold text-foreground">Review Details</h2>
+          <button class="p-1 text-muted-foreground hover:text-foreground rounded-lg hover:bg-muted cursor-pointer" @click="closeReviewDetail">
             <X class="size-4" />
           </button>
         </div>
@@ -593,38 +593,38 @@ function addInternalNote() {
         <div class="flex-1 overflow-y-auto p-5 space-y-6">
           <!-- Author Header -->
           <div>
-            <div class="flex items-center justify-between mb-4">
+            <div class="flex items-start justify-between mb-3">
               <div class="flex items-center gap-3">
-                <img :src="selectedReview.avatar" class="size-10 rounded-full border border-border" />
+                <img :src="selectedReview.avatar" class="size-10 rounded-full border border-border object-cover shrink-0" />
                 <div>
-                  <h3 class="font-medium text-sm text-foreground">{{ selectedReview.author }}</h3>
+                  <h3 class="font-bold text-sm text-foreground">{{ selectedReview.author }}</h3>
                   <div class="flex items-center gap-2 mt-0.5">
                     <span class="text-xs text-muted-foreground">{{ selectedReview.date }} on {{ selectedReview.platform }}</span>
                   </div>
                 </div>
               </div>
-              <div class="flex gap-0.5 text-[#FFB020]">
+              <div class="flex gap-0.5 text-[#FFB020] pt-1">
                 <Star v-for="i in 5" :key="i" class="size-3.5" :class="i <= selectedReview.rating ? 'fill-[#FFB020]' : 'text-muted-foreground/30'" />
               </div>
             </div>
-            <p class="text-sm text-foreground leading-relaxed bg-muted/30 p-4 rounded-xl border border-border/50">
+            <p class="text-sm text-foreground leading-relaxed bg-muted/30 p-4 rounded-xl border border-border/50 shadow-xs">
               {{ selectedReview.content }}
             </p>
           </div>
 
           <!-- Assignee & Status Selectors -->
-          <div class="flex items-center gap-4 bg-muted/20 p-3 rounded-xl border border-border/50">
+          <div class="flex items-center gap-4 bg-muted/20 p-3.5 rounded-xl border border-border/50">
             <div class="flex-1">
-              <label class="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-1 block">Assignee</label>
-              <select v-model="selectedReview.assignee" class="w-full text-xs bg-background border border-border rounded-lg p-2 focus:outline-none">
+              <label class="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider mb-1 block">ASSIGNEE</label>
+              <select v-model="selectedReview.assignee" class="w-full text-xs font-medium bg-card border border-border rounded-lg px-3 py-2 text-foreground focus:outline-none focus:ring-1 focus:ring-primary shadow-xs cursor-pointer">
                 <option :value="null">Unassigned</option>
                 <option value="Jane Doe">Jane Doe</option>
                 <option value="John Smith">John Smith</option>
               </select>
             </div>
             <div class="flex-1">
-              <label class="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-1 block">Status</label>
-              <select v-model="selectedReview.status" class="w-full text-xs bg-background border border-border rounded-lg p-2 focus:outline-none">
+              <label class="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider mb-1 block">STATUS</label>
+              <select v-model="selectedReview.status" class="w-full text-xs font-medium bg-card border border-border rounded-lg px-3 py-2 text-foreground focus:outline-none focus:ring-1 focus:ring-primary shadow-xs cursor-pointer">
                 <option value="Needs Reply">Needs Reply</option>
                 <option value="Replied">Replied</option>
               </select>
@@ -637,16 +637,16 @@ function addInternalNote() {
               <MessageCircle class="size-4 text-primary" /> Public Reply
             </h3>
             
-            <div v-if="!selectedReview.reply" class="bg-primary/5 rounded-xl p-4 border border-primary/20 mb-4 space-y-3">
-              <div class="flex items-center gap-2 text-primary text-sm font-medium">
-                <Sparkles class="size-4" /> Relay AI Suggestions
+            <div v-if="!selectedReview.reply" class="bg-primary/5 rounded-2xl p-4 border border-primary/20 mb-4 space-y-3">
+              <div class="flex items-center gap-2 text-primary text-sm font-semibold">
+                <Sparkles class="size-4" /> AI Suggestions
               </div>
               <div class="space-y-2">
                 <button 
                   v-for="(sug, idx) in aiSuggestions" 
                   :key="idx"
                   @click="useAiSuggestion(sug)"
-                  class="w-full text-left text-xs bg-card hover:bg-primary/10 text-muted-foreground hover:text-primary p-2.5 rounded-lg border border-border shadow-sm transition-colors leading-relaxed cursor-pointer"
+                  class="w-full text-left text-xs bg-card hover:bg-primary/10 text-muted-foreground hover:text-primary p-3 rounded-xl border border-border/70 shadow-xs transition-colors leading-relaxed cursor-pointer"
                 >
                   {{ sug.replace('[Name]', selectedReview.author.split(' ')[0]) }}
                 </button>
@@ -657,15 +657,15 @@ function addInternalNote() {
               <textarea 
                 v-model="replyText"
                 rows="4" 
-                class="w-full text-sm bg-background border border-border rounded-xl p-3 pb-12 focus:outline-none focus:ring-2 focus:ring-ring resize-none"
+                class="w-full text-sm bg-background border border-border rounded-2xl p-3.5 pb-12 focus:outline-none focus:ring-1 focus:ring-ring resize-none placeholder:text-muted-foreground/60"
                 placeholder="Write a response..."
               ></textarea>
               <div class="absolute bottom-3 left-3 right-3 flex justify-between items-center">
                 <div class="flex items-center gap-1">
-                  <button class="p-1.5 text-muted-foreground hover:text-foreground rounded-lg hover:bg-muted"><ImageIcon class="size-4" /></button>
-                  <button class="p-1.5 text-primary hover:bg-primary/10 rounded-lg" @click="useAiSuggestion(aiSuggestions[0])"><Sparkles class="size-4" /></button>
+                  <button class="p-1.5 text-muted-foreground hover:text-foreground rounded-lg hover:bg-muted cursor-pointer"><ImageIcon class="size-4" /></button>
+                  <button class="p-1.5 text-primary hover:bg-primary/10 rounded-lg cursor-pointer" @click="useAiSuggestion(aiSuggestions[0])"><Sparkles class="size-4" /></button>
                 </div>
-                <button class="inline-flex items-center gap-1.5 bg-primary text-primary-foreground px-3.5 py-1.5 rounded-lg text-xs font-semibold hover:bg-primary/90 transition-colors shadow-sm">
+                <button class="inline-flex items-center gap-1.5 bg-primary text-primary-foreground px-3.5 py-1.5 rounded-lg text-xs font-semibold hover:bg-primary/90 transition-colors shadow-sm cursor-pointer">
                   Send <Send class="size-3.5" />
                 </button>
               </div>
@@ -696,10 +696,10 @@ function addInternalNote() {
                 v-model="internalNote"
                 @keyup.enter="addInternalNote"
                 type="text"
-                class="w-full text-sm bg-background border border-border rounded-lg px-3 py-2 pr-10 focus:outline-none"
+                class="w-full text-xs bg-background border border-border rounded-xl px-3.5 py-2.5 pr-10 focus:outline-none shadow-xs"
                 placeholder="Add a private note..."
               />
-              <button @click="addInternalNote" class="absolute right-1 top-1.5 p-1 text-amber-500 hover:text-amber-600 rounded">
+              <button @click="addInternalNote" class="absolute right-2 top-2 p-1 text-amber-500 hover:text-amber-600 rounded cursor-pointer">
                 <Plus class="size-3.5" />
               </button>
             </div>

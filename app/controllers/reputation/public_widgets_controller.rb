@@ -9,7 +9,8 @@ class Reputation::PublicWidgetsController < ApplicationController
     return head :not_found unless widget.active?
 
     reviews = Reputation::Review
-              .where(account_id: widget.account_id, status: :replied)
+              .where(account_id: widget.account_id)
+              .where.not(status: :ignored)
               .where('rating >= ?', widget.min_rating)
               .order(reviewed_at: :desc)
               .limit(20)

@@ -118,8 +118,8 @@ const getSentimentClass = (sentiment) => {
 };
 
 const getStatusClass = (status) => {
-  if (status === 'Replied') return 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 border border-emerald-500/20';
-  if (status === 'Pending') return 'bg-amber-500/15 text-amber-700 dark:text-amber-400 border border-amber-500/20';
+  if (status === 'Replied' || status === 'Approved') return 'bg-emerald-50 text-emerald-600 border border-emerald-100 dark:bg-emerald-900/30 dark:border-emerald-800 dark:text-emerald-400';
+  if (status === 'Pending') return 'bg-amber-50 text-amber-600 border border-amber-100 dark:bg-amber-900/30 dark:border-amber-800 dark:text-amber-400';
   if (status === 'Needs Reply') return 'bg-purple-500/15 text-purple-700 dark:text-purple-300 border border-purple-500/20';
   return 'bg-muted text-muted-foreground border border-border';
 };

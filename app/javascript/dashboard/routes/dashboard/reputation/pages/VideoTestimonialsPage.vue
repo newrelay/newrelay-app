@@ -545,9 +545,9 @@ const filteredVideos = computed(() => {
                     <Badge v-for="tag in video.aiTags.filter(t => t !== 'AI Summary')" :key="tag" 
                       class="shadow-none font-medium text-[10px] px-2 py-0.5 rounded-md border"
                       :class="
-                        tag === 'Approved' ? 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 border-emerald-500/20' : 
-                        tag === 'Published' ? 'bg-primary/10 text-primary border-primary/20' : 
-                        'bg-amber-500/15 text-amber-700 dark:text-amber-400 border-amber-500/20'
+                        tag === 'Approved' ? 'bg-emerald-50 text-emerald-600 border-emerald-100 dark:bg-emerald-900/30 dark:border-emerald-900/50' : 
+                        tag === 'Published' ? 'bg-primary/10 text-primary border-primary/20 dark:bg-primary/10 dark:border-primary/20' : 
+                        'bg-amber-50 text-amber-600 border-amber-100 dark:bg-amber-900/30 dark:border-amber-900/50'
                       "
                     >
                       {{ tag }}
@@ -572,9 +572,9 @@ const filteredVideos = computed(() => {
                   <Badge
                     class="shadow-none font-medium text-[10.5px] px-2.5 py-0.5 rounded-full border w-max mb-1"
                     :class="
-                      video.status === 'Approved' ? 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 border-emerald-500/20' : 
-                      video.status === 'Published' ? 'bg-primary/10 text-primary border-primary/20' : 
-                      'bg-amber-500/15 text-amber-700 dark:text-amber-400 border-amber-500/20'
+                      video.status === 'Approved' ? 'bg-emerald-50 text-emerald-600 border-emerald-100 dark:bg-emerald-900/30 dark:border-emerald-900/50' : 
+                      video.status === 'Published' ? 'bg-primary/10 text-primary border-primary/20 dark:bg-primary/10 dark:border-primary/20' : 
+                      'bg-amber-50 text-amber-600 border-amber-100 dark:bg-amber-900/30 dark:border-amber-900/50'
                     "
                   >
                     {{ video.status }}

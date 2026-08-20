@@ -109,6 +109,20 @@ const showFilterDropdown = ref(false);
 const showPlatformDropdown = ref(false);
 const showSortDropdown = ref(false);
 
+const getSentimentClass = (sentiment) => {
+  if (sentiment === 'Positive') return 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 border border-emerald-500/20';
+  if (sentiment === 'Needs Escalation') return 'bg-amber-500/15 text-amber-700 dark:text-amber-400 border border-amber-500/20';
+  if (sentiment === 'Negative') return 'bg-rose-500/15 text-rose-700 dark:text-rose-400 border border-rose-500/20';
+  return 'bg-muted text-muted-foreground border border-border';
+};
+
+const getStatusClass = (status) => {
+  if (status === 'Replied') return 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 border border-emerald-500/20';
+  if (status === 'Pending') return 'bg-amber-500/15 text-amber-700 dark:text-amber-400 border border-amber-500/20';
+  if (status === 'Needs Reply') return 'bg-purple-500/15 text-purple-700 dark:text-purple-300 border border-purple-500/20';
+  return 'bg-muted text-muted-foreground border border-border';
+};
+
 const filteredReviews = computed(() => {
   return reviews.value.filter(r =>
     r.author.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
@@ -389,7 +403,8 @@ function addInternalNote() {
                   </span>
                   <span
                     v-else
-                    class="px-2.5 py-1 text-[10px] font-semibold border-0 rounded-md bg-[#DCFCE7] text-[#166534] dark:bg-[#166534]/20 dark:text-[#86EFAC]"
+                    class="px-2.5 py-1 text-[10px] font-semibold rounded-md shrink-0"
+                    :class="getStatusClass(review.status)"
                   >
                     {{ review.status }}
                   </span>
@@ -449,8 +464,11 @@ function addInternalNote() {
                         <div class="flex gap-0.5 text-[#FFB020]">
                           <Star v-for="i in 5" :key="i" class="size-[13px]" :class="i <= review.rating ? 'fill-[#FFB020]' : 'text-muted-foreground/30'" />
                         </div>
-                        <span v-if="review.sentiment" class="text-[10px] font-medium px-1.5 py-0.5 rounded-md"
-                              :class="review.sentiment === 'Positive' ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400' : 'bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-400'">
+                        <span 
+                          v-if="review.sentiment" 
+                          class="text-[10px] font-semibold px-1.5 py-0.5 rounded-md shrink-0"
+                          :class="getSentimentClass(review.sentiment)"
+                        >
                           {{ review.sentiment }}
                         </span>
                       </div>
@@ -489,7 +507,8 @@ function addInternalNote() {
                   
                   <span 
                     v-else
-                    class="px-3 py-1.5 text-xs font-semibold border-0 rounded-md bg-[#DCFCE7] text-[#166534] dark:bg-[#166534]/20 dark:text-[#86EFAC]"
+                    class="px-3 py-1 text-xs font-semibold rounded-md shrink-0"
+                    :class="getStatusClass(review.status)"
                   >
                     {{ review.status }}
                   </span>

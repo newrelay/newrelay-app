@@ -38,7 +38,10 @@ const learnMore = () => {
     </div>
 
     <!-- Case A: Inboxes are already configured (Show "Go to Conversations") -->
-    <div v-else-if="hasInboxes" class="flex flex-col items-center w-full max-w-lg text-center">
+    <div
+      v-else-if="hasInboxes"
+      class="flex flex-col items-center w-full max-w-lg text-center"
+    >
       <div
         class="size-20 rounded-full bg-primary/5 flex items-center justify-center mb-6 relative"
       >

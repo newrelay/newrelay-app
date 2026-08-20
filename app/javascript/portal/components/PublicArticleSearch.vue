@@ -143,7 +143,8 @@ export default {
       if (!query) return;
 
       const searchParams = new URLSearchParams({ query });
-      const { theme, isPlainLayoutEnabled, customDomain } = window.portalConfig || {};
+      const { theme, isPlainLayoutEnabled, customDomain } =
+        window.portalConfig || {};
 
       if (theme) searchParams.set('theme', theme);
       if (isPlainLayoutEnabled === 'true') {

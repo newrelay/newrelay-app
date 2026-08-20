@@ -146,7 +146,10 @@ const handleSubmit = async () => {
         </div>
 
         <div class="flex flex-col gap-1">
-          <label for="audience" class="mb-0.5 text-sm font-medium text-foreground">
+          <label
+            for="audience"
+            class="mb-0.5 text-sm font-medium text-foreground"
+          >
             {{ t('CAMPAIGN.SMS.CREATE.FORM.AUDIENCE.LABEL') }}
           </label>
           <TagMultiSelectComboBox
@@ -172,7 +175,9 @@ const handleSubmit = async () => {
       </div>
     </div>
 
-    <div class="flex items-center justify-between w-full gap-3 flex-shrink-0 pt-4 border-t border-border">
+    <div
+      class="flex items-center justify-between w-full gap-3 flex-shrink-0 pt-4 border-t border-border"
+    >
       <Button
         variant="faded"
         color="slate"

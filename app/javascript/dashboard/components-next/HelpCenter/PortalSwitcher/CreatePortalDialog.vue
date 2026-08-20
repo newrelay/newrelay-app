@@ -39,7 +39,7 @@ const rules = {
     ),
     isValidSlug: helpers.withMessage(
       () => t('HELP_CENTER.CREATE_PORTAL_DIALOG.SLUG.FORMAT_ERROR'),
-      (val) => !val || isValidSlug(val)
+      val => !val || isValidSlug(val)
     ),
   },
 };

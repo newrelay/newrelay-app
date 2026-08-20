@@ -108,6 +108,8 @@ const aiSuggestions = [
 const showFilterDropdown = ref(false);
 const showPlatformDropdown = ref(false);
 const showSortDropdown = ref(false);
+const showAssigneeDropdown = ref(false);
+const showStatusDropdown = ref(false);
 
 const getSentimentClass = (sentiment) => {
   if (sentiment === 'Positive') return 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400';
@@ -614,20 +616,60 @@ function addInternalNote() {
 
           <!-- Assignee & Status Selectors -->
           <div class="flex items-center gap-4 bg-muted/20 p-3.5 rounded-xl border border-border/50">
-            <div class="flex-1">
+            <!-- Assignee Selector -->
+            <div class="flex-1 relative">
               <label class="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider mb-1 block">ASSIGNEE</label>
-              <select v-model="selectedReview.assignee" class="w-full text-xs font-medium bg-card border border-border rounded-lg px-3 py-2 text-foreground focus:outline-none focus:ring-1 focus:ring-primary shadow-xs cursor-pointer">
-                <option :value="null">Unassigned</option>
-                <option value="Jane Doe">Jane Doe</option>
-                <option value="John Smith">John Smith</option>
-              </select>
+              <button 
+                @click="showAssigneeDropdown = !showAssigneeDropdown"
+                class="w-full h-9 bg-card border border-border rounded-lg px-3 py-1.5 text-xs font-medium text-foreground flex items-center justify-between shadow-xs hover:bg-muted/50 transition-colors cursor-pointer"
+              >
+                <span class="truncate">{{ selectedReview.assignee || 'Unassigned' }}</span>
+                <ChevronDown class="size-3.5 text-muted-foreground shrink-0 ml-1.5" />
+              </button>
+              
+              <div 
+                v-if="showAssigneeDropdown" 
+                class="absolute left-0 right-0 mt-1 bg-card border border-border rounded-xl p-1 shadow-xl z-50 space-y-0.5 animate-in fade-in duration-150"
+              >
+                <button 
+                  v-for="person in ['Unassigned', 'Jane Doe', 'John Smith', 'Sarah Jenkins']"
+                  :key="person"
+                  @click="selectedReview.assignee = person === 'Unassigned' ? null : person; showAssigneeDropdown = false"
+                  class="w-full text-left px-3 py-1.5 text-xs rounded-md font-medium flex items-center justify-between cursor-pointer"
+                  :class="(selectedReview.assignee === person || (!selectedReview.assignee && person === 'Unassigned')) ? 'bg-primary/10 text-primary font-semibold' : 'hover:bg-muted text-foreground'"
+                >
+                  <span>{{ person }}</span>
+                  <Check v-if="(selectedReview.assignee === person || (!selectedReview.assignee && person === 'Unassigned'))" class="size-3.5" />
+                </button>
+              </div>
             </div>
-            <div class="flex-1">
+
+            <!-- Status Selector -->
+            <div class="flex-1 relative">
               <label class="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider mb-1 block">STATUS</label>
-              <select v-model="selectedReview.status" class="w-full text-xs font-medium bg-card border border-border rounded-lg px-3 py-2 text-foreground focus:outline-none focus:ring-1 focus:ring-primary shadow-xs cursor-pointer">
-                <option value="Needs Reply">Needs Reply</option>
-                <option value="Replied">Replied</option>
-              </select>
+              <button 
+                @click="showStatusDropdown = !showStatusDropdown"
+                class="w-full h-9 bg-card border border-border rounded-lg px-3 py-1.5 text-xs font-medium text-foreground flex items-center justify-between shadow-xs hover:bg-muted/50 transition-colors cursor-pointer"
+              >
+                <span class="truncate">{{ selectedReview.status }}</span>
+                <ChevronDown class="size-3.5 text-muted-foreground shrink-0 ml-1.5" />
+              </button>
+              
+              <div 
+                v-if="showStatusDropdown" 
+                class="absolute left-0 right-0 mt-1 bg-card border border-border rounded-xl p-1 shadow-xl z-50 space-y-0.5 animate-in fade-in duration-150"
+              >
+                <button 
+                  v-for="st in ['Needs Reply', 'Replied', 'Pending']"
+                  :key="st"
+                  @click="selectedReview.status = st; showStatusDropdown = false"
+                  class="w-full text-left px-3 py-1.5 text-xs rounded-md font-medium flex items-center justify-between cursor-pointer"
+                  :class="selectedReview.status === st ? 'bg-primary/10 text-primary font-semibold' : 'hover:bg-muted text-foreground'"
+                >
+                  <span>{{ st }}</span>
+                  <Check v-if="selectedReview.status === st" class="size-3.5" />
+                </button>
+              </div>
             </div>
           </div>
 

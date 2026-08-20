@@ -331,6 +331,7 @@ function addInternalNote() {
             v-for="review in filteredReviews" 
             :key="review.id"
             class="relative group"
+            :class="activeReviewMenuId === review.id ? 'z-30' : ''"
           >
             <!-- Timeline elements -->
             <div v-if="viewMode === 'timeline'" class="absolute -left-[38.5px] top-8 size-3.5 rounded-full bg-primary ring-4 ring-white dark:ring-[#FAFAFA] transition-colors z-10" :class="selectedReview?.id === review.id ? 'ring-primary/20 scale-125' : ''"></div>
@@ -343,8 +344,9 @@ function addInternalNote() {
             <!-- Review Card Row -->
             <div
               @click="openReviewDetail(review)"
-              class="transition-all duration-300 cursor-pointer overflow-hidden relative"
+              class="transition-all duration-300 cursor-pointer relative"
               :class="[
+                activeReviewMenuId === review.id ? 'z-30 overflow-visible' : 'overflow-hidden',
                 viewMode === 'list' ? 'px-8 py-5 flex items-center gap-6 hover:bg-muted/30' : 'bg-card border rounded-xl hover:shadow-md p-6 flex flex-col h-full',
                 selectedReview?.id === review.id && viewMode === 'list' ? 'bg-primary/10/30 dark:bg-primary/10/10 border-l-[3px] border-l-primary' : viewMode === 'list' ? 'border-l-[3px] border-l-transparent' : '',
                 selectedReview?.id === review.id && viewMode !== 'list' ? 'border-primary ring-1 ring-primary shadow-md scale-[1.02]' : viewMode !== 'list' ? 'border-border shadow-sm scale-100' : ''

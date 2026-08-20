@@ -834,43 +834,111 @@ const filteredVideos = computed(() => {
               </div>
             </div>
             
-            <div v-else-if="activeTab === 'Activity'" class="p-2 space-y-6">
+            <div v-else-if="activeTab === 'Activity'" class="p-6 space-y-8 pb-10">
+              <!-- AI Recommendation -->
               <div class="bg-primary/5 border border-primary/10 rounded-lg p-3 flex items-center gap-3">
                 <div class="size-8 rounded-full bg-primary/20 flex items-center justify-center shrink-0">
                   <Bot class="size-4 text-primary" />
                 </div>
-                <div class="text-xs font-medium text-primary">
+                <div class="text-[13px] font-medium text-primary">
                   Relay AI Recommendation: Ready for marketing channels
                 </div>
               </div>
 
+              <!-- Today -->
               <div class="space-y-4">
                 <div class="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Today</div>
+                
                 <div class="relative border-l-2 border-border ml-2.5 pl-6 space-y-6">
+                  <!-- Published -->
                   <div class="relative">
-                    <div class="absolute -left-[35.5px] top-0 size-6 rounded-full bg-emerald-500/15 flex items-center justify-center ring-4 ring-card">
-                      <Check class="size-3.5 text-emerald-600 dark:text-emerald-400" />
+                    <div class="absolute -left-[35.5px] top-0 size-6 rounded-full bg-emerald-100 flex items-center justify-center ring-4 ring-white dark:ring-card">
+                      <Check class="size-3.5 text-emerald-600" />
                     </div>
                     <div class="font-medium text-[13.5px] text-foreground">Published</div>
                     <div class="text-[11px] text-muted-foreground mt-0.5">2:34 PM</div>
                   </div>
                   
+                  <!-- Approved -->
                   <div class="relative">
-                    <div class="absolute -left-[35.5px] top-0 size-6 rounded-full bg-primary/10 flex items-center justify-center ring-4 ring-card">
+                    <div class="absolute -left-[35.5px] top-0 size-6 rounded-full bg-primary/10 flex items-center justify-center ring-4 ring-white dark:ring-card">
                       <ThumbsUp class="size-3.5 text-primary" />
                     </div>
                     <div class="font-medium text-[13.5px] text-foreground">Approved</div>
                     <div class="text-[11px] text-muted-foreground mt-0.5">2:12 PM</div>
                   </div>
+
+                  <!-- AI Summary -->
+                  <div class="relative">
+                    <div class="absolute -left-[35.5px] top-0 size-6 rounded-full bg-amber-100 flex items-center justify-center ring-4 ring-white dark:ring-card">
+                      <Sparkles class="size-3.5 text-amber-600" />
+                    </div>
+                    <div class="font-medium text-[13.5px] text-foreground">AI Summary Generated</div>
+                    <div class="text-[11px] text-muted-foreground mt-0.5">1:58 PM</div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Yesterday -->
+              <div class="space-y-4">
+                <div class="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Yesterday</div>
+                
+                <div class="relative border-l-2 border-border ml-2.5 pl-6 space-y-6">
+                  <!-- Video Submitted -->
+                  <div class="relative">
+                    <div class="absolute -left-[35.5px] top-0 size-6 rounded-full bg-primary/10 flex items-center justify-center ring-4 ring-white dark:ring-card">
+                      <Play class="size-3.5 text-primary" />
+                    </div>
+                    <div class="font-medium text-[13.5px] text-foreground">Video Submitted</div>
+                  </div>
+                  
+                  <!-- Recording Completed -->
+                  <div class="relative">
+                    <div class="absolute -left-[35.5px] top-0 size-6 rounded-full bg-muted flex items-center justify-center ring-4 ring-white dark:ring-card">
+                      <Eye class="size-3.5 text-muted-foreground" />
+                    </div>
+                    <div class="font-medium text-[13.5px] text-foreground">Recording Completed</div>
+                  </div>
+                  
+                  <!-- Request Sent -->
+                  <div class="relative">
+                    <div class="absolute -left-[35.5px] top-0 size-6 rounded-full bg-muted flex items-center justify-center ring-4 ring-white dark:ring-card">
+                      <Send class="size-3.5 text-muted-foreground" />
+                    </div>
+                    <div class="font-medium text-[13.5px] text-foreground">Request Sent</div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Last Week -->
+              <div class="space-y-4">
+                <div class="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Last Week</div>
+                
+                <div class="relative border-l-2 border-border ml-2.5 pl-6 space-y-6">
+                  <!-- Shared -->
+                  <div class="relative">
+                    <div class="absolute -left-[35.5px] top-0 size-6 rounded-full bg-primary/10 flex items-center justify-center ring-4 ring-white dark:ring-card">
+                      <Share2 class="size-3.5 text-primary" />
+                    </div>
+                    <div class="font-medium text-[13.5px] text-foreground">Shared to Instagram</div>
+                  </div>
+                  
+                  <!-- Added to Website -->
+                  <div class="relative">
+                    <div class="absolute -left-[35.5px] top-0 size-6 rounded-full bg-primary/10 flex items-center justify-center ring-4 ring-white dark:ring-card">
+                      <Globe class="size-3.5 text-primary" />
+                    </div>
+                    <div class="font-medium text-[13.5px] text-foreground">Added to Website</div>
+                  </div>
                 </div>
               </div>
             </div>
             
-            <div v-else-if="activeTab === 'Notes'" class="p-2">
-              <div class="flex items-center gap-2 text-foreground font-semibold text-sm mb-2">
-                <FileText class="size-4 text-amber-500" /> Notes
+            <div v-else-if="activeTab === 'Notes'" class="p-6">
+              <div class="flex items-center gap-2 text-foreground font-semibold text-[15px] mb-2">
+                <FileText class="size-4" /> Notes
               </div>
-              <p class="text-xs text-muted-foreground mb-6">
+              <p class="text-[13px] text-muted-foreground mb-6">
                 Collaborate with your team about this testimonial.
               </p>
               
@@ -885,7 +953,7 @@ const filteredVideos = computed(() => {
         </div>
         
         <!-- Footer Actions -->
-        <div class="p-5 border-t border-border bg-card shrink-0 space-y-3">
+        <div class="p-5 border-t border-border bg-white dark:bg-card shrink-0 space-y-3">
           <div class="flex gap-2">
             <button @click="handleReply" class="bg-primary hover:bg-primary/90 text-primary-foreground h-9 gap-2 flex-1 shadow-xs font-semibold text-xs rounded-lg inline-flex items-center justify-center cursor-pointer">
               <MessageSquare class="size-4" /> Reply

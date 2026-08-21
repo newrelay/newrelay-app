@@ -29,10 +29,23 @@ class Reputation::ReviewRequestSendService
   end
 
   def deliver(body, request)
+    return deliver_mock(request) if Reputation::Providers.mock?
+
     case @template.channel
     when 'sms'   then send_sms(body)
     when 'email' then send_email(body, request)
     end
+  end
+
+  # Mock mode: no Twilio/SMTP. Log the shareable link (open it to test the real
+  # public submission flow), and simulate the customer receiving + completing the
+  # request so the funnel and "received" data populate offline. Swap to real
+  # delivery by setting REPUTATION_GOOGLE_PROVIDER to google/gmbapi.
+  def deliver_mock(request)
+    link = "#{ENV.fetch('FRONTEND_URL', '')}/r/#{request.token}"
+    Rails.logger.info("[Reputation::Mock] review request ##{request.id} to " \
+                      "#{@contact.email || @contact.phone_number} — link: #{link}")
+    request.update!(status: :completed, clicked_at: Time.current, completed_at: Time.current)
   end
 
   def send_sms(body)

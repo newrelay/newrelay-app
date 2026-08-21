@@ -57,7 +57,9 @@ class Api::V1::Accounts::Reputation::IntegrationsController < Api::V1::Accounts:
   # POST /api/v1/accounts/:account_id/reputation/integrations
   def create
     if integration_params[:provider] == 'google'
-      return create_google_via_gmbapi if Reputation::Providers.gmbapi?
+      # GMBapi and Mock modes hold no Google OAuth of their own, so connect with
+      # just a location_id (any value in mock mode) and let reviews sync in.
+      return create_google_via_gmbapi if Reputation::Providers.skip_oauth?
 
       cache_key = params[:oauth_session_id] || integration_params[:oauth_session_id]
       if cache_key.present?

@@ -173,7 +173,6 @@ const stats = computed(() => {
     else if (r.status === 'clicked') { totals.sent++; totals.delivered++; totals.clicked++; }
     else if (r.status === 'completed') { totals.sent++; totals.delivered++; totals.clicked++; totals.completed++; }
   });
-  if (totals.sent === 0) return { sent: 124, delivered: 118, clicked: 84, completed: 42 };
   return totals;
 });
 

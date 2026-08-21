@@ -1,6 +1,6 @@
 <script setup>
 /* eslint-disable */
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import { RelayInput as Input, RelayCheckbox as Checkbox } from 'dashboard/components-next/relay';
 import {
   Search, Filter, ChevronDown, CheckSquare, Sparkles, MessageSquare,
@@ -9,7 +9,11 @@ import {
   MessageCircle, LayoutGrid, List, Plus
 } from 'lucide-vue-next';
 
-// State
+const axios = window.axios;
+const accountId = window.__STORE__?.getters['auth/getCurrentAccount']?.id ||
+  window.location.pathname.match(/accounts\/(\d+)/)?.[1];
+const baseUrl = () => `/api/v1/accounts/${accountId}/reputation`;
+
 const searchQuery = ref('');
 const selectedReviews = ref([]);
 const selectedReview = ref(null);
@@ -17,8 +21,8 @@ const activeReviewMenuId = ref(null);
 const internalNote = ref('');
 const replyText = ref('');
 const viewMode = ref('list');
+const loading = ref(true);
 
-// Platform SVG Icons map
 const platformIcons = {
   'Google': '<svg viewBox="0 0 24 24" width="14" height="14" xmlns="http://www.w3.org/2000/svg"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>',
   'Facebook': '<svg viewBox="0 0 24 24" width="14" height="14" xmlns="http://www.w3.org/2000/svg"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" fill="#1877F2"/></svg>',
@@ -26,77 +30,57 @@ const platformIcons = {
   'Trustpilot': '<svg viewBox="0 0 24 24" width="14" height="14" xmlns="http://www.w3.org/2000/svg"><rect width="24" height="24" fill="#00B67A" rx="2" ry="2"/><path d="M12 4l2.5 5.2 5.7.8-4.1 4 1 5.7-5.1-2.7-5.1 2.7 1-5.7-4.1-4 5.7-.8L12 4z" fill="#FFF"/></svg>'
 };
 
-// Reviews Dataset matching reference
-const reviews = ref([
-  { 
-    id: 1, 
-    author: 'Sarah Jenkins', 
-    avatar: 'https://i.pravatar.cc/150?u=a042581f4e29026704d', 
-    platform: 'Google', 
-    location: 'New York, USA',
-    rating: 5, 
-    date: '2 hours ago', 
-    content: '"Absolutely incredible service! The team was super responsive and helped me resolve my issue within minutes."',
-    status: 'Needs Reply',
+const reviews = ref([]);
+
+function formatRelativeDate(dateStr) {
+  if (!dateStr) return '';
+  const diff = Date.now() - new Date(dateStr).getTime();
+  const mins = Math.floor(diff / 60000);
+  if (mins < 60) return `${mins}m ago`;
+  const hrs = Math.floor(mins / 60);
+  if (hrs < 24) return `${hrs}h ago`;
+  const days = Math.floor(hrs / 24);
+  if (days < 7) return `${days}d ago`;
+  const weeks = Math.floor(days / 7);
+  return `${weeks}w ago`;
+}
+
+function mapReview(r) {
+  const provider = (r.provider || 'google');
+  const displayPlatform = provider.charAt(0).toUpperCase() + provider.slice(1);
+  const hasReply = r.reputation_review_reply && r.reputation_review_reply.body;
+  return {
+    id: r.id,
+    author: r.reviewer_name || 'Anonymous',
+    avatar: `https://i.pravatar.cc/150?u=review${r.id}`,
+    platform: displayPlatform,
+    location: '',
+    rating: r.rating || 5,
+    date: formatRelativeDate(r.reviewed_at),
+    content: r.body || '',
+    status: hasReply ? 'Replied' : (r.status === 'ignored' ? 'Replied' : 'Needs Reply'),
     assignee: null,
+    reply: hasReply ? r.reputation_review_reply.body : null,
     notes: [],
-    sentiment: 'Positive',
-    aiDraft: true,
-    history: { conversations: 12, deals: 3, memberSince: '2 years', ltv: '$4,200' },
-    timelineDate: { title: 'Today', sub: '21 Jul, 2026' }
-  },
-  { 
-    id: 2, 
-    author: 'Michael Chang', 
-    avatar: 'https://i.pravatar.cc/150?u=a042581f4e29026704e', 
-    platform: 'Yelp', 
-    location: 'New York, USA',
-    rating: 4, 
-    date: '1 day ago', 
-    content: '"Good overall experience, but the onboarding process could be a little smoother. The product itself is solid."',
-    status: 'Replied',
-    assignee: 'Jane Doe',
-    reply: 'Hi Michael, thanks for the feedback! We are constantly working on improving our onboarding process and your input is invaluable.',
-    notes: [{ author: 'System', text: 'Sentiment flagged as mixed. Assigned to Jane.' }],
-    sentiment: 'Needs Escalation',
-    aiDraft: false,
-    history: { conversations: 4, deals: 1, memberSince: '6 months', ltv: '$800' },
-    timelineDate: { title: 'Yesterday', sub: '20 Jul, 2026' }
-  },
-  { 
-    id: 3, 
-    author: 'Emily Rodriguez', 
-    avatar: 'https://i.pravatar.cc/150?u=a042581f4e29026704f', 
-    platform: 'Facebook', 
-    location: 'New York, USA',
-    rating: 5, 
-    date: '1 day ago', 
-    content: '"We\'ve been using this for 3 months now and it has completely transformed how we handle our customer reviews!"',
-    status: 'Replied',
-    assignee: null,
-    notes: [],
-    sentiment: 'Positive',
-    aiDraft: false,
-    history: { conversations: 28, deals: 5, memberSince: '3 years', ltv: '$12,500' }
-  },
-  { 
-    id: 4, 
-    author: 'David Lee', 
-    avatar: 'https://i.pravatar.cc/150?u=a042581f4e29026704g', 
-    platform: 'Trustpilot', 
-    location: 'New York, USA',
-    rating: 1, 
-    date: '2 days ago', 
-    content: '"Terrible experience. The system crashed and I lost all my data. Support took 3 days to respond to my tickets."',
-    status: 'Needs Reply',
-    assignee: 'John Smith',
-    notes: [{ author: 'John Smith', text: 'Called David on 10/19. Engineering is pushing a hotfix today.' }],
-    sentiment: 'Negative',
-    aiDraft: true,
-    history: { conversations: 3, deals: 1, memberSince: '1 month', ltv: '$150' },
-    timelineDate: { title: '18 Jul', sub: '2026' }
-  },
-]);
+    sentiment: r.rating >= 4 ? 'Positive' : (r.rating <= 2 ? 'Negative' : 'Needs Escalation'),
+    aiDraft: r.status === 'pending' && !hasReply,
+    history: {},
+  };
+}
+
+async function loadReviews() {
+  loading.value = true;
+  try {
+    const { data } = await axios.get(`${baseUrl()}/reviews`);
+    reviews.value = (data || []).map(mapReview);
+  } catch (err) {
+    console.error('Failed to load reviews', err);
+  } finally {
+    loading.value = false;
+  }
+}
+
+onMounted(loadReviews);
 
 const aiSuggestions = [
   "Thank you for the review! We're thrilled to hear you had a great experience.",
@@ -177,7 +161,7 @@ function addInternalNote() {
         <div class="flex items-center gap-3">
           <h1 class="text-xl font-semibold text-foreground">Reviews</h1>
           <span class="inline-flex items-center rounded-md border px-2 py-0.5 text-xs font-medium transition-colors focus:outline-none focus:ring-1 focus:ring-ring border-transparent bg-primary/10 text-primary dark:bg-primary/10 dark:text-primary">
-            1,096 Reviews
+            {{ reviews.length }} Reviews
           </span>
         </div>
         
@@ -321,7 +305,7 @@ function addInternalNote() {
         </div>
 
         <div class="flex items-center gap-4">
-          <span class="text-sm font-semibold text-foreground">1-20 of 1,096</span>
+          <span class="text-sm font-semibold text-foreground">{{ filteredReviews.length }} of {{ reviews.length }}</span>
           
           <div class="flex bg-card border border-border rounded-lg p-0.5 shadow-sm mr-2">
             <button @click="viewMode = 'grid'" class="p-1.5 rounded-md transition-colors" :class="viewMode === 'grid' ? 'bg-muted text-foreground' : 'text-muted-foreground hover:text-foreground hover:bg-muted'"><LayoutGrid class="size-4" /></button>

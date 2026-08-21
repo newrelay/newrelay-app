@@ -215,6 +215,7 @@ Rails.application.routes.draw do
             resources :templates, only: [:index, :create, :update, :destroy]
             resources :review_requests, only: [:index, :create]
             resources :feedback, only: [:index], path: 'feedback'
+            resource :summary, only: [:show], controller: 'summaries'
             resources :widgets, only: [:index, :create, :update, :destroy]
             resources :video_testimonials, only: [:index, :destroy] do
               collection do

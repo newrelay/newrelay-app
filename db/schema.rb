@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2026_08_21_123000) do
+ActiveRecord::Schema[7.1].define(version: 2026_08_21_140000) do
   # These extensions should be enabled to support this database
   enable_extension "pg_stat_statements"
   enable_extension "pg_trgm"
@@ -1422,6 +1422,20 @@ ActiveRecord::Schema[7.1].define(version: 2026_08_21_123000) do
     t.index ["account_id", "status"], name: "index_reputation_reviews_on_account_id_and_status"
     t.index ["account_id"], name: "index_reputation_reviews_on_account_id"
     t.index ["reputation_integration_id"], name: "index_reputation_reviews_on_reputation_integration_id"
+  end
+
+  create_table "reputation_snapshots", force: :cascade do |t|
+    t.bigint "account_id", null: false
+    t.string "provider", null: false
+    t.date "captured_on", null: false
+    t.integer "reviews_count", default: 0, null: false
+    t.decimal "avg_rating", precision: 3, scale: 2, default: "0.0", null: false
+    t.decimal "response_rate", precision: 5, scale: 2, default: "0.0", null: false
+    t.integer "score", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["account_id", "provider", "captured_on"], name: "idx_reputation_snapshots_unique", unique: true
+    t.index ["account_id"], name: "index_reputation_snapshots_on_account_id"
   end
 
   create_table "reputation_templates", force: :cascade do |t|

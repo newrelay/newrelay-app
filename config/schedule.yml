@@ -20,6 +20,12 @@ reputation_sync_all_reviews_job:
   class: 'Reputation::SyncAllReviewsJob'
   queue: scheduled_jobs
 
+# executed daily at 0030 UTC — store review totals for month-over-month deltas
+reputation_capture_snapshots_job:
+  cron: '30 0 * * *'
+  class: 'Reputation::CaptureSnapshotsJob'
+  queue: scheduled_jobs
+
 # executed hourly for scheduled jobs that do not need minute-level cadence
 trigger_hourly_scheduled_items_job:
   cron: '0 * * * *'

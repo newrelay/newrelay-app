@@ -29,13 +29,10 @@ const isRequestModalOpen = ref(false);
 const loading = ref(true);
 const allReviews = ref([]);
 const integrations = ref([]);
+const summary = ref(null);
 
-// Demo-only values — no backend (items 6,7,8,10)
+// Demo-only values — no backend (items 7, 10). Score/deltas come from /summary.
 const mock = {
-  reputationScore: 85,
-  reputationDelta: '+3 pts',
-  ratingDelta: '+0.2',
-  reviewsDelta: '+12%',
   sentiment: 92,
   insights: [
     { color: 'bg-emerald-500', title: 'Support speed mentioned', text: '"Fast customer service" appeared in 24% of positive reviews this week.' },
@@ -83,10 +80,16 @@ const platforms = computed(() => {
     grouped[p].ratings.push(r.rating || 0);
     grouped[p].count++;
   });
+  const trends = {};
+  (summary.value && summary.value.platforms ? summary.value.platforms : []).forEach(row => {
+    trends[row.provider] = row.trend_pct;
+  });
   return Object.entries(grouped).map(([provider, data]) => ({
     name: provider.charAt(0).toUpperCase() + provider.slice(1),
+    provider,
     rating: +(data.ratings.reduce((s, v) => s + v, 0) / data.ratings.length).toFixed(1),
     total: data.count,
+    trend: Object.prototype.hasOwnProperty.call(trends, provider) ? trends[provider] : null,
     svgIcon: platformSvg[provider] || platformSvg.google,
   }));
 });
@@ -116,6 +119,26 @@ const trendBars = computed(() => {
 
 const trendIsMock = computed(() => allReviews.value.length === 0);
 
+const reputationScore = computed(() => (summary.value && summary.value.score != null) ? summary.value.score : 0);
+const scoreDelta = computed(() => summary.value ? summary.value.score_delta : null);
+const ratingDelta = computed(() => summary.value ? summary.value.rating_delta : null);
+const reviewsDeltaPct = computed(() => summary.value ? summary.value.reviews_delta_pct : null);
+
+function formatDelta(value, kind) {
+  if (value == null || Number.isNaN(Number(value))) return "—";
+  const n = Number(value);
+  const sign = n > 0 ? "+" : "";
+  if (kind === "pts") return sign + n + " pts";
+  if (kind === "pct") return sign + (Number.isInteger(n) ? n : n.toFixed(1)) + "%";
+  if (kind === "rating") return sign + n.toFixed(1);
+  return sign + n;
+}
+
+function deltaClass(value) {
+  if (value == null || value === 0) return "text-muted-foreground";
+  return value > 0 ? "text-emerald-600" : "text-rose-600";
+}
+
 function formatRelativeDate(dateStr) {
   if (!dateStr) return '';
   const diff = Date.now() - new Date(dateStr).getTime();
@@ -132,12 +155,14 @@ function formatRelativeDate(dateStr) {
 async function loadData() {
   loading.value = true;
   try {
-    const [reviewsRes, integrationsRes] = await Promise.all([
+    const [reviewsRes, integrationsRes, summaryRes] = await Promise.all([
       axios.get(`${baseUrl()}/reviews`),
       axios.get(`${baseUrl()}/integrations`),
+      axios.get(`${baseUrl()}/summary`).catch(() => ({ data: null })),
     ]);
     allReviews.value = reviewsRes.data || [];
     integrations.value = integrationsRes.data || [];
+    summary.value = summaryRes.data || null;
   } catch (err) {
     console.error('Failed to load reputation data', err);
   } finally {
@@ -193,24 +218,24 @@ function handleRequestReviews() {
       </div>
 
       <!-- Section 1: Top Summary Metrics -->
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4" :class="showDemoSurfaces ? 'lg:grid-cols-4' : 'lg:grid-cols-2'">
-        <!-- Reputation Score (Demo — no backend formula yet) -->
-        <div v-if="showDemoSurfaces" class="bg-card rounded-2xl border border-border shadow-xs p-5 relative overflow-hidden group hover:border-primary/50 transition-colors">
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4" :class="showDemoSurfaces ? 'lg:grid-cols-4' : 'lg:grid-cols-3'">
+        <!-- Reputation Score (real — /summary) -->
+        <div class="bg-card rounded-2xl border border-border shadow-xs p-5 relative overflow-hidden group hover:border-primary/50 transition-colors">
           <div class="flex justify-between items-start mb-4">
             <div>
               <div class="flex items-center gap-2 mb-1">
                 <p class="text-sm font-medium text-muted-foreground">Reputation Score</p>
-                <span class="rounded bg-amber-500/15 px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wide text-amber-600 dark:text-amber-400" title="Demo — server-side score formula needed">Demo</span>
               </div>
-              <h3 class="text-3xl font-bold text-foreground">{{ mock.reputationScore }}<span class="text-lg text-muted-foreground font-normal">/100</span></h3>
+              <h3 class="text-3xl font-bold text-foreground">{{ reputationScore }}<span class="text-lg text-muted-foreground font-normal">/100</span></h3>
             </div>
             <div class="p-2.5 bg-primary/10 rounded-xl text-primary">
               <Trophy class="size-5" />
             </div>
           </div>
-          <div class="flex items-center text-sm font-medium text-emerald-600 gap-1">
-            <TrendingUp class="size-3.5" />
-            <span>{{ mock.reputationDelta }}</span>
+          <div class="flex items-center text-sm font-medium gap-1" :class="deltaClass(scoreDelta)">
+            <TrendingUp v-if="scoreDelta > 0" class="size-3.5" />
+            <TrendingDown v-else-if="scoreDelta < 0" class="size-3.5" />
+            <span>{{ formatDelta(scoreDelta, 'pts') }}</span>
             <span class="text-muted-foreground font-normal ml-1">from last month</span>
           </div>
         </div>
@@ -232,10 +257,11 @@ function handleRequestReviews() {
               <Star class="size-5" />
             </div>
           </div>
-          <div v-if="showDemoSurfaces" class="flex items-center text-sm font-medium text-muted-foreground gap-1">
-            <span>{{ mock.ratingDelta }}</span>
-            <span class="font-normal ml-1">from last month</span>
-            <span class="rounded bg-amber-500/15 px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wide text-amber-600 dark:text-amber-400 ml-1" title="Demo — needs daily snapshots for real deltas">Demo</span>
+          <div class="flex items-center text-sm font-medium gap-1" :class="deltaClass(ratingDelta)">
+            <TrendingUp v-if="ratingDelta > 0" class="size-3.5" />
+            <TrendingDown v-else-if="ratingDelta < 0" class="size-3.5" />
+            <span>{{ formatDelta(ratingDelta, 'rating') }}</span>
+            <span class="text-muted-foreground font-normal ml-1">from last month</span>
           </div>
         </div>
 
@@ -250,10 +276,11 @@ function handleRequestReviews() {
               <MessageCircle class="size-5" />
             </div>
           </div>
-          <div v-if="showDemoSurfaces" class="flex items-center text-sm font-medium text-muted-foreground gap-1">
-            <span>{{ mock.reviewsDelta }}</span>
-            <span class="font-normal ml-1">vs last period</span>
-            <span class="rounded bg-amber-500/15 px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wide text-amber-600 dark:text-amber-400 ml-1" title="Demo — needs daily snapshots for real deltas">Demo</span>
+          <div class="flex items-center text-sm font-medium gap-1" :class="deltaClass(reviewsDeltaPct)">
+            <TrendingUp v-if="reviewsDeltaPct > 0" class="size-3.5" />
+            <TrendingDown v-else-if="reviewsDeltaPct < 0" class="size-3.5" />
+            <span>{{ formatDelta(reviewsDeltaPct, 'pct') }}</span>
+            <span class="text-muted-foreground font-normal ml-1">vs last period</span>
           </div>
         </div>
 
@@ -350,7 +377,7 @@ function handleRequestReviews() {
 
       <!-- Section 3: Platform Ratings & Quick Actions -->
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <!-- Platform Breakdown (Real from reviews, trend column Demo) -->
+        <!-- Platform Breakdown (Real from reviews; trend from snapshots) -->
         <div class="bg-card rounded-2xl border border-border shadow-xs p-6">
           <div class="flex items-center gap-2 mb-6">
             <h3 class="text-base font-semibold text-foreground">Platform Breakdown</h3>
@@ -359,27 +386,32 @@ function handleRequestReviews() {
 
           <div v-if="platforms.length" class="w-full">
             <div class="grid grid-cols-12 gap-2 text-xs font-medium text-muted-foreground mb-4">
-              <div class="col-span-4">Platform</div>
-              <div class="col-span-4 text-center">Rating</div>
-              <div class="col-span-4 text-center">Reviews</div>
+              <div class="col-span-3">Platform</div>
+              <div class="col-span-3 text-center">Rating</div>
+              <div class="col-span-3 text-center">Reviews</div>
+              <div class="col-span-3 text-center">Trend</div>
             </div>
 
             <div class="space-y-4">
               <div v-for="platform in platforms" :key="platform.name" class="grid grid-cols-12 gap-2 items-center text-sm py-1 border-b border-border/40 last:border-0">
-                <div class="col-span-4 flex items-center gap-2.5">
+                <div class="col-span-3 flex items-center gap-2.5">
                   <div v-html="platform.svgIcon" class="shrink-0 flex items-center justify-center"></div>
                   <span class="font-bold text-foreground text-[13.5px]">{{ platform.name }}</span>
                 </div>
 
-                <div class="col-span-4 flex items-center justify-center gap-1.5">
+                <div class="col-span-3 flex items-center justify-center gap-1.5">
                   <span class="font-bold text-foreground">{{ platform.rating }}</span>
                   <div class="flex gap-0.5 text-amber-400">
                     <Star v-for="i in 5" :key="i" class="size-3.5" :class="i <= Math.round(platform.rating) ? 'fill-amber-400 text-amber-400' : 'text-muted-foreground/30'" />
                   </div>
                 </div>
 
-                <div class="col-span-4 text-center text-muted-foreground font-medium text-xs">
+                <div class="col-span-3 text-center text-muted-foreground font-medium text-xs">
                   {{ platform.total }}
+                </div>
+
+                <div class="col-span-3 text-center font-medium text-xs" :class="deltaClass(platform.trend)">
+                  {{ formatDelta(platform.trend, 'pct') }}
                 </div>
               </div>
             </div>
@@ -500,3 +532,4 @@ function handleRequestReviews() {
     {{ toastState.message }}
   </div>
 </template>
+

@@ -6,7 +6,7 @@ import {
   ArrowLeft, Send, Sparkles, MessageSquare, 
   Mail, MessageCircle, Star, Smartphone, 
   Upload, Clock, Check, BarChart3,
-  Calendar, ChevronLeft, Users, Plus
+  Calendar, ChevronLeft, Users, Plus, AlertCircle
 } from 'lucide-vue-next';
 import { 
   RelayButton as Button, RelayInput as Input, RelayBadge as Badge
@@ -24,7 +24,7 @@ const emit = defineEmits(['update:open']);
 const defaultFormState = {
   selectedCustomers: [],
   customRecipients: '',
-  channels: ['WhatsApp', 'Email'],
+  channels: ['Email'],
   delivery: 'Send immediately',
   scheduleDate: '',
   scheduleTime: '',
@@ -84,12 +84,26 @@ async function ensureDefaultLabels() {
 // Real Chatwoot contacts (loaded on open) + any CSV-imported rows, prepended.
 const allCustomers = ref([]);
 
+// Past review requests, used to compute the real per-channel open rate.
+const requests = ref([]);
+async function loadRequests() {
+  if (!accountId) return;
+  try {
+    const { data } = await axios.get(`/api/v1/accounts/${accountId}/reputation/review_requests`);
+    requests.value = data.payload || data || [];
+  } catch (err) {
+    requests.value = [];
+  }
+}
+
 function mapContact(c) {
   return {
     id: String(c.id),
     name: c.name || c.email || c.phone_number || 'Unknown',
     contextLabel: 'Contact:',
-    contextValue: c.email || c.phone_number || ''
+    contextValue: c.email || c.phone_number || '',
+    email: c.email || '',
+    phone: c.phone_number || ''
   };
 }
 
@@ -107,7 +121,7 @@ async function loadContacts() {
   }
 }
 
-watch(() => props.open, isOpen => { if (isOpen) { ensureDefaultLabels(); loadContacts(); } }, { immediate: true });
+watch(() => props.open, isOpen => { if (isOpen) { ensureDefaultLabels(); loadContacts(); loadRequests(); } }, { immediate: true });
 watch(activeFilter, () => { if (props.open) loadContacts(); });
 
 const filteredCustomers = computed(() => {
@@ -143,7 +157,9 @@ function addManualEntry() {
     id: `manual-${Date.now()}-${i}`,
     name: contact,
     contextLabel: 'Manual:',
-    contextValue: contact
+    contextValue: contact,
+    email: contact.includes('@') ? contact : '',
+    phone: contact.includes('@') ? '' : contact
   }));
   allCustomers.value = [...added, ...allCustomers.value];
   form.value.selectedCustomers = [...form.value.selectedCustomers, ...added.map(c => c.id)];
@@ -164,7 +180,9 @@ function handleCsvImport(event) {
       id: `csv-${Date.now()}-${i}`,
       name: c.name,
       contextLabel: 'Imported:',
-      contextValue: c.contact || 'CSV'
+      contextValue: c.contact || 'CSV',
+      email: (c.contact || '').includes('@') ? c.contact : '',
+      phone: (c.contact || '').includes('@') ? '' : (c.contact || '')
     }));
     allCustomers.value = [...added, ...allCustomers.value];
     form.value.selectedCustomers = [
@@ -185,11 +203,43 @@ const previewMessage = computed(() => {
     .replace('{{EmployeeName}}', 'Alex');
 });
 
-const channels = [
-  { name: 'WhatsApp', icon: MessageCircle, rate: '98%', color: 'text-emerald-500', bg: 'bg-emerald-50' },
-  { name: 'Email', icon: Mail, rate: '92%', color: 'text-primary', bg: 'bg-primary/10' },
-  { name: 'SMS', icon: Smartphone, rate: '96%', color: 'text-primary', bg: 'bg-primary/10' }
+// Channels need email or a phone number; used for the picker and to validate recipients.
+const CHANNEL_META = [
+  { name: 'WhatsApp', key: 'whatsapp', field: 'phone', icon: MessageCircle, color: 'text-emerald-500', bg: 'bg-emerald-50' },
+  { name: 'Email', key: 'email', field: 'email', icon: Mail, color: 'text-primary', bg: 'bg-primary/10' },
+  { name: 'SMS', key: 'sms', field: 'phone', icon: Smartphone, color: 'text-primary', bg: 'bg-primary/10' }
 ];
+
+// Real open rate per channel from past requests (opened = status past "sent"); "—" until there's data.
+const channels = computed(() => {
+  const acc = {};
+  requests.value.forEach(r => {
+    if (!r.channel) return;
+    acc[r.channel] = acc[r.channel] || { sent: 0, opened: 0 };
+    acc[r.channel].sent += 1;
+    if (r.status !== 'sent') acc[r.channel].opened += 1;
+  });
+  return CHANNEL_META.map(c => {
+    const d = acc[c.key];
+    return { ...c, rate: d && d.sent ? `${Math.round((d.opened / d.sent) * 100)}%` : '—' };
+  });
+});
+
+// Validate chosen channels against the selected, currently-visible recipients.
+// ponytail: only sees recipients still in the loaded list (a filter switch can hide some) — fine for the happy path.
+const selectedRecipients = computed(() =>
+  allCustomers.value.filter(c => form.value.selectedCustomers.includes(c.id))
+);
+const channelError = computed(() => {
+  const recips = selectedRecipients.value;
+  if (!recips.length || !form.value.channels.length) return '';
+  const missing = new Set();
+  form.value.channels.forEach(name => {
+    const meta = CHANNEL_META.find(c => c.name === name);
+    if (meta && recips.some(r => !r[meta.field])) missing.add(meta.field === 'email' ? 'an email' : 'a phone number');
+  });
+  return missing.size ? `Some selected contacts have no ${[...missing].join(' or ')}. Remove them or deselect that channel.` : '';
+});
 
 const tones = ['Friendly', 'Professional', 'Luxury', 'Casual'];
 const destinations = ['Google', 'Facebook', 'Trustpilot', 'Yelp', 'Custom Link'];
@@ -209,6 +259,7 @@ function selectAllCustomers() {
 }
 
 function nextStep() {
+  if (currentStep.value === 2 && channelError.value) return;
   if (currentStep.value < 5) currentStep.value++;
 }
 
@@ -217,6 +268,7 @@ function prevStep() {
 }
 
 function generateReport() {
+  if (channelError.value) { currentStep.value = 2; return; }
   setTimeout(() => {
     currentStep.value = 5;
   }, 800);
@@ -356,12 +408,15 @@ function close() {
                     <div class="flex items-center gap-1.5 text-sm">
                       <Star class="size-3.5 fill-amber-400 text-amber-400" v-if="channel.name === 'WhatsApp'" />
                       <span class="font-medium text-foreground">{{ channel.rate }}</span>
-                      <span class="text-muted-foreground">Open Rate</span>
+                      <span class="text-muted-foreground">{{ channel.rate === '—' ? 'No sends yet' : 'Open Rate' }}</span>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
+            <p v-if="channelError" class="text-sm text-red-500 flex items-center gap-1.5">
+              <AlertCircle class="size-4 shrink-0" /> {{ channelError }}
+            </p>
           </div>
 
           <div class="space-y-4">
@@ -547,7 +602,7 @@ function close() {
         <button class="h-9 px-4 text-sm font-semibold text-muted-foreground hover:text-foreground cursor-pointer disabled:opacity-40" @click="prevStep" :disabled="currentStep === 1">
           Back
         </button>
-        <button v-if="currentStep < 4" class="h-9 px-8 text-sm font-semibold bg-primary hover:bg-primary/90 text-primary-foreground rounded-lg shadow-xs cursor-pointer inline-flex items-center gap-2" @click="nextStep" :disabled="currentStep === 1 && form.selectedCustomers.length === 0">
+        <button v-if="currentStep < 4" class="h-9 px-8 text-sm font-semibold bg-primary hover:bg-primary/90 text-primary-foreground rounded-lg shadow-xs cursor-pointer inline-flex items-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed" @click="nextStep" :disabled="(currentStep === 1 && form.selectedCustomers.length === 0) || (currentStep === 2 && !!channelError)">
           Next
           <ChevronRight class="size-4" />
         </button>

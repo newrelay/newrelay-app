@@ -137,9 +137,11 @@ shows `—` "No sends yet" until data exists. Backend enum only has `sms|email`,
 SMS/WhatsApp→`phone`); `mapContact`/manual/CSV rows now carry `email`+`phone` (manual/CSV split on `@`).
 `channelError` computed blocks Next (step 2) and Send when a selected, currently-visible contact lacks the
 required field. Default channel stays `['Email']`.
-**Ceiling:** validation only sees recipients still in the loaded `contactsList` (switching Quick Filter can hide
-some); WhatsApp open rate needs a real WhatsApp send path. **Not touched:** `RequestReviewsModal.vue` (mock, used
-only by OverviewPage) — port the same logic there when that modal goes real.
+**Ceiling:** validation only sees recipients still in the loaded list (switching Quick Filter can hide
+some); WhatsApp open rate needs a real WhatsApp send path (backend enum is `sms|email` only, so WhatsApp reads `—`).
+**Applied to BOTH surfaces:** `RequestsPage.vue` (Requests route, real send) and `RequestReviewsModal.vue`
+(Overview "Request Reviews", mock send) — the modal now also GETs `/reputation/review_requests` for its rates.
+Rates show `—`/"No sends yet" until the account actually has send history.
 
 ## Cross-cutting (every version)
 - `enterprise/` overlay check for each new model/controller (CLAUDE.md).

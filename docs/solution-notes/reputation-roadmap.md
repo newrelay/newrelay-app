@@ -115,6 +115,20 @@ v1.0 provider spine ─┬─> v1.0 reconnect ──> v1.1 (deltas/score/flag)
 v2.1 Feedback ── mostly independent (public feedback backend exists)
 ```
 
+## Request Reviews — Quick Filters (decided 2026-08-21)
+The recipient picker's Quick Filters (Completed Jobs, Closed Deals, Positive Feedback,
+Appointment Completed, Invoice Paid) are CRM/job concepts with **no native Chatwoot field**.
+Decision: back them with **contact labels** — reuse the contacts index `?labels=<slug>` support
+(`tagged_with`, contacts_controller.rb), zero backend. "Recent Customers" = default `sort=-last_activity_at`.
+Slugs: `completed-job`, `closed-deal`, `positive-feedback`, `appointment-completed`, `invoice-paid`.
+Wired in `RequestsPage.vue` + `RequestReviewsModal.vue` via `FILTER_PARAMS`; search overrides the filter.
+**Default labels auto-seeded:** on first open the picker `ensureDefaultLabels()` GETs `/labels` and POSTs any of the
+five slugs that are missing (idempotent, once/session) — so the labels exist in the account (and show up in the contact
+label picker) without the user creating them. Re-seeds if a user deletes one; that's the "default" semantic.
+**Ceiling:** a filter is empty until contacts actually carry that label (via automations/CRM sync/manual tagging) — honest, not a bug.
+**Upgrade path:** for richer rules (date ranges, custom attributes like `invoice_status=paid`) switch to `POST /contacts/filter`
+(`Contacts::FilterService`). `positive-feedback` can later point at real reviews/CSAT instead of a label.
+
 ## Cross-cutting (every version)
 - `enterprise/` overlay check for each new model/controller (CLAUDE.md).
 - Semantic tokens only; lucide icons (verify names); i18n sweep is a **separate track** (still deferred).

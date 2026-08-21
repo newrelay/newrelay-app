@@ -44,7 +44,7 @@ const baseUrl = () => `/api/v1/accounts/${accountId}/reputation`;
 
 // Default Form State for Multi-step Modal matching reference
 const defaultFormState = {
-  selectedCustomers: ['1', '2'],
+  selectedCustomers: [],
   customRecipients: '',
   channels: ['Email'],
   delivery: 'Send immediately',
@@ -60,16 +60,79 @@ const form = ref({ ...defaultFormState });
 const activeFilter = ref('Recent Customers');
 const filters = ['Recent Customers', 'Completed Jobs', 'Closed Deals', 'Positive Feedback', 'Appointment Completed', 'Invoice Paid'];
 
-const mockCustomers = [
-  { id: '1', name: 'Sarah Johnson', contextLabel: 'Purchased:', contextValue: '2 days ago' },
-  { id: '2', name: 'Michael Brown', contextLabel: 'Service Completed:', contextValue: 'Yesterday' },
-  { id: '3', name: 'Emily Wilson', contextLabel: 'Appointment:', contextValue: 'Today' },
-  { id: '4', name: 'David Miller', contextLabel: 'Invoice Paid:', contextValue: 'Today' },
-  { id: '5', name: 'Jessica Taylor', contextLabel: 'Purchased:', contextValue: '3 days ago' },
-  { id: '6', name: 'Robert Anderson', contextLabel: 'Service Completed:', contextValue: 'Yesterday' },
-  { id: '7', name: 'Amanda Thomas', contextLabel: 'Appointment:', contextValue: 'Today' },
-  { id: '8', name: 'James Jackson', contextLabel: 'Invoice Paid:', contextValue: 'Yesterday' }
-];
+// Quick Filters map to contact labels; "Recent Customers" is just the default sort.
+// Tag contacts with these labels (via automations/CRM sync/manual) to populate each filter.
+const FILTER_PARAMS = {
+  'Recent Customers': { sort: '-last_activity_at' },
+  'Completed Jobs': { labels: 'completed-job' },
+  'Closed Deals': { labels: 'closed-deal' },
+  'Positive Feedback': { labels: 'positive-feedback' },
+  'Appointment Completed': { labels: 'appointment-completed' },
+  'Invoice Paid': { labels: 'invoice-paid' },
+};
+
+const csvInput = ref(null);
+const importError = ref('');
+
+// The label slugs the Quick Filters depend on, seeded so filters work out of the box.
+const QUICK_FILTER_LABELS = Object.values(FILTER_PARAMS).map(p => p.labels).filter(Boolean);
+
+// Create the default filter labels once (idempotent — skips existing), so the user
+// doesn't have to set them up before tagging contacts.
+let labelsEnsured = false;
+async function ensureDefaultLabels() {
+  if (labelsEnsured || !accountId) return;
+  labelsEnsured = true;
+  try {
+    const { data } = await axios.get(`/api/v1/accounts/${accountId}/labels`);
+    const existing = new Set((data.payload || []).map(l => l.title));
+    const missing = QUICK_FILTER_LABELS.filter(t => !existing.has(t));
+    await Promise.all(missing.map(title =>
+      axios.post(`/api/v1/accounts/${accountId}/labels`, {
+        label: { title, color: '#1f93ff', show_on_sidebar: true }
+      }).catch(() => {})
+    ));
+  } catch (err) {
+    labelsEnsured = false; // let it retry on next open
+  }
+}
+
+function mapContact(c) {
+  return {
+    id: String(c.id),
+    name: c.name || c.email || c.phone_number || 'Unknown',
+    contextLabel: 'Contact:',
+    contextValue: c.email || c.phone_number || ''
+  };
+}
+
+async function loadContacts() {
+  if (!accountId) return;
+  loadingContacts.value = true;
+  try {
+    const url = contactsQuery.value
+      ? `/api/v1/accounts/${accountId}/contacts/search`
+      : `/api/v1/accounts/${accountId}/contacts`;
+    // Search takes priority; otherwise apply the active Quick Filter.
+    const params = contactsQuery.value
+      ? { q: contactsQuery.value }
+      : (FILTER_PARAMS[activeFilter.value] || { sort: '-last_activity_at' });
+    const { data } = await axios.get(url, { params });
+    contactsList.value = (data.payload || []).map(mapContact);
+  } catch (err) {
+    console.error('Failed to load contacts', err);
+  } finally {
+    loadingContacts.value = false;
+  }
+}
+
+let searchDebounce;
+watch(contactsQuery, () => {
+  clearTimeout(searchDebounce);
+  searchDebounce = setTimeout(loadContacts, 300);
+});
+
+watch(activeFilter, loadContacts);
 
 const availableChannels = [
   { name: 'WhatsApp', icon: MessageCircle, rate: '98%', color: 'text-emerald-500', bg: 'bg-emerald-500/10' },
@@ -80,10 +143,64 @@ const availableChannels = [
 const tones = ['Friendly', 'Professional', 'Luxury', 'Casual'];
 const destinations = ['Google', 'Facebook', 'Trustpilot', 'Yelp', 'Custom Link'];
 
-const filteredCustomers = computed(() => {
-  if (!contactsQuery.value) return mockCustomers;
-  return mockCustomers.filter(c => c.name.toLowerCase().includes(contactsQuery.value.toLowerCase()));
-});
+// Server already filters when searching; imported CSV rows live at the top of contactsList.
+const filteredCustomers = computed(() => contactsList.value);
+
+// Parse a contacts CSV (name, email/phone) client-side, prepend as selectable rows, auto-select.
+function triggerImport() {
+  importError.value = '';
+  csvInput.value?.click();
+}
+
+function parseCsv(text) {
+  const rows = text.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
+  if (!rows.length) return [];
+  const looksLikeHeader = /name|email|phone|contact/i.test(rows[0]) && !/[@\d]/.test(rows[0]);
+  const dataRows = looksLikeHeader ? rows.slice(1) : rows;
+  return dataRows.map(row => {
+    const [name, contact] = row.split(',').map(c => (c || '').trim());
+    return { name: name || contact, contact: contact || '' };
+  }).filter(r => r.name);
+}
+
+// Turn the Manual Entry field (emails/phones, any delimiter) into selected recipients.
+function addManualEntry() {
+  const parts = form.value.customRecipients.split(/[\s,;]+/).map(s => s.trim()).filter(Boolean);
+  if (!parts.length) return;
+  const added = parts.map((contact, i) => ({
+    id: `manual-${Date.now()}-${i}`,
+    name: contact,
+    contextLabel: 'Manual:',
+    contextValue: contact
+  }));
+  contactsList.value = [...added, ...contactsList.value];
+  form.value.selectedCustomers = [...form.value.selectedCustomers, ...added.map(c => c.id)];
+  form.value.customRecipients = '';
+}
+
+function handleCsvImport(event) {
+  const file = event.target.files?.[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = () => {
+    const parsed = parseCsv(String(reader.result || ''));
+    if (!parsed.length) {
+      importError.value = 'No contacts found in that file.';
+      return;
+    }
+    const added = parsed.map((c, i) => ({
+      id: `csv-${Date.now()}-${i}`,
+      name: c.name,
+      contextLabel: 'Imported:',
+      contextValue: c.contact || 'CSV'
+    }));
+    contactsList.value = [...added, ...contactsList.value];
+    form.value.selectedCustomers = [...form.value.selectedCustomers, ...added.map(c => c.id)];
+  };
+  reader.onerror = () => { importError.value = 'Could not read that file.'; };
+  reader.readAsText(file);
+  event.target.value = '';
+}
 
 const previewMessage = computed(() => {
   const name = selectedContact.value ? selectedContact.value.name.split(' ')[0] : 'Sarah';
@@ -135,6 +252,9 @@ async function loadData() {
 const openModal = async () => {
   showModal.value = true;
   currentStep.value = 1;
+  contactsQuery.value = '';
+  ensureDefaultLabels();
+  loadContacts();
 };
 
 function closeModal() {
@@ -356,13 +476,16 @@ const statusColor = s => {
                 </div>
               </div>
               <div class="pt-4 border-t border-border space-y-4">
-                <button class="w-full inline-flex items-center justify-start gap-2 rounded-md border border-border bg-card px-3 py-2 text-xs font-medium text-muted-foreground hover:text-foreground shadow-sm">
+                <button type="button" class="w-full inline-flex items-center justify-start gap-2 rounded-md border border-border bg-card px-3 py-2 text-xs font-medium text-muted-foreground hover:text-foreground shadow-sm cursor-pointer" @click="triggerImport">
                   <Upload class="size-4" /> Import CSV
                 </button>
+                <input ref="csvInput" type="file" accept=".csv,text/csv" class="hidden" @change="handleCsvImport" />
+                <p v-if="importError" class="text-[11px] text-red-500">{{ importError }}</p>
 
                 <div class="flex flex-col gap-1.5">
                   <label class="text-xs font-medium text-foreground">Manual Entry</label>
-                  <input v-model="form.customRecipients" placeholder="Emails or phone numbers..." class="h-9 px-3 text-xs shadow-sm rounded-md border border-border bg-background focus:outline-none focus-visible:ring-1 focus-visible:ring-primary/30" />
+                  <input v-model="form.customRecipients" placeholder="Emails or phone numbers..." class="h-9 px-3 text-xs shadow-sm rounded-md border border-border bg-background focus:outline-none focus-visible:ring-1 focus-visible:ring-primary/30" @keyup.enter="addManualEntry" />
+                  <p class="text-[10px] text-muted-foreground">Press Enter to add. Separate multiple with commas.</p>
                 </div>
               </div>
             </div>
@@ -382,7 +505,9 @@ const statusColor = s => {
                 </div>
               </div>
 
-              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 overflow-y-auto pr-2 pb-4">
+              <div v-if="loadingContacts" class="flex items-center justify-center py-10 text-xs text-muted-foreground">Loading contacts…</div>
+              <div v-else-if="filteredCustomers.length === 0" class="flex items-center justify-center py-10 text-xs text-muted-foreground">No contacts found. Import a CSV or add contacts first.</div>
+              <div v-else class="grid grid-cols-1 sm:grid-cols-2 gap-3 overflow-y-auto pr-2 pb-4">
                 <div
                   v-for="customer in filteredCustomers" :key="customer.id"
                   class="flex items-start gap-3 p-3 rounded-xl border cursor-pointer transition-all"

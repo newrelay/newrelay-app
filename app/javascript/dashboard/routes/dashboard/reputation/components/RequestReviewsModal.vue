@@ -1,6 +1,6 @@
 <script setup>
 /* eslint-disable */
-import { ref, computed } from 'vue';
+import { ref, computed, watch } from 'vue';
 import { 
   X, ChevronRight, Search, FileText, CheckCircle2, 
   ArrowLeft, Send, Sparkles, MessageSquare, 
@@ -34,25 +34,81 @@ const defaultFormState = {
   destinations: ['Google']
 };
 
+const axios = window.axios;
+const accountId = window.__STORE__?.getters['auth/getCurrentAccount']?.id ||
+  window.location.pathname.match(/accounts\/(\d+)/)?.[1];
+
 const currentStep = ref(1);
 const form = ref({ ...defaultFormState });
 const searchQuery = ref('');
 const activeFilter = ref('Recent Customers');
 const csvInput = ref(null);
 const importError = ref('');
+const loadingContacts = ref(false);
 
 const filters = ['Recent Customers', 'Completed Jobs', 'Closed Deals', 'Positive Feedback', 'Appointment Completed', 'Invoice Paid'];
 
-const allCustomers = ref([
-  { id: '1', name: 'Sarah Johnson', contextLabel: 'Purchased:', contextValue: '2 days ago' },
-  { id: '2', name: 'Michael Brown', contextLabel: 'Service Completed:', contextValue: 'Yesterday' },
-  { id: '3', name: 'Emily Wilson', contextLabel: 'Appointment:', contextValue: 'Today' },
-  { id: '4', name: 'David Miller', contextLabel: 'Invoice Paid:', contextValue: 'Today' },
-  { id: '5', name: 'Jessica Taylor', contextLabel: 'Purchased:', contextValue: '3 days ago' },
-  { id: '6', name: 'Robert Anderson', contextLabel: 'Service Completed:', contextValue: 'Yesterday' },
-  { id: '7', name: 'Amanda Thomas', contextLabel: 'Appointment:', contextValue: 'Today' },
-  { id: '8', name: 'James Jackson', contextLabel: 'Invoice Paid:', contextValue: 'Yesterday' }
-]);
+// Quick Filters map to contact labels; "Recent Customers" is just the default sort.
+const FILTER_PARAMS = {
+  'Recent Customers': { sort: '-last_activity_at' },
+  'Completed Jobs': { labels: 'completed-job' },
+  'Closed Deals': { labels: 'closed-deal' },
+  'Positive Feedback': { labels: 'positive-feedback' },
+  'Appointment Completed': { labels: 'appointment-completed' },
+  'Invoice Paid': { labels: 'invoice-paid' },
+};
+
+// The label slugs the Quick Filters depend on, seeded so filters work out of the box.
+const QUICK_FILTER_LABELS = Object.values(FILTER_PARAMS).map(p => p.labels).filter(Boolean);
+
+// Create the default filter labels once (idempotent — skips ones that already exist),
+// so the user doesn't have to set them up before tagging contacts.
+let labelsEnsured = false;
+async function ensureDefaultLabels() {
+  if (labelsEnsured || !accountId) return;
+  labelsEnsured = true;
+  try {
+    const { data } = await axios.get(`/api/v1/accounts/${accountId}/labels`);
+    const existing = new Set((data.payload || []).map(l => l.title));
+    const missing = QUICK_FILTER_LABELS.filter(t => !existing.has(t));
+    await Promise.all(missing.map(title =>
+      axios.post(`/api/v1/accounts/${accountId}/labels`, {
+        label: { title, color: '#1f93ff', show_on_sidebar: true }
+      }).catch(() => {})
+    ));
+  } catch (err) {
+    labelsEnsured = false; // let it retry on next open
+  }
+}
+
+// Real Chatwoot contacts (loaded on open) + any CSV-imported rows, prepended.
+const allCustomers = ref([]);
+
+function mapContact(c) {
+  return {
+    id: String(c.id),
+    name: c.name || c.email || c.phone_number || 'Unknown',
+    contextLabel: 'Contact:',
+    contextValue: c.email || c.phone_number || ''
+  };
+}
+
+async function loadContacts() {
+  if (!accountId) return;
+  loadingContacts.value = true;
+  try {
+    const params = FILTER_PARAMS[activeFilter.value] || { sort: '-last_activity_at' };
+    const { data } = await axios.get(`/api/v1/accounts/${accountId}/contacts`, { params });
+    allCustomers.value = (data.payload || []).map(mapContact);
+  } catch (err) {
+    console.error('Failed to load contacts', err);
+  } finally {
+    loadingContacts.value = false;
+  }
+}
+
+watch(() => props.open, isOpen => { if (isOpen) { ensureDefaultLabels(); loadContacts(); } }, { immediate: true });
+watch(activeFilter, () => { if (props.open) loadContacts(); });
 
 const filteredCustomers = computed(() => {
   if (!searchQuery.value) return allCustomers.value;
@@ -77,6 +133,21 @@ function parseCsv(text) {
     const [name, contact] = row.split(',').map(c => (c || '').trim());
     return { name: name || contact, contact: contact || '' };
   }).filter(r => r.name);
+}
+
+// Turn the Manual Entry field (emails/phones, any delimiter) into selected recipients.
+function addManualEntry() {
+  const parts = form.value.customRecipients.split(/[\s,;]+/).map(s => s.trim()).filter(Boolean);
+  if (!parts.length) return;
+  const added = parts.map((contact, i) => ({
+    id: `manual-${Date.now()}-${i}`,
+    name: contact,
+    contextLabel: 'Manual:',
+    contextValue: contact
+  }));
+  allCustomers.value = [...added, ...allCustomers.value];
+  form.value.selectedCustomers = [...form.value.selectedCustomers, ...added.map(c => c.id)];
+  form.value.customRecipients = '';
 }
 
 function handleCsvImport(event) {
@@ -217,7 +288,8 @@ function close() {
 
               <div class="flex flex-col gap-1.5">
                 <label class="text-[13.5px] font-medium text-foreground">Manual Entry</label>
-                <Input v-model="form.customRecipients" placeholder="Emails or phone numbers..." class="h-10 px-4 text-[14px] shadow-xs rounded-md border-border/80 bg-background" />
+                <Input v-model="form.customRecipients" placeholder="Emails or phone numbers..." class="h-10 px-4 text-[14px] shadow-xs rounded-md border-border/80 bg-background" @keyup.enter="addManualEntry" />
+                <p class="text-[11px] text-muted-foreground">Press Enter to add. Separate multiple with commas.</p>
               </div>
             </div>
           </div>
@@ -237,8 +309,10 @@ function close() {
               </div>
             </div>
             
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-3 overflow-y-auto pr-2 pb-4">
-              <div 
+            <div v-if="loadingContacts" class="flex items-center justify-center py-10 text-sm text-muted-foreground">Loading contacts…</div>
+            <div v-else-if="filteredCustomers.length === 0" class="flex items-center justify-center py-10 text-sm text-muted-foreground">No contacts found. Import a CSV or add contacts first.</div>
+            <div v-else class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-3 overflow-y-auto pr-2 pb-4">
+              <div
                 v-for="customer in filteredCustomers" :key="customer.id"
                 class="flex items-start gap-3 p-3 rounded-xl border cursor-pointer transition-all"
                 :class="form.selectedCustomers.includes(customer.id) ? 'border-primary bg-primary/5 shadow-xs' : 'border-border bg-card hover:border-primary/30'"

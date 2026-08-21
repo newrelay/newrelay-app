@@ -86,7 +86,7 @@
     "json-logic-js": "^2.0.5",
     "lettersanitizer": "^1.0.6",
     "libphonenumber-js": "^1.11.9",
-    "lucide-vue-next": "^1.0.0",
+    "lucide-vue-next": "^0.475.0",
     "markdown-it": "^14.1.1",
     "markdown-it-link-attributes": "^4.0.1",
     "md5": "^2.3.0",

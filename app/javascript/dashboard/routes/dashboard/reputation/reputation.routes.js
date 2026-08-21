@@ -1,4 +1,5 @@
 import { frontendURL } from '../../../helper/URLHelper';
+import { FEATURE_FLAGS } from 'dashboard/featureFlags';
 import ReputationLayout from './pages/ReputationLayout.vue';
 import OverviewPage from './pages/OverviewPage.vue';
 import ReviewsPage from './pages/ReviewsPage.vue';
@@ -7,6 +8,7 @@ import WidgetsPage from './pages/WidgetsPage.vue';
 import SettingsPage from './pages/SettingsPage.vue';
 import VideoTestimonialsPage from './pages/VideoTestimonialsPage.vue';
 import ListingsPage from './pages/ListingsPage.vue';
+import FeedbackPage from './pages/FeedbackPage.vue';
 
 const meta = { permissions: ['administrator', 'agent'] };
 
@@ -53,7 +55,13 @@ export const routes = [
         path: 'listings',
         name: 'reputation_listings',
         component: ListingsPage,
-        meta,
+        meta: { ...meta, featureFlag: FEATURE_FLAGS.REPUTATION_DEMO_SURFACES },
+      },
+      {
+        path: 'feedback',
+        name: 'reputation_feedback',
+        component: FeedbackPage,
+        meta: { ...meta, featureFlag: FEATURE_FLAGS.REPUTATION_DEMO_SURFACES },
       },
       {
         path: 'settings',

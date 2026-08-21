@@ -143,6 +143,7 @@ class Account < ApplicationRecord
   has_many :reputation_review_requests, dependent: :destroy_async, class_name: 'Reputation::ReviewRequest'
   has_many :reputation_widgets, dependent: :destroy_async, class_name: 'Reputation::Widget'
   has_many :reputation_video_testimonials, dependent: :destroy_async, class_name: 'Reputation::VideoTestimonial'
+  has_many :reputation_feedback_submissions, dependent: :destroy_async, class_name: 'Reputation::FeedbackSubmission'
 
   has_one_attached :contacts_export
   has_one_attached :logo

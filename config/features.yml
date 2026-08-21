@@ -258,3 +258,6 @@
   display_name: Advanced Assignment
   enabled: true
   premium: true
+- name: reputation_demo_surfaces
+  display_name: Reputation Demo Surfaces
+  enabled: true

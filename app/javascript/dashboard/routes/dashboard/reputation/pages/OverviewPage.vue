@@ -10,11 +10,19 @@ import {
 
 import RequestReviewsModal from '../components/RequestReviewsModal.vue';
 import ShareReportModal from '../components/ShareReportModal.vue';
+import { isReputationDemoSurfacesEnabled } from 'dashboard/featureFlags';
 
 const axios = window.axios;
 const accountId = window.__STORE__?.getters['auth/getCurrentAccount']?.id ||
   window.location.pathname.match(/accounts\/(\d+)/)?.[1];
 const baseUrl = () => `/api/v1/accounts/${accountId}/reputation`;
+
+const showDemoSurfaces = computed(() =>
+  isReputationDemoSurfacesEnabled(
+    accountId,
+    window.__STORE__?.getters['accounts/isFeatureEnabledonAccount']
+  )
+);
 
 const isShareModalOpen = ref(false);
 const isRequestModalOpen = ref(false);
@@ -101,8 +109,8 @@ const trendBars = computed(() => {
   const maxCount = Math.max(...counts.map(c => c.count), 1);
   return counts.map(c => ({
     month: c.month,
-    val1: Math.round((c.count / maxCount) * 80) + 10,
-    val2: Math.round((c.count / maxCount) * 40) + 5,
+    val1: c.count === 0 ? 0 : Math.round((c.count / maxCount) * 80) + 10,
+    val2: c.count === 0 ? 0 : Math.round((c.count / maxCount) * 40) + 5,
   }));
 });
 
@@ -163,7 +171,7 @@ function handleRequestReviews() {
 <template>
   <div class="flex-1 overflow-y-auto w-full hide-scrollbar bg-background p-6 lg:p-8">
     <RequestReviewsModal v-model:open="isRequestModalOpen" />
-    <ShareReportModal v-model:open="isShareModalOpen" />
+    <ShareReportModal v-if="showDemoSurfaces" v-model:open="isShareModalOpen" />
     
     <div class="max-w-7xl mx-auto space-y-6">
       <!-- Header matching AGENTS.md rule (h1 text-xl font-semibold text-foreground) -->
@@ -173,7 +181,7 @@ function handleRequestReviews() {
           <p class="text-sm text-muted-foreground mt-1">Monitor and manage your brand's online presence across all platforms.</p>
         </div>
         <div class="flex items-center gap-3">
-          <button @click="handleShareReport" class="h-9 gap-2 shadow-xs bg-card border border-border text-foreground hover:bg-muted text-[13px] font-semibold px-4 rounded-lg inline-flex items-center cursor-pointer">
+          <button v-if="showDemoSurfaces" @click="handleShareReport" class="h-9 gap-2 shadow-xs bg-card border border-border text-foreground hover:bg-muted text-[13px] font-semibold px-4 rounded-lg inline-flex items-center cursor-pointer">
             <Share2 class="size-4" />
             Share Report
           </button>
@@ -185,9 +193,9 @@ function handleRequestReviews() {
       </div>
 
       <!-- Section 1: Top Summary Metrics -->
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4" :class="showDemoSurfaces ? 'lg:grid-cols-4' : 'lg:grid-cols-2'">
         <!-- Reputation Score (Demo — no backend formula yet) -->
-        <div class="bg-card rounded-2xl border border-border shadow-xs p-5 relative overflow-hidden group hover:border-primary/50 transition-colors">
+        <div v-if="showDemoSurfaces" class="bg-card rounded-2xl border border-border shadow-xs p-5 relative overflow-hidden group hover:border-primary/50 transition-colors">
           <div class="flex justify-between items-start mb-4">
             <div>
               <div class="flex items-center gap-2 mb-1">
@@ -224,7 +232,7 @@ function handleRequestReviews() {
               <Star class="size-5" />
             </div>
           </div>
-          <div class="flex items-center text-sm font-medium text-muted-foreground gap-1">
+          <div v-if="showDemoSurfaces" class="flex items-center text-sm font-medium text-muted-foreground gap-1">
             <span>{{ mock.ratingDelta }}</span>
             <span class="font-normal ml-1">from last month</span>
             <span class="rounded bg-amber-500/15 px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wide text-amber-600 dark:text-amber-400 ml-1" title="Demo — needs daily snapshots for real deltas">Demo</span>
@@ -242,7 +250,7 @@ function handleRequestReviews() {
               <MessageCircle class="size-5" />
             </div>
           </div>
-          <div class="flex items-center text-sm font-medium text-muted-foreground gap-1">
+          <div v-if="showDemoSurfaces" class="flex items-center text-sm font-medium text-muted-foreground gap-1">
             <span>{{ mock.reviewsDelta }}</span>
             <span class="font-normal ml-1">vs last period</span>
             <span class="rounded bg-amber-500/15 px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wide text-amber-600 dark:text-amber-400 ml-1" title="Demo — needs daily snapshots for real deltas">Demo</span>
@@ -250,7 +258,7 @@ function handleRequestReviews() {
         </div>
 
         <!-- AI Sentiment Card (Demo — no sentiment backend yet) -->
-        <div class="bg-primary text-primary-foreground rounded-2xl border border-transparent shadow-xs p-5 relative overflow-hidden group hover:shadow-md transition-all flex flex-col justify-between">
+        <div v-if="showDemoSurfaces" class="bg-primary text-primary-foreground rounded-2xl border border-transparent shadow-xs p-5 relative overflow-hidden group hover:shadow-md transition-all flex flex-col justify-between">
           <div class="absolute top-0 right-0 -mt-4 -mr-4 size-24 bg-white/10 rounded-full blur-xl pointer-events-none"></div>
 
           <div class="flex justify-between items-start mb-4 relative z-10">
@@ -285,14 +293,14 @@ function handleRequestReviews() {
       <!-- Section 2: Charts & Insights -->
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <!-- Review Trend (Left - 2/3 width) — real when reviews exist -->
-        <div class="bg-card rounded-2xl border border-border shadow-xs p-6 lg:col-span-2 flex flex-col justify-between">
+        <div class="bg-card rounded-2xl border border-border shadow-xs p-6 flex flex-col justify-between" :class="showDemoSurfaces ? 'lg:col-span-2' : 'lg:col-span-3'">
           <div class="flex justify-between items-center mb-6">
             <div class="flex items-center gap-2">
               <div>
                 <h3 class="text-base font-semibold text-foreground">Review Trend</h3>
                 <p class="text-sm text-muted-foreground mt-0.5">Volume of new reviews over the last 7 months</p>
               </div>
-              <span v-if="trendIsMock" class="rounded bg-amber-500/15 px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wide text-amber-600 dark:text-amber-400" title="Demo — connect a review platform to see real data">Demo</span>
+              <span v-if="showDemoSurfaces && trendIsMock" class="rounded bg-amber-500/15 px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wide text-amber-600 dark:text-amber-400" title="Demo — connect a review platform to see real data">Demo</span>
             </div>
             <div class="inline-flex items-center gap-1.5 rounded-lg border border-border bg-card px-3 py-1.5 text-xs font-medium text-muted-foreground shrink-0">
               Last 7 Months
@@ -311,7 +319,7 @@ function handleRequestReviews() {
         </div>
 
         <!-- AI Insights (Right - 1/3 width, Demo — needs LLM summary backend) -->
-        <div class="bg-card rounded-2xl border border-border shadow-xs p-0 flex flex-col overflow-hidden relative">
+        <div v-if="showDemoSurfaces" class="bg-card rounded-2xl border border-border shadow-xs p-0 flex flex-col overflow-hidden relative">
           <div class="h-1 w-full bg-primary"></div>
 
           <div class="p-6 flex-1 flex flex-col">

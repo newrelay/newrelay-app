@@ -42,6 +42,7 @@
         reputationGoogleClientId: '<%= ENV.fetch('REPUTATION_GOOGLE_CLIENT_ID', nil) %>',
         reputationGoogleViaGmbapi: <%= %w[gmbapi mock].include?(ENV.fetch('REPUTATION_GOOGLE_PROVIDER', 'google')) %>,
         reputationFacebookAppId: '<%= ENV.fetch('REPUTATION_FACEBOOK_APP_ID', nil) %>',
+        reputationDemoSurfaces: <%= ActiveModel::Type::Boolean.new.cast(ENV.fetch('REPUTATION_DEMO_SURFACES', 'false')) %>,
         allowedLoginMethods: <%= @global_config['ALLOWED_LOGIN_METHODS'].to_json.html_safe %>,
         fbApiVersion: '<%= @global_config['FACEBOOK_API_VERSION'] %>',
         whatsappAppId: '<%= @global_config['WHATSAPP_APP_ID'] %>',

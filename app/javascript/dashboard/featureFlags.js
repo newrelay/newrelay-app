@@ -51,6 +51,7 @@ export const FEATURE_FLAGS = {
   CUSTOM_DOMAIN: 'custom_domain',
   RESELLER_DASHBOARD: 'reseller_dashboard',
   API_ACCESS: 'api_access',
+  REPUTATION_DEMO_SURFACES: 'reputation_demo_surfaces',
 };
 
 export const PREMIUM_FEATURES = [
@@ -68,3 +69,16 @@ export const PREMIUM_FEATURES = [
   FEATURE_FLAGS.RESELLER_DASHBOARD,
   FEATURE_FLAGS.API_ACCESS,
 ];
+
+export const isReputationDemoSurfacesEnabled = (
+  accountId,
+  isFeatureEnabledonAccount
+) => {
+  if (window.newrelayConfig?.reputationDemoSurfaces) return true;
+  if (!accountId || typeof isFeatureEnabledonAccount !== 'function')
+    return false;
+  return !!isFeatureEnabledonAccount(
+    accountId,
+    FEATURE_FLAGS.REPUTATION_DEMO_SURFACES
+  );
+};

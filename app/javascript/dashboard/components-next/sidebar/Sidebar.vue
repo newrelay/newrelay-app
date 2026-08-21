@@ -7,7 +7,10 @@ import { useStore } from 'vuex';
 import { useI18n } from 'vue-i18n';
 import { useSidebarKeyboardShortcuts } from './useSidebarKeyboardShortcuts';
 import { vOnClickOutside } from '@vueuse/components';
-import { FEATURE_FLAGS } from 'dashboard/featureFlags';
+import {
+  FEATURE_FLAGS,
+  isReputationDemoSurfacesEnabled,
+} from 'dashboard/featureFlags';
 import { useWindowSize, useEventListener } from '@vueuse/core';
 
 import Auth from 'dashboard/api/auth';
@@ -57,6 +60,13 @@ const hasConversationUnreadCounts = computed(() => {
     FEATURE_FLAGS.CONVERSATION_UNREAD_COUNTS
   );
 });
+
+const showReputationDemoSurfaces = computed(() =>
+  isReputationDemoSurfacesEnabled(
+    accountId.value,
+    isFeatureEnabledonAccount.value
+  )
+);
 
 const fetchConversationUnreadCounts = ([currentAccountId, isEnabled]) => {
   if (!currentAccountId) return;
@@ -522,15 +532,25 @@ const primaryMenuItems = computed(() => {
           to: accountScopedRoute('reputation_video_testimonials'),
           activeOn: ['reputation_video_testimonials'],
         },
+        ...(showReputationDemoSurfaces.value
+          ? [
+              {
+                name: 'Reputation Listings',
+                label: t('SIDEBAR.REPUTATION_LISTINGS'),
+                to: accountScopedRoute('reputation_listings'),
+                activeOn: ['reputation_listings'],
+              },
+              {
+                name: 'Reputation Feedback',
+                label: t('SIDEBAR.REPUTATION_FEEDBACK'),
+                to: accountScopedRoute('reputation_feedback'),
+                activeOn: ['reputation_feedback'],
+              },
+            ]
+          : []),
         {
-          name: 'Reputation Listings',
-          label: t('SIDEBAR.REPUTATION_LISTINGS'),
-          to: accountScopedRoute('reputation_listings'),
-          activeOn: ['reputation_listings'],
-        },
-        {
-          name: 'Reputation Feedback',
-          label: t('SIDEBAR.REPUTATION_FEEDBACK'),
+          name: 'Reputation Requests',
+          label: t('SIDEBAR.REPUTATION_REQUESTS'),
           to: accountScopedRoute('reputation_requests'),
           activeOn: ['reputation_requests'],
         },

@@ -1,6 +1,8 @@
 <script setup>
 /* eslint-disable */
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted } from 'vue';
+import { useRouter } from 'vue-router';
+import { isReputationDemoSurfacesEnabled } from 'dashboard/featureFlags';
 import {
   Download,
   ChevronDown,
@@ -25,6 +27,22 @@ import {
   Link as LinkIcon,
   ArrowLeft,
 } from 'lucide-vue-next';
+
+const router = useRouter();
+const accountId =
+  window.__STORE__?.getters['auth/getCurrentAccount']?.id ||
+  window.location.pathname.match(/accounts\/(\d+)/)?.[1];
+const showDemoSurfaces = computed(() =>
+  isReputationDemoSurfacesEnabled(
+    accountId,
+    window.__STORE__?.getters['accounts/isFeatureEnabledonAccount']
+  )
+);
+onMounted(() => {
+  if (!showDemoSurfaces.value) {
+    router.replace({ name: 'reputation_overview' });
+  }
+});
 
 // ---------------------------------------------------------------------------
 // DEMO / MOCK DATA — no listings backend yet. The whole page is sample data;

@@ -69,7 +69,12 @@ module Featurable
 
   def enable_features(*names)
     names.each do |name|
-      send("feature_#{name}=", true)
+      setter = "feature_#{name}="
+      if respond_to?(setter)
+        send(setter, true)
+      else
+        assign_virtual_feature(name, true)
+      end
     end
   end
 
@@ -80,7 +85,12 @@ module Featurable
 
   def disable_features(*names)
     names.each do |name|
-      send("feature_#{name}=", false)
+      setter = "feature_#{name}="
+      if respond_to?(setter)
+        send(setter, false)
+      else
+        assign_virtual_feature(name, false)
+      end
     end
   end
 
@@ -90,11 +100,18 @@ module Featurable
   end
 
   def feature_enabled?(name)
-    send("feature_#{name}?")
+    predicate = "feature_#{name}?"
+    if respond_to?(predicate)
+      send(predicate)
+    else
+      ActiveModel::Type::Boolean.new.cast(settings&.dig('virtual_features', name.to_s))
+    end
   end
 
   def all_features
-    FEATURE_LIST.pluck('name').index_with do |feature_name|
+    names = FEATURE_LIST.pluck('name')
+    extra = Array(settings&.dig('virtual_features')&.keys)
+    (names + extra).uniq.index_with do |feature_name|
       feature_enabled?(feature_name)
     end
   end
@@ -108,6 +125,12 @@ module Featurable
   end
 
   private
+
+  def assign_virtual_feature(name, value)
+    self.settings ||= {}
+    self.settings['virtual_features'] ||= {}
+    self.settings['virtual_features'][name.to_s] = ActiveModel::Type::Boolean.new.cast(value)
+  end
 
   def enable_default_features
     config = InstallationConfig.find_by(name: 'ACCOUNT_LEVEL_FEATURE_DEFAULTS')

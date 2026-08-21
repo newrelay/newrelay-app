@@ -63,6 +63,7 @@ export const mockFeatures = {
   notion_integration: true,
   quoted_email_reply: true,
   reply_mailer_migration: true,
+  reputation_demo_surfaces: true,
   report_rollup: true,
   reports: true,
   reseller_dashboard: true,

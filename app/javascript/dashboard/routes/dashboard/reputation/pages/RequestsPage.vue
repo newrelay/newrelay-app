@@ -20,6 +20,7 @@ import {
   Send,
   BarChart3,
   Plus,
+  AlertCircle,
 } from 'lucide-vue-next';
 
 const axios = window.axios;
@@ -102,7 +103,9 @@ function mapContact(c) {
     id: String(c.id),
     name: c.name || c.email || c.phone_number || 'Unknown',
     contextLabel: 'Contact:',
-    contextValue: c.email || c.phone_number || ''
+    contextValue: c.email || c.phone_number || '',
+    email: c.email || '',
+    phone: c.phone_number || ''
   };
 }
 
@@ -134,11 +137,45 @@ watch(contactsQuery, () => {
 
 watch(activeFilter, loadContacts);
 
-const availableChannels = [
-  { name: 'WhatsApp', icon: MessageCircle, rate: '98%', color: 'text-emerald-500', bg: 'bg-emerald-500/10' },
-  { name: 'Email', icon: Mail, rate: '92%', color: 'text-primary', bg: 'bg-primary/10' },
-  { name: 'SMS', icon: Smartphone, rate: '96%', color: 'text-primary', bg: 'bg-primary/10' }
-];
+// Channels need email or a phone number; used both for the picker and to validate recipients.
+const CHANNEL_META = [
+  { name: 'WhatsApp', key: 'whatsapp', field: 'phone', icon: MessageCircle, color: 'text-emerald-500', bg: 'bg-emerald-500/10' },
+  { name: 'Email', key: 'email', field: 'email', icon: Mail, color: 'text-primary', bg: 'bg-primary/10' },
+  { name: 'SMS', key: 'sms', field: 'phone', icon: Smartphone, color: 'text-primary', bg: 'bg-primary/10' }
+]
+
+// Real open rate per channel from sent requests (opened = anything past "sent"); "—" until there's data.
+const availableChannels = computed(() => {
+  const acc = {};
+  requests.value.forEach(r => {
+    if (!r.channel) return;
+    acc[r.channel] = acc[r.channel] || { sent: 0, opened: 0 };
+    acc[r.channel].sent += 1;
+    if (r.status !== 'sent') acc[r.channel].opened += 1;
+  });
+  return CHANNEL_META.map(c => {
+    const d = acc[c.key];
+    return { ...c, rate: d && d.sent ? `${Math.round((d.opened / d.sent) * 100)}%` : '—' };
+  });
+});
+
+// Selected contacts we can currently see; validate the chosen channels against them.
+// ponytail: only validates recipients present in the loaded list (a filter switch can hide some) — fine for the happy path.
+const selectedRecipients = computed(() =>
+  contactsList.value.filter(c => form.value.selectedCustomers.includes(c.id))
+);
+
+const channelError = computed(() => {
+  const recips = selectedRecipients.value;
+  if (!recips.length || !form.value.channels.length) return '';
+  const missing = new Set();
+  form.value.channels.forEach(name => {
+    const meta = CHANNEL_META.find(c => c.name === name);
+    if (meta && recips.some(r => !r[meta.field])) missing.add(meta.field === 'email' ? 'an email' : 'a phone number');
+  });
+  if (!missing.size) return '';
+  return `Some selected contacts have no ${[...missing].join(' or ')}. Remove them or deselect that channel.`;
+});;
 
 const tones = ['Friendly', 'Professional', 'Luxury', 'Casual'];
 const destinations = ['Google', 'Facebook', 'Trustpilot', 'Yelp', 'Custom Link'];
@@ -171,7 +208,9 @@ function addManualEntry() {
     id: `manual-${Date.now()}-${i}`,
     name: contact,
     contextLabel: 'Manual:',
-    contextValue: contact
+    contextValue: contact,
+    email: contact.includes('@') ? contact : '',
+    phone: contact.includes('@') ? '' : contact
   }));
   contactsList.value = [...added, ...contactsList.value];
   form.value.selectedCustomers = [...form.value.selectedCustomers, ...added.map(c => c.id)];
@@ -192,7 +231,9 @@ function handleCsvImport(event) {
       id: `csv-${Date.now()}-${i}`,
       name: c.name,
       contextLabel: 'Imported:',
-      contextValue: c.contact || 'CSV'
+      contextValue: c.contact || 'CSV',
+      email: (c.contact || '').includes('@') ? c.contact : '',
+      phone: (c.contact || '').includes('@') ? '' : (c.contact || '')
     }));
     contactsList.value = [...added, ...contactsList.value];
     form.value.selectedCustomers = [...form.value.selectedCustomers, ...added.map(c => c.id)];
@@ -226,6 +267,7 @@ function selectAllCustomers() {
 }
 
 function nextStep() {
+  if (currentStep.value === 2 && channelError.value) return;
   if (currentStep.value < 5) currentStep.value++;
 }
 
@@ -266,6 +308,7 @@ function closeModal() {
 }
 
 async function sendRequest() {
+  if (channelError.value) { currentStep.value = 2; return; }
   sendingRequest.value = true;
   try {
     await axios.post(`${baseUrl()}/review_requests`, {
@@ -552,12 +595,15 @@ const statusColor = s => {
                       <div class="flex items-center gap-1.5 text-xs">
                         <Star class="size-3 fill-amber-400 text-amber-400" v-if="channel.name === 'WhatsApp'" />
                         <span class="font-medium text-foreground">{{ channel.rate }}</span>
-                        <span class="text-muted-foreground">Open Rate</span>
+                        <span class="text-muted-foreground">{{ channel.rate === '—' ? 'No sends yet' : 'Open Rate' }}</span>
                       </div>
                     </div>
                   </div>
                 </div>
               </div>
+              <p v-if="channelError" class="text-xs text-red-500 flex items-center gap-1.5">
+                <AlertCircle class="size-3.5 shrink-0" /> {{ channelError }}
+              </p>
             </div>
 
             <div class="space-y-4">
@@ -742,7 +788,7 @@ const statusColor = s => {
             Back
           </button>
 
-          <button v-if="currentStep < 4" class="inline-flex items-center gap-2 rounded-lg bg-primary px-6 py-2 text-xs font-semibold text-primary-foreground shadow-sm hover:bg-primary/90 transition-colors" @click="nextStep">
+          <button v-if="currentStep < 4" class="inline-flex items-center gap-2 rounded-lg bg-primary px-6 py-2 text-xs font-semibold text-primary-foreground shadow-sm hover:bg-primary/90 transition-colors disabled:opacity-40 disabled:cursor-not-allowed" :disabled="currentStep === 2 && !!channelError" @click="nextStep">
             Next
             <ChevronRight class="size-4" />
           </button>

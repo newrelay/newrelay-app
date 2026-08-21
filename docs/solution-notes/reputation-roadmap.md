@@ -129,6 +129,18 @@ label picker) without the user creating them. Re-seeds if a user deletes one; th
 **Upgrade path:** for richer rules (date ranges, custom attributes like `invoice_status=paid`) switch to `POST /contacts/filter`
 (`Contacts::FilterService`). `positive-feedback` can later point at real reviews/CSAT instead of a label.
 
+## Request Reviews — Delivery Channels (decided 2026-08-21)
+`RequestsPage.vue` step 2. **Dynamic open rate:** per-channel rate is computed from real `review_requests`
+(`opened = status past "sent"` / total for that `channel` enum) instead of the old hardcoded 92/96/98%;
+shows `—` "No sends yet" until data exists. Backend enum only has `sms|email`, so WhatsApp always reads `—`
+(no adapter yet). **Channel/recipient validation:** each channel needs a field on the recipient (Email→`email`,
+SMS/WhatsApp→`phone`); `mapContact`/manual/CSV rows now carry `email`+`phone` (manual/CSV split on `@`).
+`channelError` computed blocks Next (step 2) and Send when a selected, currently-visible contact lacks the
+required field. Default channel stays `['Email']`.
+**Ceiling:** validation only sees recipients still in the loaded `contactsList` (switching Quick Filter can hide
+some); WhatsApp open rate needs a real WhatsApp send path. **Not touched:** `RequestReviewsModal.vue` (mock, used
+only by OverviewPage) — port the same logic there when that modal goes real.
+
 ## Cross-cutting (every version)
 - `enterprise/` overlay check for each new model/controller (CLAUDE.md).
 - Semantic tokens only; lucide icons (verify names); i18n sweep is a **separate track** (still deferred).

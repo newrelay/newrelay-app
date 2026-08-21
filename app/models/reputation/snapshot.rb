@@ -15,8 +15,8 @@
 #
 # Indexes
 #
-#  idx_reputation_snapshots_unique               (account_id,provider,captured_on) UNIQUE
-#  index_reputation_snapshots_on_account_id      (account_id)
+#  idx_reputation_snapshots_unique           (account_id,provider,captured_on) UNIQUE
+#  index_reputation_snapshots_on_account_id  (account_id)
 #
 class Reputation::Snapshot < ApplicationRecord
   self.table_name = 'reputation_snapshots'

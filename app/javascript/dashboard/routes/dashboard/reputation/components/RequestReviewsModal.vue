@@ -38,10 +38,12 @@ const currentStep = ref(1);
 const form = ref({ ...defaultFormState });
 const searchQuery = ref('');
 const activeFilter = ref('Recent Customers');
+const csvInput = ref(null);
+const importError = ref('');
 
 const filters = ['Recent Customers', 'Completed Jobs', 'Closed Deals', 'Positive Feedback', 'Appointment Completed', 'Invoice Paid'];
 
-const allCustomers = [
+const allCustomers = ref([
   { id: '1', name: 'Sarah Johnson', contextLabel: 'Purchased:', contextValue: '2 days ago' },
   { id: '2', name: 'Michael Brown', contextLabel: 'Service Completed:', contextValue: 'Yesterday' },
   { id: '3', name: 'Emily Wilson', contextLabel: 'Appointment:', contextValue: 'Today' },
@@ -50,12 +52,59 @@ const allCustomers = [
   { id: '6', name: 'Robert Anderson', contextLabel: 'Service Completed:', contextValue: 'Yesterday' },
   { id: '7', name: 'Amanda Thomas', contextLabel: 'Appointment:', contextValue: 'Today' },
   { id: '8', name: 'James Jackson', contextLabel: 'Invoice Paid:', contextValue: 'Yesterday' }
-];
+]);
 
 const filteredCustomers = computed(() => {
-  if (!searchQuery.value) return allCustomers;
-  return allCustomers.filter(c => c.name.toLowerCase().includes(searchQuery.value.toLowerCase()));
+  if (!searchQuery.value) return allCustomers.value;
+  return allCustomers.value.filter(c => c.name.toLowerCase().includes(searchQuery.value.toLowerCase()));
 });
+
+// Parse a CSV of contacts (name, email/phone) client-side and add them as
+// selectable recipients. Accepts an optional header row; splits on comma only
+// (contacts don't contain commas) — no CSV lib for this happy path.
+function triggerImport() {
+  importError.value = '';
+  csvInput.value?.click();
+}
+
+function parseCsv(text) {
+  const rows = text.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
+  if (!rows.length) return [];
+  // Header only if it names columns and carries no actual contact data (@ / digits).
+  const looksLikeHeader = /name|email|phone|contact/i.test(rows[0]) && !/[@\d]/.test(rows[0]);
+  const dataRows = looksLikeHeader ? rows.slice(1) : rows;
+  return dataRows.map(row => {
+    const [name, contact] = row.split(',').map(c => (c || '').trim());
+    return { name: name || contact, contact: contact || '' };
+  }).filter(r => r.name);
+}
+
+function handleCsvImport(event) {
+  const file = event.target.files?.[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = () => {
+    const parsed = parseCsv(String(reader.result || ''));
+    if (!parsed.length) {
+      importError.value = 'No contacts found in that file.';
+      return;
+    }
+    const added = parsed.map((c, i) => ({
+      id: `csv-${Date.now()}-${i}`,
+      name: c.name,
+      contextLabel: 'Imported:',
+      contextValue: c.contact || 'CSV'
+    }));
+    allCustomers.value = [...added, ...allCustomers.value];
+    form.value.selectedCustomers = [
+      ...form.value.selectedCustomers,
+      ...added.map(c => c.id)
+    ];
+  };
+  reader.onerror = () => { importError.value = 'Could not read that file.'; };
+  reader.readAsText(file);
+  event.target.value = '';
+}
 
 const previewMessage = computed(() => {
   return form.value.message
@@ -160,10 +209,12 @@ function close() {
               </div>
             </div>
             <div class="pt-4 border-t border-border space-y-4">
-              <button class="w-full h-9 px-4 text-sm font-semibold bg-card border border-border rounded-lg text-foreground hover:bg-muted cursor-pointer inline-flex items-center justify-start gap-2">
+              <button type="button" class="w-full h-9 px-4 text-sm font-semibold bg-card border border-border rounded-lg text-foreground hover:bg-muted cursor-pointer inline-flex items-center justify-start gap-2" @click="triggerImport">
                 <Upload class="size-4 text-muted-foreground" /> Import CSV
               </button>
-              
+              <input ref="csvInput" type="file" accept=".csv,text/csv" class="hidden" @change="handleCsvImport" />
+              <p v-if="importError" class="text-xs text-red-500">{{ importError }}</p>
+
               <div class="flex flex-col gap-1.5">
                 <label class="text-[13.5px] font-medium text-foreground">Manual Entry</label>
                 <Input v-model="form.customRecipients" placeholder="Emails or phone numbers..." class="h-10 px-4 text-[14px] shadow-xs rounded-md border-border/80 bg-background" />

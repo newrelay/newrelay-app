@@ -44,19 +44,30 @@ Listings, Feedback, Share Report.
 ## v2.0 — "Listings"  (multi-location)
 **Goal:** manage business listings + connected platforms across locations.
 
-| Feature | Backend |
-|---|---|
-| Listings page (grid, stats, filters, Add/Export) — UI already built | `Reputation::Listing` model + `listings_controller` (index/create/sync) |
-| Listing Detail page (`ListingDetailView` port) | same model + per-listing reviews/activity |
-| Per-platform sync (Google Business Profile, etc.) | **build on the v1.0 provider, do not greenfield a 2nd sync stack** |
+**Status (2026-08-21): lean backend SHIPPED.** `Reputation::Listing` model + `reputation_listings`
+table (name/address/category/country/phone/website/email/primary/platforms jsonb/synced_at) +
+`listings_controller` (index/create/destroy) + route + `Account#reputation_listings`. ListingsPage
+wired to `GET/POST /reputation/listings` with mock fallback (Demo badge only when mock); Add-Listing
+modal persists. **Deferred (still Demo/computed on FE):** optimization score, rating/review rollups,
+per-platform sync (needs v1.0 provider), Listing Detail page.
+
+| Feature | Backend | Status |
+|---|---|---|
+| Listings page (grid, stats, filters, Add/Export) — UI already built | `Reputation::Listing` model + `listings_controller` (index/create) | ✅ done |
+| Listing Detail page (`ListingDetailView` port) | same model + per-listing reviews/activity | ⬜ deferred |
+| Per-platform sync (Google Business Profile, etc.) | **build on the v1.0 provider, do not greenfield a 2nd sync stack** | ⬜ deferred |
 
 **Ship criteria:** a real location with real optimization score + platform health, syncing.
 **Effort:** ~1–2 weeks / CC ~3–5 days. **Depends on v1.0 provider.**
 
 ---
 
-## v2.1 — "Feedback / private interceptor"
+## v2.1 — "Feedback / private interceptor"  ✅ SHIPPED
 **Goal:** intercept 1–3★ feedback privately before it goes public (the funnel promised in Overview copy).
+
+**Status (2026-08-21): fully done.** `Reputation::FeedbackSubmission` model, public `POST /reputation/feedback`
+(creates submission + marks request completed), dashboard `GET /reputation/feedback` (index), FeedbackPage
+wired with Demo fallback, sidebar `reputation_feedback` route correct. Nothing outstanding.
 
 | Feature | Backend |
 |---|---|
@@ -73,9 +84,23 @@ Listings, Feedback, Share Report.
 
 | Feature | Backend |
 |---|---|
-| AI Sentiment (92% card) | per-review sentiment classify (reuse `ai_draft` LLM path) → aggregate; **budget batching + caching** |
-| Relay AI Insights (bullets) | daily LLM summary over recent reviews, cached per account |
-| Share Report wizard (UI built) | report-builder service: render selected sections → PDF/PNG → signed share link + email |
+| AI Sentiment (92% card) | per-review sentiment classify (reuse `ai_draft` LLM path) → aggregate; **budget batching + caching** — **SHIPPED 2026-08-21** |
+| Relay AI Insights (bullets) | daily LLM summary over recent reviews, cached per account — **SHIPPED 2026-08-21** |
+
+**v3.0 AI Sentiment + Insights status (2026-08-21): SHIPPED.** `Reputation::AiInsightsService` (inherits enterprise
+`Llm::BaseAiService`, same as `AiDraftService`) makes ONE LLM call over up to 50 recent reviews → `{sentiment 0-100,
+insights:[{title,text}]}`. `AiInsightsController#show` (`GET /reputation/ai_insights`) caches per account per day
+(`Rails.cache`, `skip_nil: true` so a misconfig doesn't stick 24h). OverviewPage fetches it in `loadData`; real
+sentiment % + insight bullets replace the mock and drop the Demo badge when present, mock fallback otherwise (no LLM /
+no reviews). **All roadmap items v1.0–v3.0 now have a lean backend.**
+| Share Report wizard (UI built) | report-builder service: render selected sections → PDF/PNG → signed share link + email — **lean version SHIPPED 2026-08-21** |
+
+**v3.0 Share Report status (2026-08-21): lean backend SHIPPED.** `Reputation::Report` model + `reputation_reports`
+table (token + config jsonb) + dashboard `reports_controller#create` (persists config, returns `share_url`) +
+**public** `Reputation::ReportsController#show` rendering a printable HTML report at `GET /reputation/reports/:token`
+from live `SummaryBuilder` data (score/avg rating/reviews/response rate/platform breakdown). ShareReportModal wired:
+Generate → POST, Open Report → opens the public link, Copy Link → real URL. **Deferred (Demo choices in the wizard):**
+server-side PDF/PNG/CSV export (use browser print-to-PDF for now), email delivery, link expiry, download counts.
 
 **Ship criteria:** sentiment/insights reflect real reviews; a report generates + shares a working link.
 **Effort:** ~1–2 weeks / CC ~4–6 days. **Depends on v1.0 (real reviews to analyze).**

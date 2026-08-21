@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title><%= @config['report_type'].presence || 'Reputation Report' %></title>
+  <style>
+    :root { color-scheme: light; }
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; color: #0f172a; background: #f8fafc; }
+    .wrap { max-width: 880px; margin: 0 auto; padding: 40px 24px 64px; }
+    header { border-bottom: 1px solid #e2e8f0; padding-bottom: 20px; margin-bottom: 28px; }
+    h1 { font-size: 24px; margin: 0 0 6px; }
+    .meta { color: #64748b; font-size: 14px; }
+    .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 16px; margin-bottom: 32px; }
+    .card { background: #fff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 18px; }
+    .card .label { color: #64748b; font-size: 12px; text-transform: uppercase; letter-spacing: .04em; }
+    .card .value { font-size: 28px; font-weight: 600; margin-top: 8px; }
+    .card .delta { font-size: 12px; margin-top: 4px; }
+    .up { color: #16a34a; } .down { color: #dc2626; } .flat { color: #94a3b8; }
+    h2 { font-size: 16px; margin: 28px 0 12px; }
+    table { width: 100%; border-collapse: collapse; background: #fff; border: 1px solid #e2e8f0; border-radius: 12px; overflow: hidden; }
+    th, td { text-align: left; padding: 12px 16px; font-size: 14px; border-bottom: 1px solid #f1f5f9; }
+    th { background: #f8fafc; color: #64748b; font-weight: 600; font-size: 12px; text-transform: uppercase; }
+    tr:last-child td { border-bottom: 0; }
+    footer { margin-top: 40px; color: #94a3b8; font-size: 12px; text-align: center; }
+    @media print { body { background: #fff; } .card, table { border-color: #cbd5e1; } }
+  </style>
+</head>
+<body>
+  <%
+    delta_tag = lambda do |pct|
+      next '<span class="delta flat">—</span>'.html_safe if pct.nil?
+      cls = pct.to_f >= 0 ? 'up' : 'down'
+      sign = pct.to_f >= 0 ? '+' : ''
+      %(<span class="delta #{cls}">#{sign}#{pct}% vs 30d</span>).html_safe
+    end
+  %>
+  <div class="wrap">
+    <header>
+      <h1><%= @config['report_type'].presence || 'Reputation Report' %></h1>
+      <div class="meta">
+        <%= @report.account.name %> · <%= @config['date_range'].presence || 'Last 30 Days' %>
+        · generated <%= @report.created_at.strftime('%b %-d, %Y') %>
+      </div>
+    </header>
+
+    <div class="cards">
+      <% if @sections.include?('Reputation Score') %>
+        <div class="card">
+          <div class="label">Reputation Score</div>
+          <div class="value"><%= @summary[:score] %>/100</div>
+          <%= delta_tag.(@summary[:score_delta]) %>
+        </div>
+      <% end %>
+      <% if @sections.include?('Average Rating') %>
+        <div class="card">
+          <div class="label">Average Rating</div>
+          <div class="value"><%= format('%.1f', @summary[:avg_rating]) %>★</div>
+          <%= delta_tag.(@summary[:rating_delta]) %>
+        </div>
+      <% end %>
+      <div class="card">
+        <div class="label">Total Reviews</div>
+        <div class="value"><%= @summary[:reviews_count] %></div>
+        <%= delta_tag.(@summary[:reviews_delta_pct]) %>
+      </div>
+      <div class="card">
+        <div class="label">Response Rate</div>
+        <div class="value"><%= format('%.0f', @summary[:response_rate]) %>%</div>
+      </div>
+    </div>
+
+    <% if @sections.include?('Platform Breakdown') && @summary[:platforms].present? %>
+      <h2>Platform Breakdown</h2>
+      <table>
+        <thead><tr><th>Platform</th><th>Avg Rating</th><th>Reviews</th><th>Trend</th></tr></thead>
+        <tbody>
+          <% @summary[:platforms].each do |p| %>
+            <tr>
+              <td><%= p[:provider].to_s.capitalize %></td>
+              <td><%= format('%.1f', p[:avg_rating]) %>★</td>
+              <td><%= p[:reviews_count] %></td>
+              <td><%= delta_tag.(p[:trend_pct]) %></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    <% end %>
+
+    <footer>
+      This report reflects live data at generation time. Deltas show “—” until 30 days of history exist.
+    </footer>
+  </div>
+</body>
+</html>

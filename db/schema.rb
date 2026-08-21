@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2026_08_21_140000) do
+ActiveRecord::Schema[7.1].define(version: 2026_08_21_160000) do
   # These extensions should be enabled to support this database
   enable_extension "pg_stat_statements"
   enable_extension "pg_trgm"
@@ -1374,6 +1374,33 @@ ActiveRecord::Schema[7.1].define(version: 2026_08_21_140000) do
     t.datetime "updated_at", null: false
     t.index ["account_id", "provider", "location_id"], name: "idx_reputation_integrations_unique", unique: true
     t.index ["account_id"], name: "index_reputation_integrations_on_account_id"
+  end
+
+  create_table "reputation_listings", force: :cascade do |t|
+    t.bigint "account_id", null: false
+    t.string "name", null: false
+    t.string "address"
+    t.string "category"
+    t.string "country"
+    t.string "phone"
+    t.string "website"
+    t.string "email"
+    t.boolean "primary", default: false, null: false
+    t.jsonb "platforms", default: [], null: false
+    t.datetime "synced_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["account_id"], name: "index_reputation_listings_on_account_id"
+  end
+
+  create_table "reputation_reports", force: :cascade do |t|
+    t.bigint "account_id", null: false
+    t.string "token", null: false
+    t.jsonb "config", default: {}, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["account_id"], name: "index_reputation_reports_on_account_id"
+    t.index ["token"], name: "index_reputation_reports_on_token", unique: true
   end
 
   create_table "reputation_review_replies", force: :cascade do |t|

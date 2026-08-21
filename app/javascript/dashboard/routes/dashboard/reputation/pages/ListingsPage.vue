@@ -41,7 +41,9 @@ const showDemoSurfaces = computed(() =>
 onMounted(() => {
   if (!showDemoSurfaces.value) {
     router.replace({ name: 'reputation_overview' });
+    return;
   }
+  loadListings();
 });
 
 // ---------------------------------------------------------------------------
@@ -59,7 +61,7 @@ const googleIcon = `<svg viewBox="0 0 24 24" width="16" height="16" xmlns="http:
 const facebookIcon = `<svg viewBox="0 0 24 24" width="16" height="16" xmlns="http://www.w3.org/2000/svg"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" fill="#1877F2"/></svg>`;
 const bingIcon = `<svg viewBox="0 0 24 24" width="16" height="16" xmlns="http://www.w3.org/2000/svg"><path d="M5 3l4.2 1.48v11.9l5.06-2.92-2.48-1.16-1.57-3.9 7.79 2.74v4.14L9.2 21 5 18.66z" fill="#008373"/></svg>`;
 
-const listings = ref([
+const mockListings = [
   {
     id: 1,
     name: 'Jaipur HQ',
@@ -112,7 +114,58 @@ const listings = ref([
     ],
     extra: 0,
   },
-]);
+];
+
+const axios = window.axios;
+const baseUrl = () => `/api/v1/accounts/${accountId}/reputation`;
+const platformIcons = { Google: googleIcon, Facebook: facebookIcon, Bing: bingIcon };
+const listings = ref([]);
+const usingMock = ref(false);
+const loading = ref(true);
+
+function mapListing(row) {
+  const platforms = (row.platforms || []).map(p => ({
+    name: p.name,
+    ok: !!p.ok,
+    icon: platformIcons[p.name] || googleIcon,
+  }));
+  return {
+    id: row.id,
+    name: row.name,
+    primary: !!row.primary,
+    address: row.address || '',
+    image:
+      'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=600&auto=format&fit=crop',
+    optimized: row.optimized ?? 0,
+    rating: row.rating || '—',
+    reviews: row.reviews ?? 0,
+    lastSync: row.synced_at ? new Date(row.synced_at).toLocaleString() : 'Never',
+    synced: !!row.synced_at,
+    platforms,
+    extra: 0,
+  };
+}
+
+async function loadListings() {
+  loading.value = true;
+  usingMock.value = false;
+  try {
+    const { data } = await axios.get(`${baseUrl()}/listings`);
+    const rows = Array.isArray(data) ? data : [];
+    if (rows.length) {
+      listings.value = rows.map(mapListing);
+    } else {
+      usingMock.value = true;
+      listings.value = mockListings;
+    }
+  } catch (err) {
+    console.error('Failed to load listings', err);
+    usingMock.value = true;
+    listings.value = mockListings;
+  } finally {
+    loading.value = false;
+  }
+}
 
 const query = ref('');
 const statusFilter = ref('All'); // All | Connected | Needs Attention
@@ -218,8 +271,27 @@ const openAdd = type => {
   addOpen.value = true;
   addStep.value = type === 'connect' ? 'connect' : 'info';
 };
-const addNext = () => {
-  addStep.value = addStep.value === 'info' ? 'connect' : 'success';
+const addNext = async () => {
+  if (addStep.value === 'info') {
+    addStep.value = 'connect';
+    return;
+  }
+  try {
+    await axios.post(`${baseUrl()}/listings`, {
+      name: addForm.value.name,
+      address: addForm.value.address,
+      category: addForm.value.category,
+      country: addForm.value.country,
+      phone: addForm.value.phone,
+      website: addForm.value.website,
+      email: addForm.value.email,
+      platforms: [{ name: connectSelected.value, ok: true }],
+    });
+    await loadListings();
+  } catch (err) {
+    console.error('Failed to create listing', err);
+  }
+  addStep.value = 'success';
 };
 const addBack = () => {
   if (addStep.value === 'connect') addStep.value = 'info';
@@ -245,7 +317,7 @@ const closeAdd = () => {
         <div>
           <h1 class="text-base font-medium text-foreground flex items-center gap-2">
             Listings
-            <span class="rounded bg-amber-500/15 px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wide text-amber-600 dark:text-amber-400" title="Demo — no listings backend yet; sample data">Demo</span>
+            <span v-if="usingMock" class="rounded bg-amber-500/15 px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wide text-amber-600 dark:text-amber-400" title="Demo — sample data until you add a real listing">Demo</span>
           </h1>
           <p class="text-sm text-muted-foreground mt-1">Manage all business listings and connected review platforms.</p>
         </div>

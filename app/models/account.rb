@@ -145,6 +145,8 @@ class Account < ApplicationRecord
   has_many :reputation_video_testimonials, dependent: :destroy_async, class_name: 'Reputation::VideoTestimonial'
   has_many :reputation_feedback_submissions, dependent: :destroy_async, class_name: 'Reputation::FeedbackSubmission'
   has_many :reputation_snapshots, dependent: :destroy_async, class_name: 'Reputation::Snapshot'
+  has_many :reputation_listings, dependent: :destroy_async, class_name: 'Reputation::Listing'
+  has_many :reputation_reports, dependent: :destroy_async, class_name: 'Reputation::Report'
 
   has_one_attached :contacts_export
   has_one_attached :logo

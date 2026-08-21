@@ -55,6 +55,13 @@ const layoutOptions = ['Executive', 'Detailed', 'Landscape', 'Portrait'];
 
 const fileInput = ref(null);
 const copied = ref(false);
+const generating = ref(false);
+const shareUrl = ref('');
+
+const axios = window.axios;
+const accountId =
+  window.__STORE__?.getters['auth/getCurrentAccount']?.id ||
+  window.location.pathname.match(/accounts\/(\d+)/)?.[1];
 
 function triggerFileInput() {
   fileInput.value?.click();
@@ -81,14 +88,34 @@ function prevStep() {
   if (currentStep.value > 1) currentStep.value--;
 }
 
-function generateReport() {
-  setTimeout(() => {
+async function generateReport() {
+  generating.value = true;
+  try {
+    const { data } = await axios.post(
+      `/api/v1/accounts/${accountId}/reputation/reports`,
+      {
+        report_type: form.value.reportType,
+        date_range: form.value.dateRange,
+        layout: form.value.layout,
+        sections: form.value.sections,
+      }
+    );
+    shareUrl.value = data.share_url;
+  } catch (err) {
+    console.error('Failed to generate report', err);
+  } finally {
+    generating.value = false;
     currentStep.value = 5;
-  }, 800);
+  }
+}
+
+function openReport() {
+  if (shareUrl.value) window.open(shareUrl.value, '_blank', 'noopener');
 }
 
 function copyShareLink() {
-  navigator.clipboard?.writeText('https://app.newrelay.com/r/rep-789234');
+  if (!shareUrl.value) return;
+  navigator.clipboard?.writeText(shareUrl.value);
   copied.value = true;
   setTimeout(() => {
     copied.value = false;
@@ -100,6 +127,7 @@ function close() {
   setTimeout(() => {
     currentStep.value = 1;
     form.value = { ...defaultFormState };
+    shareUrl.value = '';
   }, 300);
 }
 </script>
@@ -414,7 +442,7 @@ function close() {
           </div>
           
           <div class="flex flex-wrap justify-center gap-3">
-            <button class="h-11 px-6 text-sm font-semibold bg-primary hover:bg-primary/90 text-primary-foreground rounded-lg shadow-xs cursor-pointer inline-flex items-center gap-2">
+            <button :disabled="!shareUrl" class="h-11 px-6 text-sm font-semibold bg-primary hover:bg-primary/90 text-primary-foreground rounded-lg shadow-xs cursor-pointer inline-flex items-center gap-2 disabled:opacity-50" @click="openReport">
               <FileText class="size-4" /> Open Report
             </button>
             <button @click="copyShareLink" class="h-11 px-6 text-sm font-semibold bg-card border border-border hover:bg-muted text-foreground rounded-lg shadow-xs cursor-pointer inline-flex items-center gap-2">

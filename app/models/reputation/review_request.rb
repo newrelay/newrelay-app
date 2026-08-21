@@ -6,6 +6,7 @@
 #  channel                :string           not null
 #  clicked_at             :datetime
 #  completed_at           :datetime
+#  scheduled_at           :datetime
 #  status                 :string           default("sent")
 #  token                  :string           not null
 #  created_at             :datetime         not null
@@ -16,11 +17,12 @@
 #
 # Indexes
 #
-#  index_reputation_review_requests_on_account_id              (account_id)
-#  index_reputation_review_requests_on_account_id_and_status   (account_id,status)
-#  index_reputation_review_requests_on_contact_id              (contact_id)
-#  index_reputation_review_requests_on_reputation_template_id  (reputation_template_id)
-#  index_reputation_review_requests_on_token                   (token) UNIQUE
+#  index_reputation_review_requests_on_account_id               (account_id)
+#  index_reputation_review_requests_on_account_id_and_status    (account_id,status)
+#  index_reputation_review_requests_on_contact_id               (contact_id)
+#  index_reputation_review_requests_on_reputation_template_id   (reputation_template_id)
+#  index_reputation_review_requests_on_status_and_scheduled_at  (status,scheduled_at)
+#  index_reputation_review_requests_on_token                    (token) UNIQUE
 #
 class Reputation::ReviewRequest < ApplicationRecord
   self.table_name = 'reputation_review_requests'
@@ -32,7 +34,7 @@ class Reputation::ReviewRequest < ApplicationRecord
                                            foreign_key: :reputation_review_request_id, dependent: :destroy
 
   enum :channel, { sms: 'sms', email: 'email' }
-  enum :status, { sent: 'sent', delivered: 'delivered', clicked: 'clicked', completed: 'completed' }
+  enum :status, { scheduled: 'scheduled', sent: 'sent', delivered: 'delivered', clicked: 'clicked', completed: 'completed' }
 
   validates :token, :channel, presence: true
   validates :token, uniqueness: true

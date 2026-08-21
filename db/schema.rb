@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2026_08_21_160000) do
+ActiveRecord::Schema[7.1].define(version: 2026_08_21_170000) do
   # These extensions should be enabled to support this database
   enable_extension "pg_stat_statements"
   enable_extension "pg_trgm"
@@ -1426,10 +1426,12 @@ ActiveRecord::Schema[7.1].define(version: 2026_08_21_160000) do
     t.datetime "completed_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.datetime "scheduled_at"
     t.index ["account_id", "status"], name: "index_reputation_review_requests_on_account_id_and_status"
     t.index ["account_id"], name: "index_reputation_review_requests_on_account_id"
     t.index ["contact_id"], name: "index_reputation_review_requests_on_contact_id"
     t.index ["reputation_template_id"], name: "index_reputation_review_requests_on_reputation_template_id"
+    t.index ["status", "scheduled_at"], name: "index_reputation_review_requests_on_status_and_scheduled_at"
     t.index ["token"], name: "index_reputation_review_requests_on_token", unique: true
   end
 

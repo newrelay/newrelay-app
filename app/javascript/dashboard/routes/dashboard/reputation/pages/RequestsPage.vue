@@ -49,9 +49,7 @@ const defaultFormState = {
   customRecipients: '',
   channels: ['Email'],
   delivery: 'Send immediately',
-  scheduleDate: '',
-  scheduleTime: '',
-  scheduleTimezone: '',
+  scheduleAt: '',
   message: 'Hi {{FirstName}},\n\nThank you for choosing us!\n\nWould you mind sharing your experience?\n\n⭐ Leave your review here:\n{{ReviewLink}}\n\nIt only takes one minute.\n\nThank you ❤️',
   tone: 'Friendly',
   destinations: ['Google']
@@ -175,7 +173,20 @@ const channelError = computed(() => {
   });
   if (!missing.size) return '';
   return `Some selected contacts have no ${[...missing].join(' or ')}. Remove them or deselect that channel.`;
-});;
+});
+
+// datetime-local needs "YYYY-MM-DDTHH:mm" in local time; use it as the min and to validate.
+const minScheduleAt = computed(() => {
+  const d = new Date(Date.now() - new Date().getTimezoneOffset() * 60000);
+  return d.toISOString().slice(0, 16);
+});
+const scheduleError = computed(() => {
+  if (form.value.delivery !== 'Schedule') return '';
+  if (!form.value.scheduleAt) return 'Pick a date and time to schedule.';
+  if (form.value.scheduleAt <= minScheduleAt.value) return 'Scheduled time must be in the future.';
+  return '';
+});
+const step2Error = computed(() => channelError.value || scheduleError.value);;
 
 const tones = ['Friendly', 'Professional', 'Luxury', 'Casual'];
 const destinations = ['Google', 'Facebook', 'Trustpilot', 'Yelp', 'Custom Link'];
@@ -267,7 +278,7 @@ function selectAllCustomers() {
 }
 
 function nextStep() {
-  if (currentStep.value === 2 && channelError.value) return;
+  if (currentStep.value === 2 && step2Error.value) return;
   if (currentStep.value < 5) currentStep.value++;
 }
 
@@ -307,15 +318,29 @@ function closeModal() {
   }, 300);
 }
 
+// Selected real contacts send their numeric id; manual/CSV rows send their raw email/phone.
+function buildRecipients() {
+  const contactIds = [];
+  const recipients = [];
+  form.value.selectedCustomers.forEach(id => {
+    if (/^\d+$/.test(id)) { contactIds.push(Number(id)); return; }
+    const row = contactsList.value.find(c => c.id === id);
+    if (row) recipients.push(row.email || row.phone || row.contextValue);
+  });
+  return { contactIds, recipients };
+}
+
 async function sendRequest() {
-  if (channelError.value) { currentStep.value = 2; return; }
+  if (step2Error.value) { currentStep.value = 2; return; }
   sendingRequest.value = true;
+  const { contactIds, recipients } = buildRecipients();
   try {
     await axios.post(`${baseUrl()}/review_requests`, {
-      channel: form.value.channels[0] || 'email',
-      recipients_count: form.value.selectedCustomers.length || 1,
-      message: form.value.message,
-    }).catch(() => {});
+      channel: (form.value.channels[0] || 'Email').toLowerCase(),
+      contact_ids: contactIds,
+      recipients,
+      scheduled_at: form.value.delivery === 'Schedule' ? form.value.scheduleAt : null,
+    });
     currentStep.value = 5;
     loadData();
   } catch (err) {
@@ -622,6 +647,15 @@ const statusColor = s => {
                   <span class="text-xs font-medium text-foreground">Schedule Later</span>
                 </div>
               </div>
+              <div v-if="form.delivery === 'Schedule'" class="space-y-1.5">
+                <input
+                  v-model="form.scheduleAt" type="datetime-local" :min="minScheduleAt"
+                  class="h-9 px-3 text-xs shadow-sm rounded-md border border-border bg-background focus:outline-none focus-visible:ring-1 focus-visible:ring-primary/30"
+                />
+                <p v-if="scheduleError" class="text-xs text-red-500 flex items-center gap-1.5">
+                  <AlertCircle class="size-3.5 shrink-0" /> {{ scheduleError }}
+                </p>
+              </div>
             </div>
           </div>
 
@@ -758,7 +792,7 @@ const statusColor = s => {
                   </div>
                   <div>
                     <div class="text-[11px] text-muted-foreground">Schedule</div>
-                    <div class="text-xs font-semibold text-foreground">{{ form.delivery }}</div>
+                    <div class="text-xs font-semibold text-foreground">{{ form.delivery === 'Schedule' && form.scheduleAt ? new Date(form.scheduleAt).toLocaleString() : 'Send Immediately' }}</div>
                   </div>
                 </div>
               </div>
@@ -788,7 +822,7 @@ const statusColor = s => {
             Back
           </button>
 
-          <button v-if="currentStep < 4" class="inline-flex items-center gap-2 rounded-lg bg-primary px-6 py-2 text-xs font-semibold text-primary-foreground shadow-sm hover:bg-primary/90 transition-colors disabled:opacity-40 disabled:cursor-not-allowed" :disabled="currentStep === 2 && !!channelError" @click="nextStep">
+          <button v-if="currentStep < 4" class="inline-flex items-center gap-2 rounded-lg bg-primary px-6 py-2 text-xs font-semibold text-primary-foreground shadow-sm hover:bg-primary/90 transition-colors disabled:opacity-40 disabled:cursor-not-allowed" :disabled="currentStep === 2 && !!step2Error" @click="nextStep">
             Next
             <ChevronRight class="size-4" />
           </button>

@@ -7,13 +7,23 @@ class Reputation::ReviewRequestSendService
     @contact  = account.contacts.find(contact_id)
   end
 
-  def send!
+  # scheduled_at in the future → persist as :scheduled and let the cron dispatch it later.
+  # Otherwise create it and hand the actual delivery to a background job.
+  def send!(scheduled_at: nil)
+    scheduled = scheduled_at.present? && scheduled_at.to_time.future?
     request = @account.reputation_review_requests.create!(
       reputation_template: @template,
       contact: @contact,
-      channel: @template.channel
+      channel: @template.channel,
+      scheduled_at: (scheduled ? scheduled_at : nil),
+      status: (scheduled ? :scheduled : :sent)
     )
+    Reputation::SendReviewRequestJob.perform_later(request.id) unless scheduled
+    request
+  end
 
+  # Called by the job (immediate) and the cron (when a scheduled request comes due).
+  def deliver!(request)
     body = render_body(request)
     deliver(body, request)
     request

@@ -1,6 +1,5 @@
 <script setup>
 import { computed, useAttrs } from 'vue';
-import { Check, Minus } from 'lucide-vue-next';
 import { cn } from '../utils/cn';
 
 const props = defineProps({
@@ -55,7 +54,13 @@ const toggle = () => {
     "
     @click="toggle"
   >
-    <Minus v-if="isIndeterminate" class="size-3.5 shrink-0 text-current" />
-    <Check v-else-if="isChecked" class="size-3.5 shrink-0 text-current" />
+    <span
+      v-if="isIndeterminate"
+      class="i-lucide-minus size-3.5 shrink-0 text-current"
+    />
+    <span
+      v-else-if="isChecked"
+      class="i-lucide-check size-3.5 shrink-0 text-current"
+    />
   </button>
 </template>

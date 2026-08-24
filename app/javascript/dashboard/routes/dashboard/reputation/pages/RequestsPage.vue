@@ -164,8 +164,9 @@ const selectedRecipients = computed(() =>
 );
 
 const channelError = computed(() => {
+  if (!form.value.channels.length) return 'Select at least one delivery channel.';
   const recips = selectedRecipients.value;
-  if (!recips.length || !form.value.channels.length) return '';
+  if (!recips.length) return '';
   const missing = new Set();
   form.value.channels.forEach(name => {
     const meta = CHANNEL_META.find(c => c.name === name);

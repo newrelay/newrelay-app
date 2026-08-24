@@ -1,0 +1,75 @@
+<header class="app-header">
+  <div class="header-left">
+    <!-- Sidebar Toggle Trigger -->
+    <button class="sidebar-trigger" id="sidebarTrigger" aria-label="Toggle Sidebar" title="Toggle Sidebar">
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+        class="lucide lucide-panel-left" style="width:16px;height:16px;">
+        <rect width="18" height="18" x="3" y="3" rx="2"></rect>
+        <path d="M9 3v18"></path>
+      </svg>
+      <span class="sr-only">Toggle Sidebar</span>
+    </button>
+  </div>
+
+  <!-- Center Search Pill -->
+  <div class="header-center">
+    <button class="command-search-btn" type="button" aria-label="Open command palette"
+      onclick="openSearchModal && openSearchModal()">
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+        class="lucide lucide-search"
+        style="width:16px;height:16px;flex-shrink:0;color:var(--muted-foreground);">
+        <path d="m21 21-4.34-4.34"></path>
+        <circle cx="11" cy="11" r="8"></circle>
+      </svg>
+      <span>Search</span>
+      <kbd>⌘K</kbd>
+    </button>
+  </div>
+
+  <!-- Right Header Actions -->
+  <div class="header-right">
+    <!-- Tabler Sun / Moon Toggle Button -->
+    <button class="theme-toggle-btn" aria-label="Toggle theme" type="button" onclick="toggleDarkMode()">
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+        class="tabler-icon tabler-icon-sun">
+        <path d="M8 12a4 4 0 1 0 8 0a4 4 0 1 0 -8 0"></path>
+        <path d="M3 12h1m8 -9v1m8 8h1m-9 8v1m-6.4 -15.4l.7 .7m12.1 -.7l-.7 .7m0 11.4l.7 .7m-12.1 -.7l-.7 .7">
+        </path>
+      </svg>
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+        class="tabler-icon tabler-icon-moon">
+        <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454l0 .008"></path>
+      </svg>
+      <span class="sr-only">Toggle theme</span>
+    </button>
+
+    <!-- Notifications Bell Button -->
+    <button class="header-icon-button" type="button" aria-label="Notifications">
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+        class="lucide lucide-bell" style="width:16px;height:16px;color:var(--muted-foreground);">
+        <path d="M10.268 21a2 2 0 0 0 3.464 0"></path>
+        <path
+          d="M3.262 15.326A1 1 0 0 0 4 17h16a1 1 0 0 0 .74-1.673C19.41 13.956 18 12.499 18 8A6 6 0 0 0 6 8c0 4.499-1.411 5.956-2.738 7.326">
+        </path>
+      </svg>
+      <span class="header-notif-dot"></span>
+    </button>
+
+    <!-- User Profile Pill -->
+    <%= link_to super_admin_settings_path, class: "header-user-btn" do %>
+      <div class="header-user-avatar-wrap">
+        <div class="header-user-avatar">N</div>
+        <div class="header-user-status"></div>
+      </div>
+      <div class="header-user-text">
+        <span>New Relay</span>
+      </div>
+    <% end %>
+  </div>
+</header>
+

@@ -97,32 +97,32 @@ const stats = [
 
 <template>
   <div class="space-y-6">
-    <header
-      class="flex items-center justify-between pb-4 border-b border-border/40"
-    >
-      <h1 class="text-2xl font-semibold tracking-tight text-foreground">
-        Dashboard
-      </h1>
-    </header>
+    <h1 class="page-title">
+      Admin Dashboard
+    </h1>
 
     <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
       <div
         v-for="stat in stats"
         :key="stat.label"
-        class="rounded-xl border border-border bg-card p-5 shadow-xs"
+        class="stat-card"
       >
-        <div class="flex items-center justify-between mb-3">
-          <span class="text-sm font-medium text-muted-foreground">{{
-            stat.label
-          }}</span>
-          <span
-            class="size-4 text-muted-foreground"
-            :class="[stat.icon]"
-            aria-hidden="true"
-          />
-        </div>
-        <div class="text-3xl font-bold text-foreground tabular-nums">
-          {{ stat.value }}
+        <div class="stat-card-inner">
+          <div class="stat-card-icon-wrap">
+            <span
+              class="size-4"
+              :class="[stat.icon]"
+              aria-hidden="true"
+            />
+          </div>
+          <div class="stat-card-body">
+            <div class="stat-card-val">
+              {{ stat.value }}
+            </div>
+            <div class="stat-card-label">
+              {{ stat.label }}
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -207,3 +207,4 @@ const stats = [
     </div>
   </div>
 </template>
+

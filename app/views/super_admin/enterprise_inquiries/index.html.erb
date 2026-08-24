@@ -1,14 +1,10 @@
-<% content_for(:title) do %>
-  Enterprise Inquiries
-<% end %>
+<div class="space-y-6">
+  <div class="flex items-center justify-between mb-6">
+    <h1 class="page-title">
+      Enterprise Inquiries
+    </h1>
+  </div>
 
-<header class="main-content__header" role="banner">
-  <h1 class="main-content__page-title">
-    <%= content_for(:title) %>
-  </h1>
-</header>
-
-<section class="main-content__body">
   <% if notice.present? %>
     <div class="mb-4 rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-800">
       <%= notice %>

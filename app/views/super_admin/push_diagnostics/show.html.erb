@@ -1,10 +1,10 @@
 <% content_for(:title) do %>Push Diagnostics<% end %>
 
-<header class="main-content__header" role="banner">
-  <h1 class="main-content__page-title" id="page-title">Push Diagnostics</h1>
-</header>
+<div class="space-y-6">
+  <div class="flex items-center justify-between mb-6">
+    <h1 class="page-title" id="page-title">Push Diagnostics</h1>
+  </div>
 
-<section class="main-content__body">
   <p class="text-sm text-slate-600 mb-6">
     Send a test push notification to a specific user's registered devices to diagnose delivery issues.
     Results show the raw FCM / Web Push / relay response so you can see exactly what failed.

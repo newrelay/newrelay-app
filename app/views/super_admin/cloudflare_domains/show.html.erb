@@ -1,9 +1,9 @@
 <% content_for(:title) { "Cloudflare Domains" } %>
 
 <div class="space-y-6">
-  <header class="flex items-center justify-between pb-4 border-b border-border/40">
-    <h1 class="text-2xl font-semibold tracking-tight text-foreground">Cloudflare Domains</h1>
-  </header>
+  <div class="flex items-center justify-between mb-6">
+    <h1 class="page-title">Cloudflare Domains</h1>
+  </div>
 
   <% if @error.present? %>
     <div class="rounded-md border border-border bg-muted/30 px-4 py-3 text-sm text-muted-foreground">
@@ -11,38 +11,39 @@
     </div>
   <% end %>
 
-  <section class="rounded-xl border border-border bg-card text-card-foreground shadow-xs overflow-hidden">
-    <table class="w-full text-sm">
-      <thead class="bg-muted/30 text-muted-foreground uppercase tracking-wider text-xs">
+  <div class="table-card">
+    <table>
+      <thead>
         <tr>
-          <th class="text-left px-6 py-3">Hostname</th>
-          <th class="text-left px-6 py-3">Status</th>
-          <th class="text-left px-6 py-3">SSL</th>
-          <th class="text-left px-6 py-3">Created</th>
-          <th class="text-right px-6 py-3">Actions</th>
+          <th>Hostname</th>
+          <th>Status</th>
+          <th>SSL</th>
+          <th>Created</th>
+          <th style="text-align: right;">Actions</th>
         </tr>
       </thead>
-      <tbody class="divide-y divide-border/50">
+      <tbody>
         <% if @hostnames.blank? %>
-          <tr><td colspan="5" class="px-6 py-6 text-muted-foreground">No custom hostnames found on Cloudflare.</td></tr>
+          <tr><td colspan="5" class="text-muted-foreground text-center py-6">No custom hostnames found on Cloudflare.</td></tr>
         <% end %>
         <% @hostnames.each do |h| %>
-          <tr class="hover:bg-muted/10 transition-colors">
-            <td class="px-6 py-3 font-medium text-foreground break-all"><%= h['hostname'] %></td>
-            <td class="px-6 py-3"><%= h['status'] %></td>
-            <td class="px-6 py-3"><%= h.dig('ssl', 'status') %></td>
-            <td class="px-6 py-3 text-muted-foreground"><%= h['created_at'] %></td>
-            <td class="px-6 py-3 text-right">
+          <tr>
+            <td class="font-medium text-foreground break-all"><%= h['hostname'] %></td>
+            <td><%= h['status'] %></td>
+            <td><%= h.dig('ssl', 'status') %></td>
+            <td class="text-muted-foreground"><%= h['created_at'] %></td>
+            <td style="text-align: right;">
               <%= button_to "Delete",
                     super_admin_cloudflare_domains_path(hostname: h['hostname']),
                     method: :delete,
                     form: { data: { turbo_confirm: "Delete #{h['hostname']} from Cloudflare?" } },
                     data: { confirm: "Delete #{h['hostname']} from Cloudflare?" },
-                    class: "inline-flex h-8 items-center justify-center rounded-md bg-destructive px-3 text-sm font-medium text-destructive-foreground hover:bg-destructive/90" %>
+                    class: "inline-flex h-8 items-center justify-center rounded-md bg-destructive px-3 text-xs font-medium text-destructive-foreground hover:bg-destructive/90 transition-colors" %>
             </td>
           </tr>
         <% end %>
       </tbody>
     </table>
-  </section>
+  </div>
 </div>
+

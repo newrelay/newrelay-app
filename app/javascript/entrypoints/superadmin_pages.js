@@ -26,9 +26,15 @@ const renderComponent = (componentName, props) => {
 
 document.addEventListener('DOMContentLoaded', () => {
   const element = document.getElementById('app');
-  if (element) {
-    const componentName = element.dataset.componentName;
-    const props = JSON.parse(element.dataset.props);
-    renderComponent(componentName, props);
+  if (element && element.dataset && element.dataset.componentName && element.dataset.props) {
+    try {
+      const componentName = element.dataset.componentName;
+      const props = JSON.parse(element.dataset.props);
+      renderComponent(componentName, props);
+    } catch (e) {
+      // eslint-disable-next-line no-console
+      console.error('Failed to parse Super Admin Vue component props:', e);
+    }
   }
 });
+

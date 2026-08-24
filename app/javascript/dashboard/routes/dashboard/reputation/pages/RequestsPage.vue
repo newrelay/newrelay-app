@@ -191,6 +191,18 @@ const step2Error = computed(() => channelError.value || scheduleError.value);;
 const tones = ['Friendly', 'Professional', 'Luxury', 'Casual'];
 const destinations = ['Google', 'Facebook', 'Trustpilot', 'Yelp', 'Custom Link'];
 
+// Each tone swaps the composed message to a matching preset (this is what "Tone" does).
+const TONE_PRESETS = {
+  Friendly: 'Hi {{FirstName}},\n\nThanks so much for choosing us! 😊\n\nWe’d love to hear how it went — it only takes a minute:\n{{ReviewLink}}\n\nThank you!',
+  Professional: 'Dear {{FirstName}},\n\nThank you for your business. We value your feedback and would appreciate a brief review of your experience:\n{{ReviewLink}}\n\nKind regards,\n{{BusinessName}}',
+  Luxury: 'Dear {{FirstName}},\n\nIt was our pleasure to serve you. We would be honoured if you shared a few words about your experience:\n{{ReviewLink}}\n\nWith gratitude,\n{{BusinessName}}',
+  Casual: 'Hey {{FirstName}}! 👋\n\nHope you loved it! Mind dropping us a quick review?\n{{ReviewLink}}\n\nThanks a ton!',
+};
+function applyTone(tone) {
+  form.value.tone = tone;
+  form.value.message = TONE_PRESETS[tone] || form.value.message;
+}
+
 // Server already filters when searching; imported CSV rows live at the top of contactsList.
 const filteredCustomers = computed(() => contactsList.value);
 
@@ -339,6 +351,8 @@ async function sendRequest() {
       channel: (form.value.channels[0] || 'Email').toLowerCase(),
       contact_ids: contactIds,
       recipients,
+      message: form.value.message,
+      destinations: form.value.destinations,
       scheduled_at: form.value.delivery === 'Schedule' ? form.value.scheduleAt : null,
     });
     currentStep.value = 5;
@@ -692,7 +706,7 @@ const statusColor = s => {
                       v-for="tone in tones" :key="tone"
                       class="px-3 py-1.5 rounded-md border text-xs text-center cursor-pointer transition-colors"
                       :class="form.tone === tone ? 'bg-primary/10 border-primary text-primary font-medium' : 'bg-card border-border hover:bg-muted text-muted-foreground'"
-                      @click="form.tone = tone"
+                      @click="applyTone(tone)"
                     >
                       {{ tone }}
                     </div>

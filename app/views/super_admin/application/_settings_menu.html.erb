@@ -1,24 +1,30 @@
-<li class="relative">
-  <details class="group" <%= 'open' if open %>>
-    <summary class="flex h-8 min-w-0 w-full items-center gap-3 overflow-hidden rounded-md px-2 text-sm transition-colors outline-none cursor-pointer <%= open ? 'text-sidebar-primary font-medium bg-sidebar-primary/10' : 'text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground' %> list-none relative">
-      <%= link_to super_admin_settings_url, class: 'flex items-center gap-3 flex-1 h-full' do %>
-        <span class="i-lucide-settings size-4 shrink-0 <%= open ? 'text-sidebar-primary' : 'text-muted-foreground' %>" aria-hidden="true"></span>
-        <span class="truncate">Settings</span>
-      <% end %>
-      <span class="i-lucide-chevron-down ml-auto size-4 shrink-0 text-muted-foreground transition-transform duration-200 group-open:rotate-180"></span>
-    </summary>
-    
-    <ul class="mt-1 flex flex-col gap-1 pl-6">
-      <% settings_pages.each do |_feature_key, attrs| %>
-        <% url = super_admin_app_config_url(config: attrs['config_key']) %>
-        <li class="relative">
-          <% text_class = current_page?(url) ? 'text-sidebar-primary font-medium bg-sidebar-primary/10' : 'text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground' %>
-          <%= link_to url, class: text_class + ' flex h-8 min-w-0 w-full items-center gap-3 overflow-hidden rounded-md px-2 text-sm transition-colors outline-none' do %>
-            <span class="i-lucide-minus size-3 shrink-0 text-muted-foreground <%= current_page?(url) ? 'text-sidebar-primary' : '' %>" aria-hidden="true"></span>
-            <span class="truncate"><%= attrs['name'] %></span>
-          <% end %>
-        </li>
-      <% end %>
-    </ul>
-  </details>
+<% settings_active = open || current_page?(super_admin_settings_path) %>
+<li class="sidebar-menu-item sidebar-item-wrap <%= 'open' if settings_active %>" id="settingsMenuItem" data-slot="sidebar-menu-item">
+  <button aria-expanded="<%= settings_active ? 'true' : 'false' %>" class="sidebar-menu-btn <%= 'active' if settings_active %>" id="settingsToggleBtn">
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-settings" style="width:16px;height:16px;"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.38a2 2 0 0 0-.73-2.73l-.15-.1a2 2 0 0 1-1-1.72v-.51a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
+    <span class="flex-1">Settings</span>
+    <svg class="sidebar-chevron" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+  </button>
+  <div class="sidebar-submenu-wrapper">
+    <div class="sidebar-submenu-inner">
+      <ul class="sidebar-menu-sub" data-slot="sidebar-menu-sub">
+        <% settings_pages.each_with_index do |(_feature_key, attrs), index| %>
+          <% is_last = index == settings_pages.length - 1 %>
+          <% url = super_admin_app_config_url(config: attrs['config_key']) %>
+          <li class="sidebar-sub-item">
+            <% unless is_last %>
+              <div class="tree-line-v"></div>
+            <% end %>
+            <div class="tree-line-corner"></div>
+            <div class="pl-3">
+              <%= link_to url, class: "sidebar-sub-link #{'active' if current_page?(url)}" do %>
+                <span><%= attrs['name'] %></span>
+              <% end %>
+            </div>
+          </li>
+        <% end %>
+      </ul>
+    </div>
+  </div>
+  <div class="sidebar-flyout sidebar-tooltip">Settings</div>
 </li>

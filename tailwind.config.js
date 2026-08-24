@@ -39,8 +39,11 @@ const tailwindConfig = {
     './app/javascript/dashboard/composables/**/*.js',
     './app/javascript/dashboard/components-next/**/*.js',
     './app/javascript/dashboard/routes/dashboard/**/**/*.js',
+    './app/javascript/superadmin/**/*.js',
+    './app/javascript/superadmin_pages/**/*.{js,vue}',
     './app/views/**/*.erb',
   ],
+
   theme: {
     extend: {
       // Matches Tailwind v4 / shadcn `shadow-xs` (same value as TW3 `shadow-sm`)

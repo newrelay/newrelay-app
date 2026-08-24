@@ -1,0 +1,47 @@
+<!-- Search Modal Command Palette -->
+<div id="searchModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 sm:p-6 md:p-20" role="dialog" aria-modal="true">
+  <div class="fixed inset-0 bg-background/80 backdrop-blur-sm transition-opacity" onclick="closeSearchModal()"></div>
+  <div class="relative w-full max-w-2xl transform rounded-xl border border-border bg-popover p-0 shadow-2xl transition-all">
+    <div class="flex items-center border-b border-border px-4 py-3">
+      <svg class="size-5 text-muted-foreground mr-3" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.34-4.34"/></svg>
+      <input type="text" id="searchInputModal" class="w-full bg-transparent text-sm text-foreground placeholder:text-muted-foreground focus:outline-none" placeholder="Search resources, accounts, users, settings..." oninput="handleSearchModalInput(this.value)">
+      <kbd class="pointer-events-none rounded border border-border bg-muted px-2 py-0.5 text-xs text-muted-foreground font-mono">ESC</kbd>
+    </div>
+    <div class="max-h-96 overflow-y-auto p-2" id="searchResultsModal">
+      <div class="p-4 text-center text-xs text-muted-foreground">Type a query to search across Super Admin...</div>
+    </div>
+  </div>
+</div>
+
+<script>
+  function openSearchModal() {
+    const modal = document.getElementById('searchModal');
+    if (modal) {
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+      const input = document.getElementById('searchInputModal');
+      if (input) {
+        input.value = '';
+        input.focus();
+      }
+    }
+  }
+
+  function closeSearchModal() {
+    const modal = document.getElementById('searchModal');
+    if (modal) {
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    }
+  }
+
+  document.addEventListener('keydown', (e) => {
+    if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+      e.preventDefault();
+      openSearchModal();
+    }
+    if (e.key === 'Escape') {
+      closeSearchModal();
+    }
+  });
+</script>

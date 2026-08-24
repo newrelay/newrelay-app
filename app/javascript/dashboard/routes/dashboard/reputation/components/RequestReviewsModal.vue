@@ -267,6 +267,18 @@ function buildRecipients() {
 const tones = ['Friendly', 'Professional', 'Luxury', 'Casual'];
 const destinations = ['Google', 'Facebook', 'Trustpilot', 'Yelp', 'Custom Link'];
 
+// Each tone swaps the composed message to a matching preset (this is what "Tone" does).
+const TONE_PRESETS = {
+  Friendly: 'Hi {{FirstName}},\n\nThanks so much for choosing us! 😊\n\nWe’d love to hear how it went — it only takes a minute:\n{{ReviewLink}}\n\nThank you!',
+  Professional: 'Dear {{FirstName}},\n\nThank you for your business. We value your feedback and would appreciate a brief review of your experience:\n{{ReviewLink}}\n\nKind regards,\n{{BusinessName}}',
+  Luxury: 'Dear {{FirstName}},\n\nIt was our pleasure to serve you. We would be honoured if you shared a few words about your experience:\n{{ReviewLink}}\n\nWith gratitude,\n{{BusinessName}}',
+  Casual: 'Hey {{FirstName}}! 👋\n\nHope you loved it! Mind dropping us a quick review?\n{{ReviewLink}}\n\nThanks a ton!',
+};
+function applyTone(tone) {
+  form.value.tone = tone;
+  form.value.message = TONE_PRESETS[tone] || form.value.message;
+}
+
 function toggleSelection(array, item) {
   const index = array.indexOf(item);
   if (index === -1) array.push(item);
@@ -298,6 +310,8 @@ async function generateReport() {
       channel: (form.value.channels[0] || 'Email').toLowerCase(),
       contact_ids: contactIds,
       recipients,
+      message: form.value.message,
+      destinations: form.value.destinations,
       scheduled_at: form.value.delivery === 'Schedule' ? form.value.scheduleAt : null,
     });
   } catch (err) {
@@ -468,6 +482,15 @@ function close() {
                 <span class="text-sm font-medium text-foreground">Schedule Later</span>
               </div>
             </div>
+            <div v-if="form.delivery === 'Schedule'" class="space-y-1.5">
+              <input
+                v-model="form.scheduleAt" type="datetime-local" :min="minScheduleAt"
+                class="h-9 px-3 text-sm shadow-sm rounded-md border border-border bg-background focus:outline-none focus-visible:ring-1 focus-visible:ring-primary/30"
+              />
+              <p v-if="scheduleError" class="text-sm text-red-500 flex items-center gap-1.5">
+                <AlertCircle class="size-4 shrink-0" /> {{ scheduleError }}
+              </p>
+            </div>
           </div>
         </div>
 
@@ -493,6 +516,35 @@ function close() {
                 <Badge v-for="v in ['{{FirstName}}', '{{BusinessName}}', '{{ReviewLink}}', '{{EmployeeName}}']" :key="v" class="font-mono text-xs cursor-pointer bg-muted hover:bg-primary/20 text-foreground">
                   {{ v }}
                 </Badge>
+              </div>
+            </div>
+
+            <div class="space-y-3">
+              <p class="text-xs font-medium text-muted-foreground uppercase tracking-wider">Tone</p>
+              <div class="flex flex-wrap gap-2">
+                <button
+                  v-for="tone in tones" :key="tone" type="button"
+                  class="px-3 py-1.5 rounded-lg border text-xs transition-colors"
+                  :class="form.tone === tone ? 'bg-primary/10 border-primary text-primary font-medium' : 'bg-card border-border hover:bg-muted text-muted-foreground'"
+                  @click="applyTone(tone)"
+                >
+                  {{ tone }}
+                </button>
+              </div>
+            </div>
+
+            <div class="space-y-3">
+              <p class="text-xs font-medium text-muted-foreground uppercase tracking-wider">Review Destination</p>
+              <div class="flex flex-wrap gap-2">
+                <button
+                  v-for="dest in destinations" :key="dest" type="button"
+                  class="px-3 py-1.5 rounded-lg border text-xs inline-flex items-center gap-1.5 transition-colors"
+                  :class="form.destinations.includes(dest) ? 'bg-primary/10 border-primary text-primary font-medium' : 'bg-card border-border hover:bg-muted text-muted-foreground'"
+                  @click="toggleSelection(form.destinations, dest)"
+                >
+                  <Check v-if="form.destinations.includes(dest)" class="size-3" />
+                  {{ dest }}
+                </button>
               </div>
             </div>
           </div>
@@ -635,7 +687,7 @@ function close() {
         <button class="h-9 px-4 text-sm font-semibold text-muted-foreground hover:text-foreground cursor-pointer disabled:opacity-40" @click="prevStep" :disabled="currentStep === 1">
           Back
         </button>
-        <button v-if="currentStep < 4" class="h-9 px-8 text-sm font-semibold bg-primary hover:bg-primary/90 text-primary-foreground rounded-lg shadow-xs cursor-pointer inline-flex items-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed" @click="nextStep" :disabled="(currentStep === 1 && form.selectedCustomers.length === 0) || (currentStep === 2 && !!channelError)">
+        <button v-if="currentStep < 4" class="h-9 px-8 text-sm font-semibold bg-primary hover:bg-primary/90 text-primary-foreground rounded-lg shadow-xs cursor-pointer inline-flex items-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed" @click="nextStep" :disabled="(currentStep === 1 && form.selectedCustomers.length === 0) || (currentStep === 2 && !!step2Error)">
           Next
           <ChevronRight class="size-4" />
         </button>

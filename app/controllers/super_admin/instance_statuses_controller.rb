@@ -25,8 +25,9 @@ class SuperAdmin::InstanceStatusesController < SuperAdmin::ApplicationController
   end
 
   def chatwoot_version
-    @metrics['newrelay version'] = Chatwoot.config[:version]
+    @metrics['chatwoot version'] = Chatwoot.config[:version]
   end
+
 
   def sha
     @metrics['Git SHA'] = GIT_HASH

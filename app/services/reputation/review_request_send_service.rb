@@ -9,12 +9,14 @@ class Reputation::ReviewRequestSendService
 
   # scheduled_at in the future → persist as :scheduled and let the cron dispatch it later.
   # Otherwise create it and hand the actual delivery to a background job.
-  def send!(scheduled_at: nil)
+  def send!(scheduled_at: nil, message: nil, destinations: [])
     scheduled = scheduled_at.present? && scheduled_at.to_time.future?
     request = @account.reputation_review_requests.create!(
       reputation_template: @template,
       contact: @contact,
       channel: @template.channel,
+      message: message.presence,
+      destinations: Array(destinations),
       scheduled_at: (scheduled ? scheduled_at : nil),
       status: (scheduled ? :scheduled : :sent)
     )
@@ -31,11 +33,15 @@ class Reputation::ReviewRequestSendService
 
   private
 
+  # Prefer the composer's message (carries the chosen Tone) over the template body.
+  # Support both placeholder styles: template ({{contact.name}}/{{review_link}}) and
+  # composer ({{FirstName}}/{{ReviewLink}}/{{BusinessName}}).
   def render_body(request)
     review_link = "#{ENV.fetch('FRONTEND_URL')}/r/#{request.token}"
-    @template.body
-             .gsub('{{contact.name}}', @contact.name.to_s)
-             .gsub('{{review_link}}', review_link)
+    (request.message.presence || @template.body)
+      .gsub(/\{\{\s*(contact\.name|FirstName)\s*\}\}/, @contact.name.to_s)
+      .gsub(/\{\{\s*(review_link|ReviewLink)\s*\}\}/, review_link)
+      .gsub(/\{\{\s*BusinessName\s*\}\}/, @account.name.to_s)
   end
 
   def deliver(body, request)

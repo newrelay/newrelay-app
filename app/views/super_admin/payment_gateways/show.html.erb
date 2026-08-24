@@ -2,13 +2,13 @@
   Payment Gateways
 <% end %>
 
-<header class="main-content__header" role="banner">
-  <h1 class="main-content__page-title">
-    <%= content_for(:title) %>
-  </h1>
-</header>
+<div class="space-y-6">
+  <div class="flex items-center justify-between mb-6">
+    <h1 class="page-title">
+      Payment Gateways
+    </h1>
+  </div>
 
-<section class="main-content__body">
   <% if notice.present? %>
     <div class="mb-4 rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-800">
       <%= notice %>
@@ -20,7 +20,7 @@
     </div>
   <% end %>
 
-  <p class="mb-6 text-sm text-slate-600 max-w-3xl">
+  <p class="mb-6 text-sm text-muted-foreground max-w-3xl">
     Enable or disable payment gateways for cloud billing. Search and select country codes to route checkout
     (for example, India → <code>IN</code>). Each country can only be assigned to one enabled gateway.
     Leave country codes empty to use a gateway as the default fallback for countries not matched elsewhere.
@@ -29,28 +29,28 @@
   </p>
 
   <%= form_tag super_admin_payment_gateways_path, method: :patch do %>
-    <div class="overflow-x-auto mb-6">
+    <div class="table-card mb-6">
       <table>
         <thead>
           <tr>
-            <th class="cell-label" scope="col">Gateway</th>
-            <th class="cell-label" scope="col">Enabled</th>
-            <th class="cell-label" scope="col">Country codes</th>
-            <th class="cell-label" scope="col">Currency</th>
-            <th class="cell-label" scope="col">Status</th>
+            <th scope="col">Gateway</th>
+            <th scope="col">Enabled</th>
+            <th scope="col">Country codes</th>
+            <th scope="col">Currency</th>
+            <th scope="col">Status</th>
           </tr>
         </thead>
         <tbody>
           <% @gateways.each do |gateway| %>
-            <tr class="js-table-row">
-              <td class="cell-data font-medium text-slate-900"><%= gateway['label'] %></td>
-              <td class="cell-data">
+            <tr>
+              <td class="font-medium text-foreground"><%= gateway['label'] %></td>
+              <td>
                 <%= hidden_field_tag "gateways[#{gateway['id']}][enabled]", '0' %>
                 <%= check_box_tag "gateways[#{gateway['id']}][enabled]", '1', gateway['enabled'] != false,
                   disabled: !gateway['configured'],
-                  class: 'rounded border-slate-300 text-violet-600 focus:ring-violet-600' %>
+                  class: 'rounded border-input text-primary focus:ring-[#cac7f7]' %>
               </td>
-              <td class="cell-data">
+              <td>
                 <div
                   class="payment-gateway-countries min-w-[18rem]"
                   data-payment-gateway-countries
@@ -62,21 +62,21 @@
                   <div class="relative">
                     <input
                       type="text"
-                      class="js-country-search block w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-900 focus:border-violet-600 focus:ring-violet-600"
+                      class="js-country-search block w-full rounded-md border border-input bg-background px-3 py-1.5 text-sm text-foreground focus:border-[#cac7f7]"
                       placeholder="Search country to add..."
                       autocomplete="off"
                     />
-                    <ul class="js-country-suggestions hidden absolute z-10 mt-1 max-h-48 w-full overflow-auto rounded-lg border border-slate-200 bg-white shadow-lg"></ul>
+                    <ul class="js-country-suggestions hidden absolute z-10 mt-1 max-h-48 w-full overflow-auto rounded-lg border border-border bg-popover shadow-lg"></ul>
                   </div>
                   <%= hidden_field_tag "gateways[#{gateway['id']}][country_codes]", gateway['country_codes_text'], class: 'js-country-codes-input' %>
                 </div>
               </td>
-              <td class="cell-data uppercase text-slate-700"><%= gateway['currency'] %></td>
-              <td class="cell-data">
+              <td class="uppercase text-foreground font-mono"><%= gateway['currency'] %></td>
+              <td>
                 <% if gateway['configured'] %>
-                  <span class="text-green-700 text-sm">Ready</span>
+                  <span class="text-success text-sm font-medium">Ready</span>
                 <% else %>
-                  <span class="text-amber-700 text-sm">Not configured (missing ENV keys)</span>
+                  <span class="text-warning text-sm font-medium">Not configured (missing ENV keys)</span>
                 <% end %>
               </td>
             </tr>
@@ -85,8 +85,8 @@
       </table>
     </div>
 
-    <div class="rounded-lg border border-slate-200 bg-slate-50 px-4 py-3 text-xs text-slate-600 max-w-3xl mb-6">
-      <p class="font-semibold text-slate-800 mb-1">Adding a new gateway later</p>
+    <div class="rounded-xl border border-border bg-card p-4 text-xs text-muted-foreground max-w-3xl mb-6">
+      <p class="font-semibold text-foreground mb-1">Adding a new gateway later</p>
       <p>
         Register the gateway in
         <code>Enterprise::Billing::PaymentGatewayRegistry::DEFINITIONS</code>
@@ -95,7 +95,8 @@
     </div>
 
     <div class="flex justify-end">
-      <%= submit_tag 'Save gateway settings', class: 'button' %>
+      <%= submit_tag 'Save gateway settings', class: 'inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors bg-primary text-primary-foreground hover:bg-primary/90 h-9 px-4 py-2 cursor-pointer shadow-xs' %>
     </div>
   <% end %>
-</section>
+</div>
+

@@ -6,6 +6,8 @@
 #  channel                :string           not null
 #  clicked_at             :datetime
 #  completed_at           :datetime
+#  destinations           :jsonb
+#  message                :text
 #  scheduled_at           :datetime
 #  status                 :string           default("sent")
 #  token                  :string           not null

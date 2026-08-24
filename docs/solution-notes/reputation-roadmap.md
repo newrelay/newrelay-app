@@ -143,6 +143,38 @@ some); WhatsApp open rate needs a real WhatsApp send path (backend enum is `sms|
 (Overview "Request Reviews", mock send) — the modal now also GETs `/reputation/review_requests` for its rates.
 Rates show `—`/"No sends yet" until the account actually has send history.
 
+## Request Reviews — Sending Method: immediate job + scheduled cron (decided 2026-08-21)
+Step 2 "Sending Method" is now real end-to-end.
+- **Send Immediately** → `review_requests#create` calls `ReviewRequestSendService#send!` which creates the request
+  (`status: :sent`) and enqueues `Reputation::SendReviewRequestJob` (async delivery via existing mailer/Twilio/mock).
+- **Schedule Later** → the picker shows a native `<input type="datetime-local">` (min = now, future-only validation
+  in `scheduleError`); the payload carries `scheduled_at`. The service persists it `status: :scheduled` and does NOT
+  deliver. Cron `Reputation::DispatchScheduledRequestsJob` (`*/5 * * * *`, schedule.yml) selects due
+  `scheduled` rows, flips them to `:sent` (so the next tick won't re-pick), and enqueues the send job.
+- **Migration:** `scheduled_at :datetime` + index `[status, scheduled_at]`; new enum value `scheduled` on status.
+- **Send payload contract (both FE surfaces):** `{ channel, contact_ids:[numeric ids], recipients:[raw emails/phones], scheduled_at }`.
+  Controller resolves real contacts by id + find-or-creates contacts from raw emails/phones; auto-provisions a default
+  per-channel template (`default_template`) so no template needs selecting. WhatsApp coerced to `sms` (no WA backend yet).
+- **Verified** via `rails runner`: immediate→sent+job, future→scheduled, due+cron→sent.
+**Ceiling / not done:** WhatsApp has no real adapter; no per-request retry/failure UI. **Manual/CSV rows** send as raw
+`recipients` (find-or-create contact) since their FE ids aren't real contact ids.
+
+## Request Reviews — Tone & Review Destination (decided 2026-08-21)
+Both step-3 selectors in `RequestsPage.vue` are now real (the modal has no selectors — it sends its composer message + `['Google']` default).
+- **Tone** → `applyTone(tone)` swaps the composer message to a tone preset (`TONE_PRESETS`: Friendly/Professional/Luxury/Casual).
+  The composed `message` is now **persisted on the request** (`message :text`) and **actually delivered**: `render_body`
+  prefers `request.message` over the template body and resolves both placeholder styles
+  (`{{FirstName}}`/`{{contact.name}}`, `{{ReviewLink}}`/`{{review_link}}`, `{{BusinessName}}`). This closes the old
+  "freeform message not used" gap — works for immediate and scheduled sends.
+- **Review Destination** → selected platforms persist on the request (`destinations :jsonb`). The public
+  `/r/:token` redirect (`PublicWidgetsController#redirect`) now sends the customer to the **primary destination's real
+  write-review URL** when that platform is a connected `Reputation::Integration` — currently only **Google** resolves
+  (`search.google.com/local/writereview?placeid=<location_id>`); everything else falls back to the testimonial funnel.
+- **Migration:** `message :text`, `destinations :jsonb default: []`. **Payload:** `create` now also takes `message`, `destinations[]`.
+- **Verified** via `rails runner`: message stored + rendered with placeholders; destination → nil without integration, real Google URL with one.
+**Ceiling:** only Google has a real deep link (others → funnel); tone presets are static copy (not AI-rewritten — the
+"Improve Message" button is still unwired).
+
 ## Cross-cutting (every version)
 - `enterprise/` overlay check for each new model/controller (CLAUDE.md).
 - Semantic tokens only; lucide icons (verify names); i18n sweep is a **separate track** (still deferred).

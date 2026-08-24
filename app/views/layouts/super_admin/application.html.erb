@@ -25,6 +25,8 @@ By default, it renders:
   <%= vite_client_tag %>
   <%= vite_javascript_tag 'superadmin' %>
   <%= vite_javascript_tag 'superadmin_pages' %>
+
+
   <%= csrf_meta_tags %>
 </head>
 <body class="antialiased w-full h-full bg-background text-foreground" data-relay="true">
@@ -67,15 +69,31 @@ By default, it renders:
   </script>
 
   <%= render "icons" %>
-  <div class="flex w-full h-full">
-    <%= render "navigation" -%>
-    <main class="flex-1 flex flex-col min-w-0 overflow-auto bg-background" role="main">
-      <%= render "flashes" -%>
-      <div class="flex-1 p-6">
-        <%= yield %>
+  <div class="w-full h-full">
+    <div class="app-layout">
+
+      <!-- Sidebar Spacer (Offset for Fixed Desktop Sidebar) -->
+      <div class="sidebar-spacer" id="sidebarSpacer"></div>
+
+      <!-- Sidebar -->
+      <%= render "navigation" -%>
+
+      <!-- Main Column -->
+      <div class="main-column">
+        <!-- Top Header -->
+        <%= render "header" -%>
+
+        <!-- Main Content Body -->
+        <main class="flex-1 p-6 lg:px-10 max-w-7xl w-full mx-auto bg-background" role="main">
+          <%= render "flashes" -%>
+          <%= yield %>
+        </main>
       </div>
-    </main>
+    </div>
   </div>
+
+  <%= render "search_modal" %>
   <%= render "javascript" %>
 </body>
 </html>
+

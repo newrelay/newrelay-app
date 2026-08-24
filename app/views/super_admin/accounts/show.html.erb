@@ -3,20 +3,24 @@
 %>
 
 <div class="space-y-6">
-  <header class="flex items-center justify-between pb-4 border-b border-border/40">
-    <h1 class="text-2xl font-semibold tracking-tight text-foreground">
+  <div class="flex items-center gap-3 mb-6">
+    <%= link_to super_admin_accounts_path, class: "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md border border-input bg-background text-sm font-medium text-foreground hover:bg-accent hover:border-[#cac7f7] transition-colors" do %>
+      <svg class="size-4" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+      <span>Back</span>
+    <% end %>
+    <h1 class="page-title">
       <%= content_for(:title) %>
     </h1>
-    <div class="flex items-center gap-2">
-      <%= link_to(
-        [:edit, namespace, page.resource],
-        class: "inline-flex h-9 items-center justify-center whitespace-nowrap rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 gap-2",
-      ) do %>
-        <span class="i-lucide-pen-line size-4"></span>
-        <%= t("administrate.actions.edit") %>
-      <% end if accessible_action?(page.resource, :edit) %>
-    </div>
-  </header>
+    <% if accessible_action?(page.resource, :edit) %>
+      <div class="ml-auto">
+        <%= link_to [:edit, namespace, page.resource], class: "inline-flex h-9 items-center justify-center rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground shadow-xs hover:bg-primary/90 transition-colors gap-2" do %>
+          <svg class="size-4" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg>
+          <span>Edit Account</span>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+
 
   <section class="rounded-xl border border-border bg-card text-card-foreground shadow-xs overflow-hidden">
     <div class="divide-y divide-border/50">

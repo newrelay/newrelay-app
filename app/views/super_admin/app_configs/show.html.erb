@@ -1,12 +1,14 @@
-<% content_for(:title) do %>
-  Configure Settings - <%= @config.titleize %>
-<% end %>
+<div class="space-y-6">
+  <div class="flex items-center gap-3 mb-6">
+    <%= link_to super_admin_settings_path, class: "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md border border-input bg-background text-sm font-medium text-foreground hover:bg-accent hover:border-[#cac7f7] transition-colors" do %>
+      <svg class="size-4" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+      <span>Back</span>
+    <% end %>
+    <h1 class="page-title" id="page-title">
+      Configure Settings - <%= @config.titleize %>
+    </h1>
+  </div>
 
-<header class="main-content__header" role="banner">
-  <h1 class="main-content__page-title" id="page-title">
-    <%= content_for(:title) %>
-  </h1>
-</header>
 
 <style>
 .eye-icon.eye-hide path {

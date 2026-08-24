@@ -29,7 +29,11 @@ class Api::V1::Accounts::Reputation::ReviewRequestsController < Api::V1::Account
         account: current_account,
         template_id: template_id,
         contact_id: cid
-      ).send!(scheduled_at: scheduled_at)
+      ).send!(
+        scheduled_at: scheduled_at,
+        message: params[:message],
+        destinations: params[:destinations]
+      )
     end
     head :created
   end

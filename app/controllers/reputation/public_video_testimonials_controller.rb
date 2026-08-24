@@ -7,6 +7,14 @@ class Reputation::PublicVideoTestimonialsController < ApplicationController
     # Renders app/views/reputation/public_video_testimonials/new.html.erb
   end
 
+  # Public branded share page (F2). Only approved/published are reachable; 404 otherwise.
+  def show
+    @testimonial = Reputation::VideoTestimonial.publicly_visible.find_by!(token: params[:token])
+    @account = @testimonial.account
+    @testimonial.increment!(:views)
+    # Renders app/views/reputation/public_video_testimonials/show.html.erb
+  end
+
   def create
     @account = Account.find(params[:account_id])
     review_request = params[:token].present? ? @account.reputation_review_requests.find_by(token: params[:token]) : nil

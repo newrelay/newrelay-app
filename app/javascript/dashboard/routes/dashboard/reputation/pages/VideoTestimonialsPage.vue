@@ -43,6 +43,7 @@ function mapVideo(v) {
     avatar: '',
     thumbnail: v.thumbnail_url || '',
     videoUrl: v.video_url || '',
+    shareUrl: v.share_url || '',
     duration: formatDuration(v.duration_seconds),
     date: v.created_at ? formatDate(v.created_at) : '',
     status: STATUS_LABEL[v.status] || 'Pending Approval',
@@ -155,8 +156,27 @@ const handleModalSubmit = () => {
 };
 
 const handleReply = () => showToast(`Opening reply composer for ${selectedVideo.value?.author}...`);
-const handleShare = () => showToast('Share link copied to clipboard!');
-const handleDownload = () => showToast('Downloading video...');
+const handleShare = async () => {
+  const url = selectedVideo.value?.shareUrl || selectedVideo.value?.videoUrl;
+  if (!url) { showToast('No shareable link yet.'); return; }
+  try {
+    await navigator.clipboard.writeText(url);
+    showToast('Share link copied to clipboard!');
+  } catch (e) {
+    showToast('Could not copy link.');
+  }
+};
+const handleDownload = () => {
+  const url = selectedVideo.value?.videoUrl;
+  if (!url) { showToast('No video to download.'); return; }
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `${selectedVideo.value.author || 'testimonial'}.mp4`;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  showToast('Downloading video…');
+};
 const handleEdit = () => showToast(`Opening editor for ${selectedVideo.value?.author}'s video...`);
 const handleMore = () => showToast('Opening more options...');
 

@@ -727,6 +727,7 @@ Rails.application.routes.draw do
 
   get 'reputation/video/:account_id/new', to: 'reputation/public_video_testimonials#new', as: :new_reputation_video_testimonial
   post 'reputation/video/:account_id', to: 'reputation/public_video_testimonials#create', as: :reputation_video_testimonials
+  get 'reputation/testimonials/:token', to: 'reputation/public_video_testimonials#show', as: :reputation_testimonial
   # ----------------------------------------------------------------------
   # Routes for external service verifications
   get '.well-known/assetlinks.json' => 'android_app#assetlinks'

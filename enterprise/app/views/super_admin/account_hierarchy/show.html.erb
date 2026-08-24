@@ -10,26 +10,26 @@
 
 <section class="main-content__body">
   <% if @resellers.empty? %>
-    <div class="rounded-lg border border-slate-100 bg-white p-6 text-sm text-slate-600">
+    <div class="rounded-lg border border-border bg-card p-6 text-sm text-muted-foreground">
       No reseller accounts found.
     </div>
   <% else %>
     <div class="space-y-4">
       <% @resellers.each do |reseller| %>
-        <details class="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
-          <summary class="flex cursor-pointer items-center justify-between text-sm font-semibold text-slate-900">
+        <details class="rounded-lg border border-border bg-card p-4 shadow-sm">
+          <summary class="flex cursor-pointer items-center justify-between text-sm font-semibold text-foreground">
             <span class="flex items-center gap-3">
               <%= reseller.name %>
               <%= link_to 'View billing',
                           account_super_admin_account_hierarchy_path(reseller),
-                          class: 'text-xs font-normal text-violet-700 hover:underline',
+                          class: 'text-xs font-normal text-primary hover:underline',
                           onclick: 'event.stopPropagation();' %>
             </span>
-            <span class="text-xs font-normal text-slate-500 bg-slate-100 px-2.5 py-0.5 rounded-full"><%= pluralize(reseller.children.size, 'child account') %></span>
+            <span class="text-xs font-normal text-muted-foreground bg-muted px-2.5 py-0.5 rounded-full"><%= pluralize(reseller.children.size, 'child account') %></span>
           </summary>
 
           <% if reseller.children.empty? %>
-            <p class="mt-4 text-sm text-slate-500">No child accounts linked.</p>
+            <p class="mt-4 text-sm text-muted-foreground">No child accounts linked.</p>
           <% else %>
             <div class="mt-4 overflow-x-auto">
               <table>
@@ -49,7 +49,7 @@
                     <% child_sub = child.subscription %>
                     <tr class="js-table-row">
                       <td class="cell-data">#<%= child.id %></td>
-                      <td class="cell-data font-semibold text-slate-800"><%= child.name %></td>
+                      <td class="cell-data font-semibold text-foreground"><%= child.name %></td>
                       <td class="cell-data">
                         <%= child_sub&.plan_name.presence || child.custom_attributes['plan_name'].presence || '—' %>
                       </td>
@@ -61,7 +61,7 @@
                       <td class="cell-data">
                         <%= link_to 'View details',
                                     account_super_admin_account_hierarchy_path(child),
-                                    class: 'text-violet-700 hover:underline text-sm font-medium' %>
+                                    class: 'text-primary hover:underline text-sm font-medium' %>
                       </td>
                     </tr>
                   <% end %>

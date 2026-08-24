@@ -4,10 +4,10 @@
 <% razorpay_customer_id = page.resource.custom_attributes['razorpay_customer_id'] %>
 
 <% if sub.present? || billing_country.present? || stripe_customer_id.present? || razorpay_customer_id.present? %>
-  <section class="main-content__body mt-8 border-t border-slate-200 pt-8">
-    <h2 class="text-base font-semibold text-slate-900 mb-4">Payment gateway</h2>
+  <section class="main-content__body mt-8 border-t border-border pt-8">
+    <h2 class="text-base font-semibold text-foreground mb-4">Payment gateway</h2>
 
-    <div class="rounded-lg border border-slate-200 bg-white overflow-hidden">
+    <div class="rounded-lg border border-border bg-card overflow-hidden">
       <table>
         <tbody>
           <% if billing_country.present? %>
@@ -67,7 +67,7 @@
             <tr class="js-table-row">
               <td class="cell-label">View subscription</td>
               <td class="cell-data">
-                <%= link_to "Subscription ##{sub.id}", super_admin_subscription_path(sub), class: 'text-violet-700 hover:underline' %>
+                <%= link_to "Subscription ##{sub.id}", super_admin_subscription_path(sub), class: 'text-primary hover:underline' %>
               </td>
             </tr>
           <% else %>

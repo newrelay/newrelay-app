@@ -125,7 +125,7 @@ class PaymentGatewayCountryPicker {
       const item = document.createElement('button');
       item.type = 'button';
       item.className =
-        'block w-full px-3 py-2 text-left text-sm text-slate-900 hover:bg-violet-50';
+        'block w-full px-3 py-2 text-left text-sm text-foreground hover:bg-accent';
       item.textContent = country.label;
       item.addEventListener('click', () => {
         this.addCode(country.id);
@@ -194,7 +194,7 @@ class PaymentGatewayCountryPicker {
 
     if (!this.selectedCodes.length) {
       const empty = document.createElement('span');
-      empty.className = 'text-xs text-slate-400';
+      empty.className = 'text-xs text-muted-foreground';
       empty.textContent = 'Default fallback (all unmatched countries)';
       this.tagsContainer.appendChild(empty);
       return;
@@ -204,14 +204,14 @@ class PaymentGatewayCountryPicker {
       const country = findCountry(code);
       const tag = document.createElement('span');
       tag.className =
-        'inline-flex items-center gap-1 rounded-full bg-violet-50 px-2 py-1 text-xs font-medium text-violet-800';
+        'inline-flex items-center gap-1 rounded-full bg-accent px-2 py-1 text-xs font-medium text-primary';
 
       const label = document.createElement('span');
       label.textContent = country ? country.label : code;
 
       const removeButton = document.createElement('button');
       removeButton.type = 'button';
-      removeButton.className = 'text-violet-600 hover:text-violet-900';
+      removeButton.className = 'text-primary hover:text-foreground';
       removeButton.setAttribute('aria-label', `Remove ${code}`);
       removeButton.textContent = '×';
       removeButton.addEventListener('click', () => this.removeCode(code));

@@ -5,15 +5,15 @@
 <% billing_country = account.custom_attributes['billing_country'] %>
 
 <section class="space-y-6">
-  <div class="rounded-lg border border-slate-200 bg-white overflow-hidden">
-    <div class="border-b border-slate-200 px-4 py-3">
-      <h2 class="text-sm font-semibold text-slate-900">Current plan</h2>
+  <div class="rounded-lg border border-border bg-card overflow-hidden">
+    <div class="border-b border-border px-4 py-3">
+      <h2 class="text-sm font-semibold text-foreground">Current plan</h2>
     </div>
     <table>
       <tbody>
         <tr class="js-table-row">
           <td class="cell-label w-1/3">Account</td>
-          <td class="cell-data font-semibold text-slate-800">
+          <td class="cell-data font-semibold text-foreground">
             #<%= account.id %> — <%= account.name %>
           </td>
         </tr>
@@ -59,7 +59,7 @@
         <% else %>
           <tr class="js-table-row">
             <td class="cell-label">Subscription</td>
-            <td class="cell-data text-slate-500">No subscription record</td>
+            <td class="cell-data text-muted-foreground">No subscription record</td>
           </tr>
         <% end %>
         <% if billing_country.present? %>
@@ -72,7 +72,7 @@
           <tr class="js-table-row">
             <td class="cell-label">Reseller parent</td>
             <td class="cell-data">
-              <%= link_to account.parent.name, account_super_admin_account_hierarchy_path(account.parent), class: 'text-violet-700 hover:underline' %>
+              <%= link_to account.parent.name, account_super_admin_account_hierarchy_path(account.parent), class: 'text-primary hover:underline' %>
             </td>
           </tr>
         <% end %>
@@ -81,9 +81,9 @@
   </div>
 
   <% if sub.present? %>
-    <div class="rounded-lg border border-slate-200 bg-white overflow-hidden">
-      <div class="border-b border-slate-200 px-4 py-3">
-        <h2 class="text-sm font-semibold text-slate-900">Payment gateway IDs</h2>
+    <div class="rounded-lg border border-border bg-card overflow-hidden">
+      <div class="border-b border-border px-4 py-3">
+        <h2 class="text-sm font-semibold text-foreground">Payment gateway IDs</h2>
       </div>
       <table>
         <tbody>
@@ -111,13 +111,13 @@
     </div>
   <% end %>
 
-  <div class="rounded-lg border border-slate-200 bg-white overflow-hidden">
-    <div class="border-b border-slate-200 px-4 py-3 flex items-center justify-between">
-      <h2 class="text-sm font-semibold text-slate-900">Billing activity</h2>
-      <span class="text-xs text-slate-500"><%= pluralize(billing_activity.size, 'record') %></span>
+  <div class="rounded-lg border border-border bg-card overflow-hidden">
+    <div class="border-b border-border px-4 py-3 flex items-center justify-between">
+      <h2 class="text-sm font-semibold text-foreground">Billing activity</h2>
+      <span class="text-xs text-muted-foreground"><%= pluralize(billing_activity.size, 'record') %></span>
     </div>
     <% if billing_activity.empty? %>
-      <p class="px-4 py-6 text-sm text-slate-500">No billing activity recorded yet.</p>
+      <p class="px-4 py-6 text-sm text-muted-foreground">No billing activity recorded yet.</p>
     <% else %>
       <div class="overflow-x-auto">
         <table>
@@ -139,14 +139,14 @@
                 <td class="cell-data"><%= log.user&.email.presence || '—' %></td>
                 <td class="cell-data"><%= log.action %></td>
                 <td class="cell-data">
-                  <span class="<%= log.success? ? 'text-green-700' : 'text-red-700' %>">
+                  <span class="<%= log.success? ? 'text-success' : 'text-destructive' %>">
                     <%= log.status.titleize %>
                   </span>
                 </td>
                 <td class="cell-data"><%= log.payment_provider.to_s.capitalize.presence || '—' %></td>
                 <td class="cell-data"><%= log.message %></td>
                 <td class="cell-data">
-                  <%= link_to 'View', super_admin_billing_activity_log_path(log), class: 'text-violet-700 hover:underline' %>
+                  <%= link_to 'View', super_admin_billing_activity_log_path(log), class: 'text-primary hover:underline' %>
                 </td>
               </tr>
             <% end %>

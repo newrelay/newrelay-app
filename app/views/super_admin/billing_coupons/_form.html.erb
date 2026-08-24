@@ -27,7 +27,7 @@
     <div class="field-unit__label"><%= f.label :code, 'Code' %></div>
     <div class="field-unit__field">
       <%= f.text_field :code %>
-      <p class="text-xs text-slate-500 mt-1 mb-0">
+      <p class="text-xs text-muted-foreground mt-1 mb-0">
         Auto-generated. Edit to set a custom code, or clear to regenerate on save.
       </p>
     </div>
@@ -92,7 +92,7 @@
     <div class="field-unit__label"><%= f.label :duration_in_months, 'Duration in months' %></div>
     <div class="field-unit__field">
       <%= f.number_field :duration_in_months, min: 1 %>
-      <p class="text-xs text-slate-500 mt-1 mb-0">Required only when duration is &quot;repeating&quot;.</p>
+      <p class="text-xs text-muted-foreground mt-1 mb-0">Required only when duration is &quot;repeating&quot;.</p>
     </div>
   </div>
 

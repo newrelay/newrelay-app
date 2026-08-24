@@ -1,6 +1,6 @@
 <div class="space-y-6">
   <div class="flex items-center gap-3 mb-6">
-    <%= link_to super_admin_settings_path, class: "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md border border-input bg-background text-sm font-medium text-foreground hover:bg-accent hover:border-[#cac7f7] transition-colors" do %>
+    <%= link_to super_admin_settings_path, class: "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md border border-input bg-background text-sm font-medium text-foreground hover:bg-accent hover:border-ring transition-colors" do %>
       <svg class="size-4" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
       <span>Back</span>
     <% end %>
@@ -28,21 +28,21 @@
             <%= form.select "app_config[#{key}]",
               [["True", true], ["False", false]],
               { selected: ActiveModel::Type::Boolean.new.cast(@app_config[key]) },
-              class: "flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm shadow-xs text-foreground focus:border-[#cac7f7] transition-colors cursor-pointer"
+              class: "flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm shadow-xs text-foreground focus:border-ring transition-colors cursor-pointer"
             %>
           <% elsif @installation_configs[key]&.dig('type') == 'code' %>
             <%= form.text_area "app_config[#{key}]",
                 value: @app_config[key],
                 rows: 10,
                 wrap: 'off',
-                class: "flex w-full rounded-md border border-input bg-background p-3 font-mono text-xs shadow-xs text-foreground focus:border-[#cac7f7] transition-colors overflow-auto"
+                class: "flex w-full rounded-md border border-input bg-background p-3 font-mono text-xs shadow-xs text-foreground focus:border-ring transition-colors overflow-auto"
             %>
           <% elsif @installation_configs[key]&.dig('type') == 'secret' %>
             <div class="relative">
               <%= form.password_field "app_config[#{key}]",
                   id: "app_config_#{key}",
                   value: @app_config[key],
-                  class: "flex h-9 w-full rounded-md border border-input bg-background pl-3 pr-10 py-1 text-sm shadow-xs text-foreground focus:border-[#cac7f7] transition-colors"
+                  class: "flex h-9 w-full rounded-md border border-input bg-background pl-3 pr-10 py-1 text-sm shadow-xs text-foreground focus:border-ring transition-colors"
               %>
               <button
                 type="button"
@@ -59,10 +59,10 @@
             <%= form.select "app_config[#{key}]",
               @installation_configs[key]['options'].map { |val, label| [label, val] },
               { selected: @app_config[key] },
-              class: "flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm shadow-xs text-foreground focus:border-[#cac7f7] transition-colors cursor-pointer"
+              class: "flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm shadow-xs text-foreground focus:border-ring transition-colors cursor-pointer"
             %>
           <% else %>
-            <%= form.text_field "app_config[#{key}]", value: @app_config[key], class: "flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm shadow-xs text-foreground focus:border-[#cac7f7] transition-colors" %>
+            <%= form.text_field "app_config[#{key}]", value: @app_config[key], class: "flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm shadow-xs text-foreground focus:border-ring transition-colors" %>
           <% end %>
           <% if @installation_configs[key]&.dig('description').present? %>
             <p class="text-xs text-muted-foreground">

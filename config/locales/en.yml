@@ -30,6 +30,9 @@
 # available at https://guides.rubyonrails.org/i18n.html.
 
 en:
+  administrate:
+    actions:
+      new_resource: "New %{name}"
   hello: 'Hello world'
   inbox:
     reauthorization:

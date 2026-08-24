@@ -204,6 +204,16 @@
           </li>
         <% end %>
 
+        <!-- Sidekiq (external) -->
+        <li class="sidebar-item-wrap" data-slot="sidebar-menu-item">
+          <%= link_to sidekiq_web_path, target: "_blank", rel: "noopener", class: "sidebar-menu-btn" do %>
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-activity" style="width:16px;height:16px;"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+            <span>Sidekiq Dashboard</span>
+            <svg class="size-3 ml-auto opacity-60" xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" x2="21" y1="14" y2="3"/></svg>
+          <% end %>
+          <div class="sidebar-flyout sidebar-tooltip">Sidekiq Dashboard</div>
+        </li>
+
         <!-- Instance Health -->
         <li class="sidebar-item-wrap" data-slot="sidebar-menu-item">
           <%= link_to super_admin_instance_status_path, class: "sidebar-menu-btn #{'active' if current_page?(super_admin_instance_status_path)}" do %>
@@ -230,15 +240,6 @@
   <div class="sidebar-footer" data-slot="sidebar-footer">
     <ul class="sidebar-menu" data-slot="sidebar-menu">
       <%= render 'settings_menu', open: settings_open? %>
-
-      <li class="sidebar-item-wrap" data-slot="sidebar-menu-item">
-        <%= link_to sidekiq_web_path, target: "_blank", rel: "noopener", class: "sidebar-menu-btn" do %>
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-activity" style="width:16px;height:16px;"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
-          <span>Sidekiq Dashboard</span>
-          <svg class="size-3 ml-auto opacity-60" xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" x2="21" y1="14" y2="3"/></svg>
-        <% end %>
-        <div class="sidebar-flyout sidebar-tooltip">Sidekiq Dashboard</div>
-      </li>
 
       <li class="sidebar-item-wrap" data-slot="sidebar-menu-item">
         <%= link_to super_admin_logout_path, class: "sidebar-menu-btn sidebar-logout-btn" do %>

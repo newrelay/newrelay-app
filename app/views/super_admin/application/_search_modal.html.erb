@@ -1,6 +1,32 @@
-<!-- Search Modal Command Palette -->
+<%
+  nr_command_pages = [
+    { href: super_admin_root_path, label: 'Dashboard', desc: 'Overview metrics & conversation volume' },
+    { href: super_admin_accounts_path, label: 'Accounts', desc: 'Manage tenant accounts and feature flags' },
+    { href: super_admin_users_path, label: 'Users', desc: 'SuperAdmin and agent user credentials' },
+    { href: super_admin_enterprise_contracts_path, label: 'Enterprise Contracts', desc: 'Contract renewals & billing periods' },
+    { href: super_admin_subscriptions_path, label: 'Subscriptions', desc: 'Stripe & Razorpay active subscriptions' },
+    { href: super_admin_billing_activity_logs_path, label: 'Billing Activity Logs', desc: 'Checkout, webhooks and coupon validations' },
+    { href: super_admin_billing_coupons_path, label: 'Billing Coupons', desc: 'Promotional discount codes & redemption stats' },
+    { href: super_admin_marketplace_plan_prices_path, label: 'Marketplace Plan Prices', desc: 'Custom agency and gateway pricing' },
+    { href: super_admin_agent_bots_path, label: 'Agent Bots', desc: 'Outgoing webhooks & automation bots' },
+    { href: super_admin_platform_apps_path, label: 'Platform Apps', desc: 'Custom apps and integration credentials' },
+    { href: super_admin_platform_banners_path, label: 'Platform Banners', desc: 'Global notice and announcement banners' },
+    { href: super_admin_account_hierarchy_path, label: 'Account Hierarchy', desc: 'Parent-child account structures' },
+    { href: super_admin_plan_management_path, label: 'Plan Management', desc: 'Pricing tiers and limit tiers' },
+    { href: super_admin_payment_gateways_path, label: 'Payment Gateways', desc: 'Stripe & Razorpay gateway credentials' },
+    { href: super_admin_enterprise_inquiries_path, label: 'Enterprise Inquiries', desc: 'Lead captures and demo requests' },
+    { href: super_admin_cloudflare_domains_path, label: 'Cloudflare Domains', desc: 'Custom SSL domains mapping' },
+    { href: super_admin_settings_path, label: 'Settings', desc: 'Installation & system configurations' },
+    { href: super_admin_app_config_path, label: 'App Configs', desc: 'Environment keys, secrets & AI params' },
+    { href: sidekiq_web_path, label: 'Sidekiq Dashboard', desc: 'Background workers & redis job queues' },
+    { href: super_admin_instance_status_path, label: 'Instance Health', desc: 'System resources and uptime monitoring' },
+    { href: super_admin_push_diagnostics_path, label: 'Push Diagnostics', desc: 'Web and mobile push notifications tester' }
+  ]
+%>
+<script type="application/json" id="nrCommandPages"><%= raw json_escape(nr_command_pages.to_json) %></script>
+
 <div id="searchModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 sm:p-6 md:p-20" role="dialog" aria-modal="true">
-  <div class="fixed inset-0 bg-background/80 backdrop-blur-sm transition-opacity" onclick="closeSearchModal()"></div>
+  <div class="fixed inset-0 bg-background/80 backdrop-blur-[8px] transition-opacity" onclick="closeSearchModal()"></div>
   <div class="relative w-full max-w-2xl transform rounded-xl border border-border bg-popover p-0 shadow-2xl transition-all">
     <div class="flex items-center border-b border-border px-4 py-3">
       <svg class="size-5 text-muted-foreground mr-3" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.34-4.34"/></svg>
@@ -12,36 +38,3 @@
     </div>
   </div>
 </div>
-
-<script>
-  function openSearchModal() {
-    const modal = document.getElementById('searchModal');
-    if (modal) {
-      modal.classList.remove('hidden');
-      modal.classList.add('flex');
-      const input = document.getElementById('searchInputModal');
-      if (input) {
-        input.value = '';
-        input.focus();
-      }
-    }
-  }
-
-  function closeSearchModal() {
-    const modal = document.getElementById('searchModal');
-    if (modal) {
-      modal.classList.add('hidden');
-      modal.classList.remove('flex');
-    }
-  }
-
-  document.addEventListener('keydown', (e) => {
-    if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
-      e.preventDefault();
-      openSearchModal();
-    }
-    if (e.key === 'Escape') {
-      closeSearchModal();
-    }
-  });
-</script>

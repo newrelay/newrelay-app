@@ -22,12 +22,12 @@
       <% regular_keys.each do |feature_key| %>
         <% is_checked = field.enabled?(feature_key) %>
         <% title = display_names[feature_key] || feature_key.titleize %>
-        <label for="feature_<%= feature_key %>" class="feature-flag-card flex items-center gap-2.5 p-2.5 border border-border rounded-xl bg-card hover:bg-accent hover:border-[#cac7f7] transition-all cursor-pointer select-none">
+        <label for="feature_<%= feature_key %>" class="feature-flag-card flex items-center gap-2.5 p-2.5 border border-border rounded-xl bg-card hover:bg-accent hover:border-ring transition-all cursor-pointer select-none">
           <div class="feature-flag-icon-wrap size-8 rounded-lg bg-primary/10 text-primary flex items-center justify-center shrink-0">
             <svg class="size-4 text-primary" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
           </div>
           <span class="feature-flag-name text-xs font-medium text-foreground truncate flex-1"><%= title %></span>
-          <%= check_box_tag "#{f.object_name}[#{field.attribute}][]", feature_key, is_checked, class: "feature-flag-checkbox size-4 rounded border-input text-primary focus:ring-[#cac7f7] cursor-pointer shrink-0 ml-auto", id: "feature_#{feature_key}", data: { basic_feature: true } %>
+          <%= check_box_tag "#{f.object_name}[#{field.attribute}][]", feature_key, is_checked, class: "feature-flag-checkbox size-4 rounded border-input text-primary focus:ring-ring cursor-pointer shrink-0 ml-auto", id: "feature_#{feature_key}", data: { basic_feature: true } %>
         </label>
       <% end %>
     </div>
@@ -47,12 +47,12 @@
       <% premium_keys.each do |feature_key| %>
         <% is_checked = field.enabled?(feature_key) %>
         <% title = display_names[feature_key] || feature_key.titleize %>
-        <label for="feature_<%= feature_key %>" class="feature-flag-card is-premium flex items-center gap-2.5 p-2.5 border border-border rounded-xl bg-card hover:bg-accent hover:border-[#cac7f7] transition-all cursor-pointer select-none relative">
+        <label for="feature_<%= feature_key %>" class="feature-flag-card is-premium flex items-center gap-2.5 p-2.5 border border-border rounded-xl bg-card hover:bg-accent hover:border-ring transition-all cursor-pointer select-none relative">
           <div class="feature-flag-icon-wrap size-8 rounded-lg bg-primary/10 text-primary flex items-center justify-center shrink-0">
             <svg class="size-4 text-primary" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
           </div>
           <span class="feature-flag-name text-xs font-medium text-foreground truncate flex-1"><%= title %></span>
-          <%= check_box_tag "#{f.object_name}[#{field.attribute}][]", feature_key, is_checked, class: "feature-flag-checkbox size-4 rounded border-input text-primary focus:ring-[#cac7f7] cursor-pointer shrink-0 ml-auto", id: "feature_#{feature_key}", data: { premium_feature: true } %>
+          <%= check_box_tag "#{f.object_name}[#{field.attribute}][]", feature_key, is_checked, class: "feature-flag-checkbox size-4 rounded border-input text-primary focus:ring-ring cursor-pointer shrink-0 ml-auto", id: "feature_#{feature_key}", data: { premium_feature: true } %>
         </label>
       <% end %>
     </div>

@@ -23,14 +23,14 @@ It displays a header, and renders the `_form` partial to do the heavy lifting.
       <%= content_for(:title) %>
     </h1>
     <div class="page-actions flex items-center gap-2">
-      <%= link_to polymorphic_path([namespace, page.resource_name.to_s.pluralize.to_sym]), class: "inline-flex h-9 items-center justify-center rounded-md border border-input bg-background px-4 text-sm font-medium text-foreground shadow-xs hover:bg-accent hover:border-[#cac7f7] transition-colors" do %>
+      <%= link_to polymorphic_path([namespace, page.resource_name.to_s.pluralize.to_sym]), class: "inline-flex h-9 items-center justify-center rounded-md border border-input bg-background px-4 text-sm font-medium text-foreground shadow-xs hover:bg-accent hover:border-ring transition-colors" do %>
         <span>Back</span>
       <% end %>
       <% if accessible_action?(page.resource, :show) %>
         <%= link_to(
           t("administrate.actions.show_resource", name: page.page_title),
           [namespace, page.resource],
-          class: "inline-flex h-9 items-center justify-center rounded-md border border-input bg-background px-4 text-sm font-medium text-foreground shadow-xs hover:bg-accent hover:border-[#cac7f7] transition-colors",
+          class: "inline-flex h-9 items-center justify-center rounded-md border border-input bg-background px-4 text-sm font-medium text-foreground shadow-xs hover:bg-accent hover:border-ring transition-colors",
         ) %>
       <% end %>
     </div>

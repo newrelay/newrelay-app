@@ -6,18 +6,18 @@
   </div>
 
   <% if notice.present? %>
-    <div class="mb-4 rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-800">
+    <div class="mb-4 rounded-lg border border-success/20 bg-success/10 px-4 py-3 text-sm text-success">
       <%= notice %>
     </div>
   <% end %>
   <% if alert.present? %>
-    <div class="mb-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800">
+    <div class="mb-4 rounded-lg border border-destructive/20 bg-destructive/10 px-4 py-3 text-sm text-destructive">
       <%= alert %>
     </div>
   <% end %>
 
   <% if @accounts.empty? %>
-    <p class="text-slate-500">No Enterprise plan inquiries have been submitted yet.</p>
+    <p class="text-muted-foreground">No Enterprise plan inquiries have been submitted yet.</p>
   <% else %>
     <div class="table-card mb-6">
       <table class="w-full text-sm text-left">

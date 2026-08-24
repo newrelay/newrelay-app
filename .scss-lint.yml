@@ -284,3 +284,4 @@ exclude:
   - 'app/assets/stylesheets/administrate/reset/_normalize.scss'
   - 'app/javascript/shared/assets/stylesheets/*.scss'
   - 'app/javascript/dashboard/assets/scss/_woot.scss'
+  - 'app/javascript/dashboard/assets/scss/super_admin/index.scss'

@@ -879,7 +879,7 @@ const statusColor = s => {
                     <div class="text-[11px] text-muted-foreground">Schedule</div>
                     <div v-if="form.delivery === 'Schedule'" class="text-xs font-semibold text-foreground">
                       {{ form.scheduleDate ? new Date(form.scheduleDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : '—' }}
-                      <span v-if="form.scheduleTime" class="ml-1">at {{ form.scheduleTime }} {{ form.scheduleTimezone }}</span>
+                      <span v-if="form.scheduleTimezone" class="ml-2 text-muted-foreground">({{ form.scheduleTimezone }})</span>
                     </div>
                     <div v-else class="text-xs font-semibold text-foreground">Send Immediately</div>
                   </div>

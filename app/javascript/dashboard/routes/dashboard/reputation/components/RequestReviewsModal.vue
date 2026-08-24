@@ -12,7 +12,6 @@ import {
   RelayButton as Button, RelayInput as Input, RelayBadge as Badge
 } from 'dashboard/components-next/relay';
 import RelayDatePicker from 'dashboard/components-next/relay/calendar/DatePicker.vue';
-import RelayTimePicker from 'dashboard/components-next/relay/calendar/TimePicker.vue';
 
 const props = defineProps({
   open: {
@@ -41,11 +40,10 @@ const COMMON_TIMEZONES = [
   { label: 'Australia/Melbourne', value: 'Australia/Melbourne' },
 ];
 
-const convertToUtcIso = (dateStr, timeStr, tz) => {
-  if (!dateStr || !timeStr) return null;
-  const [hours, minutes] = timeStr.split(':').map(Number);
+const convertToUtcIso = (dateStr, tz) => {
+  if (!dateStr) return null;
   const dateParts = dateStr.split('-').map(Number);
-  const dateObj = new Date(dateParts[0], dateParts[1] - 1, dateParts[2], hours, minutes);
+  const dateObj = new Date(dateParts[0], dateParts[1] - 1, dateParts[2], 9, 0); // 9 AM default
   const formatter = new Intl.DateTimeFormat('en-CA', {
     year: 'numeric',
     month: '2-digit',
@@ -70,7 +68,6 @@ const defaultFormState = {
   channels: ['Email'],
   delivery: 'Send immediately',
   scheduleDate: '',
-  scheduleTime: '',
   scheduleTimezone: getUserTimezone(),
   message: 'Hi {{FirstName}},\n\nThank you for choosing us!\n\nWould you mind sharing your experience?\n\n⭐ Leave your review here:\n{{ReviewLink}}\n\nIt only takes one minute.\n\nThank you ❤️',
   tone: 'Friendly',
@@ -295,10 +292,10 @@ const minScheduleDate = computed(() => {
 
 const scheduleError = computed(() => {
   if (form.value.delivery !== 'Schedule') return '';
-  if (!form.value.scheduleDate || !form.value.scheduleTime) return 'Pick a date and time to schedule.';
-  const isoDateTime = convertToUtcIso(form.value.scheduleDate, form.value.scheduleTime, form.value.scheduleTimezone);
-  if (!isoDateTime) return 'Invalid date or time.';
-  if (new Date(isoDateTime) <= new Date()) return 'Scheduled time must be in the future.';
+  if (!form.value.scheduleDate) return 'Pick a date to schedule.';
+  const isoDateTime = convertToUtcIso(form.value.scheduleDate, form.value.scheduleTimezone);
+  if (!isoDateTime) return 'Invalid date.';
+  if (new Date(isoDateTime) <= new Date()) return 'Scheduled date must be in the future.';
   return '';
 });
 const step2Error = computed(() => channelErrorWithRequired.value || scheduleError.value);
@@ -357,7 +354,7 @@ async function generateReport() {
   if (step2Error.value) { currentStep.value = 2; return; }
   const { contactIds, recipients } = buildRecipients();
   const scheduledAt = form.value.delivery === 'Schedule'
-    ? convertToUtcIso(form.value.scheduleDate, form.value.scheduleTime, form.value.scheduleTimezone)
+    ? convertToUtcIso(form.value.scheduleDate, form.value.scheduleTimezone)
     : null;
   try {
     await axios.post(`/api/v1/accounts/${accountId}/reputation/review_requests`, {
@@ -537,7 +534,7 @@ function close() {
               </div>
             </div>
             <div v-if="form.delivery === 'Schedule'" class="space-y-3">
-              <div class="grid grid-cols-3 gap-3 items-end">
+              <div class="grid grid-cols-2 gap-4">
                 <div class="space-y-1">
                   <label class="text-xs font-medium text-foreground">Date</label>
                   <RelayDatePicker
@@ -549,24 +546,17 @@ function close() {
                   />
                 </div>
                 <div class="space-y-1">
-                  <label class="text-xs font-medium text-foreground">Time</label>
-                  <RelayTimePicker
-                    v-model="form.scheduleTime"
-                    placeholder="--:-- --"
-                  />
-                </div>
-                <div class="space-y-1">
                   <label class="text-xs font-medium text-foreground">Timezone</label>
-                  <div class="relative">
+                  <div class="relative h-9">
                     <select
                       v-model="form.scheduleTimezone"
-                      class="w-full h-9 px-3 text-xs shadow-sm rounded-md border border-border bg-background appearance-none focus:outline-none focus-visible:ring-1 focus-visible:ring-primary/30 cursor-pointer pr-8"
+                      class="w-full h-full px-3 text-xs shadow-sm rounded-md border border-border bg-background appearance-none focus:outline-none focus-visible:ring-1 focus-visible:ring-primary/30 cursor-pointer pr-9 font-medium text-foreground"
                     >
                       <option v-for="tz in COMMON_TIMEZONES" :key="tz.value" :value="tz.value">
                         {{ tz.label }}
                       </option>
                     </select>
-                    <Globe class="absolute right-2 top-1/2 -translate-y-1/2 size-4 text-muted-foreground pointer-events-none" />
+                    <Globe class="absolute right-3 top-1/2 -translate-y-1/2 size-4 text-primary pointer-events-none" />
                   </div>
                 </div>
               </div>

@@ -95,12 +95,13 @@
   --warning: #e9b928;
 }
 
-/* Explicit specificity resets to prevent legacy Chatwoot button/active styles from overriding superadmin components */
+/* Explicit specificity resets to enforce round buttons/pills and prevent legacy Chatwoot overrides */
 .app-header button.sidebar-trigger {
   background-color: transparent !important;
   color: var(--foreground) !important;
   border: none !important;
   box-shadow: none !important;
+  border-radius: 6px !important;
 }
 .app-header button.sidebar-trigger:hover {
   background-color: var(--accent) !important;
@@ -111,6 +112,7 @@
   background-color: var(--background) !important;
   color: var(--muted-foreground) !important;
   border: 1px solid var(--input) !important;
+  border-radius: 9999px !important;
   box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05) !important;
 }
 .app-header button.command-search-btn:hover,
@@ -124,6 +126,10 @@
   background-color: var(--background) !important;
   color: var(--foreground) !important;
   border: 1px solid var(--border) !important;
+  border-radius: 9999px !important;
+  width: 36px !important;
+  height: 36px !important;
+  padding: 0 !important;
   box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05) !important;
 }
 .app-header button.theme-toggle-btn:hover {
@@ -135,11 +141,19 @@
   background-color: var(--background) !important;
   color: var(--foreground) !important;
   border: 1px solid var(--border) !important;
+  border-radius: 9999px !important;
+  width: 36px !important;
+  height: 36px !important;
+  padding: 0 !important;
   box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05) !important;
 }
 .app-header button.header-icon-button:hover {
   background-color: var(--accent) !important;
   border-color: #cac7f7 !important;
+}
+
+.app-header .header-user-btn {
+  border-radius: 9999px !important;
 }
 
 .sidebar .sidebar-menu-btn {

@@ -95,6 +95,68 @@
   --warning: #e9b928;
 }
 
+/* Disable default focus outline/border boxes on buttons & navigation elements */
+button:focus,
+button:focus-visible,
+button:active,
+a:focus,
+a:focus-visible,
+a:active,
+.sidebar-menu-btn:focus,
+.sidebar-menu-btn:focus-visible,
+.sidebar-menu-btn:active,
+.sidebar-sub-link:focus,
+.sidebar-sub-link:focus-visible,
+.sidebar-sub-link:active,
+.sidebar-trigger:focus,
+.sidebar-trigger:focus-visible,
+.sidebar-trigger:active,
+.command-search-btn:focus,
+.command-search-btn:focus-visible,
+.command-search-btn:active,
+.theme-toggle-btn:focus,
+.theme-toggle-btn:focus-visible,
+.theme-toggle-btn:active,
+.header-icon-button:focus,
+.header-icon-button:focus-visible,
+.header-icon-button:active,
+.header-user-btn:focus,
+.header-user-btn:focus-visible,
+.header-user-btn:active {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+/* Sidebar elements strictly forbid borders on select/focus/active states */
+.sidebar .sidebar-menu-btn,
+.sidebar .sidebar-menu-btn:focus,
+.sidebar .sidebar-menu-btn:focus-visible,
+.sidebar .sidebar-menu-btn:active,
+.sidebar .sidebar-menu-btn.active,
+.sidebar .sidebar-sub-link,
+.sidebar .sidebar-sub-link:focus,
+.sidebar .sidebar-sub-link:focus-visible,
+.sidebar .sidebar-sub-link:active,
+.sidebar .sidebar-sub-link.active {
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+/* Form inputs focus border styling with #cac7f7 (Rule #7) */
+input:focus,
+input:focus-visible,
+select:focus,
+select:focus-visible,
+textarea:focus,
+textarea:focus-visible,
+.nr-select:focus,
+.nr-select:focus-visible {
+  border-color: #cac7f7 !important;
+  box-shadow: 0 0 0 2px rgba(202, 199, 247, 0.35) !important;
+  outline: none !important;
+}
+
 /* Explicit specificity resets to enforce round buttons/pills and prevent legacy Chatwoot overrides */
 .app-header button.sidebar-trigger {
   background-color: transparent !important;

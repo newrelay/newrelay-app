@@ -1,16 +1,18 @@
 <script setup>
 /* eslint-disable */
 import { ref, computed, watch } from 'vue';
-import { 
-  X, ChevronRight, Search, FileText, CheckCircle2, 
-  ArrowLeft, Send, Sparkles, MessageSquare, 
-  Mail, MessageCircle, Star, Smartphone, 
+import {
+  X, ChevronRight, Search, FileText, CheckCircle2,
+  ArrowLeft, Send, Sparkles, MessageSquare,
+  Mail, MessageCircle, Star, Smartphone,
   Upload, Clock, Check, BarChart3,
-  Calendar, ChevronLeft, Users, Plus, AlertCircle
+  Calendar, ChevronLeft, Users, Plus, AlertCircle, Globe
 } from 'lucide-vue-next';
-import { 
+import {
   RelayButton as Button, RelayInput as Input, RelayBadge as Badge
 } from 'dashboard/components-next/relay';
+import RelayDatePicker from 'dashboard/components-next/relay/calendar/DatePicker.vue';
+import RelayTimePicker from 'dashboard/components-next/relay/calendar/TimePicker.vue';
 
 const props = defineProps({
   open: {
@@ -21,12 +23,55 @@ const props = defineProps({
 
 const emit = defineEmits(['update:open']);
 
+// Timezone utilities
+const getUserTimezone = () => Intl.DateTimeFormat().resolvedOptions().timeZone;
+const COMMON_TIMEZONES = [
+  { label: 'UTC', value: 'UTC' },
+  { label: 'US Eastern', value: 'America/New_York' },
+  { label: 'US Central', value: 'America/Chicago' },
+  { label: 'US Mountain', value: 'America/Denver' },
+  { label: 'US Pacific', value: 'America/Los_Angeles' },
+  { label: 'Europe/London', value: 'Europe/London' },
+  { label: 'Europe/Paris', value: 'Europe/Paris' },
+  { label: 'Asia/Tokyo', value: 'Asia/Tokyo' },
+  { label: 'Asia/Shanghai', value: 'Asia/Shanghai' },
+  { label: 'Asia/Hong_Kong', value: 'Asia/Hong_Kong' },
+  { label: 'Asia/Singapore', value: 'Asia/Singapore' },
+  { label: 'Australia/Sydney', value: 'Australia/Sydney' },
+  { label: 'Australia/Melbourne', value: 'Australia/Melbourne' },
+];
+
+const convertToUtcIso = (dateStr, timeStr, tz) => {
+  if (!dateStr || !timeStr) return null;
+  const [hours, minutes] = timeStr.split(':').map(Number);
+  const dateParts = dateStr.split('-').map(Number);
+  const dateObj = new Date(dateParts[0], dateParts[1] - 1, dateParts[2], hours, minutes);
+  const formatter = new Intl.DateTimeFormat('en-CA', {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    timeZone: tz,
+    hour12: false,
+  });
+  const tzDate = formatter.format(dateObj);
+  const [date, time] = tzDate.split(', ');
+  const [year, month, day] = date.split('-');
+  const offset = dateObj.getTime() - new Date(`${year}-${month}-${day}T${time}`).getTime();
+  const utcDate = new Date(dateObj.getTime() + offset);
+  return utcDate.toISOString();
+};
+
 const defaultFormState = {
   selectedCustomers: [],
   customRecipients: '',
   channels: ['Email'],
   delivery: 'Send immediately',
-  scheduleAt: '',
+  scheduleDate: '',
+  scheduleTime: '',
+  scheduleTimezone: getUserTimezone(),
   message: 'Hi {{FirstName}},\n\nThank you for choosing us!\n\nWould you mind sharing your experience?\n\n⭐ Leave your review here:\n{{ReviewLink}}\n\nIt only takes one minute.\n\nThank you ❤️',
   tone: 'Friendly',
   destinations: ['Google']
@@ -238,19 +283,25 @@ const channelError = computed(() => {
   });
   return missing.size ? `Some selected contacts have no ${[...missing].join(' or ')}. Remove them or deselect that channel.` : '';
 });
-
-// datetime-local needs "YYYY-MM-DDTHH:mm" in local time; use it as the min and to validate.
-const minScheduleAt = computed(() => {
-  const d = new Date(Date.now() - new Date().getTimezoneOffset() * 60000);
-  return d.toISOString().slice(0, 16);
+const channelErrorWithRequired = computed(() => {
+  if (!form.value.channels.length) return 'Select at least one delivery channel.';
+  return channelError.value;
 });
+
+const minScheduleDate = computed(() => {
+  const d = new Date();
+  return d.toISOString().split('T')[0];
+});
+
 const scheduleError = computed(() => {
   if (form.value.delivery !== 'Schedule') return '';
-  if (!form.value.scheduleAt) return 'Pick a date and time to schedule.';
-  if (form.value.scheduleAt <= minScheduleAt.value) return 'Scheduled time must be in the future.';
+  if (!form.value.scheduleDate || !form.value.scheduleTime) return 'Pick a date and time to schedule.';
+  const isoDateTime = convertToUtcIso(form.value.scheduleDate, form.value.scheduleTime, form.value.scheduleTimezone);
+  if (!isoDateTime) return 'Invalid date or time.';
+  if (new Date(isoDateTime) <= new Date()) return 'Scheduled time must be in the future.';
   return '';
 });
-const step2Error = computed(() => channelError.value || scheduleError.value);
+const step2Error = computed(() => channelErrorWithRequired.value || scheduleError.value);
 
 // Selected real contacts send their numeric id; manual/CSV rows send their raw email/phone.
 function buildRecipients() {
@@ -305,6 +356,9 @@ function prevStep() {
 async function generateReport() {
   if (step2Error.value) { currentStep.value = 2; return; }
   const { contactIds, recipients } = buildRecipients();
+  const scheduledAt = form.value.delivery === 'Schedule'
+    ? convertToUtcIso(form.value.scheduleDate, form.value.scheduleTime, form.value.scheduleTimezone)
+    : null;
   try {
     await axios.post(`/api/v1/accounts/${accountId}/reputation/review_requests`, {
       channel: (form.value.channels[0] || 'Email').toLowerCase(),
@@ -312,7 +366,7 @@ async function generateReport() {
       recipients,
       message: form.value.message,
       destinations: form.value.destinations,
-      scheduled_at: form.value.delivery === 'Schedule' ? form.value.scheduleAt : null,
+      scheduled_at: scheduledAt,
     });
   } catch (err) {
     // surface nothing blocking — still show the success step for this demo surface
@@ -461,8 +515,8 @@ function close() {
                 </div>
               </div>
             </div>
-            <p v-if="channelError" class="text-sm text-red-500 flex items-center gap-1.5">
-              <AlertCircle class="size-4 shrink-0" /> {{ channelError }}
+            <p v-if="channelErrorWithRequired" class="text-sm text-red-500 flex items-center gap-1.5">
+              <AlertCircle class="size-4 shrink-0" /> {{ channelErrorWithRequired }}
             </p>
           </div>
 
@@ -482,11 +536,40 @@ function close() {
                 <span class="text-sm font-medium text-foreground">Schedule Later</span>
               </div>
             </div>
-            <div v-if="form.delivery === 'Schedule'" class="space-y-1.5">
-              <input
-                v-model="form.scheduleAt" type="datetime-local" :min="minScheduleAt"
-                class="h-9 px-3 text-sm shadow-sm rounded-md border border-border bg-background focus:outline-none focus-visible:ring-1 focus-visible:ring-primary/30"
-              />
+            <div v-if="form.delivery === 'Schedule'" class="space-y-3">
+              <div class="grid grid-cols-3 gap-3 items-end">
+                <div class="space-y-1">
+                  <label class="text-xs font-medium text-foreground">Date</label>
+                  <RelayDatePicker
+                    v-model="form.scheduleDate"
+                    placeholder="Pick date"
+                    display-format="MMM dd, yyyy"
+                    value-format="yyyy-MM-dd"
+                    :min-date="new Date()"
+                  />
+                </div>
+                <div class="space-y-1">
+                  <label class="text-xs font-medium text-foreground">Time</label>
+                  <RelayTimePicker
+                    v-model="form.scheduleTime"
+                    placeholder="--:-- --"
+                  />
+                </div>
+                <div class="space-y-1">
+                  <label class="text-xs font-medium text-foreground">Timezone</label>
+                  <div class="relative">
+                    <select
+                      v-model="form.scheduleTimezone"
+                      class="w-full h-9 px-3 text-xs shadow-sm rounded-md border border-border bg-background appearance-none focus:outline-none focus-visible:ring-1 focus-visible:ring-primary/30 cursor-pointer pr-8"
+                    >
+                      <option v-for="tz in COMMON_TIMEZONES" :key="tz.value" :value="tz.value">
+                        {{ tz.label }}
+                      </option>
+                    </select>
+                    <Globe class="absolute right-2 top-1/2 -translate-y-1/2 size-4 text-muted-foreground pointer-events-none" />
+                  </div>
+                </div>
+              </div>
               <p v-if="scheduleError" class="text-sm text-red-500 flex items-center gap-1.5">
                 <AlertCircle class="size-4 shrink-0" /> {{ scheduleError }}
               </p>

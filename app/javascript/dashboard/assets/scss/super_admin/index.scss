@@ -143,6 +143,57 @@ a:active,
   box-shadow: none !important;
 }
 
+/* Explicit Submenu Link Text Color Resets (Prevent white text override in light mode) */
+.sidebar .sidebar-sub-link,
+.sidebar .sidebar-sub-link:link,
+.sidebar .sidebar-sub-link:visited,
+.sidebar .sidebar-sub-link span,
+.sidebar a.sidebar-sub-link,
+.sidebar a.sidebar-sub-link span {
+  color: var(--muted-foreground) !important;
+  text-decoration: none !important;
+}
+
+.sidebar .sidebar-sub-link:hover,
+.sidebar .sidebar-sub-link:hover span,
+.sidebar a.sidebar-sub-link:hover,
+.sidebar a.sidebar-sub-link:hover span {
+  color: var(--foreground) !important;
+  background-color: var(--sidebar-accent) !important;
+}
+
+.sidebar .sidebar-sub-link.active,
+.sidebar .sidebar-sub-link.active span,
+.sidebar a.sidebar-sub-link.active,
+.sidebar a.sidebar-sub-link.active span {
+  color: var(--sidebar-primary) !important;
+  font-weight: 500 !important;
+  background-color: transparent !important;
+}
+
+.dark .sidebar .sidebar-sub-link,
+.dark .sidebar .sidebar-sub-link:link,
+.dark .sidebar .sidebar-sub-link:visited,
+.dark .sidebar .sidebar-sub-link span,
+.dark .sidebar a.sidebar-sub-link,
+.dark .sidebar a.sidebar-sub-link span {
+  color: var(--muted-foreground) !important;
+}
+
+.dark .sidebar .sidebar-sub-link:hover,
+.dark .sidebar .sidebar-sub-link:hover span,
+.dark .sidebar a.sidebar-sub-link:hover,
+.dark .sidebar a.sidebar-sub-link:hover span {
+  color: var(--foreground) !important;
+}
+
+.dark .sidebar .sidebar-sub-link.active,
+.dark .sidebar .sidebar-sub-link.active span,
+.dark .sidebar a.sidebar-sub-link.active,
+.dark .sidebar a.sidebar-sub-link.active span {
+  color: var(--sidebar-primary) !important;
+}
+
 /* Form inputs focus border styling with #cac7f7 (Rule #7) */
 input:focus,
 input:focus-visible,

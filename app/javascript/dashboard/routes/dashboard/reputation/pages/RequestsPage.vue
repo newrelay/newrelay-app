@@ -24,7 +24,6 @@ import {
   Globe,
 } from 'lucide-vue-next';
 import RelayDatePicker from 'dashboard/components-next/relay/calendar/DatePicker.vue';
-import RelayTimePicker from 'dashboard/components-next/relay/calendar/TimePicker.vue';
 
 const axios = window.axios;
 

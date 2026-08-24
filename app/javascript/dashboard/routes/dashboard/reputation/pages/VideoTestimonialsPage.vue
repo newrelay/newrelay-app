@@ -33,6 +33,28 @@ const formatDuration = secs => {
   return `${m}:${s}`;
 };
 const formatDate = ts => new Date(ts * 1000).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+const formatEventTime = ts => new Date(ts * 1000).toLocaleString('en-GB', { day: 'numeric', month: 'short', hour: 'numeric', minute: '2-digit' });
+
+// Real activity timeline from the moderation timestamps (D4) — no separate events table.
+const TIMELINE_META = {
+  submitted: { icon: Play, dot: 'bg-primary/10', ic: 'text-primary' },
+  approved: { icon: ThumbsUp, dot: 'bg-primary/10', ic: 'text-primary' },
+  published: { icon: Check, dot: 'bg-emerald-100', ic: 'text-emerald-600' },
+  rejected: { icon: X, dot: 'bg-red-100', ic: 'text-red-600' },
+};
+const iconFor = key => TIMELINE_META[key].icon;
+const timeline = computed(() => {
+  const v = selectedVideo.value;
+  if (!v) return [];
+  return [
+    { key: 'submitted', label: 'Video Submitted', ts: v.submittedAt },
+    { key: 'approved', label: 'Approved', ts: v.approvedAt },
+    { key: 'published', label: 'Published', ts: v.publishedAt },
+    { key: 'rejected', label: 'Rejected', ts: v.rejectedAt },
+  ].filter(e => e.ts)
+    .sort((a, b) => b.ts - a.ts)
+    .map(e => ({ ...e, at: formatEventTime(e.ts), dot: TIMELINE_META[e.key].dot, ic: TIMELINE_META[e.key].ic }));
+});
 
 // Map an API row to the shape the template expects. AI-only fields stay empty in Phase 1.
 function mapVideo(v) {
@@ -46,6 +68,10 @@ function mapVideo(v) {
     shareUrl: v.share_url || '',
     duration: formatDuration(v.duration_seconds),
     date: v.created_at ? formatDate(v.created_at) : '',
+    submittedAt: v.created_at || null,
+    approvedAt: v.approved_at || null,
+    publishedAt: v.published_at || null,
+    rejectedAt: v.rejected_at || null,
     status: STATUS_LABEL[v.status] || 'Pending Approval',
     platform: v.platform || '',
     rating: v.rating || 0,
@@ -857,102 +883,17 @@ const stats = computed(() => {
               </div>
             </div>
             
-            <div v-else-if="activeTab === 'Activity'" class="p-6 space-y-8 pb-10">
-              <!-- AI Recommendation -->
-              <div class="bg-primary/5 border border-primary/10 rounded-lg p-3 flex items-center gap-3">
-                <div class="size-8 rounded-full bg-primary/20 flex items-center justify-center shrink-0">
-                  <Bot class="size-4 text-primary" />
-                </div>
-                <div class="text-[13px] font-medium text-primary">
-                  Relay AI Recommendation: Ready for marketing channels
-                </div>
+            <div v-else-if="activeTab === 'Activity'" class="p-6 pb-10">
+              <div v-if="timeline.length === 0" class="text-[13px] text-muted-foreground text-center py-10">
+                No activity yet.
               </div>
-
-              <!-- Today -->
-              <div class="space-y-4">
-                <div class="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Today</div>
-                
-                <div class="relative border-l-2 border-border ml-2.5 pl-6 space-y-6">
-                  <!-- Published -->
-                  <div class="relative">
-                    <div class="absolute -left-[35.5px] top-0 size-6 rounded-full bg-emerald-100 flex items-center justify-center ring-4 ring-white dark:ring-card">
-                      <Check class="size-3.5 text-emerald-600" />
-                    </div>
-                    <div class="font-medium text-[13.5px] text-foreground">Published</div>
-                    <div class="text-[11px] text-muted-foreground mt-0.5">2:34 PM</div>
+              <div v-else class="relative border-l-2 border-border ml-2.5 pl-6 space-y-6">
+                <div v-for="event in timeline" :key="event.key" class="relative">
+                  <div class="absolute -left-[35.5px] top-0 size-6 rounded-full flex items-center justify-center ring-4 ring-white dark:ring-card" :class="event.dot">
+                    <component :is="iconFor(event.key)" class="size-3.5" :class="event.ic" />
                   </div>
-                  
-                  <!-- Approved -->
-                  <div class="relative">
-                    <div class="absolute -left-[35.5px] top-0 size-6 rounded-full bg-primary/10 flex items-center justify-center ring-4 ring-white dark:ring-card">
-                      <ThumbsUp class="size-3.5 text-primary" />
-                    </div>
-                    <div class="font-medium text-[13.5px] text-foreground">Approved</div>
-                    <div class="text-[11px] text-muted-foreground mt-0.5">2:12 PM</div>
-                  </div>
-
-                  <!-- AI Summary -->
-                  <div class="relative">
-                    <div class="absolute -left-[35.5px] top-0 size-6 rounded-full bg-amber-100 flex items-center justify-center ring-4 ring-white dark:ring-card">
-                      <Sparkles class="size-3.5 text-amber-600" />
-                    </div>
-                    <div class="font-medium text-[13.5px] text-foreground">AI Summary Generated</div>
-                    <div class="text-[11px] text-muted-foreground mt-0.5">1:58 PM</div>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Yesterday -->
-              <div class="space-y-4">
-                <div class="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Yesterday</div>
-                
-                <div class="relative border-l-2 border-border ml-2.5 pl-6 space-y-6">
-                  <!-- Video Submitted -->
-                  <div class="relative">
-                    <div class="absolute -left-[35.5px] top-0 size-6 rounded-full bg-primary/10 flex items-center justify-center ring-4 ring-white dark:ring-card">
-                      <Play class="size-3.5 text-primary" />
-                    </div>
-                    <div class="font-medium text-[13.5px] text-foreground">Video Submitted</div>
-                  </div>
-                  
-                  <!-- Recording Completed -->
-                  <div class="relative">
-                    <div class="absolute -left-[35.5px] top-0 size-6 rounded-full bg-muted flex items-center justify-center ring-4 ring-white dark:ring-card">
-                      <Eye class="size-3.5 text-muted-foreground" />
-                    </div>
-                    <div class="font-medium text-[13.5px] text-foreground">Recording Completed</div>
-                  </div>
-                  
-                  <!-- Request Sent -->
-                  <div class="relative">
-                    <div class="absolute -left-[35.5px] top-0 size-6 rounded-full bg-muted flex items-center justify-center ring-4 ring-white dark:ring-card">
-                      <Send class="size-3.5 text-muted-foreground" />
-                    </div>
-                    <div class="font-medium text-[13.5px] text-foreground">Request Sent</div>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Last Week -->
-              <div class="space-y-4">
-                <div class="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Last Week</div>
-                
-                <div class="relative border-l-2 border-border ml-2.5 pl-6 space-y-6">
-                  <!-- Shared -->
-                  <div class="relative">
-                    <div class="absolute -left-[35.5px] top-0 size-6 rounded-full bg-primary/10 flex items-center justify-center ring-4 ring-white dark:ring-card">
-                      <Share2 class="size-3.5 text-primary" />
-                    </div>
-                    <div class="font-medium text-[13.5px] text-foreground">Shared to Instagram</div>
-                  </div>
-                  
-                  <!-- Added to Website -->
-                  <div class="relative">
-                    <div class="absolute -left-[35.5px] top-0 size-6 rounded-full bg-primary/10 flex items-center justify-center ring-4 ring-white dark:ring-card">
-                      <Globe class="size-3.5 text-primary" />
-                    </div>
-                    <div class="font-medium text-[13.5px] text-foreground">Added to Website</div>
-                  </div>
+                  <div class="font-medium text-[13.5px] text-foreground">{{ event.label }}</div>
+                  <div class="text-[11px] text-muted-foreground mt-0.5">{{ event.at }}</div>
                 </div>
               </div>
             </div>

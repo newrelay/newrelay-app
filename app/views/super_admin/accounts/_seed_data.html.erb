@@ -1,15 +1,10 @@
 <% if ENV.fetch('ENABLE_ACCOUNT_SEEDING', !Rails.env.production?)  %>
-<section class="main-content__body">
- <hr/>
-  <%= form_for([:seed, namespace, page.resource], method: :post, html: { class: "form" }) do |f| %>
-
-  <div class="form-actions">
-    <div class="pb-3">
-      <p>Click the button to generate seed data into this account for demos.</p>
-      <p class="text-color-red">Note: This will clear all the existing data in this account.</p>
-    </div>
-  <%= f.submit 'Generate Seed Data' %>
-  </div>
-  <% end %>
-</section>
+  <section class="rounded-xl border border-border bg-card p-6 shadow-xs">
+    <h3 class="text-base font-semibold text-foreground mb-1">Demo Seed Data</h3>
+    <p class="text-sm text-muted-foreground mb-2">Click the button below to generate sample seed data for demo purposes.</p>
+    <p class="text-sm font-medium text-destructive mb-4">Warning: Generating seed data will clear all existing conversations, contacts, and messages in this account.</p>
+    <%= form_for([:seed, namespace, page.resource], method: :post) do |f| %>
+      <%= f.submit 'Generate Seed Data', class: "inline-flex h-9 items-center justify-center rounded-md bg-destructive px-4 text-sm font-medium text-destructive-foreground shadow-xs hover:bg-destructive/90 transition-colors cursor-pointer" %>
+    <% end %>
+  </section>
 <% end %>

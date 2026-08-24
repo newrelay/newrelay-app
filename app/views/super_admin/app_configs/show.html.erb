@@ -16,40 +16,40 @@
 }
 </style>
 
-<section class="main-content__body">
-  <%= form_with url: super_admin_app_config_url(config: @config) , method: :post do |form| %>
+<section class="rounded-xl border border-border bg-card p-6 shadow-xs">
+  <%= form_with url: super_admin_app_config_url(config: @config), method: :post, class: "space-y-6" do |form| %>
     <% @allowed_configs.each do |key| %>
-      <div class="flex mb-8">
-        <div class="field-unit__label">
-          <%= form.label "app_config[#{key}]", @installation_configs[key]&.dig('display_title') || key %>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-start pb-4 border-b border-border/40 last:border-b-0">
+        <div class="pt-1.5">
+          <%= form.label "app_config[#{key}]", @installation_configs[key]&.dig('display_title') || key.titleize, class: "text-sm font-medium text-foreground" %>
         </div>
-        <div class="-mt-2 field-unit__field ">
+        <div class="md:col-span-2 space-y-1.5">
           <% if @installation_configs[key]&.dig('type') == 'boolean' %>
             <%= form.select "app_config[#{key}]",
               [["True", true], ["False", false]],
               { selected: ActiveModel::Type::Boolean.new.cast(@app_config[key]) },
-              class: "mt-2 border border-slate-100 p-1 rounded-md"
+              class: "flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm shadow-xs text-foreground focus:border-[#cac7f7] transition-colors cursor-pointer"
             %>
           <% elsif @installation_configs[key]&.dig('type') == 'code' %>
             <%= form.text_area "app_config[#{key}]",
                 value: @app_config[key],
-                rows: 12,
+                rows: 10,
                 wrap: 'off',
-                class: "mt-2 border font-mono text-xs border-slate-100 p-1 rounded-md overflow-scroll"
+                class: "flex w-full rounded-md border border-input bg-background p-3 font-mono text-xs shadow-xs text-foreground focus:border-[#cac7f7] transition-colors overflow-auto"
             %>
           <% elsif @installation_configs[key]&.dig('type') == 'secret' %>
             <div class="relative">
               <%= form.password_field "app_config[#{key}]",
                   id: "app_config_#{key}",
                   value: @app_config[key],
-                  class: "mt-2 border border-slate-100 p-1.5 pr-8 rounded-md w-full"
+                  class: "flex h-9 w-full rounded-md border border-input bg-background pl-3 pr-10 py-1 text-sm shadow-xs text-foreground focus:border-[#cac7f7] transition-colors"
               %>
               <button
                 type="button"
-                class="absolute reset-base !bg-white top-1/2 !outline-0 !text-n-slate-11 -translate-y-1/2 right-2 p-1 hover:!bg-n-slate-5 rounded-sm toggle-password"
+                class="absolute right-2 top-1/2 -translate-y-1/2 inline-flex items-center justify-center size-7 rounded-sm text-muted-foreground hover:text-foreground transition-colors toggle-password"
                 data-target="app_config_<%= key %>"
               >
-                <svg class="eye-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <svg class="eye-icon size-4" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                   <path d="M12 5C5.63636 5 2 12 2 12C2 12 5.63636 19 12 19C18.3636 19 22 12 22 12C22 12 18.3636 5 12 5Z"/>
                   <path d="M12 15C13.6569 15 15 13.6569 15 12C15 10.3431 13.6569 9 12 9C10.3431 9 9 10.3431 9 12C9 13.6569 10.3431 15 12 15Z"/>
                 </svg>
@@ -59,21 +59,21 @@
             <%= form.select "app_config[#{key}]",
               @installation_configs[key]['options'].map { |val, label| [label, val] },
               { selected: @app_config[key] },
-              class: "mt-2 border border-slate-100 p-1 rounded-md"
+              class: "flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm shadow-xs text-foreground focus:border-[#cac7f7] transition-colors cursor-pointer"
             %>
-        <% else %>
-          <%= form.text_field "app_config[#{key}]", value: @app_config[key] %>
-        <% end %>
-          <%if @installation_configs[key]&.dig('description').present? %>
-            <p class="pt-2 text-xs italic text-slate-400">
+          <% else %>
+            <%= form.text_field "app_config[#{key}]", value: @app_config[key], class: "flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm shadow-xs text-foreground focus:border-[#cac7f7] transition-colors" %>
+          <% end %>
+          <% if @installation_configs[key]&.dig('description').present? %>
+            <p class="text-xs text-muted-foreground">
               <%= @installation_configs[key]&.dig('description') %>
             </p>
           <% end %>
         </div>
       </div>
     <% end %>
-    <div class="form-actions">
-      <%= form.submit "Submit" %>
+    <div class="pt-4 flex justify-end">
+      <%= form.submit "Save Configuration", class: "inline-flex h-9 items-center justify-center rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground shadow-xs hover:bg-primary/90 transition-colors cursor-pointer" %>
     </div>
   <% end %>
 </section>

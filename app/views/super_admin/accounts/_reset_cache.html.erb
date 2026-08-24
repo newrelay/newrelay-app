@@ -1,9 +1,7 @@
-<section class="main-content__body">
- <hr/>
-  <%= form_for([:reset_cache, namespace, page.resource], method: :post, html: { class: "form" }) do |f| %>
-    <div class="form-actions">
-      <p class="pb-3">This will clear the IndexedDB cache keys from redis. <br>The next load will fetch the data from backend.</p>
-      <%= f.submit 'Reset Frontend Cache' %>
-    </div>
+<section class="rounded-xl border border-border bg-card p-6 shadow-xs">
+  <h3 class="text-base font-semibold text-foreground mb-1">Frontend Cache</h3>
+  <p class="text-sm text-muted-foreground mb-4">Clears the IndexedDB cache keys from Redis. The next page load will fetch fresh data from the backend server.</p>
+  <%= form_for([:reset_cache, namespace, page.resource], method: :post) do |f| %>
+    <%= f.submit 'Reset Frontend Cache', class: "inline-flex h-9 items-center justify-center rounded-md border border-input bg-background px-4 text-sm font-medium text-foreground shadow-xs hover:bg-accent hover:border-[#cac7f7] transition-colors cursor-pointer" %>
   <% end %>
 </section>

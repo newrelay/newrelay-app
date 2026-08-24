@@ -1,8 +1,12 @@
-<section class="main-content__body">
- <hr/>
-  <div class="form-actions">
-  <p class="text-color-red">Caution: Any actions executed after impersonate will appear as if performed by the impersonated user - [<%= page.resource.name %> ]</p>
-    <a class='button' target='_blank' href='<%= page.resource.generate_sso_link_with_impersonation %>'>Impersonate user </a>
+<section class="rounded-xl border border-border bg-card p-6 shadow-xs">
+  <h3 class="text-base font-semibold text-foreground mb-1">User Impersonation</h3>
+  <p class="text-sm text-muted-foreground mb-3">Sign in to the user's dashboard as <%= page.resource.name %> (<%= page.resource.email %>).</p>
+  <div class="rounded-lg border border-destructive/20 bg-destructive/10 p-4 mb-4">
+    <p class="text-sm font-medium text-destructive">Caution: Any actions executed after impersonating will be logged as if performed directly by <%= page.resource.name %>.</p>
   </div>
+  <a class="inline-flex h-9 items-center justify-center rounded-md bg-destructive px-4 text-sm font-medium text-destructive-foreground shadow-xs hover:bg-destructive/90 transition-colors gap-2" target="_blank" rel="noopener noreferrer" href="<%= page.resource.generate_sso_link_with_impersonation %>">
+    <svg class="size-4" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" x2="3" y1="12" y2="12"/></svg>
+    <span>Impersonate User</span>
+  </a>
 </section>
 

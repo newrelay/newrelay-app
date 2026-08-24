@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2026_08_21_180000) do
+ActiveRecord::Schema[7.1].define(version: 2026_08_24_100000) do
   # These extensions should be enabled to support this database
   enable_extension "pg_stat_statements"
   enable_extension "pg_trgm"
@@ -1491,7 +1491,21 @@ ActiveRecord::Schema[7.1].define(version: 2026_08_21_180000) do
     t.string "token", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "contact_id"
+    t.bigint "review_request_id"
+    t.string "customer_name"
+    t.string "company"
+    t.integer "rating"
+    t.integer "duration_seconds"
+    t.string "platform"
+    t.integer "views", default: 0, null: false
+    t.datetime "consented_at"
+    t.datetime "approved_at"
+    t.datetime "published_at"
+    t.datetime "rejected_at"
+    t.index ["account_id", "status"], name: "index_reputation_video_testimonials_on_account_id_and_status"
     t.index ["account_id"], name: "index_reputation_video_testimonials_on_account_id"
+    t.index ["contact_id"], name: "index_reputation_video_testimonials_on_contact_id"
     t.index ["token"], name: "index_reputation_video_testimonials_on_token", unique: true
   end
 

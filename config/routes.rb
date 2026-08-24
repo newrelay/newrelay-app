@@ -220,7 +220,7 @@ Rails.application.routes.draw do
             resource :summary, only: [:show], controller: 'summaries'
             resource :ai_insights, only: [:show], controller: 'ai_insights'
             resources :widgets, only: [:index, :create, :update, :destroy]
-            resources :video_testimonials, only: [:index, :destroy] do
+            resources :video_testimonials, only: [:index, :update, :destroy] do
               collection do
                 post :dispatch_request
                 get :requests_index

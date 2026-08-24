@@ -9,24 +9,47 @@ class Reputation::PublicVideoTestimonialsController < ApplicationController
 
   def create
     @account = Account.find(params[:account_id])
-    
-    @testimonial = @account.reputation_video_testimonials.new(
-      title: params[:title],
-      email: params[:email]
-    )
-
-    if params[:video].present?
-      @testimonial.video.attach(params[:video])
-    end
+    review_request = params[:token].present? ? @account.reputation_review_requests.find_by(token: params[:token]) : nil
+    @testimonial = build_testimonial(review_request)
 
     if @testimonial.save
-      if params[:token].present?
-        request = @account.reputation_review_requests.find_by(token: params[:token])
-        request&.update(status: :completed)
-      end
+      review_request&.update(status: :completed)
       render json: { success: true, message: 'Video uploaded successfully!' }
     else
       render json: { success: false, errors: @testimonial.errors.full_messages }, status: :unprocessable_entity
     end
+  end
+
+  private
+
+  def build_testimonial(review_request)
+    testimonial = @account.reputation_video_testimonials.new(testimonial_attributes(review_request))
+    testimonial.video.attach(params[:video]) if params[:video].present?
+    # Client-captured poster frame (canvas → blob); optional.
+    testimonial.thumbnail.attach(params[:thumbnail]) if params[:thumbnail].present?
+    testimonial
+  end
+
+  def testimonial_attributes(review_request)
+    {
+      title: params[:title],
+      email: params[:email],
+      customer_name: params[:customer_name].presence || params[:title],
+      rating: params[:rating],
+      # Duration is captured client-side (no server ffmpeg dependency).
+      duration_seconds: params[:duration_seconds],
+      # Consent is the hard gate — only stamp it when the checkbox was ticked;
+      # a blank consented_at fails model validation and returns 422.
+      consented_at: (Time.current if ActiveModel::Type::Boolean.new.cast(params[:consent])),
+      contact: review_request&.contact || find_or_create_contact,
+      reputation_review_request: review_request
+    }
+  end
+
+  def find_or_create_contact
+    return nil if params[:email].blank?
+
+    @account.contacts.from_email(params[:email]) ||
+      @account.contacts.create!(name: params[:customer_name].presence || params[:email].split('@').first, email: params[:email])
   end
 end

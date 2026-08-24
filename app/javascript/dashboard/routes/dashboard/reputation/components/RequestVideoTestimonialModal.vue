@@ -1,8 +1,8 @@
 <script setup>
 /* eslint-disable */
-import { ref, computed } from 'vue';
+import { ref, computed, watch } from 'vue';
 import { RelayInput as Input, RelayCheckbox as Checkbox } from 'dashboard/components-next/relay';
-import { 
+import {
   X, Search, MessageSquare, Mail, Smartphone,
   Check, ChevronDown, MonitorPlay,
   Clock, Bell, Sparkles, LayoutTemplate, Link as LinkIcon
@@ -14,6 +14,10 @@ const props = defineProps({
 
 const emit = defineEmits(['update:open', 'submit']);
 
+const axios = window.axios;
+const accountId = window.__STORE__?.getters['auth/getCurrentAccount']?.id ||
+  window.location.pathname.match(/accounts\/(\d+)/)?.[1];
+
 // State
 const searchQuery = ref('');
 const selectedCustomers = ref([]);
@@ -22,12 +26,15 @@ const selectedTemplate = ref('Customer Testimonial Request');
 const selectedLandingPage = ref('Default Video Collection Page');
 const selectedExpiration = ref('30 Days');
 const selectedReminder = ref('1 Reminder');
+const sending = ref(false);
 
 const showTemplateDropdown = ref(false);
 const showLandingPageDropdown = ref(false);
 const showExpirationDropdown = ref(false);
 const showReminderDropdown = ref(false);
 
+// NOTE: template/landing/expiration/reminder/AI options are UI-only (no backend
+// until Phase 3). Only the customer list + send path below are wired.
 const aiOptions = ref({
   transcript: true,
   summarize: true,
@@ -35,16 +42,37 @@ const aiOptions = ref({
   reply: false
 });
 
-// Mock Data
-const allCustomers = [
-  { id: '1', name: 'John Smith', email: 'john@example.com', phone: '+1 234 567 8900' },
-  { id: '2', name: 'Sarah Wilson', email: 'sarah@example.com', phone: '+1 345 678 9012' },
-  { id: '3', name: 'Michael Brown', email: 'michael@example.com', phone: '+1 456 789 0123' },
-];
+// Real Chatwoot contacts, loaded when the modal opens.
+const allCustomers = ref([]);
+const loadingContacts = ref(false);
+
+function mapContact(c) {
+  return {
+    id: String(c.id),
+    name: c.name || c.email || c.phone_number || 'Unknown',
+    email: c.email || '',
+    phone: c.phone_number || ''
+  };
+}
+
+async function loadContacts() {
+  if (!accountId) return;
+  loadingContacts.value = true;
+  try {
+    const { data } = await axios.get(`/api/v1/accounts/${accountId}/contacts`, { params: { sort: '-last_activity_at' } });
+    allCustomers.value = (data.payload || []).map(mapContact);
+  } catch (err) {
+    console.error('Failed to load contacts', err);
+  } finally {
+    loadingContacts.value = false;
+  }
+}
+
+watch(() => props.open, isOpen => { if (isOpen) loadContacts(); }, { immediate: true });
 
 const filteredCustomers = computed(() => {
-  if (!searchQuery.value) return allCustomers;
-  return allCustomers.filter(c => c.name.toLowerCase().includes(searchQuery.value.toLowerCase()));
+  if (!searchQuery.value) return allCustomers.value;
+  return allCustomers.value.filter(c => c.name.toLowerCase().includes(searchQuery.value.toLowerCase()));
 });
 
 const toggleCustomer = (id) => {
@@ -63,20 +91,28 @@ const toggleDelivery = (method) => {
   }
 };
 
-const handleSubmit = () => {
-  emit('submit', {
-    customers: selectedCustomers.value,
-    delivery: selectedDelivery.value,
-    template: selectedTemplate.value,
-    landingPage: selectedLandingPage.value,
-    expiration: selectedExpiration.value,
-    reminder: selectedReminder.value,
-    aiOptions: aiOptions.value
-  });
-  emit('update:open', false);
-  selectedCustomers.value = [];
-  selectedDelivery.value = ['Email'];
-  searchQuery.value = '';
+// Fire one video-request email per selected contact (backend picks a video template).
+// dispatch_request is email-only for now; SMS/WhatsApp toggles are Phase 3.
+const handleSubmit = async () => {
+  if (sending.value || selectedCustomers.value.length === 0) return;
+  sending.value = true;
+  const emails = selectedCustomers.value
+    .map(id => allCustomers.value.find(c => c.id === id)?.email)
+    .filter(Boolean);
+  try {
+    await Promise.all(emails.map(email =>
+      axios.post(`/api/v1/accounts/${accountId}/reputation/video_testimonials/dispatch_request`, { email })
+    ));
+    emit('submit', { count: emails.length });
+    emit('update:open', false);
+    selectedCustomers.value = [];
+    selectedDelivery.value = ['Email'];
+    searchQuery.value = '';
+  } catch (err) {
+    console.error('Failed to send video request', err);
+  } finally {
+    sending.value = false;
+  }
 };
 </script>
 
@@ -130,7 +166,9 @@ const handleSubmit = () => {
           </div>
           
           <div class="flex flex-col gap-2 mt-1 max-h-[140px] overflow-y-auto p-1 hide-scrollbar">
-            <div 
+            <div v-if="loadingContacts" class="flex items-center justify-center py-6 text-sm text-muted-foreground">Loading contacts…</div>
+            <div v-else-if="filteredCustomers.length === 0" class="flex items-center justify-center py-6 text-sm text-muted-foreground">No contacts found. Add contacts first.</div>
+            <div
               v-for="customer in filteredCustomers" :key="customer.id"
               @click="toggleCustomer(customer.id)"
               class="flex items-center justify-between p-3 rounded-xl border cursor-pointer transition-all duration-200"
@@ -375,8 +413,8 @@ const handleSubmit = () => {
           <button class="font-semibold bg-card border border-border h-10 px-6 shadow-sm rounded-lg text-foreground hover:bg-muted cursor-pointer">
             Preview
           </button>
-          <button class="font-semibold bg-primary hover:bg-primary/90 text-primary-foreground h-10 px-6 shadow-sm rounded-lg cursor-pointer disabled:opacity-50" @click="handleSubmit" :disabled="selectedCustomers.length === 0 || selectedDelivery.length === 0">
-            Send Request
+          <button class="font-semibold bg-primary hover:bg-primary/90 text-primary-foreground h-10 px-6 shadow-sm rounded-lg cursor-pointer disabled:opacity-50" @click="handleSubmit" :disabled="sending || selectedCustomers.length === 0 || selectedDelivery.length === 0">
+            {{ sending ? 'Sending…' : 'Send Request' }}
           </button>
         </div>
       </div>

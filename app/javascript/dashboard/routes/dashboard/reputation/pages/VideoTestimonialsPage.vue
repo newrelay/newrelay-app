@@ -1,6 +1,6 @@
 <script setup>
 /* eslint-disable */
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted, watch } from 'vue';
 import { RelayInput as Input, RelayBadge as Badge } from 'dashboard/components-next/relay';
 import {
   Play, MoreHorizontal, MessageSquare, Heart, Share2, 
@@ -12,114 +12,68 @@ import {
 import RequestVideoTestimonialModal from '../components/RequestVideoTestimonialModal.vue';
 import ExportVideoTestimonialsModal from '../components/ExportVideoTestimonialsModal.vue';
 
-// Mock Data
-const mockVideos = ref([
-  {
-    id: 1,
-    author: 'Sarah Johnson',
-    company: 'Marketing Corp',
-    avatar: 'https://i.pravatar.cc/150?u=s1',
-    thumbnail: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=600&auto=format&fit=crop',
-    duration: '0:47',
-    date: '2 hours ago',
-    timelineDate: { title: 'Today', sub: '21 Jul, 2026' },
-    status: 'Approved',
-    platform: 'Google',
-    rating: 5,
-    views: 1240,
-    likes: 45,
-    aiTags: ['Approved', 'Marketing Ready'],
-    topics: ['Support', 'Response Time', 'Ease of Use', 'Customer Service'],
-    transcriptSummary: 'Sarah loved the quick response time and how easy the platform is to use. She mentioned the support team was friendly and resolved her issue in minutes.'
-  },
-  {
-    id: 2,
-    author: 'Michael Brown',
-    company: 'Tech Startup',
-    avatar: 'https://i.pravatar.cc/150?u=m2',
-    thumbnail: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?q=80&w=600&auto=format&fit=crop',
-    duration: '01:12',
-    date: 'Yesterday',
-    timelineDate: { title: 'Yesterday', sub: '20 Jul, 2026' },
-    status: 'Published',
-    platform: 'Facebook',
-    rating: 5,
-    views: 8500,
-    likes: 312,
-    aiTags: ['Published', 'AI Summary'],
-    topics: ['Features', 'Reliability'],
-    transcriptSummary: 'Michael praises the platform\'s reliability and the wide array of features available for enterprise use.'
-  },
-  {
-    id: 3,
-    author: 'Emily Rodriguez',
-    company: 'Startup Hub',
-    avatar: 'https://i.pravatar.cc/150?u=e3',
-    thumbnail: 'https://images.unsplash.com/photo-1573164713988-8665fc963095?q=80&w=600&auto=format&fit=crop',
-    duration: '00:35',
-    date: 'Yesterday',
-    status: 'Approved',
-    platform: 'Yelp',
-    rating: 5,
-    views: 890,
-    likes: 22,
-    aiTags: ['Approved', 'AI Summary'],
-    topics: ['Onboarding', 'Value'],
-    transcriptSummary: 'Emily highlights the smooth onboarding process and the tremendous value the product provides for her team.'
-  },
-  {
-    id: 4,
-    author: 'David Lee',
-    company: 'Tech Solutions',
-    avatar: 'https://i.pravatar.cc/150?u=d4',
-    thumbnail: 'https://images.unsplash.com/photo-1556761175-5973dc0f32d7?q=80&w=600&auto=format&fit=crop',
-    duration: '01:05',
-    date: '5 days ago',
-    status: 'Pending Approval',
-    platform: 'Trustpilot',
-    rating: 5,
-    views: 0,
+// Real data — de-mocked (Phase 1). AI fields (topics/transcript/aiTags) are Phase 3,
+// so they render empty until that ships.
+const axios = window.axios;
+const accountId = window.__STORE__?.getters['auth/getCurrentAccount']?.id ||
+  window.location.pathname.match(/accounts\/(\d+)/)?.[1];
+const baseUrl = () => `/api/v1/accounts/${accountId}/reputation/video_testimonials`;
+
+const mockVideos = ref([]); // holds the real, mapped rows (name kept to avoid touching the template)
+const loading = ref(true);
+
+// enum (backend) → display label (UI) and back.
+const STATUS_LABEL = { pending: 'Pending Approval', approved: 'Approved', published: 'Published', rejected: 'Rejected' };
+const STATUS_KEY = { 'Pending Approval': 'pending', Approved: 'approved', Published: 'published', Rejected: 'rejected' };
+
+const formatDuration = secs => {
+  if (!secs && secs !== 0) return '--:--';
+  const m = Math.floor(secs / 60);
+  const s = String(secs % 60).padStart(2, '0');
+  return `${m}:${s}`;
+};
+const formatDate = ts => new Date(ts * 1000).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+
+// Map an API row to the shape the template expects. AI-only fields stay empty in Phase 1.
+function mapVideo(v) {
+  return {
+    id: v.id,
+    author: v.customer_name || v.contact?.name || v.title || 'Customer',
+    company: v.company || '',
+    avatar: '',
+    thumbnail: v.thumbnail_url || '',
+    videoUrl: v.video_url || '',
+    duration: formatDuration(v.duration_seconds),
+    date: v.created_at ? formatDate(v.created_at) : '',
+    status: STATUS_LABEL[v.status] || 'Pending Approval',
+    platform: v.platform || '',
+    rating: v.rating || 0,
+    views: v.views || 0,
     likes: 0,
-    aiTags: ['Pending Approval', 'AI Summary'],
-    topics: ['Pricing', 'Support'],
-    transcriptSummary: 'David mentions the fair pricing structure but would like to see faster support on weekends.'
-  },
-  {
-    id: 5,
-    author: 'James Wilson',
-    company: 'Logistics Pro',
-    avatar: 'https://i.pravatar.cc/150?u=j5',
-    thumbnail: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?q=80&w=600&auto=format&fit=crop',
-    duration: '00:59',
-    date: '18 Jul, 2026',
-    timelineDate: { title: '18 Jul,', sub: '2026' },
-    status: 'Published',
-    platform: 'Google',
-    rating: 5,
-    views: 3200,
-    likes: 110,
-    aiTags: ['Published', 'Marketing Ready'],
-    topics: ['Efficiency', 'Speed'],
-    transcriptSummary: 'James discusses how the system improved their delivery efficiency by over 30% in just two months.'
-  },
-  {
-    id: 6,
-    author: 'Olivia Martinez',
-    company: 'Creative Agency',
-    avatar: 'https://i.pravatar.cc/150?u=o6',
-    thumbnail: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?q=80&w=600&auto=format&fit=crop',
-    duration: '00:41',
-    date: '6 days ago',
-    status: 'Approved',
-    platform: 'Facebook',
-    rating: 5,
-    views: 450,
-    likes: 15,
-    aiTags: ['Approved', 'AI Summary'],
-    topics: ['Design', 'Customization'],
-    transcriptSummary: 'Olivia loves the customization options and how easy it is to match their brand identity.'
+    aiTags: [STATUS_LABEL[v.status] || 'Pending Approval'],
+    topics: [],
+    transcriptSummary: ''
+  };
+}
+
+async function loadVideos() {
+  if (!accountId) { loading.value = false; return; }
+  loading.value = true;
+  try {
+    const params = {};
+    if (activeStatus.value) params.status = activeStatus.value;
+    if (activePlatform.value) params.platform = activePlatform.value;
+    if (activeMinRating.value) params.min_rating = activeMinRating.value;
+    if (activeSort.value) params.sort = activeSort.value;
+    const { data } = await axios.get(baseUrl(), { params });
+    mockVideos.value = (data || []).map(mapVideo);
+  } catch (err) {
+    console.error('Failed to load video testimonials', err);
+    mockVideos.value = [];
+  } finally {
+    loading.value = false;
   }
-]);
+}
 
 const selectedVideo = ref(null);
 const viewMode = ref('grid');
@@ -134,6 +88,20 @@ const showStatusDropdown = ref(false);
 const showAiTagsDropdown = ref(false);
 const showSortDropdown = ref(false);
 const showDetailStatusDropdown = ref(false);
+
+// Filter state (server-side via loadVideos). Empty = no filter.
+const activeStatus = ref('');
+const activePlatform = ref('');
+const activeMinRating = ref('');
+const activeSort = ref('');
+
+function setStatusFilter(label) { activeStatus.value = STATUS_KEY[label] || ''; showStatusDropdown.value = false; }
+function setPlatformFilter(name) { activePlatform.value = name === 'All Platforms' ? '' : name; showPlatformDropdown.value = false; }
+function setRatingFilter(label) { activeMinRating.value = { '5 Stars': 5, '4 Stars & Up': 4, '3 Stars & Up': 3, '2 Stars & Below': 2 }[label] || ''; showRatingDropdown.value = false; }
+function setSortFilter(label) { activeSort.value = { 'Newest First': '', 'Oldest First': 'oldest', 'Highest Rating': 'rating', 'Most Views': 'views' }[label] ?? ''; showSortDropdown.value = false; }
+
+onMounted(loadVideos);
+watch([activeStatus, activePlatform, activeMinRating, activeSort], loadVideos);
 
 const toastState = ref({ visible: false, message: '' });
 let toastTimeout = null;
@@ -180,28 +148,10 @@ const handleRequestTestimonial = () => {
   isRequestModalOpen.value = true;
 };
 
-const handleModalSubmit = (payload) => {
-  const newRequest = {
-    id: mockVideos.value.length + 1,
-    author: payload.customers.length > 1 ? `${payload.customers.length} Customers` : 'Requested Customer',
-    company: 'Pending Request',
-    avatar: 'https://i.pravatar.cc/150?u=req',
-    thumbnail: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=600&auto=format&fit=crop',
-    duration: '--:--',
-    date: 'Just now',
-    timelineDate: { title: 'Today', sub: new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) },
-    status: 'Pending Approval',
-    platform: payload.delivery.join(', '),
-    rating: 5,
-    views: 0,
-    likes: 0,
-    aiTags: ['Pending Approval'],
-    topics: ['Customer Service'],
-    transcriptSummary: 'Waiting for the customer to upload a video testimonial.'
-  };
-  
-  mockVideos.value.unshift(newRequest);
+const handleModalSubmit = () => {
+  // The request modal already POSTed; the video arrives later via the public page.
   showToast('Request sent successfully.');
+  loadVideos();
 };
 
 const handleReply = () => showToast(`Opening reply composer for ${selectedVideo.value?.author}...`);
@@ -210,21 +160,33 @@ const handleDownload = () => showToast('Downloading video...');
 const handleEdit = () => showToast(`Opening editor for ${selectedVideo.value?.author}'s video...`);
 const handleMore = () => showToast('Opening more options...');
 
-const handleStatusChange = (newStatus) => {
-  if (selectedVideo.value) {
-    selectedVideo.value.status = newStatus;
-    const idx = mockVideos.value.findIndex((v) => v.id === selectedVideo.value.id);
+const handleStatusChange = async (newStatus) => {
+  if (!selectedVideo.value) return;
+  const video = selectedVideo.value;
+  const prev = video.status;
+  video.status = newStatus; // optimistic
+  showDetailStatusDropdown.value = false;
+  try {
+    await axios.patch(`${baseUrl()}/${video.id}`, { status: STATUS_KEY[newStatus] });
+    const idx = mockVideos.value.findIndex(v => v.id === video.id);
     if (idx !== -1) mockVideos.value[idx].status = newStatus;
     showToast(`Status changed to ${newStatus}`);
-    showDetailStatusDropdown.value = false;
+  } catch (err) {
+    video.status = prev; // revert on failure
+    showToast('Failed to update status.');
   }
 };
 
-const handleDelete = () => {
-  if (selectedVideo.value && confirm('Are you sure you want to delete this video?')) {
-    mockVideos.value = mockVideos.value.filter((v) => v.id !== selectedVideo.value.id);
+const handleDelete = async () => {
+  if (!selectedVideo.value || !confirm('Are you sure you want to delete this video?')) return;
+  const id = selectedVideo.value.id;
+  try {
+    await axios.delete(`${baseUrl()}/${id}`);
+    mockVideos.value = mockVideos.value.filter(v => v.id !== id);
     selectedVideo.value = null;
     showToast('Video deleted successfully.');
+  } catch (err) {
+    showToast('Failed to delete video.');
   }
 };
 
@@ -240,10 +202,27 @@ const handleGenerateClip = () => {
 
 const filteredVideos = computed(() => {
   if (!searchQuery.value) return mockVideos.value;
+  const q = searchQuery.value.toLowerCase();
   return mockVideos.value.filter(v =>
-    v.author.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
-    v.transcriptSummary.toLowerCase().includes(searchQuery.value.toLowerCase())
+    (v.author || '').toLowerCase().includes(q) ||
+    (v.transcriptSummary || '').toLowerCase().includes(q)
   );
+});
+
+// Real KPI numbers computed from the loaded rows (was hardcoded).
+const stats = computed(() => {
+  const rows = mockVideos.value;
+  const total = rows.length;
+  const published = rows.filter(v => v.status === 'Published').length;
+  const awaiting = rows.filter(v => v.status === 'Pending Approval').length;
+  const rated = rows.filter(v => v.rating > 0);
+  const avgRating = rated.length ? (rated.reduce((s, v) => s + v.rating, 0) / rated.length).toFixed(1) : '—';
+  return {
+    total,
+    publishedPct: total ? Math.round((published / total) * 100) : 0,
+    avgRating,
+    awaiting
+  };
 });
 </script>
 
@@ -305,7 +284,7 @@ const filteredVideos = computed(() => {
               <div class="size-8 rounded-full bg-primary/10 text-primary flex items-center justify-center border border-primary/20">
                 <Play class="size-4" />
               </div>
-              <span class="text-2xl font-bold text-foreground">321</span>
+              <span class="text-2xl font-bold text-foreground">{{ stats.total }}</span>
             </div>
             <span class="text-xs text-muted-foreground font-medium mb-3">Total Videos</span>
             <div class="text-[10px] text-emerald-600 font-semibold flex items-center gap-1">
@@ -318,7 +297,7 @@ const filteredVideos = computed(() => {
               <div class="size-8 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center border border-emerald-100 dark:bg-emerald-900/30 dark:border-emerald-800 dark:text-emerald-400">
                 <CheckCircle class="size-4" />
               </div>
-              <span class="text-2xl font-bold text-foreground">78%</span>
+              <span class="text-2xl font-bold text-foreground">{{ stats.publishedPct }}%</span>
             </div>
             <span class="text-xs text-muted-foreground font-medium mb-3">Published</span>
             <div class="text-[10px] text-emerald-600 font-semibold flex items-center gap-1">
@@ -331,7 +310,7 @@ const filteredVideos = computed(() => {
               <div class="size-8 rounded-full bg-amber-50 text-amber-500 flex items-center justify-center border border-amber-100 dark:bg-amber-900/30 dark:border-amber-800 dark:text-amber-400">
                 <Star class="size-4 fill-amber-500 text-amber-500" />
               </div>
-              <span class="text-2xl font-bold text-foreground">4.9</span>
+              <span class="text-2xl font-bold text-foreground">{{ stats.avgRating }}</span>
             </div>
             <span class="text-xs text-muted-foreground font-medium mb-3">Average Rating</span>
             <div class="text-[10px] text-emerald-600 font-semibold flex items-center gap-1">
@@ -344,7 +323,7 @@ const filteredVideos = computed(() => {
               <div class="size-8 rounded-full bg-rose-50 text-rose-500 flex items-center justify-center border border-rose-100 dark:bg-rose-900/30 dark:border-rose-800 dark:text-rose-400">
                 <Calendar class="size-4" />
               </div>
-              <span class="text-2xl font-bold text-foreground">42</span>
+              <span class="text-2xl font-bold text-foreground">{{ stats.awaiting }}</span>
             </div>
             <span class="text-xs text-muted-foreground font-medium mb-3">Awaiting Approval</span>
             <div class="text-[10px] text-rose-600 dark:text-rose-400 font-semibold flex items-center gap-1">
@@ -357,7 +336,7 @@ const filteredVideos = computed(() => {
               <div class="size-8 rounded-full bg-primary/10 text-primary flex items-center justify-center border border-primary/20">
                 <Sparkles class="size-4" />
               </div>
-              <span class="text-2xl font-bold text-foreground">146</span>
+              <span class="text-2xl font-bold text-foreground">—</span>
             </div>
             <span class="text-xs text-muted-foreground font-medium mb-3">Relay AI Highlights</span>
             <div class="text-[10px] text-emerald-600 font-semibold flex items-center gap-1">
@@ -389,7 +368,7 @@ const filteredVideos = computed(() => {
               Platform <ChevronDown class="size-3.5 text-muted-foreground shrink-0" />
             </button>
             <div v-if="showPlatformDropdown" class="absolute left-0 mt-1.5 w-40 bg-card border border-border rounded-xl p-1 shadow-xl z-50 space-y-0.5">
-              <button v-for="p in ['All Platforms', 'Google', 'Facebook', 'Yelp', 'Trustpilot']" :key="p" @click="showPlatformDropdown = false" class="w-full text-left px-3 py-1.5 text-xs rounded-md font-medium hover:bg-muted text-foreground cursor-pointer">{{ p }}</button>
+              <button v-for="p in ['All Platforms', 'Google', 'Facebook', 'Yelp', 'Trustpilot']" :key="p" @click="setPlatformFilter(p)" class="w-full text-left px-3 py-1.5 text-xs rounded-md font-medium hover:bg-muted text-foreground cursor-pointer">{{ p }}</button>
             </div>
           </div>
 
@@ -402,7 +381,7 @@ const filteredVideos = computed(() => {
               Rating <ChevronDown class="size-3.5 text-muted-foreground shrink-0" />
             </button>
             <div v-if="showRatingDropdown" class="absolute left-0 mt-1.5 w-44 bg-card border border-border rounded-xl p-1 shadow-xl z-50 space-y-0.5">
-              <button v-for="r in ['5 Stars', '4 Stars & Up', '3 Stars & Up', '2 Stars & Below']" :key="r" @click="showRatingDropdown = false" class="w-full text-left px-3 py-1.5 text-xs rounded-md font-medium hover:bg-muted text-foreground cursor-pointer">{{ r }}</button>
+              <button v-for="r in ['5 Stars', '4 Stars & Up', '3 Stars & Up', '2 Stars & Below']" :key="r" @click="setRatingFilter(r)" class="w-full text-left px-3 py-1.5 text-xs rounded-md font-medium hover:bg-muted text-foreground cursor-pointer">{{ r }}</button>
             </div>
           </div>
 
@@ -428,7 +407,7 @@ const filteredVideos = computed(() => {
               Status <ChevronDown class="size-3.5 text-muted-foreground shrink-0" />
             </button>
             <div v-if="showStatusDropdown" class="absolute left-0 mt-1.5 w-40 bg-card border border-border rounded-xl p-1 shadow-xl z-50 space-y-0.5">
-              <button v-for="s in ['Approved', 'Pending Approval', 'Published', 'Rejected']" :key="s" @click="showStatusDropdown = false" class="w-full text-left px-3 py-1.5 text-xs rounded-md font-medium hover:bg-muted text-foreground cursor-pointer">{{ s }}</button>
+              <button v-for="s in ['Approved', 'Pending Approval', 'Published', 'Rejected']" :key="s" @click="setStatusFilter(s)" class="w-full text-left px-3 py-1.5 text-xs rounded-md font-medium hover:bg-muted text-foreground cursor-pointer">{{ s }}</button>
             </div>
           </div>
 
@@ -455,14 +434,14 @@ const filteredVideos = computed(() => {
               Newest First <ChevronDown class="size-3.5 text-muted-foreground shrink-0" />
             </button>
             <div v-if="showSortDropdown" class="absolute right-0 mt-1.5 w-40 bg-card border border-border rounded-xl p-1 shadow-xl z-50 space-y-0.5">
-              <button v-for="sort in ['Newest First', 'Oldest First', 'Highest Rating', 'Most Views']" :key="sort" @click="showSortDropdown = false" class="w-full text-left px-3 py-1.5 text-xs rounded-md font-medium hover:bg-muted text-foreground cursor-pointer">{{ sort }}</button>
+              <button v-for="sort in ['Newest First', 'Oldest First', 'Highest Rating', 'Most Views']" :key="sort" @click="setSortFilter(sort)" class="w-full text-left px-3 py-1.5 text-xs rounded-md font-medium hover:bg-muted text-foreground cursor-pointer">{{ sort }}</button>
             </div>
           </div>
         </div>
       </div>
       
       <div class="px-8 py-4 flex items-center justify-between text-xs text-muted-foreground font-medium">
-        Showing 1-{{ filteredVideos.length }} of 321 videos
+        Showing {{ filteredVideos.length }} of {{ stats.total }} videos
         <div class="flex bg-card border border-border rounded-lg p-0.5 shadow-xs">
           <button @click="viewMode = 'grid'" class="p-1.5 rounded-md transition-colors cursor-pointer" :class="viewMode === 'grid' ? 'bg-muted text-foreground' : 'text-muted-foreground hover:text-foreground hover:bg-muted'"><LayoutGrid class="size-4" /></button>
           <button @click="viewMode = 'list'" class="p-1.5 rounded-md transition-colors cursor-pointer" :class="viewMode === 'list' ? 'bg-muted text-foreground' : 'text-muted-foreground hover:text-foreground hover:bg-muted'"><List class="size-4" /></button>
@@ -603,13 +582,19 @@ const filteredVideos = computed(() => {
           </div>
         </div>
 
+        <!-- Loading -->
+        <div v-if="loading" class="p-16 flex flex-col items-center justify-center gap-3 text-muted-foreground">
+          <div class="size-8 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+          <p class="text-[13.5px]">Loading video testimonials…</p>
+        </div>
+
         <!-- Empty State matching AGENTS.md rule 6 (text-[20px] font-[600]) -->
-        <div v-if="filteredVideos.length === 0" class="p-12 text-center text-muted-foreground flex flex-col items-center">
+        <div v-else-if="filteredVideos.length === 0" class="p-12 text-center text-muted-foreground flex flex-col items-center">
           <Play class="size-10 opacity-20 mb-3" />
-          <h3 class="text-[20px] font-[600] text-foreground mb-1">No video testimonials found</h3>
-          <p class="text-[13.5px] text-muted-foreground leading-relaxed mb-4">No video testimonials match your search filter.</p>
-          <button @click="searchQuery = ''" class="px-4 py-2 rounded-lg border border-border bg-card text-[13.5px] font-medium text-foreground hover:bg-muted transition-colors border-input hover:border-transparent cursor-pointer">
-            Reset Filters
+          <h3 class="text-[20px] font-[600] text-foreground mb-1">No video testimonials yet</h3>
+          <p class="text-[13.5px] text-muted-foreground leading-relaxed mb-4">Request a video from a happy customer to see it here.</p>
+          <button @click="handleRequestTestimonial" class="px-4 py-2 rounded-lg bg-primary text-primary-foreground text-[13.5px] font-semibold hover:bg-primary/90 transition-colors cursor-pointer inline-flex items-center gap-1.5">
+            <Play class="size-4 fill-current" /> Request Video Testimonial
           </button>
         </div>
       </div>

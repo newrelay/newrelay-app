@@ -34,6 +34,8 @@ class Reputation::ReviewRequest < ApplicationRecord
   belongs_to :contact
   has_one :reputation_feedback_submission, class_name: 'Reputation::FeedbackSubmission',
                                            foreign_key: :reputation_review_request_id, dependent: :destroy
+  has_one :video_testimonial, class_name: 'Reputation::VideoTestimonial',
+                              inverse_of: :reputation_review_request, dependent: :nullify
 
   enum :channel, { sms: 'sms', email: 'email' }
   enum :status, { scheduled: 'scheduled', sent: 'sent', delivered: 'delivered', clicked: 'clicked', completed: 'completed' }

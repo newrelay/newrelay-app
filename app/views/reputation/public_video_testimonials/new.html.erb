@@ -5,15 +5,32 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Leave a Video Testimonial</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    // Brand palette so this standalone page reads like the Relay dashboard
+    // (the compiled _relay-theme.scss tokens are not loaded on this public route).
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: { DEFAULT: '#6366f1', hover: '#4f46e5', soft: '#eef2ff' },
+            ink: { DEFAULT: '#0f172a', muted: '#64748b', line: '#e2e8f0' }
+          }
+        }
+      }
+    };
+    // Enforced client-side; the server is the real gate for consent.
+    const MAX_SECONDS = 90;
+    const MAX_BYTES = 100 * 1024 * 1024; // 100 MB
+  </script>
 </head>
-<body class="bg-slate-50 min-h-screen flex items-center justify-center p-4 font-sans">
-  
-  <div class="max-w-xl w-full bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+<body class="bg-slate-50 min-h-screen flex items-center justify-center p-4 font-sans text-ink">
+
+  <div class="max-w-xl w-full bg-white rounded-2xl shadow-sm border border-ink-line overflow-hidden">
     <div class="p-6 md:p-8 space-y-6">
-      
+
       <div class="text-center space-y-2">
-        <h1 class="text-2xl font-extrabold text-slate-900 tracking-tight"><%= @account.name %> would love a video testimonial!</h1>
-        <p class="text-sm text-slate-500">Share your experience with us. You can either record a quick video right here or upload one from your device.</p>
+        <h1 class="text-2xl font-extrabold tracking-tight"><%= @account.name %> would love a video testimonial!</h1>
+        <p class="text-sm text-ink-muted">Share your experience. Record a quick video right here or upload one from your device.</p>
       </div>
 
       <div id="success-state" class="hidden text-center py-12 space-y-4">
@@ -22,16 +39,16 @@
             <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
           </svg>
         </div>
-        <h3 class="text-xl font-bold text-slate-900">Thank you!</h3>
-        <p class="text-sm text-slate-500">Your video testimonial has been submitted successfully.</p>
+        <h3 class="text-xl font-bold">Thank you!</h3>
+        <p class="text-sm text-ink-muted">Your video testimonial has been submitted successfully.</p>
       </div>
 
       <form id="video-form" class="space-y-5">
-        
+
         <!-- Video Input Area -->
         <div class="space-y-3">
-          <label class="block text-sm font-bold text-slate-700">Your Video</label>
-          
+          <label class="block text-sm font-bold">Your Video</label>
+
           <!-- Video Preview -->
           <div id="video-preview-container" class="hidden relative aspect-video bg-black rounded-xl overflow-hidden shadow-inner">
             <video id="preview-video" class="w-full h-full object-cover" controls playsinline></video>
@@ -47,25 +64,31 @@
               <button type="button" id="start-record-btn" class="px-4 py-2 bg-red-500 text-white rounded-full font-bold text-sm shadow-lg flex items-center gap-2">
                 <span class="size-2.5 bg-white rounded-full animate-pulse"></span> Start Recording
               </button>
-              <button type="button" id="stop-record-btn" class="hidden px-4 py-2 bg-slate-900 text-white rounded-full font-bold text-sm shadow-lg flex items-center gap-2">
+              <button type="button" id="stop-record-btn" class="hidden px-4 py-2 bg-ink text-white rounded-full font-bold text-sm shadow-lg flex items-center gap-2">
                 <span class="size-2.5 bg-red-500 rounded-sm"></span> Stop Recording
               </button>
             </div>
             <div id="recording-timer" class="hidden absolute top-4 left-4 bg-black/50 text-white px-2 py-1 rounded-md font-mono text-xs font-bold backdrop-blur-sm">
-              00:00
+              00:00 / 01:30
             </div>
+          </div>
+
+          <!-- Camera permission denied -->
+          <div id="camera-denied" class="hidden rounded-xl border border-red-200 bg-red-50 p-4 text-center space-y-1">
+            <p class="text-sm font-bold text-red-700">Camera access blocked</p>
+            <p class="text-xs text-red-600">Allow camera &amp; microphone access in your browser, or upload a video instead.</p>
           </div>
 
           <!-- Action Buttons -->
           <div id="video-actions" class="grid grid-cols-2 gap-3">
-            <button type="button" id="open-camera-btn" class="flex flex-col items-center justify-center py-6 border-2 border-dashed border-slate-200 hover:border-blue-500 hover:bg-blue-50 rounded-xl transition-colors text-slate-500 hover:text-blue-600">
+            <button type="button" id="open-camera-btn" class="flex flex-col items-center justify-center py-6 border-2 border-dashed border-ink-line hover:border-brand hover:bg-brand-soft rounded-xl transition-colors text-ink-muted hover:text-brand">
               <svg class="size-8 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
               </svg>
               <span class="text-sm font-bold">Record Video</span>
             </button>
-            
-            <label class="cursor-pointer flex flex-col items-center justify-center py-6 border-2 border-dashed border-slate-200 hover:border-blue-500 hover:bg-blue-50 rounded-xl transition-colors text-slate-500 hover:text-blue-600">
+
+            <label class="cursor-pointer flex flex-col items-center justify-center py-6 border-2 border-dashed border-ink-line hover:border-brand hover:bg-brand-soft rounded-xl transition-colors text-ink-muted hover:text-brand">
               <svg class="size-8 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
               </svg>
@@ -73,19 +96,43 @@
               <input type="file" id="upload-video-input" accept="video/*" class="hidden" />
             </label>
           </div>
+          <p class="text-xs text-ink-muted text-center">Max 90 seconds &middot; up to 100&nbsp;MB</p>
+          <p id="video-error" class="hidden text-xs text-red-600 text-center font-medium"></p>
         </div>
 
         <div class="space-y-1.5">
-          <label class="block text-sm font-bold text-slate-700">Testimonial Title</label>
-          <input type="text" id="title-input" required placeholder="e.g. Amazing experience!" class="w-full rounded-xl border border-slate-200 p-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+          <label class="block text-sm font-bold">Your Name</label>
+          <input type="text" id="name-input" required placeholder="Jane Doe" class="w-full rounded-xl border border-ink-line p-3 text-sm focus:outline-none focus:ring-2 focus:ring-brand" />
         </div>
 
         <div class="space-y-1.5">
-          <label class="block text-sm font-bold text-slate-700">Your Email Address</label>
-          <input type="email" id="email-input" required placeholder="you@example.com" class="w-full rounded-xl border border-slate-200 p-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+          <label class="block text-sm font-bold">Testimonial Title</label>
+          <input type="text" id="title-input" required placeholder="e.g. Amazing experience!" class="w-full rounded-xl border border-ink-line p-3 text-sm focus:outline-none focus:ring-2 focus:ring-brand" />
         </div>
 
-        <button type="submit" id="submit-btn" disabled class="w-full py-3.5 bg-blue-600 hover:bg-blue-700 disabled:bg-slate-300 disabled:cursor-not-allowed text-white rounded-xl font-bold text-sm transition-colors flex items-center justify-center gap-2">
+        <div class="space-y-1.5">
+          <label class="block text-sm font-bold">Your Email Address</label>
+          <input type="email" id="email-input" required placeholder="you@example.com" class="w-full rounded-xl border border-ink-line p-3 text-sm focus:outline-none focus:ring-2 focus:ring-brand" />
+        </div>
+
+        <div class="space-y-1.5">
+          <label class="block text-sm font-bold">How would you rate us?</label>
+          <div id="rating-stars" class="flex gap-1" role="radiogroup" aria-label="Rating">
+            <% (1..5).each do |n| %>
+            <button type="button" class="rating-star text-slate-300 hover:text-amber-400 transition-colors" data-value="<%= n %>" aria-label="<%= n %> star<%= 's' if n > 1 %>">
+              <svg class="size-7" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.957a1 1 0 00.95.69h4.162c.969 0 1.371 1.24.588 1.81l-3.368 2.446a1 1 0 00-.364 1.118l1.287 3.957c.3.922-.755 1.688-1.54 1.118l-3.367-2.446a1 1 0 00-1.175 0l-3.368 2.446c-.783.57-1.838-.196-1.539-1.118l1.287-3.957a1 1 0 00-.364-1.118L2.075 9.394c-.783-.57-.38-1.81.588-1.81h4.163a1 1 0 00.95-.69l1.286-3.957z"/></svg>
+            </button>
+            <% end %>
+          </div>
+        </div>
+
+        <!-- Consent: hard gate. Server rejects without it (validates :consented_at). -->
+        <label class="flex items-start gap-3 rounded-xl border border-ink-line bg-slate-50 p-3 cursor-pointer">
+          <input type="checkbox" id="consent-input" class="mt-0.5 size-4 rounded border-ink-line text-brand focus:ring-brand" />
+          <span class="text-xs text-ink-muted leading-relaxed">I give <%= @account.name %> permission to use my video testimonial in marketing and promotional materials.</span>
+        </label>
+
+        <button type="submit" id="submit-btn" disabled class="w-full py-3.5 bg-brand hover:bg-brand-hover disabled:bg-slate-300 disabled:cursor-not-allowed text-white rounded-xl font-bold text-sm transition-colors flex items-center justify-center gap-2">
           Submit Testimonial
         </button>
 
@@ -98,6 +145,7 @@
     const videoActions = document.getElementById('video-actions');
     const recordingContainer = document.getElementById('recording-container');
     const previewContainer = document.getElementById('video-preview-container');
+    const cameraDenied = document.getElementById('camera-denied');
     const liveVideo = document.getElementById('live-video');
     const previewVideo = document.getElementById('preview-video');
     const startRecordBtn = document.getElementById('start-record-btn');
@@ -106,39 +154,87 @@
     const uploadInput = document.getElementById('upload-video-input');
     const removeVideoBtn = document.getElementById('remove-video-btn');
     const submitBtn = document.getElementById('submit-btn');
+    const consentInput = document.getElementById('consent-input');
     const successState = document.getElementById('success-state');
-    
+    const videoError = document.getElementById('video-error');
+    const timerEl = document.getElementById('recording-timer');
+
     let stream = null;
     let mediaRecorder = null;
     let recordedChunks = [];
     let finalVideoBlob = null;
+    let thumbnailBlob = null;
+    let durationSeconds = 0;
     let timerInterval = null;
     let recordingSeconds = 0;
+    let rating = 0;
 
-    function formatTime(seconds) {
+    function fmt(seconds) {
       const m = Math.floor(seconds / 60).toString().padStart(2, '0');
       const s = (seconds % 60).toString().padStart(2, '0');
       return `${m}:${s}`;
     }
 
+    // Submit is gated on BOTH a video and consent (consent is enforced server-side too).
     function checkSubmitReady() {
-      submitBtn.disabled = !finalVideoBlob;
+      submitBtn.disabled = !(finalVideoBlob && consentInput.checked);
+    }
+    consentInput.addEventListener('change', checkSubmitReady);
+
+    function showError(msg) {
+      videoError.textContent = msg;
+      videoError.classList.remove('hidden');
+    }
+    function clearError() { videoError.classList.add('hidden'); }
+
+    // Capture duration + a poster frame from the chosen/recorded video (T8 — no server ffmpeg).
+    function captureMeta(blob, fallbackSeconds) {
+      const v = document.createElement('video');
+      v.preload = 'metadata';
+      v.muted = true;
+      v.src = URL.createObjectURL(blob);
+      v.addEventListener('loadeddata', () => {
+        durationSeconds = Number.isFinite(v.duration) && v.duration > 0
+          ? Math.round(v.duration)
+          : fallbackSeconds || 0;
+        // Seek a touch in so the poster isn't a black first frame.
+        try { v.currentTime = Math.min(0.5, (v.duration || 1) / 2); } catch (e) { /* noop */ }
+      });
+      v.addEventListener('seeked', () => {
+        const canvas = document.createElement('canvas');
+        canvas.width = v.videoWidth || 640;
+        canvas.height = v.videoHeight || 360;
+        canvas.getContext('2d').drawImage(v, 0, 0, canvas.width, canvas.height);
+        canvas.toBlob(b => { thumbnailBlob = b; }, 'image/jpeg', 0.8);
+      });
+    }
+
+    function acceptVideo(blob, fallbackSeconds) {
+      if (blob.size > MAX_BYTES) {
+        showError('That video is over 100 MB. Please upload a shorter or smaller file.');
+        return;
+      }
+      clearError();
+      finalVideoBlob = blob;
+      thumbnailBlob = null;
+      durationSeconds = 0;
+      previewVideo.src = URL.createObjectURL(blob);
+      captureMeta(blob, fallbackSeconds);
+      videoActions.classList.add('hidden');
+      cameraDenied.classList.add('hidden');
+      previewContainer.classList.remove('hidden');
+      checkSubmitReady();
     }
 
     // Handle Upload
     uploadInput.addEventListener('change', (e) => {
-      if (e.target.files.length > 0) {
-        finalVideoBlob = e.target.files[0];
-        previewVideo.src = URL.createObjectURL(finalVideoBlob);
-        videoActions.classList.add('hidden');
-        previewContainer.classList.remove('hidden');
-        checkSubmitReady();
-      }
+      if (e.target.files.length > 0) acceptVideo(e.target.files[0], 0);
     });
 
     // Remove selected/recorded video
     removeVideoBtn.addEventListener('click', () => {
       finalVideoBlob = null;
+      thumbnailBlob = null;
       previewVideo.src = '';
       previewContainer.classList.add('hidden');
       videoActions.classList.remove('hidden');
@@ -148,100 +244,109 @@
 
     // Start Webcam
     openCameraBtn.addEventListener('click', async () => {
+      cameraDenied.classList.add('hidden');
       try {
         stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
         liveVideo.srcObject = stream;
         videoActions.classList.add('hidden');
         recordingContainer.classList.remove('hidden');
       } catch (err) {
-        alert('Camera access denied or unavailable.');
+        videoActions.classList.add('hidden');
+        cameraDenied.classList.remove('hidden');
       }
     });
+
+    function stopRecording() {
+      if (mediaRecorder && mediaRecorder.state !== 'inactive') mediaRecorder.stop();
+      startRecordBtn.classList.remove('hidden');
+      stopRecordBtn.classList.add('hidden');
+      timerEl.classList.add('hidden');
+    }
 
     // Start Recording
     startRecordBtn.addEventListener('click', () => {
       recordedChunks = [];
       mediaRecorder = new MediaRecorder(stream);
-      
-      mediaRecorder.ondataavailable = e => {
-        if (e.data.size > 0) recordedChunks.push(e.data);
-      };
-
+      mediaRecorder.ondataavailable = e => { if (e.data.size > 0) recordedChunks.push(e.data); };
       mediaRecorder.onstop = () => {
-        finalVideoBlob = new Blob(recordedChunks, { type: 'video/webm' });
-        previewVideo.src = URL.createObjectURL(finalVideoBlob);
-        
-        // Cleanup stream
+        const blob = new Blob(recordedChunks, { type: 'video/webm' });
         stream.getTracks().forEach(track => track.stop());
         recordingContainer.classList.add('hidden');
-        previewContainer.classList.remove('hidden');
-        
         clearInterval(timerInterval);
-        checkSubmitReady();
+        acceptVideo(blob, recordingSeconds); // timer seconds fallback: webm duration is often Infinity
       };
 
       mediaRecorder.start();
       startRecordBtn.classList.add('hidden');
       stopRecordBtn.classList.remove('hidden');
-      document.getElementById('recording-timer').classList.remove('hidden');
-      
+      timerEl.classList.remove('hidden');
+
       recordingSeconds = 0;
-      document.getElementById('recording-timer').innerText = '00:00';
+      timerEl.textContent = '00:00 / 01:30';
       timerInterval = setInterval(() => {
         recordingSeconds++;
-        document.getElementById('recording-timer').innerText = formatTime(recordingSeconds);
+        timerEl.textContent = `${fmt(recordingSeconds)} / 01:30`;
+        if (recordingSeconds >= MAX_SECONDS) stopRecording(); // auto-stop at 90s
       }, 1000);
     });
 
-    // Stop Recording
-    stopRecordBtn.addEventListener('click', () => {
-      mediaRecorder.stop();
-      startRecordBtn.classList.remove('hidden');
-      stopRecordBtn.classList.add('hidden');
-      document.getElementById('recording-timer').classList.add('hidden');
+    stopRecordBtn.addEventListener('click', stopRecording);
+
+    // Rating stars
+    document.querySelectorAll('.rating-star').forEach(star => {
+      star.addEventListener('click', () => {
+        rating = Number(star.dataset.value);
+        document.querySelectorAll('.rating-star').forEach(s => {
+          s.classList.toggle('text-amber-400', Number(s.dataset.value) <= rating);
+          s.classList.toggle('text-slate-300', Number(s.dataset.value) > rating);
+        });
+      });
     });
 
     // Submit form
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
-      if (!finalVideoBlob) return;
+      if (!finalVideoBlob || !consentInput.checked) return;
 
       submitBtn.disabled = true;
-      submitBtn.innerText = 'Uploading...';
+      submitBtn.textContent = 'Uploading…';
 
       const formData = new FormData();
       formData.append('title', document.getElementById('title-input').value);
+      formData.append('customer_name', document.getElementById('name-input').value);
       formData.append('email', document.getElementById('email-input').value);
+      formData.append('consent', 'true');
+      if (rating) formData.append('rating', rating);
+      if (durationSeconds) formData.append('duration_seconds', durationSeconds);
       <% if params[:token].present? %>
       formData.append('token', '<%= params[:token] %>');
       <% end %>
-      
-      // Upload blob as a file
-      const fileName = finalVideoBlob.name || 'video.mp4';
-      const ext = fileName.includes('.') ? fileName.split('.').pop() : 'mp4';
+
+      const fileName = finalVideoBlob.name || 'testimonial.webm';
+      const ext = fileName.includes('.') ? fileName.split('.').pop() : 'webm';
       formData.append('video', finalVideoBlob, `testimonial.${ext}`);
+      if (thumbnailBlob) formData.append('thumbnail', thumbnailBlob, 'thumbnail.jpg');
 
       try {
         const res = await fetch('<%= reputation_video_testimonials_path(@account) %>', {
           method: 'POST',
           body: formData
         });
-        
         if (res.ok) {
           form.classList.add('hidden');
           successState.classList.remove('hidden');
         } else {
-          alert('Failed to upload video.');
+          const data = await res.json().catch(() => ({}));
+          showError((data.errors && data.errors.join(', ')) || 'Failed to upload video.');
           submitBtn.disabled = false;
-          submitBtn.innerText = 'Submit Testimonial';
+          submitBtn.textContent = 'Submit Testimonial';
         }
       } catch (err) {
-        alert('Network error during upload.');
+        showError('Network error during upload.');
         submitBtn.disabled = false;
-        submitBtn.innerText = 'Submit Testimonial';
+        submitBtn.textContent = 'Submit Testimonial';
       }
     });
-
   </script>
 </body>
 </html>

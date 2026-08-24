@@ -117,7 +117,7 @@
             <div class="flex items-center gap-1.5 mb-1">
               <h3 class="text-sm font-medium text-foreground"><%= attrs[:name] %></h3>
               <% if attrs[:enterprise] %>
-                <span class="px-1.5 py-0.5 rounded text-xs font-medium text-success bg-success/10">EE</span>
+                <span class="px-1.5 py-0.5 rounded text-xs font-medium text-primary bg-primary/10">EE</span>
               <% end %>
               <% if attrs[:config_key].present? && attrs[:enabled] %>
                 <a class="inline-flex items-center justify-center size-5 rounded hover:bg-muted transition-colors" href="/super_admin/app_config?config=<%= attrs[:config_key] %>">

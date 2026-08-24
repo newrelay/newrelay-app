@@ -1,34 +1,53 @@
+<% regular_features, premium_features = SuperAdmin::AccountFeaturesHelper.partition_features(field.data || {}) %>
+
 <div class="w-full">
-  <% regular_features, premium_features = SuperAdmin::AccountFeaturesHelper.partition_features(field.data) %>
-
-  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-    <% regular_features.each do |key_array, val| %>
-      <% feature_key, display_name = key_array %>
-      <div class="flex items-center justify-between p-3 bg-white rounded-md outline outline-n-container outline-1 shadow-sm">
-        <span class="text-sm text-n-slate-12"><%= display_name %></span>
-        <span class="<%= val.present? ? 'bg-green-400 text-white': 'bg-slate-50 text-slate-800' %> rounded-full p-1 inline-flex right-4 top-5">
-          <svg width="12" height="12"><use xlink:href="#icon-tick-line" /></svg>
-        </span>
-      </div>
-    <% end %>
-  </div>
-
-  <hr class="my-8 border-t border-n-weak">
-
-  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-    <% premium_features.each do |key_array, val| %>
-      <% feature_key, display_name = key_array %>
-      <div class="flex items-center justify-between p-3 bg-white rounded-md outline outline-n-container outline-1 shadow-sm">
-        <div class="flex items-center gap-2">
-          <span class="bg-n-amber-3 text-n-amber-12 rounded-full p-1 inline-flex right-4 top-5">
-            <svg width="12" height="12"><use xlink:href="#icon-lock-line" /></svg>
+  <% if regular_features.any? %>
+    <div class="feature-section-header">
+      <span class="feature-section-title">Basic Features</span>
+    </div>
+    <div class="feature-flags-grid">
+      <% regular_features.each do |key_array, enabled| %>
+        <% _feature_key, display_name = key_array %>
+        <div class="feature-flag-card is-read-only <%= 'is-enabled' if enabled %>">
+          <div class="feature-flag-icon-wrap">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          </div>
+          <span class="feature-flag-name"><%= display_name %></span>
+          <span class="feature-flag-check-badge <%= 'inactive' unless enabled %>">
+            <% if enabled %>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+            <% else %>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+            <% end %>
           </span>
-          <span class="text-sm text-n-slate-12"><%= display_name %></span>
         </div>
-        <span class="<%= val.present? ? 'bg-green-400 text-white': 'bg-slate-50 text-slate-800' %> rounded-full p-1 inline-flex right-4 top-5">
-          <svg width="12" height="12"><use xlink:href="#icon-tick-line" /></svg>
-        </span>
-      </div>
-    <% end %>
-  </div>
+      <% end %>
+    </div>
+  <% end %>
+
+  <% if premium_features.any? %>
+    <div class="feature-section-header">
+      <span class="feature-section-title premium">
+        <span class="premium-star">*</span> Premium Features
+      </span>
+    </div>
+    <div class="feature-flags-grid">
+      <% premium_features.each do |key_array, enabled| %>
+        <% _feature_key, display_name = key_array %>
+        <div class="feature-flag-card is-read-only is-premium <%= enabled ? 'is-enabled' : 'is-disabled' %>">
+          <div class="feature-flag-icon-wrap">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          </div>
+          <span class="feature-flag-name"><%= display_name %></span>
+          <span class="feature-flag-check-badge <%= 'inactive' unless enabled %>">
+            <% if enabled %>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+            <% else %>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+            <% end %>
+          </span>
+        </div>
+      <% end %>
+    </div>
+  <% end %>
 </div>

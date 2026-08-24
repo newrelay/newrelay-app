@@ -59,7 +59,25 @@ as well as a link to its edit page.
             </div>
 
             <div class="text-sm text-foreground md:col-span-2 attribute-data attribute-data--<%=attribute.html_class%> break-words">
-              <%= render_field attribute, page: page %>
+              <% if attribute.name.to_s == 'access_token' %>
+                <% token = page.resource.access_token&.token %>
+                <% if token.present? %>
+                  <%= javascript_include_tag 'secretField' %>
+                  <div data-secret-text="<%= token %>" class="cell-data__secret-field inline-flex items-center gap-1 text-sm text-foreground font-mono">
+                    <span data-secret-masked="true" class="select-none"></span>
+                    <button type="button" onclick="toggleSecretField(event)" data-secret-toggler class="inline-flex items-center justify-center size-7 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted transition-colors focus:outline-none">
+                      <svg width="16" height="16" class="fill-current"><use xlink:href="#eye-show" /></svg>
+                    </button>
+                    <button type="button" onclick="copySecretField(event)" data-secret-copier class="inline-flex items-center justify-center size-7 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted transition-colors focus:outline-none">
+                      <svg width="16" height="16" class="fill-current"><use xlink:href="#icon-copy" /></svg>
+                    </button>
+                  </div>
+                <% else %>
+                  <span class="text-muted-foreground">—</span>
+                <% end %>
+              <% else %>
+                <%= render_field attribute, page: page %>
+              <% end %>
             </div>
           </div>
         <% end %>

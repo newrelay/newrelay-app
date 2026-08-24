@@ -224,6 +224,7 @@ Rails.application.routes.draw do
               collection do
                 post :dispatch_request
                 get :requests_index
+                get :export
               end
             end
           end

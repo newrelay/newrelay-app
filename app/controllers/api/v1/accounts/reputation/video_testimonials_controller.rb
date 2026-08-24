@@ -28,6 +28,19 @@ class Api::V1::Accounts::Reputation::VideoTestimonialsController < Api::V1::Acco
     head :ok
   end
 
+  # F5: stream the library as CSV (stdlib CSV, no export gem).
+  def export
+    rows = Current.account.reputation_video_testimonials.includes(:contact).order(created_at: :desc)
+    csv = CSV.generate do |out|
+      out << %w[id customer_name company email rating status platform duration_seconds views created_at]
+      rows.each do |t|
+        out << [t.id, t.customer_name, t.company, t.email, t.rating, t.status,
+                t.platform, t.duration_seconds, t.views, t.created_at&.iso8601]
+      end
+    end
+    send_data csv, filename: "video-testimonials-#{Date.current}.csv", type: 'text/csv'
+  end
+
   def requests_index
     requests = current_account.reputation_review_requests
                               .joins(:reputation_template)

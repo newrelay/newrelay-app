@@ -44,16 +44,24 @@ const defaultChartOptions = {
   plugins: {
     legend: { display: false },
     tooltip: {
-      backgroundColor: 'rgba(0,0,0,0.75)',
+      backgroundColor: 'rgba(24, 29, 39, 0.92)',
       padding: 10,
       cornerRadius: 8,
       titleFont: { family: fontFamily, size: 12 },
       bodyFont: { family: fontFamily, size: 13, weight: 'bold' },
+      callbacks: {
+        label: context => `Conversations: ${context.parsed.y}`,
+      },
     },
   },
   scales: {
     x: {
-      ticks: { font: { family: fontFamily, size: 11 }, color: '#9ca3af' },
+      ticks: {
+        font: { family: fontFamily, size: 10.5 },
+        color: '#94a3b8',
+        maxRotation: 45,
+        minRotation: 45,
+      },
       grid: { display: false },
       border: { display: false },
     },

@@ -136,10 +136,28 @@ const closePanel = () => {
 const isExportModalOpen = ref(false);
 const isRequestModalOpen = ref(false);
 
+async function exportCsv() {
+  try {
+    const { data } = await axios.get(`${baseUrl()}/export`, { responseType: 'blob' });
+    const url = URL.createObjectURL(data);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'video-testimonials.csv';
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+  } catch (e) {
+    showToast('Export failed.');
+  }
+}
+
 const handleExportOption = (type) => {
   showExportDropdown.value = false;
   if (type === 'zip') {
     isExportModalOpen.value = true;
+  } else if (type === 'CSV Data') {
+    exportCsv();
   } else {
     showToast(`Exporting ${type}...`);
   }

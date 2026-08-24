@@ -203,15 +203,14 @@ class PaymentGatewayCountryPicker {
     this.selectedCodes.forEach(code => {
       const country = findCountry(code);
       const tag = document.createElement('span');
-      tag.className =
-        'inline-flex items-center gap-1 rounded-full bg-accent px-2 py-1 text-xs font-medium text-primary';
+      tag.className = 'country-tag-blue';
 
       const label = document.createElement('span');
       label.textContent = country ? country.label : code;
 
       const removeButton = document.createElement('button');
       removeButton.type = 'button';
-      removeButton.className = 'text-primary hover:text-foreground';
+      removeButton.className = 'country-tag-close';
       removeButton.setAttribute('aria-label', `Remove ${code}`);
       removeButton.textContent = '×';
       removeButton.addEventListener('click', () => this.removeCode(code));

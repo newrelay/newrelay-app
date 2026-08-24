@@ -4,9 +4,12 @@
 
 <div class="space-y-6">
   <div class="flex items-center justify-between mb-6">
-    <h1 class="page-title">
-      Plan Management
-    </h1>
+    <div>
+      <h1 class="page-title">
+        Plan Management
+      </h1>
+      <p class="text-sm text-muted-foreground mt-1">Configure plan pricing, resource limits, and feature availability</p>
+    </div>
   </div>
 
   <% if notice.present? %>
@@ -24,7 +27,10 @@
             <h2 class="text-base font-semibold text-foreground"><%= plan['name'] %></h2>
             <label class="flex items-center gap-2 text-sm text-muted-foreground cursor-pointer">
               <%= hidden_field_tag "plans[#{plan['name']}][enabled]", '0' %>
-              <%= check_box_tag "plans[#{plan['name']}][enabled]", '1', plan['enabled'] != false, class: 'rounded border-input text-primary focus:ring-ring' %>
+              <span class="custom-checkbox">
+                <%= check_box_tag "plans[#{plan['name']}][enabled]", '1', plan['enabled'] != false %>
+                <span class="checkmark"></span>
+              </span>
               <span>Enabled</span>
             </label>
           </div>
@@ -70,6 +76,7 @@
     <%# Resource Limits Matrix Heading %>
     <div class="mb-3">
       <h2 class="text-sm font-semibold text-foreground">Resource Limits</h2>
+      <p class="text-xs text-muted-foreground mt-0.5">Define resource boundaries per subscription tier (leave blank for unlimited)</p>
     </div>
 
     <%# Resource Limits Table %>
@@ -109,6 +116,7 @@
     <%# Feature matrix heading %>
     <div class="mb-3">
       <h2 class="text-sm font-semibold text-foreground">Feature Matrix</h2>
+      <p class="text-xs text-muted-foreground mt-0.5">Toggle modular platform feature availability across subscription tiers</p>
     </div>
 
     <%# Feature matrix table %>
@@ -121,7 +129,7 @@
               <th class="text-center" scope="col">
                 <%= plan['name'] %>
                 <% if plan['name'].downcase != 'enterprise' %>
-                  <button type="button" class="text-xs text-primary hover:underline block mx-auto mt-1 font-medium" onclick="const cbs = document.querySelectorAll('input[id^=feature_<%= plan['name'].parameterize %>_]'); const allChecked = Array.from(cbs).every(cb => cb.checked); cbs.forEach(cb => cb.checked = !allChecked); this.innerText = allChecked ? 'Select All' : 'Deselect All';">Select All</button>
+                  <button type="button" class="btn-toggle-all mx-auto mt-1" onclick="const cbs = document.querySelectorAll('input[id^=feature_<%= plan['name'].parameterize %>_]'); const allChecked = Array.from(cbs).every(cb => cb.checked); cbs.forEach(cb => cb.checked = !allChecked); this.innerText = allChecked ? 'Select All' : 'Deselect All';">Select All</button>
                 <% end %>
               </th>
             <% end %>
@@ -141,7 +149,10 @@
                       checked = pfl&.enabled || false
                     %>
                     <%= hidden_field_tag "plan_features[#{plan['name']}][#{feature['name']}]", '0' %>
-                    <%= check_box_tag "plan_features[#{plan['name']}][#{feature['name']}]", '1', checked, class: 'rounded border-input text-primary focus:ring-ring', id: "feature_#{plan['name'].parameterize}_#{feature['name']}" %>
+                    <label class="custom-checkbox mx-auto">
+                      <%= check_box_tag "plan_features[#{plan['name']}][#{feature['name']}]", '1', checked, id: "feature_#{plan['name'].parameterize}_#{feature['name']}" %>
+                      <span class="checkmark"></span>
+                    </label>
                   <% end %>
                 </td>
               <% end %>

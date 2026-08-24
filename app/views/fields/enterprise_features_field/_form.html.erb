@@ -1,33 +1,60 @@
-<div class="field-unit" style="grid-column: 1 / -1; display: block; margin-top: 2rem;">
-  <div class="mb-4">
-    <h2 class="text-sm font-semibold uppercase tracking-wider text-slate-500">Feature Matrix</h2>
-  </div>
+<%
+  premium_feature_names = SuperAdmin::AccountFeaturesHelper.account_premium_features
+  display_names = SuperAdmin::AccountFeaturesHelper.feature_display_names
 
-  <div class="mb-8 overflow-x-auto w-full">
-    <table class="w-full text-left border-collapse">
-      <thead>
-        <tr class="border-b border-slate-200">
-          <th class="py-3 pr-4 text-sm font-semibold text-slate-600 w-1/2" scope="col">Feature</th>
-          <th class="py-3 px-4 text-sm font-semibold text-slate-600 w-1/2 flex items-center justify-between" scope="col">
-            <span>Enabled</span>
-            <button type="button" class="text-[10px] text-violet-600 hover:text-violet-800 font-medium uppercase tracking-wider" onclick="const cbs = document.querySelectorAll('input[id^=feature_]'); const allChecked = Array.from(cbs).every(cb => cb.checked); cbs.forEach(cb => cb.checked = !allChecked); this.innerText = allChecked ? 'Select All' : 'Deselect All';">Select All</button>
-          </th>
-        </tr>
-      </thead>
-      <tbody>
-        <!-- Hidden field to ensure an empty array is sent if all checkboxes are unchecked -->
-        <%= hidden_field_tag "#{f.object_name}[#{field.attribute}][]", "" %>
-        <% field.available_features.each do |feature_key| %>
-          <tr class="border-b border-slate-100 last:border-0 hover:bg-slate-50 transition-colors">
-            <td class="py-3 pr-4 text-sm font-medium text-slate-700">
-              <label for="feature_<%= feature_key %>" class="cursor-pointer block w-full h-full"><%= feature_key.titleize %></label>
-            </td>
-            <td class="py-3 px-4">
-              <%= check_box_tag "#{f.object_name}[#{field.attribute}][]", feature_key, field.enabled?(feature_key), class: "h-4 w-4 rounded border-slate-300 text-violet-600 focus:ring-violet-600 cursor-pointer", id: "feature_#{feature_key}" %>
-            </td>
-          </tr>
-        <% end %>
-      </tbody>
-    </table>
-  </div>
+  available = field.available_features
+  regular_keys, premium_keys = available.partition { |key| premium_feature_names.exclude?(key) }
+%>
+
+<div class="field-unit w-full" style="grid-column: 1 / -1; display: block; margin-top: 2rem;">
+  <!-- Hidden field to ensure an empty array is sent if all checkboxes are unchecked -->
+  <%= hidden_field_tag "#{f.object_name}[#{field.attribute}][]", "" %>
+
+  <% if regular_keys.any? %>
+    <div class="feature-section-header flex items-center justify-between mb-4 pb-2 border-b border-border/40">
+      <span class="feature-section-title text-sm font-semibold text-foreground">Basic Features</span>
+      <button type="button" class="btn-toggle-all" onclick="const cbs = document.querySelectorAll('input[data-basic-feature=true]'); const allChecked = Array.from(cbs).every(cb => cb.checked); cbs.forEach(cb => cb.checked = !allChecked); this.innerText = allChecked ? 'Select All' : 'Deselect All';">
+        Select All
+      </button>
+    </div>
+
+    <div class="feature-flags-grid grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2.5 mb-8">
+      <% regular_keys.each do |feature_key| %>
+        <% is_checked = field.enabled?(feature_key) %>
+        <% title = display_names[feature_key] || feature_key.titleize %>
+        <label for="feature_<%= feature_key %>" class="feature-flag-card flex items-center gap-2.5 p-2.5 border border-border rounded-xl bg-card hover:bg-accent hover:border-[#cac7f7] transition-all cursor-pointer select-none">
+          <div class="feature-flag-icon-wrap size-8 rounded-lg bg-primary/10 text-primary flex items-center justify-center shrink-0">
+            <svg class="size-4 text-primary" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          </div>
+          <span class="feature-flag-name text-xs font-medium text-foreground truncate flex-1"><%= title %></span>
+          <%= check_box_tag "#{f.object_name}[#{field.attribute}][]", feature_key, is_checked, class: "feature-flag-checkbox size-4 rounded border-input text-primary focus:ring-[#cac7f7] cursor-pointer shrink-0 ml-auto", id: "feature_#{feature_key}", data: { basic_feature: true } %>
+        </label>
+      <% end %>
+    </div>
+  <% end %>
+
+  <% if premium_keys.any? %>
+    <div class="feature-section-header flex items-center justify-between mb-4 pb-2 border-b border-border/40">
+      <span class="feature-section-title premium text-sm font-semibold text-foreground flex items-center gap-1">
+        <span class="premium-star text-destructive font-bold text-lg">*</span> Premium Features
+      </span>
+      <button type="button" class="btn-toggle-all" onclick="const cbs = document.querySelectorAll('input[data-premium-feature=true]'); const allChecked = Array.from(cbs).every(cb => cb.checked); cbs.forEach(cb => cb.checked = !allChecked); this.innerText = allChecked ? 'Select All' : 'Deselect All';">
+        Select All
+      </button>
+    </div>
+
+    <div class="feature-flags-grid grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2.5 mb-8">
+      <% premium_keys.each do |feature_key| %>
+        <% is_checked = field.enabled?(feature_key) %>
+        <% title = display_names[feature_key] || feature_key.titleize %>
+        <label for="feature_<%= feature_key %>" class="feature-flag-card is-premium flex items-center gap-2.5 p-2.5 border border-border rounded-xl bg-card hover:bg-accent hover:border-[#cac7f7] transition-all cursor-pointer select-none relative">
+          <div class="feature-flag-icon-wrap size-8 rounded-lg bg-primary/10 text-primary flex items-center justify-center shrink-0">
+            <svg class="size-4 text-primary" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          </div>
+          <span class="feature-flag-name text-xs font-medium text-foreground truncate flex-1"><%= title %></span>
+          <%= check_box_tag "#{f.object_name}[#{field.attribute}][]", feature_key, is_checked, class: "feature-flag-checkbox size-4 rounded border-input text-primary focus:ring-[#cac7f7] cursor-pointer shrink-0 ml-auto", id: "feature_#{feature_key}", data: { premium_feature: true } %>
+        </label>
+      <% end %>
+    </div>
+  <% end %>
 </div>

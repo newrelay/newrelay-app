@@ -48,8 +48,16 @@ export function initSubmenu() {
     if (trigger) {
       trigger.addEventListener('click', (e) => {
         if (e.target.closest('.sidebar-menu-sub') || e.target.closest('.sidebar-flyout')) return;
-        const isOpen = item.classList.toggle('open');
-        trigger.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+        const isChevron = e.target.closest('.sidebar-chevron');
+        if (isChevron) {
+          e.preventDefault();
+          e.stopPropagation();
+          const isOpen = item.classList.toggle('open');
+          trigger.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+        } else if (trigger.tagName === 'BUTTON') {
+          const isOpen = item.classList.toggle('open');
+          trigger.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+        }
       });
     }
   });

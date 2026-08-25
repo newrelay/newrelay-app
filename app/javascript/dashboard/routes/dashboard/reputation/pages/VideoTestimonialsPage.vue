@@ -162,6 +162,9 @@ const activeStatus = ref('');
 const activePlatform = ref('');
 const activeMinRating = ref('');
 const activeSort = ref('');
+const activeTag = ref(''); // B7: client-side AI-topic filter
+
+function setTagFilter(tag) { activeTag.value = tag === 'All Tags' ? '' : tag; showAiTagsDropdown.value = false; }
 
 function setStatusFilter(label) { activeStatus.value = STATUS_KEY[label] || ''; showStatusDropdown.value = false; }
 function setPlatformFilter(name) { activePlatform.value = name === 'All Platforms' ? '' : name; showPlatformDropdown.value = false; }
@@ -333,13 +336,21 @@ const handleGenerateClip = () => {
   if (selectedVideo.value) showToast('Analyzing video and generating highlight clips...');
 };
 
+// B7: distinct AI topic tags across loaded rows (only analyzed videos have any).
+const availableTags = computed(() => {
+  const seen = new Set();
+  mockVideos.value.forEach(v => (v.topics || []).forEach(t => t && seen.add(t)));
+  return [...seen].sort();
+});
+
 const filteredVideos = computed(() => {
-  if (!searchQuery.value) return mockVideos.value;
   const q = searchQuery.value.toLowerCase();
-  return mockVideos.value.filter(v =>
-    (v.author || '').toLowerCase().includes(q) ||
-    (v.transcriptSummary || '').toLowerCase().includes(q)
-  );
+  return mockVideos.value.filter(v => {
+    if (activeTag.value && !(v.topics || []).includes(activeTag.value)) return false;
+    if (!q) return true;
+    return (v.author || '').toLowerCase().includes(q) ||
+      (v.transcriptSummary || '').toLowerCase().includes(q);
+  });
 });
 
 // Real KPI numbers computed from the loaded rows (was hardcoded).
@@ -544,16 +555,19 @@ const stats = computed(() => {
             </div>
           </div>
 
-          <!-- AI Tags Filter -->
-          <div class="relative">
-            <button 
+          <!-- AI Tags Filter (B7) — real topics from AI analysis; demo-flag only -->
+          <div v-if="showDemoSurfaces" class="relative">
+            <button
               @click="showAiTagsDropdown = !showAiTagsDropdown"
-              class="h-9 gap-1.5 rounded-lg text-xs font-medium bg-card border border-border shadow-xs px-3 hover:bg-muted inline-flex items-center cursor-pointer text-foreground"
+              class="h-9 gap-1.5 rounded-lg text-xs font-medium shadow-xs px-3 inline-flex items-center cursor-pointer"
+              :class="activeTag ? 'bg-primary/10 border border-primary/20 text-primary' : 'bg-card border border-border hover:bg-muted text-foreground'"
             >
-              Relay AI Tags <ChevronDown class="size-3.5 text-muted-foreground shrink-0" />
+              {{ activeTag || 'Relay AI Tags' }} <ChevronDown class="size-3.5 shrink-0" :class="activeTag ? 'text-primary' : 'text-muted-foreground'" />
             </button>
-            <div v-if="showAiTagsDropdown" class="absolute left-0 mt-1.5 w-44 bg-card border border-border rounded-xl p-1 shadow-xl z-50 space-y-0.5">
-              <button v-for="tag in ['AI Summary', 'Marketing Ready', 'Needs Review']" :key="tag" @click="showAiTagsDropdown = false" class="w-full text-left px-3 py-1.5 text-xs rounded-md font-medium hover:bg-muted text-foreground cursor-pointer">{{ tag }}</button>
+            <div v-if="showAiTagsDropdown" class="absolute left-0 mt-1.5 w-44 max-h-64 overflow-y-auto bg-card border border-border rounded-xl p-1 shadow-xl z-50 space-y-0.5">
+              <button @click="setTagFilter('All Tags')" class="w-full text-left px-3 py-1.5 text-xs rounded-md font-medium hover:bg-muted text-foreground cursor-pointer">All Tags</button>
+              <p v-if="!availableTags.length" class="px-3 py-1.5 text-xs text-muted-foreground">No AI tags yet — analyze a video.</p>
+              <button v-for="tag in availableTags" :key="tag" @click="setTagFilter(tag)" class="w-full text-left px-3 py-1.5 text-xs rounded-md font-medium hover:bg-muted text-foreground cursor-pointer">{{ tag }}</button>
             </div>
           </div>
         </div>

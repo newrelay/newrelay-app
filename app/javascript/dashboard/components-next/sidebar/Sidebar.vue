@@ -643,8 +643,8 @@ const primaryMenuItems = computed(() => {
         {
           name: 'Campaign Analytics',
           label: t('SIDEBAR.CAMPAIGN_ANALYTICS'),
-          disabled: true,
-          comingSoon: true,
+          to: accountScopedRoute('campaign_analytics_index'),
+          activeOn: ['campaign_analytics_index'],
         },
       ],
     },

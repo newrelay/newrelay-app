@@ -2,7 +2,7 @@
 
 **Status:** Draft · **Owner:** Dashboard UI · **Compared:** 2026-08-25
 **Locked 2026-08-25:** do **not** update Workspace, Customer Engagement, or Reputation.
-**Phase 0–1:** complete 2026-08-25. **Phase 2 PRD:** drafted (`crm-deals-pipelines-prd.md`); build blocked on §7.
+**Phase 0–3:** complete 2026-08-25 (shell, CRM, campaign analytics MVP).
 **Source of truth (visual + IA):** [https://new-relay-ui.vercel.app](https://new-relay-ui.vercel.app)
 **This app:** `app/javascript/dashboard/` (Vue 3, Relay tokens)
 
@@ -106,12 +106,15 @@ Source: `Sidebar.vue` `primaryMenuItems` (~line 265).
      stay on WootWriter; global `woot-code` tag name remains (component
      already Relay-styled).
 
-### Phase 2 — CRM objects — **in progress (defaults approved 2026-08-25)**
+### Phase 2 — CRM objects — **complete 2026-08-25**
 
-PRD: `docs/solution-notes/crm-deals-pipelines-prd.md`. Schema/API first;
-UI follows. Do not port mock dollars.
+PRD: `docs/solution-notes/crm-deals-pipelines-prd.md`. Deals / Pipelines /
+Opportunities live (schema, API, table, board, links).
 
-### Phase 3 — Campaign Analytics when metrics exist
+### Phase 3 — Campaign Analytics — **complete 2026-08-25**
+
+PRD: `docs/solution-notes/campaign-analytics-prd.md`. Live page with real
+aggregates (totals + attributed conversations); no fabricated open/click.
 
 ---
 
@@ -130,7 +133,7 @@ UI follows. Do not port mock dollars.
 | # | Question | Default |
 |---|---|---|
 | 1 | ⌘K palette vs Search page only? | **Palette** that can jump to Search |
-| 2 | Deals / Pipelines / Opportunities: Coming soon or real CRM? | **Coming soon** |
+| 2 | Deals / Pipelines / Opportunities: Coming soon or real CRM? | **Closed — real CRM shipped** |
 | 3 | Floating Relay AI FAB? | **Closed — no FAB** (launcher unmounted) |
 
 ---
@@ -139,5 +142,6 @@ UI follows. Do not port mock dollars.
 
 - Settings leftover `woot-*`: `docs/solution-notes/settings-ui-newrelay-port-prd.md`
 - CRM Phase 2: `docs/solution-notes/crm-deals-pipelines-prd.md`
+- Campaign Analytics Phase 3: `docs/solution-notes/campaign-analytics-prd.md`
 - Super Admin: `docs/solution-notes/super-admin-ui-prd.md`
 - Reputation (do not expand here): `docs/solution-notes/reputation-design-port.md`

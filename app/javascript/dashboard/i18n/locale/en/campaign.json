@@ -215,5 +215,40 @@
         "ERROR_MESSAGE": "There was an error. Please try again."
       }
     }
+  },
+  "CAMPAIGN_ANALYTICS": {
+    "HEADER": "Campaign Analytics",
+    "DESCRIPTION": "Performance of your outreach campaigns based on real activity.",
+    "SEARCH_PLACEHOLDER": "Search campaigns...",
+    "EMPTY": {
+      "TITLE": "No campaigns in this period",
+      "DESCRIPTION": "Create a campaign or widen the date range to see analytics.",
+      "CTA": "Go to Campaigns"
+    },
+    "METRICS": {
+      "TOTAL": "Total campaigns",
+      "ACTIVE": "Active",
+      "COMPLETED": "Completed",
+      "CONVERSATIONS": "Attributed conversations"
+    },
+    "TABLE": {
+      "TITLE": "Campaign",
+      "STATUS": "Status",
+      "TYPE": "Type",
+      "CHANNEL": "Channel",
+      "AUDIENCE": "Audience",
+      "CONVERSATIONS": "Conversations",
+      "CREATED": "Created"
+    },
+    "STATUS": {
+      "active": "Active",
+      "completed": "Completed",
+      "processing": "Processing"
+    },
+    "TYPE": {
+      "ongoing": "Ongoing",
+      "one_off": "One-off"
+    },
+    "ERROR": "Could not load campaign analytics."
   }
 }

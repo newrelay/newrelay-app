@@ -11,6 +11,7 @@ import {
 } from 'lucide-vue-next';
 import RequestVideoTestimonialModal from '../components/RequestVideoTestimonialModal.vue';
 import ExportVideoTestimonialsModal from '../components/ExportVideoTestimonialsModal.vue';
+import { isReputationDemoSurfacesEnabled } from 'dashboard/featureFlags';
 
 // Real data — de-mocked (Phase 1). AI fields (topics/transcript/aiTags) are Phase 3,
 // so they render empty until that ships.
@@ -79,8 +80,9 @@ function mapVideo(v) {
     views: v.views || 0,
     likes: 0,
     aiTags: [STATUS_LABEL[v.status] || 'Pending Approval'],
-    topics: [],
-    transcriptSummary: ''
+    aiInsights: v.ai_insights || {},
+    topics: (v.ai_insights && v.ai_insights.topics) || [],
+    transcriptSummary: (v.ai_insights && v.ai_insights.summary) || ''
   };
 }
 
@@ -106,6 +108,44 @@ async function loadVideos() {
 const selectedVideo = ref(null);
 const viewMode = ref('grid');
 const activeTab = ref('Overview');
+
+// Phase 3: AI tabs (Transcript / AI Insights) only exist behind the demo flag.
+const showDemoSurfaces = computed(() =>
+  isReputationDemoSurfacesEnabled(
+    accountId,
+    window.__STORE__?.getters['accounts/isFeatureEnabledonAccount']
+  )
+);
+const tabs = computed(() =>
+  showDemoSurfaces.value
+    ? ['Overview', 'Transcript', 'AI Insights', 'Activity', 'Notes']
+    : ['Overview', 'Activity', 'Notes']
+);
+const insights = computed(() => selectedVideo.value?.aiInsights || {});
+const hasInsights = computed(() => !!insights.value.processed_at);
+const analyzing = ref(false);
+
+// POST /analyze, then poll index until this video's ai_insights fills in (or errors).
+async function analyzeVideo() {
+  const v = selectedVideo.value;
+  if (!v || analyzing.value) return;
+  analyzing.value = true;
+  try {
+    await axios.post(`${baseUrl()}/${v.id}/analyze`);
+    for (let i = 0; i < 12; i += 1) {
+      await new Promise(r => setTimeout(r, 4000));
+      await loadVideos();
+      const fresh = mockVideos.value.find(x => x.id === v.id);
+      if (fresh) selectedVideo.value = fresh;
+      const ai = fresh?.aiInsights || {};
+      if (ai.processed_at || ai.error) break;
+    }
+  } catch (err) {
+    showToast('Could not start analysis.');
+  } finally {
+    analyzing.value = false;
+  }
+}
 const searchQuery = ref('');
 
 const showExportDropdown = ref(false);
@@ -757,7 +797,7 @@ const stats = computed(() => {
           <!-- Tabs Nav -->
           <div class="px-6 border-b border-border flex gap-5 text-[13px] font-semibold shrink-0 pt-2 bg-card">
             <button 
-              v-for="tab in ['Overview', 'Transcript', 'AI Insights', 'Activity', 'Notes']" :key="tab"
+              v-for="tab in tabs" :key="tab"
               @click="activeTab = tab"
               class="py-3 border-b-2 transition-colors -mb-[1px] whitespace-nowrap cursor-pointer"
               :class="activeTab === tab ? 'border-primary text-primary' : 'border-transparent text-muted-foreground hover:text-foreground'"
@@ -831,87 +871,73 @@ const stats = computed(() => {
               </div>
             </div>
             
-            <div v-else-if="activeTab === 'Transcript'" class="space-y-1 pr-2">
-              <div class="flex gap-4 group cursor-pointer hover:bg-muted/50 p-2.5 rounded-lg transition-colors -mx-2.5" @click="showToast('Jumping to 0:00 in video...')">
-                <div class="w-10 shrink-0 pt-0.5">
-                  <span class="text-[11px] font-semibold text-primary bg-primary/10 px-1.5 py-0.5 rounded transition-colors group-hover:bg-primary group-hover:text-primary-foreground">0:00</span>
-                </div>
-                <div class="flex-1">
-                  <p class="text-[13px] leading-relaxed text-foreground transition-colors">
-                    Hi everyone, I wanted to quickly share my experience with the platform over the last few months.
-                  </p>
-                </div>
-              </div>
-              
-              <div class="flex gap-4 group cursor-pointer hover:bg-muted/50 p-2.5 rounded-lg transition-colors -mx-2.5" @click="showToast('Jumping to 0:07 in video...')">
-                <div class="w-10 shrink-0 pt-0.5">
-                  <span class="text-[11px] font-semibold text-muted-foreground bg-muted group-hover:bg-primary group-hover:text-primary-foreground px-1.5 py-0.5 rounded transition-colors">0:07</span>
-                </div>
-                <div class="flex-1">
-                  <p class="text-[13px] leading-relaxed text-muted-foreground group-hover:text-foreground transition-colors">
-                    I recently started using it for our daily operations, and the difference is night and day.
-                  </p>
-                </div>
-              </div>
-              
-              <div class="flex gap-4 group cursor-pointer hover:bg-muted/50 p-2.5 rounded-lg transition-colors -mx-2.5" @click="showToast('Jumping to 0:15 in video...')">
-                <div class="w-10 shrink-0 pt-0.5">
-                  <span class="text-[11px] font-semibold text-muted-foreground bg-muted group-hover:bg-primary group-hover:text-primary-foreground px-1.5 py-0.5 rounded transition-colors">0:15</span>
-                </div>
-                <div class="flex-1">
-                  <p class="text-[13px] leading-relaxed text-muted-foreground group-hover:text-foreground transition-colors">
-                    The support team has also been incredibly responsive whenever we hit a snag. Highly recommend!
-                  </p>
-                </div>
+            <div v-else-if="activeTab === 'Transcript'" class="p-6">
+              <p v-if="insights.transcript" class="text-[13px] leading-relaxed text-foreground whitespace-pre-wrap">{{ insights.transcript }}</p>
+              <div v-else class="flex flex-col items-center justify-center text-center py-10 gap-3">
+                <Bot class="size-8 text-muted-foreground" />
+                <p v-if="analyzing" class="text-[13px] text-muted-foreground">Transcribing this video… this can take a moment.</p>
+                <p v-else-if="insights.error" class="text-[13px] text-muted-foreground">Couldn't transcribe: {{ insights.error }}</p>
+                <p v-else class="text-[13px] text-muted-foreground">No transcript yet.</p>
+                <button v-if="!analyzing" @click="analyzeVideo" class="inline-flex items-center gap-1.5 text-[13px] font-semibold text-primary hover:underline">
+                  <Sparkles class="size-4" /> Analyze video
+                </button>
               </div>
             </div>
-            
-            <div v-else-if="activeTab === 'AI Insights'" class="space-y-6">
-              <div class="grid grid-cols-2 gap-4">
-                <div class="bg-muted/30 border border-border rounded-xl p-4">
-                  <div class="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider mb-2">Sentiment</div>
-                  <div class="flex items-center gap-2">
-                    <span class="text-xl">😊</span>
-                    <span class="font-bold text-foreground">Positive</span>
+
+            <div v-else-if="activeTab === 'AI Insights'" class="p-6 space-y-6">
+              <template v-if="hasInsights && !insights.error">
+                <p v-if="insights.summary" class="text-[13px] leading-relaxed text-foreground">{{ insights.summary }}</p>
+
+                <div class="grid grid-cols-2 gap-4">
+                  <div class="bg-muted/30 border border-border rounded-xl p-4">
+                    <div class="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider mb-2">Sentiment</div>
+                    <div class="flex items-end gap-1"><span class="text-xl font-bold text-foreground">{{ insights.sentiment }}%</span></div>
                   </div>
-                </div>
-                
-                <div class="bg-muted/30 border border-border rounded-xl p-4">
-                  <div class="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider mb-2">Confidence</div>
-                  <div class="flex items-end gap-1">
-                    <span class="text-xl font-bold text-foreground">97%</span>
-                  </div>
-                </div>
-                
-                <div class="bg-muted/30 border border-border rounded-xl p-4">
-                  <div class="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider mb-2">Marketing Score</div>
-                  <div class="flex items-center gap-2">
-                    <div class="flex-1 h-2 bg-muted rounded-full overflow-hidden">
-                      <div class="h-full bg-emerald-500 rounded-full" style="width: 94%"></div>
+                  <div class="bg-muted/30 border border-border rounded-xl p-4">
+                    <div class="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider mb-2">Marketing Score</div>
+                    <div class="flex items-center gap-2">
+                      <div class="flex-1 h-2 bg-muted rounded-full overflow-hidden">
+                        <div class="h-full bg-emerald-500 rounded-full" :style="{ width: (insights.marketing_score || 0) + '%' }"></div>
+                      </div>
+                      <span class="text-xs font-bold text-foreground">{{ insights.marketing_score }}%</span>
                     </div>
-                    <span class="text-xs font-bold text-foreground">94%</span>
                   </div>
                 </div>
-                
-                <div class="bg-muted/30 border border-border rounded-xl p-4">
-                  <div class="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider mb-2">Recommendation</div>
-                  <div class="flex text-amber-400 mt-1">
-                    <Star v-for="i in 5" :key="i" class="size-3.5 fill-amber-400 text-amber-400" />
+
+                <div v-if="insights.topics && insights.topics.length" class="space-y-2">
+                  <div class="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider px-1">Topics</div>
+                  <div class="flex flex-wrap gap-2">
+                    <span v-for="t in insights.topics" :key="t" class="text-[12px] font-medium text-foreground bg-muted px-2.5 py-1 rounded-full">{{ t }}</span>
                   </div>
                 </div>
-              </div>
-              
-              <div class="space-y-2">
-                <div class="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider px-1">Most Quotable Line</div>
-                <div class="bg-primary/5 border border-primary/20 rounded-xl p-4 relative">
-                  <Quote class="absolute top-3 right-3 size-4 text-primary/30" />
-                  <p class="text-[14px] font-medium text-foreground pr-6 leading-relaxed italic">
-                    "The team solved everything within minutes."
-                  </p>
+
+                <div v-if="insights.quotable" class="space-y-2">
+                  <div class="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider px-1">Most Quotable Line</div>
+                  <div class="bg-primary/5 border border-primary/20 rounded-xl p-4 relative">
+                    <Quote class="absolute top-3 right-3 size-4 text-primary/30" />
+                    <p class="text-[14px] font-medium text-foreground pr-6 leading-relaxed italic">"{{ insights.quotable }}"</p>
+                  </div>
                 </div>
+
+                <div v-if="insights.suggested_reply" class="space-y-2">
+                  <div class="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider px-1">Suggested Reply</div>
+                  <div class="bg-muted/30 border border-border rounded-xl p-4">
+                    <p class="text-[13px] leading-relaxed text-foreground">{{ insights.suggested_reply }}</p>
+                  </div>
+                </div>
+              </template>
+
+              <div v-else class="flex flex-col items-center justify-center text-center py-10 gap-3">
+                <Sparkles class="size-8 text-muted-foreground" />
+                <p v-if="analyzing" class="text-[13px] text-muted-foreground">Analyzing this video…</p>
+                <p v-else-if="insights.error" class="text-[13px] text-muted-foreground">Couldn't analyze: {{ insights.error }}</p>
+                <p v-else class="text-[13px] text-muted-foreground">No AI insights yet.</p>
+                <button v-if="!analyzing" @click="analyzeVideo" class="inline-flex items-center gap-1.5 text-[13px] font-semibold text-primary hover:underline">
+                  <Sparkles class="size-4" /> Analyze video
+                </button>
               </div>
             </div>
-            
+
             <div v-else-if="activeTab === 'Activity'" class="p-6 pb-10">
               <div v-if="timeline.length === 0" class="text-[13px] text-muted-foreground text-center py-10">
                 No activity yet.

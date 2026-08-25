@@ -1,6 +1,6 @@
 # PRD — Video Testimonials
 
-**Status:** Draft · **Owner:** Reputation squad · **Last updated:** 2026-08-24
+**Status:** Draft · **Owner:** Reputation squad · **Last updated:** 2026-08-25 (Phase 3 E1–E6 shipped)
 **Companion docs:** `reputation-roadmap.md`, `reputation-demo-inventory.md`
 
 Rule inherited from the roadmap: **no feature ships as "real" until its backend exists.** Until
@@ -189,10 +189,17 @@ Backend for the core loop; drop the mock list.
 - Embed via `Reputation::Widget`. (F6)
 - **Exit:** an approved testimonial can be shared/embedded; team can annotate.
 
-### Phase 3 — "AI assist" (flag-gated, `reputation_demo_surfaces`)
-- Transcript (STT) → summary, topics, sentiment/confidence, marketing score, quotable line, suggested reply. (E1–E6)
-- AI-tag filter becomes real. (B7)
-- **Exit:** AI fields reflect the real video; blank/absent until processed (honest, no fabrication).
+### Phase 3 — "AI assist" (flag-gated, `reputation_demo_surfaces`) — **E1–E6 SHIPPED**
+- Transcript (STT) → summary, topics, sentiment, marketing score, quotable line, suggested reply. (E1–E6) ✅
+  - STT decision (open Q #1) **resolved by reuse**: codebase already commits to OpenAI transcription
+    (`gpt-4o-mini-transcribe`, used by `Messages::AudioTranscriptionService`). No new provider.
+  - One service `Reputation::VideoInsightsService` (transcribe + one JSON LLM pass), run async by
+    `Reputation::VideoInsightsJob`, triggered by `POST video_testimonials/:id/analyze` (flag-gated).
+    Stored in a single `ai_insights` jsonb column. FE: Transcript + AI Insights tabs render real data,
+    hidden unless the flag is on, with an "Analyze video" trigger + poll.
+  - 25MB transcription cap (OpenAI limit); videos above it skip transcription honestly (blank + error note).
+- AI-tag filter becomes real. (B7) — **still pending** (needs tags derived from `ai_insights.topics`).
+- **Exit:** AI fields reflect the real video; blank/absent until processed (honest, no fabrication). ✅
 
 ### Deferred (keep flag OFF, don't build until asked)
 - E7 auto-clip highlights (video processing pipeline).
@@ -268,7 +275,7 @@ Approved wireframe for the three record-page states: **§10 Approved Mockups**.
 ---
 
 ## 8. Open questions (still unresolved — need a real answer before their phase)
-1. **STT provider** for transcripts (cost/PII)? Determines Phase 3 feasibility. Also gates captions (§7.4).
+1. ~~**STT provider** for transcripts (cost/PII)?~~ **Resolved (2026-08-25):** reuse the codebase's existing OpenAI transcription (`gpt-4o-mini-transcribe`). Still gates captions (§7.4) — transcript is stored, captions UI not yet wired.
 2. **Storage/CDN** for video delivery at scale — ActiveStorage service + signed URLs enough?
 3. **`platform` semantics** — is a video tied to a review destination, or platform-agnostic? Affects B3 filter.
 

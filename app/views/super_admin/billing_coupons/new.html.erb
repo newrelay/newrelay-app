@@ -2,15 +2,23 @@
 # New Billing Coupon
 %>
 
-<header class="main-content__header">
-  <h1 class="main-content__page-title">
-    <%= t("administrate.actions.new_resource", name: display_resource_name(page.resource_name, count: 1)) %>
-  </h1>
-  <div>
-    <%= link_to t("administrate.actions.back"), :back, class: "button" %>
-  </div>
-</header>
+<% content_for(:title) do %>
+  <%= t('administrate.actions.new_resource', name: display_resource_name(page.resource_name, count: 1)) %>
+<% end %>
 
-<section class="main-content__body">
-  <%= render "form", page: page %>
-</section>
+<div class="space-y-6 w-full">
+  <div class="page-header flex items-center justify-between mb-6">
+    <h1 class="page-title">
+      <%= content_for(:title) %>
+    </h1>
+    <div class="page-actions">
+      <%= link_to :back, class: "inline-flex h-9 items-center justify-center rounded-md border border-input bg-background px-4 text-sm font-medium text-foreground shadow-xs hover:bg-accent hover:border-ring transition-colors" do %>
+        <span><%= t('administrate.actions.back') %></span>
+      <% end %>
+    </div>
+  </div>
+
+  <section class="form-card rounded-xl border border-border bg-card p-6 md:p-8 shadow-xs w-full">
+    <%= render 'form', page: page %>
+  </section>
+</div>

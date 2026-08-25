@@ -21,6 +21,7 @@ json.array! @video_testimonials do |testimonial|
   json.video_url testimonial.video.attached? ? url_for(testimonial.video) : nil
   json.thumbnail_url testimonial.thumbnail.attached? ? url_for(testimonial.thumbnail) : nil
   json.notes testimonial.notes
+  json.ai_insights testimonial.ai_insights
   json.token testimonial.token
   json.share_url reputation_testimonial_url(token: testimonial.token)
 end

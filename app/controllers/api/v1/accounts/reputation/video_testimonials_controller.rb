@@ -39,6 +39,16 @@ class Api::V1::Accounts::Reputation::VideoTestimonialsController < Api::V1::Acco
     render json: note
   end
 
+  # Phase 3 (flag: reputation_demo_surfaces): kick off transcription + AI analysis.
+  # Async — the FE polls index for the filled-in ai_insights.
+  def analyze
+    return head :forbidden unless Current.account.feature_enabled?('reputation_demo_surfaces')
+
+    testimonial = Current.account.reputation_video_testimonials.find(params[:id])
+    Reputation::VideoInsightsJob.perform_later(testimonial)
+    render json: { processing: true }
+  end
+
   # F5: stream the library as CSV (stdlib CSV, no export gem).
   def export
     rows = Current.account.reputation_video_testimonials.includes(:contact).order(created_at: :desc)

@@ -1154,7 +1154,7 @@ input, select, textarea { font: inherit; color: inherit; }
   justify-content: center;
   border-radius: 9999px;
   background-color: var(--primary);
-  color: #ffffff;
+  color: var(--primary-foreground);
   font-size: 14px;
   font-weight: 700;
 }
@@ -1166,7 +1166,7 @@ input, select, textarea { font: inherit; color: inherit; }
   height: 10px;
   border-radius: 9999px;
   border: 2px solid var(--background);
-  background-color: #22c55e;
+  background-color: var(--success);
 }
 .header-user-text {
   display: flex;
@@ -1686,7 +1686,7 @@ tbody td strong,
 }
 
 .status-failed {
-  color: #ef4444;
+  color: var(--destructive);
   font-weight: 500;
 }
 .status-success {
@@ -1698,7 +1698,7 @@ tbody td strong,
   font-weight: 500;
 }
 .status-text-active {
-  color: #10b981;
+  color: var(--success);
   font-weight: 500;
 }
 
@@ -1792,12 +1792,9 @@ tr:focus-within .row-actions {
   font-size: 12px;
   font-weight: 500;
 }
-.badge-success { background: #ecfdf5; color: #047857; }
-.badge-warning { background: #fffbeb; color: #b45309; }
-.badge-indigo { background: #eef2ff; color: #4338ca; }
-.dark .badge-success { background: rgba(52, 211, 153, 0.15); color: #34d399; }
-.dark .badge-warning { background: rgba(251, 191, 36, 0.15); color: #fbbf24; }
-.dark .badge-indigo { background: rgba(111, 113, 251, 0.15); color: #6f71fb; }
+.badge-success { background: color-mix(in srgb, var(--success) 12%, var(--card)); color: var(--success); }
+.badge-warning { background: color-mix(in srgb, var(--warning) 14%, var(--card)); color: var(--warning); }
+.badge-indigo { background: color-mix(in srgb, var(--primary) 12%, var(--card)); color: var(--primary); }
 
 .btn {
   display: inline-flex;
@@ -1813,17 +1810,18 @@ tr:focus-within .row-actions {
   cursor: pointer;
   border: 1px solid transparent;
 }
-.btn-primary {
+.btn.btn-primary {
   background-color: var(--primary);
   color: var(--primary-foreground);
+  border-color: transparent;
 }
-.btn-primary:hover { opacity: 0.92; }
-.btn-outline {
+.btn.btn-primary:hover { opacity: 0.92; }
+.btn.btn-outline {
   border-color: var(--border);
   background-color: var(--card);
   color: var(--foreground);
 }
-.btn-outline:hover { background-color: var(--accent); }
+.btn.btn-outline:hover { background-color: var(--accent); }
 .btn-sm { height: 32px; padding: 0 12px; font-size: 13px; }
 
 .input {
@@ -1918,7 +1916,7 @@ tr:focus-within .row-actions {
   color: var(--foreground);
 }
 .form-label-col .required-star {
-  color: #ef4444;
+  color: var(--destructive);
   margin-left: 2px;
 }
 
@@ -2200,7 +2198,7 @@ button.nr-select-trigger {
 
 .nr-calendar-day.selected {
   background-color: var(--primary);
-  color: #ffffff;
+  color: var(--primary-foreground);
   font-weight: 600;
 }
 
@@ -2312,7 +2310,7 @@ button.nr-select-trigger {
   position: absolute;
   top: 2px;
   right: 6px;
-  color: #ef4444;
+  color: var(--destructive);
   font-size: 18px;
   font-weight: 700;
   line-height: 1;
@@ -2408,7 +2406,7 @@ button.nr-select-trigger {
   top: 1.5px;
   width: 4px;
   height: 8px;
-  border: solid #ffffff;
+  border: solid var(--primary-foreground);
   border-width: 0 2px 2px 0;
   transform: rotate(45deg);
 }
@@ -2441,7 +2439,7 @@ button.nr-select-trigger {
   color: var(--foreground);
 }
 .premium-star {
-  color: #ef4444;
+  color: var(--destructive);
   font-weight: 700;
   font-size: 18px;
   line-height: 1;
@@ -2579,8 +2577,8 @@ button.nr-select-trigger {
   font-weight: 600;
 }
 .status-badge-pill.active {
-  background-color: rgba(16, 185, 129, 0.1);
-  color: #10b981;
+  background-color: color-mix(in srgb, var(--success) 10%, transparent);
+  color: var(--success);
 }
 .status-badge-pill svg {
   width: 13px;
@@ -2705,7 +2703,7 @@ button.nr-select-trigger {
   position: absolute;
   top: 2px;
   right: 6px;
-  color: #ef4444;
+  color: var(--destructive);
   font-size: 18px;
   font-weight: 700;
   line-height: 1;
@@ -3162,11 +3160,11 @@ input[type="file"].file-input-hidden {
 }
 
 /* Danger / Delete Soft Button */
-.btn-danger-soft,
-.btn-danger {
-  color: #dc2626 !important;
-  background-color: #fef2f2 !important;
-  border: 1px solid #fee2e2 !important;
+.btn.btn-danger-soft,
+.btn.btn-danger {
+  color: var(--destructive) !important;
+  background-color: color-mix(in oklab, var(--destructive) 10%, var(--card)) !important;
+  border: 1px solid color-mix(in oklab, var(--destructive) 20%, var(--border)) !important;
   font-weight: 500;
   display: inline-flex;
   align-items: center;
@@ -3177,23 +3175,11 @@ input[type="file"].file-input-hidden {
   cursor: pointer;
   transition: all 0.15s ease;
 }
-.btn-danger-soft:hover,
-.btn-danger:hover {
-  background-color: #fee2e2 !important;
-  color: #b91c1c !important;
-  border-color: #fca5a5 !important;
-}
-.dark .btn-danger-soft,
-.dark .btn-danger {
-  background-color: rgba(239, 68, 68, 0.15) !important;
-  border-color: rgba(239, 68, 68, 0.25) !important;
-  color: #f87171 !important;
-}
-.dark .btn-danger-soft:hover,
-.dark .btn-danger:hover {
-  background-color: rgba(239, 68, 68, 0.25) !important;
-  color: #fca5a5 !important;
-  border-color: rgba(239, 68, 68, 0.4) !important;
+.btn.btn-danger-soft:hover,
+.btn.btn-danger:hover {
+  background-color: color-mix(in oklab, var(--destructive) 16%, var(--card)) !important;
+  color: var(--destructive) !important;
+  border-color: color-mix(in oklab, var(--destructive) 35%, var(--border)) !important;
 }
 
 /* Modal Dialog System */
@@ -4284,8 +4270,8 @@ button.modal-close-btn {
   outline: none;
 }
 .inquiry-sent-box {
-  background-color: color-mix(in srgb, #10b981 6%, var(--card));
-  border: 1px solid color-mix(in srgb, #10b981 25%, var(--border));
+  background-color: color-mix(in srgb, var(--success) 6%, var(--card));
+  border: 1px solid color-mix(in srgb, var(--success) 25%, var(--border));
   border-radius: 8px;
   padding: 8px 10px;
   width: 100%;

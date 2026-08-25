@@ -228,6 +228,7 @@ Rails.application.routes.draw do
               end
               member do
                 post :add_note
+                post :analyze
               end
             end
           end

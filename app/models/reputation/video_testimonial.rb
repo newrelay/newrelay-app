@@ -3,6 +3,7 @@
 # Table name: reputation_video_testimonials
 #
 #  id                :bigint           not null, primary key
+#  ai_insights       :jsonb            not null
 #  approved_at       :datetime
 #  company           :string
 #  consented_at      :datetime

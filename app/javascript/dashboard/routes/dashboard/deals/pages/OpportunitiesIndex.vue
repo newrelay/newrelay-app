@@ -11,7 +11,7 @@ import DealFormDialog from 'dashboard/components-next/Deals/DealFormDialog.vue';
 import DealMetricsRow from 'dashboard/components-next/Deals/DealMetricsRow.vue';
 import Icon from 'dashboard/components-next/icon/Icon.vue';
 
-defineOptions({ name: 'DealsIndex' });
+defineOptions({ name: 'OpportunitiesIndex' });
 
 const {
   selectedDeal,
@@ -42,10 +42,10 @@ onMounted(load);
     >
       <div>
         <h1 class="text-base font-medium text-foreground">
-          {{ $t('DEALS.HEADER') }}
+          {{ $t('OPPORTUNITIES.HEADER') }}
         </h1>
         <p class="mt-1 text-[13px] font-medium text-muted-foreground">
-          {{ $t('DEALS.DESCRIPTION') }}
+          {{ $t('OPPORTUNITIES.DESCRIPTION') }}
         </p>
       </div>
       <RelayButton
@@ -53,7 +53,7 @@ onMounted(load);
         @click="openCreate"
       >
         <Icon icon="i-lucide-plus" class="size-4" />
-        {{ $t('DEALS.NEW') }}
+        {{ $t('OPPORTUNITIES.NEW') }}
       </RelayButton>
     </div>
 
@@ -68,7 +68,7 @@ onMounted(load);
         <RelayInput
           v-model="searchQuery"
           class="pl-9 text-[13px]"
-          :placeholder="$t('DEALS.SEARCH_PLACEHOLDER')"
+          :placeholder="$t('OPPORTUNITIES.SEARCH_PLACEHOLDER')"
         />
       </div>
     </div>
@@ -86,13 +86,13 @@ onMounted(load);
         class="flex flex-col items-center justify-center gap-3 rounded-xl border border-border/60 bg-card px-6 py-16 text-center"
       >
         <h2 class="text-[20px] font-[600] text-foreground">
-          {{ $t('DEALS.EMPTY.TITLE') }}
+          {{ $t('OPPORTUNITIES.EMPTY.TITLE') }}
         </h2>
         <p class="max-w-md text-[14px] text-muted-foreground">
-          {{ $t('DEALS.EMPTY.DESCRIPTION') }}
+          {{ $t('OPPORTUNITIES.EMPTY.DESCRIPTION') }}
         </p>
         <RelayButton class="mt-2 h-9 px-4 text-[13px]" @click="openCreate">
-          {{ $t('DEALS.NEW') }}
+          {{ $t('OPPORTUNITIES.NEW') }}
         </RelayButton>
       </div>
 
@@ -119,7 +119,7 @@ onMounted(load);
                 {{ $t('DEALS.TABLE.PRIORITY') }}
               </th>
               <th class="px-4 py-3 text-[12px] font-medium text-muted-foreground">
-                {{ $t('DEALS.TABLE.UPDATED') }}
+                {{ $t('DEALS.TABLE.PROBABILITY') }}
               </th>
               <th class="px-4 py-3" />
             </tr>
@@ -149,8 +149,8 @@ onMounted(load);
               <td class="px-4 py-3 text-[13px] capitalize text-foreground">
                 {{ deal.priority }}
               </td>
-              <td class="px-4 py-3 text-[13px] text-muted-foreground">
-                {{ formatDate(deal.updatedAt) }}
+              <td class="px-4 py-3 text-[13px] text-foreground">
+                {{ deal.probability }}%
               </td>
               <td class="px-4 py-3">
                 <div class="flex justify-end gap-1">

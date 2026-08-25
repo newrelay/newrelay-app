@@ -167,10 +167,10 @@ ready; remove `comingSoon: true`.
    (`pipelines` / `pipeline_stages` / `deals`, EnsureDefaultService,
    `/api/v1/accounts/{id}/pipelines|deals`, specs green).
 2. **Deals table + create/edit dialog** (Relay) — **done 2026-08-25** (sidebar Deals live).
-3. **Pipelines board + drag stage**.
-4. **Opportunities route** (reuse table; column set).
-5. **Sidebar:** flip Coming soon → live routes.
-6. **Empty states + computed metric chips.**
+3. **Pipelines board + drag stage** — **done 2026-08-25**.
+4. **Opportunities route** (reuse deals; probability column) — **done 2026-08-25**.
+5. **Sidebar:** Deals / Pipelines / Opportunities live — **done 2026-08-25**.
+6. **Empty states + computed metric chips** — **done 2026-08-25**.
 
 Do not port mock demo toggles. Do not add Workspace/Calendar.
 

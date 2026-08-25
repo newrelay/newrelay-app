@@ -55,7 +55,22 @@ on every page; do not start a second design system.
 
 ---
 
-## 3. Current state (audited 2026-08-24)
+## 3. Current state (re-audited 2026-08-25, live against localhost:3000/super_admin)
+
+> The 2026-08-24 audit below is **stale**. A live pass on 2026-08-25 (logged into the running
+> app, side-by-side with the Vercel mock) found nearly every item in the original "Hard gaps"
+> table already shipped in commits after that audit (`4f7db256`, `6d2b99f0`, `ce8db2b0`,
+> `c53f331f` and others). One real, live bug was found and fixed: Administrate's bundled
+> `selectize.js` (`administrate/components/select.js`, gem-provided, not app code) still
+> auto-initializes on every `.field-unit--select select` and rendered its own widget stacked
+> under our `.nr-select` trigger — two visible dropdowns per field. Fixed with one CSS rule
+> (`.selectize-control { display: none !important; }`) in `super_admin/index.scss` — the
+> underlying `<select>` stays the real form field for both, so no functional risk. Verified on
+> New/Edit Account and New User forms.
+>
+> Rows below reflect what was actually re-checked in-browser on 2026-08-25. Rows not
+> re-verified (most of §4 C3–C10, D3–D4, F6–F9) still carry the 2026-08-24 assessment —
+> treat those as **unconfirmed**, not necessarily still gaps.
 
 ### Already in place (keep, polish)
 
@@ -63,28 +78,28 @@ on every page; do not start a second design system.
 |---|---|---|
 | Color / type tokens | `super_admin/index.scss` `:root` / `.dark` | **Same hex** as the live mock (`--primary: #4f46e5`, `--sidebar: #f9fafd`, Geist, radius `0.75rem`) |
 | App chrome | `layouts/super_admin/application.html.erb`, `_navigation.html.erb`, `_header.html.erb` | Shell is the same: 240px sidebar, brand card, ⌘K search pill, theme toggle, notifications, user pill |
-| Dashboard | `dashboard/index.html.erb` + `superadmin_pages/views/dashboard/Index.vue` | Same 4 stat cards + Conversation Activity chart. Extra Avg / Trend stats in our Vue vs mock header (mock shows Total + Peak). Align to mock. |
-| Collection index | `application/index.html.erb`, `_collection.html.erb`, `_filters.html.erb`, `_search.html.erb` | Table card, sort icons, filter dropdown, search field, New button, row edit/delete icons |
-| Show / New / Edit shells | `application/show.html.erb`, `new.html.erb`, `edit.html.erb`, `_form.html.erb` | Card + field grid exists. Native selects and hex hover borders remain. |
-| Feature flag cards | `views/fields/enterprise_features_field/_form.html.erb` + SCSS `.feature-flag-card` | Pattern exists. Show page still uses key/value rows instead of read-only flag cards. |
-| Custom select kit | SCSS `.nr-select` + mock `initCustomSelects()` | CSS exists. Most ERB forms still render native `<select>`. |
+| Dashboard | `dashboard/index.html.erb` + `superadmin_pages/views/dashboard/Index.vue` | **Re-verified 08-25: Match.** Mock itself also shows Total/Peak/Avg-Period/Trend (the 08-24 audit was wrong to call this a gap) — ours already matches. |
+| Collection index | `application/index.html.erb`, `_collection.html.erb`, `_filters.html.erb`, `_search.html.erb` | Table card, sort icons, filter dropdown, search field, New button, row edit/delete icons. Re-verified on Accounts/Users 08-25: Match. |
+| Show / New / Edit shells | `application/show.html.erb`, `new.html.erb`, `edit.html.erb`, `_form.html.erb` | **Re-verified 08-25: Match**, after fixing the selectize double-select bug above. Custom `.nr-select` is now the only visible control. |
+| Feature flag cards | `views/fields/enterprise_features_field/_show.html.erb` / `_form.html.erb` + SCSS | **Re-verified 08-25: Match.** Account show renders flags as check-icon pills, not key/value rows. |
+| Custom select kit | SCSS `.nr-select` + `superadmin/custom_select.js` | **Re-verified 08-25: Match**, once the selectize conflict was suppressed. |
 | Sign-in | `devise/sessions/new.html.erb` | Mock has **no login**. Keep ours; it already uses tokens. |
-| Settings / plan / push / inquiries | respective `show.html.erb` / `index.html.erb` | Structure exists; leftover `green-*` / `violet-*` / `slate-*` classes. |
+| Settings / plan / push / inquiries | respective `show.html.erb` / `index.html.erb` | **Re-verified 08-25 (Settings, Plan Management, Payment Gateways): Match.** `grep` found no remaining `slate-*`/`violet-*`/`green-50` in `app/views/super_admin` or `enterprise/app/views/super_admin`. Push Diagnostics not re-checked. |
 
-### Hard gaps (must fix)
+### Hard gaps — re-audit result
 
-| Gap | Where | Why it fails the mock |
+| Gap (2026-08-24 claim) | Where | 2026-08-25 finding |
 |---|---|---|
-| Hardcoded hex | Many ERB files: `hover:border-[#cac7f7]` | Mock uses `var(--ring)` / `var(--focus-border)`. Hardcoded hex also breaks dark mode. |
-| Hardcoded Tailwind palette | Hierarchy, notices, Discord CTA, payment tags | `slate-*`, `violet-*`, `green-50`, `bg-violet-600` are forbidden. Use `border-border`, `bg-primary`, `text-success`, `bg-destructive/10`. |
-| Native `<select>` | Forms, filters, account-user role, payment gateways | Mock replaces every select with `.nr-select` (trigger + menu + check). Native OS popups are out. |
-| Account Hierarchy | `enterprise/app/views/super_admin/account_hierarchy/show.html.erb` | Still `main-content__page-title` + `border-slate-*`. Mock has page subtitle, search, and design-system cards. |
-| Sidekiq placement | `_navigation.html.erb` footer vs mock main list | Mock puts Sidekiq in the **main** nav (external-link icon), not the footer. Footer is Settings + Log Out. |
-| Delete confirm | Administrate `data-confirm` browser dialog | Mock uses a custom delete modal (`#deleteConfirmModal`: title, item name, Keep / Delete). |
-| Toasts | Flash partial only | Mock uses a toast container for success after save. Keep flashes **and** add the toast for in-page actions that do not redirect. |
-| Command palette results | `_search_modal.html.erb` | Mock lists jump-to pages with label + description + Jump chip. Ours is a placeholder. |
-| Empty table | `_collection.html.erb` | Mock empty state is a boxed icon + "No {Resource} found." Match icon size, muted color, padding. |
-| Chart | Dashboard Vue vs mock canvas | Mock: spline canvas, `#5b5bd6` / `#7373f7` dark, 45° x labels, hover tooltip, Total + Peak only. Ours: Chart.js line + Avg + Trend. Match mock chrome; keep real `@data`. |
+| Hardcoded hex | Many ERB files | **Not found.** Only remaining hex is in `_icons.html.erb` SVG `fill` attributes and `dashboard_chart.js` canvas colors — both legitimate (Tailwind classes don't apply inside raw SVG paths or Canvas2D `strokeStyle`). |
+| Hardcoded Tailwind palette (`slate-*`/`violet-*`/`green-*`) | Hierarchy, notices, Discord CTA, payment tags | **Not found** — grep across `app/views/super_admin`, `enterprise/app/views/super_admin`, `app/javascript/superadmin` returned zero matches. Settings' "Community Support" CTA already uses `bg-primary`. |
+| Native `<select>` | Forms, filters, account-user role, payment gateways | **Was a real bug, now fixed** — see the selectize note above. `.nr-select` is the only visible control everywhere checked. |
+| Account Hierarchy | `enterprise/.../account_hierarchy/show.html.erb` | **Done.** Fully redesigned: page-title, subtitle, search, stat cards, `hierarchy-node-card`, `status-text-active` — same language as Accounts. No `slate-*` left. |
+| Sidekiq placement | `_navigation.html.erb` | **Done.** "Sidekiq Dashboard" now renders in the main nav list with an external-link icon, matching the mock. |
+| Delete confirm | Administrate `data-confirm` | **Done.** Custom modal (`superadmin/delete_confirm.js`) — trash icon, "Delete record" / "Are you sure?", Keep record / Delete record, blurred backdrop. Verified on Accounts index. |
+| Toasts | Flash partial only | `superadmin/toast.js` exists; not re-verified end-to-end (no in-page save action was exercised in this pass). |
+| Command palette results | `_search_modal.html.erb` | **Done.** `superadmin/command_palette.js` — real Super Admin routes with label + description + Jump chip, opens on ⌘K, closes on Esc. Verified. |
+| Empty table | `_collection.html.erb` | Not re-verified (no empty resource available in the seeded data used for this pass). |
+| Chart | Dashboard Vue vs mock canvas | **Re-verified: Match.** `dashboard_chart.js` uses the mock's series colors (`#5b5bd6` / `#7373f7`) and Total/Peak/Avg/Trend header, same as the mock. |
 
 ---
 

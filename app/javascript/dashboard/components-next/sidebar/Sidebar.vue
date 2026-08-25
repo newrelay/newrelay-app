@@ -415,14 +415,14 @@ const primaryMenuItems = computed(() => {
         {
           name: 'Pipelines',
           label: t('SIDEBAR.PIPELINES'),
-          disabled: true,
-          comingSoon: true,
+          to: accountScopedRoute('pipelines_dashboard_index'),
+          activeOn: ['pipelines_dashboard_index'],
         },
         {
           name: 'Opportunities',
           label: t('SIDEBAR.OPPORTUNITIES'),
-          disabled: true,
-          comingSoon: true,
+          to: accountScopedRoute('opportunities_dashboard_index'),
+          activeOn: ['opportunities_dashboard_index'],
         },
       ],
     },

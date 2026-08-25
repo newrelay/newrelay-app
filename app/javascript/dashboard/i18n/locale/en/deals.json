@@ -8,12 +8,20 @@
       "DESCRIPTION": "Create your first deal to start tracking opportunities."
     },
     "SEARCH_PLACEHOLDER": "Search deals...",
+    "METRICS": {
+      "TOTAL": "Total deals",
+      "PIPELINE_VALUE": "Pipeline value",
+      "WEIGHTED_VALUE": "Weighted value",
+      "AVG_DEAL": "Avg. deal value",
+      "WIN_RATE": "Win rate"
+    },
     "TABLE": {
       "NAME": "Deal",
       "STAGE": "Stage",
       "AMOUNT": "Amount",
       "CLOSE_ON": "Close date",
       "PRIORITY": "Priority",
+      "PROBABILITY": "Probability",
       "UPDATED": "Updated"
     },
     "FORM": {
@@ -63,5 +71,20 @@
       "CONFIRM": "Delete",
       "CANCEL": "Cancel"
     }
+  },
+  "PIPELINES": {
+    "HEADER": "Pipelines",
+    "DESCRIPTION": "Visualize and manage your deals across every stage.",
+    "EMPTY_COLUMN": "No deals"
+  },
+  "OPPORTUNITIES": {
+    "HEADER": "Opportunities",
+    "DESCRIPTION": "Track and manage all your sales opportunities in one place.",
+    "SEARCH_PLACEHOLDER": "Search opportunities...",
+    "EMPTY": {
+      "TITLE": "No opportunities yet",
+      "DESCRIPTION": "Create a deal to start tracking opportunities."
+    },
+    "NEW": "New Opportunity"
   }
 }

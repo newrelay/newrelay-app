@@ -2,7 +2,7 @@
 
 **Status:** Draft · **Owner:** Dashboard UI · **Compared:** 2026-08-25
 **Locked 2026-08-25:** do **not** update Workspace, Customer Engagement, or Reputation.
-**Phase 0–1:** complete 2026-08-25. **Next:** Phase 2 CRM (own PRD) or Phase 3 analytics.
+**Phase 0–1:** complete 2026-08-25. **Phase 2 PRD:** drafted (`crm-deals-pipelines-prd.md`); build blocked on §7.
 **Source of truth (visual + IA):** [https://new-relay-ui.vercel.app](https://new-relay-ui.vercel.app)
 **This app:** `app/javascript/dashboard/` (Vue 3, Relay tokens)
 
@@ -106,11 +106,10 @@ Source: `Sidebar.vue` `primaryMenuItems` (~line 265).
      stay on WootWriter; global `woot-code` tag name remains (component
      already Relay-styled).
 
-### Phase 2 — CRM objects (own spec) — not started
+### Phase 2 — CRM objects — **in progress (defaults approved 2026-08-25)**
 
-Deals / Pipelines / Opportunities need schema/API. Coming soon leaves are
-already in the sidebar. Do not port mock dollars. Do not start this until
-product commits to a CRM backend PRD.
+PRD: `docs/solution-notes/crm-deals-pipelines-prd.md`. Schema/API first;
+UI follows. Do not port mock dollars.
 
 ### Phase 3 — Campaign Analytics when metrics exist
 
@@ -139,5 +138,6 @@ product commits to a CRM backend PRD.
 ## 8. Related
 
 - Settings leftover `woot-*`: `docs/solution-notes/settings-ui-newrelay-port-prd.md`
+- CRM Phase 2: `docs/solution-notes/crm-deals-pipelines-prd.md`
 - Super Admin: `docs/solution-notes/super-admin-ui-prd.md`
 - Reputation (do not expand here): `docs/solution-notes/reputation-design-port.md`

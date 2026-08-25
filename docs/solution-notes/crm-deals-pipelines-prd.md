@@ -1,10 +1,10 @@
 # PRD — CRM Deals / Pipelines / Opportunities (Phase 2)
 
-**Status:** Draft · **Owner:** Product + Dashboard · **Created:** 2026-08-25  
+**Status:** Approved (defaults) · **Owner:** Product + Dashboard · **Created:** 2026-08-25 · **Approved:** 2026-08-25  
 **Parent:** `docs/solution-notes/newrelay-ui-parity-prd.md` (Phase 2)  
 **Visual source:** [new-relay-ui.vercel.app](https://new-relay-ui.vercel.app) → Deals / Pipelines / Opportunities  
 **Markup:** `NewRelay-UI/src/views/{deals,pipelines,opportunities}/*`  
-**Do not start build** until product signs the open decisions in §7.
+**Build started 2026-08-25** with §7 recommended defaults (user “next”).
 
 **Success in one line:** agents can create, stage-move, and list real deals linked to
 Contacts/Companies — with Relay UI matching the mock’s table + board — without
@@ -157,7 +157,7 @@ ready; remove `comingSoon: true`.
 | 7 | Import? | **Defer.** |
 | 8 | Plan / feature flag? | **No flag** for MVP unless billing requires it. |
 
-**Build starts only after:** decisions 1–3 + 5 confirmed (or explicitly overridden).
+**Decisions 1–3 + 5:** approved as recommended defaults (2026-08-25).
 
 ---
 

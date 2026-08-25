@@ -317,6 +317,8 @@ Rails.application.routes.draw do
             end
           end
           resources :labels, only: [:index, :show, :create, :update, :destroy]
+          resources :pipelines, only: [:index, :show, :create, :update, :destroy]
+          resources :deals, only: [:index, :show, :create, :update, :destroy]
 
           resources :notifications, only: [:index, :update, :destroy] do
             collection do

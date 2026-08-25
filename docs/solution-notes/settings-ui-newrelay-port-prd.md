@@ -126,9 +126,9 @@ macros, automation, notifications, attributes, customRoles, assignmentPolicy,
 agentBots, reports. `account/Index.vue` (the reference screenshot page) is the
 reference implementation of recipe 5a.
 
-## 7. Current state — PENDING (10 files, in scope)
+## 7. Current state — DONE (10/10 files ported, 2026-08-25)
 
-Each file mapped to the recipe it should adopt.
+Each file mapped to the recipe it adopted.
 
 | # | File | Recipe | Notes |
 |---|------|--------|-------|
@@ -194,5 +194,8 @@ Each file mapped to the recipe it should adopt.
 
 ## 11. Open questions
 
-- Any pages intentionally excluded (Captain / Enterprise-only)?
-- `sla/SlaForm` — modal or inline page? (drives recipe choice)
+- ~~`sla/SlaForm` — modal or inline page?~~ **Resolved during QA:** it's a
+  `RelayModal` ("Add SLA" dialog), confirmed 2026-08-25.
+- Any pages intentionally excluded (Captain / Enterprise-only)? Still open —
+  no Captain/Enterprise settings pages were touched or found under
+  `settings/` in this pass; flag if any exist elsewhere and need the same treatment.

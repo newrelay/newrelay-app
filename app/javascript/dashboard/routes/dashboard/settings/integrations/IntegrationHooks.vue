@@ -8,6 +8,7 @@ import SingleIntegrationHooks from './SingleIntegrationHooks.vue';
 import MultipleIntegrationHooks from './MultipleIntegrationHooks.vue';
 import SettingsLayout from '../SettingsLayout.vue';
 import BaseSettingsHeader from '../components/BaseSettingsHeader.vue';
+import { RelayConfirmModal } from 'dashboard/components-next/relay';
 
 export default {
   components: {
@@ -16,6 +17,7 @@ export default {
     MultipleIntegrationHooks,
     SettingsLayout,
     BaseSettingsHeader,
+    RelayConfirmModal,
   },
   props: {
     integrationId: {
@@ -151,14 +153,14 @@ export default {
       @close="hideAddHookModal"
     />
 
-    <woot-delete-modal
-      v-model:show="showDeleteConfirmationPopup"
-      :on-close="closeDeletePopup"
-      :on-confirm="confirmDeletion"
+    <RelayConfirmModal
+      :show="showDeleteConfirmationPopup"
       :title="deleteTitle"
       :message="deleteMessage"
       :confirm-text="confirmText"
-      :reject-text="cancelText"
+      :cancel-text="cancelText"
+      @confirm="confirmDeletion"
+      @close="closeDeletePopup"
     />
   </SettingsLayout>
 </template>

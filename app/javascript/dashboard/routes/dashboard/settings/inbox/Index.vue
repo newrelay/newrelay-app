@@ -18,6 +18,7 @@ import ChannelName from './components/ChannelName.vue';
 import ChannelIcon from 'next/icon/ChannelIcon.vue';
 import {
   RelayButton,
+  RelayConfirmModal,
   RelayInput,
   RelayTooltip,
 } from 'dashboard/components-next/relay';
@@ -250,17 +251,16 @@ const openAddInbox = () => {
       </SettingsListCard>
     </template>
 
-    <woot-confirm-delete-modal
-      v-if="showDeletePopup"
-      v-model:show="showDeletePopup"
+    <RelayConfirmModal
+      :show="showDeletePopup"
       :title="$t('INBOX_MGMT.DELETE.CONFIRM.TITLE')"
       :message="confirmDeleteMessage"
       :confirm-text="deleteConfirmText"
-      :reject-text="deleteRejectText"
+      :cancel-text="deleteRejectText"
       :confirm-value="selectedInbox.name"
-      :confirm-place-holder-text="confirmPlaceHolderText"
-      @on-confirm="confirmDeletion"
-      @on-close="closeDelete"
+      :confirm-placeholder="confirmPlaceHolderText"
+      @confirm="confirmDeletion"
+      @close="closeDelete"
     />
   </SettingsLayout>
 </template>

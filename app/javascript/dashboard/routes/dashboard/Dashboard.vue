@@ -23,7 +23,6 @@ const FloatingCallWidget = defineAsyncComponent(
   () => import('dashboard/components-next/call/FloatingCallWidget.vue')
 );
 
-import CopilotLauncher from 'dashboard/components-next/copilot/CopilotLauncher.vue';
 import CopilotContainer from 'dashboard/components/copilot/CopilotContainer.vue';
 
 import MobileSidebarLauncher from 'dashboard/components-next/sidebar/MobileSidebarLauncher.vue';
@@ -37,7 +36,6 @@ export default {
     WootKeyShortcutModal,
     AddAccountModal,
     UpgradePage,
-    CopilotLauncher,
     CopilotContainer,
     FloatingCallWidget,
     MobileSidebarLauncher,
@@ -347,7 +345,6 @@ export default {
         <template v-if="!showUpgradePage">
           <router-view />
           <CommandBar />
-          <CopilotLauncher />
           <MobileSidebarLauncher
             :is-mobile-sidebar-open="isMobileSidebarOpen"
             @toggle="toggleMobileSidebar"

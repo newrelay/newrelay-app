@@ -90,10 +90,23 @@ Source: `Sidebar.vue` `primaryMenuItems` (~line 265).
    Opportunities; Funnels, Landing Pages, Forms, Surveys. Sidebar leaves
    without a `to` now render (also unblocks Analytics Coming soon leaves).
 3. **Do not** add Workspace. **Do not** remap Reputation.
+4. Floating Relay AI FAB — **removed 2026-08-25** (`CopilotLauncher` unmounted
+   from `Dashboard.vue`). Copilot panel still opens from the conversation
+   sidepanel switch. Shared settings loading spinner in `SettingsLayout.vue`
+   no longer uses `woot-loading-state`.
+5. Settings leftover widgets pass — **done 2026-08-25 (batch A):**
+   - `woot-loading-state` → Spinner in macros, assignment policies, website
+     channel create, plus shared `SettingsLayout`.
+   - Delete / confirm modals → `RelayConfirmModal` in inboxes, teams,
+     account delete, integration hooks, automation (delete + toggle).
+   - **Still leftover (batch B, not started):** `woot-code`, `woot-wizard`,
+     `WootMessageEditor`, `WootDatePicker`, `WootReports`.
 
-### Phase 2 — CRM objects (own spec)
+### Phase 2 — CRM objects (own spec) — not started
 
-Deals / Pipelines / Opportunities need schema/API. Do not port mock dollars.
+Deals / Pipelines / Opportunities need schema/API. Coming soon leaves are
+already in the sidebar. Do not port mock dollars. Do not start this until
+product commits to a CRM backend PRD.
 
 ### Phase 3 — Campaign Analytics when metrics exist
 
@@ -115,7 +128,7 @@ Deals / Pipelines / Opportunities need schema/API. Do not port mock dollars.
 |---|---|---|
 | 1 | ⌘K palette vs Search page only? | **Palette** that can jump to Search |
 | 2 | Deals / Pipelines / Opportunities: Coming soon or real CRM? | **Coming soon** |
-| 3 | Floating Relay AI FAB? | **No FAB** |
+| 3 | Floating Relay AI FAB? | **Closed — no FAB** (launcher unmounted) |
 
 ---
 

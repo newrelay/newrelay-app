@@ -10,12 +10,31 @@ import { useStoreGetters, useStore } from 'dashboard/composables/store';
 import { picoSearch } from '@scmmishra/pico-search';
 import AutomationRuleRow from './AutomationRuleRow.vue';
 import Icon from 'dashboard/components-next/icon/Icon.vue';
-import { RelayButton, RelayInput } from 'dashboard/components-next/relay';
+import {
+  RelayButton,
+  RelayConfirmModal,
+  RelayInput,
+} from 'dashboard/components-next/relay';
 
 const getters = useStoreGetters();
 const store = useStore();
 const { t } = useI18n();
-const confirmDialog = ref(null);
+const showToggleConfirmationPopup = ref(false);
+let toggleConfirmResolve = null;
+
+const askToggleConfirmation = () =>
+  new Promise(resolve => {
+    toggleConfirmResolve = resolve;
+    showToggleConfirmationPopup.value = true;
+  });
+
+const closeToggleConfirmation = confirmed => {
+  showToggleConfirmationPopup.value = false;
+  if (toggleConfirmResolve) {
+    toggleConfirmResolve(confirmed);
+    toggleConfirmResolve = null;
+  }
+};
 
 const loading = ref({});
 const addDialogRef = ref(null);
@@ -160,7 +179,7 @@ const toggleAutomation = async ({ id, name, status }) => {
       );
     }
 
-    const ok = await confirmDialog.value.showConfirmation();
+    const ok = await askToggleConfirmation();
     if (ok) {
       await store.dispatch('automations/update', {
         id: id,
@@ -304,15 +323,15 @@ const toggleAutomation = async ({ id, name, status }) => {
 
     <AddAutomationRule ref="addDialogRef" @save-automation="submitAutomation" />
 
-    <woot-delete-modal
-      v-model:show="showDeleteConfirmationPopup"
-      :on-close="closeDeletePopup"
-      :on-confirm="confirmDeletion"
+    <RelayConfirmModal
+      :show="showDeleteConfirmationPopup"
       :title="$t('LABEL_MGMT.DELETE.CONFIRM.TITLE')"
       :message="$t('AUTOMATION.DELETE.CONFIRM.MESSAGE')"
       :message-value="deleteMessage"
       :confirm-text="deleteConfirmText"
-      :reject-text="deleteRejectText"
+      :cancel-text="deleteRejectText"
+      @confirm="confirmDeletion"
+      @close="closeDeletePopup"
     />
 
     <EditAutomationRule
@@ -320,10 +339,14 @@ const toggleAutomation = async ({ id, name, status }) => {
       :selected-response="selectedAutomation"
       @save-automation="submitAutomation"
     />
-    <woot-confirm-modal
-      ref="confirmDialog"
+    <RelayConfirmModal
+      :show="showToggleConfirmationPopup"
       :title="toggleModalTitle"
-      :description="toggleModalDescription"
+      :message="toggleModalDescription"
+      :confirm-text="$t('AUTOMATION.TOGGLE.CONFIRMATION_LABEL')"
+      :cancel-text="$t('AUTOMATION.TOGGLE.CANCEL_LABEL')"
+      @confirm="closeToggleConfirmation(true)"
+      @close="closeToggleConfirmation(false)"
     />
   </SettingsLayout>
 </template>

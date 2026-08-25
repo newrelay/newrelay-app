@@ -1,4 +1,6 @@
 <script setup>
+import Spinner from 'dashboard/components-next/spinner/Spinner.vue';
+
 defineProps({
   isLoading: {
     type: Boolean,
@@ -26,7 +28,12 @@ defineProps({
     <main>
       <slot name="preBody" />
       <slot v-if="isLoading" name="loading">
-        <woot-loading-state :message="loadingMessage" />
+        <div
+          class="flex flex-col items-center justify-center gap-3 py-20 text-muted-foreground"
+        >
+          <Spinner :size="28" class="text-primary" />
+          <p v-if="loadingMessage" class="text-sm">{{ loadingMessage }}</p>
+        </div>
       </slot>
       <p
         v-else-if="noRecordsFound"

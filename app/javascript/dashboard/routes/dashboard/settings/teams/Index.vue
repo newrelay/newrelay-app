@@ -11,7 +11,11 @@ import { useRouter } from 'vue-router';
 
 import Icon from 'dashboard/components-next/icon/Icon.vue';
 import DropdownMenu from 'dashboard/components-next/dropdown-menu/DropdownMenu.vue';
-import { RelayButton, RelayInput } from 'dashboard/components-next/relay';
+import {
+  RelayButton,
+  RelayConfirmModal,
+  RelayInput,
+} from 'dashboard/components-next/relay';
 
 const PER_PAGE_OPTIONS = [5, 10, 20, 50];
 
@@ -479,17 +483,16 @@ const confirmPlaceHolderText = computed(() =>
       </div>
     </template>
 
-    <woot-confirm-delete-modal
-      v-if="showDeletePopup"
-      v-model:show="showDeletePopup"
+    <RelayConfirmModal
+      :show="showDeletePopup"
       :title="confirmDeleteTitle"
       :message="$t('TEAMS_SETTINGS.DELETE.CONFIRM.MESSAGE')"
       :confirm-text="deleteConfirmText"
-      :reject-text="deleteRejectText"
+      :cancel-text="deleteRejectText"
       :confirm-value="selectedTeam.name"
-      :confirm-place-holder-text="confirmPlaceHolderText"
-      @on-confirm="confirmDeletion"
-      @on-close="closeDelete"
+      :confirm-placeholder="confirmPlaceHolderText"
+      @confirm="confirmDeletion"
+      @close="closeDelete"
     />
   </SettingsLayout>
 </template>

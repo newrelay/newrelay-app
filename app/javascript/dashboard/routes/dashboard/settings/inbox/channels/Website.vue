@@ -6,6 +6,7 @@ import PageHeader from '../../SettingsSubPageHeader.vue';
 import GreetingsEditor from 'shared/components/GreetingsEditor.vue';
 import Editor from 'dashboard/components-next/Editor/Editor.vue';
 import { RelayButton, RelayInput } from 'dashboard/components-next/relay';
+import Spinner from 'dashboard/components-next/spinner/Spinner.vue';
 
 const INPUT_CLASS =
   'h-10 rounded-md border-border/80 bg-background px-4 text-[14px] shadow-sm focus-visible:ring-1 focus-visible:ring-primary/30';
@@ -17,6 +18,7 @@ export default {
     Editor,
     RelayButton,
     RelayInput,
+    Spinner,
   },
   data() {
     return {
@@ -89,10 +91,15 @@ export default {
       :header-title="$t('INBOX_MGMT.ADD.WEBSITE_CHANNEL.TITLE')"
       :header-content="$t('INBOX_MGMT.ADD.WEBSITE_CHANNEL.DESC')"
     />
-    <woot-loading-state
+    <div
       v-if="uiFlags.isCreating"
-      :message="$t('INBOX_MGMT.ADD.WEBSITE_CHANNEL.LOADING_MESSAGE')"
-    />
+      class="flex flex-col items-center justify-center gap-3 py-20 text-muted-foreground"
+    >
+      <Spinner :size="28" class="text-primary" />
+      <p class="text-sm">
+        {{ $t('INBOX_MGMT.ADD.WEBSITE_CHANNEL.LOADING_MESSAGE') }}
+      </p>
+    </div>
     <form
       v-if="!uiFlags.isCreating"
       class="space-y-6"

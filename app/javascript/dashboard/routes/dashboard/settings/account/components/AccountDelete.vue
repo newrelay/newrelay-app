@@ -5,8 +5,7 @@ import { useAccount } from 'dashboard/composables/useAccount';
 import { useI18n } from 'vue-i18n';
 import { useToggle } from '@vueuse/core';
 import { useAlert } from 'dashboard/composables';
-import WootConfirmDeleteModal from 'dashboard/components/widgets/modal/ConfirmDeleteModal.vue';
-import { RelayButton } from 'dashboard/components-next/relay';
+import { RelayButton, RelayConfirmModal } from 'dashboard/components-next/relay';
 import SectionLayout from './SectionLayout.vue';
 
 const { t } = useI18n();
@@ -138,18 +137,17 @@ async function clearDeletionMark() {
       </div>
     </template>
   </SectionLayout>
-  <WootConfirmDeleteModal
-    v-if="showDeletePopup"
-    v-model:show="showDeletePopup"
+  <RelayConfirmModal
+    :show="showDeletePopup"
     :title="$t('GENERAL_SETTINGS.ACCOUNT_DELETE_SECTION.CONFIRM.TITLE')"
     :message="$t('GENERAL_SETTINGS.ACCOUNT_DELETE_SECTION.CONFIRM.MESSAGE')"
     :confirm-text="
       $t('GENERAL_SETTINGS.ACCOUNT_DELETE_SECTION.CONFIRM.BUTTON_TEXT')
     "
-    :reject-text="$t('GENERAL_SETTINGS.ACCOUNT_DELETE_SECTION.CONFIRM.DISMISS')"
+    :cancel-text="$t('GENERAL_SETTINGS.ACCOUNT_DELETE_SECTION.CONFIRM.DISMISS')"
     :confirm-value="currentAccount.name"
-    :confirm-place-holder-text="confirmPlaceHolderText"
-    @on-confirm="markAccountForDeletion"
-    @on-close="toggleDeletePopup(false)"
+    :confirm-placeholder="confirmPlaceHolderText"
+    @confirm="markAccountForDeletion"
+    @close="toggleDeletePopup(false)"
   />
 </template>

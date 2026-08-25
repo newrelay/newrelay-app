@@ -18,6 +18,7 @@ import {
   RelayConfirmModal,
   RelayInput,
 } from 'dashboard/components-next/relay';
+import Spinner from 'dashboard/components-next/spinner/Spinner.vue';
 
 const getters = useStoreGetters();
 const store = useStore();
@@ -374,7 +375,13 @@ const saveMacro = async macroData => {
             @submit="saveMacro"
             @close="closeBuilder"
           />
-          <woot-loading-state v-else :message="t('MACROS.EDITOR.LOADING')" />
+          <div
+            v-else
+            class="flex flex-1 flex-col items-center justify-center gap-3 text-muted-foreground"
+          >
+            <Spinner :size="28" class="text-primary" />
+            <p class="text-sm">{{ t('MACROS.EDITOR.LOADING') }}</p>
+          </div>
         </div>
       </div>
     </template>

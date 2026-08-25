@@ -9,6 +9,7 @@ import { useAlert } from 'dashboard/composables';
 import ConfirmDeletePolicyDialog from './components/ConfirmDeletePolicyDialog.vue';
 import Icon from 'dashboard/components-next/icon/Icon.vue';
 import { RelayButton } from 'dashboard/components-next/relay';
+import Spinner from 'dashboard/components-next/spinner/Spinner.vue';
 
 const store = useStore();
 const { t } = useI18n();
@@ -74,10 +75,15 @@ onMounted(() => {
       </RelayButton>
     </div>
 
-    <woot-loading-state
+    <div
       v-if="uiFlags.isFetching"
-      :message="$t('ASSIGNMENT_POLICY.AGENT_CAPACITY_POLICY.INDEX.LOADING')"
-    />
+      class="flex flex-col items-center justify-center gap-3 py-20 text-muted-foreground"
+    >
+      <Spinner :size="28" class="text-primary" />
+      <p class="text-sm">
+        {{ $t('ASSIGNMENT_POLICY.AGENT_CAPACITY_POLICY.INDEX.LOADING') }}
+      </p>
+    </div>
 
     <div
       v-else-if="!policies.length"

@@ -30,6 +30,7 @@ const flattenNavLeaves = items =>
   );
 
 const childHasAccessibleRoute = (child, allowed) => {
+  if (child.comingSoon) return true;
   if (child.children?.length) {
     return child.children.some(sub => childHasAccessibleRoute(sub, allowed));
   }
@@ -356,7 +357,7 @@ watch(
                 :is-last="index === accessibleItems.length - 1"
               />
               <SidebarGroupLeaf
-                v-else-if="isAllowed(child.to)"
+                v-else-if="child.comingSoon || isAllowed(child.to)"
                 v-bind="child"
                 :active="activeChild?.name === child.name"
                 :depth="1"

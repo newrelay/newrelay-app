@@ -2,6 +2,7 @@
 
 **Status:** Draft · **Owner:** Dashboard UI · **Compared:** 2026-08-25
 **Locked 2026-08-25:** do **not** update Workspace, Customer Engagement, or Reputation.
+**Phase started:** 2026-08-25 (copy + Coming soon leaves + ⌘K).
 **Source of truth (visual + IA):** [https://new-relay-ui.vercel.app](https://new-relay-ui.vercel.app)
 **This app:** `app/javascript/dashboard/` (Vue 3, Relay tokens)
 
@@ -73,20 +74,22 @@ Source: `Sidebar.vue` `primaryMenuItems` (~line 265).
 
 ### Phase 0 — this sprint
 
-Child PRD: `docs/solution-notes/settings-ui-newrelay-port-prd.md`
-(settings leftover `woot-*`: inbox IMAP/SMTP, profile, SLA).
-
-Optional: `SIDEBAR.CAPTAIN` `"Relay"` → **Relay AI** in `en.json` only.
+- Settings leftover `woot-*`: already converted (see child PRD).
+- `SIDEBAR.CAPTAIN` → **Relay AI** — done 2026-08-25.
 
 **Removed from Phase 0:** conversations/inbox visual QA, conversation
 `woot-*` strip, onboarding vs live `/conversations`.
 
 ### Phase 1 — remaining shell (no new backends)
 
-1. ⌘K palette overlay that can still jump to `/search`. Keep `modules/search`.
-2. Coming soon leaves: Deals, Pipelines, Opportunities (unless CRM PRD).
-3. Coming soon leaves: Funnels, Landing Pages, Forms, Surveys.
-4. **Do not** add Workspace. **Do not** remap Reputation.
+1. ⌘K palette overlay — **done 2026-08-25.** Header search / ⌘K opens the
+   existing `ninja-keys` CommandBar. Palette includes **Go to Search** so
+   `/search` stays reachable. Fallback: if CommandBar is not mounted, the
+   header still routes to `search`.
+2. Coming soon leaves — **done 2026-08-25:** Deals, Pipelines,
+   Opportunities; Funnels, Landing Pages, Forms, Surveys. Sidebar leaves
+   without a `to` now render (also unblocks Analytics Coming soon leaves).
+3. **Do not** add Workspace. **Do not** remap Reputation.
 
 ### Phase 2 — CRM objects (own spec)
 

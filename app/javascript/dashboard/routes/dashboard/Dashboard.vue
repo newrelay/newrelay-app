@@ -282,6 +282,11 @@ export default {
       this.showShortcutModal = false;
     },
     openSearch() {
+      const ninja = document.querySelector('ninja-keys');
+      if (ninja && typeof ninja.open === 'function') {
+        ninja.open();
+        return;
+      }
       this.$router.push({ name: 'search' });
     },
   },

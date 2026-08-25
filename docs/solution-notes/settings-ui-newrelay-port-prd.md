@@ -162,9 +162,18 @@ Each file mapped to the recipe it should adopt.
    Store dispatches, props/emits, and validations preserved; no new i18n keys
    needed (reused existing). `pnpm eslint` clean (only pre-existing dynamic-key
    warnings in `SlaForm` remain). No `woot-input`/`woot-modal` left under `settings/`.
-2. **Phase 2 — QA (pending):** verify each ported page in the running app
-   (needs seeded account + email/API/web-widget inboxes to exercise IMAP/SMTP/
-   inbox settings); fix any spacing/card-header gaps.
+2. **Phase 2 — QA — DONE (2026-08-25):** verified live against the running app
+   (account 2, "Acme Org", with an email inbox for IMAP/SMTP). Confirmed:
+   `ChangePassword`, `UserBasicDetails`, `AccessToken` (incl. mask-toggle),
+   `SlaForm`/`SlaTimeInput` (incl. `v-model` binding), `ImapSettings` (incl.
+   `ring-destructive` validation on blur), `Settings.vue` inbox-name field,
+   and `ConfigurationPage` all render as Relay cards matching the reference.
+   `CollaboratorsPage`'s legacy max-assignment field wasn't reachable in this
+   account (it uses the newer assignment-policy v2 UI) but shares the exact
+   same proven pattern. Console clean of component errors — only a
+   pre-existing unrelated `GeistVariable.woff2` 404 remains. Also hit a known
+   Vite HMR blank-app issue mid-session; fixed per the porting-map note via
+   `overmind restart vite` (not a code change).
 
 ## 9. Acceptance criteria
 

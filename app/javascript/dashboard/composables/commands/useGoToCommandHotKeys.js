@@ -42,6 +42,14 @@ const GO_TO_COMMANDS = [
     role: ['administrator', 'agent'],
   },
   {
+    id: 'goto_search',
+    title: 'COMMAND_BAR.COMMANDS.GO_TO_SEARCH',
+    section: 'COMMAND_BAR.SECTIONS.GENERAL',
+    icon: ICON_INBOXES,
+    path: accountId => `accounts/${accountId}/search`,
+    role: ['administrator', 'agent'],
+  },
+  {
     id: 'open_reports_overview',
     section: 'COMMAND_BAR.SECTIONS.REPORTS',
     title: 'COMMAND_BAR.COMMANDS.GO_TO_REPORTS_OVERVIEW',

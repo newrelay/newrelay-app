@@ -26,6 +26,7 @@ const isRTL = useMapGetter('accounts/isRTL');
 const skipTransition = ref(true);
 
 const childHasAccessibleRoute = child => {
+  if (child.comingSoon) return true;
   if (child.children?.length) {
     return child.children.some(childHasAccessibleRoute);
   }
@@ -37,6 +38,7 @@ const toggleSubGroup = name => {
 };
 
 const navigateAndClose = to => {
+  if (!to) return;
   router.push(to);
   emit('close');
 };
@@ -302,11 +304,13 @@ onMounted(async () => {
             <li v-else class="py-0.5">
               <button
                 type="button"
-                class="relative flex w-full cursor-pointer select-none items-center rounded-sm px-2 py-1.5 text-left text-sm outline-none transition-colors hover:bg-accent hover:text-accent-foreground rtl:text-right"
-                :class="{
-                  'bg-sidebar-accent font-medium text-sidebar-primary':
-                    isActive(child),
-                }"
+                class="relative flex w-full select-none items-center rounded-sm px-2 py-1.5 text-left text-sm outline-none transition-colors rtl:text-right"
+                :class="
+                  child.comingSoon
+                    ? 'cursor-not-allowed text-muted-foreground/60'
+                    : 'cursor-pointer hover:bg-accent hover:text-accent-foreground'
+                "
+                :disabled="child.comingSoon"
                 @click="navigateAndClose(child.to)"
               >
                 <component
@@ -321,7 +325,13 @@ onMounted(async () => {
                   "
                 />
                 <span class="flex-1 truncate">{{ child.label }}</span>
-                <SidebarUnreadBadge :count="child.badgeCount" />
+                <span
+                  v-if="child.comingSoon"
+                  class="shrink-0 rounded-full bg-muted px-1.5 py-0.5 text-[10px] font-medium text-muted-foreground"
+                >
+                  {{ $t('SIDEBAR.COMING_SOON') }}
+                </span>
+                <SidebarUnreadBadge v-else :count="child.badgeCount" />
               </button>
             </li>
           </template>

@@ -4,10 +4,13 @@ import { required, minLength } from '@vuelidate/validators';
 import { useAlert } from 'dashboard/composables';
 import { parseAPIErrorResponse } from 'dashboard/store/utils/api';
 import NextButton from 'dashboard/components-next/button/Button.vue';
+import { RelayInput, RelayLabel } from 'dashboard/components-next/relay';
 
 export default {
   components: {
     NextButton,
+    RelayInput,
+    RelayLabel,
   },
   setup() {
     return { v$: useVuelidate() };
@@ -19,12 +22,6 @@ export default {
       passwordConfirmation: '',
       isPasswordChanging: false,
       errorMessage: '',
-      inputStyles: {
-        borderRadius: '0.75rem',
-        padding: '0.375rem 0.75rem',
-        fontSize: '0.875rem',
-        marginBottom: '0.125rem',
-      },
     };
   },
   validations: {
@@ -82,53 +79,66 @@ export default {
 <template>
   <form @submit.prevent="changePassword()">
     <div class="flex flex-col w-full gap-4">
-      <woot-input
-        v-model="currentPassword"
-        type="password"
-        :styles="inputStyles"
-        :class="{ error: v$.currentPassword.$error }"
-        :label="$t('PROFILE_SETTINGS.FORM.CURRENT_PASSWORD.LABEL')"
-        :placeholder="$t('PROFILE_SETTINGS.FORM.CURRENT_PASSWORD.PLACEHOLDER')"
-        :error="`${
-          v$.currentPassword.$error
-            ? $t('PROFILE_SETTINGS.FORM.CURRENT_PASSWORD.ERROR')
-            : ''
-        }`"
-        @input="v$.currentPassword.$touch"
-        @blur="v$.currentPassword.$touch"
-      />
+      <div class="flex flex-col gap-2">
+        <RelayLabel html-for="current-password">
+          {{ $t('PROFILE_SETTINGS.FORM.CURRENT_PASSWORD.LABEL') }}
+        </RelayLabel>
+        <RelayInput
+          id="current-password"
+          v-model="currentPassword"
+          type="password"
+          class-name="h-10 shadow-xs bg-background"
+          :placeholder="
+            $t('PROFILE_SETTINGS.FORM.CURRENT_PASSWORD.PLACEHOLDER')
+          "
+          @update:model-value="v$.currentPassword.$touch"
+          @blur="v$.currentPassword.$touch"
+        />
+        <p v-if="v$.currentPassword.$error" class="text-xs text-destructive">
+          {{ $t('PROFILE_SETTINGS.FORM.CURRENT_PASSWORD.ERROR') }}
+        </p>
+      </div>
 
-      <woot-input
-        v-model="password"
-        type="password"
-        :styles="inputStyles"
-        :class="{ error: v$.password.$error }"
-        :label="$t('PROFILE_SETTINGS.FORM.PASSWORD.LABEL')"
-        :placeholder="$t('PROFILE_SETTINGS.FORM.PASSWORD.PLACEHOLDER')"
-        :error="`${
-          v$.password.$error ? $t('PROFILE_SETTINGS.FORM.PASSWORD.ERROR') : ''
-        }`"
-        @input="v$.password.$touch"
-        @blur="v$.password.$touch"
-      />
+      <div class="flex flex-col gap-2">
+        <RelayLabel html-for="new-password">
+          {{ $t('PROFILE_SETTINGS.FORM.PASSWORD.LABEL') }}
+        </RelayLabel>
+        <RelayInput
+          id="new-password"
+          v-model="password"
+          type="password"
+          class-name="h-10 shadow-xs bg-background"
+          :placeholder="$t('PROFILE_SETTINGS.FORM.PASSWORD.PLACEHOLDER')"
+          @update:model-value="v$.password.$touch"
+          @blur="v$.password.$touch"
+        />
+        <p v-if="v$.password.$error" class="text-xs text-destructive">
+          {{ $t('PROFILE_SETTINGS.FORM.PASSWORD.ERROR') }}
+        </p>
+      </div>
 
-      <woot-input
-        v-model="passwordConfirmation"
-        type="password"
-        :styles="inputStyles"
-        :class="{ error: v$.passwordConfirmation.$error }"
-        :label="$t('PROFILE_SETTINGS.FORM.PASSWORD_CONFIRMATION.LABEL')"
-        :placeholder="
-          $t('PROFILE_SETTINGS.FORM.PASSWORD_CONFIRMATION.PLACEHOLDER')
-        "
-        :error="`${
-          v$.passwordConfirmation.$error
-            ? $t('PROFILE_SETTINGS.FORM.PASSWORD_CONFIRMATION.ERROR')
-            : ''
-        }`"
-        @input="v$.passwordConfirmation.$touch"
-        @blur="v$.passwordConfirmation.$touch"
-      />
+      <div class="flex flex-col gap-2">
+        <RelayLabel html-for="confirm-password">
+          {{ $t('PROFILE_SETTINGS.FORM.PASSWORD_CONFIRMATION.LABEL') }}
+        </RelayLabel>
+        <RelayInput
+          id="confirm-password"
+          v-model="passwordConfirmation"
+          type="password"
+          class-name="h-10 shadow-xs bg-background"
+          :placeholder="
+            $t('PROFILE_SETTINGS.FORM.PASSWORD_CONFIRMATION.PLACEHOLDER')
+          "
+          @update:model-value="v$.passwordConfirmation.$touch"
+          @blur="v$.passwordConfirmation.$touch"
+        />
+        <p
+          v-if="v$.passwordConfirmation.$error"
+          class="text-xs text-destructive"
+        >
+          {{ $t('PROFILE_SETTINGS.FORM.PASSWORD_CONFIRMATION.ERROR') }}
+        </p>
+      </div>
 
       <div>
         <NextButton

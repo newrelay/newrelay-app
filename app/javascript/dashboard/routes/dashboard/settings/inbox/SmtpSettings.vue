@@ -7,6 +7,7 @@ import { required, minLength } from '@vuelidate/validators';
 import InputRadioGroup from './components/InputRadioGroup.vue';
 import SingleSelectDropdown from './components/SingleSelectDropdown.vue';
 import NextButton from 'dashboard/components-next/button/Button.vue';
+import { RelayInput, RelayLabel } from 'dashboard/components-next/relay';
 
 export default {
   components: {
@@ -14,6 +15,8 @@ export default {
     InputRadioGroup,
     SingleSelectDropdown,
     NextButton,
+    RelayInput,
+    RelayLabel,
   },
   props: {
     inbox: {
@@ -173,49 +176,69 @@ export default {
         {{ $t('INBOX_MGMT.SMTP.TOGGLE_AVAILABILITY') }}
       </label>
       <p>{{ $t('INBOX_MGMT.SMTP.TOGGLE_HELP') }}</p>
-      <div v-if="isSMTPEnabled" class="mb-6">
-        <woot-input
-          v-model="address"
-          :class="{ error: v$.address.$error }"
-          class="w-full"
-          :label="$t('INBOX_MGMT.SMTP.ADDRESS.LABEL')"
-          :placeholder="$t('INBOX_MGMT.SMTP.ADDRESS.PLACE_HOLDER')"
-          @blur="v$.address.$touch"
-        />
-        <woot-input
-          v-model="port"
-          type="number"
-          :class="{ error: v$.port.$error }"
-          class="w-full"
-          :label="$t('INBOX_MGMT.SMTP.PORT.LABEL')"
-          :placeholder="$t('INBOX_MGMT.SMTP.PORT.PLACE_HOLDER')"
-          @blur="v$.port.$touch"
-        />
-        <woot-input
-          v-model="login"
-          :class="{ error: v$.login.$error }"
-          class="w-full"
-          :label="$t('INBOX_MGMT.SMTP.LOGIN.LABEL')"
-          :placeholder="$t('INBOX_MGMT.SMTP.LOGIN.PLACE_HOLDER')"
-          @blur="v$.login.$touch"
-        />
-        <woot-input
-          v-model="password"
-          :class="{ error: v$.password.$error }"
-          class="w-full"
-          :label="$t('INBOX_MGMT.SMTP.PASSWORD.LABEL')"
-          :placeholder="$t('INBOX_MGMT.SMTP.PASSWORD.PLACE_HOLDER')"
-          type="password"
-          @blur="v$.password.$touch"
-        />
-        <woot-input
-          v-model="domain"
-          :class="{ error: v$.domain.$error }"
-          class="w-full"
-          :label="$t('INBOX_MGMT.SMTP.DOMAIN.LABEL')"
-          :placeholder="$t('INBOX_MGMT.SMTP.DOMAIN.PLACE_HOLDER')"
-          @blur="v$.domain.$touch"
-        />
+      <div v-if="isSMTPEnabled" class="mb-6 flex flex-col gap-4">
+        <div class="flex w-full flex-col gap-2">
+          <RelayLabel html-for="smtp-address">
+            {{ $t('INBOX_MGMT.SMTP.ADDRESS.LABEL') }}
+          </RelayLabel>
+          <RelayInput
+            id="smtp-address"
+            v-model="address"
+            :class-name="`h-10 shadow-xs bg-background ${v$.address.$error ? 'ring-1 ring-destructive' : ''}`"
+            :placeholder="$t('INBOX_MGMT.SMTP.ADDRESS.PLACE_HOLDER')"
+            @blur="v$.address.$touch"
+          />
+        </div>
+        <div class="flex w-full flex-col gap-2">
+          <RelayLabel html-for="smtp-port">
+            {{ $t('INBOX_MGMT.SMTP.PORT.LABEL') }}
+          </RelayLabel>
+          <RelayInput
+            id="smtp-port"
+            v-model="port"
+            type="number"
+            :class-name="`h-10 shadow-xs bg-background ${v$.port.$error ? 'ring-1 ring-destructive' : ''}`"
+            :placeholder="$t('INBOX_MGMT.SMTP.PORT.PLACE_HOLDER')"
+            @blur="v$.port.$touch"
+          />
+        </div>
+        <div class="flex w-full flex-col gap-2">
+          <RelayLabel html-for="smtp-login">
+            {{ $t('INBOX_MGMT.SMTP.LOGIN.LABEL') }}
+          </RelayLabel>
+          <RelayInput
+            id="smtp-login"
+            v-model="login"
+            :class-name="`h-10 shadow-xs bg-background ${v$.login.$error ? 'ring-1 ring-destructive' : ''}`"
+            :placeholder="$t('INBOX_MGMT.SMTP.LOGIN.PLACE_HOLDER')"
+            @blur="v$.login.$touch"
+          />
+        </div>
+        <div class="flex w-full flex-col gap-2">
+          <RelayLabel html-for="smtp-password">
+            {{ $t('INBOX_MGMT.SMTP.PASSWORD.LABEL') }}
+          </RelayLabel>
+          <RelayInput
+            id="smtp-password"
+            v-model="password"
+            type="password"
+            :class-name="`h-10 shadow-xs bg-background ${v$.password.$error ? 'ring-1 ring-destructive' : ''}`"
+            :placeholder="$t('INBOX_MGMT.SMTP.PASSWORD.PLACE_HOLDER')"
+            @blur="v$.password.$touch"
+          />
+        </div>
+        <div class="flex w-full flex-col gap-2">
+          <RelayLabel html-for="smtp-domain">
+            {{ $t('INBOX_MGMT.SMTP.DOMAIN.LABEL') }}
+          </RelayLabel>
+          <RelayInput
+            id="smtp-domain"
+            v-model="domain"
+            :class-name="`h-10 shadow-xs bg-background ${v$.domain.$error ? 'ring-1 ring-destructive' : ''}`"
+            :placeholder="$t('INBOX_MGMT.SMTP.DOMAIN.PLACE_HOLDER')"
+            @blur="v$.domain.$touch"
+          />
+        </div>
         <InputRadioGroup
           :label="$t('INBOX_MGMT.SMTP.ENCRYPTION')"
           :items="encryptionProtocols"

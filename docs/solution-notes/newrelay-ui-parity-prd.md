@@ -1,0 +1,123 @@
+# PRD — Tenant dashboard UI parity (NewRelay)
+
+**Status:** Draft · **Owner:** Dashboard UI · **Compared:** 2026-08-25
+**Locked 2026-08-25:** do **not** update Workspace, Customer Engagement, or Reputation.
+**Source of truth (visual + IA):** [https://new-relay-ui.vercel.app](https://new-relay-ui.vercel.app)
+**This app:** `app/javascript/dashboard/` (Vue 3, Relay tokens)
+
+This is a **visual + information-architecture parity** PRD for the tenant
+dashboard. It is not a Super Admin PRD and not a new-CRM-backend PRD.
+
+**Success in one line:** remaining in-scope screens (Settings leftovers,
+optional Relay AI copy, CRM/Marketing Coming soon leaves, ⌘K) match the
+live mock — without touching Workspace, Customer Engagement, or Reputation.
+
+---
+
+## 1. Locked — do not change
+
+Product decision (2026-08-25): these three areas stay as they are in this
+app. Do not add, rename, restyle, or “visual QA” them as part of this PRD.
+
+| Area | Keep as today | Do not do |
+|---|---|---|
+| **Workspace** | No Workspace sidebar group. Tasks stay under Contacts. No Dashboard home. No Calendar leaf. | Add Dashboard / Tasks / Calendar. Change default landing. |
+| **Customer Engagement** | Inbox + Conversations tree in `Sidebar.vue`. Inbox views. Conversation onboarding / empty / composer. | Sidebar reorder, live `/conversations` restyle, Inbox empty restyle, strip `woot-*` on conversation chrome. |
+| **Reputation** | Overview, Reviews, Video; Listings + Feedback behind demo flag; **Requests**; **Settings**. | Remap to Review Outreach / Integrations. Hide Feedback. Port live label set. |
+
+Open decisions **1** (Workspace Dashboard vs Conversations home) and **5**
+(live reputation labels) are **closed**: keep Conversations as landing;
+keep current Reputation labels and routes.
+
+---
+
+## 2. Sources of truth (priority order)
+
+| Priority | Source | Rule |
+|---|---|---|
+| 1 (IA + pixels) | https://new-relay-ui.vercel.app | Live snapshot wins **only for in-scope sections**. Deep links 404 (SPA) — load `/` then navigate. Root redirects to `/ecommerce/dashboard-1` (stub); ignore that landing. |
+| 2 (markup) | `/Users/deependrasankhala/Documents/chandresh/NewRelay-UI/src/views/` | Port classes for in-scope screens only. No demo toggles. |
+| 3 (how to port) | `app/javascript/dashboard/components-next/relay/DESIGN.md`, `TOKENS.md`, `NEWRELAY_PORTING_MAP.md` | Tokens 1:1. Never invent hex. Never translate to `n-*` / `woot-*`. |
+
+**Ignore mock leftovers:** `/ecommerce/*`, `/todo/*`, `/project-management/*`,
+`/original/*`, `/developers/*`, Designing demo, developer buttons.
+
+---
+
+## 3. Design system contract (in-scope screens only)
+
+Same as `docs/solution-notes/settings-ui-newrelay-port-prd.md` §3.
+User-facing AI name is **Relay AI**. **Never fabricate metrics.**
+
+---
+
+## 4. Sidebar IA — still in play vs locked
+
+Source: `Sidebar.vue` `primaryMenuItems` (~line 265).
+
+| Section | Mock | This app | This PRD |
+|---|---|---|---|
+| Workspace | Dashboard, Tasks, Calendar | Missing | **Locked out** |
+| Customer Engagement | Inbox + Conversations tree | Match | **Locked out** |
+| Reputation | Live: Outreach, Integrations, … | Requests, Settings, Feedback | **Locked out** |
+| CRM & Sales | + Deals, Pipelines, Opportunities | Contacts + Companies | **In scope** (Coming soon or P2 CRM) |
+| Marketing | + Funnels, LP, Forms, Surveys | Campaigns only | **In scope** (Coming soon leaves) |
+| Relay AI | 7 items | Same 7; label `"Relay"` | **In scope** (copy only) |
+| Analytics | Reports + 3 | Reports live; 3 `comingSoon` | Match — leave |
+| Knowledge Base | 4 items under Portals | Same | Match — leave |
+| Header ⌘K | Palette overlay | Full `/search` page | **In scope** |
+
+---
+
+## 5. Work plan (revised)
+
+### Phase 0 — this sprint
+
+Child PRD: `docs/solution-notes/settings-ui-newrelay-port-prd.md`
+(settings leftover `woot-*`: inbox IMAP/SMTP, profile, SLA).
+
+Optional: `SIDEBAR.CAPTAIN` `"Relay"` → **Relay AI** in `en.json` only.
+
+**Removed from Phase 0:** conversations/inbox visual QA, conversation
+`woot-*` strip, onboarding vs live `/conversations`.
+
+### Phase 1 — remaining shell (no new backends)
+
+1. ⌘K palette overlay that can still jump to `/search`. Keep `modules/search`.
+2. Coming soon leaves: Deals, Pipelines, Opportunities (unless CRM PRD).
+3. Coming soon leaves: Funnels, Landing Pages, Forms, Surveys.
+4. **Do not** add Workspace. **Do not** remap Reputation.
+
+### Phase 2 — CRM objects (own spec)
+
+Deals / Pipelines / Opportunities need schema/API. Do not port mock dollars.
+
+### Phase 3 — Campaign Analytics when metrics exist
+
+---
+
+## 6. Out of scope
+
+- Workspace, Customer Engagement, Reputation (locked above)
+- Super Admin (`docs/solution-notes/super-admin-ui-prd.md`)
+- Building Funnels / LP / Forms / Surveys / Calendar as product
+- Mock leftover routes
+- Fabricating metrics
+
+---
+
+## 7. Open product calls (remaining)
+
+| # | Question | Default |
+|---|---|---|
+| 1 | ⌘K palette vs Search page only? | **Palette** that can jump to Search |
+| 2 | Deals / Pipelines / Opportunities: Coming soon or real CRM? | **Coming soon** |
+| 3 | Floating Relay AI FAB? | **No FAB** |
+
+---
+
+## 8. Related
+
+- Settings leftover `woot-*`: `docs/solution-notes/settings-ui-newrelay-port-prd.md`
+- Super Admin: `docs/solution-notes/super-admin-ui-prd.md`
+- Reputation (do not expand here): `docs/solution-notes/reputation-design-port.md`

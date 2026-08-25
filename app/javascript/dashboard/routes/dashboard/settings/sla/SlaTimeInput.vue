@@ -1,8 +1,13 @@
 <script>
 import validations from './validations';
 import { useVuelidate } from '@vuelidate/core';
+import { RelayInput, RelayLabel } from 'dashboard/components-next/relay';
 
 export default {
+  components: {
+    RelayInput,
+    RelayLabel,
+  },
   props: {
     threshold: {
       type: Number,
@@ -84,37 +89,33 @@ export default {
 </script>
 
 <template>
-  <div class="flex items-center w-full gap-3">
-    <woot-input
-      v-model="thresholdTime"
-      type="number"
-      :class="{ error: v$.thresholdTime.$error }"
-      class="flex-grow"
-      :styles="{
-        borderRadius: '0.75rem',
-        padding: '0.375rem 0.75rem',
-        fontSize: '0.875rem',
-      }"
-      :label="label"
-      :placeholder="placeholder"
-      :error="thresholdTimeErrorMessage"
-      @update:model-value="onThresholdTimeChange"
-    />
-    <!-- the mt-7 handles the label offset -->
-    <div class="mt-7">
-      <select
-        v-model="thresholdUnitValue"
-        class="px-4 py-1.5 min-w-[6.5rem] h-10 text-sm font-medium border-0 rounded-xl hover:cursor-pointer pr-7"
-        @change="onThresholdUnitChange"
-      >
-        <option
-          v-for="(option, index) in options"
-          :key="index"
-          :value="option.value"
-        >
-          {{ option.label }}
-        </option>
-      </select>
+  <div class="flex w-full items-start gap-3">
+    <div class="flex flex-grow flex-col gap-2">
+      <RelayLabel>{{ label }}</RelayLabel>
+      <RelayInput
+        v-model="thresholdTime"
+        type="number"
+        class-name="h-10 shadow-xs bg-background"
+        :placeholder="placeholder"
+        @update:model-value="onThresholdTimeChange"
+      />
+      <p v-if="v$.thresholdTime.$error" class="text-xs text-destructive">
+        {{ thresholdTimeErrorMessage }}
+      </p>
     </div>
+    <!-- the mt-[26px] handles the label offset -->
+    <select
+      v-model="thresholdUnitValue"
+      class="mt-[26px] h-10 min-w-[6.5rem] rounded-lg border border-border/80 bg-background px-3 py-1.5 pr-7 text-sm font-medium text-foreground shadow-sm hover:cursor-pointer focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary/30"
+      @change="onThresholdUnitChange"
+    >
+      <option
+        v-for="(option, index) in options"
+        :key="index"
+        :value="option.value"
+      >
+        {{ option.label }}
+      </option>
+    </select>
   </div>
 </template>

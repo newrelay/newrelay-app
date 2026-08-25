@@ -10,6 +10,7 @@ import { useConfig } from 'dashboard/composables/useConfig';
 import SettingsFieldSection from 'dashboard/components-next/Settings/SettingsFieldSection.vue';
 import SettingsAccordion from 'dashboard/components-next/Settings/SettingsAccordion.vue';
 import NextButton from 'dashboard/components-next/button/Button.vue';
+import { RelayInput, RelayLabel } from 'dashboard/components-next/relay';
 import SettingsToggleSection from 'dashboard/components-next/Settings/SettingsToggleSection.vue';
 import DropdownMenu from 'dashboard/components-next/dropdown-menu/DropdownMenu.vue';
 import Icon from 'dashboard/components-next/icon/Icon.vue';
@@ -648,15 +649,24 @@ onMounted(() => {
           <!-- Old UI for non-assignment_v2 -->
           <template v-else-if="isEnterprise">
             <div class="p-4">
-              <woot-input
-                v-model="maxAssignmentLimit"
-                type="number"
-                :class="{ error: v$.maxAssignmentLimit.$error }"
-                :error="maxAssignmentLimitErrors"
-                :label="$t('INBOX_MGMT.AUTO_ASSIGNMENT.MAX_ASSIGNMENT_LIMIT')"
-                class="[&>input]:!mb-0"
-                @blur="v$.maxAssignmentLimit.$touch"
-              />
+              <div class="flex flex-col gap-2">
+                <RelayLabel html-for="max-assignment-limit">
+                  {{ $t('INBOX_MGMT.AUTO_ASSIGNMENT.MAX_ASSIGNMENT_LIMIT') }}
+                </RelayLabel>
+                <RelayInput
+                  id="max-assignment-limit"
+                  v-model="maxAssignmentLimit"
+                  type="number"
+                  :class-name="`h-10 shadow-xs bg-background ${v$.maxAssignmentLimit.$error ? 'ring-1 ring-destructive' : ''}`"
+                  @blur="v$.maxAssignmentLimit.$touch"
+                />
+                <p
+                  v-if="v$.maxAssignmentLimit.$error"
+                  class="text-xs text-destructive"
+                >
+                  {{ maxAssignmentLimitErrors }}
+                </p>
+              </div>
 
               <p class="mt-1.5 text-label-small text-muted-foreground">
                 {{

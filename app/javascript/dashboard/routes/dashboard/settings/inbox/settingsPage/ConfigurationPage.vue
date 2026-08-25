@@ -9,6 +9,7 @@ import SmtpSettings from '../SmtpSettings.vue';
 import { useVuelidate } from '@vuelidate/core';
 import { required } from '@vuelidate/validators';
 import NextButton from 'dashboard/components-next/button/Button.vue';
+import { RelayInput } from 'dashboard/components-next/relay';
 import TextArea from 'next/textarea/TextArea.vue';
 import WhatsappReauthorize from '../channels/whatsapp/Reauthorize.vue';
 import { sanitizeAllowedDomains } from 'dashboard/helper/URLHelper';
@@ -21,6 +22,7 @@ export default {
     ImapSettings,
     SmtpSettings,
     NextButton,
+    RelayInput,
     TextArea,
     WhatsappReauthorize,
   },
@@ -406,10 +408,10 @@ export default {
           <div
             class="flex flex-1 justify-between items-center whatsapp-settings--content"
           >
-            <woot-input
+            <RelayInput
               v-model="whatsAppInboxAPIKey"
               type="text"
-              class="flex-1 mr-2 [&>input]:!mb-0"
+              class-name="h-10 shadow-xs bg-background flex-1 ltr:mr-2 rtl:ml-2"
               :placeholder="
                 $t(
                   'INBOX_MGMT.SETTINGS_POPUP.WHATSAPP_SECTION_UPDATE_PLACEHOLDER'

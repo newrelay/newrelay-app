@@ -6,12 +6,15 @@ import SlaTimeInput from './SlaTimeInput.vue';
 import NextButton from 'dashboard/components-next/button/Button.vue';
 import { useVuelidate } from '@vuelidate/core';
 import ToggleSwitch from 'dashboard/components-next/switch/Switch.vue';
+import { RelayInput, RelayLabel } from 'dashboard/components-next/relay';
 
 export default {
   components: {
     SlaTimeInput,
     NextButton,
     ToggleSwitch,
+    RelayInput,
+    RelayLabel,
   },
   props: {
     selectedResponse: {
@@ -159,33 +162,34 @@ export default {
 
 <template>
   <div class="flex flex-col h-auto overflow-auto">
-    <form class="flex flex-wrap mx-0" @submit.prevent="onSubmit">
-      <woot-input
-        v-model="name"
-        :class="{ error: v$.name.$error }"
-        class="w-full"
-        :styles="{
-          borderRadius: '0.75rem',
-          padding: '0.375rem 0.75rem',
-          fontSize: '0.875rem',
-        }"
-        :label="$t('SLA.FORM.NAME.LABEL')"
-        :placeholder="$t('SLA.FORM.NAME.PLACEHOLDER')"
-        :error="slaNameErrorMessage"
-        @input="v$.name.$touch"
-        @blur="v$.name.$touch"
-      />
-      <woot-input
-        v-model="description"
-        class="w-full"
-        :styles="{
-          borderRadius: '0.75rem',
-          padding: '0.375rem 0.75rem',
-          fontSize: '0.875rem',
-        }"
-        :label="$t('SLA.FORM.DESCRIPTION.LABEL')"
-        :placeholder="$t('SLA.FORM.DESCRIPTION.PLACEHOLDER')"
-      />
+    <form class="flex flex-col gap-4" @submit.prevent="onSubmit">
+      <div class="flex w-full flex-col gap-2">
+        <RelayLabel html-for="sla_name">
+          {{ $t('SLA.FORM.NAME.LABEL') }}
+        </RelayLabel>
+        <RelayInput
+          id="sla_name"
+          v-model="name"
+          class-name="h-10 shadow-xs bg-background"
+          :placeholder="$t('SLA.FORM.NAME.PLACEHOLDER')"
+          @update:model-value="v$.name.$touch"
+          @blur="v$.name.$touch"
+        />
+        <p v-if="v$.name.$error" class="text-xs text-destructive">
+          {{ slaNameErrorMessage }}
+        </p>
+      </div>
+      <div class="flex w-full flex-col gap-2">
+        <RelayLabel html-for="sla_description">
+          {{ $t('SLA.FORM.DESCRIPTION.LABEL') }}
+        </RelayLabel>
+        <RelayInput
+          id="sla_description"
+          v-model="description"
+          class-name="h-10 shadow-xs bg-background"
+          :placeholder="$t('SLA.FORM.DESCRIPTION.PLACEHOLDER')"
+        />
+      </div>
 
       <SlaTimeInput
         v-for="(input, index) in slaTimeInputs"

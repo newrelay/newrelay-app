@@ -31,6 +31,7 @@ import { FEATURE_FLAGS } from '../../../../featureFlags';
 import SenderNameExamplePreview from './components/SenderNameExamplePreview.vue';
 import LockToSingleConversationPreview from './components/LockToSingleConversationPreview.vue';
 import NextButton from 'dashboard/components-next/button/Button.vue';
+import { RelayInput } from 'dashboard/components-next/relay';
 import SpinnerLoader from 'dashboard/components-next/spinner/Spinner.vue';
 import { INBOX_TYPES } from 'dashboard/helper/inbox';
 import { getInboxIconByType } from 'dashboard/helper/inbox';
@@ -45,6 +46,7 @@ import { copyTextToClipboard } from 'shared/helpers/clipboard';
 
 export default {
   components: {
+    RelayInput,
     BotConfiguration,
     CollaboratorsPage,
     ConfigurationPage,
@@ -777,18 +779,18 @@ export default {
               />
             </div>
             <SettingsFieldSection :label="inboxNameLabel">
-              <woot-input
+              <RelayInput
                 v-model="selectedInboxName"
-                class="[&>input]:!mb-0"
-                :class="{ error: v$.selectedInboxName.$error }"
+                :class-name="`h-10 shadow-xs bg-background ${v$.selectedInboxName.$error ? 'ring-1 ring-destructive' : ''}`"
                 :placeholder="inboxNamePlaceHolder"
-                :error="
-                  v$.selectedInboxName.$error
-                    ? $t('INBOX_MGMT.ADD.CHANNEL_NAME.ERROR')
-                    : ''
-                "
                 @blur="v$.selectedInboxName.$touch"
               />
+              <p
+                v-if="v$.selectedInboxName.$error"
+                class="mt-1.5 text-xs text-destructive"
+              >
+                {{ $t('INBOX_MGMT.ADD.CHANNEL_NAME.ERROR') }}
+              </p>
             </SettingsFieldSection>
             <SettingsFieldSection
               v-if="isAPIInbox"
@@ -796,24 +798,24 @@ export default {
                 $t('INBOX_MGMT.ADD.WEBSITE_CHANNEL.CHANNEL_WEBHOOK_URL.LABEL')
               "
             >
-              <woot-input
+              <RelayInput
                 v-model="webhookUrl"
-                class="[&>input]:!mb-0"
-                :class="{ error: v$.webhookUrl.$error }"
+                :class-name="`h-10 shadow-xs bg-background ${v$.webhookUrl.$error ? 'ring-1 ring-destructive' : ''}`"
                 :placeholder="
                   $t(
                     'INBOX_MGMT.ADD.WEBSITE_CHANNEL.CHANNEL_WEBHOOK_URL.PLACEHOLDER'
                   )
                 "
-                :error="
-                  v$.webhookUrl.$error
-                    ? $t(
-                        'INBOX_MGMT.ADD.WEBSITE_CHANNEL.CHANNEL_WEBHOOK_URL.ERROR'
-                      )
-                    : ''
-                "
                 @blur="v$.webhookUrl.$touch"
               />
+              <p
+                v-if="v$.webhookUrl.$error"
+                class="mt-1.5 text-xs text-destructive"
+              >
+                {{
+                  $t('INBOX_MGMT.ADD.WEBSITE_CHANNEL.CHANNEL_WEBHOOK_URL.ERROR')
+                }}
+              </p>
             </SettingsFieldSection>
 
             <SettingsFieldSection
@@ -835,9 +837,9 @@ export default {
               v-if="isAWebWidgetInbox"
               :label="$t('INBOX_MGMT.ADD.WEBSITE_CHANNEL.CHANNEL_DOMAIN.LABEL')"
             >
-              <woot-input
+              <RelayInput
                 v-model="channelWebsiteUrl"
-                class="[&>input]:!mb-0"
+                class-name="h-10 shadow-xs bg-background"
                 :placeholder="
                   $t(
                     'INBOX_MGMT.ADD.WEBSITE_CHANNEL.CHANNEL_DOMAIN.PLACEHOLDER'
@@ -954,9 +956,9 @@ export default {
                   )
                 "
               >
-                <woot-input
+                <RelayInput
                   v-model="channelWelcomeTitle"
-                  class="[&>input]:!mb-0"
+                  class-name="h-10 shadow-xs bg-background"
                   :placeholder="
                     $t(
                       'INBOX_MGMT.ADD.WEBSITE_CHANNEL.CHANNEL_WELCOME_TITLE.PLACEHOLDER'
@@ -1067,14 +1069,14 @@ export default {
                   )
                 "
               >
-                <woot-input
+                <RelayInput
                   v-model="widgetBubbleLauncherTitle"
+                  class-name="h-10 shadow-xs bg-background"
                   :placeholder="
                     $t(
                       'INBOX_MGMT.WIDGET_BUILDER.WIDGET_OPTIONS.WIDGET_BUBBLE_LAUNCHER_TITLE.PLACE_HOLDER'
                     )
                   "
-                  class="[&>input]:!mb-0"
                 />
               </SettingsFieldSection>
               <SettingsFieldSection

@@ -175,6 +175,27 @@ Each file mapped to the recipe it adopted.
    Vite HMR blank-app issue mid-session; fixed per the porting-map note via
    `overmind restart vite` (not a code change).
 
+## 8b. Phase 3 — Visual polish pass — DONE (2026-08-25)
+
+Swept every page in the settings secondary nav at desktop width (1440×900),
+live against the running app, comparing each against recipes 5a/5b/5c:
+
+General (Account, Branding, Custom Domain, Billing) · People (Agents, Teams,
+Custom Roles, Agent Assignment) · Communication (Inboxes, Labels,
+Notifications) · Automation (Workflows, Bots, Macros, Quick Replies, SLA) ·
+Customer Data (Custom Attributes) · Integrations (Apps, API Keys, Webhooks) ·
+Security (Security, Audit Logs).
+
+**Found and fixed:** `auditlogs/Index.vue` was the only page missing a
+`BaseSettingsHeader` — it jumped straight to the table with no title or
+description, unlike every sibling list page. Added the header using i18n
+keys that already existed but were unused (`AUDIT_LOGS.HEADER`,
+`AUDIT_LOGS.DESCRIPTION`, `AUDIT_LOGS.LEARN_MORE`), matching the exact
+pattern used by `labels/Index.vue`. No new strings, no logic change,
+`pnpm eslint` clean.
+
+Every other page checked was already consistent — no other polish items found.
+
 ## 9. Acceptance criteria
 
 - No `woot-*` / `WootModal` / scoped CSS under `settings/`.

@@ -2,7 +2,7 @@
 import { ref, computed } from 'vue';
 import 'highlight.js/styles/default.css';
 import 'highlight.js/lib/common';
-import NextButton from 'dashboard/components-next/button/Button.vue';
+import { RelayButton } from 'dashboard/components-next/relay';
 import { copyTextToClipboard } from 'shared/helpers/clipboard';
 import { useAlert } from 'dashboard/composables';
 import { useI18n } from 'vue-i18n';
@@ -69,9 +69,11 @@ const onCopy = async e => {
 </script>
 
 <template>
-  <div class="relative text-left">
+  <div
+    class="relative overflow-hidden rounded-lg border border-border/60 bg-muted/40 text-left shadow-xs"
+  >
     <div
-      class="top-1.5 absolute ltr:right-1.5 rtl:left-1.5 flex backdrop-blur-sm rounded-lg items-center gap-1"
+      class="absolute end-1.5 top-1.5 z-10 flex items-center gap-1 rounded-md bg-background/80 p-0.5 backdrop-blur-sm"
     >
       <form
         v-if="enableCodePen"
@@ -81,21 +83,30 @@ const onCopy = async e => {
         target="_blank"
       >
         <input type="hidden" name="data" :value="codepenScriptValue" />
-        <NextButton
-          slate
-          xs
+        <RelayButton
           type="submit"
-          faded
-          :label="t('COMPONENTS.CODE.CODEPEN')"
-        />
+          variant="outline"
+          size="sm"
+          class="h-7 border-border px-2.5 text-[12px]"
+        >
+          {{ t('COMPONENTS.CODE.CODEPEN') }}
+        </RelayButton>
       </form>
-      <NextButton slate xs faded :label="buttonLabel" @click="onCopy" />
+      <RelayButton
+        type="button"
+        variant="outline"
+        size="sm"
+        class="h-7 border-border px-2.5 text-[12px]"
+        @click="onCopy"
+      >
+        {{ buttonLabel }}
+      </RelayButton>
     </div>
     <highlightjs
       v-if="script"
       :language="lang"
       :code="scrubbedScript"
-      class="[&_code]:text-start"
+      class="[&_code]:text-start [&_pre]:m-0"
     />
   </div>
 </template>

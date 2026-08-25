@@ -3,6 +3,7 @@ import { useAlert } from 'dashboard/composables';
 import { messageTimestamp } from 'shared/helpers/timeHelper';
 import { useStoreGetters, useStore } from 'dashboard/composables/store';
 import SettingsLayout from '../SettingsLayout.vue';
+import BaseSettingsHeader from '../components/BaseSettingsHeader.vue';
 import Icon from 'dashboard/components-next/icon/Icon.vue';
 import {
   generateTranslationPayload,
@@ -88,6 +89,14 @@ watch(routerPage, (newPage, oldPage) => {
     :loading-message="$t('AUDIT_LOGS.LOADING')"
     :no-records-found="false"
   >
+    <template #header>
+      <BaseSettingsHeader
+        :title="$t('AUDIT_LOGS.HEADER')"
+        :description="$t('AUDIT_LOGS.DESCRIPTION')"
+        :link-text="$t('AUDIT_LOGS.LEARN_MORE')"
+        feature-name="audit_logs"
+      />
+    </template>
     <template #body>
       <div class="space-y-6">
         <div

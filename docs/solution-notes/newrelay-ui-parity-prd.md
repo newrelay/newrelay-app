@@ -94,13 +94,23 @@ Source: `Sidebar.vue` `primaryMenuItems` (~line 265).
    from `Dashboard.vue`). Copilot panel still opens from the conversation
    sidepanel switch. Shared settings loading spinner in `SettingsLayout.vue`
    no longer uses `woot-loading-state`.
-5. Settings leftover widgets pass — **done 2026-08-25 (batch A):**
-   - `woot-loading-state` → Spinner in macros, assignment policies, website
-     channel create, plus shared `SettingsLayout`.
-   - Delete / confirm modals → `RelayConfirmModal` in inboxes, teams,
-     account delete, integration hooks, automation (delete + toggle).
-   - **Still leftover (batch B, not started):** `woot-code`, `woot-wizard`,
-     `WootMessageEditor`, `WootDatePicker`, `WootReports`.
+5. Settings leftover widgets pass — **done 2026-08-25 (batch A + B partial):**
+   - **Batch A:** loading + delete/confirm modals → Spinner /
+     `RelayConfirmModal`.
+   - **Batch B (this pass):**
+     - `Code.vue` (`woot-code`) restyled with Relay tokens + `RelayButton`
+       (covers all inbox finish/config copy blocks).
+     - hljs styles moved off `n-*` onto semantic tokens.
+     - Canned Add/Edit → `components-next/Editor` (blur emit added).
+     - Teams `woot-wizard` already token-clean (`Wizard.vue`) — no change.
+   - **Batch C (this pass):**
+     - Profile MessageSignature, inbox business hours, pre-chat message →
+       `components-next/Editor` (`is-format-mode` was a no-op).
+     - Business hours ComboBox surface `bg-black/10` → `bg-muted/40`.
+   - **Still leftover (deferred):** report date-range `WootDatePicker` (dual
+     range ≠ `RelayDatePicker`), cosmetic `WootReports` rename (shell already
+     uses Relay header/button). Conversation ReplyBox + AutomationActionInput
+     editors stay on WootWriter (not settings chrome).
 
 ### Phase 2 — CRM objects (own spec) — not started
 

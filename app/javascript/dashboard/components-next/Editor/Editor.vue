@@ -28,7 +28,7 @@ const props = defineProps({
   medium: { type: String, default: '' },
 });
 
-const emit = defineEmits(['update:modelValue', 'executeCopilotAction']);
+const emit = defineEmits(['update:modelValue', 'executeCopilotAction', 'blur']);
 
 const slots = useSlots();
 
@@ -62,6 +62,7 @@ const handleFocus = () => {
 const handleBlur = () => {
   if (!props.disabled) {
     isFocused.value = false;
+    emit('blur');
   }
 };
 
@@ -83,10 +84,10 @@ watch(
       {{ label }}
     </label>
     <div
-      class="flex flex-col w-full gap-2 px-3 py-3 transition-all duration-500 ease-in-out border rounded-lg editor-wrapper bg-black/10"
+      class="flex flex-col w-full gap-2 px-3 py-3 transition-all duration-500 ease-in-out border rounded-lg editor-wrapper bg-muted/40"
       :class="[
         {
-          'cursor-not-allowed opacity-50 pointer-events-none !bg-black/10 disabled:border-border dark:disabled:border-border':
+          'cursor-not-allowed opacity-50 pointer-events-none !bg-muted/40 disabled:border-border dark:disabled:border-border':
             disabled,
           'border-primary dark:border-primary': isFocused,
           'hover:border-border dark:hover:border-border border-border dark:border-border':

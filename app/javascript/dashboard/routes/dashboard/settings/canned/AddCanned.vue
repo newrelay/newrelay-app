@@ -8,7 +8,7 @@ import {
   RelayInput,
   RelayLabel,
 } from 'dashboard/components-next/relay';
-import WootMessageEditor from 'dashboard/components/widgets/WootWriter/Editor.vue';
+import Editor from 'dashboard/components-next/Editor/Editor.vue';
 
 export default {
   name: 'AddCanned',
@@ -16,7 +16,7 @@ export default {
     RelayButton,
     RelayInput,
     RelayLabel,
-    WootMessageEditor,
+    Editor,
   },
   props: {
     responseContent: {
@@ -104,18 +104,19 @@ export default {
         <RelayLabel class="text-[13.5px] font-medium text-foreground">
           {{ $t('CANNED_MGMT.ADD.FORM.CONTENT.LABEL') }}
         </RelayLabel>
-        <div class="editor-wrap">
-          <WootMessageEditor
-            v-model="content"
-            class="message-editor [&>div]:px-1"
-            :class="{ editor_warning: v$.content.$error }"
-            channel-type="Context::Default"
-            enable-variables
-            :enable-canned-responses="false"
-            :placeholder="$t('CANNED_MGMT.ADD.FORM.CONTENT.PLACEHOLDER')"
-            @blur="v$.content.$touch"
-          />
-        </div>
+        <Editor
+          v-model="content"
+          channel-type="Context::Default"
+          enable-variables
+          :enable-canned-responses="false"
+          :show-character-count="false"
+          :message="
+            v$.content.$error ? $t('CANNED_MGMT.ADD.FORM.CONTENT.ERROR') : ''
+          "
+          :message-type="v$.content.$error ? 'error' : 'info'"
+          :placeholder="$t('CANNED_MGMT.ADD.FORM.CONTENT.PLACEHOLDER')"
+          @blur="v$.content.$touch"
+        />
       </div>
     </div>
     <div class="flex justify-end gap-3 border-t border-border/40 px-7 py-6">
@@ -140,16 +141,3 @@ export default {
   </form>
 </template>
 
-<style scoped lang="scss">
-:deep(.ProseMirror-menubar) {
-  @apply hidden;
-}
-
-:deep(.ProseMirror-woot-style) {
-  @apply min-h-[12.5rem];
-
-  p {
-    @apply text-base;
-  }
-}
-</style>

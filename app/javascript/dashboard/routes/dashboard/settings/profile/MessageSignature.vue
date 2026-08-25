@@ -3,7 +3,7 @@ import { ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useAlert } from 'dashboard/composables';
 import { stripInlineBase64Images } from 'dashboard/helper/editorHelper';
-import WootMessageEditor from 'dashboard/components/widgets/WootWriter/Editor.vue';
+import Editor from 'dashboard/components-next/Editor/Editor.vue';
 import NextButton from 'dashboard/components-next/button/Button.vue';
 
 const props = defineProps({
@@ -40,14 +40,14 @@ const updateSignature = () => {
 
 <template>
   <form class="flex flex-col gap-6" @submit.prevent="updateSignature()">
-    <WootMessageEditor
+    <Editor
       id="message-signature-input"
       v-model="signature"
-      class="message-editor h-[10rem] !px-3"
-      is-format-mode
-      :placeholder="$t('PROFILE_SETTINGS.FORM.MESSAGE_SIGNATURE.PLACEHOLDER')"
+      class="min-h-[10rem]"
       channel-type="Context::MessageSignature"
-      :enable-suggestions="false"
+      :enable-canned-responses="false"
+      :show-character-count="false"
+      :placeholder="$t('PROFILE_SETTINGS.FORM.MESSAGE_SIGNATURE.PLACEHOLDER')"
     />
     <div>
       <NextButton

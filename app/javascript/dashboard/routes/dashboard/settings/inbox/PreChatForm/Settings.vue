@@ -6,7 +6,7 @@ import { useMapGetter } from 'dashboard/composables/store';
 import { useAlert } from 'dashboard/composables';
 import PreChatFields from './PreChatFields.vue';
 import { getPreChatFields } from 'dashboard/helper/preChat';
-import WootMessageEditor from 'dashboard/components/widgets/WootWriter/Editor.vue';
+import Editor from 'dashboard/components-next/Editor/Editor.vue';
 import Button from 'dashboard/components-next/button/Button.vue';
 import SettingsToggleSection from 'dashboard/components-next/Settings/SettingsToggleSection.vue';
 
@@ -101,8 +101,10 @@ onMounted(() => {
       :description="$t('INBOX_MGMT.PRE_CHAT_FORM.DESCRIPTION')"
     >
       <template v-if="preChatFormEnabled" #editor>
-        <WootMessageEditor
+        <Editor
           v-model="preChatMessage"
+          :enable-canned-responses="false"
+          :show-character-count="false"
           :placeholder="
             $t('INBOX_MGMT.PRE_CHAT_FORM.PRE_CHAT_MESSAGE.PLACEHOLDER')
           "

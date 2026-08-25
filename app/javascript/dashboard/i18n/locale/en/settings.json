@@ -427,6 +427,8 @@
     "CAPTAIN_AI": "Relay AI",
     "CONVERSATION_WORKFLOW": "Workflows",
     "SETTINGS_NAV": "Settings navigation",
+    "SETTINGS_NAV_SEARCH": "Search settings",
+    "SETTINGS_NAV_NO_RESULTS": "No settings found",
     "SETTINGS_SECTIONS": {
       "GENERAL": "General",
       "PEOPLE": "People",

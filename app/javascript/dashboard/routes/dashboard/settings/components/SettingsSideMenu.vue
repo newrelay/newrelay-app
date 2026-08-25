@@ -8,6 +8,7 @@ import { usePolicy } from 'dashboard/composables/usePolicy';
 import { FEATURE_FLAGS } from 'dashboard/featureFlags';
 import Icon from 'dashboard/components-next/icon/Icon.vue';
 import Policy from 'dashboard/components/policy.vue';
+import { RelayInput } from 'dashboard/components-next/relay';
 import { SETTINGS_NAV_SECTIONS } from '../settings.navigation';
 
 const route = useRoute();
@@ -60,7 +61,27 @@ const sections = computed(() =>
   })).filter(section => section.items.length > 0)
 );
 
+const searchQuery = ref('');
+const normalizedQuery = computed(() => searchQuery.value.trim().toLowerCase());
+
+const filteredSections = computed(() => {
+  if (!normalizedQuery.value) return sections.value;
+  return sections.value
+    .map(section => ({
+      ...section,
+      items: section.items.filter(item =>
+        item.label.toLowerCase().includes(normalizedQuery.value)
+      ),
+    }))
+    .filter(section => section.items.length > 0);
+});
+
+const hasResults = computed(() => filteredSections.value.length > 0);
+
 const openSectionKey = ref(null);
+
+const isSectionOpen = section =>
+  normalizedQuery.value ? true : openSectionKey.value === section.key;
 
 const syncOpenSection = () => {
   const activeSection = sections.value.find(section =>
@@ -85,8 +106,25 @@ const toggleSection = key => {
     class="w-full shrink-0 space-y-1 lg:sticky lg:top-8 lg:w-56"
     :aria-label="t('SIDEBAR.SETTINGS_NAV')"
   >
+    <div class="relative mb-4">
+      <Icon
+        icon="i-lucide-search"
+        class="pointer-events-none absolute top-1/2 size-4 -translate-y-1/2 text-muted-foreground ltr:left-3 rtl:right-3"
+      />
+      <RelayInput
+        v-model="searchQuery"
+        type="search"
+        class-name="h-9 shadow-xs bg-background ltr:pl-9 rtl:pr-9"
+        :placeholder="t('SIDEBAR.SETTINGS_NAV_SEARCH')"
+      />
+    </div>
+
+    <p v-if="!hasResults" class="px-3 py-2 text-sm text-muted-foreground">
+      {{ t('SIDEBAR.SETTINGS_NAV_NO_RESULTS') }}
+    </p>
+
     <div
-      v-for="section in sections"
+      v-for="section in filteredSections"
       :key="section.key"
       class="mb-4 flex flex-col"
     >
@@ -105,12 +143,12 @@ const toggleSection = key => {
         <Icon
           icon="i-lucide-chevron-right"
           class="size-4 shrink-0 text-muted-foreground opacity-50 transition-all group-hover:text-foreground group-hover:opacity-100"
-          :class="openSectionKey === section.key ? 'rotate-90' : ''"
+          :class="isSectionOpen(section) ? 'rotate-90' : ''"
         />
       </button>
 
       <div
-        v-show="openSectionKey === section.key"
+        v-show="isSectionOpen(section)"
         class="relative my-1 ml-5 flex flex-col space-y-1 border-l border-border pl-4"
       >
         <Policy

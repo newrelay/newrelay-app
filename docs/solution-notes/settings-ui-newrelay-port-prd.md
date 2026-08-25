@@ -143,9 +143,15 @@ Each file mapped to the recipe it should adopt.
 | 9 | `sla/SlaForm.vue` | 5a or 5c | If shown as modal → `RelayModal`; if inline → `SectionLayout` |
 | 10 | `sla/SlaTimeInput.vue` | field | Leaf input used by SlaForm → `RelayInput` styling |
 
-### 7b. Deferred (not this pass)
-- Global settings **search + ⌘K** — `SettingsHeader.vue` is title-only; the
-  reference top bar has a persistent search. Revisit as its own feature.
+### 7b. Settings search — DONE (2026-08-25), scope adjusted
+- Built as a **live filter box at the top of `SettingsSideMenu`** that filters
+  `SETTINGS_NAV_SECTIONS` by item label, force-expands matching sections, and
+  shows a "No settings found" empty state.
+- **No ⌘K binding:** Chatwoot already ships a global ⌘K/Ctrl+K command palette
+  (`ninja-keys`, `routes/dashboard/commands/commandbar.vue`) — the reference's
+  top-bar search *is* that global palette. Adding a settings-scoped ⌘K would
+  collide, so the settings search is nav-scoped with no shortcut.
+- i18n keys added: `SIDEBAR.SETTINGS_NAV_SEARCH`, `SIDEBAR.SETTINGS_NAV_NO_RESULTS`.
 
 ## 8. Plan
 

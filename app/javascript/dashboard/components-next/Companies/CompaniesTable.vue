@@ -172,11 +172,15 @@ const openCompany = id => {
     >
       <span class="pl-2">
         {{
-          t('COMPANIES_LAYOUT.PAGINATION_FOOTER.SHOWING', {
-            startItem,
-            endItem,
-            totalItems,
-          })
+          t(
+            'COMPANIES_LAYOUT.PAGINATION_FOOTER.SHOWING',
+            {
+              startItem,
+              endItem,
+              totalItems,
+            },
+            Number(totalItems)
+          )
         }}
       </span>
       <div class="flex items-center gap-1.5">

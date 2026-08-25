@@ -32,7 +32,7 @@ export function initCustomSelects() {
 
       const trigger = document.createElement('button');
       trigger.type = 'button';
-      trigger.className = 'nr-select-trigger';
+      trigger.className = 'nr-select-trigger reset-base';
       trigger.setAttribute('aria-haspopup', 'listbox');
       trigger.setAttribute('aria-expanded', 'false');
 

@@ -9,6 +9,7 @@
 #  customer_name     :string
 #  duration_seconds  :integer
 #  email             :string
+#  notes             :jsonb            not null
 #  platform          :string
 #  published_at      :datetime
 #  rating            :integer

@@ -28,6 +28,17 @@ class Api::V1::Accounts::Reputation::VideoTestimonialsController < Api::V1::Acco
     head :ok
   end
 
+  # D3: append a staff note to the jsonb array (no separate notes table for MVP).
+  # ponytail: jsonb append; move to a notes table if per-note edit/delete or threading is needed.
+  def add_note
+    return head :unprocessable_entity if params[:body].blank?
+
+    testimonial = Current.account.reputation_video_testimonials.find(params[:id])
+    note = { 'author' => Current.user.name, 'body' => params[:body].to_s, 'at' => Time.current.to_i }
+    testimonial.update!(notes: testimonial.notes + [note])
+    render json: note
+  end
+
   # F5: stream the library as CSV (stdlib CSV, no export gem).
   def export
     rows = Current.account.reputation_video_testimonials.includes(:contact).order(created_at: :desc)

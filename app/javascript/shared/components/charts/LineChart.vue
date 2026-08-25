@@ -74,7 +74,7 @@ const defaultChartOptions = {
         color: '#9ca3af',
         stepSize: 1,
       },
-      grid: { color: 'rgba(0,0,0,0.06)' },
+      grid: { color: 'rgba(148, 163, 184, 0.18)' },
       border: { display: false },
     },
   },

@@ -1,3 +1,5 @@
+let selectedIndex = 0;
+
 function commandPages() {
   const node = document.getElementById('nrCommandPages');
   if (!node) return [];
@@ -6,6 +8,27 @@ function commandPages() {
   } catch (_err) {
     return [];
   }
+}
+
+function searchModalIsOpen() {
+  const modal = document.getElementById('searchModal');
+  return Boolean(modal && !modal.classList.contains('hidden'));
+}
+
+function resultLinks() {
+  return Array.from(
+    document.querySelectorAll('#searchResultsModal a[data-command-item]')
+  );
+}
+
+function highlightSelected() {
+  resultLinks().forEach((link, i) => {
+    const active = i === selectedIndex;
+    link.classList.toggle('bg-accent', active);
+    link.setAttribute('aria-selected', active ? 'true' : 'false');
+  });
+  const current = resultLinks()[selectedIndex];
+  if (current) current.scrollIntoView({ block: 'nearest' });
 }
 
 export function handleSearchModalInput(query) {
@@ -19,6 +42,8 @@ export function handleSearchModalInput(query) {
       (p.desc || '').toLowerCase().includes(q)
   );
 
+  selectedIndex = 0;
+
   if (!pages.length) {
     const empty = document.createElement('div');
     empty.className = 'p-4 text-center text-xs text-muted-foreground';
@@ -31,6 +56,7 @@ export function handleSearchModalInput(query) {
     ...pages.map(item => {
       const link = document.createElement('a');
       link.href = item.href;
+      link.setAttribute('data-command-item', '');
       link.className =
         'flex items-center justify-between gap-3 px-3 py-2 rounded-md hover:bg-accent transition-colors';
       const left = document.createElement('div');
@@ -42,14 +68,15 @@ export function handleSearchModalInput(query) {
       desc.textContent = item.desc || '';
       left.append(title, desc);
       const jump = document.createElement('span');
-      jump.className =
-        'shrink-0 rounded bg-muted px-1.5 py-0.5 text-[11px] text-muted-foreground';
+      jump.className = 'command-jump';
       jump.textContent = 'Jump';
       link.append(left, jump);
       return link;
     })
   );
+  highlightSelected();
 }
+
 export function openSearchModal() {
   const modal = document.getElementById('searchModal');
   if (!modal) return;
@@ -80,6 +107,21 @@ document.addEventListener('DOMContentLoaded', () => {
     if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
       e.preventDefault();
       openSearchModal();
+      return;
+    }
+    if (!searchModalIsOpen()) return;
+    const links = resultLinks();
+    if (e.key === 'ArrowDown' && links.length) {
+      e.preventDefault();
+      selectedIndex = (selectedIndex + 1) % links.length;
+      highlightSelected();
+    } else if (e.key === 'ArrowUp' && links.length) {
+      e.preventDefault();
+      selectedIndex = (selectedIndex - 1 + links.length) % links.length;
+      highlightSelected();
+    } else if (e.key === 'Enter' && links[selectedIndex]) {
+      e.preventDefault();
+      links[selectedIndex].click();
     }
   });
 });

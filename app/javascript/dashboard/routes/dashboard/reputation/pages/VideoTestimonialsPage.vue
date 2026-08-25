@@ -72,6 +72,7 @@ function mapVideo(v) {
     approvedAt: v.approved_at || null,
     publishedAt: v.published_at || null,
     rejectedAt: v.rejected_at || null,
+    notes: v.notes || [],
     status: STATUS_LABEL[v.status] || 'Pending Approval',
     platform: v.platform || '',
     rating: v.rating || 0,
@@ -198,6 +199,23 @@ const handleModalSubmit = () => {
   showToast('Request sent successfully.');
   loadVideos();
 };
+
+const noteDraft = ref('');
+const savingNote = ref(false);
+async function addNote() {
+  const body = noteDraft.value.trim();
+  if (!body || !selectedVideo.value) return;
+  savingNote.value = true;
+  try {
+    const { data } = await axios.post(`${baseUrl()}/${selectedVideo.value.id}/add_note`, { body });
+    selectedVideo.value.notes = [...(selectedVideo.value.notes || []), data];
+    noteDraft.value = '';
+  } catch (e) {
+    showToast('Failed to add note.');
+  } finally {
+    savingNote.value = false;
+  }
+}
 
 const handleReply = () => showToast(`Opening reply composer for ${selectedVideo.value?.author}...`);
 const handleShare = async () => {
@@ -902,14 +920,25 @@ const stats = computed(() => {
               <div class="flex items-center gap-2 text-foreground font-semibold text-[15px] mb-2">
                 <FileText class="size-4" /> Notes
               </div>
-              <p class="text-[13px] text-muted-foreground mb-6">
+              <p class="text-[13px] text-muted-foreground mb-4">
                 Collaborate with your team about this testimonial.
               </p>
-              
-              <div class="border-t border-border pt-6 flex flex-col items-center justify-center text-center">
-                <div class="text-xs text-muted-foreground mb-4">No notes yet.</div>
-                <button class="h-8 px-4 text-xs font-semibold bg-card border border-border rounded-lg text-foreground hover:bg-muted cursor-pointer inline-flex items-center gap-1.5">
-                  <Plus class="size-3.5" /> Add First Note
+
+              <div class="space-y-3 mb-4">
+                <div v-for="(note, i) in (selectedVideo?.notes || [])" :key="i" class="rounded-lg border border-border bg-muted/30 p-3">
+                  <div class="flex items-center justify-between mb-1">
+                    <span class="text-[12px] font-semibold text-foreground">{{ note.author }}</span>
+                    <span class="text-[11px] text-muted-foreground">{{ formatEventTime(note.at) }}</span>
+                  </div>
+                  <p class="text-[13px] text-foreground whitespace-pre-line">{{ note.body }}</p>
+                </div>
+                <div v-if="!(selectedVideo?.notes || []).length" class="text-xs text-muted-foreground text-center py-4">No notes yet.</div>
+              </div>
+
+              <div class="border-t border-border pt-4 space-y-2">
+                <textarea v-model="noteDraft" rows="3" placeholder="Add a note for your team…" class="w-full rounded-lg border border-border bg-background p-3 text-[13px] focus:outline-none focus:ring-1 focus:ring-primary/30 resize-none"></textarea>
+                <button @click="addNote" :disabled="savingNote || !noteDraft.trim()" class="h-8 px-4 text-xs font-semibold bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 disabled:opacity-50 cursor-pointer inline-flex items-center gap-1.5">
+                  <Plus class="size-3.5" /> {{ savingNote ? 'Saving…' : 'Add Note' }}
                 </button>
               </div>
             </div>

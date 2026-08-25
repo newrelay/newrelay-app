@@ -226,6 +226,9 @@ Rails.application.routes.draw do
                 get :requests_index
                 get :export
               end
+              member do
+                post :add_note
+              end
             end
           end
           resources :contacts, only: [:index, :show, :update, :create, :destroy] do

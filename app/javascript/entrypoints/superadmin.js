@@ -2,6 +2,7 @@ import '../dashboard/assets/scss/super_admin/index.scss';
 import '../superadmin/navigation_and_theme';
 import '../superadmin/custom_select';
 import '../superadmin/delete_confirm';
+import '../superadmin/toast';
 import '../superadmin/command_palette';
 import '../superadmin/dashboard_chart';
 import '../superadmin/custom_file_upload';

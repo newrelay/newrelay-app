@@ -1,3 +1,41 @@
+# == Schema Information
+#
+# Table name: deals
+#
+#  id                :bigint           not null, primary key
+#  amount_cents      :bigint           default(0), not null
+#  close_on          :date
+#  currency          :string           default("USD"), not null
+#  name              :string           not null
+#  priority          :integer          default("medium"), not null
+#  probability       :integer          default(0), not null
+#  created_at        :datetime         not null
+#  updated_at        :datetime         not null
+#  account_id        :bigint           not null
+#  company_id        :bigint
+#  contact_id        :bigint
+#  owner_id          :bigint
+#  pipeline_id       :bigint           not null
+#  pipeline_stage_id :bigint           not null
+#
+# Indexes
+#
+#  index_deals_on_account_id           (account_id)
+#  index_deals_on_account_id_and_name  (account_id,name)
+#  index_deals_on_company_id           (company_id)
+#  index_deals_on_contact_id           (contact_id)
+#  index_deals_on_owner_id             (owner_id)
+#  index_deals_on_pipeline_id          (pipeline_id)
+#  index_deals_on_pipeline_stage_id    (pipeline_stage_id)
+#
+# Foreign Keys
+#
+#  fk_rails_...  (account_id => accounts.id)
+#  fk_rails_...  (contact_id => contacts.id)
+#  fk_rails_...  (owner_id => users.id)
+#  fk_rails_...  (pipeline_id => pipelines.id)
+#  fk_rails_...  (pipeline_stage_id => pipeline_stages.id)
+#
 class Deal < ApplicationRecord
   belongs_to :account
   belongs_to :pipeline

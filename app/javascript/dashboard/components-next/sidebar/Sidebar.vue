@@ -409,8 +409,8 @@ const primaryMenuItems = computed(() => {
         {
           name: 'Deals',
           label: t('SIDEBAR.DEALS'),
-          disabled: true,
-          comingSoon: true,
+          to: accountScopedRoute('deals_dashboard_index'),
+          activeOn: ['deals_dashboard_index'],
         },
         {
           name: 'Pipelines',

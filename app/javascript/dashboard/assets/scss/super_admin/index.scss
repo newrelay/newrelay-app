@@ -1977,6 +1977,14 @@ select.nr-select-native {
   display: none !important;
 }
 
+/* Administrate's selectize.js still auto-inits on `.field-unit--select select`
+   (app/assets/javascripts/administrate/components/select.js) and renders its
+   own widget next to ours. Suppress it — the underlying <select> stays the
+   real form field either way. */
+.selectize-control {
+  display: none !important;
+}
+
 button.nr-select-trigger {
   display: flex;
   align-items: center;

@@ -1,0 +1,67 @@
+{
+  "DEALS": {
+    "HEADER": "Deals",
+    "DESCRIPTION": "Track and manage sales deals across your pipeline.",
+    "NEW": "New Deal",
+    "EMPTY": {
+      "TITLE": "No deals yet",
+      "DESCRIPTION": "Create your first deal to start tracking opportunities."
+    },
+    "SEARCH_PLACEHOLDER": "Search deals...",
+    "TABLE": {
+      "NAME": "Deal",
+      "STAGE": "Stage",
+      "AMOUNT": "Amount",
+      "CLOSE_ON": "Close date",
+      "PRIORITY": "Priority",
+      "UPDATED": "Updated"
+    },
+    "FORM": {
+      "CREATE_TITLE": "New deal",
+      "EDIT_TITLE": "Edit deal",
+      "DESCRIPTION": "Add deal details and place it on your sales pipeline.",
+      "NAME": {
+        "LABEL": "Name",
+        "PLACEHOLDER": "Website redesign",
+        "ERROR": "Name is required."
+      },
+      "AMOUNT": {
+        "LABEL": "Amount",
+        "PLACEHOLDER": "0.00"
+      },
+      "STAGE": {
+        "LABEL": "Stage",
+        "PLACEHOLDER": "Select a stage"
+      },
+      "CLOSE_ON": {
+        "LABEL": "Close date"
+      },
+      "PRIORITY": {
+        "LABEL": "Priority"
+      },
+      "PROBABILITY": {
+        "LABEL": "Probability (%)"
+      },
+      "CANCEL": "Cancel",
+      "CREATE": "Create deal",
+      "SAVE": "Save changes"
+    },
+    "PRIORITY": {
+      "LOW": "Low",
+      "MEDIUM": "Medium",
+      "HIGH": "High"
+    },
+    "API": {
+      "CREATE_SUCCESS": "Deal created",
+      "UPDATE_SUCCESS": "Deal updated",
+      "DELETE_SUCCESS": "Deal deleted",
+      "ERROR": "Something went wrong. Please try again."
+    },
+    "DELETE": {
+      "TITLE": "Delete deal?",
+      "DESCRIPTION": "This permanently removes the deal.",
+      "CONFIRM": "Delete",
+      "CANCEL": "Cancel"
+    }
+  }
+}

@@ -163,8 +163,10 @@ ready; remove `comingSoon: true`.
 
 ## 8. Work plan (after approval)
 
-1. **Schema + API + default pipeline seed** (behind routes not yet linked, or feature-ready).
-2. **Deals table + create/edit drawer** (Relay).
+1. **Schema + API + default pipeline seed** — **done 2026-08-25**
+   (`pipelines` / `pipeline_stages` / `deals`, EnsureDefaultService,
+   `/api/v1/accounts/{id}/pipelines|deals`, specs green).
+2. **Deals table + create/edit dialog** (Relay) — **done 2026-08-25** (sidebar Deals live).
 3. **Pipelines board + drag stage**.
 4. **Opportunities route** (reuse table; column set).
 5. **Sidebar:** flip Coming soon → live routes.

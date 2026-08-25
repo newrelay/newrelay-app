@@ -2,7 +2,7 @@
 import { useRoute } from 'vue-router';
 import { useFunctionGetter } from 'dashboard/composables/store';
 
-import WootReports from './components/WootReports.vue';
+import ReportsShell from './components/ReportsShell.vue';
 import Spinner from 'dashboard/components-next/spinner/Spinner.vue';
 
 const route = useRoute();
@@ -10,7 +10,7 @@ const team = useFunctionGetter('teams/getTeamById', route.params.id);
 </script>
 
 <template>
-  <WootReports
+  <ReportsShell
     v-if="team.id"
     :key="team.id"
     type="team"

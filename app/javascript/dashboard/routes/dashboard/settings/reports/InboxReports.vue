@@ -1,9 +1,9 @@
 <script setup>
-import WootReports from './components/WootReports.vue';
+import ReportsShell from './components/ReportsShell.vue';
 </script>
 
 <template>
-  <WootReports
+  <ReportsShell
     key="inbox-reports"
     type="inbox"
     getter-key="inboxes/getInboxes"

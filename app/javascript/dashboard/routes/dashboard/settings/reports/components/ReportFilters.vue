@@ -7,7 +7,7 @@ import { getUnixStartOfDay, getUnixEndOfDay } from 'helpers/DateHelper';
 import subDays from 'date-fns/subDays';
 import differenceInDays from 'date-fns/differenceInDays';
 import ActiveFilterChip from './Filters/v3/ActiveFilterChip.vue';
-import WootDatePicker from 'dashboard/components/ui/DatePicker/DatePicker.vue';
+import DatePicker from 'dashboard/components/ui/DatePicker/DatePicker.vue';
 import ToggleSwitch from 'dashboard/components-next/switch/Switch.vue';
 import { GROUP_BY_FILTER } from '../constants';
 import { DATE_RANGE_TYPES } from 'dashboard/components/ui/DatePicker/helpers/DatePickerHelper';
@@ -323,7 +323,7 @@ onMounted(() => {
     class="flex items-center justify-between border-b border-border pb-4 pt-2"
   >
     <div class="flex items-center gap-4">
-      <WootDatePicker
+      <DatePicker
         v-model:date-range="customDateRange"
         v-model:range-type="selectedDateRange"
         @date-range-changed="onDateRangeChange"

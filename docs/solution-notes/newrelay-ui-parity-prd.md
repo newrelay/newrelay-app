@@ -2,7 +2,7 @@
 
 **Status:** Draft · **Owner:** Dashboard UI · **Compared:** 2026-08-25
 **Locked 2026-08-25:** do **not** update Workspace, Customer Engagement, or Reputation.
-**Phase started:** 2026-08-25 (copy + Coming soon leaves + ⌘K).
+**Phase 0–1:** complete 2026-08-25. **Next:** Phase 2 CRM (own PRD) or Phase 3 analytics.
 **Source of truth (visual + IA):** [https://new-relay-ui.vercel.app](https://new-relay-ui.vercel.app)
 **This app:** `app/javascript/dashboard/` (Vue 3, Relay tokens)
 
@@ -94,23 +94,17 @@ Source: `Sidebar.vue` `primaryMenuItems` (~line 265).
    from `Dashboard.vue`). Copilot panel still opens from the conversation
    sidepanel switch. Shared settings loading spinner in `SettingsLayout.vue`
    no longer uses `woot-loading-state`.
-5. Settings leftover widgets pass — **done 2026-08-25 (batch A + B partial):**
-   - **Batch A:** loading + delete/confirm modals → Spinner /
-     `RelayConfirmModal`.
-   - **Batch B (this pass):**
-     - `Code.vue` (`woot-code`) restyled with Relay tokens + `RelayButton`
-       (covers all inbox finish/config copy blocks).
-     - hljs styles moved off `n-*` onto semantic tokens.
-     - Canned Add/Edit → `components-next/Editor` (blur emit added).
-     - Teams `woot-wizard` already token-clean (`Wizard.vue`) — no change.
-   - **Batch C (this pass):**
-     - Profile MessageSignature, inbox business hours, pre-chat message →
-       `components-next/Editor` (`is-format-mode` was a no-op).
-     - Business hours ComboBox surface `bg-black/10` → `bg-muted/40`.
-   - **Still leftover (deferred):** report date-range `WootDatePicker` (dual
-     range ≠ `RelayDatePicker`), cosmetic `WootReports` rename (shell already
-     uses Relay header/button). Conversation ReplyBox + AutomationActionInput
-     editors stay on WootWriter (not settings chrome).
+5. Settings leftover widgets pass — **done 2026-08-25 (batches A–D):**
+   - **A:** loading + delete/confirm → Spinner / `RelayConfirmModal`.
+   - **B:** `Code.vue` Relay restyle; canned → next Editor; hljs tokens.
+   - **C:** signature / business hours / pre-chat → next Editor.
+   - **D:** `WootReports` → `ReportsShell`; report filters import
+     `DatePicker` (dual-range kept — not swapped to single-date
+     `RelayDatePicker`); teams Create/Edit use local `Wizard` import
+     instead of `woot-wizard`.
+   - **Out of this PRD:** conversation ReplyBox + AutomationActionInput
+     stay on WootWriter; global `woot-code` tag name remains (component
+     already Relay-styled).
 
 ### Phase 2 — CRM objects (own spec) — not started
 

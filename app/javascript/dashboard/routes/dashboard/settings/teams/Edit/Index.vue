@@ -1,5 +1,8 @@
 <script>
+import Wizard from 'dashboard/components/ui/Wizard.vue';
+
 export default {
+  components: { Wizard },
   computed: {
     items() {
       const routes = {
@@ -31,7 +34,7 @@ export default {
     <div
       class="grid h-full min-h-[50dvh] w-full grid-cols-1 rounded-xl border border-border/60 bg-card shadow-xs lg:grid-cols-8 lg:divide-x lg:divide-border/40"
     >
-      <woot-wizard
+      <Wizard
         class="hidden h-fit px-6 py-8 lg:col-span-2 lg:block"
         :items="items"
       />

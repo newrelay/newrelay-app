@@ -611,49 +611,6 @@ const primaryMenuItems = computed(() => {
 
 const administrationMenuItems = computed(() => [
   {
-    name: 'Administration',
-    label: t('SIDEBAR.ADMINISTRATION'),
-    icon: 'i-lucide-shield',
-    children: [
-      {
-        name: 'Team',
-        label: t('SIDEBAR.TEAM'),
-        to: accountScopedRoute('agent_list'),
-      },
-      {
-        name: 'Roles',
-        label: t('SIDEBAR.ROLES'),
-        to: accountScopedRoute('custom_roles_list'),
-      },
-      {
-        name: 'Billing',
-        label: t('SIDEBAR.BILLING'),
-        to: accountScopedRoute('billing_settings_index'),
-      },
-      {
-        name: 'Integrations',
-        label: t('SIDEBAR.INTEGRATIONS'),
-        activeOn: [
-          'settings_applications',
-          'settings_applications_integration',
-          'settings_integrations_dashboard_apps',
-          'settings_integrations_api_keys',
-          'settings_integrations_webhook',
-          'settings_integrations_slack',
-          'settings_integrations_linear',
-          'settings_integrations_notion',
-          'settings_integrations_shopify',
-        ],
-        to: accountScopedRoute('settings_applications'),
-      },
-      {
-        name: 'Admin Settings',
-        label: t('SIDEBAR.SETTINGS'),
-        to: accountScopedRoute('general_settings_index'),
-      },
-    ],
-  },
-  {
     name: 'Portals',
     label: t('SIDEBAR.KNOWLEDGE_BASE'),
     icon: 'i-lucide-help-circle',

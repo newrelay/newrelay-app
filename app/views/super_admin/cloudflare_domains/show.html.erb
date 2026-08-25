@@ -1,8 +1,11 @@
 <% content_for(:title) { "Cloudflare Domains" } %>
 
 <div class="space-y-6">
-  <div class="flex items-center justify-between mb-6">
-    <h1 class="page-title">Cloudflare Domains</h1>
+  <div class="page-header mb-6">
+    <div>
+      <h1 class="page-title">Cloudflare Domains</h1>
+      <p class="text-sm text-muted-foreground mt-1">Custom hostnames issued on Cloudflare for this installation.</p>
+    </div>
   </div>
 
   <% if @error.present? %>
@@ -19,7 +22,7 @@
           <th>Status</th>
           <th>SSL</th>
           <th>Created</th>
-          <th style="text-align: right;">Actions</th>
+          <th class="text-right">Actions</th>
         </tr>
       </thead>
       <tbody>
@@ -32,13 +35,13 @@
             <td><%= h['status'] %></td>
             <td><%= h.dig('ssl', 'status') %></td>
             <td class="text-muted-foreground"><%= h['created_at'] %></td>
-            <td style="text-align: right;">
+            <td class="text-right">
               <%= button_to "Delete",
                     super_admin_cloudflare_domains_path(hostname: h['hostname']),
                     method: :delete,
                     form: { data: { turbo_confirm: "Delete #{h['hostname']} from Cloudflare?" } },
                     data: { confirm: "Delete #{h['hostname']} from Cloudflare?" },
-                    class: "inline-flex h-8 items-center justify-center rounded-md bg-destructive px-3 text-xs font-medium text-destructive-foreground hover:bg-destructive/90 transition-colors" %>
+                    class: "btn btn-danger-soft btn-sm reset-base" %>
             </td>
           </tr>
         <% end %>

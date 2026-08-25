@@ -1,7 +1,4 @@
-button:not(.reset-base),
-input[type='button']:not(.reset-base),
-input[type='reset']:not(.reset-base),
-input[type='submit']:not(.reset-base),
+/* Super Admin kit paints <button> / submit. Keep Administrate chrome on .button only. */
 .button:not(.reset-base) {
   appearance: none;
   background-color: $color-woot;

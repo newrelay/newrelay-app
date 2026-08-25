@@ -240,7 +240,18 @@ const handleDownload = () => {
   showToast('Downloading video…');
 };
 const handleEdit = () => showToast(`Opening editor for ${selectedVideo.value?.author}'s video...`);
-const handleMore = () => showToast('Opening more options...');
+// F6: embed = an iframe of the public share page (reuses F2; no separate video widget).
+const handleEmbed = async () => {
+  const url = selectedVideo.value?.shareUrl;
+  if (!url) { showToast('No embed available yet.'); return; }
+  const code = `<iframe src="${url}" width="360" height="640" frameborder="0" allowfullscreen loading="lazy"></iframe>`;
+  try {
+    await navigator.clipboard.writeText(code);
+    showToast('Embed code copied to clipboard!');
+  } catch (e) {
+    showToast('Could not copy embed code.');
+  }
+};
 
 const handleStatusChange = async (newStatus) => {
   if (!selectedVideo.value) return;
@@ -957,7 +968,7 @@ const stats = computed(() => {
             <button @click="handleDownload" class="h-9 gap-1.5 bg-card border border-border hover:bg-muted text-foreground flex-1 shadow-xs font-semibold text-xs rounded-lg inline-flex items-center justify-center cursor-pointer">
               <Download class="size-3.5" /> Download
             </button>
-            <button @click="handleMore" class="h-9 w-9 shrink-0 bg-card border border-border hover:bg-muted text-foreground shadow-xs rounded-lg inline-flex items-center justify-center cursor-pointer">
+            <button @click="handleEmbed" title="Copy embed code" class="h-9 w-9 shrink-0 bg-card border border-border hover:bg-muted text-foreground shadow-xs rounded-lg inline-flex items-center justify-center cursor-pointer">
               <MoreHorizontal class="size-4" />
             </button>
           </div>

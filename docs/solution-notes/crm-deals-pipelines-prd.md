@@ -171,6 +171,7 @@ ready; remove `comingSoon: true`.
 4. **Opportunities route** (reuse deals; probability column) — **done 2026-08-25**.
 5. **Sidebar:** Deals / Pipelines / Opportunities live — **done 2026-08-25**.
 6. **Empty states + computed metric chips** — **done 2026-08-25**.
+7. **Contact / Company / Owner on deal form + tables** — **done 2026-08-25**.
 
 Do not port mock demo toggles. Do not add Workspace/Calendar.
 

@@ -22,7 +22,10 @@
       "CLOSE_ON": "Close date",
       "PRIORITY": "Priority",
       "PROBABILITY": "Probability",
-      "UPDATED": "Updated"
+      "UPDATED": "Updated",
+      "OWNER": "Owner",
+      "COMPANY": "Company",
+      "CONTACT": "Contact"
     },
     "FORM": {
       "CREATE_TITLE": "New deal",
@@ -52,7 +55,19 @@
       },
       "CANCEL": "Cancel",
       "CREATE": "Create deal",
-      "SAVE": "Save changes"
+      "SAVE": "Save changes",
+      "OWNER": {
+        "LABEL": "Owner",
+        "PLACEHOLDER": "Select owner"
+      },
+      "CONTACT": {
+        "LABEL": "Contact",
+        "PLACEHOLDER": "Select contact"
+      },
+      "COMPANY": {
+        "LABEL": "Company",
+        "PLACEHOLDER": "Select company"
+      }
     },
     "PRIORITY": {
       "LOW": "Low",

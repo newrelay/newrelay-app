@@ -96,10 +96,12 @@ on every page; do not start a second design system.
 | Account Hierarchy | `enterprise/.../account_hierarchy/show.html.erb` | **Done.** Fully redesigned: page-title, subtitle, search, stat cards, `hierarchy-node-card`, `status-text-active` — same language as Accounts. No `slate-*` left. |
 | Sidekiq placement | `_navigation.html.erb` | **Done.** "Sidekiq Dashboard" now renders in the main nav list with an external-link icon, matching the mock. |
 | Delete confirm | Administrate `data-confirm` | **Done.** Custom modal (`superadmin/delete_confirm.js`) — trash icon, "Delete record" / "Are you sure?", Keep record / Delete record, blurred backdrop. Verified on Accounts index. |
-| Toasts | Flash partial only | `superadmin/toast.js` exists; not re-verified end-to-end (no in-page save action was exercised in this pass). |
+| Toasts | Flash partial only | **Effectively done.** `superadmin/toast.js` + `#toastContainer` wired and used for copy-to-clipboard actions. No other in-page (non-redirect) save action currently exists in Super Admin (`payment_gateway_form.js` / `billing_coupon_form.js` submits are normal redirecting POSTs) — flash partial (already tokenized, `bg-success/10` etc.) covers every save today. Re-add a toast call if a genuine AJAX save is introduced later. |
 | Command palette results | `_search_modal.html.erb` | **Done.** `superadmin/command_palette.js` — real Super Admin routes with label + description + Jump chip, opens on ⌘K, closes on Esc. Verified. |
-| Empty table | `_collection.html.erb` | Not re-verified (no empty resource available in the seeded data used for this pass). |
+| Empty table | `_collection.html.erb` | **Done** (source-verified 08-25). Boxed inbox-style SVG icon + "No {Resource} found." at `_collection.html.erb:174-183`, matches spec. |
 | Chart | Dashboard Vue vs mock canvas | **Re-verified: Match.** `dashboard_chart.js` uses the mock's series colors (`#5b5bd6` / `#7373f7`) and Total/Peak/Avg/Trend header, same as the mock. |
+
+**Source-level sweep 08-25** (grep, not visually verified — browser pane was unavailable): Agent Bots, Platform Apps, Platform Banners, Instance Health, Push Diagnostics, Cloudflare Domains, App Configs, Enterprise Inquiries — zero hits for `slate-*`/`violet-*`/`green-50/100/200/700`, hardcoded hex, or native `<select>` across all of `app/views/super_admin` and `enterprise/app/views/super_admin`. The `bg-green-100` Push Diagnostics status chip the 08-24 audit flagged is gone.
 
 ---
 

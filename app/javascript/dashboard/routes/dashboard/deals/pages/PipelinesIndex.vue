@@ -138,6 +138,12 @@ onMounted(load);
                 <div class="text-[13px] font-medium text-foreground">
                   {{ deal.name }}
                 </div>
+                <div
+                  v-if="deal.company?.name"
+                  class="mt-1 text-[12px] text-muted-foreground"
+                >
+                  {{ deal.company.name }}
+                </div>
                 <div class="mt-2 flex items-center justify-between gap-2">
                   <span class="text-[13px] text-foreground">
                     {{ formatDealAmount(deal) }}

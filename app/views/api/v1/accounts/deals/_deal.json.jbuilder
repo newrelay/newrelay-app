@@ -35,3 +35,11 @@ json.contact do
     json.name deal.contact.name
   end
 end
+
+json.company do
+  if deal.respond_to?(:company) && deal.company
+    json.id deal.company.id
+    json.name deal.company.name
+  end
+end
+

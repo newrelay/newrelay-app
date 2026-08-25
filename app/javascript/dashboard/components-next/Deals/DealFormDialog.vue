@@ -13,6 +13,9 @@ import {
 } from 'dashboard/components-next/relay/modal/constants';
 import RelayModalHeader from 'dashboard/components-next/relay/modal/RelayModalHeader.vue';
 import ComboBox from 'dashboard/components-next/combobox/ComboBox.vue';
+import { useMapGetter, useStore } from 'dashboard/composables/store';
+import ContactAPI from 'dashboard/api/contacts';
+import { useCompaniesStore } from 'dashboard/stores/companies';
 
 const props = defineProps({
   isLoading: { type: Boolean, default: false },
@@ -22,9 +25,15 @@ const props = defineProps({
 
 const emit = defineEmits(['submit']);
 const { t } = useI18n();
+const store = useStore();
+const companiesStore = useCompaniesStore();
+const agents = useMapGetter('agents/getAgents');
 
 const isOpen = ref(false);
 const showErrors = ref(false);
+const contactOptions = ref([]);
+const companyOptions = ref([]);
+const companiesAvailable = ref(false);
 
 const form = reactive({
   name: '',
@@ -33,6 +42,9 @@ const form = reactive({
   closeOn: '',
   priority: 'medium',
   probability: 50,
+  ownerId: '',
+  contactId: '',
+  companyId: '',
 });
 
 const isEdit = computed(() => Boolean(props.deal?.id));
@@ -50,23 +62,41 @@ const priorityOptions = computed(() => [
   { value: 'high', label: t('DEALS.PRIORITY.HIGH') },
 ]);
 
+const ownerOptions = computed(() =>
+  (agents.value || []).map(agent => ({
+    value: agent.id,
+    label: agent.name || agent.availableName || agent.email,
+  }))
+);
+
 const isFormValid = computed(
   () => form.name.trim() !== '' && Boolean(form.pipelineStageId)
 );
 
-const resetForm = () => {
-  form.name = props.deal?.name || '';
+const optionalId = value => {
+  if (value === '' || value === null || value === undefined) return null;
+  const parsed = Number(value);
+  return Number.isFinite(parsed) ? parsed : null;
+};
+
+const applyDealToForm = deal => {
+  form.name = deal?.name || '';
   form.amount =
-    props.deal?.amountCents != null
-      ? (Number(props.deal.amountCents) / 100).toFixed(2)
+    deal?.amountCents != null
+      ? (Number(deal.amountCents) / 100).toFixed(2)
       : '';
-  form.pipelineStageId = props.deal?.pipelineStageId || props.stages?.[0]?.id || '';
-  form.closeOn = props.deal?.closeOn || '';
-  form.priority = props.deal?.priority || 'medium';
+  form.pipelineStageId = deal?.pipelineStageId || props.stages?.[0]?.id || '';
+  form.closeOn = deal?.closeOn || '';
+  form.priority = deal?.priority || 'medium';
   form.probability =
-    props.deal?.probability != null ? Number(props.deal.probability) : 50;
+    deal?.probability != null ? Number(deal.probability) : 50;
+  form.ownerId = deal?.ownerId || '';
+  form.contactId = deal?.contactId || '';
+  form.companyId = deal?.companyId || '';
   showErrors.value = false;
 };
+
+const resetForm = () => applyDealToForm(props.deal);
 
 watch(
   () => props.deal,
@@ -85,21 +115,43 @@ watch(
   { immediate: true }
 );
 
-const open = (deal = null) => {
-  // deal override via prop watch; parent sets :deal before open
-  isOpen.value = true;
-  resetForm();
-  if (deal) {
-    form.name = deal.name || '';
-    form.amount =
-      deal.amountCents != null
-        ? (Number(deal.amountCents) / 100).toFixed(2)
-        : '';
-    form.pipelineStageId = deal.pipelineStageId || props.stages?.[0]?.id || '';
-    form.closeOn = deal.closeOn || '';
-    form.priority = deal.priority || 'medium';
-    form.probability = deal.probability != null ? Number(deal.probability) : 50;
+const loadLinkOptions = async () => {
+  try {
+    await store.dispatch('agents/get');
+  } catch {
+    // agents may already be loaded
   }
+
+  try {
+    const { data } = await ContactAPI.get(1, 'name');
+    const payload = data.payload || [];
+    contactOptions.value = payload.map(contact => ({
+      value: contact.id,
+      label: contact.name || contact.email || `#${contact.id}`,
+    }));
+  } catch {
+    contactOptions.value = [];
+  }
+
+  try {
+    await companiesStore.get({ page: 1, sort: 'name' });
+    companyOptions.value = (companiesStore.getCompaniesList || []).map(
+      company => ({
+        value: company.id,
+        label: company.name,
+      })
+    );
+    companiesAvailable.value = true;
+  } catch {
+    companyOptions.value = [];
+    companiesAvailable.value = false;
+  }
+};
+
+const open = (deal = null) => {
+  isOpen.value = true;
+  applyDealToForm(deal || props.deal);
+  loadLinkOptions();
 };
 
 const close = () => {
@@ -124,6 +176,9 @@ const submit = () => {
     closeOn: form.closeOn || null,
     priority: form.priority,
     probability: Number(form.probability) || 0,
+    ownerId: optionalId(form.ownerId),
+    contactId: optionalId(form.contactId),
+    companyId: optionalId(form.companyId),
   });
 };
 
@@ -142,7 +197,7 @@ defineExpose({ open, close, onSuccess, dialogRef: { open, close } });
         @click="close"
       />
       <div
-        class="relative z-10 flex w-full max-w-lg flex-col overflow-hidden rounded-xl border border-border bg-card shadow-lg"
+        class="relative z-10 flex max-h-[90vh] w-full max-w-lg flex-col overflow-hidden rounded-xl border border-border bg-card shadow-lg"
         role="dialog"
         aria-modal="true"
       >
@@ -153,7 +208,10 @@ defineExpose({ open, close, onSuccess, dialogRef: { open, close } });
           :description="$t('DEALS.FORM.DESCRIPTION')"
           @close="close"
         />
-        <form :class="RELAY_MODAL_BODY_CLASS" @submit.prevent="submit">
+        <form
+          :class="[RELAY_MODAL_BODY_CLASS, 'overflow-y-auto']"
+          @submit.prevent="submit"
+        >
           <div class="flex flex-col gap-4">
             <div class="flex flex-col gap-1.5">
               <RelayLabel class="text-[13.5px] font-medium text-foreground">
@@ -232,6 +290,39 @@ defineExpose({ open, close, onSuccess, dialogRef: { open, close } });
                   :options="priorityOptions"
                 />
               </div>
+            </div>
+
+            <div class="flex flex-col gap-1.5">
+              <RelayLabel class="text-[13.5px] font-medium text-foreground">
+                {{ $t('DEALS.FORM.OWNER.LABEL') }}
+              </RelayLabel>
+              <ComboBox
+                v-model="form.ownerId"
+                :options="ownerOptions"
+                :placeholder="$t('DEALS.FORM.OWNER.PLACEHOLDER')"
+              />
+            </div>
+
+            <div class="flex flex-col gap-1.5">
+              <RelayLabel class="text-[13.5px] font-medium text-foreground">
+                {{ $t('DEALS.FORM.CONTACT.LABEL') }}
+              </RelayLabel>
+              <ComboBox
+                v-model="form.contactId"
+                :options="contactOptions"
+                :placeholder="$t('DEALS.FORM.CONTACT.PLACEHOLDER')"
+              />
+            </div>
+
+            <div v-if="companiesAvailable" class="flex flex-col gap-1.5">
+              <RelayLabel class="text-[13.5px] font-medium text-foreground">
+                {{ $t('DEALS.FORM.COMPANY.LABEL') }}
+              </RelayLabel>
+              <ComboBox
+                v-model="form.companyId"
+                :options="companyOptions"
+                :placeholder="$t('DEALS.FORM.COMPANY.PLACEHOLDER')"
+              />
             </div>
           </div>
 

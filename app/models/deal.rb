@@ -42,6 +42,7 @@ class Deal < ApplicationRecord
   belongs_to :pipeline_stage
   belongs_to :contact, optional: true
   belongs_to :owner, class_name: 'User', optional: true, inverse_of: false
+  belongs_to :company, optional: true if ChatwootApp.enterprise?
 
   validates :name, presence: true
   validates :amount_cents, numericality: { only_integer: true, greater_than_or_equal_to: 0 }

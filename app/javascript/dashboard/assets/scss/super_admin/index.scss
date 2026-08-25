@@ -1648,6 +1648,14 @@ thead th:first-child {
 thead th:last-child {
   border-radius: 0 12px 12px 0;
 }
+/* Id is always the first collection column (see COLLECTION_ATTRIBUTES in
+   app/dashboards/*.rb) and its content is short — without a width hint,
+   table-layout:auto stretches it proportionally with the wider columns. */
+thead th:first-child,
+tbody td:first-child {
+  width: 1%;
+  white-space: nowrap;
+}
 
 .th-sort-btn {
   display: inline-flex;

@@ -4,7 +4,7 @@ class Api::V1::Accounts::DealsController < Api::V1::Accounts::BaseController
   before_action :fetch_deal, only: [:show, :update, :destroy]
 
   def index
-    deals = Current.account.deals.includes(:pipeline, :pipeline_stage, :contact, :owner)
+    deals = Current.account.deals.includes(deal_includes)
     deals = deals.where(pipeline_id: params[:pipeline_id]) if params[:pipeline_id].present?
     deals = deals.where(pipeline_stage_id: params[:pipeline_stage_id]) if params[:pipeline_stage_id].present?
     @deals = deals.order(updated_at: :desc)
@@ -33,6 +33,12 @@ class Api::V1::Accounts::DealsController < Api::V1::Accounts::BaseController
 
   def fetch_deal
     @deal = Current.account.deals.find(params[:id])
+  end
+
+  def deal_includes
+    associations = [:pipeline, :pipeline_stage, :contact, :owner]
+    associations << :company if ChatwootApp.enterprise?
+    associations
   end
 
   def deal_params

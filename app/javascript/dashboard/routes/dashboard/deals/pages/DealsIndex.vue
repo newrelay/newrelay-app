@@ -107,6 +107,9 @@ onMounted(load);
                 {{ $t('DEALS.TABLE.NAME') }}
               </th>
               <th class="px-4 py-3 text-[12px] font-medium text-muted-foreground">
+                {{ $t('DEALS.TABLE.COMPANY') }}
+              </th>
+              <th class="px-4 py-3 text-[12px] font-medium text-muted-foreground">
                 {{ $t('DEALS.TABLE.STAGE') }}
               </th>
               <th class="px-4 py-3 text-[12px] font-medium text-muted-foreground">
@@ -117,6 +120,9 @@ onMounted(load);
               </th>
               <th class="px-4 py-3 text-[12px] font-medium text-muted-foreground">
                 {{ $t('DEALS.TABLE.PRIORITY') }}
+              </th>
+              <th class="px-4 py-3 text-[12px] font-medium text-muted-foreground">
+                {{ $t('DEALS.TABLE.OWNER') }}
               </th>
               <th class="px-4 py-3 text-[12px] font-medium text-muted-foreground">
                 {{ $t('DEALS.TABLE.UPDATED') }}
@@ -133,6 +139,9 @@ onMounted(load);
               <td class="px-4 py-3 text-[14px] font-medium text-foreground">
                 {{ deal.name }}
               </td>
+              <td class="px-4 py-3 text-[13px] text-muted-foreground">
+                {{ deal.company?.name || '—' }}
+              </td>
               <td class="px-4 py-3">
                 <span
                   class="inline-flex rounded-md bg-primary/10 px-2 py-0.5 text-[12px] font-medium text-primary"
@@ -148,6 +157,9 @@ onMounted(load);
               </td>
               <td class="px-4 py-3 text-[13px] capitalize text-foreground">
                 {{ deal.priority }}
+              </td>
+              <td class="px-4 py-3 text-[13px] text-muted-foreground">
+                {{ deal.owner?.availableName || deal.owner?.name || '—' }}
               </td>
               <td class="px-4 py-3 text-[13px] text-muted-foreground">
                 {{ formatDate(deal.updatedAt) }}

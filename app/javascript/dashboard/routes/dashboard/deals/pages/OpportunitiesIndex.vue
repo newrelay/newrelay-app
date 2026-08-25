@@ -107,6 +107,9 @@ onMounted(load);
                 {{ $t('DEALS.TABLE.NAME') }}
               </th>
               <th class="px-4 py-3 text-[12px] font-medium text-muted-foreground">
+                {{ $t('DEALS.TABLE.COMPANY') }}
+              </th>
+              <th class="px-4 py-3 text-[12px] font-medium text-muted-foreground">
                 {{ $t('DEALS.TABLE.STAGE') }}
               </th>
               <th class="px-4 py-3 text-[12px] font-medium text-muted-foreground">
@@ -121,6 +124,9 @@ onMounted(load);
               <th class="px-4 py-3 text-[12px] font-medium text-muted-foreground">
                 {{ $t('DEALS.TABLE.PROBABILITY') }}
               </th>
+              <th class="px-4 py-3 text-[12px] font-medium text-muted-foreground">
+                {{ $t('DEALS.TABLE.OWNER') }}
+              </th>
               <th class="px-4 py-3" />
             </tr>
           </thead>
@@ -132,6 +138,9 @@ onMounted(load);
             >
               <td class="px-4 py-3 text-[14px] font-medium text-foreground">
                 {{ deal.name }}
+              </td>
+              <td class="px-4 py-3 text-[13px] text-muted-foreground">
+                {{ deal.company?.name || '—' }}
               </td>
               <td class="px-4 py-3">
                 <span
@@ -151,6 +160,9 @@ onMounted(load);
               </td>
               <td class="px-4 py-3 text-[13px] text-foreground">
                 {{ deal.probability }}%
+              </td>
+              <td class="px-4 py-3 text-[13px] text-muted-foreground">
+                {{ deal.owner?.availableName || deal.owner?.name || '—' }}
               </td>
               <td class="px-4 py-3">
                 <div class="flex justify-end gap-1">

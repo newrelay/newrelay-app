@@ -1,35 +1,41 @@
-<% 
+<%
   resource_name = page.resource_name.classify
   dashboard_class_name = "#{resource_name}Dashboard"
   dashboard_class = dashboard_class_name.constantize
-  
+  is_user = page.resource_name.to_s == 'user'
+  all_label = is_user ? 'All' : 'All records'
+
   current_filter = nil
   if params[:search] && params[:search].include?(':')
     current_filter = params[:search].split(':').first
   end
 
-  active_label = current_filter ? current_filter.to_s.titleize : (page.resource_name.to_s == 'user' ? 'All' : 'All records')
+  filter_copy = {
+    'marked_for_deletion' => 'Marked For Deletion',
+    'super_admin' => 'Super Admin'
+  }
+  active_label = current_filter ? (filter_copy[current_filter.to_s] || current_filter.to_s.titleize) : all_label
 %>
 
 <% if dashboard_class.const_defined?(:COLLECTION_FILTERS) && !dashboard_class::COLLECTION_FILTERS.empty? %>
-  <div class="filter-dropdown relative inline-block text-left" id="collectionFilterDropdown">
-    <button type="button" class="filter-dropdown-trigger flex h-9 items-center gap-2 rounded-md border border-input bg-background px-3 py-1 text-sm shadow-xs text-foreground hover:bg-accent hover:border-ring transition-colors cursor-pointer" onclick="toggleFilterDropdown('collectionFilterDropdown')">
-      <svg class="size-4 text-muted-foreground shrink-0" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
+  <div class="filter-dropdown" id="collectionFilterDropdown">
+    <button type="button" class="filter-dropdown-trigger reset-base" onclick="toggleFilterDropdown('collectionFilterDropdown')">
+      <svg class="filter-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
       <span class="filter-label"><%= active_label %></span>
-      <svg class="size-3.5 text-muted-foreground shrink-0" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+      <svg class="filter-chevron" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
     </button>
 
-    <div class="filter-dropdown-menu absolute right-0 mt-1 hidden group-open:block" id="collectionFilterMenu">
-      <button type="button" class="filter-dropdown-item <%= 'selected' if current_filter.nil? %>" onclick="applyFilter('')">
-        <span>All<%= page.resource_name.to_s == 'user' ? '' : ' records' %></span>
-        <svg class="item-check size-4 text-primary ml-auto" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+    <div class="filter-dropdown-menu" id="collectionFilterMenu">
+      <button type="button" class="filter-dropdown-item reset-base <%= 'selected' if current_filter.nil? %>" onclick="applyFilter('')">
+        <span><%= all_label %></span>
+        <svg class="item-check" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
       </button>
 
       <% dashboard_class::COLLECTION_FILTERS.each do |filter_name, _| %>
         <% is_selected = filter_name.to_s == current_filter %>
-        <button type="button" class="filter-dropdown-item <%= 'selected' if is_selected %>" onclick="applyFilter('<%= filter_name %>')">
-          <span><%= filter_name.to_s.titleize %></span>
-          <svg class="item-check size-4 text-primary ml-auto" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+        <button type="button" class="filter-dropdown-item reset-base <%= 'selected' if is_selected %>" onclick="applyFilter('<%= filter_name %>')">
+          <span><%= filter_copy[filter_name.to_s] || filter_name.to_s.titleize %></span>
+          <svg class="item-check" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
         </button>
       <% end %>
     </div>

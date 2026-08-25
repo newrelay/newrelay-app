@@ -1,6 +1,6 @@
 # PRD — Video Testimonials
 
-**Status:** Draft · **Owner:** Reputation squad · **Last updated:** 2026-08-25 (Phase 3 E1–E6 shipped)
+**Status:** Draft · **Owner:** Reputation squad · **Last updated:** 2026-08-25 (Phase 3 complete — E1–E6 + B7)
 **Companion docs:** `reputation-roadmap.md`, `reputation-demo-inventory.md`
 
 Rule inherited from the roadmap: **no feature ships as "real" until its backend exists.** Until
@@ -189,7 +189,7 @@ Backend for the core loop; drop the mock list.
 - Embed via `Reputation::Widget`. (F6)
 - **Exit:** an approved testimonial can be shared/embedded; team can annotate.
 
-### Phase 3 — "AI assist" (flag-gated, `reputation_demo_surfaces`) — **E1–E6 SHIPPED**
+### Phase 3 — "AI assist" (flag-gated, `reputation_demo_surfaces`) — **COMPLETE (E1–E6 + B7)**
 - Transcript (STT) → summary, topics, sentiment, marketing score, quotable line, suggested reply. (E1–E6) ✅
   - STT decision (open Q #1) **resolved by reuse**: codebase already commits to OpenAI transcription
     (`gpt-4o-mini-transcribe`, used by `Messages::AudioTranscriptionService`). No new provider.
@@ -198,7 +198,9 @@ Backend for the core loop; drop the mock list.
     Stored in a single `ai_insights` jsonb column. FE: Transcript + AI Insights tabs render real data,
     hidden unless the flag is on, with an "Analyze video" trigger + poll.
   - 25MB transcription cap (OpenAI limit); videos above it skip transcription honestly (blank + error note).
-- AI-tag filter becomes real. (B7) — **still pending** (needs tags derived from `ai_insights.topics`).
+- AI-tag filter becomes real. (B7) ✅ — the (previously mock) "Relay AI Tags" dropdown now lists the
+  distinct `ai_insights.topics` across loaded rows and filters the list client-side. Demo-flag only.
+  ponytail: client-side filter (no backend) — move to a jsonb `WHERE ... ? tag` query when real paging lands.
 - **Exit:** AI fields reflect the real video; blank/absent until processed (honest, no fabrication). ✅
 
 ### Deferred (keep flag OFF, don't build until asked)

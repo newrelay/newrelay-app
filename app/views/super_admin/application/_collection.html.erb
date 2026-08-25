@@ -8,6 +8,12 @@
   visible_attr_count = attr_types.count - (skip_avatar_col ? 1 : 0)
   has_actions = existing_action?(collection_presenter.resource_name, :edit) || existing_action?(collection_presenter.resource_name, :destroy)
   col_count = visible_attr_count + (has_actions ? 1 : 0)
+  resource_key = collection_presenter.resource_name.to_s
+  text_row_actions = %w[agent_bot platform_app].include?(resource_key)
+  table_initials = lambda do |name|
+    chars = name.to_s.split(/\s+/).filter_map { |word| word[0] }.first(2)
+    chars.join.upcase.presence || '?'
+  end
 %>
 
 <div class="table-card">
@@ -43,7 +49,7 @@
         <% end %>
 
         <% if has_actions %>
-          <th scope="col" style="width: 90px; text-align: right;">
+          <th scope="col" class="w-[90px] text-right">
             <span class="sr-only">Actions</span>
           </th>
         <% end %>
@@ -64,6 +70,7 @@
             <% next if skip_avatar_col && attr_name == 'avatar_url' %>
             <% is_name = attr_name == 'name' %>
             <% is_status = attr_name == 'status' %>
+            <% is_account = attr_name == 'account' %>
             <td class="<%= index.zero? ? 'text-muted-foreground' : 'text-foreground' %>">
               <% if is_name && resource.respond_to?(:avatar_url) %>
                 <div class="table-user-cell">
@@ -71,9 +78,7 @@
                     <% if resource.avatar_url.present? %>
                       <%= image_tag resource.avatar_url, alt: '', class: 'size-full object-cover' %>
                     <% else %>
-                      <span class="table-avatar-placeholder">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-                      </span>
+                      <span class="table-avatar-placeholder"><%= table_initials.call(resource.try(:name)) %></span>
                     <% end %>
                   </div>
                   <% if authorized_action?(path_resource, :show) %>
@@ -84,10 +89,31 @@
                     <span class="font-medium"><%= render_field attribute %></span>
                   <% end %>
                 </div>
+              <% elsif is_account && attribute.data.respond_to?(:name) %>
+                <div class="table-user-cell">
+                  <div class="table-avatar">
+                    <span class="table-avatar-placeholder"><%= table_initials.call(attribute.data.name) %></span>
+                  </div>
+                  <span class="font-medium"><%= render_field attribute %></span>
+                </div>
               <% elsif is_status %>
                 <span class="<%= attribute.data.to_s == 'suspended' ? 'text-muted-foreground font-medium' : 'status-text-active' %>">
                   <%= render_field attribute %>
                 </span>
+              <% elsif attr_name == 'banner_type' %>
+                <span class="badge <%= case attribute.data.to_s
+                                       when 'warning' then 'badge-warning'
+                                       when 'error' then 'badge-destructive'
+                                       else 'badge-indigo'
+                                       end %>">
+                  <%= render_field attribute %>
+                </span>
+              <% elsif attr_name == 'active' && resource_key == 'platform_banner' %>
+                <span class="badge <%= attribute.data ? 'badge-success' : 'badge-muted' %>">
+                  <%= attribute.data ? 'Active' : 'Inactive' %>
+                </span>
+              <% elsif attr_name == 'type' && attribute.data.to_s == 'SuperAdmin' %>
+                <span class="badge badge-indigo">Super Admin</span>
               <% elsif is_name && authorized_action?(path_resource, :show) %>
                 <a href="<%= polymorphic_path([namespace, path_resource]) %>" class="font-medium hover:text-primary transition-colors">
                   <%= render_field attribute %>
@@ -99,7 +125,23 @@
           <% end %>
 
           <% if has_actions %>
-            <td style="text-align: right;">
+            <td class="text-right">
+              <% if text_row_actions %>
+                <div class="row-actions row-actions-text">
+                  <% if existing_action?(collection_presenter.resource_name, :edit) && authorized_action?(path_resource, :edit) %>
+                    <%= link_to t("administrate.actions.edit"),
+                          [:edit, namespace, path_resource],
+                          class: "btn btn-outline btn-sm" %>
+                  <% end %>
+                  <% if existing_action?(collection_presenter.resource_name, :destroy) && authorized_action?(path_resource, :destroy) %>
+                    <%= link_to t("administrate.actions.destroy"),
+                          [namespace, path_resource],
+                          method: :delete,
+                          class: "btn btn-danger-soft btn-sm",
+                          data: { confirm: t("administrate.actions.confirm") } %>
+                  <% end %>
+                </div>
+              <% else %>
               <div class="row-actions">
                 <% if existing_action?(collection_presenter.resource_name, :edit) %>
                   <%= link_to(
@@ -122,6 +164,7 @@
                   <% end if authorized_action?(path_resource, :destroy) %>
                 <% end %>
               </div>
+              <% end %>
             </td>
           <% end %>
         </tr>

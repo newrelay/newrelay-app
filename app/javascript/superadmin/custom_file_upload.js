@@ -40,7 +40,7 @@ function wrapNativeFileInput(input) {
 
   const trigger = document.createElement('button');
   trigger.type = 'button';
-  trigger.className = 'file-upload-trigger';
+  trigger.className = 'file-upload-trigger reset-base';
   trigger.innerHTML = `${FILE_TRIGGER_ICON}<span>Choose file</span>`;
 
   const nameLabel = document.createElement('span');

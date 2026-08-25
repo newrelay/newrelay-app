@@ -27,12 +27,12 @@ It renders the `_table` partial to display details about the resources.
   <%= display_resource_name(page.resource_name) %>
 <% end %>
 
-<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 w-full mb-6">
+<div class="page-header mb-6">
   <h1 class="page-title" id="page-title">
     <%= content_for(:title) %>
   </h1>
 
-  <div class="flex flex-wrap items-center gap-3">
+  <div class="page-actions">
     <% if show_search_bar %>
       <%= render("filters", page: page) %>
       <div class="relative">
@@ -44,20 +44,18 @@ It renders the `_table` partial to display details about the resources.
       </div>
     <% end %>
 
-    <div class="whitespace-nowrap">
-      <%= link_to(
-        [:new, namespace, page.resource_path.to_sym],
-        class: "inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors bg-primary text-primary-foreground hover:bg-primary/90 h-9 px-4 gap-2 shadow-xs",
-      ) do %>
-        <svg class="size-4 shrink-0" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
-        <span>
-          <%= t(
-            "administrate.actions.new_resource",
-            name: page.resource_name.to_s.tr('_', ' ')
-          ) %>
-        </span>
-      <% end if accessible_action?(new_resource, :new) %>
-    </div>
+    <%= link_to(
+      [:new, namespace, page.resource_path.to_sym],
+      class: "btn btn-primary",
+    ) do %>
+      <svg class="size-4 shrink-0" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
+      <span>
+        <%= t(
+          "administrate.actions.new_resource",
+          name: page.resource_name.to_s.tr('_', ' ')
+        ) %>
+      </span>
+    <% end if accessible_action?(new_resource, :new) %>
   </div>
 </div>
 

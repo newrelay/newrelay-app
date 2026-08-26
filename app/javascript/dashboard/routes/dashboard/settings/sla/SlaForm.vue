@@ -169,7 +169,7 @@ export default {
         <label class="text-[13.5px] font-medium text-foreground">SLA Name</label>
         <input
           v-model="name"
-          class="placeholder:text-muted-foreground flex w-full border px-3 py-1 transition-colors focus-visible:outline-hidden disabled:cursor-not-allowed disabled:opacity-50 h-10 text-[14px] shadow-xs rounded-md border-border/80 bg-muted/20 focus-visible:ring-1 focus-visible:ring-primary/30 text-foreground"
+          class="placeholder:text-muted-foreground flex w-full border px-4 py-2 transition-colors focus-visible:outline-hidden disabled:cursor-not-allowed disabled:opacity-50 h-11 text-[14px] shadow-xs rounded-xl border-border/60 bg-muted/20 focus-visible:ring-1 focus-visible:ring-primary/30 text-foreground"
           placeholder="SLA Name"
           @update:model-value="v$.name.$touch"
           @blur="v$.name.$touch"
@@ -184,7 +184,7 @@ export default {
         <label class="text-[13.5px] font-medium text-foreground">Description</label>
         <input
           v-model="description"
-          class="placeholder:text-muted-foreground flex w-full border px-3 py-1 transition-colors focus-visible:outline-hidden disabled:cursor-not-allowed disabled:opacity-50 h-10 text-[14px] shadow-xs rounded-md border-border/80 bg-muted/20 focus-visible:ring-1 focus-visible:ring-primary/30 text-foreground"
+          class="placeholder:text-muted-foreground flex w-full border px-4 py-2 transition-colors focus-visible:outline-hidden disabled:cursor-not-allowed disabled:opacity-50 h-11 text-[14px] shadow-xs rounded-xl border-border/60 bg-muted/20 focus-visible:ring-1 focus-visible:ring-primary/30 text-foreground"
           placeholder="SLA for premium customers"
         />
       </div>
@@ -196,11 +196,11 @@ export default {
           <input
             v-model="slaTimeInputs[0].threshold"
             type="number"
-            class="placeholder:text-muted-foreground flex w-full rounded-md border px-3 py-1 transition-colors focus-visible:outline-hidden disabled:cursor-not-allowed disabled:opacity-50 h-10 text-[14px] shadow-xs rounded-l-md rounded-r-none border-r-0 border-border/80 bg-muted/20 focus-visible:ring-1 focus-visible:ring-primary/30 z-10 text-foreground"
+            class="placeholder:text-muted-foreground flex w-full rounded-l-xl border border-r-0 border-border/60 px-4 py-2 transition-colors focus-visible:outline-hidden disabled:cursor-not-allowed disabled:opacity-50 h-11 text-[14px] shadow-xs bg-muted/20 focus-visible:ring-1 focus-visible:ring-primary/30 text-foreground"
           />
           <select
             v-model="slaTimeInputs[0].unit"
-            class="h-10 px-3 text-[13.5px] shadow-xs rounded-r-md border border-border/80 bg-background text-foreground outline-none focus:ring-1 focus:ring-primary/30 min-w-[100px] cursor-pointer"
+            class="h-11 px-3 text-[13.5px] shadow-xs rounded-r-xl border border-l border-border/60 bg-muted/20 text-foreground outline-none focus:ring-1 focus:ring-primary/30 min-w-[100px] cursor-pointer"
           >
             <option value="Minutes">minutes</option>
             <option value="Hours">hours</option>
@@ -216,11 +216,11 @@ export default {
           <input
             v-model="slaTimeInputs[1].threshold"
             type="number"
-            class="placeholder:text-muted-foreground flex w-full rounded-md border px-3 py-1 transition-colors focus-visible:outline-hidden disabled:cursor-not-allowed disabled:opacity-50 h-10 text-[14px] shadow-xs rounded-l-md rounded-r-none border-r-0 border-border/80 bg-muted/20 focus-visible:ring-1 focus-visible:ring-primary/30 z-10 text-foreground"
+            class="placeholder:text-muted-foreground flex w-full rounded-l-xl border border-r-0 border-border/60 px-4 py-2 transition-colors focus-visible:outline-hidden disabled:cursor-not-allowed disabled:opacity-50 h-11 text-[14px] shadow-xs bg-muted/20 focus-visible:ring-1 focus-visible:ring-primary/30 text-foreground"
           />
           <select
             v-model="slaTimeInputs[1].unit"
-            class="h-10 px-3 text-[13.5px] shadow-xs rounded-r-md border border-border/80 bg-background text-foreground outline-none focus:ring-1 focus:ring-primary/30 min-w-[100px] cursor-pointer"
+            class="h-11 px-3 text-[13.5px] shadow-xs rounded-r-xl border border-l border-border/60 bg-muted/20 text-foreground outline-none focus:ring-1 focus:ring-primary/30 min-w-[100px] cursor-pointer"
           >
             <option value="Minutes">minutes</option>
             <option value="Hours">hours</option>
@@ -236,11 +236,11 @@ export default {
           <input
             v-model="slaTimeInputs[2].threshold"
             type="number"
-            class="placeholder:text-muted-foreground flex w-full rounded-md border px-3 py-1 transition-colors focus-visible:outline-hidden disabled:cursor-not-allowed disabled:opacity-50 h-10 text-[14px] shadow-xs rounded-l-md rounded-r-none border-r-0 border-border/80 bg-muted/20 focus-visible:ring-1 focus-visible:ring-primary/30 z-10 text-foreground"
+            class="placeholder:text-muted-foreground flex w-full rounded-l-xl border border-r-0 border-border/60 px-4 py-2 transition-colors focus-visible:outline-hidden disabled:cursor-not-allowed disabled:opacity-50 h-11 text-[14px] shadow-xs bg-muted/20 focus-visible:ring-1 focus-visible:ring-primary/30 text-foreground"
           />
           <select
             v-model="slaTimeInputs[2].unit"
-            class="h-10 px-3 text-[13.5px] shadow-xs rounded-r-md border border-border/80 bg-background text-foreground outline-none focus:ring-1 focus:ring-primary/30 min-w-[100px] cursor-pointer"
+            class="h-11 px-3 text-[13.5px] shadow-xs rounded-r-xl border border-l border-border/60 bg-muted/20 text-foreground outline-none focus:ring-1 focus:ring-primary/30 min-w-[100px] cursor-pointer"
           >
             <option value="Minutes">minutes</option>
             <option value="Hours">hours</option>
@@ -257,17 +257,17 @@ export default {
     </div>
 
     <!-- Static Footer Buttons -->
-    <div class="shrink-0 py-4 border-t border-border/40 bg-background flex justify-end gap-3 mt-4">
+    <div class="shrink-0 py-4 border-t border-border/40 bg-background flex items-center justify-end gap-3 mt-4">
       <button
         type="button"
-        class="inline-flex items-center justify-center gap-2 whitespace-nowrap transition-colors focus-visible:outline-hidden focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 hover:text-accent-foreground py-2 rounded-md h-9 px-4 text-[13.5px] text-foreground font-medium border border-input bg-background hover:bg-muted"
+        class="text-muted-foreground hover:text-foreground font-medium text-[13.5px] px-4 py-2 rounded-lg transition-colors"
         @click="onClose"
       >
         Cancel
       </button>
       <button
         type="submit"
-        class="inline-flex items-center justify-center gap-2 whitespace-nowrap transition-colors focus-visible:outline-hidden focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 py-2 rounded-md h-9 px-6 text-[13.5px] font-medium bg-primary text-primary-foreground hover:bg-primary/90 shadow-sm disabled:opacity-50"
+        class="inline-flex items-center justify-center gap-2 whitespace-nowrap transition-colors focus-visible:outline-hidden focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 py-2.5 rounded-xl h-10 px-6 text-[13.5px] font-medium bg-primary text-primary-foreground hover:bg-primary/90 shadow-sm disabled:opacity-50"
         :disabled="isSubmitDisabled"
       >
         {{ submitLabel }}

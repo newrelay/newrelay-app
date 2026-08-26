@@ -53,8 +53,8 @@ const deliveryTeams = ref(false);
 
 // Quiet hours state
 const quietHoursEnabled = ref(false);
-const quietHoursFrom = ref('09:00 AM');
-const quietHoursTo = ref('05:00 PM');
+const quietHoursFrom = ref('22:00');
+const quietHoursTo = ref('07:00');
 const selectedTimezone = ref('(GMT+05:30) Asia/Kolkata');
 const activeDays = ref(['Mon', 'Tue', 'Wed', 'Thu', 'Fri']);
 const availableDays = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
@@ -561,23 +561,21 @@ onMounted(() => {
           <div>
             <label class="block text-xs font-medium text-muted-foreground mb-1">From</label>
             <div class="relative">
-              <RelayInput
+              <input
                 v-model="quietHoursFrom"
-                type="text"
-                class-name="h-9 bg-background text-xs"
+                type="time"
+                class="h-9 w-full rounded-md border border-input bg-background px-3 text-xs text-foreground shadow-xs focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring cursor-pointer"
               />
-              <span class="i-lucide-clock pointer-events-none absolute right-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
             </div>
           </div>
           <div>
             <label class="block text-xs font-medium text-muted-foreground mb-1">To</label>
             <div class="relative">
-              <RelayInput
+              <input
                 v-model="quietHoursTo"
-                type="text"
-                class-name="h-9 bg-background text-xs"
+                type="time"
+                class="h-9 w-full rounded-md border border-input bg-background px-3 text-xs text-foreground shadow-xs focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring cursor-pointer"
               />
-              <span class="i-lucide-clock pointer-events-none absolute right-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
             </div>
           </div>
         </div>

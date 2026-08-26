@@ -139,6 +139,12 @@ flag-gated, badged** demo content, not lies to real users:
   - ✅ **Done:** AI cards now show real insights to **real** users when `/ai_insights` returns data
     (`v-if="!aiIsMock || showDemoSurfaces"`); sample fallback stays demo-only + badged. Trend chart
     width follows the same condition.
+  - ✅ **Done (2026-08-26):** restored the reference's 4th KPI — **Overall Feedback** (positive share
+    of reviews, `rating>=4`) as a real always-on card, replacing the demo AI Sentiment KPI. Clicking
+    it opens **`FeedbackBreakdownModal.vue`** (ported from the reference): sentiment split
+    (positive/neutral/negative), sentiment bar, and per-platform breakdown all computed from real
+    `allReviews`; the "Top Feedback Themes" section is demo-only + badged (needs a topic-analysis
+    backend). Skipped: month-over-month feedback delta (no endpoint).
 - **Reviews** — already real (`mock≈1`); no work.
 - **Listings**, **Feedback** — demo-gated (real users are redirected out); mock only shows in demo
   mode, badged. Real `/listings` + `/feedback` endpoints exist.

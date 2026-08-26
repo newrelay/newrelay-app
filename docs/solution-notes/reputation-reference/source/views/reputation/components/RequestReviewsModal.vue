@@ -7,7 +7,7 @@ import {
   Upload, Clock, Check, BarChart3, Bot, Settings2,
   Calendar, ChevronLeft, Users, AlertCircle, AlertTriangle, ExternalLink,
   Signal, Wifi, MoreVertical, Paperclip, Smile, Mic, Trash2, Archive, Video, Info,
-  LayoutTemplate, ChevronDown
+  LayoutTemplate, ChevronDown, Building2
 } from 'lucide-vue-next'
 import { 
   Button, Input, Checkbox, Badge,
@@ -152,16 +152,18 @@ function getChannelIcon(channel: string) {
 
 // Mock Data
 const filters = ['Recent Customers', 'Completed Jobs', 'Closed Deals', 'Positive Feedback', 'Appointment Completed', 'Invoice Paid']
+const selectedCompanyFilter = ref<string | null>(null)
+const companyList = ['Acme Inc.', 'Global Tech', 'Stark Industries', 'Wayne Enterprises']
 
 const allCustomers = [
-  { id: '1', name: 'Sarah Johnson', email: 'sarah.j@gmail.com', phone: '+1 (555) 234-5678', contextLabel: 'Purchased:', contextValue: '2 days ago' },
-  { id: '2', name: 'Michael Brown', email: '', phone: '+1 (555) 876-5432', contextLabel: 'Service Completed:', contextValue: 'Yesterday' },
-  { id: '3', name: 'Emily Wilson', email: 'emily.wilson@outlook.com', phone: '+1 (555) 345-6789', contextLabel: 'Appointment:', contextValue: 'Today' },
-  { id: '4', name: 'David Miller', email: 'david.m@yahoo.com', phone: '', contextLabel: 'Invoice Paid:', contextValue: 'Today' },
-  { id: '5', name: 'Jessica Taylor', email: 'jessica.t@gmail.com', phone: '+1 (555) 456-7890', contextLabel: 'Purchased:', contextValue: '3 days ago' },
-  { id: '6', name: 'Robert Anderson', email: '', phone: '+1 (555) 567-8901', contextLabel: 'Service Completed:', contextValue: 'Yesterday' },
-  { id: '7', name: 'Amanda Thomas', email: 'amanda.t@hotmail.com', phone: '+1 (555) 678-9012', contextLabel: 'Appointment:', contextValue: 'Today' },
-  { id: '8', name: 'James Jackson', email: 'james.j@gmail.com', phone: '', contextLabel: 'Invoice Paid:', contextValue: 'Yesterday' }
+  { id: '1', name: 'Sarah Johnson', email: 'sarah.j@gmail.com', phone: '+1 (555) 234-5678', company: 'Acme Inc.', contextLabel: 'Purchased:', contextValue: '2 days ago' },
+  { id: '2', name: 'Michael Brown', email: '', phone: '+1 (555) 876-5432', company: 'Acme Inc.', contextLabel: 'Service Completed:', contextValue: 'Yesterday' },
+  { id: '3', name: 'Emily Wilson', email: 'emily.wilson@outlook.com', phone: '+1 (555) 345-6789', company: 'Global Tech', contextLabel: 'Appointment:', contextValue: 'Today' },
+  { id: '4', name: 'David Miller', email: 'david.m@yahoo.com', phone: '', company: 'Global Tech', contextLabel: 'Invoice Paid:', contextValue: 'Today' },
+  { id: '5', name: 'Jessica Taylor', email: 'jessica.t@gmail.com', phone: '+1 (555) 456-7890', company: 'Stark Industries', contextLabel: 'Purchased:', contextValue: '3 days ago' },
+  { id: '6', name: 'Robert Anderson', email: '', phone: '+1 (555) 567-8901', company: 'Stark Industries', contextLabel: 'Service Completed:', contextValue: 'Yesterday' },
+  { id: '7', name: 'Amanda Thomas', email: 'amanda.t@hotmail.com', phone: '+1 (555) 678-9012', company: 'Wayne Enterprises', contextLabel: 'Appointment:', contextValue: 'Today' },
+  { id: '8', name: 'James Jackson', email: 'james.j@gmail.com', phone: '', company: 'Wayne Enterprises', contextLabel: 'Invoice Paid:', contextValue: 'Yesterday' }
 ]
 
 // Channel eligibility logic
@@ -199,8 +201,12 @@ const channelRequirementText = computed(() => {
 
 const filteredCustomers = computed(() => {
   let list = eligibleCustomers.value
+  if (selectedCompanyFilter.value) {
+    list = list.filter(c => c.company === selectedCompanyFilter.value)
+  }
   if (searchQuery.value) {
-    list = list.filter(c => c.name.toLowerCase().includes(searchQuery.value.toLowerCase()))
+    const q = searchQuery.value.toLowerCase()
+    list = list.filter(c => c.name.toLowerCase().includes(q) || (c.company && c.company.toLowerCase().includes(q)))
   }
   return list
 })
@@ -338,8 +344,8 @@ function close() {
         <div v-if="currentStep === 1" class="p-6 sm:p-8 space-y-8 animate-in slide-in-from-right-4 duration-300">
           <div class="space-y-4">
             <div>
-              <h3 class="text-sm font-semibold text-foreground uppercase tracking-wider">Select Delivery Channels (Multiple Allowed)</h3>
-              <p class="text-[13px] text-muted-foreground mt-0.5">Choose which channels you will use to send review requests. Next step will automatically shortlist contacts with valid details.</p>
+              <h3 class="text-sm font-semibold text-foreground uppercase tracking-wider">Select Delivery Channels</h3>
+              <p class="text-[13px] text-muted-foreground mt-0.5">Choose which channel you will use to send review requests. Next step will automatically shortlist contacts with valid details.</p>
             </div>
             
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -347,7 +353,7 @@ function close() {
                 v-for="channel in channels" :key="channel.name"
                 class="relative border-2 rounded-xl p-5 cursor-pointer transition-all overflow-hidden group"
                 :class="form.channels.includes(channel.name) ? 'border-primary bg-primary/5 shadow-sm' : 'border-border bg-card hover:border-primary/50'"
-                @click="toggleSelection(form.channels, channel.name)"
+                @click="form.channels = [channel.name]"
               >
                 <div class="absolute top-3 right-3 size-5 rounded-full border-2 flex items-center justify-center transition-colors shrink-0" :class="form.channels.includes(channel.name) ? 'border-primary' : 'border-muted-foreground/30'">
                   <div v-if="form.channels.includes(channel.name)" class="size-2.5 rounded-full bg-primary"></div>
@@ -436,28 +442,59 @@ function close() {
         <!-- STEP 2: Select Recipients -->
         <div v-if="currentStep === 2" class="flex-1 flex animate-in slide-in-from-right-4 duration-300 min-h-[500px]">
           <!-- Sidebar Filters -->
-          <div class="w-64 border-r border-border bg-muted/10 p-4 space-y-6 hidden md:block shrink-0">
+          <div class="w-64 border-r border-border bg-muted/10 p-4 space-y-6 hidden md:block shrink-0 overflow-y-auto">
+            <!-- Quick Filters -->
             <div>
               <h3 class="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">Quick Filters</h3>
               <div class="space-y-1">
                 <button 
                   v-for="filter in filters" :key="filter"
-                  class="w-full text-left px-3 py-2 rounded-md text-sm transition-colors"
-                  :class="activeFilter === filter ? 'bg-primary/10 text-primary font-medium' : 'text-muted-foreground hover:bg-muted/50 hover:text-foreground'"
-                  @click="activeFilter = filter"
+                  class="w-full text-left px-3 py-2 rounded-md text-sm transition-colors cursor-pointer"
+                  :class="activeFilter === filter && !selectedCompanyFilter ? 'bg-primary/10 text-primary font-medium' : 'text-muted-foreground hover:bg-muted/50 hover:text-foreground'"
+                  @click="activeFilter = filter; selectedCompanyFilter = null"
                 >
                   {{ filter }}
                 </button>
-              </div>
-            </div>
-            <div class="pt-4 border-t border-border space-y-4">
-              <Button variant="outline" class="w-full justify-start text-muted-foreground text-sm border border-border hover:border-transparent">
-                <Upload class="size-4 mr-2" /> Import CSV
-              </Button>
-              
-              <div class="flex flex-col gap-1.5">
-                <label class="text-[13.5px] font-medium text-foreground">Manual Entry</label>
-                <Input v-model="form.customRecipients" placeholder="Emails or phone numbers..." class="h-10 px-4 text-[14px] shadow-sm rounded-md border-border/80 bg-background focus-visible:ring-1 focus-visible:ring-primary/30" />
+
+                <!-- Company dropdown inside Quick Filters -->
+                <DropdownMenu>
+                  <DropdownMenuTrigger as-child>
+                    <button 
+                      class="w-full text-left px-3 py-2 rounded-md text-sm transition-colors flex items-center justify-between cursor-pointer group"
+                      :class="selectedCompanyFilter ? 'bg-primary/10 text-primary font-medium' : 'text-muted-foreground hover:bg-muted/50 hover:text-foreground'"
+                    >
+                      <div class="flex items-center gap-2 min-w-0 truncate">
+                        <span class="truncate">{{ selectedCompanyFilter ? selectedCompanyFilter : 'Company' }}</span>
+                      </div>
+                      <ChevronDown class="size-3.5 shrink-0 opacity-60 group-hover:opacity-100 transition-transform" />
+                    </button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="start" class="w-56 p-1.5 shadow-lg border border-border bg-popover z-50">
+                    <DropdownMenuItem 
+                      @click="selectedCompanyFilter = null; activeFilter = 'Recent Customers'"
+                      class="flex items-center justify-between px-2.5 py-1.5 text-xs rounded-md cursor-pointer hover:bg-muted/80"
+                      :class="!selectedCompanyFilter ? 'bg-primary/10 text-primary font-medium' : ''"
+                    >
+                      <span>All Companies</span>
+                      <Check v-if="!selectedCompanyFilter" class="size-3 text-primary" />
+                    </DropdownMenuItem>
+                    <DropdownMenuItem 
+                      v-for="comp in companyList" 
+                      :key="comp"
+                      @click="selectedCompanyFilter = comp; activeFilter = ''"
+                      class="flex items-center justify-between px-2.5 py-1.5 text-xs rounded-md cursor-pointer hover:bg-muted/80"
+                      :class="selectedCompanyFilter === comp ? 'bg-primary/10 text-primary font-medium' : ''"
+                    >
+                      <div class="flex items-center gap-2 truncate">
+                        <Building2 class="size-3.5 opacity-70 shrink-0" />
+                        <span class="truncate">{{ comp }}</span>
+                      </div>
+                      <span class="text-[10.5px] px-1.5 py-0.5 rounded-full bg-muted text-muted-foreground font-medium">
+                        {{ eligibleCustomers.filter(c => c.company === comp).length }}
+                      </span>
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
               </div>
             </div>
           </div>
@@ -496,7 +533,13 @@ function close() {
                   <Check v-if="form.selectedCustomers.includes(customer.id)" class="size-3" />
                 </div>
                 <div class="flex-1 min-w-0">
-                  <div class="font-medium text-foreground text-sm truncate">{{ customer.name }}</div>
+                  <div class="flex items-center justify-between gap-2">
+                    <div class="font-medium text-foreground text-sm truncate">{{ customer.name }}</div>
+                    <span v-if="customer.company" class="text-[10.5px] px-1.5 py-0.5 rounded bg-muted text-muted-foreground shrink-0 font-medium flex items-center gap-1">
+                      <Building2 class="size-2.5 opacity-70" />
+                      {{ customer.company }}
+                    </span>
+                  </div>
                   
                   <div class="flex items-center gap-1.5 text-xs text-muted-foreground mt-0.5">
                     <Mail v-if="form.channels.includes('Email') && customer.email" class="size-3 text-primary shrink-0" />
@@ -1153,7 +1196,7 @@ function close() {
           v-if="currentStep < 4" 
           class="gap-2 px-8" 
           @click="nextStep" 
-          :disabled="(currentStep === 1 && form.channels.length === 0) || (currentStep === 2 && form.selectedCustomers.length === 0 && !form.customRecipients)"
+          :disabled="(currentStep === 1 && form.channels.length === 0) || (currentStep === 2 && form.selectedCustomers.length === 0)"
         >
           Next
           <ChevronRight class="size-4" />

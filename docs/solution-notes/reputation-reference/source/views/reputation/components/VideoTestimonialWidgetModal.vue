@@ -5,7 +5,7 @@ import {
   Smartphone, Eye, Sliders, Palette, Filter, RefreshCw, ChevronLeft,
   ChevronRight, Star, CheckCircle2, Globe, ExternalLink, Moon, Sun,
   Layers, Play, Clock, MessageSquare, Volume2, ShieldCheck, Share2,
-  Video, EyeOff, Radio
+  Video, EyeOff, Radio, Search, SlidersHorizontal, Trash2
 } from 'lucide-vue-next'
 import { Button, Input, Badge, Switch, Checkbox } from '@/components/ui'
 
@@ -79,7 +79,7 @@ const widgetConfig = ref({
   bubblePulseAnimation: true
 })
 
-// Mock Video Testimonial items for live widget preview
+// Mock Video Testimonial items for live widget preview (representative of 300+ library)
 const allVideoTestimonials = [
   {
     id: 1,
@@ -164,8 +164,178 @@ const allVideoTestimonials = [
     aiHighlight: true,
     aiTag: 'Conversion Booster',
     quote: 'Having authentic customer faces and voices on our checkout page eliminated all hesitation.'
+  },
+  {
+    id: 7,
+    author: 'Marcus Chen',
+    company: 'CTO, QuantumScale',
+    avatar: 'https://i.pravatar.cc/150?u=m7',
+    thumbnail: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=600&auto=format&fit=crop',
+    duration: '01:18',
+    rating: 5,
+    platform: 'Google',
+    status: 'Published',
+    aiHighlight: true,
+    aiTag: 'Scalability',
+    quote: 'Integrating the video carousel directly onto our pricing page boosted demo requests by 38%.'
+  },
+  {
+    id: 8,
+    author: 'Sophia Williams',
+    company: 'Product Lead, NovaCore',
+    avatar: 'https://i.pravatar.cc/150?u=s8',
+    thumbnail: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=600&auto=format&fit=crop',
+    duration: '00:52',
+    rating: 5,
+    platform: 'Facebook',
+    status: 'Published',
+    aiHighlight: true,
+    aiTag: 'User Friendly',
+    quote: 'Our customers love recording their feedback through the seamless mobile browser link.'
+  },
+  {
+    id: 9,
+    author: 'Alex Rivera',
+    company: 'Growth Engineer, Veloce AI',
+    avatar: 'https://i.pravatar.cc/150?u=a9',
+    thumbnail: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=600&auto=format&fit=crop',
+    duration: '00:41',
+    rating: 5,
+    platform: 'Trustpilot',
+    status: 'Published',
+    aiHighlight: false,
+    aiTag: 'Seamless Embed',
+    quote: 'The CDN widget loads in less than 40ms. Zero impact on Core Web Vitals score.'
+  },
+  {
+    id: 10,
+    author: 'Rachel Kim',
+    company: 'Marketing Manager, Bloom Studio',
+    avatar: 'https://i.pravatar.cc/150?u=r10',
+    thumbnail: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=600&auto=format&fit=crop',
+    duration: '01:03',
+    rating: 5,
+    platform: 'Direct',
+    status: 'Published',
+    aiHighlight: true,
+    aiTag: 'High Retention',
+    quote: 'Authentic customer video stories have completely transformed our brand trust.'
   }
 ]
+
+// Video Selection / Shortlist state
+const videoSelectionMode = ref<'all' | 'specific'>('all')
+const selectedVideoIds = ref<number[]>([1, 2, 3, 4, 5, 6])
+const videoSearchQuery = ref('')
+
+// Full Shortlist Modal State
+const isShortlistModalOpen = ref(false)
+const modalSearchQuery = ref('')
+const modalPlatformFilter = ref('all')
+const modalTagFilter = ref('all')
+const modalSelectedIds = ref<number[]>([...selectedVideoIds.value])
+
+function openShortlistModal() {
+  modalSelectedIds.value = [...selectedVideoIds.value]
+  modalSearchQuery.value = ''
+  modalPlatformFilter.value = 'all'
+  modalTagFilter.value = 'all'
+  isShortlistModalOpen.value = true
+}
+
+function applyShortlistModal() {
+  selectedVideoIds.value = [...modalSelectedIds.value]
+  isShortlistModalOpen.value = false
+}
+
+function toggleModalVideoSelection(id: number) {
+  if (modalSelectedIds.value.includes(id)) {
+    modalSelectedIds.value = modalSelectedIds.value.filter(item => item !== id)
+  } else {
+    modalSelectedIds.value.push(id)
+  }
+}
+
+function removeSelectedVideo(id: number) {
+  selectedVideoIds.value = selectedVideoIds.value.filter(item => item !== id)
+}
+
+const modalFilteredVideos = computed(() => {
+  let list = allVideoTestimonials
+  if (modalPlatformFilter.value !== 'all') {
+    list = list.filter(v => v.platform.toLowerCase() === modalPlatformFilter.value.toLowerCase())
+  }
+  if (modalTagFilter.value === 'ai_highlight') {
+    list = list.filter(v => v.aiHighlight)
+  } else if (modalTagFilter.value === '5_star') {
+    list = list.filter(v => v.rating === 5)
+  }
+  if (modalSearchQuery.value.trim()) {
+    const q = modalSearchQuery.value.toLowerCase()
+    list = list.filter(v => 
+      v.author.toLowerCase().includes(q) || 
+      v.company.toLowerCase().includes(q) || 
+      v.quote.toLowerCase().includes(q) ||
+      (v.aiTag && v.aiTag.toLowerCase().includes(q))
+    )
+  }
+  return list
+})
+
+function selectAllFilteredModal() {
+  const filteredIds = modalFilteredVideos.value.map(v => v.id)
+  modalSelectedIds.value = Array.from(new Set([...modalSelectedIds.value, ...filteredIds]))
+}
+
+function clearModalSelection() {
+  modalSelectedIds.value = []
+}
+
+function selectAiTopPicksModal() {
+  const aiIds = allVideoTestimonials.filter(v => v.aiHighlight).map(v => v.id)
+  modalSelectedIds.value = Array.from(new Set([...modalSelectedIds.value, ...aiIds]))
+}
+
+const availablePublishedVideos = computed(() => {
+  return allVideoTestimonials.filter(v => {
+    // Platform check
+    const platformKey = v.platform.toLowerCase() as keyof typeof widgetConfig.value.platforms
+    if (widgetConfig.value.platforms[platformKey] === false) return false
+    if (widgetConfig.value.aiHighlightsOnly && !v.aiHighlight) return false
+    return true
+  })
+})
+
+const filteredAvailableVideos = computed(() => {
+  let list = availablePublishedVideos.value
+  if (videoSearchQuery.value.trim()) {
+    const q = videoSearchQuery.value.toLowerCase()
+    list = list.filter(v => 
+      v.author.toLowerCase().includes(q) || 
+      v.company.toLowerCase().includes(q) || 
+      v.quote.toLowerCase().includes(q)
+    )
+  }
+  return list
+})
+
+function toggleVideoSelection(id: number) {
+  if (selectedVideoIds.value.includes(id)) {
+    selectedVideoIds.value = selectedVideoIds.value.filter(item => item !== id)
+  } else {
+    selectedVideoIds.value.push(id)
+  }
+}
+
+function toggleSelectAllVideos() {
+  const currentAvailableIds = availablePublishedVideos.value.map(v => v.id)
+  const allSelected = currentAvailableIds.length > 0 && currentAvailableIds.every(id => selectedVideoIds.value.includes(id))
+  if (allSelected) {
+    selectedVideoIds.value = selectedVideoIds.value.filter(id => !currentAvailableIds.includes(id))
+  } else {
+    selectedVideoIds.value = Array.from(new Set([...selectedVideoIds.value, ...currentAvailableIds]))
+  }
+}
 
 // Filtered videos based on customizer settings
 const previewVideos = computed(() => {
@@ -174,12 +344,13 @@ const previewVideos = computed(() => {
     const platformKey = v.platform.toLowerCase() as keyof typeof widgetConfig.value.platforms
     if (widgetConfig.value.platforms[platformKey] === false) return false
     
-    // Min rating check
-    if (widgetConfig.value.minRating === '5' && v.rating < 5) return false
-    if (widgetConfig.value.minRating === '4' && v.rating < 4) return false
-    
     // AI highlights only check
     if (widgetConfig.value.aiHighlightsOnly && !v.aiHighlight) return false
+    
+    // Specific shortlist check
+    if (videoSelectionMode.value === 'specific') {
+      return selectedVideoIds.value.includes(v.id)
+    }
     
     return true
   }).slice(0, widgetConfig.value.maxVideos)
@@ -277,17 +448,12 @@ function close() {
       
       <!-- Top Modal Header -->
       <div class="px-4 sm:px-6 py-3.5 border-b border-border bg-muted/30 flex items-center justify-between shrink-0">
-        <div class="flex items-center gap-3">
-          <div class="p-2 bg-primary/10 rounded-xl text-primary shrink-0">
-            <LayoutGrid class="size-5" />
+        <div>
+          <div class="flex items-center gap-2 flex-wrap">
+            <h2 class="text-base font-semibold text-foreground">Video Testimonial Widget Studio</h2>
+            <Badge variant="secondary" class="bg-primary/10 text-primary text-[11px] font-medium hidden sm:inline-flex">Live Video Embed</Badge>
           </div>
-          <div>
-            <div class="flex items-center gap-2 flex-wrap">
-              <h2 class="text-base font-semibold text-foreground">Video Testimonial Widget Studio</h2>
-              <Badge variant="secondary" class="bg-primary/10 text-primary text-[11px] font-medium hidden sm:inline-flex">Live Video Embed</Badge>
-            </div>
-            <p class="text-[12.5px] text-muted-foreground hidden sm:block">Customize, preview in real time, and generate authentic video testimonial widgets for your website.</p>
-          </div>
+          <p class="text-[12.5px] text-muted-foreground hidden sm:block">Customize, preview in real time, and generate authentic video testimonial widgets for your website.</p>
         </div>
 
         <!-- Right Header Actions -->
@@ -591,24 +757,83 @@ function close() {
                 </div>
               </div>
 
-              <!-- Rating Filter -->
-              <div class="pt-3 border-t border-border">
-                <label class="text-[13.5px] font-medium text-foreground block mb-2">Minimum Star Rating</label>
-                <div class="grid grid-cols-3 gap-2">
+              <!-- Video Shortlist & Selection Filter -->
+              <div class="pt-3 border-t border-border space-y-3">
+                <div>
+                  <label class="text-[13.5px] font-medium text-foreground block mb-0.5">Published Videos to Include</label>
+                  <p class="text-[11.5px] text-muted-foreground">Choose whether to display all eligible videos or shortlist specific ones from your 300+ library.</p>
+                </div>
+
+                <!-- Mode Switcher -->
+                <div class="grid grid-cols-2 gap-2 p-1 bg-muted/40 rounded-xl border border-border/80">
                   <button 
-                    v-for="r in [
-                      { id: 'all', label: 'All Ratings' },
-                      { id: '4', label: '4★ & Above' },
-                      { id: '5', label: '5★ Only' }
-                    ]"
-                    :key="r.id"
                     type="button"
-                    @click="widgetConfig.minRating = r.id"
-                    class="py-2 px-3 rounded-lg border text-xs text-center cursor-pointer transition-colors"
-                    :class="widgetConfig.minRating === r.id ? 'bg-primary/10 border-primary text-primary font-semibold' : 'bg-card border-border hover:bg-muted text-muted-foreground'"
+                    @click="videoSelectionMode = 'all'"
+                    class="py-1.5 px-3 rounded-lg text-xs font-medium transition-all text-center cursor-pointer"
+                    :class="videoSelectionMode === 'all' ? 'bg-background text-foreground shadow-xs font-semibold' : 'text-muted-foreground hover:text-foreground'"
                   >
-                    {{ r.label }}
+                    All Published (300)
                   </button>
+                  <button 
+                    type="button"
+                    @click="videoSelectionMode = 'specific'"
+                    class="py-1.5 px-3 rounded-lg text-xs font-medium transition-all text-center cursor-pointer flex items-center justify-center gap-1.5"
+                    :class="videoSelectionMode === 'specific' ? 'bg-background text-foreground shadow-xs font-semibold' : 'text-muted-foreground hover:text-foreground'"
+                  >
+                    <span>Shortlist Specific</span>
+                    <span class="text-[11px] px-1.5 py-0.2 rounded-full bg-primary/10 text-primary font-bold">
+                      {{ selectedVideoIds.length }}
+                    </span>
+                  </button>
+                </div>
+
+                <!-- Shortlist Management Card -->
+                <div v-if="videoSelectionMode === 'specific'" class="space-y-3 p-3.5 bg-muted/20 border border-border rounded-xl animate-in fade-in duration-200">
+                  <div class="flex items-center justify-between">
+                    <span class="text-xs font-semibold text-foreground flex items-center gap-1.5">
+                      <SlidersHorizontal class="size-3.5 text-primary" />
+                      <span>Shortlisted: {{ selectedVideoIds.length }} videos</span>
+                    </span>
+                    <span class="text-[11px] text-muted-foreground">Library (300 total)</span>
+                  </div>
+
+                  <!-- Open Full Shortlisting Library Modal Button -->
+                  <Button 
+                    variant="outline" 
+                    class="w-full justify-center gap-2 border border-border hover:border-transparent text-[13px] font-medium h-9"
+                    @click="openShortlistModal"
+                  >
+                    <SlidersHorizontal class="size-3.5 text-primary" />
+                    Browse & Shortlist Videos ({{ selectedVideoIds.length }})
+                  </Button>
+
+                  <!-- Mini preview chips of currently selected videos -->
+                  <div v-if="selectedVideoIds.length > 0" class="space-y-1.5 pt-1">
+                    <div class="text-[11px] font-medium text-muted-foreground uppercase tracking-wider">Active in Widget:</div>
+                    <div class="flex flex-wrap gap-1.5 max-h-[140px] overflow-y-auto pr-1">
+                      <div 
+                        v-for="vId in selectedVideoIds" 
+                        :key="vId"
+                        class="inline-flex items-center gap-1.5 pl-1.5 pr-1 py-1 rounded-lg bg-background border border-border text-[11.5px] text-foreground font-medium shadow-2xs group"
+                      >
+                        <img 
+                          :src="allVideoTestimonials.find(v => v.id === vId)?.avatar || 'https://i.pravatar.cc/150'" 
+                          class="size-4 rounded-full object-cover shrink-0" 
+                        />
+                        <span class="truncate max-w-[100px]">{{ allVideoTestimonials.find(v => v.id === vId)?.author || `Video #${vId}` }}</span>
+                        <button 
+                          @click.stop="removeSelectedVideo(vId)" 
+                          class="size-4 rounded hover:bg-muted text-muted-foreground hover:text-destructive flex items-center justify-center transition-colors cursor-pointer"
+                        >
+                          <X class="size-3" />
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div v-else class="text-center py-2 text-xs text-muted-foreground">
+                    No videos shortlisted yet. Click above to browse and select videos.
+                  </div>
                 </div>
               </div>
 
@@ -632,9 +857,9 @@ function close() {
                 </div>
                 <input 
                   type="range" 
-                  min="2" 
-                  max="12" 
-                  step="1"
+                  min="1" 
+                  max="10" 
+                  step="1" 
                   v-model.number="widgetConfig.maxVideos"
                   class="w-full accent-primary cursor-pointer"
                 />
@@ -1338,7 +1563,7 @@ function close() {
     <!-- Active Video Player Popup Modal inside Studio -->
     <div 
       v-if="activePlayingVideo"
-      class="fixed inset-0 z-60 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-in fade-in"
+      class="fixed inset-0 z-80 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-in fade-in"
       @click.self="activePlayingVideo = null"
     >
       <div class="relative w-full max-w-md bg-slate-950 text-white rounded-2xl overflow-hidden border border-slate-800 shadow-2xl flex flex-col">
@@ -1348,7 +1573,7 @@ function close() {
             <img :src="activePlayingVideo.avatar" class="size-6 rounded-full object-cover" />
             <span class="text-xs font-semibold">{{ activePlayingVideo.author }}</span>
           </div>
-          <button @click="activePlayingVideo = null" class="size-7 rounded-full bg-slate-800 hover:bg-slate-700 flex items-center justify-center text-white">
+          <button @click="activePlayingVideo = null" class="size-7 rounded-full bg-slate-800 hover:bg-slate-700 flex items-center justify-center text-white cursor-pointer">
             <X class="size-4" />
           </button>
         </div>
@@ -1364,6 +1589,210 @@ function close() {
             <div class="text-[10px] text-slate-400">{{ activePlayingVideo.company }} · Verified on {{ activePlayingVideo.platform }}</div>
           </div>
         </div>
+      </div>
+    </div>
+
+    <!-- Dedicated Full Shortlist Video Testimonials Modal (For 300+ library) -->
+    <div 
+      v-if="isShortlistModalOpen"
+      class="fixed inset-0 z-70 flex items-center justify-center p-3 sm:p-6 bg-black/75 backdrop-blur-md animate-in fade-in"
+      @click.self="isShortlistModalOpen = false"
+    >
+      <div class="relative w-full max-w-5xl h-[88vh] bg-card rounded-2xl border border-border shadow-2xl flex flex-col overflow-hidden animate-in zoom-in-95 duration-200">
+        
+        <!-- Header -->
+        <div class="px-6 py-4 border-b border-border bg-muted/20 flex items-center justify-between shrink-0">
+          <div>
+            <div class="flex items-center gap-2.5">
+              <h2 class="text-base font-semibold text-foreground">Shortlist Video Testimonials</h2>
+              <span class="text-xs font-semibold px-2 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20">
+                {{ modalSelectedIds.length }} of 300 Shortlisted
+              </span>
+            </div>
+            <p class="text-[12.5px] text-muted-foreground mt-0.5">Filter and handpick specific published video reviews to show on your website widget.</p>
+          </div>
+          <Button variant="ghost" size="icon" class="text-muted-foreground border border-border hover:border-transparent size-8" @click="isShortlistModalOpen = false">
+            <X class="size-4" />
+          </Button>
+        </div>
+
+        <!-- Filter & Search Toolbar -->
+        <div class="px-6 py-3 border-b border-border bg-muted/10 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 shrink-0">
+          <!-- Search input -->
+          <div class="relative flex-1 max-w-md">
+            <Search class="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground pointer-events-none" />
+            <Input 
+              v-model="modalSearchQuery" 
+              placeholder="Search by customer, company, quote, tags..." 
+              class="pl-9 pr-4 h-9 text-xs bg-background"
+            />
+          </div>
+
+          <!-- Quick Action Buttons -->
+          <div class="flex items-center gap-2 flex-wrap">
+            <Button 
+              variant="outline" 
+              size="sm" 
+              class="text-xs border border-border hover:border-transparent h-8"
+              @click="selectAllFilteredModal"
+            >
+              <CheckCircle2 class="size-3.5 mr-1.5 text-primary" /> Select All ({{ modalFilteredVideos.length }})
+            </Button>
+            <Button 
+              variant="outline" 
+              size="sm" 
+              class="text-xs border border-border hover:border-transparent h-8"
+              @click="selectAiTopPicksModal"
+            >
+              <Sparkles class="size-3.5 mr-1.5 text-amber-500" /> AI Highlights Only
+            </Button>
+            <Button 
+              v-if="modalSelectedIds.length > 0"
+              variant="ghost" 
+              size="sm" 
+              class="text-xs text-muted-foreground hover:text-destructive h-8 border border-border hover:border-transparent"
+              @click="clearModalSelection"
+            >
+              <Trash2 class="size-3 mr-1" /> Clear Selection
+            </Button>
+          </div>
+        </div>
+
+        <!-- Platform & Category Filter Pills -->
+        <div class="px-6 py-2.5 border-b border-border bg-background flex items-center gap-2 overflow-x-auto shrink-0 text-xs">
+          <span class="text-muted-foreground font-medium mr-1 shrink-0">Platform:</span>
+          <button 
+            v-for="p in [
+              { id: 'all', label: 'All Platforms (300)' },
+              { id: 'google', label: 'Google (142)' },
+              { id: 'facebook', label: 'Facebook (64)' },
+              { id: 'trustpilot', label: 'Trustpilot (51)' },
+              { id: 'yelp', label: 'Yelp (28)' },
+              { id: 'direct', label: 'Direct Form (15)' }
+            ]" 
+            :key="p.id"
+            @click="modalPlatformFilter = p.id"
+            class="px-2.5 py-1 rounded-lg transition-colors shrink-0 font-medium cursor-pointer"
+            :class="modalPlatformFilter === p.id ? 'bg-primary text-primary-foreground' : 'bg-muted/60 text-muted-foreground hover:bg-muted hover:text-foreground'"
+          >
+            {{ p.label }}
+          </button>
+        </div>
+
+        <!-- Video Cards Grid -->
+        <div class="flex-1 overflow-y-auto p-6">
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div 
+              v-for="video in modalFilteredVideos" 
+              :key="video.id"
+              @click="toggleModalVideoSelection(video.id)"
+              class="relative flex flex-col rounded-xl border bg-card overflow-hidden cursor-pointer transition-all duration-200 group hover:shadow-md"
+              :class="modalSelectedIds.includes(video.id) ? 'border-primary ring-2 ring-primary/40 bg-primary/[0.02]' : 'border-border hover:border-primary/40'"
+            >
+              <!-- Video Preview Thumbnail Header -->
+              <div class="relative aspect-video bg-slate-900 overflow-hidden shrink-0">
+                <img :src="video.thumbnail" :alt="video.author" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
+                
+                <!-- Play button overlay for instant preview -->
+                <button 
+                  @click.stop="activePlayingVideo = video"
+                  class="absolute inset-0 m-auto size-10 rounded-full bg-black/50 hover:bg-primary/90 text-white flex items-center justify-center backdrop-blur-xs transition-all group-hover:scale-110 shadow-lg cursor-pointer"
+                >
+                  <Play class="size-4 fill-white ml-0.5" />
+                </button>
+
+                <!-- Duration badge -->
+                <div class="absolute bottom-2 left-2.5 px-2 py-0.5 rounded-md bg-black/70 backdrop-blur-xs text-[10.5px] font-semibold text-white flex items-center gap-1">
+                  <Clock class="size-3" />
+                  {{ video.duration }}
+                </div>
+
+                <!-- Platform pill -->
+                <div class="absolute top-2.5 left-2.5 px-2 py-0.5 rounded-md bg-black/60 backdrop-blur-xs text-[10.5px] font-semibold text-white">
+                  {{ video.platform }}
+                </div>
+
+                <!-- Selection Checkbox -->
+                <div class="absolute top-2.5 right-2.5">
+                  <div 
+                    class="size-5 rounded-md border flex items-center justify-center transition-all shadow-sm"
+                    :class="modalSelectedIds.includes(video.id) ? 'bg-primary border-primary text-primary-foreground ring-2 ring-white/50' : 'bg-black/40 border-white/40 text-transparent'"
+                  >
+                    <Check class="size-3.5" />
+                  </div>
+                </div>
+              </div>
+
+              <!-- Video Details Body -->
+              <div class="p-3.5 flex-1 flex flex-col justify-between space-y-2.5">
+                <div>
+                  <div class="flex items-center justify-between gap-2 mb-1">
+                    <div class="flex items-center gap-2 min-w-0">
+                      <img :src="video.avatar" :alt="video.author" class="size-6 rounded-full object-cover shrink-0 border border-border" />
+                      <div class="min-w-0">
+                        <div class="text-[13px] font-semibold text-foreground truncate flex items-center gap-1">
+                          <span>{{ video.author }}</span>
+                          <CheckCircle2 class="size-3 text-primary shrink-0" />
+                        </div>
+                        <div class="text-[11px] text-muted-foreground truncate">{{ video.company }}</div>
+                      </div>
+                    </div>
+                    <!-- Rating -->
+                    <div class="flex items-center gap-0.5 text-amber-400 shrink-0">
+                      <Star v-for="s in video.rating" :key="s" class="size-3 fill-amber-400 text-amber-400" />
+                    </div>
+                  </div>
+
+                  <!-- Quote Snippet -->
+                  <p class="text-xs text-muted-foreground line-clamp-2 leading-relaxed italic mt-1.5">
+                    "{{ video.quote }}"
+                  </p>
+                </div>
+
+                <!-- AI Tag & Select Toggle Footer -->
+                <div class="flex items-center justify-between pt-2 border-t border-border/60 text-[11px]">
+                  <span v-if="video.aiTag" class="px-2 py-0.5 rounded-full bg-primary/10 text-primary font-medium flex items-center gap-1">
+                    <Sparkles class="size-2.5" />
+                    {{ video.aiTag }}
+                  </span>
+                  <span v-else class="text-muted-foreground">Published</span>
+
+                  <span 
+                    class="font-semibold transition-colors"
+                    :class="modalSelectedIds.includes(video.id) ? 'text-primary' : 'text-muted-foreground'"
+                  >
+                    {{ modalSelectedIds.includes(video.id) ? '✓ Shortlisted' : '+ Click to Add' }}
+                  </span>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <div v-if="modalFilteredVideos.length === 0" class="text-center py-16 text-muted-foreground">
+            <Video class="size-10 mx-auto text-muted-foreground/40 mb-2" />
+            <div class="text-sm font-medium text-foreground">No video testimonials found</div>
+            <p class="text-xs text-muted-foreground mt-1">Try adjusting your search terms or platform filters.</p>
+          </div>
+        </div>
+
+        <!-- Sticky Footer -->
+        <div class="px-6 py-3.5 border-t border-border bg-muted/20 flex items-center justify-between shrink-0">
+          <div class="text-xs text-muted-foreground">
+            <span class="font-semibold text-foreground">{{ modalSelectedIds.length }}</span> video testimonials shortlisted for widget display.
+          </div>
+          <div class="flex items-center gap-2">
+            <Button variant="ghost" class="border border-border hover:border-transparent text-xs h-8 sm:h-9" @click="isShortlistModalOpen = false">
+              Cancel
+            </Button>
+            <Button class="gap-1.5 text-xs h-8 sm:h-9" @click="applyShortlistModal">
+              <Check class="size-3.5" />
+              Save & Apply Shortlist ({{ modalSelectedIds.length }})
+            </Button>
+          </div>
+        </div>
+
       </div>
     </div>
 

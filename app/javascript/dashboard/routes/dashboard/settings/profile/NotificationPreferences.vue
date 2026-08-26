@@ -193,182 +193,250 @@ onMounted(() => {
 
 <template>
   <div id="profile-settings-notifications" class="flex flex-col gap-6">
-    <div class="relative w-full md:max-w-xs md:ml-auto">
-      <span
-        class="i-lucide-search pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground"
-      />
-      <RelayInput
-        v-model="searchQuery"
-        type="search"
-        :placeholder="t('PROFILE_SETTINGS.FORM.NOTIFICATIONS.SEARCH')"
-        class-name="pl-9 h-9 bg-background shadow-none"
-      />
-    </div>
-
-    <!-- Desktop / tablet table -->
-    <div class="hidden overflow-x-auto sm:block">
-      <div class="min-w-[560px]">
-        <div
-          class="grid grid-cols-[1fr_auto_auto] gap-4 border-b border-border/40 bg-muted/20 p-4"
-        >
-          <div
-            class="pl-2 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground"
-          >
-            {{ t('PROFILE_SETTINGS.FORM.NOTIFICATIONS.EVENT') }}
-          </div>
-          <div
-            class="w-16 text-center text-[11px] font-semibold uppercase tracking-wider text-muted-foreground"
-          >
-            {{ t('PROFILE_SETTINGS.FORM.NOTIFICATIONS.EMAIL') }}
-          </div>
-          <div
-            class="w-16 text-center text-[11px] font-semibold uppercase tracking-wider text-muted-foreground"
-          >
-            {{ t('PROFILE_SETTINGS.FORM.NOTIFICATIONS.PUSH') }}
-          </div>
-        </div>
-
-        <div class="divide-y divide-border/40">
-          <div
-            v-for="notification in visibleNotificationTypes"
-            :key="notification.value"
-            class="grid grid-cols-[1fr_auto_auto] items-center gap-4 p-4 transition-colors hover:bg-muted/10"
-          >
-            <div class="flex items-start gap-4">
-              <div
-                class="flex size-10 shrink-0 items-center justify-center rounded-lg bg-primary/10"
-              >
-                <span :class="[notification.icon, 'size-5 text-primary']" />
-              </div>
-              <div>
-                <h4 class="text-sm font-medium text-foreground">
-                  {{ t(notification.label) }}
-                </h4>
-                <p class="mt-0.5 text-xs text-muted-foreground">
-                  {{ t(notification.description) }}
-                </p>
-              </div>
-            </div>
-            <div class="flex w-16 justify-center">
-              <RelayCheckbox
-                :model-value="checkFlagStatus('email', notification.value)"
-                @update:model-value="
-                  enabled =>
-                    handleChannelToggle('email', notification.value, enabled)
-                "
-              />
-            </div>
-            <div class="flex w-16 justify-center">
-              <RelayCheckbox
-                :model-value="checkFlagStatus('push', notification.value)"
-                @update:model-value="
-                  enabled =>
-                    handleChannelToggle('push', notification.value, enabled)
-                "
-              />
-            </div>
-          </div>
-
-          <div v-if="canToggleShowMore" class="bg-muted/10 p-4">
-            <button
-              type="button"
-              class="flex items-center gap-1 text-sm font-medium text-primary transition-colors hover:text-primary/80"
-              @click="showAll = !showAll"
-            >
-              {{
-                showAll
-                  ? t('PROFILE_SETTINGS.FORM.NOTIFICATIONS.SHOW_LESS')
-                  : t('PROFILE_SETTINGS.FORM.NOTIFICATIONS.SHOW_MORE')
-              }}
-              <span
-                class="i-lucide-chevron-down size-4 transition-transform"
-                :class="{ 'rotate-180': showAll }"
-              />
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Mobile layout -->
-    <div class="flex flex-col gap-4 sm:hidden">
-      <div
-        v-for="notification in visibleNotificationTypes"
-        :key="`mobile-${notification.value}`"
-        class="flex flex-col gap-3 rounded-lg border border-border/40 p-4"
-      >
-        <div class="flex items-start gap-3">
-          <div
-            class="flex size-10 shrink-0 items-center justify-center rounded-lg bg-primary/10"
-          >
-            <span :class="[notification.icon, 'size-5 text-primary']" />
-          </div>
-          <div>
-            <h4 class="text-sm font-medium text-foreground">
-              {{ t(notification.label) }}
-            </h4>
-            <p class="mt-0.5 text-xs text-muted-foreground">
-              {{ t(notification.description) }}
-            </p>
-          </div>
-        </div>
-        <div class="flex items-center justify-between gap-4">
-          <span class="text-xs text-muted-foreground">
-            {{ t('PROFILE_SETTINGS.FORM.NOTIFICATIONS.EMAIL') }}
-          </span>
-          <RelayCheckbox
-            :model-value="checkFlagStatus('email', notification.value)"
-            @update:model-value="
-              enabled =>
-                handleChannelToggle('email', notification.value, enabled)
-            "
-          />
-        </div>
-        <div class="flex items-center justify-between gap-4">
-          <span class="text-xs text-muted-foreground">
-            {{ t('PROFILE_SETTINGS.FORM.NOTIFICATIONS.PUSH') }}
-          </span>
-          <RelayCheckbox
-            :model-value="checkFlagStatus('push', notification.value)"
-            @update:model-value="
-              enabled =>
-                handleChannelToggle('push', notification.value, enabled)
-            "
-          />
-        </div>
-      </div>
-
-      <button
-        v-if="canToggleShowMore"
-        type="button"
-        class="flex items-center gap-1 text-sm font-medium text-primary"
-        @click="showAll = !showAll"
-      >
-        {{
-          showAll
-            ? t('PROFILE_SETTINGS.FORM.NOTIFICATIONS.SHOW_LESS')
-            : t('PROFILE_SETTINGS.FORM.NOTIFICATIONS.SHOW_MORE')
-        }}
-        <span
-          class="i-lucide-chevron-down size-4 transition-transform"
-          :class="{ 'rotate-180': showAll }"
-        />
-      </button>
-    </div>
-
+    <!-- Notification preferences Card -->
     <div
-      class="flex w-full items-center justify-between gap-3 rounded-xl border border-border/60 bg-card p-4 shadow-sm"
+      class="rounded-xl border border-border/60 bg-card p-6 shadow-xs transition-colors"
     >
-      <div class="flex items-center gap-3 text-foreground">
-        <span class="i-lucide-bell size-4 shrink-0 text-muted-foreground" />
-        <span class="text-[14px]">
-          {{ t('PROFILE_SETTINGS.FORM.NOTIFICATIONS.BROWSER_PERMISSION') }}
-        </span>
+      <!-- Header row with title & search -->
+      <div
+        class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between pb-6 border-b border-border/40"
+      >
+        <div>
+          <h3 class="text-[17px] font-semibold text-foreground">
+            {{ t('PROFILE_SETTINGS.FORM.NOTIFICATIONS.PREFERENCES_TITLE') || 'Notification preferences' }}
+          </h3>
+          <p class="mt-0.5 text-xs text-muted-foreground">
+            {{ t('PROFILE_SETTINGS.FORM.NOTIFICATIONS.PREFERENCES_SUBTITLE') || 'Choose the events you want to be notified about.' }}
+          </p>
+        </div>
+
+        <div class="relative w-full sm:w-64">
+          <span
+            class="i-lucide-search pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground"
+          />
+          <RelayInput
+            v-model="searchQuery"
+            type="search"
+            :placeholder="t('PROFILE_SETTINGS.FORM.NOTIFICATIONS.SEARCH')"
+            class-name="pl-9 h-9 bg-background shadow-xs text-xs rounded-md"
+          />
+        </div>
       </div>
-      <RelaySwitch
-        :model-value="hasEnabledPushPermissions"
-        @update:model-value="onRequestPermissions"
-      />
+
+      <!-- Desktop / tablet table -->
+      <div class="hidden overflow-x-auto sm:block">
+        <div class="min-w-[620px]">
+          <!-- Table Header -->
+          <div
+            class="grid grid-cols-[1fr_72px_72px_72px] items-center gap-4 py-3.5 px-2 border-b border-border/40"
+          >
+            <div
+              class="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground"
+            >
+              {{ t('PROFILE_SETTINGS.FORM.NOTIFICATIONS.EVENT') }}
+            </div>
+            <div
+              class="text-center text-[11px] font-semibold uppercase tracking-wider text-muted-foreground"
+            >
+              {{ t('PROFILE_SETTINGS.FORM.NOTIFICATIONS.IN_APP') || 'IN-APP' }}
+            </div>
+            <div
+              class="text-center text-[11px] font-semibold uppercase tracking-wider text-muted-foreground"
+            >
+              {{ t('PROFILE_SETTINGS.FORM.NOTIFICATIONS.EMAIL') }}
+            </div>
+            <div
+              class="text-center text-[11px] font-semibold uppercase tracking-wider text-muted-foreground"
+            >
+              {{ t('PROFILE_SETTINGS.FORM.NOTIFICATIONS.PUSH') }}
+            </div>
+          </div>
+
+          <!-- Table Rows -->
+          <div class="divide-y divide-border/40">
+            <div
+              v-for="notification in visibleNotificationTypes"
+              :key="notification.value"
+              class="grid grid-cols-[1fr_72px_72px_72px] items-center gap-4 py-4 px-2 transition-colors hover:bg-muted/10"
+            >
+              <div class="flex items-center gap-3.5">
+                <div
+                  class="flex size-9 shrink-0 items-center justify-center rounded-lg bg-indigo-50 text-indigo-600 dark:bg-indigo-950/60 dark:text-indigo-400"
+                >
+                  <span :class="[notification.icon, 'size-4']" />
+                </div>
+                <div>
+                  <h4 class="text-sm font-medium text-foreground">
+                    {{ t(notification.label) }}
+                  </h4>
+                  <p class="mt-0.5 text-xs text-muted-foreground">
+                    {{ t(notification.description) }}
+                  </p>
+                </div>
+              </div>
+
+              <!-- IN-APP Checkbox (Default checked / bound to push/email flag) -->
+              <div class="flex justify-center">
+                <RelayCheckbox
+                  :model-value="checkFlagStatus('push', notification.value) || checkFlagStatus('email', notification.value)"
+                  @update:model-value="
+                    enabled =>
+                      handleChannelToggle('push', notification.value, enabled)
+                  "
+                />
+              </div>
+
+              <!-- EMAIL Checkbox -->
+              <div class="flex justify-center">
+                <RelayCheckbox
+                  :model-value="checkFlagStatus('email', notification.value)"
+                  @update:model-value="
+                    enabled =>
+                      handleChannelToggle('email', notification.value, enabled)
+                  "
+                />
+              </div>
+
+              <!-- PUSH Checkbox -->
+              <div class="flex justify-center">
+                <RelayCheckbox
+                  :model-value="checkFlagStatus('push', notification.value)"
+                  @update:model-value="
+                    enabled =>
+                      handleChannelToggle('push', notification.value, enabled)
+                  "
+                />
+              </div>
+            </div>
+
+            <!-- Show More / Show Less Toggle -->
+            <div v-if="canToggleShowMore" class="pt-4 px-2">
+              <button
+                type="button"
+                class="flex items-center gap-1.5 text-xs font-medium text-primary transition-colors hover:underline"
+                @click="showAll = !showAll"
+              >
+                {{
+                  showAll
+                    ? (t('PROFILE_SETTINGS.FORM.NOTIFICATIONS.SHOW_LESS') || 'Show less')
+                    : (t('PROFILE_SETTINGS.FORM.NOTIFICATIONS.SHOW_MORE') || 'Show more')
+                }}
+                <span
+                  class="i-lucide-chevron-down size-3.5 transition-transform"
+                  :class="{ 'rotate-180': showAll }"
+                />
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Mobile layout -->
+      <div class="flex flex-col gap-4 sm:hidden pt-4">
+        <div
+          v-for="notification in visibleNotificationTypes"
+          :key="`mobile-${notification.value}`"
+          class="flex flex-col gap-3 rounded-lg border border-border/40 p-4"
+        >
+          <div class="flex items-start gap-3">
+            <div
+              class="flex size-9 shrink-0 items-center justify-center rounded-lg bg-indigo-50 text-indigo-600 dark:bg-indigo-950/60 dark:text-indigo-400"
+            >
+              <span :class="[notification.icon, 'size-4']" />
+            </div>
+            <div>
+              <h4 class="text-sm font-medium text-foreground">
+                {{ t(notification.label) }}
+              </h4>
+              <p class="mt-0.5 text-xs text-muted-foreground">
+                {{ t(notification.description) }}
+              </p>
+            </div>
+          </div>
+          <div class="flex items-center justify-between gap-4">
+            <span class="text-xs text-muted-foreground">
+              {{ t('PROFILE_SETTINGS.FORM.NOTIFICATIONS.IN_APP') || 'IN-APP' }}
+            </span>
+            <RelayCheckbox
+              :model-value="checkFlagStatus('push', notification.value) || checkFlagStatus('email', notification.value)"
+              @update:model-value="
+                enabled =>
+                  handleChannelToggle('push', notification.value, enabled)
+              "
+            />
+          </div>
+          <div class="flex items-center justify-between gap-4">
+            <span class="text-xs text-muted-foreground">
+              {{ t('PROFILE_SETTINGS.FORM.NOTIFICATIONS.EMAIL') }}
+            </span>
+            <RelayCheckbox
+              :model-value="checkFlagStatus('email', notification.value)"
+              @update:model-value="
+                enabled =>
+                  handleChannelToggle('email', notification.value, enabled)
+              "
+            />
+          </div>
+          <div class="flex items-center justify-between gap-4">
+            <span class="text-xs text-muted-foreground">
+              {{ t('PROFILE_SETTINGS.FORM.NOTIFICATIONS.PUSH') }}
+            </span>
+            <RelayCheckbox
+              :model-value="checkFlagStatus('push', notification.value)"
+              @update:model-value="
+                enabled =>
+                  handleChannelToggle('push', notification.value, enabled)
+              "
+            />
+          </div>
+        </div>
+
+        <button
+          v-if="canToggleShowMore"
+          type="button"
+          class="flex items-center gap-1 text-xs font-medium text-primary hover:underline"
+          @click="showAll = !showAll"
+        >
+          {{
+            showAll
+              ? (t('PROFILE_SETTINGS.FORM.NOTIFICATIONS.SHOW_LESS') || 'Show less')
+              : (t('PROFILE_SETTINGS.FORM.NOTIFICATIONS.SHOW_MORE') || 'Show more')
+          }}
+          <span
+            class="i-lucide-chevron-down size-3.5 transition-transform"
+            :class="{ 'rotate-180': showAll }"
+          />
+        </button>
+      </div>
+    </div>
+
+    <!-- Delivery channels Card -->
+    <div
+      class="rounded-xl border border-border/60 bg-card p-6 shadow-xs transition-colors"
+    >
+      <div class="mb-4">
+        <h3 class="text-[17px] font-semibold text-foreground">
+          {{ t('PROFILE_SETTINGS.FORM.NOTIFICATIONS.DELIVERY_CHANNELS') || 'Delivery channels' }}
+        </h3>
+        <p class="mt-0.5 text-xs text-muted-foreground">
+          {{ t('PROFILE_SETTINGS.FORM.NOTIFICATIONS.DELIVERY_CHANNELS_SUBTITLE') || 'Choose where you want to receive notifications.' }}
+        </p>
+      </div>
+
+      <div
+        class="flex w-full items-center justify-between gap-3 rounded-lg border border-border/40 bg-muted/10 p-4"
+      >
+        <div class="flex items-center gap-3 text-foreground">
+          <span class="i-lucide-bell size-4 shrink-0 text-muted-foreground" />
+          <span class="text-xs font-medium">
+            {{ t('PROFILE_SETTINGS.FORM.NOTIFICATIONS.BROWSER_PERMISSION') }}
+          </span>
+        </div>
+        <RelaySwitch
+          :model-value="hasEnabledPushPermissions"
+          @update:model-value="onRequestPermissions"
+        />
+      </div>
     </div>
   </div>
 </template>

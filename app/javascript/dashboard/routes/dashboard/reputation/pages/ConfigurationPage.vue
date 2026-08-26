@@ -424,7 +424,7 @@ function saveSpamConfig() {
       </div>
 
       <!-- ================= TAB 3: RELAY AI AUTOMATIONS ================= -->
-      <div v-else-if="activeTab === 'ai_outreach'" class="max-w-3xl">
+      <div v-else-if="activeTab === 'ai_outreach'">
         <div class="bg-card rounded-2xl border border-border p-6 sm:p-7 shadow-xs space-y-6">
           <div class="flex items-center justify-between p-5 bg-muted/20 rounded-xl border border-border/80">
             <div class="flex items-center gap-3">
@@ -451,7 +451,7 @@ function saveSpamConfig() {
       </div>
 
       <!-- ================= TAB 4: SPAM & PROTECTION SHIELD ================= -->
-      <div v-else class="max-w-3xl">
+      <div v-else>
         <div class="bg-card rounded-2xl border border-border p-6 sm:p-7 shadow-xs space-y-6">
           <div class="pb-3.5 border-b border-border">
             <h2 class="text-[15px] font-semibold text-foreground">Spam Reviews Filters</h2>

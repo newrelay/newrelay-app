@@ -34,6 +34,7 @@ export default {
       showAddPopup: false,
       showDeleteConfirmationPopup: false,
       selectedResponse: {},
+      slaToEdit: null,
       searchQuery: '',
     };
   },
@@ -84,10 +85,16 @@ export default {
       if (this.isBehindAPaywall) {
         return;
       }
+      this.slaToEdit = null;
+      this.showAddPopup = true;
+    },
+    openEditPopup(sla) {
+      this.slaToEdit = sla;
       this.showAddPopup = true;
     },
     hideAddPopup() {
       this.showAddPopup = false;
+      this.slaToEdit = null;
     },
     openDeletePopup(response) {
       this.showDeleteConfirmationPopup = true;
@@ -173,7 +180,7 @@ export default {
                 v-model="searchQuery"
                 type="text"
                 :placeholder="$t('SLA.SEARCH_PLACEHOLDER')"
-                class="h-10 w-full border border-border/60 bg-muted/20 pl-9 text-foreground outline-none placeholder:text-muted-foreground focus:ring-1 focus:ring-primary/20 text-[14px] border-border/80 bg-background focus-visible:ring-1 focus-visible:ring-primary/30 shadow-sm rounded-md"
+                class="h-10 w-full rounded-md border border-border/60 bg-muted/20 pl-9 text-[14px] text-foreground shadow-sm outline-none placeholder:text-muted-foreground focus-visible:ring-1 focus-visible:ring-primary/30"
               />
             </div>
             <RelayButton
@@ -294,8 +301,19 @@ export default {
                   {{ displayTime(sla.resolution_time_threshold) }}
                 </div>
                 <div
-                  class="flex items-center justify-end opacity-0 transition-opacity group-hover:opacity-100"
+                  class="flex items-center justify-end gap-1.5 opacity-0 transition-opacity group-hover:opacity-100"
                 >
+                  <RelayTooltip :content="$t('SLA.FORM.EDIT')" side="top">
+                    <RelayButton
+                      variant="ghost"
+                      size="icon"
+                      class="size-8 border border-transparent text-muted-foreground shadow-xs hover:border-border hover:bg-background hover:text-foreground border border-border hover:border-transparent"
+                      :disabled="loading[sla.id]"
+                      @click="openEditPopup(sla)"
+                    >
+                      <Icon icon="i-lucide-pencil" class="size-3.5" />
+                    </RelayButton>
+                  </RelayTooltip>
                   <RelayTooltip :content="$t('SLA.FORM.DELETE')" side="top">
                     <RelayButton
                       variant="ghost"
@@ -316,12 +334,12 @@ export default {
 
       <RelayModal
         :show="showAddPopup"
-        :title="$t('SLA.ADD.TITLE')"
+        :title="slaToEdit ? $t('SLA.EDIT.TITLE') : $t('SLA.ADD.TITLE')"
         :description="$t('SLA.ADD.DESC')"
         size="lg"
         @close="hideAddPopup"
       >
-        <AddSLA @close="hideAddPopup" />
+        <AddSLA :sla-to-edit="slaToEdit" @close="hideAddPopup" />
       </RelayModal>
 
       <RelayConfirmModal

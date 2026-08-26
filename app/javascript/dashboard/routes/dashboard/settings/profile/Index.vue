@@ -322,7 +322,7 @@ export default {
       <SectionLayout
         as-card
         :title="$t('PROFILE_SETTINGS.FORM.NOTIFICATIONS.TITLE')"
-        description=""
+        :description="$t('PROFILE_SETTINGS.FORM.NOTIFICATIONS.NOTE')"
       >
         <NotificationPreferences />
       </SectionLayout>

@@ -17,11 +17,21 @@ const notificationPermissions = [...ROLES, ...CONVERSATION_PERMISSIONS];
 </script>
 
 <template>
-  <div class="flex flex-col gap-6">
+  <div class="flex flex-col gap-8">
     <BaseSettingsHeader
       :title="t('NOTIFICATION_SETTINGS.TITLE')"
       :description="t('NOTIFICATION_SETTINGS.DESCRIPTION')"
     />
+
+    <Policy :permissions="notificationPermissions">
+      <SectionLayout
+        as-card
+        :title="t('PROFILE_SETTINGS.FORM.NOTIFICATIONS.TITLE')"
+        :description="t('PROFILE_SETTINGS.FORM.NOTIFICATIONS.NOTE')"
+      >
+        <NotificationPreferences />
+      </SectionLayout>
+    </Policy>
 
     <Policy :permissions="audioNotificationPermissions">
       <SectionLayout
@@ -32,16 +42,6 @@ const notificationPermissions = [...ROLES, ...CONVERSATION_PERMISSIONS];
         "
       >
         <AudioNotifications />
-      </SectionLayout>
-    </Policy>
-
-    <Policy :permissions="notificationPermissions">
-      <SectionLayout
-        as-card
-        :title="t('PROFILE_SETTINGS.FORM.NOTIFICATIONS.TITLE')"
-        description=""
-      >
-        <NotificationPreferences />
       </SectionLayout>
     </Policy>
   </div>

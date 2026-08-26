@@ -196,6 +196,24 @@ pattern used by `labels/Index.vue`. No new strings, no logic change,
 
 Every other page checked was already consistent — no other polish items found.
 
+### 8c. SLA — Edit action added (2026-08-26)
+
+User flagged the reference SLA list has both Edit and Delete row actions;
+ours only had Delete. Investigation found the edit path was already
+half-scaffolded in the codebase (mutation type `EDIT_SLA`, analytics event
+`SLA_EVENTS.UPDATE`, and `SlaForm`'s `selectedResponse`/pre-fill support all
+existed unused) and the backend already exposes `PATCH /sla_policies/:id`
+with the same permitted params as `create`. Completed the wiring:
+`store/modules/sla.js` (`update` action + `isUpdating` flag), `AddSLA.vue`
+(branches create/update, dynamic submit label), `sla/Index.vue` (edit state,
+`openEditPopup`, edit icon-button row action matching the existing
+labels/Index.vue pattern, dynamic modal title). Also fixed a duplicate/
+conflicting Tailwind class pair on the search input (`border-border/60` +
+`border-border/80`, `bg-muted/20` + `bg-background` both present). i18n keys
+added: `SLA.EDIT.TITLE`, `SLA.EDIT.API.SUCCESS_MESSAGE/ERROR_MESSAGE`.
+`pnpm eslint` clean. **Not yet browser-verified** — static/backend
+cross-check only, per this pass's request to skip live QA.
+
 ## 9. Acceptance criteria
 
 - No `woot-*` / `WootModal` / scoped CSS under `settings/`.

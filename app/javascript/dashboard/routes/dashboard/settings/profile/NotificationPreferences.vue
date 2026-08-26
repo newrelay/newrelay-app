@@ -223,393 +223,279 @@ onMounted(() => {
 </script>
 
 <template>
-  <div id="profile-settings-notifications" class="flex flex-col gap-6">
-    <!-- CARD 1: Notification preferences Card -->
-    <div
-      class="rounded-xl border border-border/60 bg-card p-6 shadow-xs transition-colors"
-    >
-      <!-- Header row with title & search -->
-      <div
-        class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between pb-6 border-b border-border/40"
-      >
-        <div>
-          <h3 class="text-[17px] font-semibold text-foreground">
-            {{ t('PROFILE_SETTINGS.FORM.NOTIFICATIONS.PREFERENCES_TITLE') || 'Notification preferences' }}
-          </h3>
-          <p class="mt-0.5 text-xs text-muted-foreground">
-            {{ t('PROFILE_SETTINGS.FORM.NOTIFICATIONS.PREFERENCES_SUBTITLE') || 'Choose the events you want to be notified about.' }}
-          </p>
-        </div>
-
-        <div class="relative w-full sm:w-64">
-          <span
-            class="i-lucide-search pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground"
-          />
-          <RelayInput
-            v-model="searchQuery"
-            type="search"
-            :placeholder="t('PROFILE_SETTINGS.FORM.NOTIFICATIONS.SEARCH')"
-            class-name="pl-9 h-9 bg-background shadow-xs text-xs rounded-md"
-          />
-        </div>
-      </div>
-
-      <!-- Desktop / tablet table -->
-      <div class="hidden overflow-x-auto sm:block">
-        <div class="min-w-[620px]">
-          <!-- Table Header -->
-          <div
-            class="grid grid-cols-[1fr_72px_72px_72px] items-center gap-4 py-3.5 px-2 border-b border-border/40"
-          >
-            <div
-              class="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground"
-            >
-              {{ t('PROFILE_SETTINGS.FORM.NOTIFICATIONS.EVENT') }}
-            </div>
-            <div
-              class="text-center text-[11px] font-semibold uppercase tracking-wider text-muted-foreground"
-            >
-              {{ t('PROFILE_SETTINGS.FORM.NOTIFICATIONS.IN_APP') || 'IN-APP' }}
-            </div>
-            <div
-              class="text-center text-[11px] font-semibold uppercase tracking-wider text-muted-foreground"
-            >
-              {{ t('PROFILE_SETTINGS.FORM.NOTIFICATIONS.EMAIL') }}
-            </div>
-            <div
-              class="text-center text-[11px] font-semibold uppercase tracking-wider text-muted-foreground"
-            >
-              {{ t('PROFILE_SETTINGS.FORM.NOTIFICATIONS.PUSH') }}
-            </div>
+  <div id="profile-settings-notifications" class="flex-1 w-full max-w-4xl min-w-0">
+    <div class="max-w-3xl space-y-8">
+      <!-- CARD 1: Notification preferences -->
+      <div class="border border-border/60 bg-card rounded-xl shadow-xs overflow-hidden">
+        <div class="p-4 sm:p-6 border-b border-border/40 flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div>
+            <h3 class="text-base font-semibold text-foreground">Notification preferences</h3>
+            <p class="text-sm text-muted-foreground mt-1">Choose the events you want to be notified about.</p>
           </div>
+          <div class="relative w-full md:w-64">
+            <span class="i-lucide-search pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
+            <input
+              v-model="searchQuery"
+              type="text"
+              class="border-input placeholder:text-muted-foreground focus-visible:ring-ring flex w-full rounded-md border px-3 py-1 text-sm transition-colors focus-visible:ring-1 focus-visible:outline-hidden disabled:cursor-not-allowed disabled:opacity-50 pl-9 h-9 bg-background shadow-none"
+              placeholder="Search events..."
+            />
+          </div>
+        </div>
 
-          <!-- Table Rows -->
-          <div class="divide-y divide-border/40">
-            <div
-              v-for="notification in visibleNotificationTypes"
-              :key="notification.value"
-              class="grid grid-cols-[1fr_72px_72px_72px] items-center gap-4 py-4 px-2 transition-colors hover:bg-muted/10"
-            >
-              <div class="flex items-center gap-3.5">
-                <div
-                  class="flex size-9 shrink-0 items-center justify-center rounded-lg bg-indigo-50 text-indigo-600 dark:bg-indigo-950/60 dark:text-indigo-400"
-                >
-                  <span :class="[notification.icon, 'size-4']" />
-                </div>
-                <div>
-                  <h4 class="text-sm font-medium text-foreground">
-                    {{ notification.defaultTitle || t(notification.label) }}
-                  </h4>
-                  <p class="mt-0.5 text-xs text-muted-foreground">
-                    {{ notification.defaultDescription || t(notification.description) }}
-                  </p>
-                </div>
-              </div>
-
-              <!-- IN-APP Checkbox -->
-              <div class="flex justify-center">
-                <RelayCheckbox
-                  :model-value="checkFlagStatus('push', notification.value) || checkFlagStatus('email', notification.value)"
-                  @update:model-value="
-                    enabled =>
-                      handleChannelToggle('push', notification.value, enabled)
-                  "
-                />
-              </div>
-
-              <!-- EMAIL Checkbox -->
-              <div class="flex justify-center">
-                <RelayCheckbox
-                  :model-value="checkFlagStatus('email', notification.value)"
-                  @update:model-value="
-                    enabled =>
-                      handleChannelToggle('email', notification.value, enabled)
-                  "
-                />
-              </div>
-
-              <!-- PUSH Checkbox -->
-              <div class="flex justify-center">
-                <RelayCheckbox
-                  :model-value="checkFlagStatus('push', notification.value)"
-                  @update:model-value="
-                    enabled =>
-                      handleChannelToggle('push', notification.value, enabled)
-                  "
-                />
-              </div>
+        <div class="overflow-x-auto">
+          <div class="min-w-[600px]">
+            <!-- Header Row -->
+            <div class="grid grid-cols-[1fr_auto_auto_auto] gap-4 p-4 border-b border-border/40 bg-muted/20">
+              <div class="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider pl-2">Event</div>
+              <div class="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider w-16 text-center">In-app</div>
+              <div class="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider w-16 text-center">Email</div>
+              <div class="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider w-16 text-center">Push</div>
             </div>
 
-            <!-- Show More / Show Less Toggle -->
-            <div v-if="canToggleShowMore" class="pt-4 px-2">
-              <button
-                type="button"
-                class="flex items-center gap-1.5 text-xs font-medium text-primary transition-colors hover:underline"
-                @click="showAll = !showAll"
+            <!-- Table Rows -->
+            <div class="divide-y divide-border/40">
+              <div
+                v-for="notification in visibleNotificationTypes"
+                :key="notification.value"
+                class="grid grid-cols-[1fr_auto_auto_auto] gap-4 p-4 items-center hover:bg-muted/10 transition-colors"
               >
-                {{
-                  showAll
-                    ? (t('PROFILE_SETTINGS.FORM.NOTIFICATIONS.SHOW_LESS') || 'Show less')
-                    : (t('PROFILE_SETTINGS.FORM.NOTIFICATIONS.SHOW_MORE') || 'Show more')
-                }}
-                <span
-                  class="i-lucide-chevron-down size-3.5 transition-transform"
-                  :class="{ 'rotate-180': showAll }"
-                />
-              </button>
+                <div class="flex items-start gap-4">
+                  <div class="size-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+                    <span :class="[notification.icon, 'size-5 text-primary']" />
+                  </div>
+                  <div>
+                    <h4 class="text-sm font-medium text-foreground">
+                      {{ notification.defaultTitle || t(notification.label) }}
+                    </h4>
+                    <p class="text-xs text-muted-foreground mt-0.5">
+                      {{ notification.defaultDescription || t(notification.description) }}
+                    </p>
+                  </div>
+                </div>
+
+                <!-- In-app Checkbox -->
+                <div class="w-16 flex justify-center">
+                  <RelayCheckbox
+                    :model-value="checkFlagStatus('push', notification.value) || checkFlagStatus('email', notification.value)"
+                    @update:model-value="enabled => handleChannelToggle('push', notification.value, enabled)"
+                  />
+                </div>
+
+                <!-- Email Checkbox -->
+                <div class="w-16 flex justify-center">
+                  <RelayCheckbox
+                    :model-value="checkFlagStatus('email', notification.value)"
+                    @update:model-value="enabled => handleChannelToggle('email', notification.value, enabled)"
+                  />
+                </div>
+
+                <!-- Push Checkbox -->
+                <div class="w-16 flex justify-center">
+                  <RelayCheckbox
+                    :model-value="checkFlagStatus('push', notification.value)"
+                    @update:model-value="enabled => handleChannelToggle('push', notification.value, enabled)"
+                  />
+                </div>
+              </div>
+
+              <!-- Show More / Show Less Button -->
+              <div v-if="canToggleShowMore" class="p-4 bg-muted/10">
+                <button
+                  type="button"
+                  class="text-sm font-medium text-primary hover:text-primary/80 flex items-center gap-1 transition-colors"
+                  @click="showAll = !showAll"
+                >
+                  {{ showAll ? 'Show less' : 'Show more' }}
+                  <span
+                    class="i-lucide-chevron-down size-4 transition-transform"
+                    :class="{ 'rotate-180': showAll }"
+                  />
+                </button>
+              </div>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- Mobile layout -->
-      <div class="flex flex-col gap-4 sm:hidden pt-4">
-        <div
-          v-for="notification in visibleNotificationTypes"
-          :key="`mobile-${notification.value}`"
-          class="flex flex-col gap-3 rounded-lg border border-border/40 p-4"
-        >
-          <div class="flex items-start gap-3">
-            <div
-              class="flex size-9 shrink-0 items-center justify-center rounded-lg bg-indigo-50 text-indigo-600 dark:bg-indigo-950/60 dark:text-indigo-400"
+      <!-- CARD 2: Delivery channels -->
+      <div class="border border-border/60 bg-card rounded-xl shadow-xs overflow-hidden mt-8">
+        <div class="p-4 sm:p-6 border-b border-border/40">
+          <h3 class="text-base font-semibold text-foreground">Delivery channels</h3>
+          <p class="text-sm text-muted-foreground mt-1">Choose where you want to receive notifications.</p>
+        </div>
+
+        <div class="p-4 sm:p-6 space-y-6">
+          <!-- In-app -->
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-4">
+              <div class="size-10 flex items-center justify-center shrink-0">
+                <span class="i-lucide-monitor size-5 text-muted-foreground" />
+              </div>
+              <div>
+                <h4 class="text-sm font-medium text-foreground">In-app</h4>
+                <p class="text-xs text-muted-foreground mt-0.5">Receive notifications inside the platform.</p>
+              </div>
+            </div>
+            <RelayCheckbox v-model="deliveryInApp" />
+          </div>
+
+          <!-- Email -->
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-4">
+              <div class="size-10 flex items-center justify-center shrink-0">
+                <span class="i-lucide-mail size-5 text-muted-foreground" />
+              </div>
+              <div>
+                <h4 class="text-sm font-medium text-foreground">Email</h4>
+                <p class="text-xs text-muted-foreground mt-0.5">Receive notifications via email.</p>
+              </div>
+            </div>
+            <RelayCheckbox v-model="deliveryEmail" />
+          </div>
+
+          <!-- Push notifications -->
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-4">
+              <div class="size-10 flex items-center justify-center shrink-0">
+                <span class="i-lucide-smartphone size-5 text-muted-foreground" />
+              </div>
+              <div>
+                <h4 class="text-sm font-medium text-foreground">Push notifications</h4>
+                <p class="text-xs text-muted-foreground mt-0.5">Receive push notifications on your device.</p>
+              </div>
+            </div>
+            <RelayCheckbox
+              :model-value="hasEnabledPushPermissions || deliveryPush"
+              @update:model-value="onRequestPermissions"
+            />
+          </div>
+
+          <!-- Slack -->
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-4">
+              <div class="size-10 flex items-center justify-center shrink-0">
+                <span class="i-lucide-hash size-5 text-[#E01E5A]" />
+              </div>
+              <div>
+                <h4 class="text-sm font-medium text-foreground">Slack</h4>
+                <p class="text-xs text-muted-foreground mt-0.5">Receive notifications in Slack.</p>
+              </div>
+            </div>
+            <RelayCheckbox v-model="deliverySlack" />
+          </div>
+
+          <!-- Microsoft Teams -->
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-4">
+              <div class="size-10 flex items-center justify-center shrink-0">
+                <span class="i-lucide-message-square size-5 text-[#6264A7]" />
+              </div>
+              <div>
+                <h4 class="text-sm font-medium text-foreground">Microsoft Teams</h4>
+                <p class="text-xs text-muted-foreground mt-0.5">Receive notifications in Microsoft Teams.</p>
+              </div>
+            </div>
+            <RelayCheckbox v-model="deliveryTeams" />
+          </div>
+
+          <!-- Manage Integrations Link -->
+          <div class="pt-2">
+            <router-link
+              to="integrations"
+              class="text-sm font-medium text-primary hover:text-primary/80 flex items-center gap-1.5 transition-colors"
             >
-              <span :class="[notification.icon, 'size-4']" />
-            </div>
-            <div>
-              <h4 class="text-sm font-medium text-foreground">
-                {{ notification.defaultTitle || t(notification.label) }}
-              </h4>
-              <p class="mt-0.5 text-xs text-muted-foreground">
-                {{ notification.defaultDescription || t(notification.description) }}
-              </p>
-            </div>
+              Manage integrations
+              <span class="i-lucide-external-link size-3.5" />
+            </router-link>
           </div>
-          <div class="flex items-center justify-between gap-4">
-            <span class="text-xs text-muted-foreground">
-              {{ t('PROFILE_SETTINGS.FORM.NOTIFICATIONS.IN_APP') || 'IN-APP' }}
-            </span>
-            <RelayCheckbox
-              :model-value="checkFlagStatus('push', notification.value) || checkFlagStatus('email', notification.value)"
-              @update:model-value="
-                enabled =>
-                  handleChannelToggle('push', notification.value, enabled)
-              "
-            />
-          </div>
-          <div class="flex items-center justify-between gap-4">
-            <span class="text-xs text-muted-foreground">
-              {{ t('PROFILE_SETTINGS.FORM.NOTIFICATIONS.EMAIL') }}
-            </span>
-            <RelayCheckbox
-              :model-value="checkFlagStatus('email', notification.value)"
-              @update:model-value="
-                enabled =>
-                  handleChannelToggle('email', notification.value, enabled)
-              "
-            />
-          </div>
-          <div class="flex items-center justify-between gap-4">
-            <span class="text-xs text-muted-foreground">
-              {{ t('PROFILE_SETTINGS.FORM.NOTIFICATIONS.PUSH') }}
-            </span>
-            <RelayCheckbox
-              :model-value="checkFlagStatus('push', notification.value)"
-              @update:model-value="
-                enabled =>
-                  handleChannelToggle('push', notification.value, enabled)
-              "
-            />
-          </div>
-        </div>
-
-        <button
-          v-if="canToggleShowMore"
-          type="button"
-          class="flex items-center gap-1 text-xs font-medium text-primary hover:underline"
-          @click="showAll = !showAll"
-        >
-          {{
-            showAll
-              ? (t('PROFILE_SETTINGS.FORM.NOTIFICATIONS.SHOW_LESS') || 'Show less')
-              : (t('PROFILE_SETTINGS.FORM.NOTIFICATIONS.SHOW_MORE') || 'Show more')
-          }}
-          <span
-            class="i-lucide-chevron-down size-3.5 transition-transform"
-            :class="{ 'rotate-180': showAll }"
-          />
-        </button>
-      </div>
-    </div>
-
-    <!-- CARD 2: Delivery channels Card -->
-    <div
-      class="rounded-xl border border-border/60 bg-card p-6 shadow-xs transition-colors"
-    >
-      <div class="mb-6">
-        <h3 class="text-[17px] font-semibold text-foreground">
-          {{ t('PROFILE_SETTINGS.FORM.NOTIFICATIONS.DELIVERY_CHANNELS') || 'Delivery channels' }}
-        </h3>
-        <p class="mt-0.5 text-xs text-muted-foreground">
-          {{ t('PROFILE_SETTINGS.FORM.NOTIFICATIONS.DELIVERY_CHANNELS_SUBTITLE') || 'Choose where you want to receive notifications.' }}
-        </p>
-      </div>
-
-      <div class="divide-y divide-border/40">
-        <!-- In-app -->
-        <div class="flex items-center justify-between py-3.5">
-          <div class="flex items-center gap-3">
-            <span class="i-lucide-monitor size-4 text-muted-foreground" />
-            <div>
-              <h4 class="text-xs font-medium text-foreground">In-app</h4>
-              <p class="text-[11px] text-muted-foreground">Receive notifications inside the platform.</p>
-            </div>
-          </div>
-          <RelayCheckbox v-model="deliveryInApp" />
-        </div>
-
-        <!-- Email -->
-        <div class="flex items-center justify-between py-3.5">
-          <div class="flex items-center gap-3">
-            <span class="i-lucide-mail size-4 text-muted-foreground" />
-            <div>
-              <h4 class="text-xs font-medium text-foreground">Email</h4>
-              <p class="text-[11px] text-muted-foreground">Receive notifications via email.</p>
-            </div>
-          </div>
-          <RelayCheckbox v-model="deliveryEmail" />
-        </div>
-
-        <!-- Push notifications -->
-        <div class="flex items-center justify-between py-3.5">
-          <div class="flex items-center gap-3">
-            <span class="i-lucide-smartphone size-4 text-muted-foreground" />
-            <div>
-              <h4 class="text-xs font-medium text-foreground">Push notifications</h4>
-              <p class="text-[11px] text-muted-foreground">Receive push notifications on your device.</p>
-            </div>
-          </div>
-          <RelayCheckbox
-            :model-value="hasEnabledPushPermissions || deliveryPush"
-            @update:model-value="onRequestPermissions"
-          />
-        </div>
-
-        <!-- Slack -->
-        <div class="flex items-center justify-between py-3.5">
-          <div class="flex items-center gap-3">
-            <span class="i-lucide-hash size-4 text-muted-foreground" />
-            <div>
-              <h4 class="text-xs font-medium text-foreground">Slack</h4>
-              <p class="text-[11px] text-muted-foreground">Receive notifications in Slack.</p>
-            </div>
-          </div>
-          <RelayCheckbox v-model="deliverySlack" />
-        </div>
-
-        <!-- Microsoft Teams -->
-        <div class="flex items-center justify-between py-3.5">
-          <div class="flex items-center gap-3">
-            <span class="i-lucide-message-square size-4 text-muted-foreground" />
-            <div>
-              <h4 class="text-xs font-medium text-foreground">Microsoft Teams</h4>
-              <p class="text-[11px] text-muted-foreground">Receive notifications in Microsoft Teams.</p>
-            </div>
-          </div>
-          <RelayCheckbox v-model="deliveryTeams" />
         </div>
       </div>
 
-      <div class="pt-4">
-        <router-link
-          to="integrations"
-          class="inline-flex items-center gap-1 text-xs font-medium text-primary hover:underline"
-        >
-          Manage integrations
-          <span class="i-lucide-external-link size-3" />
-        </router-link>
-      </div>
-    </div>
-
-    <!-- CARD 3: Quiet hours Card -->
-    <div
-      class="rounded-xl border border-border/60 bg-card p-6 shadow-xs transition-colors"
-    >
-      <div class="flex items-center justify-between mb-4">
-        <div>
-          <h3 class="text-[17px] font-semibold text-foreground">
-            Quiet hours
-          </h3>
-          <p class="mt-0.5 text-xs text-muted-foreground">
-            Pause non-urgent notifications during these hours.
-          </p>
-        </div>
-        <RelaySwitch v-model="quietHoursEnabled" />
-      </div>
-
-      <div v-if="quietHoursEnabled" class="flex flex-col gap-4 pt-2">
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <!-- CARD 3: Quiet hours -->
+      <div class="border border-border/60 bg-card rounded-xl shadow-xs overflow-hidden mt-8 mb-4">
+        <div class="p-4 sm:p-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
-            <label class="block text-xs font-medium text-muted-foreground mb-1">From</label>
-            <div class="relative">
-              <input
-                v-model="quietHoursFrom"
-                type="time"
-                class="h-9 w-full rounded-md border border-input bg-background px-3 text-xs text-foreground shadow-xs focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring cursor-pointer"
-              />
-            </div>
+            <h3 class="text-base font-semibold text-foreground">Quiet hours</h3>
+            <p class="text-sm text-muted-foreground mt-1">Pause non-urgent notifications during these hours.</p>
           </div>
-          <div>
-            <label class="block text-xs font-medium text-muted-foreground mb-1">To</label>
-            <div class="relative">
-              <input
-                v-model="quietHoursTo"
-                type="time"
-                class="h-9 w-full rounded-md border border-input bg-background px-3 text-xs text-foreground shadow-xs focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring cursor-pointer"
-              />
-            </div>
-          </div>
+          <RelaySwitch v-model="quietHoursEnabled" />
         </div>
 
-        <div>
-          <label class="block text-xs font-medium text-muted-foreground mb-1">Time zone</label>
-          <select
-            v-model="selectedTimezone"
-            class="w-full h-9 rounded-md border border-input bg-background px-3 text-xs text-foreground shadow-xs focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
-          >
-            <option value="(GMT+05:30) Asia/Kolkata">(GMT+05:30) Asia/Kolkata</option>
-            <option value="(GMT+00:00) UTC">(GMT+00:00) UTC</option>
-            <option value="(GMT-05:00) Eastern Time">(GMT-05:00) Eastern Time</option>
-            <option value="(GMT-08:00) Pacific Time">(GMT-08:00) Pacific Time</option>
-          </select>
-        </div>
+        <div v-if="quietHoursEnabled" class="px-6 pb-6 space-y-6">
+          <div class="flex flex-col sm:flex-row gap-6">
+            <!-- From -->
+            <div class="flex items-center gap-4 w-full sm:w-1/2">
+              <span class="text-sm font-medium text-muted-foreground w-12">From</span>
+              <div class="relative flex-1">
+                <input
+                  v-model="quietHoursFrom"
+                  type="text"
+                  class="border-input placeholder:text-muted-foreground focus-visible:ring-ring flex w-full rounded-md border px-3 py-1 transition-colors focus-visible:ring-1 focus-visible:outline-hidden disabled:cursor-not-allowed disabled:opacity-50 h-10 text-sm bg-background pr-10 shadow-xs"
+                  placeholder="08:00 PM"
+                />
+                <span class="i-lucide-clock pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
+              </div>
+            </div>
 
-        <div class="flex flex-wrap gap-2 pt-1">
-          <button
-            v-for="day in availableDays"
-            :key="day"
-            type="button"
-            class="px-3 py-1.5 rounded-md text-xs font-medium border transition-colors"
-            :class="[
-              activeDays.includes(day)
-                ? 'bg-indigo-50 border-indigo-200 text-indigo-600 dark:bg-indigo-950/60 dark:border-indigo-800 dark:text-indigo-300'
-                : 'bg-background border-border/60 text-muted-foreground hover:bg-muted/10'
-            ]"
-            @click="toggleDay(day)"
-          >
-            {{ day }}
-          </button>
+            <!-- To -->
+            <div class="flex items-center gap-4 w-full sm:w-1/2">
+              <span class="text-sm font-medium text-muted-foreground w-8">To</span>
+              <div class="relative flex-1">
+                <input
+                  v-model="quietHoursTo"
+                  type="text"
+                  class="border-input placeholder:text-muted-foreground focus-visible:ring-ring flex w-full rounded-md border px-3 py-1 transition-colors focus-visible:ring-1 focus-visible:outline-hidden disabled:cursor-not-allowed disabled:opacity-50 h-10 text-sm bg-background pr-10 shadow-xs"
+                  placeholder="08:00 AM"
+                />
+                <span class="i-lucide-clock pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
+              </div>
+            </div>
+          </div>
+
+          <!-- Time zone -->
+          <div class="flex flex-col sm:flex-row sm:items-center gap-4">
+            <span class="text-sm font-medium text-muted-foreground w-16">Time zone</span>
+            <select
+              v-model="selectedTimezone"
+              class="border border-input focus-visible:ring-ring px-4 py-2 h-10 text-sm font-normal bg-background flex-1 shadow-xs rounded-md focus-visible:ring-1 focus-visible:outline-none"
+            >
+              <option value="(GMT+05:30) Asia/Kolkata">(GMT+05:30) Asia/Kolkata</option>
+              <option value="(GMT+00:00) UTC">(GMT+00:00) UTC</option>
+              <option value="(GMT-05:00) Eastern Time">(GMT-05:00) Eastern Time</option>
+              <option value="(GMT-08:00) Pacific Time">(GMT-08:00) Pacific Time</option>
+            </select>
+          </div>
+
+          <!-- Day selector pills -->
+          <div class="flex flex-wrap gap-2 pt-2">
+            <button
+              v-for="day in availableDays"
+              :key="day"
+              type="button"
+              class="px-4 py-2 text-xs font-medium rounded transition-colors border"
+              :class="[
+                activeDays.includes(day)
+                  ? 'border-primary/20 bg-primary/10 text-primary'
+                  : 'border-border bg-background text-muted-foreground hover:bg-muted'
+              ]"
+              @click="toggleDay(day)"
+            >
+              {{ day }}
+            </button>
+          </div>
         </div>
       </div>
-    </div>
 
-    <!-- Bottom Action Bar -->
-    <div class="flex items-center justify-end gap-3 pt-2">
-      <RelayButton variant="outline" size="sm">
-        Cancel
-      </RelayButton>
-      <RelayButton variant="primary" size="sm" @click="updateNotificationSettings">
-        Save changes
-      </RelayButton>
+      <!-- Action Buttons -->
+      <div class="pt-6 pb-2 flex justify-end gap-3 border-t border-border/40 mt-8">
+        <RelayButton variant="outline" size="sm">
+          Cancel
+        </RelayButton>
+        <RelayButton variant="primary" size="sm" @click="updateNotificationSettings">
+          Save changes
+        </RelayButton>
+      </div>
     </div>
   </div>
 </template>

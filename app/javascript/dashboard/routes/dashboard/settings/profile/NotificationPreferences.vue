@@ -506,12 +506,19 @@ onMounted(() => {
 
       <!-- Action Buttons -->
       <div class="pt-6 pb-2 flex justify-end gap-3 border-t border-border/40 mt-8">
-        <RelayButton variant="outline" size="sm">
+        <button
+          type="button"
+          class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-hidden focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 border border-input bg-background shadow-xs hover:bg-accent hover:text-accent-foreground hover:border-transparent h-9 px-4 py-2"
+        >
           Cancel
-        </RelayButton>
-        <RelayButton variant="primary" size="sm" @click="updateNotificationSettings">
+        </button>
+        <button
+          type="button"
+          class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-hidden focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-primary text-primary-foreground hover:bg-primary/90 h-9 px-4 py-2 shadow-sm"
+          @click="updateNotificationSettings"
+        >
           Save changes
-        </RelayButton>
+        </button>
       </div>
     </div>
   </div>

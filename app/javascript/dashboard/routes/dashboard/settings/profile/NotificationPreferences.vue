@@ -3,6 +3,7 @@ import { computed, onMounted, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useStore, useMapGetter } from 'dashboard/composables/store';
 import { useAlert } from 'dashboard/composables';
+import Icon from 'dashboard/components-next/icon/Icon.vue';
 import {
   RelayButton,
   RelayCheckbox,
@@ -233,7 +234,10 @@ onMounted(() => {
             <p class="text-sm text-muted-foreground mt-1">Choose the events you want to be notified about.</p>
           </div>
           <div class="relative w-full md:w-64">
-            <span class="i-lucide-search pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
+            <Icon
+              icon="i-lucide-search"
+              class="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground"
+            />
             <input
               v-model="searchQuery"
               type="text"
@@ -262,7 +266,7 @@ onMounted(() => {
               >
                 <div class="flex items-start gap-4">
                   <div class="size-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
-                    <span :class="[notification.icon, 'size-5 text-primary']" />
+                    <Icon :icon="notification.icon" class="size-5 text-primary" />
                   </div>
                   <div>
                     <h4 class="text-sm font-medium text-foreground">
@@ -307,8 +311,9 @@ onMounted(() => {
                   @click="showAll = !showAll"
                 >
                   {{ showAll ? 'Show less' : 'Show more' }}
-                  <span
-                    class="i-lucide-chevron-down size-4 transition-transform"
+                  <Icon
+                    icon="i-lucide-chevron-down"
+                    class="size-4 transition-transform"
                     :class="{ 'rotate-180': showAll }"
                   />
                 </button>
@@ -330,7 +335,7 @@ onMounted(() => {
           <div class="flex items-center justify-between">
             <div class="flex items-center gap-4">
               <div class="size-10 flex items-center justify-center shrink-0">
-                <span class="i-lucide-monitor size-5 text-muted-foreground" />
+                <Icon icon="i-lucide-monitor" class="size-5 text-muted-foreground" />
               </div>
               <div>
                 <h4 class="text-sm font-medium text-foreground">In-app</h4>
@@ -344,7 +349,7 @@ onMounted(() => {
           <div class="flex items-center justify-between">
             <div class="flex items-center gap-4">
               <div class="size-10 flex items-center justify-center shrink-0">
-                <span class="i-lucide-mail size-5 text-muted-foreground" />
+                <Icon icon="i-lucide-mail" class="size-5 text-muted-foreground" />
               </div>
               <div>
                 <h4 class="text-sm font-medium text-foreground">Email</h4>
@@ -358,7 +363,7 @@ onMounted(() => {
           <div class="flex items-center justify-between">
             <div class="flex items-center gap-4">
               <div class="size-10 flex items-center justify-center shrink-0">
-                <span class="i-lucide-smartphone size-5 text-muted-foreground" />
+                <Icon icon="i-lucide-smartphone" class="size-5 text-muted-foreground" />
               </div>
               <div>
                 <h4 class="text-sm font-medium text-foreground">Push notifications</h4>
@@ -375,7 +380,7 @@ onMounted(() => {
           <div class="flex items-center justify-between">
             <div class="flex items-center gap-4">
               <div class="size-10 flex items-center justify-center shrink-0">
-                <span class="i-lucide-hash size-5 text-[#E01E5A]" />
+                <Icon icon="i-lucide-hash" class="size-5 text-[#E01E5A]" />
               </div>
               <div>
                 <h4 class="text-sm font-medium text-foreground">Slack</h4>
@@ -389,7 +394,7 @@ onMounted(() => {
           <div class="flex items-center justify-between">
             <div class="flex items-center gap-4">
               <div class="size-10 flex items-center justify-center shrink-0">
-                <span class="i-lucide-message-square size-5 text-[#6264A7]" />
+                <Icon icon="i-lucide-message-square" class="size-5 text-[#6264A7]" />
               </div>
               <div>
                 <h4 class="text-sm font-medium text-foreground">Microsoft Teams</h4>
@@ -406,7 +411,7 @@ onMounted(() => {
               class="text-sm font-medium text-primary hover:text-primary/80 flex items-center gap-1.5 transition-colors"
             >
               Manage integrations
-              <span class="i-lucide-external-link size-3.5" />
+              <Icon icon="i-lucide-external-link" class="size-3.5" />
             </router-link>
           </div>
         </div>
@@ -434,7 +439,10 @@ onMounted(() => {
                   class="border-input placeholder:text-muted-foreground focus-visible:ring-ring flex w-full rounded-md border px-3 py-1 transition-colors focus-visible:ring-1 focus-visible:outline-hidden disabled:cursor-not-allowed disabled:opacity-50 h-10 text-sm bg-background pr-10 shadow-xs"
                   placeholder="08:00 PM"
                 />
-                <span class="i-lucide-clock pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
+                <Icon
+                  icon="i-lucide-clock"
+                  class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground"
+                />
               </div>
             </div>
 
@@ -448,7 +456,10 @@ onMounted(() => {
                   class="border-input placeholder:text-muted-foreground focus-visible:ring-ring flex w-full rounded-md border px-3 py-1 transition-colors focus-visible:ring-1 focus-visible:outline-hidden disabled:cursor-not-allowed disabled:opacity-50 h-10 text-sm bg-background pr-10 shadow-xs"
                   placeholder="08:00 AM"
                 />
-                <span class="i-lucide-clock pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
+                <Icon
+                  icon="i-lucide-clock"
+                  class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground"
+                />
               </div>
             </div>
           </div>
@@ -456,15 +467,21 @@ onMounted(() => {
           <!-- Time zone -->
           <div class="flex flex-col sm:flex-row sm:items-center gap-4">
             <span class="text-sm font-medium text-muted-foreground w-16">Time zone</span>
-            <select
-              v-model="selectedTimezone"
-              class="border border-input focus-visible:ring-ring px-4 py-2 h-10 text-sm font-normal bg-background flex-1 shadow-xs rounded-md focus-visible:ring-1 focus-visible:outline-none"
-            >
-              <option value="(GMT+05:30) Asia/Kolkata">(GMT+05:30) Asia/Kolkata</option>
-              <option value="(GMT+00:00) UTC">(GMT+00:00) UTC</option>
-              <option value="(GMT-05:00) Eastern Time">(GMT-05:00) Eastern Time</option>
-              <option value="(GMT-08:00) Pacific Time">(GMT-08:00) Pacific Time</option>
-            </select>
+            <div class="relative flex-1">
+              <select
+                v-model="selectedTimezone"
+                class="w-full appearance-none border border-input focus-visible:ring-ring px-4 py-2 h-10 text-sm font-normal bg-background pr-10 shadow-xs rounded-md focus-visible:ring-1 focus-visible:outline-none cursor-pointer"
+              >
+                <option value="(GMT+05:30) Asia/Kolkata">(GMT+05:30) Asia/Kolkata</option>
+                <option value="(GMT+00:00) UTC">(GMT+00:00) UTC</option>
+                <option value="(GMT-05:00) Eastern Time">(GMT-05:00) Eastern Time</option>
+                <option value="(GMT-08:00) Pacific Time">(GMT-08:00) Pacific Time</option>
+              </select>
+              <Icon
+                icon="i-lucide-chevron-down"
+                class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground opacity-50"
+              />
+            </div>
           </div>
 
           <!-- Day selector pills -->

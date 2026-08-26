@@ -450,11 +450,7 @@ onMounted(() => {
                 <input
                   v-model="quietHoursFrom"
                   type="time"
-                  class="w-full h-11 rounded-xl border border-border/60 bg-muted/20 px-4 pr-10 text-sm font-medium text-foreground shadow-xs transition-colors focus:border-primary focus:outline-none cursor-pointer [&::-webkit-calendar-picker-indicator]:opacity-0"
-                />
-                <Icon
-                  icon="i-lucide-clock"
-                  class="pointer-events-none absolute right-3.5 top-1/2 -translate-y-1/2 size-4 text-muted-foreground"
+                  class="w-full h-11 rounded-xl border border-border/60 bg-muted/20 px-4 text-sm font-medium text-foreground shadow-xs transition-colors focus:border-primary focus:outline-none cursor-pointer"
                 />
               </div>
             </div>
@@ -466,11 +462,7 @@ onMounted(() => {
                 <input
                   v-model="quietHoursTo"
                   type="time"
-                  class="w-full h-11 rounded-xl border border-border/60 bg-muted/20 px-4 pr-10 text-sm font-medium text-foreground shadow-xs transition-colors focus:border-primary focus:outline-none cursor-pointer [&::-webkit-calendar-picker-indicator]:opacity-0"
-                />
-                <Icon
-                  icon="i-lucide-clock"
-                  class="pointer-events-none absolute right-3.5 top-1/2 -translate-y-1/2 size-4 text-muted-foreground"
+                  class="w-full h-11 rounded-xl border border-border/60 bg-muted/20 px-4 text-sm font-medium text-foreground shadow-xs transition-colors focus:border-primary focus:outline-none cursor-pointer"
                 />
               </div>
             </div>

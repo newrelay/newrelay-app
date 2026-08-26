@@ -130,6 +130,21 @@ Legend — **Design:** ✅ ported to Relay tokens · ⚠️ partial · ❌ legac
 - **Exit (R1):** zero `woot-*`/`slate-*` (✅) + new Automation page (✅). Tab-by-tab restyle of the
   config hub → corrected R2.
 
+### Dedicated Configuration + Integrations pages — ✅ DONE (2026-08-26, per user request)
+- **User asked for the reference's `Configuration` and `Integrations` as their own pages** (not folded
+  into the Settings config hub). Built both as new pages, routed + sidebar-linked **behind
+  `reputation_demo_surfaces`** (same showcase pattern as Listings/Feedback), each with a "Demo" badge.
+  - `IntegrationsPage.vue` — platform catalog (12 platforms) with search/status/category/sort filters,
+    grid4/grid2/list views, per-platform **Integration Settings** modal (Auto Sync / Smart Auto-Reply /
+    Webhook), connect/notify toggles, request-integration flow, and empty state.
+  - `ConfigurationPage.vue` — 4 tabs: **Channels & Templates** (per-channel editor + `outreachTemplates`
+    picker + insert-tags), **Review Link & QR Hub** (copy link + QR frame selector + download),
+    **Relay AI Automations** (auto-reply toggle + rating threshold + instructions), **Spam & Protection
+    Shield** (auto-flag rating + blocklist keywords).
+- **Why demo-gated:** the *real* platform OAuth connect + live request templates + QR generator live in
+  the Settings config hub (real endpoints). These two pages are faithful design ports / showcases; their
+  toggles and saves are local demo state (no backend contract). Real users (flag off) don't see them.
+
 ### Phase R2 — Fill missing reference surfaces — ✅ DONE (2026-08-26)
 - **Configuration tabs (`qr_link`, `ai_outreach`, `spam_shield`)** — ✅ **already built**: our
   SettingsPage config hub has `reviews_qr`, `reviews_ai`, and `spam_reviews` tabs (with real

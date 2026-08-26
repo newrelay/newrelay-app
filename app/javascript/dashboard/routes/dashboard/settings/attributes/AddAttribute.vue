@@ -225,7 +225,7 @@ const addAttributes = async () => {
             <div class="relative">
               <button
                 type="button"
-                class="flex h-10 w-full items-center justify-between rounded-md border border-border/80 bg-background px-3 text-left text-[14px] text-foreground shadow-sm outline-none transition-colors focus:ring-1 focus:ring-primary/30"
+                class="flex h-11 w-full items-center justify-between rounded-xl border border-border/60 bg-background px-4 text-left text-[14px] text-foreground shadow-xs outline-none transition-colors focus:ring-1 focus:ring-primary/30"
                 @click="showModelDropdown = !showModelDropdown"
               >
                 {{ selectedModelLabel }}
@@ -236,13 +236,13 @@ const addAttributes = async () => {
               </button>
               <div
                 v-if="showModelDropdown"
-                class="absolute left-0 top-full z-50 mt-1 w-full overflow-hidden rounded-md border border-border/80 bg-card py-1 shadow-lg"
+                class="absolute left-0 top-full z-50 mt-1 w-full overflow-hidden rounded-xl border border-border/60 bg-card py-1 shadow-lg"
               >
                 <button
                   v-for="model in models"
                   :key="model.id"
                   type="button"
-                  class="w-full px-3 py-1.5 text-left text-[13.5px] transition-colors"
+                  class="w-full px-4 py-2 text-left text-[13.5px] transition-colors"
                   :class="
                     attributeModel === model.id
                       ? 'bg-primary text-primary-foreground'
@@ -262,11 +262,11 @@ const addAttributes = async () => {
           <RelayLabel class="text-[13.5px] font-medium text-foreground">
             {{ t('ATTRIBUTES_MGMT.ADD.FORM.NAME.LABEL') }}
           </RelayLabel>
-          <RelayInput
+          <input
             v-model="displayName"
             type="text"
             :placeholder="t('ATTRIBUTES_MGMT.ADD.FORM.NAME.PLACEHOLDER')"
-            class-name="h-10 rounded-md border-border/80 bg-background text-[14px] shadow-sm focus-visible:ring-1 focus-visible:ring-primary/30"
+            class="flex h-11 w-full rounded-xl border border-border/60 bg-muted/20 px-4 text-[14px] text-foreground shadow-xs transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary/30"
             @blur="v$.displayName.$touch()"
           />
           <p
@@ -282,11 +282,11 @@ const addAttributes = async () => {
           <RelayLabel class="text-[13.5px] font-medium text-foreground">
             {{ t('ATTRIBUTES_MGMT.ADD.FORM.KEY.LABEL') }}
           </RelayLabel>
-          <RelayInput
+          <input
             v-model="attributeKey"
             type="text"
             :placeholder="t('ATTRIBUTES_MGMT.ADD.FORM.KEY.PLACEHOLDER')"
-            class-name="h-10 rounded-md border-border/80 bg-background text-[14px] shadow-sm focus-visible:ring-1 focus-visible:ring-primary/30"
+            class="flex h-11 w-full rounded-xl border border-border/60 bg-muted/20 px-4 text-[14px] text-foreground shadow-xs transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary/30"
             @blur="v$.attributeKey.$touch()"
           />
           <p
@@ -306,7 +306,7 @@ const addAttributes = async () => {
             v-model="description"
             rows="3"
             :placeholder="t('ATTRIBUTES_MGMT.ADD.FORM.DESC.PLACEHOLDER')"
-            class="min-h-[80px] w-full resize-y border border-border/80 bg-background p-3 text-[14px] text-foreground outline-none focus-visible:ring-1 focus-visible:ring-primary/30 shadow-sm rounded-md"
+            class="min-h-[90px] w-full resize-y rounded-xl border border-border/60 bg-muted/20 p-4 text-[14px] text-foreground shadow-xs outline-none transition-colors placeholder:text-muted-foreground focus-visible:ring-1 focus-visible:ring-primary/30"
             @blur="v$.description.$touch()"
           />
           <p
@@ -326,7 +326,7 @@ const addAttributes = async () => {
             <div class="relative">
               <button
                 type="button"
-                class="flex h-10 w-full items-center justify-between rounded-md border border-border/80 bg-background px-3 text-left text-[14px] text-foreground shadow-sm outline-none transition-colors focus:ring-1 focus:ring-primary/30"
+                class="flex h-11 w-full items-center justify-between rounded-xl border border-border/60 bg-background px-4 text-left text-[14px] text-foreground shadow-xs outline-none transition-colors focus:ring-1 focus:ring-primary/30"
                 @click="showTypeDropdown = !showTypeDropdown"
               >
                 {{ selectedTypeLabel }}
@@ -337,13 +337,13 @@ const addAttributes = async () => {
               </button>
               <div
                 v-if="showTypeDropdown"
-                class="absolute left-0 top-full z-50 mt-1 max-h-48 w-full overflow-y-auto rounded-md border border-border/80 bg-card py-1 shadow-lg"
+                class="absolute left-0 top-full z-50 mt-1 max-h-48 w-full overflow-y-auto rounded-xl border border-border/60 bg-card py-1 shadow-lg"
               >
                 <button
                   v-for="type in types"
                   :key="type.id"
                   type="button"
-                  class="w-full px-3 py-1.5 text-left text-[13.5px] transition-colors"
+                  class="w-full px-4 py-2 text-left text-[13.5px] transition-colors"
                   :class="
                     attributeType === type.id
                       ? 'bg-primary text-primary-foreground'
@@ -364,9 +364,9 @@ const addAttributes = async () => {
             {{ t('ATTRIBUTES_MGMT.ADD.FORM.TYPE.LIST.LABEL') }}
           </RelayLabel>
           <div
-            class="rounded-md border px-3 py-2"
+            class="rounded-xl border px-3 py-2"
             :class="
-              isTagInputInvalid ? 'border-destructive' : 'border-border/80'
+              isTagInputInvalid ? 'border-destructive' : 'border-border/60'
             "
           >
             <TagInput
@@ -397,13 +397,13 @@ const addAttributes = async () => {
           <RelayLabel class="text-[13.5px] font-medium text-foreground">
             {{ t('ATTRIBUTES_MGMT.ADD.FORM.REGEX_PATTERN.LABEL') }}
           </RelayLabel>
-          <RelayInput
+          <input
             v-model="regexPattern"
             type="text"
             :placeholder="
               t('ATTRIBUTES_MGMT.ADD.FORM.REGEX_PATTERN.PLACEHOLDER')
             "
-            class-name="h-10 rounded-md border-border/80 bg-background text-[14px] shadow-sm focus-visible:ring-1 focus-visible:ring-primary/30"
+            class="flex h-11 w-full rounded-xl border border-border/60 bg-muted/20 px-4 text-[14px] text-foreground shadow-xs transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary/30"
           />
         </div>
 
@@ -415,29 +415,29 @@ const addAttributes = async () => {
           <RelayLabel class="text-[13.5px] font-medium text-foreground">
             {{ t('ATTRIBUTES_MGMT.ADD.FORM.REGEX_CUE.LABEL') }}
           </RelayLabel>
-          <RelayInput
+          <input
             v-model="regexCue"
             type="text"
             :placeholder="t('ATTRIBUTES_MGMT.ADD.FORM.REGEX_CUE.PLACEHOLDER')"
-            class-name="h-10 rounded-md border-border/80 bg-background text-[14px] shadow-sm focus-visible:ring-1 focus-visible:ring-primary/30"
+            class="flex h-11 w-full rounded-xl border border-border/60 bg-muted/20 px-4 text-[14px] text-foreground shadow-xs transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary/30"
           />
         </div>
       </div>
 
       <!-- Footer Actions -->
       <div
-        class="flex justify-end gap-3 border-t border-border/40 bg-background/50 px-7 py-6"
+        class="flex items-center justify-end gap-3 border-t border-border/40 bg-background/50 px-7 py-6"
       >
         <button
           type="button"
-          class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md border border-border bg-muted px-5 py-2 h-9 text-[13px] font-medium text-foreground shadow-sm hover:bg-muted/80 transition-colors"
+          class="text-muted-foreground hover:text-foreground font-medium text-[13.5px] px-4 py-2 rounded-lg transition-colors bg-muted/50 hover:bg-muted"
           @click="emit('close')"
         >
           {{ t('ATTRIBUTES_MGMT.ADD.CANCEL_BUTTON_TEXT') }}
         </button>
         <button
           type="submit"
-          class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md bg-primary px-5 py-2 h-9 text-[13px] font-medium text-primary-foreground shadow-sm hover:bg-primary/90 transition-colors disabled:opacity-50"
+          class="inline-flex items-center justify-center gap-2 whitespace-nowrap transition-colors focus-visible:outline-hidden focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 py-2.5 rounded-xl h-10 px-6 text-[13.5px] font-medium bg-primary text-primary-foreground hover:bg-primary/90 shadow-sm"
           :disabled="isButtonDisabled"
         >
           {{ t('ATTRIBUTES_MGMT.ADD.SUBMIT') }}

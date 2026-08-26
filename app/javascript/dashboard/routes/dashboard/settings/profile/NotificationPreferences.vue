@@ -500,16 +500,16 @@ onMounted(() => {
           </div>
 
           <!-- Day selector pills -->
-          <div class="flex flex-wrap gap-2.5 pt-1">
+          <div class="flex flex-wrap gap-2 pt-2">
             <button
               v-for="day in availableDays"
               :key="day"
               type="button"
-              class="px-4 py-2 text-xs font-medium rounded-lg transition-all border"
+              class="px-4 py-2 text-xs font-medium rounded transition-colors border"
               :class="[
                 activeDays.includes(day)
-                  ? 'bg-indigo-50/80 border-indigo-200 text-indigo-600 dark:bg-indigo-950/60 dark:border-indigo-800 dark:text-indigo-300'
-                  : 'bg-background border-border/60 text-muted-foreground hover:bg-muted/20'
+                  ? 'border-primary/20 bg-primary/10 text-primary'
+                  : 'border-border bg-background text-muted-foreground hover:bg-muted'
               ]"
               @click="toggleDay(day)"
             >

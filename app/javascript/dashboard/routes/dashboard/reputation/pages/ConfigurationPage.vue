@@ -140,8 +140,8 @@ function saveSpamConfig() {
       </div>
 
       <!-- Tabs -->
-      <div class="border-b border-border/80 flex items-center gap-7 overflow-x-auto">
-        <button v-for="tab in tabs" :key="tab.id" type="button" class="pb-3 -mb-px text-sm font-medium whitespace-nowrap border-b-2 transition-colors cursor-pointer" :class="activeTab === tab.id ? 'border-primary text-primary' : 'border-transparent text-muted-foreground hover:text-foreground'" @click="activeTab = tab.id">
+      <div class="border-b border-border flex items-center gap-6 text-[13px] font-semibold">
+        <button v-for="tab in tabs" :key="tab.id" type="button" class="py-3 border-b-2 transition-colors -mb-[1px] whitespace-nowrap cursor-pointer" :class="activeTab === tab.id ? 'border-primary text-primary' : 'border-transparent text-muted-foreground hover:text-foreground'" @click="activeTab = tab.id">
           {{ tab.label }}
         </button>
       </div>

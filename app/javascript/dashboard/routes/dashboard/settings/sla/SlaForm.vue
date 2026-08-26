@@ -161,100 +161,103 @@ export default {
 </script>
 
 <template>
-  <form class="space-y-5 p-1" @submit.prevent="onSubmit">
-    <!-- SLA Name -->
-    <div class="flex flex-col gap-1.5">
-      <label class="text-[13.5px] font-medium text-foreground">SLA Name</label>
-      <input
-        v-model="name"
-        class="placeholder:text-muted-foreground flex w-full border px-3 py-1 transition-colors focus-visible:outline-hidden disabled:cursor-not-allowed disabled:opacity-50 h-10 text-[14px] shadow-xs rounded-md border-border/80 bg-muted/20 focus-visible:ring-1 focus-visible:ring-primary/30 text-foreground"
-        placeholder="SLA Name"
-        @update:model-value="v$.name.$touch"
-        @blur="v$.name.$touch"
-      />
-      <p v-if="v$.name.$error" class="text-xs text-destructive">
-        {{ slaNameErrorMessage }}
-      </p>
-    </div>
-
-    <!-- Description -->
-    <div class="flex flex-col gap-1.5">
-      <label class="text-[13.5px] font-medium text-foreground">Description</label>
-      <input
-        v-model="description"
-        class="placeholder:text-muted-foreground flex w-full border px-3 py-1 transition-colors focus-visible:outline-hidden disabled:cursor-not-allowed disabled:opacity-50 h-10 text-[14px] shadow-xs rounded-md border-border/80 bg-muted/20 focus-visible:ring-1 focus-visible:ring-primary/30 text-foreground"
-        placeholder="SLA for premium customers"
-      />
-    </div>
-
-    <!-- First Response Time -->
-    <div class="flex flex-col gap-1.5">
-      <label class="text-[13.5px] font-medium text-foreground">First Response Time</label>
-      <div class="flex items-center">
+  <form class="flex flex-col h-full max-h-[calc(90vh-140px)] -m-6 p-6 pb-0" @submit.prevent="onSubmit">
+    <!-- Scrollable Body Content -->
+    <div class="flex-1 overflow-y-auto space-y-5 pr-1 custom-scrollbar">
+      <!-- SLA Name -->
+      <div class="flex flex-col gap-1.5">
+        <label class="text-[13.5px] font-medium text-foreground">SLA Name</label>
         <input
-          v-model="slaTimeInputs[0].threshold"
-          type="number"
-          class="placeholder:text-muted-foreground flex w-full rounded-md border px-3 py-1 transition-colors focus-visible:outline-hidden disabled:cursor-not-allowed disabled:opacity-50 h-10 text-[14px] shadow-xs rounded-l-md rounded-r-none border-r-0 border-border/80 bg-muted/20 focus-visible:ring-1 focus-visible:ring-primary/30 z-10 text-foreground"
+          v-model="name"
+          class="placeholder:text-muted-foreground flex w-full border px-3 py-1 transition-colors focus-visible:outline-hidden disabled:cursor-not-allowed disabled:opacity-50 h-10 text-[14px] shadow-xs rounded-md border-border/80 bg-muted/20 focus-visible:ring-1 focus-visible:ring-primary/30 text-foreground"
+          placeholder="SLA Name"
+          @update:model-value="v$.name.$touch"
+          @blur="v$.name.$touch"
         />
-        <select
-          v-model="slaTimeInputs[0].unit"
-          class="h-10 px-3 text-[13.5px] shadow-xs rounded-r-md border border-border/80 bg-background text-foreground outline-none focus:ring-1 focus:ring-primary/30 min-w-[100px] cursor-pointer"
-        >
-          <option value="Minutes">minutes</option>
-          <option value="Hours">hours</option>
-          <option value="Days">days</option>
-        </select>
+        <p v-if="v$.name.$error" class="text-xs text-destructive">
+          {{ slaNameErrorMessage }}
+        </p>
+      </div>
+
+      <!-- Description -->
+      <div class="flex flex-col gap-1.5">
+        <label class="text-[13.5px] font-medium text-foreground">Description</label>
+        <input
+          v-model="description"
+          class="placeholder:text-muted-foreground flex w-full border px-3 py-1 transition-colors focus-visible:outline-hidden disabled:cursor-not-allowed disabled:opacity-50 h-10 text-[14px] shadow-xs rounded-md border-border/80 bg-muted/20 focus-visible:ring-1 focus-visible:ring-primary/30 text-foreground"
+          placeholder="SLA for premium customers"
+        />
+      </div>
+
+      <!-- First Response Time -->
+      <div class="flex flex-col gap-1.5">
+        <label class="text-[13.5px] font-medium text-foreground">First Response Time</label>
+        <div class="flex items-center">
+          <input
+            v-model="slaTimeInputs[0].threshold"
+            type="number"
+            class="placeholder:text-muted-foreground flex w-full rounded-md border px-3 py-1 transition-colors focus-visible:outline-hidden disabled:cursor-not-allowed disabled:opacity-50 h-10 text-[14px] shadow-xs rounded-l-md rounded-r-none border-r-0 border-border/80 bg-muted/20 focus-visible:ring-1 focus-visible:ring-primary/30 z-10 text-foreground"
+          />
+          <select
+            v-model="slaTimeInputs[0].unit"
+            class="h-10 px-3 text-[13.5px] shadow-xs rounded-r-md border border-border/80 bg-background text-foreground outline-none focus:ring-1 focus:ring-primary/30 min-w-[100px] cursor-pointer"
+          >
+            <option value="Minutes">minutes</option>
+            <option value="Hours">hours</option>
+            <option value="Days">days</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Next Response Time -->
+      <div class="flex flex-col gap-1.5">
+        <label class="text-[13.5px] font-medium text-foreground">Next Response Time</label>
+        <div class="flex items-center">
+          <input
+            v-model="slaTimeInputs[1].threshold"
+            type="number"
+            class="placeholder:text-muted-foreground flex w-full rounded-md border px-3 py-1 transition-colors focus-visible:outline-hidden disabled:cursor-not-allowed disabled:opacity-50 h-10 text-[14px] shadow-xs rounded-l-md rounded-r-none border-r-0 border-border/80 bg-muted/20 focus-visible:ring-1 focus-visible:ring-primary/30 z-10 text-foreground"
+          />
+          <select
+            v-model="slaTimeInputs[1].unit"
+            class="h-10 px-3 text-[13.5px] shadow-xs rounded-r-md border border-border/80 bg-background text-foreground outline-none focus:ring-1 focus:ring-primary/30 min-w-[100px] cursor-pointer"
+          >
+            <option value="Minutes">minutes</option>
+            <option value="Hours">hours</option>
+            <option value="Days">days</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Resolution Time -->
+      <div class="flex flex-col gap-1.5">
+        <label class="text-[13.5px] font-medium text-foreground">Resolution Time</label>
+        <div class="flex items-center">
+          <input
+            v-model="slaTimeInputs[2].threshold"
+            type="number"
+            class="placeholder:text-muted-foreground flex w-full rounded-md border px-3 py-1 transition-colors focus-visible:outline-hidden disabled:cursor-not-allowed disabled:opacity-50 h-10 text-[14px] shadow-xs rounded-l-md rounded-r-none border-r-0 border-border/80 bg-muted/20 focus-visible:ring-1 focus-visible:ring-primary/30 z-10 text-foreground"
+          />
+          <select
+            v-model="slaTimeInputs[2].unit"
+            class="h-10 px-3 text-[13.5px] shadow-xs rounded-r-md border border-border/80 bg-background text-foreground outline-none focus:ring-1 focus:ring-primary/30 min-w-[100px] cursor-pointer"
+          >
+            <option value="Minutes">minutes</option>
+            <option value="Hours">hours</option>
+            <option value="Days">days</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Only during business hours -->
+      <div class="flex items-center justify-between pt-2 pb-1">
+        <span class="text-[13.5px] font-medium text-foreground">Only during business hours</span>
+        <ToggleSwitch id="sla_bh" v-model="onlyDuringBusinessHours" />
       </div>
     </div>
 
-    <!-- Next Response Time -->
-    <div class="flex flex-col gap-1.5">
-      <label class="text-[13.5px] font-medium text-foreground">Next Response Time</label>
-      <div class="flex items-center">
-        <input
-          v-model="slaTimeInputs[1].threshold"
-          type="number"
-          class="placeholder:text-muted-foreground flex w-full rounded-md border px-3 py-1 transition-colors focus-visible:outline-hidden disabled:cursor-not-allowed disabled:opacity-50 h-10 text-[14px] shadow-xs rounded-l-md rounded-r-none border-r-0 border-border/80 bg-muted/20 focus-visible:ring-1 focus-visible:ring-primary/30 z-10 text-foreground"
-        />
-        <select
-          v-model="slaTimeInputs[1].unit"
-          class="h-10 px-3 text-[13.5px] shadow-xs rounded-r-md border border-border/80 bg-background text-foreground outline-none focus:ring-1 focus:ring-primary/30 min-w-[100px] cursor-pointer"
-        >
-          <option value="Minutes">minutes</option>
-          <option value="Hours">hours</option>
-          <option value="Days">days</option>
-        </select>
-      </div>
-    </div>
-
-    <!-- Resolution Time -->
-    <div class="flex flex-col gap-1.5">
-      <label class="text-[13.5px] font-medium text-foreground">Resolution Time</label>
-      <div class="flex items-center">
-        <input
-          v-model="slaTimeInputs[2].threshold"
-          type="number"
-          class="placeholder:text-muted-foreground flex w-full rounded-md border px-3 py-1 transition-colors focus-visible:outline-hidden disabled:cursor-not-allowed disabled:opacity-50 h-10 text-[14px] shadow-xs rounded-l-md rounded-r-none border-r-0 border-border/80 bg-muted/20 focus-visible:ring-1 focus-visible:ring-primary/30 z-10 text-foreground"
-        />
-        <select
-          v-model="slaTimeInputs[2].unit"
-          class="h-10 px-3 text-[13.5px] shadow-xs rounded-r-md border border-border/80 bg-background text-foreground outline-none focus:ring-1 focus:ring-primary/30 min-w-[100px] cursor-pointer"
-        >
-          <option value="Minutes">minutes</option>
-          <option value="Hours">hours</option>
-          <option value="Days">days</option>
-        </select>
-      </div>
-    </div>
-
-    <!-- Only during business hours -->
-    <div class="flex items-center justify-between pt-2">
-      <span class="text-[13.5px] font-medium text-foreground">Only during business hours</span>
-      <ToggleSwitch id="sla_bh" v-model="onlyDuringBusinessHours" />
-    </div>
-
-    <!-- Footer Buttons -->
-    <div class="pt-6 flex justify-end gap-3 border-t border-border/40 mt-6">
+    <!-- Static Footer Buttons -->
+    <div class="shrink-0 py-4 border-t border-border/40 bg-background flex justify-end gap-3 mt-4">
       <button
         type="button"
         class="inline-flex items-center justify-center gap-2 whitespace-nowrap transition-colors focus-visible:outline-hidden focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 hover:text-accent-foreground py-2 rounded-md h-9 px-4 text-[13.5px] text-foreground font-medium border border-input bg-background hover:bg-muted"

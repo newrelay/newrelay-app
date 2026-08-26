@@ -308,15 +308,7 @@ export default {
       <MfaSettingsCard />
     </SectionLayout>
     <Policy :permissions="audioNotificationPermissions">
-      <SectionLayout
-        as-card
-        :title="$t('PROFILE_SETTINGS.FORM.AUDIO_NOTIFICATIONS_SECTION.TITLE')"
-        :description="
-          $t('PROFILE_SETTINGS.FORM.AUDIO_NOTIFICATIONS_SECTION.NOTE')
-        "
-      >
-        <AudioNotifications />
-      </SectionLayout>
+      <AudioNotifications />
     </Policy>
     <Policy :permissions="notificationPermissions">
       <NotificationPreferences />

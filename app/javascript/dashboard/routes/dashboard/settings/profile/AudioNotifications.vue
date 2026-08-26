@@ -90,7 +90,19 @@ const handleAudioToneChange = value => {
 </script>
 
 <template>
-  <div id="profile-settings-notifications" class="flex flex-col gap-6">
+  <div
+    id="profile-settings-audio-notifications"
+    class="rounded-xl border border-border/60 bg-card p-6 shadow-xs transition-colors flex flex-col gap-6"
+  >
+    <div class="border-b border-border/40 pb-4">
+      <h3 class="text-[17px] font-semibold text-foreground">
+        {{ $t('PROFILE_SETTINGS.FORM.AUDIO_NOTIFICATIONS_SECTION.TITLE') }}
+      </h3>
+      <p class="mt-0.5 text-xs text-muted-foreground">
+        {{ $t('PROFILE_SETTINGS.FORM.AUDIO_NOTIFICATIONS_SECTION.NOTE') }}
+      </p>
+    </div>
+
     <AudioAlertTone
       :value="alertTone"
       :label="$t(`${i18nKeyPrefix}.DEFAULT_TONE.TITLE`)"

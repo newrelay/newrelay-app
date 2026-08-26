@@ -1,5 +1,6 @@
 <script setup>
-import CheckBox from 'v3/components/Form/CheckBox.vue';
+import { RelayCheckbox } from 'dashboard/components-next/relay';
+
 defineProps({
   label: {
     type: String,
@@ -19,25 +20,22 @@ const onChange = (id, value) => {
 
 <template>
   <div>
-    <label
-      class="flex justify-between pb-1 text-heading-3 text-foreground text-[13.5px] font-[500]"
-    >
+    <label class="block pb-1 text-sm font-medium text-foreground">
       {{ label }}
     </label>
-    <div class="flex flex-col gap-3 mt-2">
+    <div class="mt-2.5 flex flex-col gap-3">
       <div
         v-for="item in items"
         :key="item.id"
-        class="flex flex-row items-start gap-2"
+        class="flex items-center gap-3"
       >
-        <CheckBox
+        <RelayCheckbox
           :id="`checkbox-condition-${item.value}`"
-          :is-checked="item.model"
-          :value="item.value"
-          @update="onChange"
+          :model-value="item.model"
+          @update:model-value="val => onChange(item.value, val)"
         />
         <label
-          class="text-body-main text-foreground text-[13.5px] font-[500]"
+          class="cursor-pointer text-xs font-medium text-foreground"
           :for="`checkbox-condition-${item.value}`"
         >
           {{ item.label }}

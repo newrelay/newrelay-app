@@ -28,15 +28,7 @@ const notificationPermissions = [...ROLES, ...CONVERSATION_PERMISSIONS];
     </Policy>
 
     <Policy :permissions="audioNotificationPermissions">
-      <SectionLayout
-        as-card
-        :title="t('PROFILE_SETTINGS.FORM.AUDIO_NOTIFICATIONS_SECTION.TITLE')"
-        :description="
-          t('PROFILE_SETTINGS.FORM.AUDIO_NOTIFICATIONS_SECTION.NOTE')
-        "
-      >
-        <AudioNotifications />
-      </SectionLayout>
+      <AudioNotifications />
     </Policy>
   </div>
 </template>

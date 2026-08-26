@@ -1,6 +1,6 @@
 <script setup>
 import { computed } from 'vue';
-import CheckBox from 'v3/components/Form/CheckBox.vue';
+import { RelayCheckbox } from 'dashboard/components-next/relay';
 import { ALERT_EVENTS, EVENT_TYPES } from './constants';
 
 const props = defineProps({
@@ -70,23 +70,23 @@ const alertDescription = computed(() => {
 
 <template>
   <div>
-    <label class="pb-1 leading-6 text-foreground text-[13.5px] font-[500]">
+    <label class="pb-1 text-sm font-medium text-foreground">
       {{ label }}
     </label>
-    <div class="grid gap-3 mt-2">
+    <div class="mt-2.5 flex flex-col gap-3">
       <div
         v-for="option in alertEvents"
         :key="option.value"
-        class="flex items-center gap-2"
+        class="flex items-center gap-3"
       >
-        <CheckBox
+        <RelayCheckbox
           :id="`checkbox-${option.value}`"
-          :is-checked="selectedValue.includes(option.value)"
-          @update="(_val, isChecked) => setValue(isChecked, option.value)"
+          :model-value="selectedValue.includes(option.value)"
+          @update:model-value="isChecked => setValue(isChecked, option.value)"
         />
         <label
           :for="`checkbox-${option.value}`"
-          class="text-foreground text-[13.5px] font-[500]"
+          class="cursor-pointer text-xs font-medium text-foreground"
         >
           {{
             $t(
@@ -95,7 +95,7 @@ const alertDescription = computed(() => {
           }}
         </label>
       </div>
-      <div class="text-muted-foreground text-sm font-medium mt-2">
+      <div class="mt-1 text-xs text-muted-foreground">
         {{ $t(alertDescription) }}
       </div>
     </div>

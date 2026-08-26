@@ -309,24 +309,24 @@ watch(
         </div>
       </div>
 
+      <!-- Footer Actions -->
       <div
         class="flex justify-end gap-3 border-t border-border/40 bg-background/50 px-7 py-6"
       >
-        <RelayButton
+        <button
           type="button"
-          variant="outline"
-          class="h-9 border-border bg-muted px-5 text-[13px] font-medium text-foreground shadow-sm hover:bg-muted/80"
+          class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md border border-border bg-muted px-5 py-2 h-9 text-[13px] font-medium text-foreground shadow-sm hover:bg-muted/80 transition-colors"
           @click="emit('close')"
         >
           {{ t('ATTRIBUTES_MGMT.ADD.CANCEL_BUTTON_TEXT') }}
-        </RelayButton>
-        <RelayButton
+        </button>
+        <button
           type="submit"
-          class="h-9 px-5 text-[13px] font-medium shadow-sm"
+          class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md bg-primary px-5 py-2 h-9 text-[13px] font-medium text-primary-foreground shadow-sm hover:bg-primary/90 transition-colors disabled:opacity-50"
           :disabled="isButtonDisabled"
         >
           {{ t('ATTRIBUTES_MGMT.EDIT.UPDATE_BUTTON_TEXT') }}
-        </RelayButton>
+        </button>
       </div>
     </form>
   </RelayModal>

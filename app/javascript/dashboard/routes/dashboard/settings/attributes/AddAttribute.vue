@@ -215,7 +215,8 @@ const addAttributes = async () => {
     @close="emit('close')"
   >
     <form @submit.prevent="addAttributes">
-      <div class="max-h-[60vh] space-y-5 overflow-y-auto px-7 pb-2">
+      <div class="max-h-[60vh] space-y-5 overflow-y-auto px-7 pb-2 custom-scrollbar">
+        <!-- Applies to -->
         <div class="flex flex-col gap-2.5">
           <RelayLabel class="text-[13.5px] font-medium text-foreground">
             {{ t('ATTRIBUTES_MGMT.ADD.FORM.MODEL.LABEL') }}
@@ -256,6 +257,7 @@ const addAttributes = async () => {
           </OnClickOutside>
         </div>
 
+        <!-- Display Name -->
         <div class="flex flex-col gap-2.5">
           <RelayLabel class="text-[13.5px] font-medium text-foreground">
             {{ t('ATTRIBUTES_MGMT.ADD.FORM.NAME.LABEL') }}
@@ -275,6 +277,7 @@ const addAttributes = async () => {
           </p>
         </div>
 
+        <!-- Key -->
         <div class="flex flex-col gap-2.5">
           <RelayLabel class="text-[13.5px] font-medium text-foreground">
             {{ t('ATTRIBUTES_MGMT.ADD.FORM.KEY.LABEL') }}
@@ -294,6 +297,7 @@ const addAttributes = async () => {
           </p>
         </div>
 
+        <!-- Description -->
         <div class="flex flex-col gap-2.5">
           <RelayLabel class="text-[13.5px] font-medium text-foreground">
             {{ t('ATTRIBUTES_MGMT.ADD.FORM.DESC.LABEL') }}
@@ -313,6 +317,7 @@ const addAttributes = async () => {
           </p>
         </div>
 
+        <!-- Type -->
         <div class="flex flex-col gap-2.5">
           <RelayLabel class="text-[13.5px] font-medium text-foreground">
             {{ t('ATTRIBUTES_MGMT.ADD.FORM.TYPE.LABEL') }}
@@ -353,6 +358,7 @@ const addAttributes = async () => {
           </OnClickOutside>
         </div>
 
+        <!-- List Options (if LIST type) -->
         <div v-if="isAttributeTypeList" class="flex flex-col gap-2.5">
           <RelayLabel class="text-[13.5px] font-medium text-foreground">
             {{ t('ATTRIBUTES_MGMT.ADD.FORM.TYPE.LIST.LABEL') }}
@@ -375,6 +381,7 @@ const addAttributes = async () => {
           </p>
         </div>
 
+        <!-- Regex Validation (if TEXT type) -->
         <div v-if="isAttributeTypeText" class="flex items-center gap-3 pt-2">
           <RelayCheckbox v-model="regexEnabled" />
           <span class="text-[13.5px] font-medium text-foreground">
@@ -382,6 +389,7 @@ const addAttributes = async () => {
           </span>
         </div>
 
+        <!-- Regex Pattern (if enabled) -->
         <div
           v-if="isAttributeTypeText && regexEnabled"
           class="flex flex-col gap-2.5"
@@ -399,6 +407,7 @@ const addAttributes = async () => {
           />
         </div>
 
+        <!-- Regex Cue (if enabled) -->
         <div
           v-if="isAttributeTypeText && regexEnabled"
           class="flex flex-col gap-2.5"
@@ -415,24 +424,24 @@ const addAttributes = async () => {
         </div>
       </div>
 
+      <!-- Footer Actions -->
       <div
         class="flex justify-end gap-3 border-t border-border/40 bg-background/50 px-7 py-6"
       >
-        <RelayButton
+        <button
           type="button"
-          variant="outline"
-          class="h-9 border-border bg-muted px-5 text-[13px] font-medium text-foreground shadow-sm hover:bg-muted/80"
+          class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md border border-border bg-muted px-5 py-2 h-9 text-[13px] font-medium text-foreground shadow-sm hover:bg-muted/80 transition-colors"
           @click="emit('close')"
         >
           {{ t('ATTRIBUTES_MGMT.ADD.CANCEL_BUTTON_TEXT') }}
-        </RelayButton>
-        <RelayButton
+        </button>
+        <button
           type="submit"
-          class="h-9 px-5 text-[13px] font-medium shadow-sm"
+          class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md bg-primary px-5 py-2 h-9 text-[13px] font-medium text-primary-foreground shadow-sm hover:bg-primary/90 transition-colors disabled:opacity-50"
           :disabled="isButtonDisabled"
         >
           {{ t('ATTRIBUTES_MGMT.ADD.SUBMIT') }}
-        </RelayButton>
+        </button>
       </div>
     </form>
   </RelayModal>

@@ -597,6 +597,12 @@ const primaryMenuItems = computed(() => {
           activeOn: ['reputation_requests'],
         },
         {
+          name: 'Reputation Automation',
+          label: t('SIDEBAR.REPUTATION_AUTOMATION'),
+          to: accountScopedRoute('reputation_automation'),
+          activeOn: ['reputation_automation'],
+        },
+        {
           name: 'Reputation Settings',
           label: t('SIDEBAR.REPUTATION_SETTINGS'),
           to: accountScopedRoute('reputation_settings'),

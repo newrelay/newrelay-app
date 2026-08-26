@@ -6,6 +6,7 @@ import ReviewsPage from './pages/ReviewsPage.vue';
 import RequestsPage from './pages/RequestsPage.vue';
 import WidgetsPage from './pages/WidgetsPage.vue';
 import SettingsPage from './pages/SettingsPage.vue';
+import AutomationPage from './pages/AutomationPage.vue';
 import VideoTestimonialsPage from './pages/VideoTestimonialsPage.vue';
 import ListingsPage from './pages/ListingsPage.vue';
 import FeedbackPage from './pages/FeedbackPage.vue';
@@ -67,6 +68,12 @@ export const routes = [
         path: 'settings',
         name: 'reputation_settings',
         component: SettingsPage,
+        meta: { ...meta, permissions: ['administrator'] },
+      },
+      {
+        path: 'automation',
+        name: 'reputation_automation',
+        component: AutomationPage,
         meta: { ...meta, permissions: ['administrator'] },
       },
     ],

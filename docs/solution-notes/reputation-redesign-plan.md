@@ -110,7 +110,19 @@ Legend — **Design:** ✅ ported to Relay tokens · ⚠️ partial · ❌ legac
   on our combined page. Separately, the reference's `SettingsView` (auto-responder/gating/alerts/
   badge) has **no direct equivalent** in our app today; decide whether to build it as a new small
   page or fold those controls into the hub's "Relay AI Reviews" tab.
-- **Exit (R1):** zero `woot-*`/`slate-*` (✅). Structural re-port moved under the corrected R1b/R2.
+- **R1c — new Automation page ✅ DONE (2026-08-26):** built `AutomationPage.vue`, a faithful port of
+  the reference `SettingsView` (4 cards: Relay AI Auto-Responder, Smart Review Gating, Notification
+  & Alert Preferences, Website Trust Badge Embed) using Relay components (`RelaySwitch`,
+  `RelayInput`, `RelayButton`) + native selects. Route `reputation_automation` (`/reputation/
+  automation`, admin-only); sidebar nav label "Automation" (`SIDEBAR.REPUTATION_AUTOMATION` in
+  en.json). MVP state = localStorage `rep_automation_settings` (no backend contract for these policy
+  fields yet — ponytail: wire to a settings endpoint when one exists). Verified: eslint exit 0, JSON
+  valid, route/nav/i18n wired, Relay APIs confirmed. **Live render pending a Vite restart** — the
+  standalone `:5173` blanks on HMR + P404s on hard deep-links (known dev-server quirks, not the code).
+- Now we ship **9 pages** (the 8 + Automation) — the config hub stays "Settings"; Automation is the
+  reference's settings surface.
+- **Exit (R1):** zero `woot-*`/`slate-*` (✅) + new Automation page (✅). Tab-by-tab restyle of the
+  config hub → corrected R2.
 
 ### Phase R2 — Fill missing reference surfaces (net-new features)
 - **RequestsPage / Configuration:** build the 3 missing tabs — `qr_link` (QR CTA), `ai_outreach`,

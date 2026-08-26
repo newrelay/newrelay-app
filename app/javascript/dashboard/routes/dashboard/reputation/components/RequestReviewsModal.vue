@@ -5,13 +5,14 @@ import {
   X, ChevronRight, Search, FileText, CheckCircle2,
   ArrowLeft, Send, Sparkles, MessageSquare,
   Mail, MessageCircle, Star, Smartphone,
-  Clock, Check, BarChart3,
+  Check, BarChart3,
   Calendar, ChevronLeft, Users, Plus, AlertCircle, Globe
 } from 'lucide-vue-next';
 import {
   RelayButton as Button, RelayInput as Input, RelayBadge as Badge
 } from 'dashboard/components-next/relay';
 import RelayDatePicker from 'dashboard/components-next/relay/calendar/DatePicker.vue';
+import RelayTimePicker from 'dashboard/components-next/relay/calendar/TimePicker.vue';
 
 const props = defineProps({
   open: {
@@ -40,11 +41,20 @@ const COMMON_TIMEZONES = [
   { label: 'Australia/Melbourne', value: 'Australia/Melbourne' },
 ];
 
+// Parse the RelayTimePicker's 12-hour string ("09:30 AM") into 24-hour [h, m].
+const parse12hTime = timeStr => {
+  const m = (timeStr || '').trim().match(/^(\d{1,2}):(\d{2})\s*(AM|PM)$/i);
+  if (!m) return [9, 0];
+  let hour = Number(m[1]) % 12;
+  if (m[3].toUpperCase() === 'PM') hour += 12;
+  return [hour, Number(m[2])];
+};
+
 const convertToUtcIso = (dateStr, timeStr, tz) => {
   if (!dateStr) return null;
   const dateParts = dateStr.split('-').map(Number);
-  const [hour, minute] = (timeStr || '09:00').split(':').map(Number);
-  const dateObj = new Date(dateParts[0], dateParts[1] - 1, dateParts[2], hour || 9, minute || 0);
+  const [hour, minute] = parse12hTime(timeStr);
+  const dateObj = new Date(dateParts[0], dateParts[1] - 1, dateParts[2], hour, minute);
   const formatter = new Intl.DateTimeFormat('en-CA', {
     year: 'numeric',
     month: '2-digit',
@@ -68,7 +78,7 @@ const defaultFormState = {
   channels: ['Email'],
   delivery: 'Send immediately',
   scheduleDate: '',
-  scheduleTime: '09:00',
+  scheduleTime: '09:00 AM',
   scheduleTimezone: getUserTimezone(),
   message: 'Hi {{FirstName}},\n\nThank you for choosing us!\n\nWould you mind sharing your experience?\n\n⭐ Leave your review here:\n{{ReviewLink}}\n\nIt only takes one minute.\n\nThank you ❤️',
   tone: 'Friendly',
@@ -514,14 +524,7 @@ function close() {
                 </div>
                 <div class="space-y-1">
                   <label class="text-xs font-medium text-foreground">Time</label>
-                  <div class="relative h-9">
-                    <input
-                      v-model="form.scheduleTime"
-                      type="time"
-                      class="w-full h-full px-3 text-xs shadow-sm rounded-md border border-border bg-background focus:outline-none focus-visible:ring-1 focus-visible:ring-primary/30 cursor-pointer pr-9 font-medium text-foreground"
-                    />
-                    <Clock class="absolute right-3 top-1/2 -translate-y-1/2 size-4 text-primary pointer-events-none" />
-                  </div>
+                  <RelayTimePicker v-model="form.scheduleTime" placeholder="Pick time" trigger-class="h-9" />
                 </div>
                 <div class="space-y-1">
                   <label class="text-xs font-medium text-foreground">Timezone</label>

@@ -244,7 +244,7 @@ onMounted(() => {
               stroke-width="2"
               stroke-linecap="round"
               stroke-linejoin="round"
-              class="lucide absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground lucide-search"
+              class="lucide absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground lucide-search-icon lucide-search absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground"
               aria-hidden="true"
             >
               <path d="m21 21-4.34-4.34"></path>
@@ -252,7 +252,6 @@ onMounted(() => {
             </svg>
             <input
               v-model="searchQuery"
-              type="text"
               class="border-input placeholder:text-muted-foreground focus-visible:ring-ring flex w-full rounded-md border px-3 py-1 text-sm transition-colors focus-visible:ring-1 focus-visible:outline-hidden disabled:cursor-not-allowed disabled:opacity-50 pl-9 h-9 bg-background shadow-none"
               placeholder="Search events..."
             />

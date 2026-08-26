@@ -179,8 +179,8 @@ function saveSpamConfig() {
                 <h2 class="text-[15px] font-semibold text-foreground">{{ channelLabel }} Request Template</h2>
                 <p class="text-[13px] text-muted-foreground mt-0.5">{{ selectedChannel === 'video' ? 'Customize the video testimonial prompt and recording interface.' : 'Customize the automated message sent to your customers.' }}</p>
               </div>
-              <div class="flex items-center gap-1.5 flex-wrap">
-                <button v-for="ch in CHANNELS" :key="ch.id" type="button" class="h-8 px-3 rounded-lg border text-xs font-medium inline-flex items-center gap-1.5 cursor-pointer transition-colors" :class="selectedChannel === ch.id ? 'bg-primary/10 border-primary text-primary' : 'bg-card border-border text-muted-foreground hover:bg-muted'" @click="selectedChannel = ch.id">
+              <div class="flex items-center gap-1.5 shrink-0 flex-wrap">
+                <button v-for="ch in CHANNELS" :key="ch.id" type="button" class="px-3 py-1.5 rounded-lg border text-xs text-center cursor-pointer transition-colors flex items-center justify-center gap-1.5" :class="selectedChannel === ch.id ? 'bg-primary/10 border-primary text-primary font-semibold' : 'bg-card border-border hover:bg-muted text-muted-foreground'" @click="selectedChannel = ch.id">
                   <component :is="ch.icon" class="size-3.5" /> {{ ch.label }}
                 </button>
               </div>

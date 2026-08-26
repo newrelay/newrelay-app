@@ -389,14 +389,15 @@ function close() {
                 </button>
               </div>
             </div>
-            <div v-if="companyList.length" class="pt-4 border-t border-border flex flex-col gap-1.5">
+            <div class="pt-4 border-t border-border flex flex-col gap-1.5">
               <label class="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-1.5">Company</label>
               <div class="relative h-9">
                 <select
                   v-model="selectedCompanyFilter"
-                  class="w-full h-full px-3 text-sm shadow-xs rounded-md border border-border bg-background appearance-none focus:outline-none focus-visible:ring-1 focus-visible:ring-primary/30 cursor-pointer pr-9 font-medium text-foreground"
+                  :disabled="!companyList.length"
+                  class="w-full h-full px-3 text-sm shadow-xs rounded-md border border-border bg-background appearance-none focus:outline-none focus-visible:ring-1 focus-visible:ring-primary/30 cursor-pointer pr-9 font-medium text-foreground disabled:opacity-60 disabled:cursor-not-allowed"
                 >
-                  <option value="">All companies</option>
+                  <option value="">{{ companyList.length ? 'All companies' : 'No companies on contacts' }}</option>
                   <option v-for="company in companyList" :key="company" :value="company">{{ company }}</option>
                 </select>
                 <ChevronRight class="absolute right-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground pointer-events-none rotate-90" />

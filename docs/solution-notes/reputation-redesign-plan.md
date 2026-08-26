@@ -173,9 +173,15 @@ flag-gated, badged** demo content, not lies to real users:
 - ✅ **Request Reviews modal made "proper" vs reference (2026-08-26)** — verified against the live
   reference on `:5173`: channel-first wizard, Schedule Later date/time/timezone, eligibility banner,
   company as top-right card badge, searchable company filter, schedule summary in review step,
-  channel-step helper copy. **Not ported (deferred, large + mostly demo):** the reference's Step 3
-  per-channel message-template system (separate SMS/Email/WhatsApp templates + prebuilt library +
-  multi-channel preview). Ours keeps a single message + tone presets + destinations + phone preview.
+  channel-step helper copy.
+- ✅ **Step 3 message redesign ported (2026-08-26):** the reference's per-channel message system —
+  channel switcher, channel-aware prebuilt-template picker (`components/data/outreachTemplates.js`),
+  separate Email (subject/body) / SMS (char count) / WhatsApp (header/body) editors,
+  Improve-with-Relay-AI, insert-variable chips, tone + single review **destination**, and a live
+  device preview that renders as an Email client / WhatsApp chat / SMS thread for the selected
+  channel. Slate/white device classes converted to tokens. Real submit sends the primary channel's
+  composed message + `[destination]`. Deferred: sending a distinct message per channel in one batch
+  (backend takes one `message`); AI enhance is the reference's canned demo (no LLM call).
 
 ## Session log — 2026-08-26 (autonomous polish)
 Commits on `feature/ui-changes`: real Overall Feedback KPI + de-mock (`5f6b1d5a`); feedback breakdown

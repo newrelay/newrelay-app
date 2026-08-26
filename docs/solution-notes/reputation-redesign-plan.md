@@ -165,6 +165,25 @@ flag-gated, badged** demo content, not lies to real users:
 - Visual-diff each page against `localhost:5174`; fix spacing/hierarchy; add missing i18n keys
   (no bare strings); confirm light + dark. Mark `NiN` (`REPORT.DATA_PENDING`) for any value we
   genuinely don't have — never fabricate.
+- ✅ **Token debt swept (2026-08-26):** removed all remaining `slate-*` / `dark:bg-black` from the
+  reputation module (phone-preview mockups in `RequestReviewsModal` + `RequestsPage`, stray icon on
+  `ReviewsPage`) → semantic tokens; validation error text `text-red-500` → `text-destructive`
+  (`RequestReviewsModal`, `RequestsPage`, `SettingsPage`). Remaining `bg-white` are intentional and
+  left as-is (brand-logo chips, video controls, printable QR/report surfaces).
+- ✅ **Request Reviews modal made "proper" vs reference (2026-08-26)** — verified against the live
+  reference on `:5173`: channel-first wizard, Schedule Later date/time/timezone, eligibility banner,
+  company as top-right card badge, searchable company filter, schedule summary in review step,
+  channel-step helper copy. **Not ported (deferred, large + mostly demo):** the reference's Step 3
+  per-channel message-template system (separate SMS/Email/WhatsApp templates + prebuilt library +
+  multi-channel preview). Ours keeps a single message + tone presets + destinations + phone preview.
+
+## Session log — 2026-08-26 (autonomous polish)
+Commits on `feature/ui-changes`: real Overall Feedback KPI + de-mock (`5f6b1d5a`); feedback breakdown
+modal (`8dc6e934`); reference snapshot refresh (`051060b5`); channel-first wizard reflow (`aea75fd2`);
+always-show company filter (`c5a87afc`); Schedule time input (`de610d17`); RelayTimePicker
+(`35bd254d`); searchable company dropdown (`1b2ba7be`); modal polish + tokens (`20de9412`); page
+token cleanup (`dc3d41c8`); destructive error token (`d76cd362`); recipients UX match (`5b6c0af8`).
+Not pushed — local commits only.
 
 ## Deferred / not in scope
 - Collapsing our 8-page nav to the reference's 5 items (see Open decision above).

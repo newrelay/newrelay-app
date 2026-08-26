@@ -130,11 +130,16 @@ Legend — **Design:** ✅ ported to Relay tokens · ⚠️ partial · ❌ legac
 - **Exit (R1):** zero `woot-*`/`slate-*` (✅) + new Automation page (✅). Tab-by-tab restyle of the
   config hub → corrected R2.
 
-### Phase R2 — Fill missing reference surfaces (net-new features)
-- **RequestsPage / Configuration:** build the 3 missing tabs — `qr_link` (QR CTA), `ai_outreach`,
-  `spam_shield` (Spam Reviews Filters).
-- **ListingsPage / Integrations:** add Automatic Review Sync, Smart Auto-Reply, Webhook Endpoint.
-- **Exit:** every reference section has a home in our pages (real or explicitly demo-gated).
+### Phase R2 — Fill missing reference surfaces — ✅ DONE (2026-08-26)
+- **Configuration tabs (`qr_link`, `ai_outreach`, `spam_shield`)** — ✅ **already built**: our
+  SettingsPage config hub has `reviews_qr`, `reviews_ai`, and `spam_reviews` tabs (with real
+  endpoints). No new work needed — this half was redundant, as flagged during reconciliation.
+- **ListingsPage / Integrations** — ✅ added the reference's per-listing **Integration Settings
+  modal** (opened from "Manage Listing"): Automatic Review Sync + Relay AI Smart Auto-Reply toggles
+  (`RelaySwitch`) and a read-only Sync Webhook Endpoint (`{origin}/api/v1/reputation/sync/{id}`).
+  Demo state on the demo-gated Listings page — no backend contract for these policy fields yet.
+- **Exit:** ✅ every reference Integrations/Configuration section now has a home (real in the config
+  hub, or demo-gated on Listings).
 
 ### Phase R3 — De-mock (RE-SCOPED after deep inspection, 2026-08-26)
 **Finding:** the pages are far more real than the first audit implied. The "mock" is **intentional,

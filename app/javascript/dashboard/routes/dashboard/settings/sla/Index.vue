@@ -168,8 +168,7 @@ export default {
                 </div>
 
                 <div class="p-4 sm:p-6 space-y-6">
-                  <!-- Toolbar -->
-                  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mt-2">
+                  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mt-8">
                     <div class="relative w-full max-w-md">
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -181,7 +180,7 @@ export default {
                         stroke-width="2"
                         stroke-linecap="round"
                         stroke-linejoin="round"
-                        class="lucide size-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground lucide-search"
+                        class="lucide size-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground lucide-search-icon lucide-search size-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
                         aria-hidden="true"
                       >
                         <path d="m21 21-4.34-4.34"></path>
@@ -189,7 +188,6 @@ export default {
                       </svg>
                       <input
                         v-model="searchQuery"
-                        type="text"
                         class="placeholder:text-muted-foreground flex w-full rounded-md border px-3 py-1 transition-colors focus-visible:outline-hidden disabled:cursor-not-allowed disabled:opacity-50 pl-9 h-10 text-[14px] bg-muted/20 border-border/60 shadow-none focus-visible:ring-1 focus-visible:ring-primary/20 text-foreground"
                         placeholder="Search SLA..."
                       />

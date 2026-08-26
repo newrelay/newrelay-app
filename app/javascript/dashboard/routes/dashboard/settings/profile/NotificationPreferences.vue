@@ -441,38 +441,36 @@ onMounted(() => {
           <RelaySwitch v-model="quietHoursEnabled" />
         </div>
 
-        <div v-if="quietHoursEnabled" class="px-6 pb-6 space-y-6">
-          <div class="flex flex-col sm:flex-row gap-6">
+        <div v-if="quietHoursEnabled" class="p-6 space-y-6">
+          <div class="flex flex-col sm:flex-row items-center gap-6">
             <!-- From -->
             <div class="flex items-center gap-4 w-full sm:w-1/2">
-              <span class="text-sm font-medium text-muted-foreground w-12">From</span>
+              <span class="text-sm font-medium text-muted-foreground w-10 shrink-0">From</span>
               <div class="relative flex-1">
                 <input
                   v-model="quietHoursFrom"
-                  type="text"
-                  class="border-input placeholder:text-muted-foreground focus-visible:ring-ring flex w-full rounded-md border px-3 py-1 transition-colors focus-visible:ring-1 focus-visible:outline-hidden disabled:cursor-not-allowed disabled:opacity-50 h-10 text-sm bg-background pr-10 shadow-xs"
-                  placeholder="08:00 PM"
+                  type="time"
+                  class="w-full h-11 rounded-xl border border-border/60 bg-muted/20 px-4 pr-10 text-sm font-medium text-foreground shadow-xs transition-colors focus:border-primary focus:outline-none cursor-pointer [&::-webkit-calendar-picker-indicator]:opacity-0"
                 />
                 <Icon
                   icon="i-lucide-clock"
-                  class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground"
+                  class="pointer-events-none absolute right-3.5 top-1/2 -translate-y-1/2 size-4 text-muted-foreground"
                 />
               </div>
             </div>
 
             <!-- To -->
             <div class="flex items-center gap-4 w-full sm:w-1/2">
-              <span class="text-sm font-medium text-muted-foreground w-8">To</span>
+              <span class="text-sm font-medium text-muted-foreground w-6 text-center shrink-0">To</span>
               <div class="relative flex-1">
                 <input
                   v-model="quietHoursTo"
-                  type="text"
-                  class="border-input placeholder:text-muted-foreground focus-visible:ring-ring flex w-full rounded-md border px-3 py-1 transition-colors focus-visible:ring-1 focus-visible:outline-hidden disabled:cursor-not-allowed disabled:opacity-50 h-10 text-sm bg-background pr-10 shadow-xs"
-                  placeholder="08:00 AM"
+                  type="time"
+                  class="w-full h-11 rounded-xl border border-border/60 bg-muted/20 px-4 pr-10 text-sm font-medium text-foreground shadow-xs transition-colors focus:border-primary focus:outline-none cursor-pointer [&::-webkit-calendar-picker-indicator]:opacity-0"
                 />
                 <Icon
                   icon="i-lucide-clock"
-                  class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground"
+                  class="pointer-events-none absolute right-3.5 top-1/2 -translate-y-1/2 size-4 text-muted-foreground"
                 />
               </div>
             </div>
@@ -480,11 +478,11 @@ onMounted(() => {
 
           <!-- Time zone -->
           <div class="flex flex-col sm:flex-row sm:items-center gap-4">
-            <span class="text-sm font-medium text-muted-foreground w-16">Time zone</span>
+            <span class="text-sm font-medium text-muted-foreground w-12 shrink-0 leading-tight">Time<br class="hidden sm:inline" />zone</span>
             <div class="relative flex-1">
               <select
                 v-model="selectedTimezone"
-                class="w-full appearance-none border border-input focus-visible:ring-ring px-4 py-2 h-10 text-sm font-normal bg-background pr-10 shadow-xs rounded-md focus-visible:ring-1 focus-visible:outline-none cursor-pointer"
+                class="w-full appearance-none h-11 rounded-xl border border-border/60 bg-background px-4 pr-10 text-sm font-medium text-foreground shadow-xs transition-colors focus:border-primary focus:outline-none cursor-pointer"
               >
                 <option value="(GMT+05:30) Asia/Kolkata">(GMT+05:30) Asia/Kolkata</option>
                 <option value="(GMT+00:00) UTC">(GMT+00:00) UTC</option>
@@ -493,22 +491,22 @@ onMounted(() => {
               </select>
               <Icon
                 icon="i-lucide-chevron-down"
-                class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground opacity-50"
+                class="pointer-events-none absolute right-3.5 top-1/2 -translate-y-1/2 size-4 text-muted-foreground opacity-60"
               />
             </div>
           </div>
 
           <!-- Day selector pills -->
-          <div class="flex flex-wrap gap-2 pt-2">
+          <div class="flex flex-wrap gap-2.5 pt-1">
             <button
               v-for="day in availableDays"
               :key="day"
               type="button"
-              class="px-4 py-2 text-xs font-medium rounded transition-colors border"
+              class="px-4 py-2 text-xs font-medium rounded-lg transition-all border shadow-xs"
               :class="[
                 activeDays.includes(day)
-                  ? 'border-primary/20 bg-primary/10 text-primary'
-                  : 'border-border bg-background text-muted-foreground hover:bg-muted'
+                  ? 'bg-indigo-50 border-indigo-200 text-indigo-600 dark:bg-indigo-950/60 dark:border-indigo-800 dark:text-indigo-300'
+                  : 'bg-background border-border/60 text-muted-foreground hover:bg-muted/20'
               ]"
               @click="toggleDay(day)"
             >

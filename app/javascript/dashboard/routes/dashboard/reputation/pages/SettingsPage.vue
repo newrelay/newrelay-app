@@ -1044,7 +1044,7 @@ onMounted(async () => {
           <p class="text-xs text-muted-foreground">Fetching locations from Google Business...</p>
         </div>
 
-        <div v-else-if="locationError" class="text-xs text-destructive bg-destructive/10 border border-destructive/20 dark:border-red-900/30 rounded-xl px-4 py-2.5">
+        <div v-else-if="locationError" class="text-xs text-destructive bg-destructive/10 border border-destructive/20 dark:border-destructive/30 rounded-xl px-4 py-2.5">
           {{ locationError }}
         </div>
 

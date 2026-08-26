@@ -611,7 +611,7 @@ const statusColor = s => {
                   <Upload class="size-4" /> Import CSV
                 </button>
                 <input ref="csvInput" type="file" accept=".csv,text/csv" class="hidden" @change="handleCsvImport" />
-                <p v-if="importError" class="text-[11px] text-red-500">{{ importError }}</p>
+                <p v-if="importError" class="text-[11px] text-destructive">{{ importError }}</p>
 
                 <div class="flex flex-col gap-1.5">
                   <label class="text-xs font-medium text-foreground">Manual Entry</label>
@@ -689,7 +689,7 @@ const statusColor = s => {
                   </div>
                 </div>
               </div>
-              <p v-if="channelError" class="text-xs text-red-500 flex items-center gap-1.5">
+              <p v-if="channelError" class="text-xs text-destructive flex items-center gap-1.5">
                 <AlertCircle class="size-3.5 shrink-0" /> {{ channelError }}
               </p>
             </div>
@@ -737,7 +737,7 @@ const statusColor = s => {
                     </div>
                   </div>
                 </div>
-                <p v-if="scheduleError" class="text-xs text-red-500 flex items-center gap-1.5">
+                <p v-if="scheduleError" class="text-xs text-destructive flex items-center gap-1.5">
                   <AlertCircle class="size-3.5 shrink-0" /> {{ scheduleError }}
                 </p>
               </div>

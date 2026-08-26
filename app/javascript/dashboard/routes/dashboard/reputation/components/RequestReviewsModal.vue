@@ -555,7 +555,7 @@ function close() {
                 </div>
               </div>
             </div>
-            <p v-if="channelRequired" class="text-sm text-red-500 flex items-center gap-1.5">
+            <p v-if="channelRequired" class="text-sm text-destructive flex items-center gap-1.5">
               <AlertCircle class="size-4 shrink-0" /> {{ channelRequired }}
             </p>
           </div>
@@ -607,7 +607,7 @@ function close() {
                   </div>
                 </div>
               </div>
-              <p v-if="scheduleError" class="text-sm text-red-500 flex items-center gap-1.5">
+              <p v-if="scheduleError" class="text-sm text-destructive flex items-center gap-1.5">
                 <AlertCircle class="size-4 shrink-0" /> {{ scheduleError }}
               </p>
             </div>

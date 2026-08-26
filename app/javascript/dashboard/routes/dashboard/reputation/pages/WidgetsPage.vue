@@ -269,9 +269,9 @@ const previewReviewsList = computed(() => {
     <!-- Main Workspace (Edit Mode) -->
     <div v-if="isEditing" class="space-y-6">
       <!-- Edit Mode Header -->
-      <div class="flex items-center gap-4 border-b border-border/60 dark:border-slate-800/60 pb-4">
+      <div class="flex items-center gap-4 border-b border-border/60 pb-4">
         <button 
-          class="p-2 -ml-2 rounded-xl hover:bg-muted dark:hover:bg-slate-800 text-muted-foreground transition-colors"
+          class="p-2 -ml-2 rounded-xl hover:bg-muted text-muted-foreground transition-colors"
           @click="isEditing = false; activeWidget = null;"
         >
           <svg class="size-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -291,32 +291,32 @@ const previewReviewsList = computed(() => {
           <!-- Customizer Config Card -->
         <div
           v-if="activeWidget"
-          class="bg-white dark:bg-slate-900 rounded-2xl border border-border/80 dark:border-slate-850 shadow-sm p-6 space-y-4"
+          class="bg-card rounded-2xl border border-border/80 shadow-sm p-6 space-y-4"
         >
           <div>
             <h3 class="capitalize font-extrabold text-foreground dark:text-white text-sm">
               Widget Configuration
             </h3>
-            <p class="text-[10px] text-slate-450 mt-0.5">
+            <p class="text-[10px] text-muted-foreground mt-0.5">
               Configure style parameters for {{ activeWidget.name }}
             </p>
           </div>
 
           <div class="space-y-4">
             <div class="space-y-1.5">
-              <label class="block text-slate-450 text-[13.5px] font-[500] text-foreground">Widget Name</label>
+              <label class="block text-muted-foreground text-[13.5px] font-[500] text-foreground">Widget Name</label>
               <input
                 v-model="activeWidget.name"
                 type="text"
-                class="w-full rounded-xl border border-border dark:border-slate-700 dark:bg-slate-850 p-3 focus:outline-none focus:ring-2 focus:ring-woot-500 text-[14px] border-border/80 bg-background focus-visible:ring-1 focus-visible:ring-primary/30 shadow-sm rounded-md"
+                class="w-full rounded-xl border border-border p-3 focus:outline-none focus:ring-2 focus:ring-primary text-[14px] border-border/80 bg-background focus-visible:ring-1 focus-visible:ring-primary/30 shadow-sm rounded-md"
               />
             </div>
 
             <div class="space-y-1.5">
-              <label class="block text-slate-450 text-[13.5px] font-[500] text-foreground">Display Style</label>
+              <label class="block text-muted-foreground text-[13.5px] font-[500] text-foreground">Display Style</label>
               <select
                 v-model="activeWidget.style"
-                class="w-full text-xs rounded-xl border border-border dark:border-slate-700 dark:bg-slate-850 p-3 focus:outline-none focus:ring-2 focus:ring-woot-500"
+                class="w-full text-xs rounded-xl border border-border p-3 focus:outline-none focus:ring-2 focus:ring-primary"
               >
                 <option value="carousel">Carousel (Responsive Slider)</option>
                 <option value="grid">Grid (Columns layout)</option>
@@ -324,10 +324,10 @@ const previewReviewsList = computed(() => {
             </div>
 
             <div class="space-y-1.5">
-              <label class="block text-slate-450 text-[13.5px] font-[500] text-foreground">Minimum Rating threshold</label>
+              <label class="block text-muted-foreground text-[13.5px] font-[500] text-foreground">Minimum Rating threshold</label>
               <select
                 v-model="activeWidget.min_rating"
-                class="w-full text-xs rounded-xl border border-border dark:border-slate-700 dark:bg-slate-850 p-3 focus:outline-none focus:ring-2 focus:ring-woot-500"
+                class="w-full text-xs rounded-xl border border-border p-3 focus:outline-none focus:ring-2 focus:ring-primary"
               >
                 <option :value="5">5 Stars only</option>
                 <option :value="4">4 Stars & Above</option>
@@ -337,19 +337,19 @@ const previewReviewsList = computed(() => {
             </div>
 
             <div class="flex items-center justify-between py-2">
-              <span class="text-xs font-bold text-slate-450">Widget Active State</span>
+              <span class="text-xs font-bold text-muted-foreground">Widget Active State</span>
               <button
                 type="button"
                 class="relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full p-0.5 transition-colors duration-200 ease-in-out focus:outline-none"
                 :class="
                   activeWidget.active
-                    ? 'bg-woot-500'
-                    : 'bg-slate-200 dark:bg-slate-700'
+                    ? 'bg-primary'
+                    : 'bg-muted '
                 "
                 @click="activeWidget.active = !activeWidget.active"
               >
                 <span
-                  class="pointer-events-none inline-block size-5 transform rounded-full bg-white shadow transition-transform duration-200 ease-in-out"
+                  class="pointer-events-none inline-block size-5 transform rounded-full bg-card shadow transition-transform duration-200 ease-in-out"
                   :class="
                     activeWidget.active ? 'translate-x-5' : 'translate-x-0'
                   "
@@ -358,21 +358,21 @@ const previewReviewsList = computed(() => {
             </div>
 
             <div class="flex items-center justify-between py-2">
-              <span class="text-xs font-bold text-slate-450">Hide NewRelay watermark</span>
+              <span class="text-xs font-bold text-muted-foreground">Hide NewRelay watermark</span>
               <button
                 type="button"
                 class="relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full p-0.5 transition-colors duration-200 ease-in-out focus:outline-none"
                 :class="
                   activeWidget.hide_watermark
-                    ? 'bg-woot-500'
-                    : 'bg-slate-200 dark:bg-slate-700'
+                    ? 'bg-primary'
+                    : 'bg-muted '
                 "
                 @click="
                   activeWidget.hide_watermark = !activeWidget.hide_watermark
                 "
               >
                 <span
-                  class="pointer-events-none inline-block size-5 transform rounded-full bg-white shadow transition-transform duration-200 ease-in-out"
+                  class="pointer-events-none inline-block size-5 transform rounded-full bg-card shadow transition-transform duration-200 ease-in-out"
                   :class="
                     activeWidget.hide_watermark
                       ? 'translate-x-5'
@@ -384,17 +384,17 @@ const previewReviewsList = computed(() => {
           </div>
 
           <div
-            class="flex justify-between items-center pt-4 border-t border-slate-100 dark:border-slate-850"
+            class="flex justify-between items-center pt-4 border-t border-border "
           >
             <button
-              class="text-xs text-destructive dark:text-red-400 font-bold hover:underline"
+              class="text-xs text-destructive font-bold hover:underline"
               @click="deleteWidget(activeWidget.id)"
             >
               Delete Widget
             </button>
 
             <button
-              class="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-xs font-bold transition-all"
+              class="px-4 py-2 bg-card hover:bg-muted text-white rounded-xl text-xs font-bold transition-all"
               :disabled="saving"
               @click="saveWidget"
             >
@@ -408,19 +408,19 @@ const previewReviewsList = computed(() => {
       <div v-if="activeWidget" class="lg:col-span-7 space-y-6">
         <!-- Live Mock Preview -->
         <div
-          class="bg-white dark:bg-slate-900 rounded-2xl border border-border/80 dark:border-slate-850 shadow-sm p-6 space-y-6"
+          class="bg-card rounded-2xl border border-border/80 shadow-sm p-6 space-y-6"
         >
           <div class="flex items-center justify-between">
             <div>
               <h3 class="capitalize font-extrabold text-foreground dark:text-white text-sm">
                 Interactive Live Preview
               </h3>
-              <p class="text-[10px] text-slate-450 mt-0.5">
+              <p class="text-[10px] text-muted-foreground mt-0.5">
                 Simulated rendering of widget on web page
               </p>
             </div>
             <span
-              class="px-2 py-0.5 rounded-lg text-[10px] uppercase font-bold bg-muted dark:bg-slate-800 text-muted-foreground"
+              class="px-2 py-0.5 rounded-lg text-[10px] uppercase font-bold bg-muted text-muted-foreground"
             >
               Live Mockup
             </span>
@@ -429,7 +429,7 @@ const previewReviewsList = computed(() => {
           <!-- Carousel widget style mockup -->
           <div
             v-if="activeWidget.style === 'carousel'"
-            class="relative p-6 bg-background dark:bg-slate-850/40 rounded-2xl border border-slate-150 dark:border-slate-800 min-h-[160px] flex flex-col justify-between"
+            class="relative p-6 bg-background rounded-2xl border border-border min-h-[160px] flex flex-col justify-between"
           >
             <div v-if="previewReviewsList.length > 0" class="space-y-4">
               <!-- Carousel Content card -->
@@ -449,19 +449,19 @@ const previewReviewsList = computed(() => {
                   }}</span>
                 </div>
                 <p
-                  class="text-xs text-slate-650 dark:text-slate-300 italic leading-relaxed"
+                  class="text-xs text-muted-foreground italic leading-relaxed"
                 >
                   "{{ previewReviewsList[carouselIndex].body }}"
                 </p>
                 <div class="flex items-center gap-1.5 pt-1">
                   <span
-                    class="text-xs font-bold text-foreground dark:text-slate-200"
+                    class="text-xs font-bold text-foreground "
                   >
                     {{ previewReviewsList[carouselIndex].reviewer_name }}
                   </span>
-                  <span class="size-1 bg-slate-300 rounded-full" />
+                  <span class="size-1 bg-muted rounded-full" />
                   <span
-                    class="text-[9px] uppercase font-bold px-2 py-0.5 bg-muted dark:bg-slate-800 text-muted-foreground rounded-full capitalize"
+                    class="text-[9px] uppercase font-bold px-2 py-0.5 bg-muted text-muted-foreground rounded-full capitalize"
                   >
                     {{ previewReviewsList[carouselIndex].provider }}
                   </span>
@@ -470,7 +470,7 @@ const previewReviewsList = computed(() => {
 
               <!-- Carousel nav items -->
               <div
-                class="flex justify-between items-center pt-2 border-t border-slate-100 dark:border-slate-800/80"
+                class="flex justify-between items-center pt-2 border-t border-border "
               >
                 <div class="flex gap-1">
                   <span
@@ -479,14 +479,14 @@ const previewReviewsList = computed(() => {
                     class="size-1.5 rounded-full transition-all"
                     :class="
                       carouselIndex === idx
-                        ? 'bg-woot-500 w-3.5'
-                        : 'bg-slate-300'
+                        ? 'bg-primary w-3.5'
+                        : 'bg-muted'
                     "
                   />
                 </div>
                 <div class="flex gap-1.5">
                   <button
-                    class="p-1 rounded-lg border border-border dark:border-slate-750 hover:bg-white dark:hover:bg-slate-800 text-muted-foreground dark:text-muted-foreground shrink-0 shadow-sm"
+                    class="p-1 rounded-lg border border-border hover:bg-muted text-muted-foreground dark:text-muted-foreground shrink-0 shadow-sm"
                     @click="prevSlide(previewReviewsList.length)"
                   >
                     <svg
@@ -504,7 +504,7 @@ const previewReviewsList = computed(() => {
                     </svg>
                   </button>
                   <button
-                    class="p-1 rounded-lg border border-border dark:border-slate-750 hover:bg-white dark:hover:bg-slate-800 text-muted-foreground dark:text-muted-foreground shrink-0 shadow-sm"
+                    class="p-1 rounded-lg border border-border hover:bg-muted text-muted-foreground dark:text-muted-foreground shrink-0 shadow-sm"
                     @click="nextSlide(previewReviewsList.length)"
                   >
                     <svg
@@ -526,10 +526,10 @@ const previewReviewsList = computed(() => {
               <!-- Watermark -->
               <div
                 v-if="!activeWidget.hide_watermark"
-                class="text-center pt-2 text-[10px] text-muted-foreground border-t border-slate-100 dark:border-slate-800/80"
+                class="text-center pt-2 text-[10px] text-muted-foreground border-t border-border "
               >
                 Powered by
-                <span class="font-bold text-slate-650 dark:text-slate-350">NewRelay</span>
+                <span class="font-bold text-muted-foreground ">NewRelay</span>
               </div>
             </div>
             <div v-else class="text-xs text-muted-foreground text-center py-10">
@@ -541,13 +541,13 @@ const previewReviewsList = computed(() => {
           <!-- Grid widget style mockup -->
           <div
             v-else-if="activeWidget.style === 'grid'"
-            class="p-4 bg-background dark:bg-slate-850/40 rounded-2xl border border-slate-150 dark:border-slate-800 space-y-4"
+            class="p-4 bg-background rounded-2xl border border-border space-y-4"
           >
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div
                 v-for="r in previewReviewsList.slice(0, 4)"
                 :key="r.id"
-                class="p-4 bg-white dark:bg-slate-900 border border-slate-150 dark:border-slate-800/80 rounded-xl space-y-2 shadow-sm"
+                class="p-4 bg-card border border-border rounded-xl space-y-2 shadow-sm"
               >
                 <div class="flex items-center justify-between">
                   <div class="flex gap-0.5 text-yellow-400">
@@ -558,13 +558,13 @@ const previewReviewsList = computed(() => {
                   <span class="text-[10px] text-muted-foreground">{{ r.date }}</span>
                 </div>
                 <p
-                  class="text-[11px] text-muted-foreground dark:text-slate-350 italic line-clamp-3"
+                  class="text-[11px] text-muted-foreground italic line-clamp-3"
                 >
                   "{{ r.body }}"
                 </p>
                 <div class="flex items-center gap-1.5">
                   <span
-                    class="text-xs font-bold text-foreground dark:text-slate-200 truncate"
+                    class="text-xs font-bold text-foreground truncate"
                   >
                     {{ r.reviewer_name }}
                   </span>
@@ -579,10 +579,10 @@ const previewReviewsList = computed(() => {
             <!-- Watermark -->
             <div
               v-if="!activeWidget.hide_watermark"
-              class="text-center pt-2 text-[10px] text-muted-foreground border-t border-slate-100 dark:border-slate-800/80"
+              class="text-center pt-2 text-[10px] text-muted-foreground border-t border-border "
             >
               Powered by
-              <span class="font-bold text-slate-650 dark:text-slate-350">NewRelay</span>
+              <span class="font-bold text-muted-foreground ">NewRelay</span>
             </div>
             <div
               v-if="previewReviewsList.length === 0"
@@ -596,20 +596,20 @@ const previewReviewsList = computed(() => {
 
         <!-- HTML Code Embed Block -->
         <div
-          class="bg-white dark:bg-slate-900 rounded-2xl border border-border/80 dark:border-slate-850 shadow-sm p-6 space-y-4"
+          class="bg-card rounded-2xl border border-border/80 shadow-sm p-6 space-y-4"
         >
           <div>
             <h3 class="capitalize font-extrabold text-foreground dark:text-white text-sm">
               HTML Embed Script
             </h3>
-            <p class="text-[10px] text-slate-450 mt-0.5">
+            <p class="text-[10px] text-muted-foreground mt-0.5">
               Copy and paste this script tag into your website body where you
               want ratings to display
             </p>
           </div>
 
           <div
-            class="relative bg-slate-950 text-slate-300 font-mono text-xs rounded-xl p-4 border border-slate-900 break-all select-all"
+            class="relative bg-card text-muted-foreground font-mono text-xs rounded-xl p-4 border border-border break-all select-all"
           >
             {{ embedCode(activeWidget) }}
           </div>
@@ -620,7 +620,7 @@ const previewReviewsList = computed(() => {
               :class="
                 copiedId === activeWidget.id
                   ? 'bg-emerald-500 text-white'
-                  : 'bg-woot-50 hover:bg-woot-100 text-woot-650 dark:bg-slate-800 dark:hover:bg-slate-750 dark:text-woot-400'
+                  : 'bg-primary/10 hover:bg-primary/10 text-primary '
               "
               @click="copyEmbed(activeWidget)"
             >

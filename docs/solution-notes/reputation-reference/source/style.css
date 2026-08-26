@@ -1,0 +1,263 @@
+@import 'tailwindcss';
+@import './fonts.css';
+
+html {
+  overflow-y: scroll;
+}
+
+/* Class-based dark mode (toggled on <html>) */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* ── shadcn/ui design tokens ported from the Artifact template ── */
+:root {
+  --radius: 0.75rem;
+
+  --background: #ffffff;
+  --foreground: #141822;
+  --card: #ffffff;
+  --card-foreground: #141822;
+  --popover: #ffffff;
+  --popover-foreground: #141822;
+  --primary: #4f46e5;
+  --primary-foreground: #fafafa;
+  --secondary: #f2f4f9;
+  --secondary-foreground: #222938;
+  --muted: #f2f4f9;
+  --muted-foreground: #6c727e;
+  --accent: #edf0ff;
+  --accent-foreground: #30327a;
+  --destructive: #e11d48;
+  --destructive-foreground: #f8fafc;
+  --border: #e4e7ee;
+  --input: #e4e7ee;
+  --ring: #4f46e5;
+
+  --chart-1: #6d74f5;
+  --chart-2: #6c50e9;
+  --chart-3: #4f46e5;
+  --chart-4: #7290fa;
+  --chart-5: #4435bc;
+
+  --sidebar: #f9fafd;
+  --sidebar-foreground: #141822;
+  --sidebar-primary: #4f46e5;
+  --sidebar-primary-foreground: #fafafa;
+  --sidebar-accent: #edf0ff;
+  --sidebar-accent-foreground: #30327a;
+  --sidebar-border: #e4e7ee;
+  --sidebar-ring: #4f46e5;
+
+  --priority-1: #e11d48;
+  --priority-2: #f27000;
+  --priority-3: #dca600;
+  --priority-4: #737373;
+  --success: #00884b;
+  --warning: #dca600;
+}
+
+.dark {
+  --background: #10141d;
+  --foreground: #fafafa;
+  --card: #181d27;
+  --card-foreground: #fafafa;
+  --popover: #181d27;
+  --popover-foreground: #fafafa;
+  --primary: #6f71fb;
+  --primary-foreground: #fafafa;
+  --secondary: #242933;
+  --secondary-foreground: #fafafa;
+  --muted: #242933;
+  --muted-foreground: #9ba2ae;
+  --accent: #2c304c;
+  --accent-foreground: #e2e7fc;
+  --destructive: #ff6568;
+  --destructive-foreground: #f8fafc;
+  --border: #ffffff1a;
+  --input: #ffffff26;
+  --ring: #6f71fb;
+
+  --chart-1: #7f8aff;
+  --chart-2: #7f68ff;
+  --chart-3: #819eff;
+  --chart-4: #5e55ed;
+  --chart-5: #5a47cf;
+
+  --sidebar: #181d27;
+  --sidebar-foreground: #fafafa;
+  --sidebar-primary: #6f71fb;
+  --sidebar-primary-foreground: #fafafa;
+  --sidebar-accent: #2c304c;
+  --sidebar-accent-foreground: #e2e7fc;
+  --sidebar-border: #ffffff1a;
+  --sidebar-ring: #6f71fb;
+
+  --priority-1: #ff6568;
+  --priority-2: #ff8b41;
+  --priority-3: #e9b928;
+  --priority-4: #a1a1a1;
+  --success: #2ec18c;
+  --warning: #e9b928;
+}
+
+/* Map tokens to Tailwind theme so bg-background / text-foreground / etc. work */
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+
+  --color-priority-1: var(--priority-1);
+  --color-priority-2: var(--priority-2);
+  --color-priority-3: var(--priority-3);
+  --color-priority-4: var(--priority-4);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+
+  --font-sans: 'Geist', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-mono: 'Geist Mono', 'SFMono-Regular', ui-monospace, Menlo, Monaco, Consolas, monospace;
+
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+}
+
+@layer base {
+  * {
+    border-color: var(--border);
+  }
+  body {
+    background-color: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+}
+
+/* ── Radix-style enter/exit animations (fade + zoom + fade) for reka-ui overlays ──
+   reka-ui keeps content mounted until the [data-state=closed] animation finishes. */
+@keyframes anim-pop-in {
+  from { opacity: 0; transform: scale(0.96); }
+  to { opacity: 1; transform: scale(1); }
+}
+@keyframes anim-pop-out {
+  from { opacity: 1; transform: scale(1); }
+  to { opacity: 0; transform: scale(0.96); }
+}
+@keyframes anim-fade-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes anim-fade-out { from { opacity: 1; } to { opacity: 0; } }
+@keyframes anim-dialog-in {
+  from { opacity: 0; transform: translate(-50%, -48%) scale(0.96); }
+  to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+}
+@keyframes anim-dialog-out {
+  from { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+  to { opacity: 0; transform: translate(-50%, -48%) scale(0.96); }
+}
+
+/* Dropdowns / popovers — zoom originates from the trigger (reka exposes the origin var). */
+.anim-pop {
+  transform-origin: var(--reka-popper-transform-origin, center);
+}
+.anim-pop[data-state='open'] { animation: anim-pop-in 0.15s ease-out; }
+.anim-pop[data-state='closed'] { animation: anim-pop-out 0.12s ease-in; }
+
+/* Dialog / sheet overlays + content */
+.anim-overlay[data-state='open'] { animation: anim-fade-in 0.15s ease-out; }
+.anim-overlay[data-state='closed'] { animation: anim-fade-out 0.15s ease-in; }
+.anim-dialog[data-state='open'] { animation: anim-dialog-in 0.18s ease-out; }
+.anim-dialog[data-state='closed'] { animation: anim-dialog-out 0.15s ease-in; }
+
+/* React Flow (xyflow) base styles — the dependency-map clone ships the rendered DOM
+   but not the library CSS, so nodes lose position:absolute and the viewport scale
+   pivots from center. These rules restore correct positioning. */
+.react-flow { position: relative; width: 100%; height: 100%; overflow: hidden; direction: ltr; }
+.react-flow__renderer,
+.react-flow__pane { position: absolute; inset: 0; }
+.react-flow__viewport { transform-origin: 0 0; z-index: 2; pointer-events: none; }
+.react-flow__nodes { position: absolute; top: 0; left: 0; transform-origin: 0 0; }
+.react-flow__node { position: absolute; transform-origin: 0 0; box-sizing: border-box; pointer-events: all; }
+.react-flow__edges { position: absolute; top: 0; left: 0; overflow: visible; pointer-events: none; }
+.react-flow__edge-path { fill: none; stroke: var(--border); stroke-width: 1.5; }
+.react-flow__handle { position: absolute; }
+.react-flow__background { position: absolute; inset: 0; }
+
+/* Custom sleek scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--muted-foreground);
+}
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
+}
+
+/* Every button with red / destructive text gets pale red background on hover & active */
+button:is(.text-destructive, [class*="text-destructive"], .text-red-500, .text-red-600):hover,
+[role="button"]:is(.text-destructive, [class*="text-destructive"], .text-red-500, .text-red-600):hover,
+a:is(.text-destructive, [class*="text-destructive"], .text-red-500, .text-red-600):hover {
+  background-color: color-mix(in srgb, var(--destructive) 10%, transparent) !important;
+  color: var(--destructive) !important;
+}
+
+button:is(.text-destructive, [class*="text-destructive"], .text-red-500, .text-red-600):active,
+[role="button"]:is(.text-destructive, [class*="text-destructive"], .text-red-500, .text-red-600):active,
+a:is(.text-destructive, [class*="text-destructive"], .text-red-500, .text-red-600):active {
+  background-color: color-mix(in srgb, var(--destructive) 18%, transparent) !important;
+  color: var(--destructive) !important;
+}
+
+/* Utility to completely hide scrollbars */
+.hide-scrollbar::-webkit-scrollbar,
+.no-scrollbar::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+}
+
+.hide-scrollbar,
+.no-scrollbar {
+  -ms-overflow-style: none !important;
+  scrollbar-width: none !important;
+}

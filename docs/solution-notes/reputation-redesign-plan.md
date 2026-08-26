@@ -156,15 +156,20 @@ flag-gated, badged** demo content, not lies to real users:
     (positive/neutral/negative), sentiment bar, and per-platform breakdown all computed from real
     `allReviews`; the "Top Feedback Themes" section is demo-only + badged (needs a topic-analysis
     backend). Skipped: month-over-month feedback delta (no endpoint).
-- **Reviews** — already real (`mock≈1`); no work.
-- **Listings**, **Feedback** — demo-gated (real users are redirected out); mock only shows in demo
-  mode, badged. Real `/listings` + `/feedback` endpoints exist.
-- **Open product decision (blocks the rest of R3):** for the flag-gated demo surfaces, keep the
-  **illustrative sample data** (the point of a demo/showcase flag) or replace with **honest empty
-  states**? This is a product call, not a code one. Until decided, no further de-mock is warranted —
-  the current architecture (real for real users, badged sample behind the flag) is already honest.
-- **Exit:** real users never see fabricated numbers (already true); demo-surface behavior per the
-  decision above.
+- **Reviews** — already real; no work.
+- **Requests** — real: KPI `stats` computed from `/review_requests`; empty ⇒ zeros. No work.
+- **Widgets** — ✅ **Done (2026-08-26):** the widget live preview now renders the account's **real
+  reviews** (filtered by `min_rating`), falling back to sample data only when there are no reviews
+  yet, badged **"Your Reviews"** vs **"Sample Data"**. Fetches `/reputation/reviews` on mount.
+- **Listings**, **Feedback** — demo-gated routes (real users are redirected out); sample data only
+  shows in demo mode, badged. The R2 Integration Settings toggles on Listings are likewise
+  demo-state behind the flag.
+- **Exit:** ✅ **real users never see fabricated numbers.** Audited every non-gated page (Overview,
+  Reviews, Requests, Widgets, Video Testimonials) — all compute from real endpoints with honest
+  empty states; sample content is confined to demo-gated routes and clearly badged.
+- **Remaining product decision (optional, not blocking):** on the demo-gated surfaces, keep the
+  illustrative sample data (the point of a showcase flag) or swap to empty states. Yours to make —
+  the current architecture is already honest either way.
 
 ### Phase R4 — Verify & polish
 - Visual-diff each page against `localhost:5174`; fix spacing/hierarchy; add missing i18n keys

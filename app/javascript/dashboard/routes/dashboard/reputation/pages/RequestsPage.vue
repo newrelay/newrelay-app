@@ -802,27 +802,25 @@ const statusColor = s => {
 
             <!-- Preview Side (Mobile Phone Mockup) -->
             <div class="w-[360px] bg-muted/20 border-l border-border p-6 flex items-center justify-center shrink-0">
-              <div class="w-[260px] h-[520px] bg-white dark:bg-black rounded-[36px] border-[6px] border-slate-200 dark:border-slate-800 shadow-2xl relative overflow-hidden flex flex-col">
+              <div class="w-[260px] h-[520px] bg-card rounded-[36px] border-[6px] border-border shadow-2xl relative overflow-hidden flex flex-col">
                 <!-- Notch -->
                 <div class="absolute top-0 inset-x-0 h-5 flex justify-center z-10">
-                  <div class="w-28 h-4 bg-slate-200 dark:bg-slate-800 rounded-b-xl"></div>
+                  <div class="w-28 h-4 bg-border rounded-b-xl"></div>
                 </div>
                 <!-- Header -->
-                <div class="bg-slate-100 dark:bg-slate-900 pt-8 pb-2.5 px-3 flex items-center gap-2 border-b border-slate-200 dark:border-slate-800 shrink-0">
-                  <div class="size-7 rounded-full bg-slate-300 dark:bg-slate-700 flex items-center justify-center overflow-hidden">
-                    <span class="text-xs font-bold text-slate-700 dark:text-slate-200">NR</span>
-                  </div>
+                <div class="bg-muted pt-8 pb-2.5 px-3 flex items-center gap-2 border-b border-border shrink-0">
+                  <div class="size-7 rounded-full bg-primary/15 text-primary flex items-center justify-center text-xs font-bold shrink-0">NR</div>
                   <div>
-                    <div class="text-[11px] font-semibold text-slate-900 dark:text-white">New Relay</div>
-                    <div class="text-[9px] text-slate-500">Business Account</div>
+                    <div class="text-[11px] font-semibold text-foreground">New Relay</div>
+                    <div class="text-[9px] text-muted-foreground">Business Account</div>
                   </div>
                 </div>
                 <!-- Chat Body -->
-                <div class="flex-1 bg-slate-50 dark:bg-black p-3 overflow-y-auto space-y-3">
-                  <div class="text-[9px] text-center text-slate-400 font-medium my-1">Today 9:41 AM</div>
-                  <div class="bg-primary text-white rounded-2xl rounded-tl-sm p-2.5 text-[12px] shadow-sm whitespace-pre-wrap leading-relaxed max-w-[90%] relative pb-5">
+                <div class="flex-1 bg-muted/40 p-3 overflow-y-auto space-y-3">
+                  <div class="text-[9px] text-center text-muted-foreground font-medium my-1">Today 9:41 AM</div>
+                  <div class="bg-primary text-primary-foreground rounded-2xl rounded-tl-sm p-2.5 text-[12px] shadow-sm whitespace-pre-wrap leading-relaxed max-w-[90%] relative pb-5">
                     {{ previewMessage }}
-                    <div class="absolute right-2 bottom-1 text-[8px] text-blue-200">9:41 AM</div>
+                    <div class="absolute right-2 bottom-1 text-[8px] text-primary-foreground/70">9:41 AM</div>
                   </div>
                 </div>
               </div>

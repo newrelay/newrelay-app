@@ -202,7 +202,7 @@ function addInternalNote() {
                     <Star class="size-4 text-[#FFB020]" /> Rating (1-5)
                   </button>
                   <button class="w-full text-left px-2 py-1.5 text-xs rounded-md hover:bg-muted font-medium text-foreground flex items-center gap-2 cursor-pointer">
-                    <Calendar class="size-4 text-slate-500" /> Date Range
+                    <Calendar class="size-4 text-muted-foreground" /> Date Range
                   </button>
                   
                   <div class="my-1 border-t border-border/80"></div>

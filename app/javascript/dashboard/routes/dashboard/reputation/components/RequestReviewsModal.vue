@@ -6,13 +6,20 @@ import {
   ArrowLeft, Send, Sparkles, MessageSquare,
   Mail, MessageCircle, Star, Smartphone,
   Check, BarChart3, ChevronDown, Building2,
-  Calendar, ChevronLeft, Users, Plus, AlertCircle, Globe
+  Calendar, ChevronLeft, Users, Plus, AlertCircle, Globe,
+  LayoutTemplate, ExternalLink, Signal, Wifi, MoreVertical,
+  Paperclip, Smile, Mic, Trash2, Archive, Video, Phone, Info
 } from 'lucide-vue-next';
 import {
-  RelayButton as Button, RelayInput as Input, RelayBadge as Badge
+  RelayButton as Button, RelayInput as Input, RelayBadge as Badge,
+  RelayDropdownMenu as DropdownMenu,
+  RelayDropdownMenuTrigger as DropdownMenuTrigger,
+  RelayDropdownMenuContent as DropdownMenuContent,
+  RelayDropdownMenuItem as DropdownMenuItem
 } from 'dashboard/components-next/relay';
 import RelayDatePicker from 'dashboard/components-next/relay/calendar/DatePicker.vue';
 import RelayTimePicker from 'dashboard/components-next/relay/calendar/TimePicker.vue';
+import { defaultSmsTemplates, defaultEmailTemplates, defaultWhatsAppTemplates } from './data/outreachTemplates';
 
 const props = defineProps({
   open: {
@@ -80,9 +87,8 @@ const defaultFormState = {
   scheduleDate: '',
   scheduleTime: '09:00 AM',
   scheduleTimezone: getUserTimezone(),
-  message: 'Hi {{FirstName}},\n\nThank you for choosing us!\n\nWould you mind sharing your experience?\n\n⭐ Leave your review here:\n{{ReviewLink}}\n\nIt only takes one minute.\n\nThank you ❤️',
   tone: 'Friendly',
-  destinations: ['Google']
+  destination: 'Google'
 };
 
 const axios = window.axios;
@@ -95,6 +101,107 @@ const searchQuery = ref('');
 const activeFilter = ref('Recent Customers');
 const selectedCompanyFilter = ref('');
 const loadingContacts = ref(false);
+
+// --- Step 3: per-channel message composition ---
+const previewChannel = ref('Email');
+const activeEditingChannel = ref('Email');
+const prebuiltSms = defaultSmsTemplates;
+const prebuiltEmail = defaultEmailTemplates;
+const prebuiltWhatsApp = defaultWhatsAppTemplates;
+const selectedSmsTemplateId = ref(defaultSmsTemplates[0].id);
+const selectedEmailTemplateId = ref(defaultEmailTemplates[0].id);
+const selectedWhatsAppTemplateId = ref(defaultWhatsAppTemplates[0].id);
+const smsMessage = ref(defaultSmsTemplates[0].message);
+const emailSubject = ref(defaultEmailTemplates[0].subject);
+const emailBody = ref(defaultEmailTemplates[0].body);
+const whatsappHeader = ref(defaultWhatsAppTemplates[0].headerText);
+const whatsappBody = ref(defaultWhatsAppTemplates[0].bodyText);
+const whatsappButton1 = ref(defaultWhatsAppTemplates[0].button1);
+const whatsappButton2 = ref(defaultWhatsAppTemplates[0].button2);
+const isAiEnhancing = ref(false);
+
+const currentChannelTemplates = computed(() => {
+  if (activeEditingChannel.value === 'SMS') return prebuiltSms;
+  if (activeEditingChannel.value === 'Email') return prebuiltEmail;
+  return prebuiltWhatsApp;
+});
+const currentActiveTemplateId = computed(() => {
+  if (activeEditingChannel.value === 'SMS') return selectedSmsTemplateId.value;
+  if (activeEditingChannel.value === 'Email') return selectedEmailTemplateId.value;
+  return selectedWhatsAppTemplateId.value;
+});
+const currentActiveTemplateName = computed(() => {
+  const found = currentChannelTemplates.value.find(t => t.id === currentActiveTemplateId.value);
+  return found ? found.name : 'Select a template…';
+});
+
+const fillVars = text => (text || '')
+  .replaceAll('{{FirstName}}', 'Sarah')
+  .replaceAll('{{BusinessName}}', 'New Relay')
+  .replaceAll('{{ReviewLink}}', 'newrelay.com/r/abc123')
+  .replaceAll('{{EmployeeName}}', 'Alex');
+const formattedEmailSubject = computed(() => fillVars(emailSubject.value));
+const formattedEmailBody = computed(() => fillVars(emailBody.value));
+const formattedSmsBody = computed(() => fillVars(smsMessage.value));
+const formattedWhatsAppHeader = computed(() => fillVars(whatsappHeader.value));
+const formattedWhatsAppBody = computed(() => fillVars(whatsappBody.value));
+
+function getChannelIcon(channel) {
+  if (channel === 'WhatsApp') return MessageCircle;
+  if (channel === 'Email') return Mail;
+  return Smartphone;
+}
+function selectTemplate(template, channel) {
+  if (channel === 'SMS') {
+    selectedSmsTemplateId.value = template.id;
+    smsMessage.value = template.message;
+  } else if (channel === 'Email') {
+    selectedEmailTemplateId.value = template.id;
+    emailSubject.value = template.subject;
+    emailBody.value = template.body;
+  } else {
+    selectedWhatsAppTemplateId.value = template.id;
+    whatsappHeader.value = template.headerText;
+    whatsappBody.value = template.bodyText;
+    whatsappButton1.value = template.button1;
+    whatsappButton2.value = template.button2;
+  }
+}
+function insertVariable(variable) {
+  if (activeEditingChannel.value === 'SMS') smsMessage.value += ` ${variable}`;
+  else if (activeEditingChannel.value === 'Email') emailBody.value += ` ${variable}`;
+  else whatsappBody.value += ` ${variable}`;
+}
+function enhanceWithAi() {
+  isAiEnhancing.value = true;
+  setTimeout(() => {
+    if (activeEditingChannel.value === 'SMS') {
+      smsMessage.value = 'Hi {{FirstName}}! We loved serving you at {{BusinessName}}. Could you share a quick 30-second review to help others find us? ⭐ {{ReviewLink}}';
+    } else if (activeEditingChannel.value === 'Email') {
+      emailSubject.value = '{{FirstName}}, how was your recent visit to {{BusinessName}}?';
+      emailBody.value = 'Hi {{FirstName}},\n\nThank you for choosing {{BusinessName}}! Our team takes immense pride in delivering top-quality service. If you had a positive experience with {{EmployeeName}}, we would be thrilled if you left us a quick review.\n\n⭐ Leave your review here:\n{{ReviewLink}}\n\nIt only takes one minute.\n\nWarm regards,\nThe {{BusinessName}} Team';
+    } else {
+      whatsappHeader.value = 'Hi {{FirstName}} 👋';
+      whatsappBody.value = 'Thank you for visiting {{BusinessName}} today! We hope everything went wonderfully. Tap below to share a quick 5-star review:\n\n{{ReviewLink}}';
+    }
+    isAiEnhancing.value = false;
+  }, 600);
+}
+// Compose the outgoing message text for a given channel.
+function messageForChannel(ch) {
+  if (ch === 'SMS') return smsMessage.value;
+  if (ch === 'WhatsApp') return `${whatsappHeader.value}\n\n${whatsappBody.value}`;
+  return `${emailSubject.value}\n\n${emailBody.value}`;
+}
+// Filled-in preview of the primary channel's message for the review step.
+const reviewPreview = computed(() => fillVars(messageForChannel(form.value.channels[0] || 'Email')));
+
+// Keep the editing/preview channel valid as the channel selection changes.
+watch(() => form.value.channels, channels => {
+  if (!channels.length) return;
+  if (!channels.includes(previewChannel.value)) previewChannel.value = channels[0];
+  if (!channels.includes(activeEditingChannel.value)) activeEditingChannel.value = channels[0];
+}, { deep: true, immediate: true });
 
 const filters = ['Recent Customers', 'Completed Jobs', 'Closed Deals', 'Positive Feedback', 'Appointment Completed', 'Invoice Paid'];
 
@@ -234,14 +341,6 @@ watch(() => form.value.channels, () => {
   form.value.selectedCustomers = form.value.selectedCustomers.filter(id => validIds.has(id));
 }, { deep: true });
 
-const previewMessage = computed(() => {
-  return form.value.message
-    .replace('{{FirstName}}', 'Sarah')
-    .replace('{{BusinessName}}', 'New Relay')
-    .replace('{{ReviewLink}}', 'newrelay.com/r/abc123')
-    .replace('{{EmployeeName}}', 'Alex');
-});
-
 // Channels need email or a phone number; used for the picker and to validate recipients.
 const CHANNEL_META = [
   { name: 'WhatsApp', key: 'whatsapp', field: 'phone', icon: MessageCircle, color: 'text-emerald-500', bg: 'bg-emerald-50' },
@@ -306,18 +405,6 @@ function buildRecipients() {
 const tones = ['Friendly', 'Professional', 'Luxury', 'Casual'];
 const destinations = ['Google', 'Facebook', 'Trustpilot', 'Yelp', 'Custom Link'];
 
-// Each tone swaps the composed message to a matching preset (this is what "Tone" does).
-const TONE_PRESETS = {
-  Friendly: 'Hi {{FirstName}},\n\nThanks so much for choosing us! 😊\n\nWe’d love to hear how it went — it only takes a minute:\n{{ReviewLink}}\n\nThank you!',
-  Professional: 'Dear {{FirstName}},\n\nThank you for your business. We value your feedback and would appreciate a brief review of your experience:\n{{ReviewLink}}\n\nKind regards,\n{{BusinessName}}',
-  Luxury: 'Dear {{FirstName}},\n\nIt was our pleasure to serve you. We would be honoured if you shared a few words about your experience:\n{{ReviewLink}}\n\nWith gratitude,\n{{BusinessName}}',
-  Casual: 'Hey {{FirstName}}! 👋\n\nHope you loved it! Mind dropping us a quick review?\n{{ReviewLink}}\n\nThanks a ton!',
-};
-function applyTone(tone) {
-  form.value.tone = tone;
-  form.value.message = TONE_PRESETS[tone] || form.value.message;
-}
-
 function toggleSelection(array, item) {
   const index = array.indexOf(item);
   if (index === -1) array.push(item);
@@ -352,8 +439,8 @@ async function generateReport() {
       channel: (form.value.channels[0] || 'Email').toLowerCase(),
       contact_ids: contactIds,
       recipients,
-      message: form.value.message,
-      destinations: form.value.destinations,
+      message: messageForChannel(form.value.channels[0] || 'Email'),
+      destinations: [form.value.destination],
       scheduled_at: scheduledAt,
     });
   } catch (err) {
@@ -370,11 +457,13 @@ function close() {
     form.value = { ...defaultFormState };
     form.value.selectedCustomers = [];
     form.value.channels = ['Email'];
-    form.value.destinations = ['Google'];
+    form.value.destination = 'Google';
     selectedCompanyFilter.value = '';
     searchQuery.value = '';
     showCompanyMenu.value = false;
     companySearch.value = '';
+    activeEditingChannel.value = 'Email';
+    previewChannel.value = 'Email';
   }, 300);
 }
 </script>
@@ -618,85 +707,291 @@ function close() {
           </div>
         </div>
 
-        <!-- STEP 3: Customize Request -->
-        <div v-if="currentStep === 3" class="flex-1 flex animate-in slide-in-from-right-4 duration-300 min-h-[450px]">
+        <!-- STEP 3: Customize Request & Select Pre-built Templates -->
+        <div v-if="currentStep === 3" class="flex-1 flex flex-col lg:flex-row animate-in slide-in-from-right-4 duration-300 min-h-[450px] overflow-hidden">
           <!-- Editor Side -->
-          <div class="flex-1 p-6 space-y-6 overflow-y-auto">
-            <div class="flex items-center justify-between">
-              <h3 class="text-sm font-semibold text-foreground uppercase tracking-wider">Message Content</h3>
-              <button class="h-8 px-3 text-xs font-semibold gap-1.5 bg-primary/10 text-primary border border-primary/20 hover:bg-primary/20 rounded-lg inline-flex items-center cursor-pointer">
-                <Sparkles class="size-3.5" /> Improve Message
-              </button>
-            </div>
-            
-            <textarea 
-              v-model="form.message"
-              class="w-full h-64 p-3 text-[14px] shadow-xs rounded-md border border-border/80 bg-background resize-none focus:outline-none focus:ring-1 focus:ring-primary/30"
-            ></textarea>
-            
-            <div class="space-y-3">
-              <p class="text-xs font-medium text-muted-foreground uppercase tracking-wider">Variables</p>
-              <div class="flex flex-wrap gap-2">
-                <Badge v-for="v in ['{{FirstName}}', '{{BusinessName}}', '{{ReviewLink}}', '{{EmployeeName}}']" :key="v" class="font-mono text-xs cursor-pointer bg-muted hover:bg-primary/20 text-foreground">
-                  {{ v }}
-                </Badge>
-              </div>
-            </div>
-
-            <div class="space-y-3">
-              <p class="text-xs font-medium text-muted-foreground uppercase tracking-wider">Tone</p>
-              <div class="flex flex-wrap gap-2">
+          <div class="flex-1 p-5 sm:p-6 space-y-5 overflow-y-auto">
+            <!-- Channel switcher (when multiple channels chosen) -->
+            <div v-if="form.channels.length > 1" class="flex items-center justify-between gap-3 pb-3 border-b border-border">
+              <span class="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Configure Channel:</span>
+              <div class="flex items-center gap-1.5">
                 <button
-                  v-for="tone in tones" :key="tone" type="button"
-                  class="px-3 py-1.5 rounded-lg border text-xs transition-colors"
-                  :class="form.tone === tone ? 'bg-primary/10 border-primary text-primary font-medium' : 'bg-card border-border hover:bg-muted text-muted-foreground'"
-                  @click="applyTone(tone)"
+                  v-for="ch in form.channels" :key="ch" type="button"
+                  class="px-3 py-1.5 rounded-lg border text-xs font-medium cursor-pointer transition-colors flex items-center gap-1.5"
+                  :class="activeEditingChannel === ch ? 'bg-primary/10 border-primary text-primary font-semibold' : 'bg-card border-border hover:bg-muted text-muted-foreground'"
+                  @click="activeEditingChannel = ch; previewChannel = ch"
                 >
-                  {{ tone }}
+                  <component :is="getChannelIcon(ch)" class="size-3.5" />
+                  <span>{{ ch }}</span>
                 </button>
               </div>
             </div>
 
-            <div class="space-y-3">
-              <p class="text-xs font-medium text-muted-foreground uppercase tracking-wider">Review Destination</p>
-              <div class="flex flex-wrap gap-2">
-                <button
-                  v-for="dest in destinations" :key="dest" type="button"
-                  class="px-3 py-1.5 rounded-lg border text-xs inline-flex items-center gap-1.5 transition-colors"
-                  :class="form.destinations.includes(dest) ? 'bg-primary/10 border-primary text-primary font-medium' : 'bg-card border-border hover:bg-muted text-muted-foreground'"
-                  @click="toggleSelection(form.destinations, dest)"
-                >
-                  <Check v-if="form.destinations.includes(dest)" class="size-3" />
-                  {{ dest }}
-                </button>
+            <!-- Pre-built template selector (channel-aware) -->
+            <div class="bg-muted/20 border border-border rounded-xl p-4 space-y-2">
+              <div class="flex items-center justify-between">
+                <label class="text-[13.5px] font-medium text-foreground flex items-center gap-1.5">
+                  <LayoutTemplate class="size-4 text-primary" />
+                  Select Pre-built {{ activeEditingChannel }} Template
+                </label>
+                <Badge class="text-[11px] font-normal text-muted-foreground py-0.5 bg-muted">{{ currentChannelTemplates.length }} templates</Badge>
+              </div>
+              <DropdownMenu>
+                <DropdownMenuTrigger as-child>
+                  <button type="button" class="h-9 px-3 text-[13.5px] bg-background border border-border/80 rounded-md text-foreground flex items-center justify-between shadow-xs hover:border-border focus-visible:ring-1 focus-visible:ring-primary/30 outline-none w-full text-left cursor-pointer transition-all">
+                    <div class="flex items-center gap-2.5 truncate">
+                      <div class="size-2 rounded-full bg-primary shrink-0"></div>
+                      <span class="truncate font-medium">{{ currentActiveTemplateName }}</span>
+                    </div>
+                    <ChevronDown class="size-3.5 opacity-50 ml-2 shrink-0" />
+                  </button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent class="w-[360px] max-h-[320px] overflow-y-auto" align="start">
+                  <DropdownMenuItem v-for="t in currentChannelTemplates" :key="t.id" class="flex items-center justify-between py-2 px-3 cursor-pointer" @click="selectTemplate(t, activeEditingChannel)">
+                    <div class="flex flex-col gap-0.5 min-w-0 pr-2">
+                      <span class="text-[13px] font-medium text-foreground truncate">{{ t.name }}</span>
+                      <span class="text-[11px] text-muted-foreground truncate">{{ t.autoDelay }}</span>
+                    </div>
+                    <Check v-if="currentActiveTemplateId === t.id" class="size-4 text-primary shrink-0" />
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
+
+            <!-- Email editor -->
+            <template v-if="activeEditingChannel === 'Email'">
+              <div class="space-y-4">
+                <div class="flex flex-col gap-1.5">
+                  <label class="text-[13.5px] font-medium text-foreground">Email Subject Line</label>
+                  <Input v-model="emailSubject" class="h-9 text-[14px]" />
+                </div>
+                <div class="flex flex-col gap-2">
+                  <div class="flex items-center justify-between">
+                    <label class="text-[13.5px] font-medium text-foreground">Email Body Copy</label>
+                    <button type="button" class="h-7 px-2.5 gap-1.5 bg-primary/5 text-primary border border-primary/20 hover:bg-primary/10 rounded-lg text-xs font-semibold inline-flex items-center cursor-pointer disabled:opacity-60" :disabled="isAiEnhancing" @click="enhanceWithAi">
+                      <Sparkles class="size-3.5" :class="isAiEnhancing ? 'animate-spin' : ''" />
+                      {{ isAiEnhancing ? 'Enhancing…' : 'Improve with Relay AI' }}
+                    </button>
+                  </div>
+                  <textarea v-model="emailBody" rows="5" class="w-full text-[13.5px] p-3.5 shadow-xs rounded-xl border border-border/80 bg-background resize-none focus:outline-none focus:ring-1 focus:ring-primary/30 leading-relaxed"></textarea>
+                </div>
+              </div>
+            </template>
+
+            <!-- SMS editor -->
+            <template v-else-if="activeEditingChannel === 'SMS'">
+              <div class="space-y-4">
+                <div class="flex flex-col gap-2">
+                  <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                      <label class="text-[13.5px] font-medium text-foreground">SMS Message Content</label>
+                      <span class="text-[11.5px] text-muted-foreground font-mono">({{ smsMessage.length }} / 160 chars)</span>
+                    </div>
+                    <button type="button" class="h-7 px-2.5 gap-1.5 bg-primary/5 text-primary border border-primary/20 hover:bg-primary/10 rounded-lg text-xs font-semibold inline-flex items-center cursor-pointer disabled:opacity-60" :disabled="isAiEnhancing" @click="enhanceWithAi">
+                      <Sparkles class="size-3.5" :class="isAiEnhancing ? 'animate-spin' : ''" />
+                      {{ isAiEnhancing ? 'Enhancing…' : 'Improve with Relay AI' }}
+                    </button>
+                  </div>
+                  <textarea v-model="smsMessage" rows="4" class="w-full text-[13.5px] p-3.5 shadow-xs rounded-xl border border-border/80 bg-background resize-none focus:outline-none focus:ring-1 focus:ring-primary/30 leading-relaxed"></textarea>
+                </div>
+              </div>
+            </template>
+
+            <!-- WhatsApp editor -->
+            <template v-else>
+              <div class="space-y-4">
+                <div class="flex flex-col gap-1.5">
+                  <label class="text-[13.5px] font-medium text-foreground">WhatsApp Header Greeting</label>
+                  <Input v-model="whatsappHeader" class="h-9 text-[14px]" />
+                </div>
+                <div class="flex flex-col gap-2">
+                  <div class="flex items-center justify-between">
+                    <label class="text-[13.5px] font-medium text-foreground">WhatsApp Body Content</label>
+                    <button type="button" class="h-7 px-2.5 gap-1.5 bg-primary/5 text-primary border border-primary/20 hover:bg-primary/10 rounded-lg text-xs font-semibold inline-flex items-center cursor-pointer disabled:opacity-60" :disabled="isAiEnhancing" @click="enhanceWithAi">
+                      <Sparkles class="size-3.5" :class="isAiEnhancing ? 'animate-spin' : ''" />
+                      {{ isAiEnhancing ? 'Enhancing…' : 'Improve with Relay AI' }}
+                    </button>
+                  </div>
+                  <textarea v-model="whatsappBody" rows="4" class="w-full text-[13.5px] p-3.5 shadow-xs rounded-xl border border-border/80 bg-background resize-none focus:outline-none focus:ring-1 focus:ring-primary/30 leading-relaxed"></textarea>
+                </div>
+              </div>
+            </template>
+
+            <!-- Insert variables -->
+            <div class="space-y-2">
+              <p class="text-[11px] font-medium text-muted-foreground uppercase tracking-wider">Insert Variables</p>
+              <div class="flex flex-wrap gap-1.5">
+                <Badge v-for="v in ['{{FirstName}}', '{{BusinessName}}', '{{ReviewLink}}', '{{EmployeeName}}']" :key="v" class="font-mono text-[11px] cursor-pointer bg-muted hover:bg-primary/20 text-foreground" @click="insertVariable(v)">{{ v }}</Badge>
+              </div>
+            </div>
+
+            <!-- Tone & destination -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4 border-t border-border">
+              <div class="space-y-2.5">
+                <p class="text-[11px] font-medium text-muted-foreground uppercase tracking-wider">Tone</p>
+                <div class="grid grid-cols-2 gap-1.5">
+                  <div v-for="tone in tones" :key="tone" class="px-2.5 py-1.5 rounded-lg border text-xs text-center cursor-pointer transition-colors" :class="form.tone === tone ? 'bg-primary/10 border-primary text-primary font-semibold' : 'bg-card border-border hover:bg-muted text-muted-foreground'" @click="form.tone = tone">{{ tone }}</div>
+                </div>
+              </div>
+              <div class="space-y-2.5">
+                <p class="text-[11px] font-medium text-muted-foreground uppercase tracking-wider">Review Destination</p>
+                <div class="flex flex-wrap gap-1.5">
+                  <button v-for="dest in destinations" :key="dest" type="button" class="px-3 py-1.5 rounded-full border text-xs cursor-pointer transition-all flex items-center gap-1.5" :class="form.destination === dest ? 'bg-primary/10 border-primary text-primary font-semibold shadow-xs' : 'bg-card border-border hover:bg-muted text-muted-foreground'" @click="form.destination = dest">
+                    <Check v-if="form.destination === dest" class="size-3 shrink-0 text-primary" />
+                    <span>{{ dest }}</span>
+                  </button>
+                </div>
               </div>
             </div>
           </div>
-          
-          <!-- Preview Side (Mobile Phone Mockup) -->
-          <div class="w-[380px] bg-muted/20 border-l border-border p-8 flex items-center justify-center shrink-0">
-            <div class="w-[280px] h-[480px] bg-card rounded-[40px] border-[8px] border-border shadow-2xl relative overflow-hidden flex flex-col">
-              <!-- Notch -->
-              <div class="absolute top-0 inset-x-0 h-6 flex justify-center z-10">
-                <div class="w-32 h-5 bg-border rounded-b-xl"></div>
-              </div>
-              <!-- Header -->
-              <div class="bg-muted pt-10 pb-3 px-4 flex items-center gap-3 border-b border-border shrink-0">
-                <div class="size-8 rounded-full bg-primary/15 text-primary flex items-center justify-center text-[11px] font-bold shrink-0">NR</div>
-                <div>
-                  <div class="text-xs font-semibold text-foreground">New Relay</div>
-                  <div class="text-[10px] text-muted-foreground">Business Account</div>
+
+          <!-- Preview Side (channel-tailored device preview) -->
+          <div class="w-full lg:w-[345px] bg-muted/40 border-t lg:border-t-0 lg:border-l border-border p-4 sm:p-5 flex flex-col items-center justify-center shrink-0 overflow-hidden relative">
+            <div class="absolute -top-12 -right-12 size-48 rounded-full bg-primary/10 blur-3xl pointer-events-none"></div>
+            <div class="absolute -bottom-12 -left-12 size-48 rounded-full bg-primary/10 blur-3xl pointer-events-none"></div>
+
+            <!-- Preview channel switcher -->
+            <div v-if="form.channels.length > 1" class="flex items-center gap-1 bg-card/80 backdrop-blur-md p-1 rounded-xl mb-3 border border-border/80 shadow-xs z-20">
+              <button v-for="ch in form.channels" :key="ch" type="button" class="px-2.5 py-1 text-[11px] font-semibold rounded-lg transition-all cursor-pointer" :class="previewChannel === ch ? 'bg-primary text-primary-foreground shadow-xs' : 'text-muted-foreground hover:text-foreground'" @click="previewChannel = ch; activeEditingChannel = ch">{{ ch }}</button>
+            </div>
+
+            <!-- Device frame -->
+            <div class="w-[260px] sm:w-[272px] h-[460px] bg-card rounded-[30px] shadow-2xl border border-border flex flex-col overflow-hidden relative z-10">
+              <!-- Status bar -->
+              <div class="pt-3 px-4 pb-1 flex items-center justify-between text-[10.5px] font-medium text-foreground/80 shrink-0 select-none">
+                <span class="font-semibold text-foreground">9:41</span>
+                <div class="flex items-center gap-1 text-foreground/70">
+                  <Signal class="size-2.5" />
+                  <Wifi class="size-2.5" />
+                  <div class="w-4 h-2 rounded-[2px] border border-foreground/70 p-0.5 flex items-center">
+                    <div class="h-full w-2 bg-foreground/80 rounded-[1px]"></div>
+                  </div>
                 </div>
               </div>
-              <!-- Chat Body -->
-              <div class="flex-1 bg-muted/40 p-4 overflow-y-auto space-y-4">
-                <div class="text-[10px] text-center text-muted-foreground font-medium my-2">Today 9:41 AM</div>
-                <div class="bg-primary text-primary-foreground rounded-2xl rounded-tl-sm p-3 text-[13px] shadow-xs whitespace-pre-wrap leading-relaxed max-w-[85%] relative pb-6">
-                  {{ previewMessage }}
-                  <div class="absolute right-2 bottom-1.5 text-[9px] text-primary-foreground/70">9:41 AM</div>
+
+              <!-- EMAIL preview -->
+              <div v-if="previewChannel === 'Email'" class="flex-1 flex flex-col overflow-hidden">
+                <div class="px-3.5 py-2 flex items-center justify-between border-b border-border/40 shrink-0 bg-muted/20">
+                  <div class="flex items-center gap-2">
+                    <ChevronLeft class="size-4 text-primary shrink-0" />
+                    <span class="text-xs font-semibold text-foreground">Inbox</span>
+                  </div>
+                  <div class="flex items-center gap-2 text-muted-foreground">
+                    <Archive class="size-3.5" /><Trash2 class="size-3.5" /><MoreVertical class="size-3.5" />
+                  </div>
+                </div>
+                <div class="flex-1 overflow-y-auto p-3 space-y-2.5 hide-scrollbar bg-muted/30">
+                  <div class="space-y-1 pb-2 border-b border-border/40">
+                    <div class="text-[12px] font-bold text-foreground leading-tight">{{ formattedEmailSubject }}</div>
+                    <div class="flex items-center justify-between pt-1">
+                      <div class="flex items-center gap-2 min-w-0">
+                        <div class="size-6 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold text-[10px] shrink-0">NR</div>
+                        <div class="min-w-0">
+                          <div class="text-[11px] font-semibold text-foreground truncate">New Relay</div>
+                          <div class="text-[9px] text-muted-foreground truncate">to sarah.j@gmail.com</div>
+                        </div>
+                      </div>
+                      <span class="text-[9px] text-muted-foreground shrink-0">9:41 AM</span>
+                    </div>
+                  </div>
+                  <div class="p-3 bg-card border border-border/60 rounded-2xl shadow-xs space-y-3">
+                    <div class="text-[11.5px] leading-relaxed whitespace-pre-wrap text-foreground">{{ formattedEmailBody }}</div>
+                    <div class="pt-1">
+                      <div class="p-2.5 rounded-xl bg-primary/10 border border-primary/20 text-center space-y-2">
+                        <div class="text-[11px] font-semibold text-primary">Rate on {{ form.destination }}</div>
+                        <div class="flex justify-center gap-1 text-amber-500">
+                          <Star v-for="s in 5" :key="s" class="size-3.5 fill-amber-500 text-amber-500" />
+                        </div>
+                        <div class="w-full py-1.5 rounded-lg bg-primary text-primary-foreground text-[10.5px] font-semibold flex items-center justify-center gap-1 shadow-xs">
+                          <span>Leave {{ form.destination }} Review</span><ExternalLink class="size-2.5" />
+                        </div>
+                      </div>
+                    </div>
+                    <div class="text-[8.5px] text-center text-muted-foreground border-t border-border/40 pt-2">New Relay Inc. · 123 Innovation Way · Unsubscribe</div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- WHATSAPP preview -->
+              <div v-else-if="previewChannel === 'WhatsApp'" class="flex-1 flex flex-col overflow-hidden">
+                <div class="px-3 py-2 bg-emerald-600 dark:bg-emerald-700 text-white flex items-center justify-between shrink-0 shadow-xs">
+                  <div class="flex items-center gap-2 min-w-0">
+                    <ChevronLeft class="size-4 shrink-0" />
+                    <div class="size-7 rounded-full bg-white/20 text-white flex items-center justify-center font-bold text-[10.5px] shrink-0 border border-white/30">NR</div>
+                    <div class="min-w-0">
+                      <div class="flex items-center gap-1">
+                        <span class="text-xs font-semibold truncate text-white">New Relay</span>
+                        <CheckCircle2 class="size-3 text-emerald-200 shrink-0" />
+                      </div>
+                      <span class="text-[9px] text-emerald-100 block truncate">Official Business Account</span>
+                    </div>
+                  </div>
+                  <div class="flex items-center gap-2.5 text-white/90"><Video class="size-3.5" /><Phone class="size-3.5" /><MoreVertical class="size-3.5" /></div>
+                </div>
+                <div class="flex-1 overflow-y-auto p-3 space-y-2.5 bg-muted/40 hide-scrollbar">
+                  <div class="flex justify-center"><span class="text-[9px] bg-card text-muted-foreground px-2 py-0.5 rounded-md shadow-xs font-medium">Today</span></div>
+                  <div class="space-y-1.5 max-w-[94%]">
+                    <div class="bg-card text-foreground rounded-2xl rounded-tl-xs p-3 shadow-xs border border-border/40 text-xs space-y-2">
+                      <div class="text-[12px] font-semibold text-foreground">{{ formattedWhatsAppHeader }}</div>
+                      <div class="text-[11.5px] leading-relaxed whitespace-pre-wrap text-foreground">{{ formattedWhatsAppBody }}</div>
+                      <div class="p-2 bg-emerald-500/10 border border-emerald-500/20 rounded-xl space-y-1">
+                        <div class="flex items-center justify-between gap-1">
+                          <span class="text-[10px] font-semibold text-foreground truncate">Rate on {{ form.destination }}</span>
+                          <div class="flex gap-0.5 text-amber-500 shrink-0"><Star v-for="s in 5" :key="s" class="size-2 fill-amber-500 text-amber-500" /></div>
+                        </div>
+                        <div class="text-[9px] font-mono text-emerald-600 dark:text-emerald-400 flex items-center gap-1 truncate"><span>newrelay.com/r/abc123</span><ExternalLink class="size-2 shrink-0" /></div>
+                      </div>
+                      <div class="flex items-center justify-end gap-1 text-[8.5px] text-muted-foreground"><span>9:41 AM</span><span class="text-primary font-bold">✓✓</span></div>
+                    </div>
+                    <div class="space-y-1">
+                      <div class="w-full py-1.5 rounded-xl bg-card border border-border/60 text-[10.5px] font-semibold text-emerald-600 dark:text-emerald-400 text-center shadow-xs">{{ whatsappButton1 }}</div>
+                      <div class="w-full py-1.5 rounded-xl bg-card border border-border/60 text-[10.5px] font-semibold text-muted-foreground text-center shadow-xs">{{ whatsappButton2 }}</div>
+                    </div>
+                  </div>
+                </div>
+                <div class="p-2 bg-card border-t border-border/40 flex items-center gap-1.5 shrink-0">
+                  <Smile class="size-4 text-muted-foreground shrink-0" />
+                  <div class="flex-1 h-6 bg-muted/60 rounded-full px-2.5 text-[9.5px] text-muted-foreground flex items-center truncate">Message</div>
+                  <Paperclip class="size-3.5 text-muted-foreground shrink-0" />
+                  <div class="size-6 rounded-full bg-emerald-600 text-white flex items-center justify-center shrink-0 shadow-xs"><Mic class="size-2.5" /></div>
+                </div>
+              </div>
+
+              <!-- SMS preview -->
+              <div v-else class="flex-1 flex flex-col overflow-hidden">
+                <div class="px-3.5 py-2 flex items-center justify-between border-b border-border/40 shrink-0 bg-muted/20">
+                  <div class="flex items-center gap-1 text-primary"><ChevronLeft class="size-4 shrink-0" /><span class="text-[11px] font-medium">Messages</span></div>
+                  <div class="flex flex-col items-center">
+                    <div class="size-6 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold text-[9px]">NR</div>
+                    <span class="text-[9.5px] font-semibold text-foreground">New Relay</span>
+                  </div>
+                  <Info class="size-3.5 text-primary shrink-0" />
+                </div>
+                <div class="flex-1 overflow-y-auto p-3 space-y-2.5 bg-muted/30 hide-scrollbar">
+                  <div class="text-[9.5px] text-center text-muted-foreground font-medium">Text Message · Today 9:41 AM</div>
+                  <div class="space-y-1 max-w-[94%]">
+                    <div class="bg-primary text-primary-foreground rounded-2xl rounded-tl-xs p-3 shadow-xs text-xs space-y-2">
+                      <div class="text-[11.5px] leading-relaxed whitespace-pre-wrap">{{ formattedSmsBody }}</div>
+                      <div class="p-2 bg-white/15 border border-white/20 rounded-xl space-y-1 text-primary-foreground">
+                        <div class="flex items-center justify-between gap-1">
+                          <span class="text-[10px] font-semibold truncate">Rate on {{ form.destination }}</span>
+                          <div class="flex gap-0.5 text-amber-300 shrink-0"><Star v-for="s in 5" :key="s" class="size-2 fill-amber-300 text-amber-300" /></div>
+                        </div>
+                        <div class="text-[9px] font-mono opacity-90 flex items-center gap-1 truncate"><span>newrelay.com/r/abc123</span><ExternalLink class="size-2 shrink-0" /></div>
+                      </div>
+                    </div>
+                    <div class="text-[8.5px] text-right text-muted-foreground px-1">Delivered</div>
+                  </div>
+                </div>
+                <div class="p-2 bg-card border-t border-border/40 flex items-center gap-1.5 shrink-0">
+                  <div class="size-5 rounded-full bg-muted flex items-center justify-center text-muted-foreground font-bold text-xs shrink-0">+</div>
+                  <div class="flex-1 h-6 bg-muted/60 rounded-full px-2.5 text-[9.5px] text-muted-foreground flex items-center truncate">Text Message</div>
+                  <div class="size-6 rounded-full bg-primary text-primary-foreground flex items-center justify-center shrink-0 shadow-xs"><Send class="size-2.5" /></div>
                 </div>
               </div>
             </div>
+
+            <div class="text-center mt-2.5"><span class="text-[11px] text-muted-foreground font-medium">{{ previewChannel }} Outreach Preview</span></div>
           </div>
         </div>
 
@@ -749,7 +1044,7 @@ function close() {
                   <div>
                     <div class="text-xs text-muted-foreground mb-0.5">Review Platform</div>
                     <div class="text-sm font-medium text-foreground">
-                      {{ form.destinations.join(', ') || 'Auto-optimized' }}
+                      {{ form.destination || 'Auto-optimized' }}
                     </div>
                   </div>
                 </div>
@@ -776,7 +1071,7 @@ function close() {
                 </div>
                 <div class="p-5 flex-1 overflow-y-auto">
                   <div class="bg-card border border-border rounded-2xl rounded-tl-sm p-4 text-[14px] shadow-xs whitespace-pre-wrap leading-relaxed inline-block max-w-[95%] text-left">
-                    {{ previewMessage }}
+                    {{ reviewPreview }}
                   </div>
                 </div>
               </div>

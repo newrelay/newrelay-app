@@ -5,14 +5,11 @@ import {
   CONVERSATION_PERMISSIONS,
 } from 'dashboard/constants/permissions.js';
 import Policy from 'dashboard/components/policy.vue';
-import SectionLayout from '../account/components/SectionLayout.vue';
 import BaseSettingsHeader from '../components/BaseSettingsHeader.vue';
 import NotificationPreferences from '../profile/NotificationPreferences.vue';
-import AudioNotifications from '../profile/AudioNotifications.vue';
 
 const { t } = useI18n();
 
-const audioNotificationPermissions = [...ROLES, ...CONVERSATION_PERMISSIONS];
 const notificationPermissions = [...ROLES, ...CONVERSATION_PERMISSIONS];
 </script>
 
@@ -25,10 +22,6 @@ const notificationPermissions = [...ROLES, ...CONVERSATION_PERMISSIONS];
 
     <Policy :permissions="notificationPermissions">
       <NotificationPreferences />
-    </Policy>
-
-    <Policy :permissions="audioNotificationPermissions">
-      <AudioNotifications />
     </Policy>
   </div>
 </template>

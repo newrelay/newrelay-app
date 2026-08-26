@@ -307,9 +307,6 @@ export default {
     >
       <MfaSettingsCard />
     </SectionLayout>
-    <Policy :permissions="audioNotificationPermissions">
-      <AudioNotifications />
-    </Policy>
     <Policy :permissions="notificationPermissions">
       <NotificationPreferences />
     </Policy>

@@ -478,13 +478,15 @@ function close() {
               <!-- click-away -->
               <div v-if="showCompanyMenu" class="fixed inset-0 z-10" @click="showCompanyMenu = false"></div>
             </div>
-            <p v-if="excludedCount > 0" class="text-[11px] text-muted-foreground pt-2 border-t border-border">
-              {{ excludedCount }} contact{{ excludedCount === 1 ? '' : 's' }} hidden — no {{ channelRequirementText }} for the selected channel.
-            </p>
           </div>
 
           <!-- Main Content -->
           <div class="flex-1 p-6 flex flex-col">
+            <!-- Channel-eligibility notice -->
+            <div v-if="excludedCount > 0" class="mb-4 flex items-center gap-2 px-4 py-2.5 rounded-lg bg-destructive/10 border border-destructive/20 text-destructive text-xs">
+              <AlertCircle class="size-4 shrink-0" />
+              <span><strong>{{ excludedCount }} contact{{ excludedCount === 1 ? '' : 's' }}</strong> without {{ channelRequirementText }} {{ excludedCount === 1 ? 'has' : 'have' }} been removed for the selected channel.</span>
+            </div>
             <div class="flex items-center justify-between mb-4">
               <div class="relative w-full max-w-md">
                 <Search class="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
@@ -511,14 +513,13 @@ function close() {
                   <Check v-if="form.selectedCustomers.includes(customer.id)" class="size-3" />
                 </div>
                 <div class="flex-1 min-w-0">
-                  <div class="font-medium text-foreground text-sm truncate">{{ customer.name }}</div>
+                  <div class="flex items-start justify-between gap-2">
+                    <div class="font-medium text-foreground text-sm truncate">{{ customer.name }}</div>
+                    <span v-if="customer.company" class="shrink-0 max-w-[45%] truncate text-[10px] px-1.5 py-0.5 rounded-md bg-muted text-muted-foreground font-medium">{{ customer.company }}</span>
+                  </div>
                   <div class="flex items-center text-xs mt-1 text-muted-foreground gap-1.5">
                     <span>{{ customer.contextLabel }}</span>
                     <span class="font-medium text-foreground truncate">{{ customer.contextValue }}</span>
-                  </div>
-                  <div v-if="customer.company" class="flex items-center gap-1 text-[11px] text-muted-foreground mt-0.5 truncate">
-                    <Building2 class="size-3 opacity-70 shrink-0" />
-                    <span class="truncate">{{ customer.company }}</span>
                   </div>
                 </div>
               </div>
@@ -529,7 +530,10 @@ function close() {
         <!-- STEP 1: Choose Delivery Channel -->
         <div v-if="currentStep === 1" class="p-6 space-y-10 animate-in slide-in-from-right-4 duration-300">
           <div class="space-y-4">
-            <h3 class="text-sm font-semibold text-foreground uppercase tracking-wider">Delivery Channels (Multiple Allowed)</h3>
+            <div>
+              <h3 class="text-sm font-semibold text-foreground uppercase tracking-wider">Select Delivery Channels</h3>
+              <p class="text-[13px] text-muted-foreground mt-1">Choose which channels to send review requests on. The next step automatically shortlists contacts with the required details.</p>
+            </div>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div 
                 v-for="channel in channels" :key="channel.name"

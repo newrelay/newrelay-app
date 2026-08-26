@@ -5,11 +5,12 @@ import { RelayButton as Button, RelayBadge as Badge } from 'dashboard/components
 import {
   Star, TrendingUp, TrendingDown, MessageSquare, Bot,
   ArrowRight, MessageCircle, Link, Mail, StarHalf, Share2, Info, Trophy,
-  CheckCircle, Plus, ThumbsUp
+  CheckCircle, Plus, ThumbsUp, ChevronRight
 } from 'lucide-vue-next';
 
 import RequestReviewsModal from '../components/RequestReviewsModal.vue';
 import ShareReportModal from '../components/ShareReportModal.vue';
+import FeedbackBreakdownModal from '../components/FeedbackBreakdownModal.vue';
 import { isReputationDemoSurfacesEnabled } from 'dashboard/featureFlags';
 
 const axios = window.axios;
@@ -26,6 +27,7 @@ const showDemoSurfaces = computed(() =>
 
 const isShareModalOpen = ref(false);
 const isRequestModalOpen = ref(false);
+const isFeedbackModalOpen = ref(false);
 const loading = ref(true);
 const allReviews = ref([]);
 const integrations = ref([]);
@@ -216,6 +218,7 @@ function handleRequestReviews() {
   <div class="flex-1 overflow-y-auto w-full hide-scrollbar bg-background p-6 lg:p-8">
     <RequestReviewsModal v-model:open="isRequestModalOpen" />
     <ShareReportModal v-if="showDemoSurfaces" v-model:open="isShareModalOpen" />
+    <FeedbackBreakdownModal v-model:open="isFeedbackModalOpen" :reviews="allReviews" :show-demo="showDemoSurfaces" />
     
     <div class="max-w-7xl mx-auto space-y-6">
       <!-- Header matching AGENTS.md rule (h1 text-xl font-semibold text-foreground) -->
@@ -304,7 +307,7 @@ function handleRequestReviews() {
         </div>
 
         <!-- Overall Feedback (Real — positive share of reviews) -->
-        <div class="bg-card rounded-2xl border border-border shadow-xs p-5 relative overflow-hidden group hover:border-primary/50 transition-colors">
+        <div class="bg-card rounded-2xl border border-border shadow-xs p-5 relative overflow-hidden group hover:border-primary/50 transition-colors cursor-pointer" @click="isFeedbackModalOpen = true">
           <div class="flex justify-between items-start mb-4">
             <div>
               <p class="text-sm font-medium text-muted-foreground mb-1">Overall Feedback</p>
@@ -317,8 +320,11 @@ function handleRequestReviews() {
               <ThumbsUp class="size-5" />
             </div>
           </div>
-          <div class="flex items-center text-sm font-medium text-muted-foreground gap-1">
+          <div class="flex items-center justify-between text-sm font-medium text-muted-foreground gap-1">
             <span>{{ positiveCount.toLocaleString() }} of {{ totalReviews.toLocaleString() }} reviews</span>
+            <span class="text-[11.5px] font-medium text-primary hover:underline flex items-center gap-0.5">
+              View breakdown <ChevronRight class="size-3" />
+            </span>
           </div>
         </div>
       </div>

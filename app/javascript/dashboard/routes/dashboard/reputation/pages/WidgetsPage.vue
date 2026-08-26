@@ -164,12 +164,46 @@ const nextSlide = max => {
   }
 };
 
-onMounted(loadWidgets);
+// Real reviews power the widget preview; fall back to sample data only when
+// the account has no reviews yet (badged "Sample").
+const realReviews = ref([]);
+function relTime(dateStr) {
+  if (!dateStr) return '';
+  const days = Math.floor((Date.now() - new Date(dateStr).getTime()) / 86400000);
+  if (days <= 0) return 'Today';
+  if (days === 1) return '1 day ago';
+  if (days < 7) return `${days} days ago`;
+  const weeks = Math.floor(days / 7);
+  return weeks === 1 ? '1 week ago' : `${weeks} weeks ago`;
+}
+async function loadReviews() {
+  try {
+    const { data } = await axios.get(`/api/v1/accounts/${accountId}/reputation/reviews`);
+    realReviews.value = (data || []).map(r => ({
+      id: r.id,
+      rating: r.rating || 0,
+      reviewer_name: r.reviewer_name || r.author_name || 'Customer',
+      body: r.body || r.content || '',
+      provider: r.provider || 'google',
+      date: relTime(r.reviewed_at),
+    }));
+  } catch (err) {
+    realReviews.value = [];
+  }
+}
 
-// Filter mock reviews for preview
+onMounted(() => {
+  loadWidgets();
+  loadReviews();
+});
+
+const previewIsMock = computed(() => realReviews.value.length === 0);
+
+// Filter reviews for preview — real when available, else sample data.
 const previewReviewsList = computed(() => {
   if (!activeWidget.value) return [];
-  return mockReviews.filter(r => r.rating >= activeWidget.value.min_rating);
+  const source = previewIsMock.value ? mockReviews : realReviews.value;
+  return source.filter(r => r.rating >= activeWidget.value.min_rating);
 });
 </script>
 
@@ -420,9 +454,17 @@ const previewReviewsList = computed(() => {
               </p>
             </div>
             <span
-              class="px-2 py-0.5 rounded-lg text-[10px] uppercase font-bold bg-muted text-muted-foreground"
+              v-if="previewIsMock"
+              class="px-2 py-0.5 rounded-lg text-[10px] uppercase font-bold bg-amber-500/15 text-amber-600 dark:text-amber-400"
+              title="No reviews yet — showing sample data"
             >
-              Live Mockup
+              Sample Data
+            </span>
+            <span
+              v-else
+              class="px-2 py-0.5 rounded-lg text-[10px] uppercase font-bold bg-emerald-500/15 text-emerald-600 dark:text-emerald-400"
+            >
+              Your Reviews
             </span>
           </div>
 
@@ -533,7 +575,7 @@ const previewReviewsList = computed(() => {
               </div>
             </div>
             <div v-else class="text-xs text-muted-foreground text-center py-10">
-              No mockup reviews matching min {{ activeWidget.min_rating }}★
+              No reviews matching min {{ activeWidget.min_rating }}★
               filter.
             </div>
           </div>
@@ -588,7 +630,7 @@ const previewReviewsList = computed(() => {
               v-if="previewReviewsList.length === 0"
               class="text-xs text-muted-foreground text-center py-10"
             >
-              No mockup reviews matching min {{ activeWidget.min_rating }}★
+              No reviews matching min {{ activeWidget.min_rating }}★
               filter.
             </div>
           </div>

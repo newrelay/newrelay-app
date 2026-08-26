@@ -229,8 +229,16 @@ Reference diff captured before touching code so the same gap isn't re-found next
 - **RV3 Floating bulk pill:** reference puts bulk actions (Assign / AI Reply / Mark Resolved / Export
   / deselect) in a fixed centred pill at `bottom-10`; ours rendered them inline in the sub-header.
 - **RV4 Wire actions:** Request Reviews → existing `RequestReviewsModal` via `v-model:open`; Widget →
-  router push to `reputation_widgets` (we already own a full Widgets page — no need to port the
-  reference's 65 KB `ReviewWidgetModal`).
+  ported the reference's `ReviewWidgetModal` (Review Widget Studio) as
+  `reputation/components/ReviewWidgetModal.vue` and open it via `v-model:open`. It is a 4-tab studio
+  (Layout / Sources / Style / Embed) with a live device preview (mobile/tablet/desktop, light/dark
+  canvas) and generated HTML/iframe/React embed snippets. `Switch`/`Checkbox` → `RelaySwitch`/
+  `RelayCheckbox` (both `defineModel`, so `v-model`); `Button`/`Badge` → raw tokened elements to
+  match the page. The **preview canvas + code terminal keep fixed slate/white colors on purpose** —
+  they simulate an external website with its own light/dark theme (a `previewBg` toggle), so
+  semantic app tokens would wrongly follow the dashboard theme; same rationale as the QR/print/video
+  surfaces the token sweep left alone. Sample reviews/counts are showcase data (Reviews page is
+  demo-gated); no widget-config backend exists yet, so Save/Copy are client-only.
 - **Kept as-is:** list/grid/timeline card body + right details drawer already matched the reference.
   Added a real `sortAt` timestamp to `mapReview` so newest/oldest sort works on live data. Pagination
   arrows are decorative (client loads all reviews; no server paging) — count text is real.

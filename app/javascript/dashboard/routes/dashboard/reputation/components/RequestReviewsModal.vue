@@ -5,7 +5,7 @@ import {
   X, ChevronRight, Search, FileText, CheckCircle2,
   ArrowLeft, Send, Sparkles, MessageSquare,
   Mail, MessageCircle, Star, Smartphone,
-  Check, BarChart3,
+  Check, BarChart3, ChevronDown, Building2,
   Calendar, ChevronLeft, Users, Plus, AlertCircle, Globe
 } from 'lucide-vue-next';
 import {
@@ -180,6 +180,20 @@ const companyList = computed(() =>
   [...new Set(allCustomers.value.map(c => c.company).filter(Boolean))].sort()
 );
 
+// Searchable company dropdown state.
+const showCompanyMenu = ref(false);
+const companySearch = ref('');
+const filteredCompanyList = computed(() => {
+  const q = companySearch.value.toLowerCase();
+  return q ? companyList.value.filter(c => c.toLowerCase().includes(q)) : companyList.value;
+});
+const companyCount = comp => eligibleCustomers.value.filter(c => c.company === comp).length;
+function selectCompany(comp) {
+  selectedCompanyFilter.value = comp;
+  showCompanyMenu.value = false;
+  companySearch.value = '';
+}
+
 // A contact is eligible only if it has the field(s) the chosen channels need.
 function isCustomerEligible(customer) {
   if (!form.value.channels.length) return true;
@@ -353,6 +367,8 @@ function close() {
     form.value.destinations = ['Google'];
     selectedCompanyFilter.value = '';
     searchQuery.value = '';
+    showCompanyMenu.value = false;
+    companySearch.value = '';
   }, 300);
 }
 </script>
@@ -404,17 +420,57 @@ function close() {
             </div>
             <div class="pt-4 border-t border-border flex flex-col gap-1.5">
               <label class="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-1.5">Company</label>
-              <div class="relative h-9">
-                <select
-                  v-model="selectedCompanyFilter"
-                  :disabled="!companyList.length"
-                  class="w-full h-full px-3 text-sm shadow-xs rounded-md border border-border bg-background appearance-none focus:outline-none focus-visible:ring-1 focus-visible:ring-primary/30 cursor-pointer pr-9 font-medium text-foreground disabled:opacity-60 disabled:cursor-not-allowed"
+              <div class="relative z-20">
+                <button
+                  type="button"
+                  class="w-full h-9 px-3 text-sm shadow-xs rounded-md border bg-background flex items-center justify-between gap-2 cursor-pointer transition-colors"
+                  :class="selectedCompanyFilter ? 'border-primary/50 text-primary font-medium' : 'border-border text-foreground hover:bg-muted/50'"
+                  @click="showCompanyMenu = !showCompanyMenu"
                 >
-                  <option value="">{{ companyList.length ? 'All companies' : 'No companies on contacts' }}</option>
-                  <option v-for="company in companyList" :key="company" :value="company">{{ company }}</option>
-                </select>
-                <ChevronRight class="absolute right-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground pointer-events-none rotate-90" />
+                  <span class="truncate">{{ selectedCompanyFilter || 'All companies' }}</span>
+                  <ChevronDown class="size-4 text-muted-foreground shrink-0 transition-transform" :class="showCompanyMenu ? 'rotate-180' : ''" />
+                </button>
+
+                <div v-if="showCompanyMenu" class="absolute left-0 right-0 mt-1 rounded-lg border border-border bg-popover shadow-lg p-1.5">
+                  <div class="relative mb-1.5">
+                    <Search class="absolute left-2.5 top-1/2 -translate-y-1/2 size-3.5 text-muted-foreground" />
+                    <input
+                      v-model="companySearch"
+                      type="text"
+                      placeholder="Search company…"
+                      class="w-full h-8 pl-8 pr-2 text-xs rounded-md border border-border bg-background text-foreground focus:outline-none focus-visible:ring-1 focus-visible:ring-primary/30"
+                    />
+                  </div>
+                  <div class="max-h-52 overflow-y-auto space-y-0.5">
+                    <button
+                      type="button"
+                      class="w-full flex items-center justify-between px-2.5 py-1.5 text-xs rounded-md cursor-pointer hover:bg-muted/80 transition-colors"
+                      :class="!selectedCompanyFilter ? 'bg-primary/10 text-primary font-medium' : 'text-foreground'"
+                      @click="selectCompany('')"
+                    >
+                      <span>All companies</span>
+                      <Check v-if="!selectedCompanyFilter" class="size-3.5 text-primary" />
+                    </button>
+                    <button
+                      v-for="company in filteredCompanyList" :key="company"
+                      type="button"
+                      class="w-full flex items-center justify-between gap-2 px-2.5 py-1.5 text-xs rounded-md cursor-pointer hover:bg-muted/80 transition-colors"
+                      :class="selectedCompanyFilter === company ? 'bg-primary/10 text-primary font-medium' : 'text-foreground'"
+                      @click="selectCompany(company)"
+                    >
+                      <span class="flex items-center gap-2 min-w-0">
+                        <Building2 class="size-3.5 opacity-70 shrink-0" />
+                        <span class="truncate">{{ company }}</span>
+                      </span>
+                      <span class="text-[10.5px] px-1.5 py-0.5 rounded-full bg-muted text-muted-foreground font-medium shrink-0">{{ companyCount(company) }}</span>
+                    </button>
+                    <div v-if="!companyList.length" class="px-2.5 py-4 text-center text-xs text-muted-foreground">No companies on your contacts.</div>
+                    <div v-else-if="!filteredCompanyList.length" class="px-2.5 py-4 text-center text-xs text-muted-foreground">No match.</div>
+                  </div>
+                </div>
               </div>
+              <!-- click-away -->
+              <div v-if="showCompanyMenu" class="fixed inset-0 z-10" @click="showCompanyMenu = false"></div>
             </div>
             <p v-if="excludedCount > 0" class="text-[11px] text-muted-foreground pt-2 border-t border-border">
               {{ excludedCount }} contact{{ excludedCount === 1 ? '' : 's' }} hidden — no {{ channelRequirementText }} for the selected channel.

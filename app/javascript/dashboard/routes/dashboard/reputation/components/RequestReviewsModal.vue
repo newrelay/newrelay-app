@@ -40,10 +40,11 @@ const COMMON_TIMEZONES = [
   { label: 'Australia/Melbourne', value: 'Australia/Melbourne' },
 ];
 
-const convertToUtcIso = (dateStr, tz) => {
+const convertToUtcIso = (dateStr, timeStr, tz) => {
   if (!dateStr) return null;
   const dateParts = dateStr.split('-').map(Number);
-  const dateObj = new Date(dateParts[0], dateParts[1] - 1, dateParts[2], 9, 0); // 9 AM default
+  const [hour, minute] = (timeStr || '09:00').split(':').map(Number);
+  const dateObj = new Date(dateParts[0], dateParts[1] - 1, dateParts[2], hour || 9, minute || 0);
   const formatter = new Intl.DateTimeFormat('en-CA', {
     year: 'numeric',
     month: '2-digit',
@@ -67,6 +68,7 @@ const defaultFormState = {
   channels: ['Email'],
   delivery: 'Send immediately',
   scheduleDate: '',
+  scheduleTime: '09:00',
   scheduleTimezone: getUserTimezone(),
   message: 'Hi {{FirstName}},\n\nThank you for choosing us!\n\nWould you mind sharing your experience?\n\n⭐ Leave your review here:\n{{ReviewLink}}\n\nIt only takes one minute.\n\nThank you ❤️',
   tone: 'Friendly',
@@ -250,9 +252,10 @@ const minScheduleDate = computed(() => {
 const scheduleError = computed(() => {
   if (form.value.delivery !== 'Schedule') return '';
   if (!form.value.scheduleDate) return 'Pick a date to schedule.';
-  const isoDateTime = convertToUtcIso(form.value.scheduleDate, form.value.scheduleTimezone);
+  if (!form.value.scheduleTime) return 'Pick a time to schedule.';
+  const isoDateTime = convertToUtcIso(form.value.scheduleDate, form.value.scheduleTime, form.value.scheduleTimezone);
   if (!isoDateTime) return 'Invalid date.';
-  if (new Date(isoDateTime) <= new Date()) return 'Scheduled date must be in the future.';
+  if (new Date(isoDateTime) <= new Date()) return 'Scheduled time must be in the future.';
   return '';
 });
 // Step 1 = channel + sending method; step 2 = pick recipients.
@@ -312,7 +315,7 @@ async function generateReport() {
   if (step1Error.value) { currentStep.value = 1; return; }
   const { contactIds, recipients } = buildRecipients();
   const scheduledAt = form.value.delivery === 'Schedule'
-    ? convertToUtcIso(form.value.scheduleDate, form.value.scheduleTimezone)
+    ? convertToUtcIso(form.value.scheduleDate, form.value.scheduleTime, form.value.scheduleTimezone)
     : null;
   try {
     await axios.post(`/api/v1/accounts/${accountId}/reputation/review_requests`, {
@@ -498,7 +501,7 @@ function close() {
               </div>
             </div>
             <div v-if="form.delivery === 'Schedule'" class="space-y-3">
-              <div class="grid grid-cols-2 gap-4">
+              <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div class="space-y-1">
                   <label class="text-xs font-medium text-foreground">Date</label>
                   <RelayDatePicker
@@ -508,6 +511,17 @@ function close() {
                     value-format="yyyy-MM-dd"
                     :min-date="new Date()"
                   />
+                </div>
+                <div class="space-y-1">
+                  <label class="text-xs font-medium text-foreground">Time</label>
+                  <div class="relative h-9">
+                    <input
+                      v-model="form.scheduleTime"
+                      type="time"
+                      class="w-full h-full px-3 text-xs shadow-sm rounded-md border border-border bg-background focus:outline-none focus-visible:ring-1 focus-visible:ring-primary/30 cursor-pointer pr-9 font-medium text-foreground"
+                    />
+                    <Clock class="absolute right-3 top-1/2 -translate-y-1/2 size-4 text-primary pointer-events-none" />
+                  </div>
                 </div>
                 <div class="space-y-1">
                   <label class="text-xs font-medium text-foreground">Timezone</label>

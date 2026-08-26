@@ -300,8 +300,8 @@ function handleRequestReviews() {
           </div>
         </div>
 
-        <!-- AI Sentiment Card (Demo — no sentiment backend yet) -->
-        <div v-if="showDemoSurfaces" class="bg-primary text-primary-foreground rounded-2xl border border-transparent shadow-xs p-5 relative overflow-hidden group hover:shadow-md transition-all flex flex-col justify-between">
+        <!-- AI Sentiment Card — shows real sentiment when available; badged Demo only when falling back to sample data in demo mode -->
+        <div v-if="!aiIsMock || showDemoSurfaces" class="bg-primary text-primary-foreground rounded-2xl border border-transparent shadow-xs p-5 relative overflow-hidden group hover:shadow-md transition-all flex flex-col justify-between">
           <div class="absolute top-0 right-0 -mt-4 -mr-4 size-24 bg-white/10 rounded-full blur-xl pointer-events-none"></div>
 
           <div class="flex justify-between items-start mb-4 relative z-10">
@@ -336,7 +336,7 @@ function handleRequestReviews() {
       <!-- Section 2: Charts & Insights -->
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <!-- Review Trend (Left - 2/3 width) — real when reviews exist -->
-        <div class="bg-card rounded-2xl border border-border shadow-xs p-6 flex flex-col justify-between" :class="showDemoSurfaces ? 'lg:col-span-2' : 'lg:col-span-3'">
+        <div class="bg-card rounded-2xl border border-border shadow-xs p-6 flex flex-col justify-between" :class="(!aiIsMock || showDemoSurfaces) ? 'lg:col-span-2' : 'lg:col-span-3'">
           <div class="flex justify-between items-center mb-6">
             <div class="flex items-center gap-2">
               <div>
@@ -361,8 +361,8 @@ function handleRequestReviews() {
           </div>
         </div>
 
-        <!-- AI Insights (Right - 1/3 width, Demo — needs LLM summary backend) -->
-        <div v-if="showDemoSurfaces" class="bg-card rounded-2xl border border-border shadow-xs p-0 flex flex-col overflow-hidden relative">
+        <!-- AI Insights (Right - 1/3 width) — real insights when available; badged Demo only for sample fallback in demo mode -->
+        <div v-if="!aiIsMock || showDemoSurfaces" class="bg-card rounded-2xl border border-border shadow-xs p-0 flex flex-col overflow-hidden relative">
           <div class="h-1 w-full bg-primary"></div>
 
           <div class="p-6 flex-1 flex flex-col">

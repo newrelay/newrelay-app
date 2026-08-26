@@ -130,10 +130,24 @@ Legend — **Design:** ✅ ported to Relay tokens · ⚠️ partial · ❌ legac
 - **ListingsPage / Integrations:** add Automatic Review Sync, Smart Auto-Reply, Webhook Endpoint.
 - **Exit:** every reference section has a home in our pages (real or explicitly demo-gated).
 
-### Phase R3 — De-mock the demo-gated pages (honesty)
-- **Overview**, **Reviews**, **Listings**, **Feedback**: wire KPIs / lists / connections to real
-  backend; drop `mock*` and the `reputation_demo_surfaces` redirect where data is real.
-- **Exit:** no page shows fabricated numbers with the demo flag OFF (blank/empty is honest).
+### Phase R3 — De-mock (RE-SCOPED after deep inspection, 2026-08-26)
+**Finding:** the pages are far more real than the first audit implied. The "mock" is **intentional,
+flag-gated, badged** demo content, not lies to real users:
+- **Overview** — real: `avgRating`/`totalReviews`/`platforms`/`trendBars`/`recentReviews` all compute
+  from real `/reviews` + `/summary`. Only the AI Sentiment/Insights cards fall back to sample data,
+  and they were `v-if="showDemoSurfaces"` (hidden from real users) + badged "Demo".
+  - ✅ **Done:** AI cards now show real insights to **real** users when `/ai_insights` returns data
+    (`v-if="!aiIsMock || showDemoSurfaces"`); sample fallback stays demo-only + badged. Trend chart
+    width follows the same condition.
+- **Reviews** — already real (`mock≈1`); no work.
+- **Listings**, **Feedback** — demo-gated (real users are redirected out); mock only shows in demo
+  mode, badged. Real `/listings` + `/feedback` endpoints exist.
+- **Open product decision (blocks the rest of R3):** for the flag-gated demo surfaces, keep the
+  **illustrative sample data** (the point of a demo/showcase flag) or replace with **honest empty
+  states**? This is a product call, not a code one. Until decided, no further de-mock is warranted —
+  the current architecture (real for real users, badged sample behind the flag) is already honest.
+- **Exit:** real users never see fabricated numbers (already true); demo-surface behavior per the
+  decision above.
 
 ### Phase R4 — Verify & polish
 - Visual-diff each page against `localhost:5174`; fix spacing/hierarchy; add missing i18n keys

@@ -10,6 +10,8 @@ import AutomationPage from './pages/AutomationPage.vue';
 import VideoTestimonialsPage from './pages/VideoTestimonialsPage.vue';
 import ListingsPage from './pages/ListingsPage.vue';
 import FeedbackPage from './pages/FeedbackPage.vue';
+import IntegrationsPage from './pages/IntegrationsPage.vue';
+import ConfigurationPage from './pages/ConfigurationPage.vue';
 
 const meta = { permissions: ['administrator', 'agent'] };
 
@@ -62,6 +64,18 @@ export const routes = [
         path: 'feedback',
         name: 'reputation_feedback',
         component: FeedbackPage,
+        meta: { ...meta, featureFlag: FEATURE_FLAGS.REPUTATION_DEMO_SURFACES },
+      },
+      {
+        path: 'configuration',
+        name: 'reputation_configuration',
+        component: ConfigurationPage,
+        meta: { ...meta, featureFlag: FEATURE_FLAGS.REPUTATION_DEMO_SURFACES },
+      },
+      {
+        path: 'integrations',
+        name: 'reputation_integrations',
+        component: IntegrationsPage,
         meta: { ...meta, featureFlag: FEATURE_FLAGS.REPUTATION_DEMO_SURFACES },
       },
       {

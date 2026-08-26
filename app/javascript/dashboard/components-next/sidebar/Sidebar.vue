@@ -577,6 +577,18 @@ const primaryMenuItems = computed(() => {
         ...(showReputationDemoSurfaces.value
           ? [
               {
+                name: 'Reputation Configuration',
+                label: t('SIDEBAR.REPUTATION_CONFIGURATION'),
+                to: accountScopedRoute('reputation_configuration'),
+                activeOn: ['reputation_configuration'],
+              },
+              {
+                name: 'Reputation Integrations',
+                label: t('SIDEBAR.REPUTATION_INTEGRATIONS'),
+                to: accountScopedRoute('reputation_integrations'),
+                activeOn: ['reputation_integrations'],
+              },
+              {
                 name: 'Reputation Listings',
                 label: t('SIDEBAR.REPUTATION_LISTINGS'),
                 to: accountScopedRoute('reputation_listings'),

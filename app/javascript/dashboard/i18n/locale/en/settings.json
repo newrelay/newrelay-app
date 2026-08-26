@@ -346,6 +346,8 @@
     "REPUTATION_OVERVIEW": "Overview",
     "REPUTATION_REVIEWS": "Reviews",
     "REPUTATION_VIDEO": "Video Testimonials",
+    "REPUTATION_CONFIGURATION": "Configuration",
+    "REPUTATION_INTEGRATIONS": "Integrations",
     "REPUTATION_LISTINGS": "Listings",
     "REPUTATION_FEEDBACK": "Feedback",
     "REPUTATION_REQUESTS": "Requests",

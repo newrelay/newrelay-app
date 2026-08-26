@@ -216,6 +216,34 @@ always-show company filter (`c5a87afc`); Schedule time input (`de610d17`); Relay
 token cleanup (`dc3d41c8`); destructive error token (`d76cd362`); recipients UX match (`5b6c0af8`).
 Not pushed — local commits only.
 
+## Phase RV — Reviews page redesign (match `views/reviews/ReviewsView.vue`)
+Reference diff captured before touching code so the same gap isn't re-found next pass:
+- **RV1 Header:** reference title is `text-base font-medium` + badge `text-[11.5px]`, has a subtitle
+  ("Monitor, manage and respond…"), and two right-aligned actions — **Widget** (LayoutGrid) and
+  **Request Reviews** (Mail). Ours had `text-xl font-semibold`, no subtitle, no action buttons, and
+  crammed search/filters into the header.
+- **RV2 Unified toolbar:** reference is ONE line — left = select-all + "N selected" + search; right =
+  Sort ▾, Platform ▾, Filters ▾, divider, grid/list/timeline switcher, divider, "1-N of total" +
+  prev/next. Ours split this across the header + a second sub-header row. Sort/Platform were also
+  **inert** in ours — reference wires `sortOption` + `selectedPlatform` into `filteredReviews`.
+- **RV3 Floating bulk pill:** reference puts bulk actions (Assign / AI Reply / Mark Resolved / Export
+  / deselect) in a fixed centred pill at `bottom-10`; ours rendered them inline in the sub-header.
+- **RV4 Wire actions:** Request Reviews → existing `RequestReviewsModal` via `v-model:open`; Widget →
+  router push to `reputation_widgets` (we already own a full Widgets page — no need to port the
+  reference's 65 KB `ReviewWidgetModal`).
+- **Kept as-is:** list/grid/timeline card body + right details drawer already matched the reference.
+  Added a real `sortAt` timestamp to `mapReview` so newest/oldest sort works on live data. Pagination
+  arrows are decorative (client loads all reviews; no server paging) — count text is real.
+
+## Session log — 2026-08-26 (autonomous polish)
+Commits on `feature/ui-changes`: real Overall Feedback KPI + de-mock (`5f6b1d5a`); feedback breakdown
+modal (`8dc6e934`); reference snapshot refresh (`051060b5`); channel-first wizard reflow (`aea75fd2`);
+always-show company filter (`c5a87afc`); Schedule time input (`de610d17`); RelayTimePicker
+(`35bd254d`); searchable company dropdown (`1b2ba7be`); modal polish + tokens (`20de9412`); page
+token cleanup (`dc3d41c8`); destructive error token (`d76cd362`); recipients UX match (`5b6c0af8`).
+Not pushed — local commits only.
+
 ## Deferred / not in scope
 - Collapsing our 8-page nav to the reference's 5 items (see Open decision above).
 - Any reference feature with no backend (mark `NiN`, don't fake).
+- Reference `ReviewWidgetModal` (Reviews page "Widget") — we route to the dedicated Widgets page instead.

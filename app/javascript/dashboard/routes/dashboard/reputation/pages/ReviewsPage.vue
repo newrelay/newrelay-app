@@ -1,13 +1,17 @@
 <script setup>
 /* eslint-disable */
 import { ref, computed, onMounted } from 'vue';
+import { useRouter } from 'vue-router';
 import { RelayInput as Input, RelayCheckbox as Checkbox } from 'dashboard/components-next/relay';
 import {
   Search, Filter, ChevronDown, CheckSquare, Sparkles, MessageSquare,
   Clock, Check, Calendar, Star, MoreHorizontal, X, ArrowRight,
   UserPlus, Send, Image as ImageIcon, CornerDownRight, FileText,
-  MessageCircle, LayoutGrid, List, Plus
+  MessageCircle, LayoutGrid, List, Plus, Mail
 } from 'lucide-vue-next';
+import RequestReviewsModal from '../components/RequestReviewsModal.vue';
+
+const router = useRouter();
 
 const axios = window.axios;
 const accountId = window.__STORE__?.getters['auth/getCurrentAccount']?.id ||
@@ -22,6 +26,13 @@ const internalNote = ref('');
 const replyText = ref('');
 const viewMode = ref('list');
 const loading = ref(true);
+const sortOption = ref('Newest First');
+const selectedPlatform = ref('All Platforms');
+const isRequestModalOpen = ref(false);
+
+function openWidgets() {
+  router.push({ name: 'reputation_widgets', params: { accountId } });
+}
 
 const platformIcons = {
   'Google': '<svg viewBox="0 0 24 24" width="14" height="14" xmlns="http://www.w3.org/2000/svg"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>',
@@ -57,6 +68,7 @@ function mapReview(r) {
     location: '',
     rating: r.rating || 5,
     date: formatRelativeDate(r.reviewed_at),
+    sortAt: r.reviewed_at ? new Date(r.reviewed_at).getTime() : 0,
     content: r.body || '',
     status: hasReply ? 'Replied' : (r.status === 'ignored' ? 'Replied' : 'Needs Reply'),
     assignee: null,
@@ -109,10 +121,26 @@ const getStatusClass = (status) => {
 };
 
 const filteredReviews = computed(() => {
-  return reviews.value.filter(r =>
-    r.author.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
-    r.content.toLowerCase().includes(searchQuery.value.toLowerCase())
-  );
+  const q = searchQuery.value.toLowerCase();
+  const list = reviews.value.filter(r => {
+    const matchesSearch =
+      r.author.toLowerCase().includes(q) || r.content.toLowerCase().includes(q);
+    const matchesPlatform =
+      selectedPlatform.value === 'All Platforms' ||
+      r.platform.toLowerCase() === selectedPlatform.value.toLowerCase();
+    return matchesSearch && matchesPlatform;
+  });
+
+  if (sortOption.value === 'Highest Rating') {
+    return [...list].sort((a, b) => b.rating - a.rating);
+  }
+  if (sortOption.value === 'Lowest Rating') {
+    return [...list].sort((a, b) => a.rating - b.rating);
+  }
+  if (sortOption.value === 'Oldest First') {
+    return [...list].sort((a, b) => a.sortAt - b.sortAt);
+  }
+  return [...list].sort((a, b) => b.sortAt - a.sortAt);
 });
 
 const isAllSelected = computed(() => {
@@ -153,164 +181,172 @@ function addInternalNote() {
 
 <template>
   <div class="relative flex h-[calc(100vh-4rem)] w-full overflow-hidden bg-[#FAFAFA] dark:bg-background">
+    <RequestReviewsModal v-model:open="isRequestModalOpen" />
+
     <!-- Main Reviews Feed List -->
     <div class="flex-1 overflow-y-auto w-full hide-scrollbar flex flex-col transition-all duration-300" :class="selectedReview ? 'mr-[400px]' : ''">
       
-      <!-- Top Toolbar matching 1:1 reference design -->
-      <div class="px-6 py-4 border-b border-border bg-card shrink-0 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div class="flex items-center gap-3">
-          <h1 class="text-xl font-semibold text-foreground">Reviews</h1>
-          <span class="inline-flex items-center rounded-md border px-2 py-0.5 text-xs font-medium transition-colors focus:outline-none focus:ring-1 focus:ring-ring border-transparent bg-primary/10 text-primary dark:bg-primary/10 dark:text-primary">
-            {{ reviews.length }} Reviews
-          </span>
+      <!-- Page Header -->
+      <div class="px-8 py-6 border-b border-border bg-card shrink-0 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <div class="flex items-center gap-2.5">
+            <h1 class="text-base font-medium tracking-tight text-foreground">Reviews</h1>
+            <span class="inline-flex items-center rounded-md px-2 py-0.5 text-[11.5px] font-medium bg-primary/10 text-primary">
+              {{ reviews.length }} Reviews
+            </span>
+          </div>
+          <p class="text-[13.5px] text-muted-foreground mt-0.5">Monitor, manage and respond to customer reviews across all connected platforms.</p>
         </div>
-        
-        <div class="flex flex-col sm:flex-row items-center gap-3">
-          <!-- Search -->
-          <div class="relative w-full sm:w-64">
+
+        <div class="flex items-center gap-3 shrink-0">
+          <button
+            @click="openWidgets"
+            class="inline-flex items-center gap-2 h-9 px-3.5 rounded-lg border border-border bg-card text-[13.5px] font-medium text-foreground hover:bg-muted shadow-xs cursor-pointer"
+          >
+            <LayoutGrid class="size-4" /> Widget
+          </button>
+          <button
+            @click="isRequestModalOpen = true"
+            class="inline-flex items-center gap-2 h-9 px-3.5 rounded-lg bg-primary text-primary-foreground text-[13.5px] font-medium hover:bg-primary/90 shadow-xs cursor-pointer"
+          >
+            <Mail class="size-4" /> Request Reviews
+          </button>
+        </div>
+      </div>
+
+      <!-- Unified toolbar: select + search | sort / platform / filters / view / pagination -->
+      <div class="px-8 py-2.5 border-b border-border/80 bg-card/70 shrink-0 flex items-center justify-between gap-4 overflow-x-auto hide-scrollbar">
+        <!-- Left: select-all + selected count + search -->
+        <div class="flex items-center gap-3 min-w-0">
+          <Checkbox
+            v-if="viewMode === 'list'"
+            :model-value="isAllSelected"
+            @update:model-value="toggleSelectAll"
+            class="rounded-sm shrink-0"
+          />
+          <span v-if="viewMode === 'list' && selectedReviews.length > 0" class="text-xs text-primary font-semibold shrink-0">
+            {{ selectedReviews.length }} selected
+          </span>
+          <div class="relative w-52 sm:w-64 lg:w-72">
             <Search class="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
             <Input
               v-model="searchQuery"
               type="text"
               placeholder="Search reviews..."
-              class="w-full pl-9 bg-background/50 border-border shadow-sm h-9 text-sm rounded-lg"
+              class="w-full pl-9 bg-background border-border shadow-xs h-9 text-[13.5px] rounded-lg"
             />
           </div>
-          
-          <div class="flex items-center gap-2 w-full sm:w-auto">
-            <!-- Filter Dropdown -->
-            <div class="relative">
-              <button
-                @click="showFilterDropdown = !showFilterDropdown"
-                class="inline-flex items-center gap-2 h-9 px-3.5 rounded-lg border border-border bg-card text-sm font-medium text-foreground hover:bg-muted shadow-sm cursor-pointer"
-              >
-                <Filter class="size-4" />
-                <span class="hidden sm:inline">Filters</span>
-              </button>
-              <div v-if="showFilterDropdown" class="absolute left-0 mt-2 w-64 rounded-xl border border-border bg-card p-2 shadow-xl z-30 space-y-1">
-                <div class="px-2 py-1 text-xs font-bold text-foreground">Filter Reviews</div>
-                <div class="border-t border-border/80 my-1"></div>
-                <div class="max-h-[300px] overflow-y-auto space-y-1">
-                  <div class="px-2 py-1 text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Status</div>
-                  <button class="w-full text-left px-2 py-1.5 text-xs rounded-md hover:bg-muted font-medium text-foreground cursor-pointer">Needs Reply</button>
-                  <button class="w-full text-left px-2 py-1.5 text-xs rounded-md hover:bg-muted font-medium text-foreground cursor-pointer">Replied</button>
-                  <button class="w-full text-left px-2 py-1.5 text-xs rounded-md hover:bg-muted font-medium text-foreground cursor-pointer">Assigned To...</button>
-                  
-                  <div class="my-1 border-t border-border/80"></div>
-                  <div class="px-2 py-1 text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Properties</div>
-                  <button class="w-full text-left px-2 py-1.5 text-xs rounded-md hover:bg-muted font-medium text-foreground flex items-center gap-2 cursor-pointer">
-                    <Star class="size-4 text-[#FFB020]" /> Rating (1-5)
-                  </button>
-                  <button class="w-full text-left px-2 py-1.5 text-xs rounded-md hover:bg-muted font-medium text-foreground flex items-center gap-2 cursor-pointer">
-                    <Calendar class="size-4 text-muted-foreground" /> Date Range
-                  </button>
-                  
-                  <div class="my-1 border-t border-border/80"></div>
-                  <div class="px-2 py-1 text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Content</div>
-                  <button class="w-full text-left px-2 py-1.5 text-xs rounded-md hover:bg-muted font-medium text-foreground flex items-center gap-2 cursor-pointer">
-                    <ImageIcon class="size-4" /> With Photos
-                  </button>
-                  <button class="w-full text-left px-2 py-1.5 text-xs rounded-md hover:bg-muted font-medium text-foreground flex items-center gap-2 cursor-pointer">
-                    <FileText class="size-4" /> Has Attachments
-                  </button>
-                  <button class="w-full text-left px-2 py-1.5 text-xs rounded-md hover:bg-muted font-medium text-foreground flex items-center gap-2 cursor-pointer">
-                    <Check class="size-4 text-emerald-600" /> Verified Purchase
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            <!-- Platform Dropdown -->
-            <div class="relative">
-              <button
-                @click="showPlatformDropdown = !showPlatformDropdown"
-                class="inline-flex items-center gap-1.5 h-9 px-3.5 rounded-lg border border-border bg-card text-sm font-medium text-foreground hover:bg-muted shadow-sm cursor-pointer"
-              >
-                Platform
-                <ChevronDown class="size-4 text-muted-foreground ml-0.5 shrink-0" />
-              </button>
-              <div v-if="showPlatformDropdown" class="absolute right-0 mt-2 w-48 rounded-xl border border-border bg-card p-1.5 shadow-xl z-30 space-y-0.5">
-                <button class="w-full text-left px-3 py-1.5 text-xs rounded-md hover:bg-muted font-medium text-foreground cursor-pointer flex items-center gap-2">
-                  All Platforms
-                </button>
-                <button class="w-full text-left px-3 py-1.5 text-xs rounded-md hover:bg-muted font-medium text-foreground cursor-pointer flex items-center gap-2">
-                  <div v-html="platformIcons['Google']" class="size-4 shrink-0 flex items-center justify-center"></div> Google
-                </button>
-                <button class="w-full text-left px-3 py-1.5 text-xs rounded-md hover:bg-muted font-medium text-foreground cursor-pointer flex items-center gap-2">
-                  <div v-html="platformIcons['Yelp']" class="size-4 shrink-0 flex items-center justify-center"></div> Yelp
-                </button>
-                <button class="w-full text-left px-3 py-1.5 text-xs rounded-md hover:bg-muted font-medium text-foreground cursor-pointer flex items-center gap-2">
-                  <div v-html="platformIcons['Facebook']" class="size-4 shrink-0 flex items-center justify-center"></div> Facebook
-                </button>
-                <button class="w-full text-left px-3 py-1.5 text-xs rounded-md hover:bg-muted font-medium text-foreground cursor-pointer flex items-center gap-2">
-                  <div v-html="platformIcons['Trustpilot']" class="size-4 shrink-0 flex items-center justify-center"></div> Trustpilot
-                </button>
-              </div>
-            </div>
-          </div>
         </div>
-      </div>
 
-      <!-- Secondary Sub-header Toolbar -->
-      <div class="px-8 py-4 flex items-center justify-between border-b border-border/50">
-        <div class="flex items-center gap-4">
-          <Checkbox
-            v-if="viewMode === 'list'"
-            :model-value="isAllSelected"
-            @update:model-value="toggleSelectAll"
-            class="rounded-sm"
-          />
-
-          <!-- Inline Bulk Actions Toolbar when reviews are selected -->
-          <div v-if="selectedReviews.length > 0" class="flex items-center gap-2 animate-in fade-in duration-200">
-            <div class="flex items-center gap-1.5 px-3 py-1 bg-primary/10 rounded-lg text-primary text-xs font-semibold">
-              <span>{{ selectedReviews.length }} Selected</span>
-            </div>
-            
-            <div class="flex items-center gap-1">
-              <button class="inline-flex items-center gap-1.5 h-8 px-3 rounded-lg border border-border bg-card text-xs font-medium text-foreground hover:bg-muted shadow-xs transition-colors cursor-pointer">
-                <UserPlus class="size-3.5" /> Assign
-              </button>
-              <button class="inline-flex items-center gap-1.5 h-8 px-3 rounded-lg border border-border bg-card text-xs font-medium text-foreground hover:bg-primary/10 hover:text-primary shadow-xs transition-colors cursor-pointer">
-                <Sparkles class="size-3.5" /> Relay AI Reply
-              </button>
-              <button class="inline-flex items-center gap-1.5 h-8 px-3 rounded-lg border border-border bg-card text-xs font-medium text-foreground hover:bg-emerald-500/10 hover:text-emerald-600 shadow-xs transition-colors cursor-pointer">
-                <CheckSquare class="size-3.5" /> Mark Resolved
-              </button>
-              <button class="inline-flex items-center gap-1.5 h-8 px-3 rounded-lg border border-border bg-card text-xs font-medium text-foreground hover:bg-muted shadow-xs transition-colors cursor-pointer">
-                <CornerDownRight class="size-3.5" /> Export
-              </button>
-              <button class="p-1 text-muted-foreground hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40 rounded-lg transition-colors cursor-pointer" title="Deselect All" @click="selectedReviews = []">
-                <X class="size-4" />
-              </button>
-            </div>
-          </div>
-
-          <!-- Default Sort Dropdown when no reviews selected -->
-          <div v-else class="relative">
+        <!-- Right: filter dropdowns, view switcher, pagination -->
+        <div class="flex items-center gap-2 shrink-0">
+          <!-- Sort Dropdown -->
+          <div class="relative">
             <button
               @click="showSortDropdown = !showSortDropdown"
-              class="inline-flex items-center gap-2 h-9 px-4 rounded-lg border border-border/50 bg-card text-sm font-semibold text-foreground shadow-xs hover:bg-muted cursor-pointer"
+              class="inline-flex items-center gap-1.5 h-9 px-3 rounded-lg border border-border bg-card text-[13px] font-medium text-foreground hover:bg-muted shadow-xs cursor-pointer whitespace-nowrap"
             >
-              Newest First
-              <ChevronDown class="size-4 opacity-50" />
+              <span>{{ sortOption }}</span>
+              <ChevronDown class="size-3 opacity-50" />
             </button>
-            <div v-if="showSortDropdown" class="absolute left-0 mt-1 w-44 rounded-lg border border-border bg-card p-1 shadow-lg z-30">
-              <button class="w-full text-left px-3 py-1.5 text-xs rounded hover:bg-muted text-foreground cursor-pointer">Newest First</button>
-              <button class="w-full text-left px-3 py-1.5 text-xs rounded hover:bg-muted text-foreground cursor-pointer">Oldest First</button>
-              <button class="w-full text-left px-3 py-1.5 text-xs rounded hover:bg-muted text-foreground cursor-pointer">Highest Rating</button>
-              <button class="w-full text-left px-3 py-1.5 text-xs rounded hover:bg-muted text-foreground cursor-pointer">Lowest Rating</button>
+            <div v-if="showSortDropdown" class="absolute right-0 mt-1 w-44 rounded-lg border border-border bg-card p-1 shadow-lg z-30">
+              <button
+                v-for="opt in ['Newest First', 'Oldest First', 'Highest Rating', 'Lowest Rating']"
+                :key="opt"
+                @click="sortOption = opt; showSortDropdown = false"
+                class="w-full text-left px-3 py-1.5 text-xs rounded hover:bg-muted cursor-pointer"
+                :class="sortOption === opt ? 'text-primary font-semibold' : 'text-foreground'"
+              >
+                {{ opt }}
+              </button>
             </div>
           </div>
-        </div>
 
-        <div class="flex items-center gap-4">
-          <span class="text-sm font-semibold text-foreground">{{ filteredReviews.length }} of {{ reviews.length }}</span>
-          
-          <div class="flex bg-card border border-border rounded-lg p-0.5 shadow-sm mr-2">
-            <button @click="viewMode = 'grid'" class="p-1.5 rounded-md transition-colors" :class="viewMode === 'grid' ? 'bg-muted text-foreground' : 'text-muted-foreground hover:text-foreground hover:bg-muted'"><LayoutGrid class="size-4" /></button>
-            <button @click="viewMode = 'list'" class="p-1.5 rounded-md transition-colors" :class="viewMode === 'list' ? 'bg-muted text-foreground' : 'text-muted-foreground hover:text-foreground hover:bg-muted'"><List class="size-4" /></button>
-            <button @click="viewMode = 'timeline'" class="p-1.5 rounded-md transition-colors" :class="viewMode === 'timeline' ? 'bg-muted text-foreground' : 'text-muted-foreground hover:text-foreground hover:bg-muted'"><Clock class="size-4" /></button>
+          <!-- Platform Dropdown -->
+          <div class="relative">
+            <button
+              @click="showPlatformDropdown = !showPlatformDropdown"
+              class="inline-flex items-center gap-1.5 h-9 px-3 rounded-lg border border-border bg-card text-[13px] font-medium text-foreground hover:bg-muted shadow-xs cursor-pointer whitespace-nowrap"
+            >
+              <span>{{ selectedPlatform }}</span>
+              <ChevronDown class="size-3 opacity-50" />
+            </button>
+            <div v-if="showPlatformDropdown" class="absolute right-0 mt-1 w-44 rounded-xl border border-border bg-card p-1.5 shadow-xl z-30 space-y-0.5">
+              <button
+                @click="selectedPlatform = 'All Platforms'; showPlatformDropdown = false"
+                class="w-full text-left px-3 py-1.5 text-xs rounded-md hover:bg-muted font-medium text-foreground cursor-pointer flex items-center gap-2"
+              >
+                All Platforms
+              </button>
+              <button
+                v-for="p in ['Google', 'Yelp', 'Facebook', 'Trustpilot']"
+                :key="p"
+                @click="selectedPlatform = p; showPlatformDropdown = false"
+                class="w-full text-left px-3 py-1.5 text-xs rounded-md hover:bg-muted font-medium text-foreground cursor-pointer flex items-center gap-2"
+              >
+                <div v-html="platformIcons[p]" class="size-4 shrink-0 flex items-center justify-center"></div> {{ p }}
+              </button>
+            </div>
+          </div>
+
+          <!-- Filters Dropdown -->
+          <div class="relative">
+            <button
+              @click="showFilterDropdown = !showFilterDropdown"
+              class="inline-flex items-center gap-1.5 h-9 px-3 rounded-lg border border-border bg-card text-[13px] font-medium text-foreground hover:bg-muted shadow-xs cursor-pointer"
+            >
+              <Filter class="size-3.5" />
+              <span>Filters</span>
+            </button>
+            <div v-if="showFilterDropdown" class="absolute right-0 mt-2 w-64 rounded-xl border border-border bg-card p-2 shadow-xl z-30 space-y-1">
+              <div class="max-h-[300px] overflow-y-auto space-y-1">
+                <div class="px-2 py-1 text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Status</div>
+                <button class="w-full text-left px-2 py-1.5 text-xs rounded-md hover:bg-muted font-medium text-foreground cursor-pointer">Needs Reply</button>
+                <button class="w-full text-left px-2 py-1.5 text-xs rounded-md hover:bg-muted font-medium text-foreground cursor-pointer">Replied</button>
+                <button class="w-full text-left px-2 py-1.5 text-xs rounded-md hover:bg-muted font-medium text-foreground cursor-pointer">Assigned To...</button>
+
+                <div class="my-1 border-t border-border/80"></div>
+                <div class="px-2 py-1 text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Properties</div>
+                <button class="w-full text-left px-2 py-1.5 text-xs rounded-md hover:bg-muted font-medium text-foreground flex items-center gap-2 cursor-pointer">
+                  <Star class="size-4 text-[#FFB020]" /> Rating (1-5)
+                </button>
+                <button class="w-full text-left px-2 py-1.5 text-xs rounded-md hover:bg-muted font-medium text-foreground flex items-center gap-2 cursor-pointer">
+                  <Calendar class="size-4 text-muted-foreground" /> Date Range
+                </button>
+
+                <div class="my-1 border-t border-border/80"></div>
+                <div class="px-2 py-1 text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Content</div>
+                <button class="w-full text-left px-2 py-1.5 text-xs rounded-md hover:bg-muted font-medium text-foreground flex items-center gap-2 cursor-pointer">
+                  <ImageIcon class="size-4" /> With Photos
+                </button>
+                <button class="w-full text-left px-2 py-1.5 text-xs rounded-md hover:bg-muted font-medium text-foreground flex items-center gap-2 cursor-pointer">
+                  <FileText class="size-4" /> Has Attachments
+                </button>
+                <button class="w-full text-left px-2 py-1.5 text-xs rounded-md hover:bg-muted font-medium text-foreground flex items-center gap-2 cursor-pointer">
+                  <Check class="size-4 text-emerald-600" /> Verified Purchase
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="h-5 w-px bg-border/80 mx-1"></div>
+
+          <!-- View switcher -->
+          <div class="flex bg-muted/40 border border-border/80 rounded-lg p-0.5 shadow-xs">
+            <button @click="viewMode = 'grid'" class="p-1.5 rounded-md transition-colors cursor-pointer" :class="viewMode === 'grid' ? 'bg-card text-foreground shadow-xs' : 'text-muted-foreground hover:text-foreground'" title="Grid view"><LayoutGrid class="size-3.5" /></button>
+            <button @click="viewMode = 'list'" class="p-1.5 rounded-md transition-colors cursor-pointer" :class="viewMode === 'list' ? 'bg-card text-foreground shadow-xs' : 'text-muted-foreground hover:text-foreground'" title="List view"><List class="size-3.5" /></button>
+            <button @click="viewMode = 'timeline'" class="p-1.5 rounded-md transition-colors cursor-pointer" :class="viewMode === 'timeline' ? 'bg-card text-foreground shadow-xs' : 'text-muted-foreground hover:text-foreground'" title="Timeline view"><Clock class="size-3.5" /></button>
+          </div>
+
+          <div class="h-5 w-px bg-border/80 mx-1"></div>
+
+          <!-- Pagination info (client loads all reviews; arrows decorative) -->
+          <div class="flex items-center gap-2">
+            <span class="text-xs font-semibold text-foreground whitespace-nowrap">1-{{ filteredReviews.length }} of {{ reviews.length }}</span>
+            <div class="flex items-center gap-1">
+              <button class="inline-flex items-center justify-center size-8 rounded-lg bg-card border border-border/80 hover:bg-muted shadow-xs cursor-pointer text-muted-foreground"><ChevronDown class="size-3.5 rotate-90" /></button>
+              <button class="inline-flex items-center justify-center size-8 rounded-lg bg-card border border-border/80 hover:bg-muted shadow-xs cursor-pointer text-muted-foreground"><ChevronDown class="size-3.5 -rotate-90" /></button>
+            </div>
           </div>
         </div>
       </div>
@@ -730,6 +766,35 @@ function addInternalNote() {
             </div>
           </div>
         </div>
+      </div>
+    </div>
+
+    <!-- Floating Bulk Actions Pill -->
+    <div v-if="selectedReviews.length > 0" class="fixed bottom-10 left-1/2 -translate-x-1/2 z-50 flex items-center gap-2 p-2 bg-card/90 backdrop-blur-md border border-border rounded-full shadow-2xl animate-in slide-in-from-bottom-10 fade-in duration-300">
+      <div class="flex items-center justify-center px-4 shrink-0 border-r border-border/50">
+        <span class="inline-flex items-center justify-center min-w-5 h-5 px-1.5 rounded-md bg-primary text-primary-foreground text-xs font-semibold mr-2">{{ selectedReviews.length }}</span>
+        <span class="text-sm font-semibold text-foreground">Selected</span>
+      </div>
+
+      <div class="flex items-center gap-1 px-2">
+        <button class="inline-flex items-center gap-1.5 rounded-full h-8 px-3 hover:bg-muted text-sm font-medium text-foreground transition-colors cursor-pointer">
+          <UserPlus class="size-4" /> Assign
+        </button>
+        <button class="inline-flex items-center gap-1.5 rounded-full h-8 px-3 hover:bg-primary/10 hover:text-primary text-sm font-medium text-foreground transition-colors cursor-pointer">
+          <Sparkles class="size-4" /> Relay AI Reply
+        </button>
+        <button class="inline-flex items-center gap-1.5 rounded-full h-8 px-3 hover:bg-emerald-500/10 hover:text-emerald-600 text-sm font-medium text-foreground transition-colors cursor-pointer">
+          <CheckSquare class="size-4" /> Mark Resolved
+        </button>
+        <button class="inline-flex items-center gap-1.5 rounded-full h-8 px-3 hover:bg-muted text-sm font-medium text-foreground transition-colors cursor-pointer">
+          <CornerDownRight class="size-4" /> Export
+        </button>
+      </div>
+
+      <div class="pl-2 border-l border-border/50 shrink-0">
+        <button class="inline-flex items-center justify-center rounded-full size-8 text-rose-500 hover:text-rose-600 hover:bg-rose-500/10 transition-colors cursor-pointer" @click="selectedReviews = []">
+          <X class="size-4" />
+        </button>
       </div>
     </div>
   </div>

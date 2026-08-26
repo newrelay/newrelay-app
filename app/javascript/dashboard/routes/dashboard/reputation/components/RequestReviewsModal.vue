@@ -285,6 +285,12 @@ const scheduleError = computed(() => {
 // Step 1 = channel + sending method; step 2 = pick recipients.
 const step1Error = computed(() => channelRequired.value || scheduleError.value);
 
+const scheduleSummary = computed(() => {
+  if (form.value.delivery !== 'Schedule') return 'Send immediately';
+  if (!form.value.scheduleDate) return 'Not scheduled';
+  return `${form.value.scheduleDate} at ${form.value.scheduleTime}`;
+});
+
 // Selected real contacts send their numeric id; manual/CSV rows send their raw email/phone.
 function buildRecipients() {
   const contactIds = [];
@@ -508,7 +514,11 @@ function close() {
                   <div class="font-medium text-foreground text-sm truncate">{{ customer.name }}</div>
                   <div class="flex items-center text-xs mt-1 text-muted-foreground gap-1.5">
                     <span>{{ customer.contextLabel }}</span>
-                    <span class="font-medium text-foreground">{{ customer.contextValue }}</span>
+                    <span class="font-medium text-foreground truncate">{{ customer.contextValue }}</span>
+                  </div>
+                  <div v-if="customer.company" class="flex items-center gap-1 text-[11px] text-muted-foreground mt-0.5 truncate">
+                    <Building2 class="size-3 opacity-70 shrink-0" />
+                    <span class="truncate">{{ customer.company }}</span>
                   </div>
                 </div>
               </div>
@@ -661,27 +671,25 @@ function close() {
           
           <!-- Preview Side (Mobile Phone Mockup) -->
           <div class="w-[380px] bg-muted/20 border-l border-border p-8 flex items-center justify-center shrink-0">
-            <div class="w-[280px] h-[480px] bg-white dark:bg-black rounded-[40px] border-[8px] border-slate-200 dark:border-slate-800 shadow-2xl relative overflow-hidden flex flex-col">
+            <div class="w-[280px] h-[480px] bg-card rounded-[40px] border-[8px] border-border shadow-2xl relative overflow-hidden flex flex-col">
               <!-- Notch -->
               <div class="absolute top-0 inset-x-0 h-6 flex justify-center z-10">
-                <div class="w-32 h-5 bg-slate-200 dark:bg-slate-800 rounded-b-xl"></div>
+                <div class="w-32 h-5 bg-border rounded-b-xl"></div>
               </div>
               <!-- Header -->
-              <div class="bg-slate-100 dark:bg-slate-900 pt-10 pb-3 px-4 flex items-center gap-3 border-b border-slate-200 dark:border-slate-800 shrink-0">
-                <div class="size-8 rounded-full bg-slate-300 dark:bg-slate-700 flex items-center justify-center overflow-hidden">
-                  <img src="https://ui-avatars.com/api/?name=New+Relay&background=random" class="w-full h-full object-cover" />
-                </div>
+              <div class="bg-muted pt-10 pb-3 px-4 flex items-center gap-3 border-b border-border shrink-0">
+                <div class="size-8 rounded-full bg-primary/15 text-primary flex items-center justify-center text-[11px] font-bold shrink-0">NR</div>
                 <div>
-                  <div class="text-xs font-semibold text-slate-900 dark:text-white">New Relay</div>
-                  <div class="text-[10px] text-slate-500">Business Account</div>
+                  <div class="text-xs font-semibold text-foreground">New Relay</div>
+                  <div class="text-[10px] text-muted-foreground">Business Account</div>
                 </div>
               </div>
               <!-- Chat Body -->
-              <div class="flex-1 bg-slate-50 dark:bg-black p-4 overflow-y-auto space-y-4">
-                <div class="text-[10px] text-center text-slate-400 font-medium my-2">Today 9:41 AM</div>
-                <div class="bg-primary text-white rounded-2xl rounded-tl-sm p-3 text-[13px] shadow-xs whitespace-pre-wrap leading-relaxed max-w-[85%] relative pb-6">
+              <div class="flex-1 bg-muted/40 p-4 overflow-y-auto space-y-4">
+                <div class="text-[10px] text-center text-muted-foreground font-medium my-2">Today 9:41 AM</div>
+                <div class="bg-primary text-primary-foreground rounded-2xl rounded-tl-sm p-3 text-[13px] shadow-xs whitespace-pre-wrap leading-relaxed max-w-[85%] relative pb-6">
                   {{ previewMessage }}
-                  <div class="absolute right-2 bottom-1.5 text-[9px] text-blue-200">9:41 AM</div>
+                  <div class="absolute right-2 bottom-1.5 text-[9px] text-primary-foreground/70">9:41 AM</div>
                 </div>
               </div>
             </div>
@@ -738,6 +746,19 @@ function close() {
                     <div class="text-xs text-muted-foreground mb-0.5">Review Platform</div>
                     <div class="text-sm font-medium text-foreground">
                       {{ form.destinations.join(', ') || 'Auto-optimized' }}
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Schedule Card -->
+                <div class="bg-card border border-border rounded-xl p-5 shadow-xs flex items-center gap-4">
+                  <div class="size-10 rounded-full bg-primary/10 flex items-center justify-center shrink-0 border border-primary/20">
+                    <Calendar class="size-4 text-primary" />
+                  </div>
+                  <div>
+                    <div class="text-xs text-muted-foreground mb-0.5">Schedule</div>
+                    <div class="text-sm font-medium text-foreground">
+                      {{ scheduleSummary }}
                     </div>
                   </div>
                 </div>

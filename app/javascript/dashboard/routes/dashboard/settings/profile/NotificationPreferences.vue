@@ -442,27 +442,38 @@ onMounted(() => {
         </div>
 
         <div v-if="quietHoursEnabled" class="p-6 space-y-6">
+          <!-- From & To Row -->
           <div class="flex flex-col sm:flex-row items-center gap-6">
             <!-- From -->
             <div class="flex items-center gap-4 w-full sm:w-1/2">
-              <span class="text-sm font-medium text-muted-foreground w-10 shrink-0">From</span>
+              <span class="text-sm font-medium text-muted-foreground w-12 shrink-0">From</span>
               <div class="relative flex-1">
                 <input
                   v-model="quietHoursFrom"
-                  type="time"
-                  class="w-full h-11 rounded-xl border border-border/60 bg-muted/20 px-4 text-sm font-medium text-foreground shadow-xs transition-colors focus:border-primary focus:outline-none cursor-pointer"
+                  type="text"
+                  class="w-full h-11 rounded-xl border border-border/60 bg-muted/20 px-4 pr-10 text-sm font-medium text-foreground shadow-xs transition-colors focus:border-primary focus:outline-none"
+                  placeholder="22:00"
+                />
+                <Icon
+                  icon="i-lucide-clock"
+                  class="pointer-events-none absolute right-3.5 top-1/2 -translate-y-1/2 size-4 text-muted-foreground"
                 />
               </div>
             </div>
 
             <!-- To -->
             <div class="flex items-center gap-4 w-full sm:w-1/2">
-              <span class="text-sm font-medium text-muted-foreground w-6 text-center shrink-0">To</span>
+              <span class="text-sm font-medium text-muted-foreground w-8 text-center shrink-0">To</span>
               <div class="relative flex-1">
                 <input
                   v-model="quietHoursTo"
-                  type="time"
-                  class="w-full h-11 rounded-xl border border-border/60 bg-muted/20 px-4 text-sm font-medium text-foreground shadow-xs transition-colors focus:border-primary focus:outline-none cursor-pointer"
+                  type="text"
+                  class="w-full h-11 rounded-xl border border-border/60 bg-muted/20 px-4 pr-10 text-sm font-medium text-foreground shadow-xs transition-colors focus:border-primary focus:outline-none"
+                  placeholder="07:00"
+                />
+                <Icon
+                  icon="i-lucide-clock"
+                  class="pointer-events-none absolute right-3.5 top-1/2 -translate-y-1/2 size-4 text-muted-foreground"
                 />
               </div>
             </div>
@@ -494,10 +505,10 @@ onMounted(() => {
               v-for="day in availableDays"
               :key="day"
               type="button"
-              class="px-4 py-2 text-xs font-medium rounded-lg transition-all border shadow-xs"
+              class="px-4 py-2 text-xs font-medium rounded-lg transition-all border"
               :class="[
                 activeDays.includes(day)
-                  ? 'bg-indigo-50 border-indigo-200 text-indigo-600 dark:bg-indigo-950/60 dark:border-indigo-800 dark:text-indigo-300'
+                  ? 'bg-indigo-50/80 border-indigo-200 text-indigo-600 dark:bg-indigo-950/60 dark:border-indigo-800 dark:text-indigo-300'
                   : 'bg-background border-border/60 text-muted-foreground hover:bg-muted/20'
               ]"
               @click="toggleDay(day)"

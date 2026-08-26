@@ -4,6 +4,7 @@ import { useI18n } from 'vue-i18n';
 import { useStore, useMapGetter } from 'dashboard/composables/store';
 import { useAlert } from 'dashboard/composables';
 import {
+  RelayButton,
   RelayCheckbox,
   RelayInput,
   RelaySwitch,
@@ -43,6 +44,21 @@ const hasEnabledPushPermissions = ref(false);
 const searchQuery = ref('');
 const showAll = ref(false);
 
+// Delivery Channels state
+const deliveryInApp = ref(true);
+const deliveryEmail = ref(true);
+const deliveryPush = ref(true);
+const deliverySlack = ref(false);
+const deliveryTeams = ref(false);
+
+// Quiet hours state
+const quietHoursEnabled = ref(false);
+const quietHoursFrom = ref('09:00 AM');
+const quietHoursTo = ref('05:00 PM');
+const selectedTimezone = ref('(GMT+05:30) Asia/Kolkata');
+const activeDays = ref(['Mon', 'Tue', 'Wed', 'Thu', 'Fri']);
+const availableDays = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+
 const isSLAEnabled = computed(() =>
   isFeatureEnabledonAccount.value(accountId.value, FEATURE_FLAGS.SLA)
 );
@@ -64,8 +80,8 @@ const filteredNotificationTypes = computed(() => {
   if (!query) return notificationTypes.value;
 
   return notificationTypes.value.filter(notification => {
-    const title = t(notification.label).toLowerCase();
-    const description = t(notification.description).toLowerCase();
+    const title = (notification.defaultTitle || t(notification.label)).toLowerCase();
+    const description = (notification.defaultDescription || t(notification.description)).toLowerCase();
     return title.includes(query) || description.includes(query);
   });
 });
@@ -147,6 +163,14 @@ const handleChannelToggle = (type, flagType, enabled) => {
   }
 };
 
+const toggleDay = day => {
+  if (activeDays.value.includes(day)) {
+    activeDays.value = activeDays.value.filter(d => d !== day);
+  } else {
+    activeDays.value.push(day);
+  }
+};
+
 const onRegistrationSuccess = () => {
   hasEnabledPushPermissions.value = true;
 };
@@ -210,7 +234,7 @@ onMounted(() => {
       </p>
     </div>
 
-    <!-- Notification preferences Card -->
+    <!-- CARD 1: Notification preferences Card -->
     <div
       class="rounded-xl border border-border/60 bg-card p-6 shadow-xs transition-colors"
     >
@@ -284,15 +308,15 @@ onMounted(() => {
                 </div>
                 <div>
                   <h4 class="text-sm font-medium text-foreground">
-                    {{ t(notification.label) }}
+                    {{ notification.defaultTitle || t(notification.label) }}
                   </h4>
                   <p class="mt-0.5 text-xs text-muted-foreground">
-                    {{ t(notification.description) }}
+                    {{ notification.defaultDescription || t(notification.description) }}
                   </p>
                 </div>
               </div>
 
-              <!-- IN-APP Checkbox (Default checked / bound to push/email flag) -->
+              <!-- IN-APP Checkbox -->
               <div class="flex justify-center">
                 <RelayCheckbox
                   :model-value="checkFlagStatus('push', notification.value) || checkFlagStatus('email', notification.value)"
@@ -363,10 +387,10 @@ onMounted(() => {
             </div>
             <div>
               <h4 class="text-sm font-medium text-foreground">
-                {{ t(notification.label) }}
+                {{ notification.defaultTitle || t(notification.label) }}
               </h4>
               <p class="mt-0.5 text-xs text-muted-foreground">
-                {{ t(notification.description) }}
+                {{ notification.defaultDescription || t(notification.description) }}
               </p>
             </div>
           </div>
@@ -427,11 +451,11 @@ onMounted(() => {
       </div>
     </div>
 
-    <!-- Delivery channels Card -->
+    <!-- CARD 2: Delivery channels Card -->
     <div
       class="rounded-xl border border-border/60 bg-card p-6 shadow-xs transition-colors"
     >
-      <div class="mb-4">
+      <div class="mb-6">
         <h3 class="text-[17px] font-semibold text-foreground">
           {{ t('PROFILE_SETTINGS.FORM.NOTIFICATIONS.DELIVERY_CHANNELS') || 'Delivery channels' }}
         </h3>
@@ -440,20 +464,164 @@ onMounted(() => {
         </p>
       </div>
 
-      <div
-        class="flex w-full items-center justify-between gap-3 rounded-lg border border-border/40 bg-muted/10 p-4"
-      >
-        <div class="flex items-center gap-3 text-foreground">
-          <span class="i-lucide-bell size-4 shrink-0 text-muted-foreground" />
-          <span class="text-xs font-medium">
-            {{ t('PROFILE_SETTINGS.FORM.NOTIFICATIONS.BROWSER_PERMISSION') }}
-          </span>
+      <div class="divide-y divide-border/40">
+        <!-- In-app -->
+        <div class="flex items-center justify-between py-3.5">
+          <div class="flex items-center gap-3">
+            <span class="i-lucide-monitor size-4 text-muted-foreground" />
+            <div>
+              <h4 class="text-xs font-medium text-foreground">In-app</h4>
+              <p class="text-[11px] text-muted-foreground">Receive notifications inside the platform.</p>
+            </div>
+          </div>
+          <RelayCheckbox v-model="deliveryInApp" />
         </div>
-        <RelaySwitch
-          :model-value="hasEnabledPushPermissions"
-          @update:model-value="onRequestPermissions"
-        />
+
+        <!-- Email -->
+        <div class="flex items-center justify-between py-3.5">
+          <div class="flex items-center gap-3">
+            <span class="i-lucide-mail size-4 text-muted-foreground" />
+            <div>
+              <h4 class="text-xs font-medium text-foreground">Email</h4>
+              <p class="text-[11px] text-muted-foreground">Receive notifications via email.</p>
+            </div>
+          </div>
+          <RelayCheckbox v-model="deliveryEmail" />
+        </div>
+
+        <!-- Push notifications -->
+        <div class="flex items-center justify-between py-3.5">
+          <div class="flex items-center gap-3">
+            <span class="i-lucide-smartphone size-4 text-muted-foreground" />
+            <div>
+              <h4 class="text-xs font-medium text-foreground">Push notifications</h4>
+              <p class="text-[11px] text-muted-foreground">Receive push notifications on your device.</p>
+            </div>
+          </div>
+          <RelayCheckbox
+            :model-value="hasEnabledPushPermissions || deliveryPush"
+            @update:model-value="onRequestPermissions"
+          />
+        </div>
+
+        <!-- Slack -->
+        <div class="flex items-center justify-between py-3.5">
+          <div class="flex items-center gap-3">
+            <span class="i-lucide-hash size-4 text-muted-foreground" />
+            <div>
+              <h4 class="text-xs font-medium text-foreground">Slack</h4>
+              <p class="text-[11px] text-muted-foreground">Receive notifications in Slack.</p>
+            </div>
+          </div>
+          <RelayCheckbox v-model="deliverySlack" />
+        </div>
+
+        <!-- Microsoft Teams -->
+        <div class="flex items-center justify-between py-3.5">
+          <div class="flex items-center gap-3">
+            <span class="i-lucide-message-square size-4 text-muted-foreground" />
+            <div>
+              <h4 class="text-xs font-medium text-foreground">Microsoft Teams</h4>
+              <p class="text-[11px] text-muted-foreground">Receive notifications in Microsoft Teams.</p>
+            </div>
+          </div>
+          <RelayCheckbox v-model="deliveryTeams" />
+        </div>
       </div>
+
+      <div class="pt-4">
+        <router-link
+          to="integrations"
+          class="inline-flex items-center gap-1 text-xs font-medium text-primary hover:underline"
+        >
+          Manage integrations
+          <span class="i-lucide-external-link size-3" />
+        </router-link>
+      </div>
+    </div>
+
+    <!-- CARD 3: Quiet hours Card -->
+    <div
+      class="rounded-xl border border-border/60 bg-card p-6 shadow-xs transition-colors"
+    >
+      <div class="flex items-center justify-between mb-4">
+        <div>
+          <h3 class="text-[17px] font-semibold text-foreground">
+            Quiet hours
+          </h3>
+          <p class="mt-0.5 text-xs text-muted-foreground">
+            Pause non-urgent notifications during these hours.
+          </p>
+        </div>
+        <RelaySwitch v-model="quietHoursEnabled" />
+      </div>
+
+      <div v-if="quietHoursEnabled" class="flex flex-col gap-4 pt-2">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-medium text-muted-foreground mb-1">From</label>
+            <div class="relative">
+              <RelayInput
+                v-model="quietHoursFrom"
+                type="text"
+                class-name="h-9 bg-background text-xs"
+              />
+              <span class="i-lucide-clock pointer-events-none absolute right-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+            </div>
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-muted-foreground mb-1">To</label>
+            <div class="relative">
+              <RelayInput
+                v-model="quietHoursTo"
+                type="text"
+                class-name="h-9 bg-background text-xs"
+              />
+              <span class="i-lucide-clock pointer-events-none absolute right-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-medium text-muted-foreground mb-1">Time zone</label>
+          <select
+            v-model="selectedTimezone"
+            class="w-full h-9 rounded-md border border-input bg-background px-3 text-xs text-foreground shadow-xs focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+          >
+            <option value="(GMT+05:30) Asia/Kolkata">(GMT+05:30) Asia/Kolkata</option>
+            <option value="(GMT+00:00) UTC">(GMT+00:00) UTC</option>
+            <option value="(GMT-05:00) Eastern Time">(GMT-05:00) Eastern Time</option>
+            <option value="(GMT-08:00) Pacific Time">(GMT-08:00) Pacific Time</option>
+          </select>
+        </div>
+
+        <div class="flex flex-wrap gap-2 pt-1">
+          <button
+            v-for="day in availableDays"
+            :key="day"
+            type="button"
+            class="px-3 py-1.5 rounded-md text-xs font-medium border transition-colors"
+            :class="[
+              activeDays.includes(day)
+                ? 'bg-indigo-50 border-indigo-200 text-indigo-600 dark:bg-indigo-950/60 dark:border-indigo-800 dark:text-indigo-300'
+                : 'bg-background border-border/60 text-muted-foreground hover:bg-muted/10'
+            ]"
+            @click="toggleDay(day)"
+          >
+            {{ day }}
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bottom Action Bar -->
+    <div class="flex items-center justify-end gap-3 pt-2">
+      <RelayButton variant="outline" size="sm">
+        Cancel
+      </RelayButton>
+      <RelayButton variant="primary" size="sm" @click="updateNotificationSettings">
+        Save changes
+      </RelayButton>
     </div>
   </div>
 </template>

@@ -5,7 +5,7 @@ import {
   X, ChevronRight, Search, FileText, CheckCircle2,
   ArrowLeft, Send, Sparkles, MessageSquare,
   Mail, MessageCircle, Star, Smartphone,
-  Upload, Clock, Check, BarChart3,
+  Clock, Check, BarChart3,
   Calendar, ChevronLeft, Users, Plus, AlertCircle, Globe
 } from 'lucide-vue-next';
 import {
@@ -64,7 +64,6 @@ const convertToUtcIso = (dateStr, tz) => {
 
 const defaultFormState = {
   selectedCustomers: [],
-  customRecipients: '',
   channels: ['Email'],
   delivery: 'Send immediately',
   scheduleDate: '',
@@ -82,8 +81,7 @@ const currentStep = ref(1);
 const form = ref({ ...defaultFormState });
 const searchQuery = ref('');
 const activeFilter = ref('Recent Customers');
-const csvInput = ref(null);
-const importError = ref('');
+const selectedCompanyFilter = ref('');
 const loadingContacts = ref(false);
 
 const filters = ['Recent Customers', 'Completed Jobs', 'Closed Deals', 'Positive Feedback', 'Appointment Completed', 'Invoice Paid'];
@@ -143,7 +141,8 @@ function mapContact(c) {
     contextLabel: 'Contact:',
     contextValue: c.email || c.phone_number || '',
     email: c.email || '',
-    phone: c.phone_number || ''
+    phone: c.phone_number || '',
+    company: c.additional_attributes?.company_name || ''
   };
 }
 
@@ -164,76 +163,50 @@ async function loadContacts() {
 watch(() => props.open, isOpen => { if (isOpen) { ensureDefaultLabels(); loadContacts(); loadRequests(); } }, { immediate: true });
 watch(activeFilter, () => { if (props.open) loadContacts(); });
 
-const filteredCustomers = computed(() => {
-  if (!searchQuery.value) return allCustomers.value;
-  return allCustomers.value.filter(c => c.name.toLowerCase().includes(searchQuery.value.toLowerCase()));
+// Company options come from the loaded contacts (real data).
+const companyList = computed(() =>
+  [...new Set(allCustomers.value.map(c => c.company).filter(Boolean))].sort()
+);
+
+// A contact is eligible only if it has the field(s) the chosen channels need.
+function isCustomerEligible(customer) {
+  if (!form.value.channels.length) return true;
+  const requiresEmail = form.value.channels.includes('Email');
+  const requiresPhone = form.value.channels.includes('SMS') || form.value.channels.includes('WhatsApp');
+  const hasEmail = Boolean(customer.email);
+  const hasPhone = Boolean(customer.phone);
+  if (requiresEmail && requiresPhone) return hasEmail || hasPhone;
+  if (requiresEmail) return hasEmail;
+  if (requiresPhone) return hasPhone;
+  return true;
+}
+
+const eligibleCustomers = computed(() => allCustomers.value.filter(isCustomerEligible));
+const excludedCount = computed(() => allCustomers.value.length - eligibleCustomers.value.length);
+
+const channelRequirementText = computed(() => {
+  const requiresEmail = form.value.channels.includes('Email');
+  const requiresPhone = form.value.channels.includes('SMS') || form.value.channels.includes('WhatsApp');
+  if (requiresEmail && !requiresPhone) return 'an email address';
+  if (requiresPhone && !requiresEmail) return 'a phone number';
+  return 'a valid email or phone number';
 });
 
-// Parse a CSV of contacts (name, email/phone) client-side and add them as
-// selectable recipients. Accepts an optional header row; splits on comma only
-// (contacts don't contain commas) — no CSV lib for this happy path.
-function triggerImport() {
-  importError.value = '';
-  csvInput.value?.click();
-}
+const filteredCustomers = computed(() => {
+  let list = eligibleCustomers.value;
+  if (selectedCompanyFilter.value) list = list.filter(c => c.company === selectedCompanyFilter.value);
+  if (searchQuery.value) {
+    const q = searchQuery.value.toLowerCase();
+    list = list.filter(c => c.name.toLowerCase().includes(q) || (c.company && c.company.toLowerCase().includes(q)));
+  }
+  return list;
+});
 
-function parseCsv(text) {
-  const rows = text.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
-  if (!rows.length) return [];
-  // Header only if it names columns and carries no actual contact data (@ / digits).
-  const looksLikeHeader = /name|email|phone|contact/i.test(rows[0]) && !/[@\d]/.test(rows[0]);
-  const dataRows = looksLikeHeader ? rows.slice(1) : rows;
-  return dataRows.map(row => {
-    const [name, contact] = row.split(',').map(c => (c || '').trim());
-    return { name: name || contact, contact: contact || '' };
-  }).filter(r => r.name);
-}
-
-// Turn the Manual Entry field (emails/phones, any delimiter) into selected recipients.
-function addManualEntry() {
-  const parts = form.value.customRecipients.split(/[\s,;]+/).map(s => s.trim()).filter(Boolean);
-  if (!parts.length) return;
-  const added = parts.map((contact, i) => ({
-    id: `manual-${Date.now()}-${i}`,
-    name: contact,
-    contextLabel: 'Manual:',
-    contextValue: contact,
-    email: contact.includes('@') ? contact : '',
-    phone: contact.includes('@') ? '' : contact
-  }));
-  allCustomers.value = [...added, ...allCustomers.value];
-  form.value.selectedCustomers = [...form.value.selectedCustomers, ...added.map(c => c.id)];
-  form.value.customRecipients = '';
-}
-
-function handleCsvImport(event) {
-  const file = event.target.files?.[0];
-  if (!file) return;
-  const reader = new FileReader();
-  reader.onload = () => {
-    const parsed = parseCsv(String(reader.result || ''));
-    if (!parsed.length) {
-      importError.value = 'No contacts found in that file.';
-      return;
-    }
-    const added = parsed.map((c, i) => ({
-      id: `csv-${Date.now()}-${i}`,
-      name: c.name,
-      contextLabel: 'Imported:',
-      contextValue: c.contact || 'CSV',
-      email: (c.contact || '').includes('@') ? c.contact : '',
-      phone: (c.contact || '').includes('@') ? '' : (c.contact || '')
-    }));
-    allCustomers.value = [...added, ...allCustomers.value];
-    form.value.selectedCustomers = [
-      ...form.value.selectedCustomers,
-      ...added.map(c => c.id)
-    ];
-  };
-  reader.onerror = () => { importError.value = 'Could not read that file.'; };
-  reader.readAsText(file);
-  event.target.value = '';
-}
+// Changing channels can make a selected contact ineligible — drop those.
+watch(() => form.value.channels, () => {
+  const validIds = new Set(eligibleCustomers.value.map(c => c.id));
+  form.value.selectedCustomers = form.value.selectedCustomers.filter(id => validIds.has(id));
+}, { deep: true });
 
 const previewMessage = computed(() => {
   return form.value.message
@@ -265,25 +238,9 @@ const channels = computed(() => {
   });
 });
 
-// Validate chosen channels against the selected, currently-visible recipients.
-// ponytail: only sees recipients still in the loaded list (a filter switch can hide some) — fine for the happy path.
-const selectedRecipients = computed(() =>
-  allCustomers.value.filter(c => form.value.selectedCustomers.includes(c.id))
+const channelRequired = computed(() =>
+  form.value.channels.length ? '' : 'Select at least one delivery channel.'
 );
-const channelError = computed(() => {
-  const recips = selectedRecipients.value;
-  if (!recips.length || !form.value.channels.length) return '';
-  const missing = new Set();
-  form.value.channels.forEach(name => {
-    const meta = CHANNEL_META.find(c => c.name === name);
-    if (meta && recips.some(r => !r[meta.field])) missing.add(meta.field === 'email' ? 'an email' : 'a phone number');
-  });
-  return missing.size ? `Some selected contacts have no ${[...missing].join(' or ')}. Remove them or deselect that channel.` : '';
-});
-const channelErrorWithRequired = computed(() => {
-  if (!form.value.channels.length) return 'Select at least one delivery channel.';
-  return channelError.value;
-});
 
 const minScheduleDate = computed(() => {
   const d = new Date();
@@ -298,7 +255,8 @@ const scheduleError = computed(() => {
   if (new Date(isoDateTime) <= new Date()) return 'Scheduled date must be in the future.';
   return '';
 });
-const step2Error = computed(() => channelErrorWithRequired.value || scheduleError.value);
+// Step 1 = channel + sending method; step 2 = pick recipients.
+const step1Error = computed(() => channelRequired.value || scheduleError.value);
 
 // Selected real contacts send their numeric id; manual/CSV rows send their raw email/phone.
 function buildRecipients() {
@@ -342,7 +300,7 @@ function selectAllCustomers() {
 }
 
 function nextStep() {
-  if (currentStep.value === 2 && step2Error.value) return;
+  if (currentStep.value === 1 && step1Error.value) return;
   if (currentStep.value < 5) currentStep.value++;
 }
 
@@ -351,7 +309,7 @@ function prevStep() {
 }
 
 async function generateReport() {
-  if (step2Error.value) { currentStep.value = 2; return; }
+  if (step1Error.value) { currentStep.value = 1; return; }
   const { contactIds, recipients } = buildRecipients();
   const scheduledAt = form.value.delivery === 'Schedule'
     ? convertToUtcIso(form.value.scheduleDate, form.value.scheduleTimezone)
@@ -378,8 +336,10 @@ function close() {
     currentStep.value = 1;
     form.value = { ...defaultFormState };
     form.value.selectedCustomers = [];
-    form.value.channels = ['WhatsApp', 'Email'];
+    form.value.channels = ['Email'];
     form.value.destinations = ['Google'];
+    selectedCompanyFilter.value = '';
+    searchQuery.value = '';
   }, 300);
 }
 </script>
@@ -395,9 +355,9 @@ function close() {
         <div>
           <h2 class="text-xl font-semibold text-foreground">Request Customer Reviews</h2>
           <div class="flex items-center gap-2 mt-1.5 text-sm">
-            <span :class="currentStep >= 1 ? 'text-primary font-medium' : 'text-muted-foreground'">1. Recipients</span>
+            <span :class="currentStep >= 1 ? 'text-primary font-medium' : 'text-muted-foreground'">1. Channel</span>
             <ChevronRight class="size-3.5 text-muted-foreground/50" />
-            <span :class="currentStep >= 2 ? 'text-primary font-medium' : 'text-muted-foreground'">2. Channel</span>
+            <span :class="currentStep >= 2 ? 'text-primary font-medium' : 'text-muted-foreground'">2. Recipients</span>
             <ChevronRight class="size-3.5 text-muted-foreground/50" />
             <span :class="currentStep >= 3 ? 'text-primary font-medium' : 'text-muted-foreground'">3. Message</span>
             <ChevronRight class="size-3.5 text-muted-foreground/50" />
@@ -412,14 +372,14 @@ function close() {
       <!-- Body -->
       <div class="flex-1 overflow-y-auto p-0 bg-card hide-scrollbar flex flex-col">
         
-        <!-- STEP 1: Select Recipients -->
-        <div v-if="currentStep === 1" class="flex-1 flex animate-in slide-in-from-right-4 duration-300 min-h-[450px]">
+        <!-- STEP 2: Select Recipients -->
+        <div v-if="currentStep === 2" class="flex-1 flex animate-in slide-in-from-right-4 duration-300 min-h-[450px]">
           <!-- Sidebar Filters -->
           <div class="w-64 border-r border-border bg-muted/10 p-4 space-y-6 hidden md:block shrink-0">
             <div>
               <h3 class="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">Quick Filters</h3>
               <div class="space-y-1">
-                <button 
+                <button
                   v-for="filter in filters" :key="filter"
                   class="w-full text-left px-3 py-2 rounded-md text-sm cursor-pointer transition-colors"
                   :class="activeFilter === filter ? 'bg-primary/10 text-primary font-medium' : 'text-muted-foreground hover:bg-muted/50 hover:text-foreground'"
@@ -429,21 +389,24 @@ function close() {
                 </button>
               </div>
             </div>
-            <div class="pt-4 border-t border-border space-y-4">
-              <button type="button" class="w-full h-9 px-4 text-sm font-semibold bg-card border border-border rounded-lg text-foreground hover:bg-muted cursor-pointer inline-flex items-center justify-start gap-2" @click="triggerImport">
-                <Upload class="size-4 text-muted-foreground" /> Import CSV
-              </button>
-              <input ref="csvInput" type="file" accept=".csv,text/csv" class="hidden" @change="handleCsvImport" />
-              <p v-if="importError" class="text-xs text-red-500">{{ importError }}</p>
-
-              <div class="flex flex-col gap-1.5">
-                <label class="text-[13.5px] font-medium text-foreground">Manual Entry</label>
-                <Input v-model="form.customRecipients" placeholder="Emails or phone numbers..." class="h-10 px-4 text-[14px] shadow-xs rounded-md border-border/80 bg-background" @keyup.enter="addManualEntry" />
-                <p class="text-[11px] text-muted-foreground">Press Enter to add. Separate multiple with commas.</p>
+            <div v-if="companyList.length" class="pt-4 border-t border-border flex flex-col gap-1.5">
+              <label class="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-1.5">Company</label>
+              <div class="relative h-9">
+                <select
+                  v-model="selectedCompanyFilter"
+                  class="w-full h-full px-3 text-sm shadow-xs rounded-md border border-border bg-background appearance-none focus:outline-none focus-visible:ring-1 focus-visible:ring-primary/30 cursor-pointer pr-9 font-medium text-foreground"
+                >
+                  <option value="">All companies</option>
+                  <option v-for="company in companyList" :key="company" :value="company">{{ company }}</option>
+                </select>
+                <ChevronRight class="absolute right-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground pointer-events-none rotate-90" />
               </div>
             </div>
+            <p v-if="excludedCount > 0" class="text-[11px] text-muted-foreground pt-2 border-t border-border">
+              {{ excludedCount }} contact{{ excludedCount === 1 ? '' : 's' }} hidden — no {{ channelRequirementText }} for the selected channel.
+            </p>
           </div>
-          
+
           <!-- Main Content -->
           <div class="flex-1 p-6 flex flex-col">
             <div class="flex items-center justify-between mb-4">
@@ -458,9 +421,9 @@ function close() {
                 </button>
               </div>
             </div>
-            
+
             <div v-if="loadingContacts" class="flex items-center justify-center py-10 text-sm text-muted-foreground">Loading contacts…</div>
-            <div v-else-if="filteredCustomers.length === 0" class="flex items-center justify-center py-10 text-sm text-muted-foreground">No contacts found. Import a CSV or add contacts first.</div>
+            <div v-else-if="filteredCustomers.length === 0" class="flex items-center justify-center py-10 text-sm text-muted-foreground">No eligible contacts for this channel. Try a different channel or filter.</div>
             <div v-else class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-3 overflow-y-auto pr-2 pb-4">
               <div
                 v-for="customer in filteredCustomers" :key="customer.id"
@@ -483,8 +446,8 @@ function close() {
           </div>
         </div>
 
-        <!-- STEP 2: Choose Delivery Channel -->
-        <div v-if="currentStep === 2" class="p-6 space-y-10 animate-in slide-in-from-right-4 duration-300">
+        <!-- STEP 1: Choose Delivery Channel -->
+        <div v-if="currentStep === 1" class="p-6 space-y-10 animate-in slide-in-from-right-4 duration-300">
           <div class="space-y-4">
             <h3 class="text-sm font-semibold text-foreground uppercase tracking-wider">Delivery Channels (Multiple Allowed)</h3>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -512,8 +475,8 @@ function close() {
                 </div>
               </div>
             </div>
-            <p v-if="channelErrorWithRequired" class="text-sm text-red-500 flex items-center gap-1.5">
-              <AlertCircle class="size-4 shrink-0" /> {{ channelErrorWithRequired }}
+            <p v-if="channelRequired" class="text-sm text-red-500 flex items-center gap-1.5">
+              <AlertCircle class="size-4 shrink-0" /> {{ channelRequired }}
             </p>
           </div>
 
@@ -760,7 +723,7 @@ function close() {
         <button class="h-9 px-4 text-sm font-semibold text-muted-foreground hover:text-foreground cursor-pointer disabled:opacity-40" @click="prevStep" :disabled="currentStep === 1">
           Back
         </button>
-        <button v-if="currentStep < 4" class="h-9 px-8 text-sm font-semibold bg-primary hover:bg-primary/90 text-primary-foreground rounded-lg shadow-xs cursor-pointer inline-flex items-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed" @click="nextStep" :disabled="(currentStep === 1 && form.selectedCustomers.length === 0) || (currentStep === 2 && !!step2Error)">
+        <button v-if="currentStep < 4" class="h-9 px-8 text-sm font-semibold bg-primary hover:bg-primary/90 text-primary-foreground rounded-lg shadow-xs cursor-pointer inline-flex items-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed" @click="nextStep" :disabled="(currentStep === 1 && !!step1Error) || (currentStep === 2 && form.selectedCustomers.length === 0)">
           Next
           <ChevronRight class="size-4" />
         </button>

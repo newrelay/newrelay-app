@@ -52,6 +52,12 @@ Legend — **Design:** ✅ ported to Relay tokens · ⚠️ partial · ❌ legac
 - **Pending (largest feature gap):** decide — keep Requests as the log page **and** add a
   Configuration surface for the 3 missing tabs (QR call-to-action, AI outreach, Spam Reviews
   Filters), or fold both together. These are net-new features, not just a restyle.
+- ✅ **RequestReviewsModal reflow (2026-08-26):** matched the reference's new wizard order —
+  **Step 1 = Channel** (+ sending method/schedule), **Step 2 = Recipients**. Recipients are now
+  eligibility-filtered to contacts that have the field the chosen channel needs (Email→email,
+  SMS/WhatsApp→phone), with an "N hidden" hint. Removed CSV import + manual-entry; added a
+  **Company filter** (from `additional_attributes.company_name`) alongside Quick Filters. All still
+  real-contact-wired.
 
 ### 4. ListingsPage — Design ✅ · Data mock (demo-gated)
 - Ported; naming differs (ours "Listings" vs ref "Integrations").

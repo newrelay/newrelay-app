@@ -430,7 +430,10 @@ onMounted(() => {
 
       <!-- CARD 3: Quiet hours -->
       <div class="border border-border/60 bg-card rounded-xl shadow-xs overflow-hidden mt-8 mb-4">
-        <div class="p-4 sm:p-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div
+          class="p-4 sm:p-6 flex flex-col md:flex-row md:items-center justify-between gap-4"
+          :class="{ 'border-b border-border/40': quietHoursEnabled }"
+        >
           <div>
             <h3 class="text-base font-semibold text-foreground">Quiet hours</h3>
             <p class="text-sm text-muted-foreground mt-1">Pause non-urgent notifications during these hours.</p>

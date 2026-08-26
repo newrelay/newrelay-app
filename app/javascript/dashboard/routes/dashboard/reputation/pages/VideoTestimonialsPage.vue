@@ -41,7 +41,7 @@ const TIMELINE_META = {
   submitted: { icon: Play, dot: 'bg-primary/10', ic: 'text-primary' },
   approved: { icon: ThumbsUp, dot: 'bg-primary/10', ic: 'text-primary' },
   published: { icon: Check, dot: 'bg-emerald-100', ic: 'text-emerald-600' },
-  rejected: { icon: X, dot: 'bg-red-100', ic: 'text-red-600' },
+  rejected: { icon: X, dot: 'bg-destructive/15', ic: 'text-destructive' },
 };
 const iconFor = key => TIMELINE_META[key].icon;
 const timeline = computed(() => {

@@ -319,13 +319,7 @@ export default {
       </SectionLayout>
     </Policy>
     <Policy :permissions="notificationPermissions">
-      <SectionLayout
-        as-card
-        :title="$t('PROFILE_SETTINGS.FORM.NOTIFICATIONS.TITLE')"
-        :description="$t('PROFILE_SETTINGS.FORM.NOTIFICATIONS.NOTE')"
-      >
-        <NotificationPreferences />
-      </SectionLayout>
+      <NotificationPreferences />
     </Policy>
     <SectionLayout
       as-card

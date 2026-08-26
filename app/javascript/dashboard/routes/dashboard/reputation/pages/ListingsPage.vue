@@ -27,6 +27,7 @@ import {
   Link as LinkIcon,
   ArrowLeft,
 } from 'lucide-vue-next';
+import { RelaySwitch } from 'dashboard/components-next/relay';
 
 const router = useRouter();
 const accountId =
@@ -143,7 +144,28 @@ function mapListing(row) {
     synced: !!row.synced_at,
     platforms,
     extra: 0,
+    autoSync: row.auto_sync ?? true,
+    autoReply: row.auto_reply ?? false,
   };
+}
+
+// --- Integration settings modal (Auto Sync / Smart Auto-Reply / Webhook) ---
+const settingsOpen = ref(false);
+const settingsListing = ref(null);
+function openSettings(l) {
+  if (l.autoSync === undefined) l.autoSync = true;
+  if (l.autoReply === undefined) l.autoReply = false;
+  settingsListing.value = l;
+  settingsOpen.value = true;
+}
+const webhookUrl = computed(() =>
+  settingsListing.value
+    ? `${window.location.origin}/api/v1/reputation/sync/${settingsListing.value.id}`
+    : ''
+);
+function saveSettings() {
+  settingsOpen.value = false;
+  showToast(`${settingsListing.value?.name || 'Listing'} settings saved`);
 }
 
 async function loadListings() {
@@ -503,7 +525,7 @@ const closeAdd = () => {
             <!-- Footer actions -->
             <div class="flex items-center justify-between mt-6 pt-4 border-t border-border">
               <div class="flex items-center gap-3">
-                <button class="inline-flex items-center h-8 gap-2 text-xs font-semibold text-primary border border-primary/30 hover:bg-primary/5 rounded-md px-3 shadow-sm transition-colors" @click="showToast(`Opening ${l.name}…`)">
+                <button class="inline-flex items-center h-8 gap-2 text-xs font-semibold text-primary border border-primary/30 hover:bg-primary/5 rounded-md px-3 shadow-sm transition-colors" @click="openSettings(l)">
                   <Building2 class="size-3.5" /> Manage Listing
                 </button>
                 <button class="inline-flex items-center h-8 gap-2 text-xs font-medium bg-card border border-border hover:bg-muted rounded-md px-3 shadow-sm transition-colors" @click="showToast(`${l.reviews} reviews for ${l.name}`)">
@@ -684,6 +706,54 @@ const closeAdd = () => {
           </button>
           <button v-if="!exportDone" class="inline-flex items-center gap-1.5 rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow-sm hover:bg-primary/90 transition-colors" @click="runExport">
             <Download class="size-4" /> Export
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Integration Settings modal (Auto Sync / Smart Auto-Reply / Webhook) -->
+    <div v-if="settingsOpen && settingsListing" class="fixed inset-0 z-50 flex items-center justify-center p-4">
+      <div class="absolute inset-0 bg-background/80 backdrop-blur-sm" @click="settingsOpen = false"></div>
+      <div class="relative bg-card border border-border rounded-2xl shadow-lg max-w-lg w-full p-6 space-y-5">
+        <div class="flex items-center justify-between pb-3 border-b border-border">
+          <div class="flex items-center gap-2.5">
+            <Building2 class="size-5 text-primary" />
+            <h2 class="text-[15px] font-semibold text-foreground">{{ settingsListing.name }} Integration Settings</h2>
+          </div>
+          <button class="text-muted-foreground hover:text-foreground" @click="settingsOpen = false">
+            <X class="size-4" />
+          </button>
+        </div>
+
+        <div class="space-y-4 text-[13.5px]">
+          <div class="flex items-center justify-between p-3.5 rounded-xl bg-muted/40 border border-border">
+            <div>
+              <div class="font-medium text-foreground">Automatic Review Sync</div>
+              <div class="text-[12px] text-muted-foreground">Pull incoming reviews in real-time every 15 minutes</div>
+            </div>
+            <RelaySwitch v-model="settingsListing.autoSync" />
+          </div>
+
+          <div class="flex items-center justify-between p-3.5 rounded-xl bg-muted/40 border border-border">
+            <div>
+              <div class="font-medium text-foreground">Relay AI Smart Auto-Reply</div>
+              <div class="text-[12px] text-muted-foreground">Auto-draft and publish on-brand responses to 5-star ratings</div>
+            </div>
+            <RelaySwitch v-model="settingsListing.autoReply" />
+          </div>
+
+          <div class="flex flex-col gap-1.5">
+            <label class="text-[13.5px] font-medium text-foreground">Sync Webhook Endpoint</label>
+            <input readonly :value="webhookUrl" class="h-9 px-3 text-[13px] rounded-md border border-border bg-muted/30 font-mono text-muted-foreground focus:outline-none" />
+          </div>
+        </div>
+
+        <div class="flex items-center justify-end gap-2 pt-3 border-t border-border">
+          <button class="rounded-lg border border-border px-4 py-2 text-sm font-medium text-muted-foreground hover:bg-muted/50 transition-colors" @click="settingsOpen = false">
+            Cancel
+          </button>
+          <button class="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow-sm hover:bg-primary/90 transition-colors" @click="saveSettings">
+            Save Changes
           </button>
         </div>
       </div>

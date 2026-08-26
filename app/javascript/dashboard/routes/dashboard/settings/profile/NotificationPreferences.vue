@@ -224,16 +224,6 @@ onMounted(() => {
 
 <template>
   <div id="profile-settings-notifications" class="flex flex-col gap-6">
-    <!-- Top Page Header (when showPageHeader is true or in tab view) -->
-    <div v-if="showPageHeader" class="flex flex-col gap-1">
-      <h2 class="text-xl font-semibold tracking-tight text-foreground">
-        {{ t('NOTIFICATION_SETTINGS.TITLE') }}
-      </h2>
-      <p class="text-sm text-muted-foreground">
-        {{ t('NOTIFICATION_SETTINGS.DESCRIPTION') }}
-      </p>
-    </div>
-
     <!-- CARD 1: Notification preferences Card -->
     <div
       class="rounded-xl border border-border/60 bg-card p-6 shadow-xs transition-colors"

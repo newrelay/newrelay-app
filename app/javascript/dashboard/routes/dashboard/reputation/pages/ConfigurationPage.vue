@@ -171,11 +171,10 @@ function saveSpamConfig() {
       </div>
 
       <!-- ================= TAB 1: CHANNELS & TEMPLATES ================= -->
-      <div v-if="activeTab === 'channels'" class="bg-card border border-border rounded-2xl shadow-xs overflow-hidden">
-        <div class="flex flex-col lg:flex-row">
-          <!-- Editor -->
-          <div class="flex-1 p-6 space-y-5">
-            <div class="flex items-start justify-between gap-4 flex-wrap">
+      <div v-if="activeTab === 'channels'" class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+        <!-- Editor -->
+        <div class="lg:col-span-8 bg-card border border-border rounded-2xl shadow-xs p-6 sm:p-7 space-y-6">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-border">
               <div>
                 <h2 class="text-[15px] font-semibold text-foreground">{{ channelLabel }} Request Template</h2>
                 <p class="text-[13px] text-muted-foreground mt-0.5">{{ selectedChannel === 'video' ? 'Customize the video testimonial prompt and recording interface.' : 'Customize the automated message sent to your customers.' }}</p>
@@ -221,8 +220,8 @@ function saveSpamConfig() {
             </div>
           </div>
 
-          <!-- Live phone preview -->
-          <div class="w-full lg:w-[345px] bg-muted/40 border-t lg:border-t-0 lg:border-l border-border p-5 flex flex-col items-center justify-center shrink-0 relative overflow-hidden">
+        <!-- Live phone preview -->
+        <div class="lg:col-span-4 bg-muted/40 rounded-2xl border border-border p-5 flex flex-col items-center justify-center relative overflow-hidden min-h-[520px]">
             <div class="absolute -top-12 -right-12 size-48 rounded-full bg-primary/10 blur-3xl pointer-events-none"></div>
             <div class="w-[260px] h-[460px] bg-card rounded-[30px] shadow-2xl border border-border flex flex-col overflow-hidden relative z-10">
               <div class="pt-3 px-4 pb-1 flex items-center justify-between text-[10.5px] font-medium text-foreground/80 shrink-0 select-none">
@@ -296,7 +295,6 @@ function saveSpamConfig() {
               </div>
             </div>
             <div class="text-center mt-2.5"><span class="text-[11px] text-muted-foreground font-medium">{{ channelLabel }} Preview</span></div>
-          </div>
         </div>
       </div>
 

@@ -5,7 +5,7 @@ import { RelayButton as Button, RelayBadge as Badge } from 'dashboard/components
 import {
   Star, TrendingUp, TrendingDown, MessageSquare, Bot,
   ArrowRight, MessageCircle, Link, Mail, StarHalf, Share2, Info, Trophy,
-  CheckCircle, Plus
+  CheckCircle, Plus, ThumbsUp
 } from 'lucide-vue-next';
 
 import RequestReviewsModal from '../components/RequestReviewsModal.vue';
@@ -34,7 +34,6 @@ const aiData = ref(null); // { sentiment, insights:[{title,text}] } from /ai_ins
 
 // Demo-only fallback — used when /ai_insights returns nothing (no LLM / no reviews).
 const mock = {
-  sentiment: 92,
   insights: [
     { color: 'bg-emerald-500', title: 'Support speed mentioned', text: '"Fast customer service" appeared in 24% of positive reviews this week.' },
     { color: 'bg-amber-500', title: 'Action required', text: '3 recent negative reviews on Yelp have not been responded to.' },
@@ -44,7 +43,6 @@ const mock = {
 
 const insightColors = ['bg-emerald-500', 'bg-amber-500', 'bg-primary'];
 const aiIsMock = computed(() => !(aiData.value && aiData.value.insights && aiData.value.insights.length));
-const sentimentValue = computed(() => (aiData.value && aiData.value.sentiment != null ? aiData.value.sentiment : mock.sentiment));
 const insightsList = computed(() =>
   aiIsMock.value
     ? mock.insights
@@ -69,6 +67,11 @@ const avgRating = computed(() => {
 });
 
 const totalReviews = computed(() => allReviews.value.length);
+
+const positiveCount = computed(() => allReviews.value.filter(r => (r.rating || 0) >= 4).length);
+const positiveValue = computed(() =>
+  totalReviews.value ? Math.round((positiveCount.value / totalReviews.value) * 100) : 0
+);
 
 const pendingCount = computed(() =>
   allReviews.value.filter(r => r.status === 'pending').length
@@ -234,7 +237,7 @@ function handleRequestReviews() {
       </div>
 
       <!-- Section 1: Top Summary Metrics -->
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4" :class="showDemoSurfaces ? 'lg:grid-cols-4' : 'lg:grid-cols-3'">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <!-- Reputation Score (real — /summary) -->
         <div class="bg-card rounded-2xl border border-border shadow-xs p-5 relative overflow-hidden group hover:border-primary/50 transition-colors">
           <div class="flex justify-between items-start mb-4">
@@ -300,35 +303,22 @@ function handleRequestReviews() {
           </div>
         </div>
 
-        <!-- AI Sentiment Card — shows real sentiment when available; badged Demo only when falling back to sample data in demo mode -->
-        <div v-if="!aiIsMock || showDemoSurfaces" class="bg-primary text-primary-foreground rounded-2xl border border-transparent shadow-xs p-5 relative overflow-hidden group hover:shadow-md transition-all flex flex-col justify-between">
-          <div class="absolute top-0 right-0 -mt-4 -mr-4 size-24 bg-white/10 rounded-full blur-xl pointer-events-none"></div>
-
-          <div class="flex justify-between items-start mb-4 relative z-10">
+        <!-- Overall Feedback (Real — positive share of reviews) -->
+        <div class="bg-card rounded-2xl border border-border shadow-xs p-5 relative overflow-hidden group hover:border-primary/50 transition-colors">
+          <div class="flex justify-between items-start mb-4">
             <div>
-              <div class="flex items-center gap-2 mb-1">
-                <p class="text-[13px] font-medium text-primary-foreground/80">AI Sentiment</p>
-                <span v-if="aiIsMock" class="rounded bg-white/20 px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wide text-primary-foreground/90" title="Demo — no reviews / LLM not configured">Demo</span>
+              <p class="text-sm font-medium text-muted-foreground mb-1">Overall Feedback</p>
+              <div class="flex items-baseline gap-1.5">
+                <h3 class="text-3xl font-bold text-foreground">{{ totalReviews ? positiveValue + '%' : '—' }}</h3>
+                <span v-if="totalReviews" class="text-base text-emerald-600 dark:text-emerald-400 font-semibold">Positive</span>
               </div>
-              <h3 class="text-3xl font-bold text-primary-foreground">{{ sentimentValue }}% <span class="text-lg font-medium text-primary-foreground/90 ml-1">Positive</span></h3>
             </div>
-            <div class="p-2.5 bg-white/20 backdrop-blur-xs rounded-xl text-primary-foreground shrink-0 border border-white/10">
-              <Bot class="size-5" />
+            <div class="p-2.5 bg-primary/10 rounded-xl text-primary">
+              <ThumbsUp class="size-5" />
             </div>
           </div>
-
-          <div class="flex items-center justify-between text-xs font-medium text-primary-foreground/80 gap-1 relative z-10 pt-1">
-            <div class="flex items-center gap-1.5">
-              <TrendingUp class="size-4 text-emerald-300 dark:text-emerald-400 shrink-0" />
-              <div class="flex flex-col leading-tight">
-                <span class="text-primary-foreground font-semibold">Sentiment</span>
-                <span class="text-primary-foreground font-semibold">improving</span>
-              </div>
-            </div>
-            <div class="flex flex-col leading-tight text-right opacity-80">
-              <span>across all</span>
-              <span>channels</span>
-            </div>
+          <div class="flex items-center text-sm font-medium text-muted-foreground gap-1">
+            <span>{{ positiveCount.toLocaleString() }} of {{ totalReviews.toLocaleString() }} reviews</span>
           </div>
         </div>
       </div>
@@ -469,7 +459,7 @@ function handleRequestReviews() {
               </div>
             </router-link>
 
-            <router-link :to="{ name: 'reputation_settings' }" class="flex items-center gap-3 p-4 border border-border rounded-xl hover:bg-muted/50 transition-colors text-left group">
+            <router-link :to="{ name: 'reputation_automation' }" class="flex items-center gap-3 p-4 border border-border rounded-xl hover:bg-muted/50 transition-colors text-left group">
               <div class="p-2 bg-primary/10 text-primary rounded-lg group-hover:scale-110 transition-transform">
                 <Bot class="size-5" />
               </div>

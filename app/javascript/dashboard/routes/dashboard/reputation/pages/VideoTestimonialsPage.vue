@@ -11,7 +11,10 @@ import {
 } from 'lucide-vue-next';
 import RequestVideoTestimonialModal from '../components/RequestVideoTestimonialModal.vue';
 import ExportVideoTestimonialsModal from '../components/ExportVideoTestimonialsModal.vue';
+import ReviewWidgetModal from '../components/ReviewWidgetModal.vue';
 import { isReputationDemoSurfacesEnabled } from 'dashboard/featureFlags';
+
+const isWidgetModalOpen = ref(false);
 
 // Real data — de-mocked (Phase 1). AI fields (topics/transcript/aiTags) are Phase 3,
 // so they render empty until that ships.
@@ -372,6 +375,10 @@ const stats = computed(() => {
 
 <template>
   <div class="relative flex h-[calc(100vh-4rem)] w-full overflow-hidden bg-background">
+    <ReviewWidgetModal v-model:open="isWidgetModalOpen" />
+    <RequestVideoTestimonialModal v-model:open="isRequestModalOpen" />
+    <ExportVideoTestimonialsModal v-model:open="isExportModalOpen" />
+
     <!-- Main Content Area (Left) -->
     <div 
       class="flex flex-col h-full overflow-y-auto transition-all duration-300 hide-scrollbar"
@@ -390,6 +397,14 @@ const stats = computed(() => {
             <p class="text-sm text-muted-foreground mt-1">Collect, manage and share authentic video testimonials from your customers.</p>
           </div>
           <div class="flex items-center gap-3">
+            <!-- Widget Button -->
+            <button
+              @click="isWidgetModalOpen = true"
+              class="inline-flex items-center gap-2 h-9 px-3.5 rounded-lg border border-border bg-card text-[13.5px] font-medium text-foreground hover:bg-muted shadow-xs cursor-pointer"
+            >
+              <LayoutGrid class="size-4" /> Widget
+            </button>
+
             <!-- Export Dropdown -->
             <div class="relative">
               <button 

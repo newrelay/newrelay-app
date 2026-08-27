@@ -26,7 +26,7 @@ import {
   Link as LinkIcon,
   ArrowLeft,
 } from 'lucide-vue-next';
-import { RelaySwitch } from 'dashboard/components-next/relay';
+import { RelayInput as Input, RelaySwitch } from 'dashboard/components-next/relay';
 
 const router = useRouter();
 const accountId =
@@ -417,27 +417,12 @@ function saveSettings() {
       <div class="px-8 py-5 border-b border-border bg-[#FAFAFA] dark:bg-background shrink-0 sticky top-0 z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div class="flex flex-wrap items-center gap-2">
           <div class="relative w-48 mr-2">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              class="lucide absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground"
-              aria-hidden="true"
-            >
-              <path d="m21 21-4.34-4.34"></path>
-              <circle cx="11" cy="11" r="8"></circle>
-            </svg>
-            <input
+            <Search class="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground z-10" />
+            <Input
               v-model="query"
               type="text"
               placeholder="Search listings..."
-              class="placeholder:text-muted-foreground focus-visible:ring-ring flex border px-3 py-1 transition-colors focus-visible:ring-1 focus-visible:outline-hidden disabled:cursor-not-allowed disabled:opacity-50 w-full pl-9 bg-white dark:bg-card border-border shadow-xs h-9 text-sm rounded-lg text-foreground"
+              class-name="w-full pl-9 h-9 text-sm rounded-lg border-border bg-white dark:bg-card shadow-xs"
             />
           </div>
 

@@ -2,13 +2,18 @@
 /* eslint-disable */
 // Port of NewRelay reference `reputation/SettingsView.vue` (auto-responder / gating / alerts /
 // badge). Kept separate from the existing config hub (SettingsPage.vue) which owns integrations,
-// request channels, QR and spam. MVP persistence: localStorage (no backend contract for these
-// policy fields yet). ponytail: wire to a real settings endpoint when one exists.
-import { reactive, ref } from 'vue';
+// request channels, QR and spam. Persists to the reputation settings endpoint under the
+// `automation` key (Configuration owns the sibling keys in the same jsonb blob).
+import { reactive, ref, onMounted } from 'vue';
 import { RelaySwitch, RelayInput, RelayButton } from 'dashboard/components-next/relay';
 import { Bot, Shield, Bell, Code, Sparkles, Save, Check, Copy } from 'lucide-vue-next';
 
-const STORAGE_KEY = 'rep_automation_settings';
+const axios = window.axios;
+const accountId =
+  window.__STORE__?.getters['auth/getCurrentAccount']?.id ||
+  window.location.pathname.match(/accounts\/(\d+)/)?.[1];
+const settingsUrl = () => `/api/v1/accounts/${accountId}/reputation/settings`;
+
 const defaults = {
   aiAutoDraft: true,
   aiAutoPublish5Star: true,
@@ -21,14 +26,18 @@ const defaults = {
   dailyDigest: true,
   alertEmail: '',
 };
+const settings = reactive({ ...defaults });
 
-let saved = {};
-try { saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}'); } catch (e) { saved = {}; }
-const settings = reactive({ ...defaults, ...saved });
+onMounted(async () => {
+  try {
+    const { data } = await axios.get(settingsUrl());
+    Object.assign(settings, data?.config?.automation || {});
+  } catch (e) { /* no saved settings yet */ }
+});
 
 const isSaved = ref(false);
-function handleSave() {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(settings));
+async function handleSave() {
+  try { await axios.patch(settingsUrl(), { config: { automation: { ...settings } } }); } catch (e) { /* keep UI optimistic */ }
   isSaved.value = true;
   setTimeout(() => { isSaved.value = false; }, 2500);
 }

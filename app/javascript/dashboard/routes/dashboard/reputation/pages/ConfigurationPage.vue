@@ -18,6 +18,15 @@ import {
 } from 'dashboard/components-next/relay';
 import { defaultSmsTemplates, defaultEmailTemplates, defaultWhatsAppTemplates } from '../components/data/outreachTemplates';
 
+const axios = window.axios;
+const accountId =
+  window.__STORE__?.getters['auth/getCurrentAccount']?.id ||
+  window.location.pathname.match(/accounts\/(\d+)/)?.[1];
+const settingsUrl = () => `/api/v1/accounts/${accountId}/reputation/settings`;
+async function persist(patch) {
+  try { await axios.patch(settingsUrl(), { config: patch }); } catch (e) { /* keep UI optimistic */ }
+}
+
 const activeTab = ref('channels');
 const tabs = [
   { id: 'channels', label: 'Channels & Templates' },
@@ -154,6 +163,7 @@ const ratingOptions = [
 ];
 const isAiSaved = ref(false);
 function saveAiConfig() {
+  persist({ aiSettings: aiSettings.value });
   isAiSaved.value = true;
   setTimeout(() => { isAiSaved.value = false; }, 2000);
 }
@@ -168,9 +178,52 @@ const autoFlagOptions = [
 ];
 const isSpamSaved = ref(false);
 function saveSpamConfig() {
+  persist({ spamSettings: spamSettings.value });
   isSpamSaved.value = true;
   setTimeout(() => { isSpamSaved.value = false; }, 2000);
 }
+
+// ---------- Tab 1/2 persistence (templates + review link/QR) ----------
+const isTemplateSaved = ref(false);
+function saveTemplates() {
+  persist({
+    selectedChannel: selectedChannel.value,
+    smsTemplateId: smsTemplateId.value, smsMessage: smsMessage.value,
+    emailTemplateId: emailTemplateId.value, emailSubject: emailSubject.value, emailBody: emailBody.value,
+    whatsappTemplateId: whatsappTemplateId.value, whatsappHeader: whatsappHeader.value, whatsappBody: whatsappBody.value,
+    videoPrompt: videoPrompt.value,
+    customSlug: customSlug.value, selectedDestination: selectedDestination.value,
+    qrFrame: qrFrame.value, qrTitle: qrTitle.value, qrSubtitle: qrSubtitle.value, includeLogo: includeLogo.value,
+  });
+  isTemplateSaved.value = true;
+  setTimeout(() => { isTemplateSaved.value = false; }, 2000);
+}
+
+async function loadConfig() {
+  try {
+    const { data } = await axios.get(settingsUrl());
+    const c = data?.config || {};
+    if (c.selectedChannel) selectedChannel.value = c.selectedChannel;
+    if (c.smsTemplateId) smsTemplateId.value = c.smsTemplateId;
+    if (c.smsMessage != null) smsMessage.value = c.smsMessage;
+    if (c.emailTemplateId) emailTemplateId.value = c.emailTemplateId;
+    if (c.emailSubject != null) emailSubject.value = c.emailSubject;
+    if (c.emailBody != null) emailBody.value = c.emailBody;
+    if (c.whatsappTemplateId) whatsappTemplateId.value = c.whatsappTemplateId;
+    if (c.whatsappHeader != null) whatsappHeader.value = c.whatsappHeader;
+    if (c.whatsappBody != null) whatsappBody.value = c.whatsappBody;
+    if (c.videoPrompt != null) videoPrompt.value = c.videoPrompt;
+    if (c.customSlug) customSlug.value = c.customSlug;
+    if (c.selectedDestination) selectedDestination.value = c.selectedDestination;
+    if (c.qrFrame) qrFrame.value = c.qrFrame;
+    if (c.qrTitle != null) qrTitle.value = c.qrTitle;
+    if (c.qrSubtitle != null) qrSubtitle.value = c.qrSubtitle;
+    if (typeof c.includeLogo === 'boolean') includeLogo.value = c.includeLogo;
+    if (c.aiSettings) aiSettings.value = { ...aiSettings.value, ...c.aiSettings };
+    if (c.spamSettings) spamSettings.value = { ...spamSettings.value, ...c.spamSettings };
+  } catch (e) { /* no saved settings yet */ }
+}
+onMounted(loadConfig);
 
 // Selected-label helpers for the custom dropdowns
 const channelTemplateLabel = computed(() => channelTemplates.value.find(t => t.id === channelTemplateId.value)?.name || 'Select template');
@@ -186,7 +239,6 @@ const autoFlagLabel = computed(() => autoFlagOptions.find(o => o.value === spamS
         <div>
           <div class="flex items-center gap-2">
             <h1 class="text-lg font-semibold text-foreground">Configuration</h1>
-            <span class="rounded bg-amber-500/15 px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wide text-amber-600 dark:text-amber-400" title="Showcase — the live request templates and QR generator are in Reputation Settings">Demo</span>
           </div>
           <p class="text-sm text-muted-foreground mt-1">Collect verified 5-star customer reviews across Google, Yelp, and Facebook via automated multi-channel sequences.</p>
         </div>
@@ -259,8 +311,8 @@ const autoFlagLabel = computed(() => autoFlagOptions.find(o => o.value === spamS
             </div>
 
             <div class="pt-5 border-t border-border flex items-center justify-end">
-              <button type="button" class="h-9 px-4 py-2 rounded-md bg-primary text-primary-foreground text-[13px] font-medium inline-flex items-center justify-center gap-1.5 hover:bg-primary/90 shadow-xs cursor-pointer">
-                <Check class="size-3.5" /> Save Template Changes
+              <button type="button" class="h-9 px-4 py-2 rounded-md bg-primary text-primary-foreground text-[13px] font-medium inline-flex items-center justify-center gap-1.5 hover:bg-primary/90 shadow-xs cursor-pointer" @click="saveTemplates">
+                <Check class="size-3.5" /> {{ isTemplateSaved ? 'Saved' : 'Save Template Changes' }}
               </button>
             </div>
           </div>

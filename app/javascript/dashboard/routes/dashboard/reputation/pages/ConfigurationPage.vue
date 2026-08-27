@@ -186,16 +186,14 @@ function saveSpamConfig() {
               </div>
             </div>
 
-            <div v-if="selectedChannel !== 'video'" class="flex flex-col sm:flex-row gap-3">
+            <div v-if="selectedChannel !== 'video'" class="flex flex-col sm:flex-row sm:items-end gap-3">
               <div class="flex-1 flex flex-col gap-1.5">
                 <label class="text-[13px] font-medium text-foreground">{{ channelLabel }} Template</label>
                 <select v-model="channelTemplateId" class="h-10 px-3 text-sm rounded-md border border-border bg-background text-foreground focus:outline-none focus-visible:ring-1 focus-visible:ring-primary/30 cursor-pointer">
                   <option v-for="t in channelTemplates" :key="t.id" :value="t.id">{{ t.name }}</option>
                 </select>
               </div>
-              <div class="flex items-end">
-                <button class="h-10 px-4 rounded-md border border-border bg-card hover:bg-muted text-sm font-semibold inline-flex items-center gap-2 cursor-pointer"><Plus class="size-4" /> New Template</button>
-              </div>
+              <button class="h-10 px-4 rounded-md border border-border bg-card hover:bg-muted text-sm font-semibold inline-flex items-center justify-center gap-2 shrink-0 cursor-pointer"><Plus class="size-4" /> New Template</button>
             </div>
 
             <div v-if="selectedChannel === 'email'" class="flex flex-col gap-1.5">

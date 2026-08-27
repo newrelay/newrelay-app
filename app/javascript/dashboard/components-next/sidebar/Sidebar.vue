@@ -569,12 +569,6 @@ const primaryMenuItems = computed(() => {
           activeOn: ['reputation_reviews'],
         },
         {
-          name: 'Reputation Video',
-          label: t('SIDEBAR.REPUTATION_VIDEO'),
-          to: accountScopedRoute('reputation_video_testimonials'),
-          activeOn: ['reputation_video_testimonials'],
-        },
-        {
           name: 'Reputation Configuration',
           label: t('SIDEBAR.REPUTATION_CONFIGURATION'),
           to: accountScopedRoute('reputation_configuration'),
@@ -586,6 +580,12 @@ const primaryMenuItems = computed(() => {
           to: accountScopedRoute('reputation_integrations'),
           activeOn: ['reputation_integrations'],
         },
+        {
+          name: 'Reputation Video',
+          label: t('SIDEBAR.REPUTATION_VIDEO'),
+          to: accountScopedRoute('reputation_video_testimonials'),
+          activeOn: ['reputation_video_testimonials'],
+        },
         ...(showReputationDemoSurfaces.value
           ? [
               {
@@ -594,32 +594,8 @@ const primaryMenuItems = computed(() => {
                 to: accountScopedRoute('reputation_listings'),
                 activeOn: ['reputation_listings'],
               },
-              {
-                name: 'Reputation Feedback',
-                label: t('SIDEBAR.REPUTATION_FEEDBACK'),
-                to: accountScopedRoute('reputation_feedback'),
-                activeOn: ['reputation_feedback'],
-              },
             ]
           : []),
-        {
-          name: 'Reputation Requests',
-          label: t('SIDEBAR.REPUTATION_REQUESTS'),
-          to: accountScopedRoute('reputation_requests'),
-          activeOn: ['reputation_requests'],
-        },
-        {
-          name: 'Reputation Automation',
-          label: t('SIDEBAR.REPUTATION_AUTOMATION'),
-          to: accountScopedRoute('reputation_automation'),
-          activeOn: ['reputation_automation'],
-        },
-        {
-          name: 'Reputation Settings',
-          label: t('SIDEBAR.REPUTATION_SETTINGS'),
-          to: accountScopedRoute('reputation_settings'),
-          activeOn: ['reputation_settings'],
-        },
       ],
     },
     {

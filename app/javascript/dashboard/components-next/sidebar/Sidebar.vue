@@ -574,20 +574,20 @@ const primaryMenuItems = computed(() => {
           to: accountScopedRoute('reputation_video_testimonials'),
           activeOn: ['reputation_video_testimonials'],
         },
+        {
+          name: 'Reputation Configuration',
+          label: t('SIDEBAR.REPUTATION_CONFIGURATION'),
+          to: accountScopedRoute('reputation_configuration'),
+          activeOn: ['reputation_configuration'],
+        },
+        {
+          name: 'Reputation Integrations',
+          label: t('SIDEBAR.REPUTATION_INTEGRATIONS'),
+          to: accountScopedRoute('reputation_integrations'),
+          activeOn: ['reputation_integrations'],
+        },
         ...(showReputationDemoSurfaces.value
           ? [
-              {
-                name: 'Reputation Configuration',
-                label: t('SIDEBAR.REPUTATION_CONFIGURATION'),
-                to: accountScopedRoute('reputation_configuration'),
-                activeOn: ['reputation_configuration'],
-              },
-              {
-                name: 'Reputation Integrations',
-                label: t('SIDEBAR.REPUTATION_INTEGRATIONS'),
-                to: accountScopedRoute('reputation_integrations'),
-                activeOn: ['reputation_integrations'],
-              },
               {
                 name: 'Reputation Listings',
                 label: t('SIDEBAR.REPUTATION_LISTINGS'),

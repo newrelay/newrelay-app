@@ -55,6 +55,18 @@ export const routes = [
         meta,
       },
       {
+        path: 'configuration',
+        name: 'reputation_configuration',
+        component: ConfigurationPage,
+        meta,
+      },
+      {
+        path: 'integrations',
+        name: 'reputation_integrations',
+        component: IntegrationsPage,
+        meta,
+      },
+      {
         path: 'listings',
         name: 'reputation_listings',
         component: ListingsPage,
@@ -64,18 +76,6 @@ export const routes = [
         path: 'feedback',
         name: 'reputation_feedback',
         component: FeedbackPage,
-        meta: { ...meta, featureFlag: FEATURE_FLAGS.REPUTATION_DEMO_SURFACES },
-      },
-      {
-        path: 'configuration',
-        name: 'reputation_configuration',
-        component: ConfigurationPage,
-        meta: { ...meta, featureFlag: FEATURE_FLAGS.REPUTATION_DEMO_SURFACES },
-      },
-      {
-        path: 'integrations',
-        name: 'reputation_integrations',
-        component: IntegrationsPage,
         meta: { ...meta, featureFlag: FEATURE_FLAGS.REPUTATION_DEMO_SURFACES },
       },
       {

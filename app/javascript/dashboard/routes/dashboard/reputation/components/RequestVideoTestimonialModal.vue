@@ -556,13 +556,13 @@ function close() {
                 </button>
 
                 <div v-if="showCompanyMenu" class="absolute left-0 right-0 bottom-full mb-1 z-50 rounded-lg border border-border bg-popover shadow-lg p-1.5">
-                  <div class="relative mb-1.5">
-                    <Search class="absolute left-2.5 top-1/2 -translate-y-1/2 size-3.5 text-muted-foreground" />
+                  <div class="mb-1.5 flex items-center gap-2 h-8 px-2.5 rounded-md border border-border bg-background focus-within:ring-1 focus-within:ring-primary/30">
+                    <Search class="size-3.5 text-muted-foreground shrink-0" />
                     <input
                       v-model="companySearch"
                       type="text"
                       placeholder="Search company…"
-                      class="w-full h-8 pl-8 pr-2 text-xs rounded-md border border-border bg-background text-foreground focus:outline-none focus-visible:ring-1 focus-visible:ring-primary/30"
+                      class="flex-1 min-w-0 h-full border-0 bg-transparent p-0 text-xs text-foreground focus:outline-none placeholder:text-muted-foreground"
                     />
                   </div>
                   <div class="max-h-52 overflow-y-auto space-y-0.5">

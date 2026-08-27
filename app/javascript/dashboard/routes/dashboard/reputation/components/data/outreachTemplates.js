@@ -119,3 +119,64 @@ export const defaultWhatsAppTemplates = [
     autoDelay: '2 hours post-visit',
   },
 ];
+
+export const defaultVideoTemplates = [
+  {
+    id: 'video_standard_request',
+    name: 'Customer Experience Video',
+    headline: 'Share Your Story with {{BusinessName}}',
+    message:
+      'Hi {{FirstName}}, thank you for choosing {{BusinessName}}! Could you take 45 seconds to record a quick video review sharing your experience?',
+    questions: [
+      'What problem or goal did you have before working with us?',
+      'How was your experience with {{EmployeeName}} & our team?',
+      'What would you say to someone considering {{BusinessName}}?',
+    ],
+    buttonText: 'Record Video Testimonial 🎥',
+    maxDuration: '60 Seconds (Recommended)',
+    autoDelay: '2 hours post-visit',
+  },
+  {
+    id: 'video_vip_story',
+    name: 'VIP Success Story',
+    headline: 'We Value Your Journey, {{FirstName}} 💎',
+    message:
+      'As one of our most valued clients, your journey means the world to us. Would you record a 60-second video sharing your story with {{BusinessName}}?',
+    questions: [
+      'How long have you partnered with {{BusinessName}}?',
+      'What results or improvements have you achieved?',
+      'What makes our service stand out to you?',
+    ],
+    buttonText: 'Start VIP Recording 🎥',
+    maxDuration: '90 Seconds',
+    autoDelay: '2 hours post-visit',
+  },
+  {
+    id: 'video_post_service',
+    name: 'Quick 30s Post-Service Feedback',
+    headline: 'How Was Your Visit Today? ⭐',
+    message:
+      'Hi {{FirstName}}! Your appointment with {{BusinessName}} is complete. We would love a quick 30-second selfie video on how everything went!',
+    questions: [
+      'How did {{EmployeeName}} take care of you today?',
+      'How did you feel about the overall service and speed?',
+    ],
+    buttonText: 'Tap to Record (30s) 🎥',
+    maxDuration: '30 Seconds',
+    autoDelay: 'Immediately post-visit',
+  },
+  {
+    id: 'video_product_unboxing',
+    name: 'Product & Service Review',
+    headline: 'Show & Tell Your Experience',
+    message:
+      'Show us how you use {{BusinessName}}! Record a quick clip sharing your honest feedback and results.',
+    questions: [
+      'What is your favorite feature or benefit?',
+      'How has it improved your day-to-day workflow?',
+    ],
+    buttonText: 'Submit Video Review 🎥',
+    maxDuration: '60 Seconds',
+    autoDelay: '24 hours post-visit',
+  },
+];

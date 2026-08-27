@@ -27,6 +27,6 @@ class Api::V1::Accounts::Reputation::WidgetsController < Api::V1::Accounts::Base
   end
 
   def widget_params
-    params.require(:widget).permit(:name, :style, :min_rating, :active, :hide_watermark)
+    params.require(:widget).permit(:name, :style, :min_rating, :active, :hide_watermark, config: {})
   end
 end

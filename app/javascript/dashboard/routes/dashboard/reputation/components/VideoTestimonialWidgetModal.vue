@@ -1,6 +1,6 @@
 <script setup>
 /* eslint-disable */
-import { ref, computed } from 'vue';
+import { ref, computed, watch } from 'vue';
 import { RelaySwitch, RelayCheckbox } from 'dashboard/components-next/relay';
 import {
   X, LayoutGrid, Code2, Copy, Check, Sparkles, Monitor, Tablet,
@@ -94,7 +94,43 @@ function copyEmbedCode() {
   isCopied.value = true;
   setTimeout(() => { isCopied.value = false; }, 2200);
 }
-function handleSaveWidget() {
+// ---------- Persistence (reputation_widgets, tagged source: video_studio) ----------
+const axios = window.axios;
+const accountId =
+  window.__STORE__?.getters['auth/getCurrentAccount']?.id ||
+  window.location.pathname.match(/accounts\/(\d+)/)?.[1];
+const widgetsUrl = () => `/api/v1/accounts/${accountId}/reputation/widgets`;
+const widgetId = ref(null);
+const STYLE_ENUM = ['carousel', 'grid', 'badge'];
+
+async function loadWidget() {
+  try {
+    const { data } = await axios.get(widgetsUrl());
+    const existing = (data || []).find(w => w.config && w.config.source === 'video_studio');
+    if (!existing) return;
+    widgetId.value = existing.id;
+    if (existing.config) widgetConfig.value = { ...widgetConfig.value, ...existing.config };
+  } catch (e) { /* none yet */ }
+}
+watch(() => props.open, isOpen => { if (isOpen) loadWidget(); }, { immediate: true });
+
+async function handleSaveWidget() {
+  const c = widgetConfig.value;
+  const payload = {
+    name: c.name,
+    style: STYLE_ENUM.includes(c.layout) ? c.layout : 'carousel',
+    min_rating: Math.max(1, Math.min(5, parseInt(c.minRating, 10) || 1)),
+    active: true,
+    config: { ...c, source: 'video_studio' },
+  };
+  try {
+    if (widgetId.value) {
+      await axios.patch(`${widgetsUrl()}/${widgetId.value}`, { widget: payload });
+    } else {
+      const { data } = await axios.post(widgetsUrl(), { widget: payload });
+      widgetId.value = data?.id || null;
+    }
+  } catch (e) { /* keep UI optimistic */ }
   isSaved.value = true;
   setTimeout(() => { isSaved.value = false; emit('update:open', false); }, 1200);
 }

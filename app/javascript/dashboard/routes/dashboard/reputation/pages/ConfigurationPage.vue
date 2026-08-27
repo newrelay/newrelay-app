@@ -229,9 +229,10 @@ function saveSpamConfig() {
           </div>
 
         <!-- Live phone preview -->
-        <div class="lg:col-span-4 bg-muted/40 rounded-2xl border border-border p-5 flex flex-col items-center justify-center relative overflow-hidden min-h-[520px]">
+        <div class="lg:col-span-4 bg-slate-100/70 dark:bg-slate-900/40 backdrop-blur-xl rounded-xl border border-border p-4 sm:p-5 shadow-xs flex flex-col items-center justify-center relative overflow-hidden min-h-[520px]">
             <div class="absolute -top-12 -right-12 size-48 rounded-full bg-primary/10 blur-3xl pointer-events-none"></div>
-            <div class="w-[260px] h-[460px] bg-card rounded-[30px] shadow-2xl border border-border flex flex-col overflow-hidden relative z-10">
+            <div class="absolute -bottom-12 -left-12 size-48 rounded-full bg-primary/10 blur-3xl pointer-events-none"></div>
+            <div class="w-[260px] sm:w-[272px] h-[460px] bg-white/95 dark:bg-card/95 backdrop-blur-md rounded-[30px] shadow-[0_20px_60px_-15px_rgba(0,0,0,0.12)] dark:shadow-[0_25px_60px_-15px_rgba(0,0,0,0.7)] border border-slate-200/80 dark:border-slate-800/80 flex flex-col overflow-hidden relative z-10">
               <div class="pt-3 px-4 pb-1 flex items-center justify-between text-[10.5px] font-medium text-foreground/80 shrink-0 select-none">
                 <span class="font-semibold text-foreground">9:41</span>
                 <div class="flex items-center gap-1 text-foreground/70"><Signal class="size-2.5" /><Wifi class="size-2.5" /><div class="w-4 h-2 rounded-[2px] border border-foreground/70 p-0.5 flex items-center"><div class="h-full w-2 bg-foreground/80 rounded-[1px]"></div></div></div>
@@ -302,7 +303,7 @@ function saveSpamConfig() {
                 <div class="p-2 bg-card border-t border-border/40 flex items-center gap-1.5 shrink-0"><div class="size-5 rounded-full bg-muted flex items-center justify-center text-muted-foreground font-bold text-xs shrink-0">+</div><div class="flex-1 h-6 bg-muted/60 rounded-full px-2.5 text-[9.5px] text-muted-foreground flex items-center truncate">Text Message</div></div>
               </div>
             </div>
-            <div class="text-center mt-2.5"><span class="text-[11px] text-muted-foreground font-medium">{{ channelLabel }} Preview</span></div>
+            <p class="text-[11.5px] text-muted-foreground text-center mt-3.5 z-10">{{ channelLabel }} Preview</p>
         </div>
       </div>
 

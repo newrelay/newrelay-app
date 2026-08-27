@@ -216,6 +216,14 @@ always-show company filter (`c5a87afc`); Schedule time input (`de610d17`); Relay
 token cleanup (`dc3d41c8`); destructive error token (`d76cd362`); recipients UX match (`5b6c0af8`).
 Not pushed — local commits only.
 
+## Configuration Tab 1 preview panel — reference slate tint (user-approved)
+Per user request ("use and update"), the Channels & Templates **right preview panel** now uses the
+reference's exact styling — `bg-slate-100/70 dark:bg-slate-900/40 backdrop-blur-xl`, dual glow orbs,
+and a phone frame with `bg-white/95 dark:bg-card/95`, custom drop shadows, and
+`border-slate-200/80 dark:border-slate-800/80`. This is a deliberate, user-approved exception to the
+no-`slate` sweep: it's a theme-independent device-mockup surface (same class as the QR/print/video
+surfaces). The inner chat bubbles stay on semantic tokens.
+
 ## Gotcha: underline-tab buttons need `rounded-none`
 Chatwoot's `@layer base` gives every `<button>` `rounded-lg`. On an underline tab
 (`border-b-2 -mb-[1px]`) that radius bends the 2px bottom border up at both ends, so the active

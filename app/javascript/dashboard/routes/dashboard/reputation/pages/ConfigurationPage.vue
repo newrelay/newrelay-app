@@ -218,6 +218,12 @@ function saveSpamConfig() {
               <span class="text-[12px] text-muted-foreground mr-1">Insert tag:</span>
               <button v-for="tag in TAGS" :key="tag" type="button" class="font-mono text-[11px] px-2 py-1 rounded-md bg-muted hover:bg-primary/20 text-foreground cursor-pointer" @click="insertTag(tag)">{{ tag }}</button>
             </div>
+
+            <div class="flex justify-end pt-4 border-t border-border">
+              <button type="button" class="h-10 px-4 rounded-lg bg-primary text-primary-foreground text-sm font-semibold inline-flex items-center gap-2 hover:bg-primary/90 shadow-xs cursor-pointer">
+                <Check class="size-4" /> Save Template Changes
+              </button>
+            </div>
           </div>
 
         <!-- Live phone preview -->

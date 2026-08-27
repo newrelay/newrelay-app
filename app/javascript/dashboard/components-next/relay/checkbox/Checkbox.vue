@@ -43,7 +43,7 @@ const toggle = () => {
     :class="
       cn(
         // p-0 overrides legacy @layer base button py-1 px-2.5 that crush size-4
-        'peer inline-flex size-4 shrink-0 items-center justify-center rounded-sm border border-input shadow-xs p-0 transition-colors cursor-pointer',
+        'peer inline-flex size-4 shrink-0 items-center justify-center rounded border border-input shadow-xs p-0 transition-colors cursor-pointer',
         'focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring',
         'disabled:cursor-not-allowed disabled:opacity-50',
         isChecked

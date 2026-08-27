@@ -173,11 +173,11 @@ function saveSpamConfig() {
       <!-- ================= TAB 1: CHANNELS & TEMPLATES ================= -->
       <div v-if="activeTab === 'channels'" class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
         <!-- Editor -->
-        <div class="lg:col-span-8 bg-card border border-border rounded-2xl shadow-xs p-6 sm:p-7 space-y-6">
+        <div class="lg:col-span-8 bg-card border border-border rounded-xl shadow-xs p-7 space-y-6">
             <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-border">
               <div>
                 <h2 class="text-[15px] font-semibold text-foreground">{{ channelLabel }} Request Template</h2>
-                <p class="text-[13px] text-muted-foreground mt-0.5">{{ selectedChannel === 'video' ? 'Customize the video testimonial prompt and recording interface.' : 'Customize the automated message sent to your customers.' }}</p>
+                <p class="text-[12.5px] text-muted-foreground mt-0.5">{{ selectedChannel === 'video' ? 'Customize the video testimonial prompt and recording interface.' : 'Customize the automated message sent to your customers.' }}</p>
               </div>
               <div class="flex items-center gap-1.5 shrink-0 flex-wrap">
                 <button v-for="ch in CHANNELS" :key="ch.id" type="button" class="px-3 py-1.5 rounded-lg border text-xs text-center cursor-pointer transition-colors flex items-center justify-center gap-1.5" :class="selectedChannel === ch.id ? 'bg-primary/10 border-primary text-primary font-semibold' : 'bg-card border-border hover:bg-muted text-muted-foreground'" @click="selectedChannel = ch.id">
@@ -186,40 +186,44 @@ function saveSpamConfig() {
               </div>
             </div>
 
-            <div v-if="selectedChannel !== 'video'" class="flex flex-col sm:flex-row sm:items-end gap-3">
-              <div class="flex-1 flex flex-col gap-1.5">
-                <label class="text-[13px] font-medium text-foreground">{{ channelLabel }} Template</label>
-                <select v-model="channelTemplateId" class="h-10 px-3 text-sm rounded-md border border-border bg-background text-foreground focus:outline-none focus-visible:ring-1 focus-visible:ring-primary/30 cursor-pointer">
+            <div v-if="selectedChannel !== 'video'" class="grid grid-cols-1 sm:grid-cols-12 gap-3.5 items-end">
+              <div class="sm:col-span-8 flex flex-col gap-1.5">
+                <label class="text-[13.5px] font-medium text-foreground">{{ channelLabel }} Template</label>
+                <select v-model="channelTemplateId" class="h-9 px-3 text-[13.5px] rounded-md border border-border/80 bg-background text-foreground shadow-2xs hover:border-border focus:outline-none focus-visible:ring-1 focus-visible:ring-primary/30 cursor-pointer">
                   <option v-for="t in channelTemplates" :key="t.id" :value="t.id">{{ t.name }}</option>
                 </select>
               </div>
-              <button class="h-10 px-4 rounded-md border border-border bg-card hover:bg-muted text-sm font-semibold inline-flex items-center justify-center gap-2 shrink-0 cursor-pointer"><Plus class="size-4" /> New Template</button>
+              <div class="sm:col-span-4">
+                <button class="h-9 w-full px-3 rounded-md border border-border hover:border-transparent bg-background hover:bg-muted text-[13px] font-medium inline-flex items-center justify-center gap-1.5 shadow-xs cursor-pointer"><Plus class="size-3.5" /> New Template</button>
+              </div>
             </div>
 
             <div v-if="selectedChannel === 'email'" class="flex flex-col gap-1.5">
-              <label class="text-[13px] font-medium text-foreground">Email Subject Line</label>
-              <input v-model="emailSubject" class="h-10 px-3 text-sm rounded-md border border-border bg-background text-foreground focus:outline-none focus-visible:ring-1 focus-visible:ring-primary/30" />
+              <label class="text-[13.5px] font-medium text-foreground">Email Subject Line</label>
+              <input v-model="emailSubject" class="h-9 px-3 text-[13.5px] rounded-md border border-border/80 bg-background text-foreground shadow-2xs focus:outline-none focus-visible:ring-1 focus-visible:ring-primary/30" />
             </div>
 
-            <div class="flex flex-col gap-1.5">
+            <div class="flex flex-col gap-2">
               <div class="flex items-center justify-between">
-                <label class="text-[13px] font-medium text-foreground">{{ selectedChannel === 'video' ? 'Video Prompt' : selectedChannel === 'email' ? 'Email Body Copy' : 'Message Content' }}</label>
+                <label class="text-[13.5px] font-medium text-foreground">{{ selectedChannel === 'video' ? 'Video Prompt' : selectedChannel === 'email' ? 'Email Body Copy' : 'Message Content' }}</label>
                 <span v-if="selectedChannel === 'sms'" class="text-[11.5px] text-muted-foreground font-mono">{{ smsMessage.length }} / 160 characters ({{ Math.ceil(smsMessage.length / 160) || 1 }} SMS)</span>
               </div>
-              <textarea v-if="selectedChannel === 'sms'" v-model="smsMessage" rows="4" class="w-full text-[13.5px] p-3.5 rounded-xl border border-border/80 bg-background resize-none focus:outline-none focus:ring-1 focus:ring-primary/30 leading-relaxed"></textarea>
-              <textarea v-else-if="selectedChannel === 'email'" v-model="emailBody" rows="5" class="w-full text-[13.5px] p-3.5 rounded-xl border border-border/80 bg-background resize-none focus:outline-none focus:ring-1 focus:ring-primary/30 leading-relaxed"></textarea>
-              <textarea v-else-if="selectedChannel === 'whatsapp'" v-model="whatsappBody" rows="4" class="w-full text-[13.5px] p-3.5 rounded-xl border border-border/80 bg-background resize-none focus:outline-none focus:ring-1 focus:ring-primary/30 leading-relaxed"></textarea>
-              <textarea v-else v-model="videoPrompt" rows="4" class="w-full text-[13.5px] p-3.5 rounded-xl border border-border/80 bg-background resize-none focus:outline-none focus:ring-1 focus:ring-primary/30 leading-relaxed"></textarea>
+              <textarea v-if="selectedChannel === 'sms'" v-model="smsMessage" rows="4" class="w-full text-[14px] p-3 rounded-lg border border-border bg-background text-foreground shadow-xs resize-none focus:outline-none focus:ring-1 focus:ring-primary/30 leading-relaxed"></textarea>
+              <textarea v-else-if="selectedChannel === 'email'" v-model="emailBody" rows="5" class="w-full text-[14px] p-3 rounded-lg border border-border bg-background text-foreground shadow-xs resize-none focus:outline-none focus:ring-1 focus:ring-primary/30 leading-relaxed"></textarea>
+              <textarea v-else-if="selectedChannel === 'whatsapp'" v-model="whatsappBody" rows="4" class="w-full text-[14px] p-3 rounded-lg border border-border bg-background text-foreground shadow-xs resize-none focus:outline-none focus:ring-1 focus:ring-primary/30 leading-relaxed"></textarea>
+              <textarea v-else v-model="videoPrompt" rows="4" class="w-full text-[14px] p-3 rounded-lg border border-border bg-background text-foreground shadow-xs resize-none focus:outline-none focus:ring-1 focus:ring-primary/30 leading-relaxed"></textarea>
+
+              <div class="flex items-center gap-2 flex-wrap pt-1">
+                <span class="text-[12.5px] text-muted-foreground font-medium">Insert tag:</span>
+                <div class="flex items-center gap-1.5 flex-wrap">
+                  <button v-for="tag in TAGS" :key="tag" type="button" class="px-2.5 py-1 bg-muted/60 hover:bg-muted text-[11.5px] font-mono rounded-md text-foreground transition-colors border border-border/50 cursor-pointer" @click="insertTag(tag)">{{ tag }}</button>
+                </div>
+              </div>
             </div>
 
-            <div class="flex flex-wrap items-center gap-1.5">
-              <span class="text-[12px] text-muted-foreground mr-1">Insert tag:</span>
-              <button v-for="tag in TAGS" :key="tag" type="button" class="font-mono text-[11px] px-2 py-1 rounded-md bg-muted hover:bg-primary/20 text-foreground cursor-pointer" @click="insertTag(tag)">{{ tag }}</button>
-            </div>
-
-            <div class="flex justify-end pt-4 border-t border-border">
-              <button type="button" class="h-10 px-4 rounded-lg bg-primary text-primary-foreground text-sm font-semibold inline-flex items-center gap-2 hover:bg-primary/90 shadow-xs cursor-pointer">
-                <Check class="size-4" /> Save Template Changes
+            <div class="pt-5 border-t border-border flex items-center justify-end">
+              <button type="button" class="h-9 px-4 py-2 rounded-md bg-primary text-primary-foreground text-[13px] font-medium inline-flex items-center justify-center gap-1.5 hover:bg-primary/90 shadow-xs cursor-pointer">
+                <Check class="size-3.5" /> Save Template Changes
               </button>
             </div>
           </div>

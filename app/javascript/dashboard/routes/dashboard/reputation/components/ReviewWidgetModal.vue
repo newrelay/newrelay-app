@@ -179,16 +179,16 @@ const isDark = computed(() => widgetConfig.value.theme === 'dark' || previewBg.v
           <!-- Tabs -->
           <div class="grid grid-cols-4 p-2 border-b border-border/70 bg-muted/20 text-xs font-medium shrink-0">
             <button @click="activeTab = 'layout'" class="py-2 px-1 rounded-lg transition-all text-center flex flex-col items-center gap-1 cursor-pointer" :class="activeTab === 'layout' ? 'bg-background text-foreground shadow-xs font-semibold' : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'">
-              <Layers class="size-4" /><span>Layout</span>
+              <Layers class="size-3.5" /><span>Layout</span>
             </button>
             <button @click="activeTab = 'filters'" class="py-2 px-1 rounded-lg transition-all text-center flex flex-col items-center gap-1 cursor-pointer" :class="activeTab === 'filters' ? 'bg-background text-foreground shadow-xs font-semibold' : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'">
-              <Filter class="size-4" /><span>Sources</span>
+              <Filter class="size-3.5" /><span>Sources</span>
             </button>
             <button @click="activeTab = 'appearance'" class="py-2 px-1 rounded-lg transition-all text-center flex flex-col items-center gap-1 cursor-pointer" :class="activeTab === 'appearance' ? 'bg-background text-foreground shadow-xs font-semibold' : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'">
-              <Palette class="size-4" /><span>Style</span>
+              <Palette class="size-3.5" /><span>Style</span>
             </button>
             <button @click="activeTab = 'embed'" class="py-2 px-1 rounded-lg transition-all text-center flex flex-col items-center gap-1 cursor-pointer" :class="activeTab === 'embed' ? 'bg-background text-foreground shadow-xs font-semibold' : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'">
-              <Code2 class="size-4" /><span>Embed</span>
+              <Code2 class="size-3.5" /><span>Embed</span>
             </button>
           </div>
 

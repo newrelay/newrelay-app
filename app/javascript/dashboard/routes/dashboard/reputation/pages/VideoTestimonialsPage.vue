@@ -11,7 +11,7 @@ import {
 } from 'lucide-vue-next';
 import RequestVideoTestimonialModal from '../components/RequestVideoTestimonialModal.vue';
 import ExportVideoTestimonialsModal from '../components/ExportVideoTestimonialsModal.vue';
-import ReviewWidgetModal from '../components/ReviewWidgetModal.vue';
+import VideoTestimonialWidgetModal from '../components/VideoTestimonialWidgetModal.vue';
 import { isReputationDemoSurfacesEnabled } from 'dashboard/featureFlags';
 
 const isWidgetModalOpen = ref(false);
@@ -375,7 +375,7 @@ const stats = computed(() => {
 
 <template>
   <div class="relative flex h-[calc(100vh-4rem)] w-full overflow-hidden bg-background">
-    <ReviewWidgetModal v-model:open="isWidgetModalOpen" />
+    <VideoTestimonialWidgetModal v-model:open="isWidgetModalOpen" />
     <RequestVideoTestimonialModal v-model:open="isRequestModalOpen" />
     <ExportVideoTestimonialsModal v-model:open="isExportModalOpen" />
 

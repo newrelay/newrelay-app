@@ -224,6 +224,18 @@ and a phone frame with `bg-white/95 dark:bg-card/95`, custom drop shadows, and
 no-`slate` sweep: it's a theme-independent device-mockup surface (same class as the QR/print/video
 surfaces). The inner chat bubbles stay on semantic tokens.
 
+## Video Testimonials — dedicated Video Widget Studio modal
+The Video Testimonials "Widget" button used to open the **reviews** widget modal. Ported the
+reference `VideoTestimonialWidgetModal` as `reputation/components/VideoTestimonialWidgetModal.vue`:
+4-tab studio (Layout / Sources / Style / Embed) with the 4 video layouts (Wall-of-Love grid /
+carousel / corner bubble / stories strip), playback toggles, source platforms, appearance, embed
+snippets, and a compact video-player popup. `Switch`/`Checkbox` → `RelaySwitch`/`RelayCheckbox`;
+`Button`/`Badge` → tokened elements. Video thumbnails use **gradient placeholders** (the reference's
+Unsplash URLs are external → CSP; avatars use pravatar which is already allowlisted). The device
+preview is driven only by the Background toggle (`isDark`), never the dashboard `dark:` theme — same
+rule as the review widget. Deferred vs reference: the full-screen "shortlist / manage videos"
+sub-modal and per-device (separate mobile) layout variants — mobile reuses a single-column grid.
+
 ## Gotcha: underline-tab buttons need `rounded-none`
 Chatwoot's `@layer base` gives every `<button>` `rounded-lg`. On an underline tab
 (`border-b-2 -mb-[1px]`) that radius bends the 2px bottom border up at both ends, so the active

@@ -150,6 +150,7 @@ class Account < ApplicationRecord
   has_many :reputation_snapshots, dependent: :destroy_async, class_name: 'Reputation::Snapshot'
   has_many :reputation_listings, dependent: :destroy_async, class_name: 'Reputation::Listing'
   has_many :reputation_reports, dependent: :destroy_async, class_name: 'Reputation::Report'
+  has_one :reputation_setting, dependent: :destroy_async, class_name: 'Reputation::Setting'
 
   has_one_attached :contacts_export
   has_one_attached :logo

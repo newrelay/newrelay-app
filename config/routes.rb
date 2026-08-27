@@ -220,6 +220,7 @@ Rails.application.routes.draw do
             resources :reports, only: [:create]
             resource :summary, only: [:show], controller: 'summaries'
             resource :ai_insights, only: [:show], controller: 'ai_insights'
+            resource :settings, only: [:show, :update], controller: 'settings'
             resources :widgets, only: [:index, :create, :update, :destroy]
             resources :video_testimonials, only: [:index, :update, :destroy] do
               collection do

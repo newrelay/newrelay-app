@@ -224,6 +224,19 @@ and a phone frame with `bg-white/95 dark:bg-card/95`, custom drop shadows, and
 no-`slate` sweep: it's a theme-independent device-mockup surface (same class as the QR/print/video
 surfaces). The inner chat bubbles stay on semantic tokens.
 
+## Request Video Testimonial — 5-step wizard (matches reference)
+Replaced the single-form modal with the reference's channel-first wizard, built by adapting the
+proven `RequestReviewsModal` (shared recipients + company filter + eligibility + schedule + device
+previews). Video-specific changes: **Step 3** is a Video Template picker (`defaultVideoTemplates`,
+added to `data/outreachTemplates.js`) + recording-page content editor (headline / prompt / guiding
+questions / max duration) + per-channel invite editor, with a preview that toggles **Video Page**
+(the browser recording screen — headline, questions, camera viewfinder, record CTA) vs **Invite
+Message** (email/WhatsApp/SMS device preview with a Record-Video CTA and `{{VideoLink}}`). **Step 4**
+swaps the review-platform card for a Video-Template card + Relay AI processing options
+(transcript/summarize/sentiment). Real wiring preserved: loads live contacts, submits one
+`video_testimonials/dispatch_request` per selected contact email (email-only for now; SMS/WhatsApp
+dispatch is future backend). `{{ReviewLink}}` → `{{VideoLink}}`.
+
 ## Video Testimonials — dedicated Video Widget Studio modal
 The Video Testimonials "Widget" button used to open the **reviews** widget modal. Ported the
 reference `VideoTestimonialWidgetModal` as `reputation/components/VideoTestimonialWidgetModal.vue`:

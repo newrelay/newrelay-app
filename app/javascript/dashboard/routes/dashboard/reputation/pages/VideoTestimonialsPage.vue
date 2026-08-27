@@ -10,7 +10,6 @@ import {
   Bot, ThumbsUp, Send, Globe, FileText, Plus, Star
 } from 'lucide-vue-next';
 import RequestVideoTestimonialModal from '../components/RequestVideoTestimonialModal.vue';
-import ExportVideoTestimonialsModal from '../components/ExportVideoTestimonialsModal.vue';
 import VideoTestimonialWidgetModal from '../components/VideoTestimonialWidgetModal.vue';
 import { isReputationDemoSurfacesEnabled } from 'dashboard/featureFlags';
 
@@ -151,7 +150,6 @@ async function analyzeVideo() {
 }
 const searchQuery = ref('');
 
-const showExportDropdown = ref(false);
 const showPlatformDropdown = ref(false);
 const showRatingDropdown = ref(false);
 const showDurationDropdown = ref(false);
@@ -206,35 +204,7 @@ const closePanel = () => {
   selectedVideo.value = null;
 };
 
-const isExportModalOpen = ref(false);
 const isRequestModalOpen = ref(false);
-
-async function exportCsv() {
-  try {
-    const { data } = await axios.get(`${baseUrl()}/export`, { responseType: 'blob' });
-    const url = URL.createObjectURL(data);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'video-testimonials.csv';
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-    URL.revokeObjectURL(url);
-  } catch (e) {
-    showToast('Export failed.');
-  }
-}
-
-const handleExportOption = (type) => {
-  showExportDropdown.value = false;
-  if (type === 'zip') {
-    isExportModalOpen.value = true;
-  } else if (type === 'CSV Data') {
-    exportCsv();
-  } else {
-    showToast(`Exporting ${type}...`);
-  }
-};
 
 const handleRequestTestimonial = () => {
   isRequestModalOpen.value = true;
@@ -377,7 +347,6 @@ const stats = computed(() => {
   <div class="relative flex h-[calc(100vh-4rem)] w-full overflow-hidden bg-background">
     <VideoTestimonialWidgetModal v-model:open="isWidgetModalOpen" />
     <RequestVideoTestimonialModal v-model:open="isRequestModalOpen" />
-    <ExportVideoTestimonialsModal v-model:open="isExportModalOpen" />
 
     <!-- Main Content Area (Left) -->
     <div 
@@ -404,26 +373,6 @@ const stats = computed(() => {
             >
               <LayoutGrid class="size-4" /> Widget
             </button>
-
-            <!-- Export Dropdown -->
-            <div class="relative">
-              <button 
-                @click="showExportDropdown = !showExportDropdown"
-                class="h-9 gap-2 shadow-xs bg-card border border-border text-foreground hover:bg-muted text-[13px] font-semibold px-4 rounded-lg inline-flex items-center cursor-pointer"
-              >
-                <Download class="size-4" /> 
-                Export <ChevronDown class="size-3 opacity-50 ml-1" />
-              </button>
-              <div 
-                v-if="showExportDropdown"
-                class="absolute right-0 mt-1.5 w-48 bg-card border border-border rounded-xl p-1 shadow-xl z-50 space-y-0.5"
-              >
-                <button @click="handleExportOption('PDF Report')" class="w-full text-left px-3 py-1.5 text-xs rounded-md font-medium hover:bg-muted text-foreground cursor-pointer">Export Report (PDF)</button>
-                <button @click="handleExportOption('CSV Data')" class="w-full text-left px-3 py-1.5 text-xs rounded-md font-medium hover:bg-muted text-foreground cursor-pointer">Export Data (CSV)</button>
-                <div class="my-1 border-t border-border"></div>
-                <button @click="handleExportOption('zip')" class="w-full text-left px-3 py-1.5 text-xs rounded-md font-medium hover:bg-muted text-foreground cursor-pointer">Download Videos (ZIP)</button>
-              </div>
-            </div>
 
             <!-- Request Video Button -->
             <button 
@@ -1083,9 +1032,6 @@ const stats = computed(() => {
   <!-- Modals -->
   <RequestVideoTestimonialModal 
     v-model:open="isRequestModalOpen" 
-    @submit="handleModalSubmit" 
-  />
-  <ExportVideoTestimonialsModal
-    v-model:open="isExportModalOpen"
+    @submit="handleModalSubmit"
   />
 </template>

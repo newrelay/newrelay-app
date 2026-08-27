@@ -23,25 +23,39 @@ Frontend owns the shape; strong params permit the whole `config` hash. Lazy + ro
 
 ## Phases
 
-### Phase A — Reputation Settings store  → ConfigurationPage + AutomationPage
-- [ ] migration `reputation_settings` (account_id, jsonb config, timestamps, unique index on account_id)
-- [ ] model `Reputation::Setting` (belongs_to :account)
-- [ ] `Api::V1::Accounts::Reputation::SettingsController` (show + update, singular)
-- [ ] route `resource :settings, only: [:show, :update], controller: 'settings'`
-- [ ] migrate + smoke test
-- [ ] wire ConfigurationPage load(onMounted) + real save handlers (kill dead button)
-- [ ] wire AutomationPage load + real save
+### Phase A — Reputation Settings store  → ConfigurationPage + AutomationPage ✅ DONE
+- [x] migration `reputation_settings` (account_id, jsonb config, timestamps, unique index on account_id)
+- [x] model `Reputation::Setting` (belongs_to :account, has_one on Account)
+- [x] `Api::V1::Accounts::Reputation::SettingsController` (show + update, singular; shallow-merge)
+- [x] route `resource :settings, only: [:show, :update], controller: 'settings'`
+- [x] migrate + smoke test (round-trip + merge verified via rails runner; route recognizes)
+- [x] wire ConfigurationPage load(onMounted) + real save handlers (dead button now saves; Demo badge removed)
+- [x] wire AutomationPage load + real save (localStorage → backend under `automation` key)
+- commits: `3e02be89` (fe) + settings-store commit (be)
+- Gotcha: config is ONE shallow-merged jsonb blob shared by Config (flat keys + aiSettings/spamSettings) and Automation (`automation` key). Keep keys namespaced so saves don't clobber each other.
 
-### Phase B — Widget config persistence → both widget studios
-- [ ] migration add `jsonb config` to `reputation_widgets`
-- [ ] permit `config` in widgets_controller
-- [ ] ReviewWidgetModal: load existing carousel/grid widget config, Save = create-or-update
-- [ ] VideoTestimonialWidgetModal: same for video style
+### Phase B — Widget config persistence → both widget studios ✅ DONE
+- [x] migration add `jsonb config` to `reputation_widgets`
+- [x] permit `config: {}` in widgets_controller
+- [x] ReviewWidgetModal: load on open (config.source == review_studio), Save = create-or-update
+- [x] VideoTestimonialWidgetModal: same, tagged video_studio
+- commit: `afc568c5`
+- Gotcha: widget `style` enum is only carousel/grid/badge. Studios have extra layouts
+  (compact / bubble / story_strip) — map non-enum → 'carousel' for the column, keep the real
+  layout in `config.layout`. Studio widgets are identified by `config.source`, NOT name.
 
-### Phase C — verify + document
-- [ ] rubocop clean on new Ruby
-- [ ] eslint clean on touched Vue (pre-commit gate)
-- [ ] update this doc + reputation-redesign-plan.md
+### Phase C — verify + document ✅ DONE
+- [x] rubocop clean on all new Ruby (settings + widgets + migrations)
+- [x] eslint clean on touched Vue (pre-commit lint-staged passed on each commit)
+- [x] backend round-trips verified via rails runner (settings merge, widget config, route recognize)
+- [x] this doc updated
+
+## Left intentionally as demo (not a gap)
+- IntegrationsPage — hardcoded showcase; the real platform-connect flow already lives in
+  SettingsPage (`/reputation/integrations` OAuth). Wiring the 12-platform grid (mostly
+  "Coming Soon", no backend) would duplicate SettingsPage. Keep badged "Demo".
+- Sample-data fallbacks (Overview AI/trend, Listings, Feedback, Widgets preview) — correct
+  behaviour: real API first, badged sample only when the account is empty.
 
 ## Log
 (append dated notes per phase; record any gotcha so it isn't repeated)

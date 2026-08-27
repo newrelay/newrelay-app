@@ -1,7 +1,8 @@
 <!-- eslint-disable vue/no-bare-strings-in-template, @intlify/vue-i18n/no-raw-text -->
 <script setup>
 /* eslint-disable */
-import { ref, computed } from 'vue';
+import { ref, computed, watch, onMounted } from 'vue';
+import QRCode from 'qrcode';
 import {
   MessageSquare, Mail, MessageCircle, Video, Plus, Sparkles, Copy, Check,
   QrCode, Download, Printer, Bot, ShieldCheck, ChevronDown, Star, ExternalLink,
@@ -95,6 +96,21 @@ const parsedVideoQuestions = computed(() =>
 // ---------- Tab 2: Review Link & QR Hub ----------
 const customSlug = ref('apex-dental');
 const reviewLink = computed(() => `https://relay.to/r/${customSlug.value}`);
+const qrDataUrl = ref('');
+async function renderQr() {
+  try {
+    qrDataUrl.value = await QRCode.toDataURL(reviewLink.value, {
+      width: 320,
+      margin: 1,
+      errorCorrectionLevel: 'H',
+      color: { dark: '#0f172a', light: '#ffffff' },
+    });
+  } catch (e) {
+    qrDataUrl.value = '';
+  }
+}
+onMounted(renderQr);
+watch(reviewLink, renderQr);
 const isLinkCopied = ref(false);
 function copyReviewLink() {
   navigator.clipboard?.writeText(reviewLink.value);
@@ -464,12 +480,10 @@ const autoFlagLabel = computed(() => autoFlagOptions.find(o => o.value === spamS
                 <div class="text-[12.5px] font-semibold text-foreground leading-tight">{{ qrTitle }}</div>
                 <div v-if="qrSubtitle" class="text-[10.5px] text-muted-foreground">{{ qrSubtitle }}</div>
               </div>
-              <div class="size-36 bg-card p-2.5 rounded-xl border border-border shadow-xs flex items-center justify-center relative">
-                <svg viewBox="0 0 100 100" class="size-full text-foreground fill-current">
-                  <path d="M5 5h30v30H5V5zm5 5v20h20V10H10z"/><path d="M15 15h10v10H15V15z"/><path d="M65 5h30v30H65V5zm5 5v20h20V10H70z"/><path d="M75 15h10v10H75V15z"/><path d="M5 65h30v30H5V65zm5 5v20h20V70H10z"/><path d="M15 75h10v10H15V75z"/>
-                  <path d="M45 10h10v10H45zm0 20h10v10H45zm15 15h10v10H60zm-20 0h10v10H40zm25 15h10v10H65zm15 0h10v10H80zm-40 20h10v10H40zm20 0h10v10H60zm20 0h10v10H80zm0-40h10v10H80zm-35 20h10v10H45z"/>
-                </svg>
-                <div v-if="includeLogo" class="absolute size-7 rounded-full bg-primary text-primary-foreground flex items-center justify-center shadow-md"><Star class="size-3.5 fill-current" /></div>
+              <div class="size-36 bg-white p-2.5 rounded-xl border border-border shadow-xs flex items-center justify-center relative">
+                <img v-if="qrDataUrl" :src="qrDataUrl" alt="Review link QR code" class="size-full rounded-md" />
+                <div v-else class="size-full rounded-md bg-muted animate-pulse"></div>
+                <div v-if="includeLogo" class="absolute size-7 rounded-full bg-primary text-primary-foreground flex items-center justify-center shadow-md ring-2 ring-white"><Star class="size-3.5 fill-current" /></div>
               </div>
               <div class="text-[11px] font-mono text-muted-foreground truncate w-full">relay.to/r/{{ customSlug }}</div>
             </div>

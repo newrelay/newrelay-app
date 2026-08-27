@@ -6,7 +6,7 @@ import {
   X, LayoutGrid, Code2, Copy, Check, Sparkles, Monitor, Tablet,
   Smartphone, Sliders, Palette, Filter, ChevronLeft,
   ChevronRight, Star, StarHalf, ShieldCheck, CheckCircle2, Globe,
-  Moon, Sun, Layers
+  Moon, Sun, Layers, Lock
 } from 'lucide-vue-next';
 
 const props = defineProps({
@@ -411,16 +411,16 @@ const isDark = computed(() => widgetConfig.value.theme === 'dark' || previewBg.v
           <!-- Canvas toolbar -->
           <div class="px-4 sm:px-6 py-3 border-b border-border bg-card/80 backdrop-blur-sm flex flex-wrap items-center justify-between gap-3 shrink-0">
             <div class="flex items-center gap-1 bg-muted p-1 rounded-xl border border-border/60">
-              <button @click="previewDevice = 'desktop'" class="px-2.5 py-1 rounded-lg text-xs font-medium flex items-center gap-1.5 transition-all cursor-pointer" :class="previewDevice === 'desktop' ? 'bg-card text-foreground shadow-xs' : 'text-muted-foreground hover:text-foreground'"><Monitor class="size-3.5" /><span class="hidden sm:inline">Desktop</span></button>
-              <button @click="previewDevice = 'tablet'" class="px-2.5 py-1 rounded-lg text-xs font-medium flex items-center gap-1.5 transition-all cursor-pointer" :class="previewDevice === 'tablet' ? 'bg-card text-foreground shadow-xs' : 'text-muted-foreground hover:text-foreground'"><Tablet class="size-3.5" /><span class="hidden sm:inline">Tablet (768px)</span></button>
-              <button @click="previewDevice = 'mobile'" class="px-2.5 py-1 rounded-lg text-xs font-medium flex items-center gap-1.5 transition-all cursor-pointer" :class="previewDevice === 'mobile' ? 'bg-card text-foreground shadow-xs' : 'text-muted-foreground hover:text-foreground'"><Smartphone class="size-3.5" /><span class="hidden sm:inline">Mobile (390px)</span></button>
+              <button @click="previewDevice = 'desktop'" class="px-2.5 py-1 rounded-lg text-xs font-medium flex items-center gap-1.5 transition-all cursor-pointer" :class="previewDevice === 'desktop' ? 'bg-card text-foreground shadow-xs' : 'text-muted-foreground hover:text-foreground'"><Monitor class="size-4" /><span class="hidden sm:inline">Desktop</span></button>
+              <button @click="previewDevice = 'tablet'" class="px-2.5 py-1 rounded-lg text-xs font-medium flex items-center gap-1.5 transition-all cursor-pointer" :class="previewDevice === 'tablet' ? 'bg-card text-foreground shadow-xs' : 'text-muted-foreground hover:text-foreground'"><Tablet class="size-4" /><span class="hidden sm:inline">Tablet (768px)</span></button>
+              <button @click="previewDevice = 'mobile'" class="px-2.5 py-1 rounded-lg text-xs font-medium flex items-center gap-1.5 transition-all cursor-pointer" :class="previewDevice === 'mobile' ? 'bg-card text-foreground shadow-xs' : 'text-muted-foreground hover:text-foreground'"><Smartphone class="size-4" /><span class="hidden sm:inline">Mobile (390px)</span></button>
             </div>
 
             <div class="flex items-center gap-2">
               <span class="text-xs text-muted-foreground font-medium hidden md:inline">Background:</span>
               <div class="flex items-center gap-1 bg-muted p-1 rounded-lg border border-border/60">
-                <button @click="previewBg = 'light'" class="size-6 rounded-md flex items-center justify-center text-xs transition-colors cursor-pointer" :class="previewBg === 'light' ? 'bg-white text-slate-800 shadow-xs' : 'text-muted-foreground'" title="Light background"><Sun class="size-3.5" /></button>
-                <button @click="previewBg = 'dark'" class="size-6 rounded-md flex items-center justify-center text-xs transition-colors cursor-pointer" :class="previewBg === 'dark' ? 'bg-slate-900 text-white shadow-xs' : 'text-muted-foreground'" title="Dark background"><Moon class="size-3.5" /></button>
+                <button @click="previewBg = 'light'" class="size-8 rounded-md flex items-center justify-center transition-colors cursor-pointer" :class="previewBg === 'light' ? 'bg-white text-slate-800 shadow-xs' : 'text-muted-foreground hover:text-foreground'" title="Light background"><Sun class="size-4" /></button>
+                <button @click="previewBg = 'dark'" class="size-8 rounded-md flex items-center justify-center transition-colors cursor-pointer" :class="previewBg === 'dark' ? 'bg-slate-900 text-white shadow-xs' : 'text-muted-foreground hover:text-foreground'" title="Dark background"><Moon class="size-4" /></button>
               </div>
             </div>
           </div>
@@ -432,7 +432,7 @@ const isDark = computed(() => widgetConfig.value.theme === 'dark' || previewBg.v
             <div v-if="previewDevice === 'mobile'" class="w-[340px] sm:w-[360px] h-[520px] max-h-[calc(100%-1rem)] bg-white dark:bg-card rounded-2xl shadow-xl border border-border flex flex-col relative overflow-hidden shrink-0 m-auto">
               <div class="px-3.5 py-2 bg-slate-100/90 dark:bg-slate-800/90 border-b border-border/70 flex items-center justify-between text-[11px] text-muted-foreground shrink-0 z-10">
                 <div class="flex items-center gap-1.5 font-mono text-[10px] truncate bg-white dark:bg-slate-900 px-2.5 py-1 rounded-md flex-1 mr-2 border border-border/40 shadow-2xs">
-                  <span class="text-emerald-500 text-xs">🔒</span>
+                  <Lock class="size-3 text-emerald-500 shrink-0" />
                   <span class="text-foreground/90 font-medium truncate">yourwebsite.com</span>
                 </div>
                 <div class="text-[10px] font-semibold text-muted-foreground">AA</div>
@@ -553,7 +553,7 @@ const isDark = computed(() => widgetConfig.value.theme === 'dark' || previewBg.v
                   <div class="size-2.5 rounded-full bg-emerald-400/80"></div>
                 </div>
                 <div class="flex items-center gap-1.5 bg-white dark:bg-slate-900 px-3 py-1 rounded-md border border-border/60 text-xs font-mono text-muted-foreground w-64 justify-center">
-                  <span class="text-emerald-500">🔒</span><span class="truncate text-foreground/80">https://yourwebsite.com</span>
+                  <Lock class="size-3 text-emerald-500 shrink-0" /><span class="truncate text-foreground/80">https://yourwebsite.com</span>
                 </div>
                 <div class="w-8"></div>
               </div>

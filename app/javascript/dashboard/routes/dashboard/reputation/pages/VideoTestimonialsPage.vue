@@ -813,7 +813,7 @@ const stats = computed(() => {
             <button 
               v-for="tab in tabs" :key="tab"
               @click="activeTab = tab"
-              class="py-3 border-b-2 transition-colors -mb-[1px] whitespace-nowrap cursor-pointer"
+              class="py-3 border-b-2 rounded-none transition-colors -mb-[1px] whitespace-nowrap cursor-pointer"
               :class="activeTab === tab ? 'border-primary text-primary' : 'border-transparent text-muted-foreground hover:text-foreground'"
             >{{ tab }}</button>
           </div>

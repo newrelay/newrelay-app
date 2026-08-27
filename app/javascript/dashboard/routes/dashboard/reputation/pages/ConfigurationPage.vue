@@ -147,6 +147,11 @@ function saveSpamConfig() {
   isSpamSaved.value = true;
   setTimeout(() => { isSpamSaved.value = false; }, 2000);
 }
+
+// Selected-label helpers for the custom dropdowns
+const channelTemplateLabel = computed(() => channelTemplates.value.find(t => t.id === channelTemplateId.value)?.name || 'Select template');
+const minRatingLabel = computed(() => ratingOptions.find(o => o.value === aiSettings.value.minRating)?.label || 'Select');
+const autoFlagLabel = computed(() => autoFlagOptions.find(o => o.value === spamSettings.value.autoFlagRating)?.label || 'Select');
 </script>
 
 <template>
@@ -189,9 +194,17 @@ function saveSpamConfig() {
             <div v-if="selectedChannel !== 'video'" class="grid grid-cols-1 sm:grid-cols-12 gap-3.5 items-end">
               <div class="sm:col-span-8 flex flex-col gap-1.5">
                 <label class="text-[13.5px] font-medium text-foreground">{{ channelLabel }} Template</label>
-                <select v-model="channelTemplateId" class="h-9 px-3 text-[13.5px] rounded-md border border-border/80 bg-background text-foreground shadow-2xs hover:border-border focus:outline-none focus-visible:ring-1 focus-visible:ring-primary/30 cursor-pointer">
-                  <option v-for="t in channelTemplates" :key="t.id" :value="t.id">{{ t.name }}</option>
-                </select>
+                <DropdownMenu>
+                  <DropdownMenuTrigger as-child>
+                    <button type="button" class="h-9 px-3 text-[13.5px] bg-background border border-border/80 rounded-md text-foreground flex items-center justify-between shadow-2xs hover:border-border focus-visible:ring-1 focus-visible:ring-primary/30 outline-none w-full text-left cursor-pointer">
+                      <span class="truncate">{{ channelTemplateLabel }}</span>
+                      <ChevronDown class="size-3.5 opacity-50 ml-2 shrink-0" />
+                    </button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent class="w-[320px]">
+                    <DropdownMenuItem v-for="t in channelTemplates" :key="t.id" class="text-[13px] cursor-pointer" @click="channelTemplateId = t.id">{{ t.name }}</DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
               </div>
               <div class="sm:col-span-4">
                 <button class="h-9 w-full px-3 rounded-md border border-border hover:border-transparent bg-background hover:bg-muted text-[13px] font-medium inline-flex items-center justify-center gap-1.5 shadow-xs cursor-pointer"><Plus class="size-3.5" /> New Template</button>
@@ -445,7 +458,17 @@ function saveSpamConfig() {
           </div>
           <div class="flex flex-col gap-1.5">
             <label class="text-[11.5px] font-semibold text-muted-foreground uppercase tracking-wider">Minimum Rating to Auto-Reply</label>
-            <select v-model="aiSettings.minRating" class="h-10 px-3 text-sm rounded-md border border-border bg-background text-foreground focus:outline-none focus-visible:ring-1 focus-visible:ring-primary/30 cursor-pointer"><option v-for="opt in ratingOptions" :key="opt.value" :value="opt.value">{{ opt.label }}</option></select>
+            <DropdownMenu>
+              <DropdownMenuTrigger as-child>
+                <button type="button" class="h-10 px-3 text-sm bg-background border border-border rounded-md text-foreground flex items-center justify-between hover:bg-muted focus-visible:ring-1 focus-visible:ring-primary/30 outline-none w-full text-left cursor-pointer">
+                  <span class="truncate">{{ minRatingLabel }}</span>
+                  <ChevronDown class="size-3.5 opacity-50 ml-2 shrink-0" />
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent class="w-[280px]">
+                <DropdownMenuItem v-for="opt in ratingOptions" :key="opt.value" class="text-[13px] cursor-pointer" @click="aiSettings.minRating = opt.value">{{ opt.label }}</DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
           <div class="flex flex-col gap-1.5">
             <label class="text-[11.5px] font-semibold text-muted-foreground uppercase tracking-wider">Custom AI Instructions</label>
@@ -466,7 +489,17 @@ function saveSpamConfig() {
           </div>
           <div class="flex flex-col gap-1.5">
             <label class="text-[11.5px] font-semibold text-muted-foreground uppercase tracking-wider">Auto-Flag Ratings Under</label>
-            <select v-model="spamSettings.autoFlagRating" class="h-10 px-3 text-sm rounded-md border border-border bg-background text-foreground focus:outline-none focus-visible:ring-1 focus-visible:ring-primary/30 cursor-pointer"><option v-for="opt in autoFlagOptions" :key="opt.value" :value="opt.value">{{ opt.label }}</option></select>
+            <DropdownMenu>
+              <DropdownMenuTrigger as-child>
+                <button type="button" class="h-10 px-3 text-sm bg-background border border-border rounded-md text-foreground flex items-center justify-between hover:bg-muted focus-visible:ring-1 focus-visible:ring-primary/30 outline-none w-full text-left cursor-pointer">
+                  <span class="truncate">{{ autoFlagLabel }}</span>
+                  <ChevronDown class="size-3.5 opacity-50 ml-2 shrink-0" />
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent class="w-[280px]">
+                <DropdownMenuItem v-for="opt in autoFlagOptions" :key="opt.value" class="text-[13px] cursor-pointer" @click="spamSettings.autoFlagRating = opt.value">{{ opt.label }}</DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
             <p class="text-[12px] text-muted-foreground">Flagged reviews will be marked as isolated and pending manual validation before public publishing.</p>
           </div>
           <div class="flex flex-col gap-1.5">

@@ -419,8 +419,8 @@ const isDark = computed(() => widgetConfig.value.theme === 'dark' || previewBg.v
             <div class="flex items-center gap-2">
               <span class="text-xs text-muted-foreground font-medium hidden md:inline">Background:</span>
               <div class="flex items-center gap-1 bg-muted p-1 rounded-lg border border-border/60">
-                <button @click="previewBg = 'light'" class="size-6 rounded-md flex items-center justify-center text-xs transition-colors cursor-pointer" :class="previewBg === 'light' ? 'bg-white text-slate-800 shadow-xs' : 'text-muted-foreground'" title="Light background"><Sun class="size-3.5" /></button>
-                <button @click="previewBg = 'dark'" class="size-6 rounded-md flex items-center justify-center text-xs transition-colors cursor-pointer" :class="previewBg === 'dark' ? 'bg-slate-900 text-white shadow-xs' : 'text-muted-foreground'" title="Dark background"><Moon class="size-3.5" /></button>
+                <button @click="previewBg = 'light'" class="size-8 rounded-md flex items-center justify-center text-xs transition-colors cursor-pointer" :class="previewBg === 'light' ? 'bg-white text-slate-800 shadow-xs' : 'text-muted-foreground'" title="Light background"><Sun class="size-4" /></button>
+                <button @click="previewBg = 'dark'" class="size-8 rounded-md flex items-center justify-center text-xs transition-colors cursor-pointer" :class="previewBg === 'dark' ? 'bg-slate-900 text-white shadow-xs' : 'text-muted-foreground'" title="Dark background"><Moon class="size-4" /></button>
               </div>
             </div>
           </div>
@@ -494,8 +494,8 @@ const isDark = computed(() => widgetConfig.value.theme === 'dark' || previewBg.v
                         <span v-for="(_, i) in previewReviews.slice(0, 6)" :key="i" @click="carouselIndex = i" class="h-1 rounded-full transition-all cursor-pointer" :class="carouselIndex === i ? 'w-4 bg-primary' : 'w-1 bg-muted-foreground/30 hover:bg-muted-foreground/50'"></span>
                       </div>
                       <div class="flex items-center gap-1">
-                        <button @click="prevSlide" class="size-6 rounded-full border border-border/80 flex items-center justify-center hover:bg-muted transition-colors cursor-pointer"><ChevronLeft class="size-3" /></button>
-                        <button @click="nextSlide" class="size-6 rounded-full border border-border/80 flex items-center justify-center hover:bg-muted transition-colors cursor-pointer"><ChevronRight class="size-3" /></button>
+                        <button @click="prevSlide" class="size-8 rounded-full border border-border/80 flex items-center justify-center hover:bg-muted transition-colors cursor-pointer"><ChevronLeft class="size-4" /></button>
+                        <button @click="nextSlide" class="size-8 rounded-full border border-border/80 flex items-center justify-center hover:bg-muted transition-colors cursor-pointer"><ChevronRight class="size-4" /></button>
                       </div>
                     </div>
                   </div>
@@ -617,8 +617,8 @@ const isDark = computed(() => widgetConfig.value.theme === 'dark' || previewBg.v
                         <span v-for="(_, i) in previewReviews.slice(0, 6)" :key="i" @click="carouselIndex = i" class="h-1.5 rounded-full transition-all cursor-pointer" :class="carouselIndex === i ? 'w-5 bg-primary' : 'w-1.5 bg-muted-foreground/30 hover:bg-muted-foreground/50'"></span>
                       </div>
                       <div class="flex items-center gap-1.5">
-                        <button @click="prevSlide" class="size-7 sm:size-8 rounded-full border border-border/80 flex items-center justify-center hover:bg-muted transition-colors cursor-pointer"><ChevronLeft class="size-3.5 sm:size-4" /></button>
-                        <button @click="nextSlide" class="size-7 sm:size-8 rounded-full border border-border/80 flex items-center justify-center hover:bg-muted transition-colors cursor-pointer"><ChevronRight class="size-3.5 sm:size-4" /></button>
+                        <button @click="prevSlide" class="size-9 sm:size-10 rounded-full border border-border/80 flex items-center justify-center hover:bg-muted transition-colors cursor-pointer"><ChevronLeft class="size-4 sm:size-5" /></button>
+                        <button @click="nextSlide" class="size-9 sm:size-10 rounded-full border border-border/80 flex items-center justify-center hover:bg-muted transition-colors cursor-pointer"><ChevronRight class="size-4 sm:size-5" /></button>
                       </div>
                     </div>
                   </div>

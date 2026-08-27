@@ -10,14 +10,29 @@ export function initActivityChart(chartData = []) {
   const tooltipCount = document.getElementById('tooltipCount');
 
   // Fallback dataset if empty
-  const data = chartData.length > 0 ? chartData : [
-    { date: '2026-07-20', val: 0 }, { date: '2026-07-21', val: 0 }, { date: '2026-07-22', val: 0 },
-    { date: '2026-07-23', val: 0 }, { date: '2026-07-24', val: 0 }, { date: '2026-07-25', val: 0 },
-    { date: '2026-07-26', val: 0 }, { date: '2026-07-27', val: 0 }, { date: '2026-07-28', val: 0 },
-    { date: '2026-07-29', val: 0 }, { date: '2026-07-30', val: 0 }, { date: '2026-07-31', val: 96 },
-    { date: '2026-08-01', val: 0 }, { date: '2026-08-02', val: 0 }, { date: '2026-08-03', val: 0 },
-    { date: '2026-08-04', val: 0 }, { date: '2026-08-05', val: 0 }, { date: '2026-08-06', val: 0 }
-  ];
+  const data =
+    chartData.length > 0
+      ? chartData
+      : [
+          { date: '2026-07-20', val: 0 },
+          { date: '2026-07-21', val: 0 },
+          { date: '2026-07-22', val: 0 },
+          { date: '2026-07-23', val: 0 },
+          { date: '2026-07-24', val: 0 },
+          { date: '2026-07-25', val: 0 },
+          { date: '2026-07-26', val: 0 },
+          { date: '2026-07-27', val: 0 },
+          { date: '2026-07-28', val: 0 },
+          { date: '2026-07-29', val: 0 },
+          { date: '2026-07-30', val: 0 },
+          { date: '2026-07-31', val: 96 },
+          { date: '2026-08-01', val: 0 },
+          { date: '2026-08-02', val: 0 },
+          { date: '2026-08-03', val: 0 },
+          { date: '2026-08-04', val: 0 },
+          { date: '2026-08-05', val: 0 },
+          { date: '2026-08-06', val: 0 },
+        ];
 
   function drawChart(activeX = null, activeY = null) {
     const dpr = window.devicePixelRatio || 1;
@@ -77,9 +92,20 @@ export function initActivityChart(chartData = []) {
     });
 
     // Area fill
-    const gradient = chartCtx.createLinearGradient(0, paddingTop, 0, height - paddingBottom);
-    gradient.addColorStop(0, isDark ? 'rgba(115, 115, 247, 0.35)' : 'rgba(91, 91, 214, 0.22)');
-    gradient.addColorStop(1, isDark ? 'rgba(115, 115, 247, 0)' : 'rgba(91, 91, 214, 0)');
+    const gradient = chartCtx.createLinearGradient(
+      0,
+      paddingTop,
+      0,
+      height - paddingBottom
+    );
+    gradient.addColorStop(
+      0,
+      isDark ? 'rgba(115, 115, 247, 0.35)' : 'rgba(91, 91, 214, 0.22)'
+    );
+    gradient.addColorStop(
+      1,
+      isDark ? 'rgba(115, 115, 247, 0)' : 'rgba(91, 91, 214, 0)'
+    );
 
     chartCtx.beginPath();
     chartCtx.moveTo(points[0].x, height - paddingBottom);
@@ -111,7 +137,10 @@ export function initActivityChart(chartData = []) {
     chartCtx.stroke();
 
     // Peak dot
-    const peakIndex = points.reduce((maxI, p, i, arr) => (p.val > arr[maxI].val ? i : maxI), 0);
+    const peakIndex = points.reduce(
+      (maxI, p, i, arr) => (p.val > arr[maxI].val ? i : maxI),
+      0
+    );
     const peakPoint = points[peakIndex];
     if (peakPoint && peakPoint.val > 0) {
       chartCtx.beginPath();
@@ -140,7 +169,7 @@ export function initActivityChart(chartData = []) {
   window.addEventListener('nr-theme-changed', drawChart);
   drawChart();
 
-  chartCanvas.addEventListener('mousemove', (e) => {
+  chartCanvas.addEventListener('mousemove', e => {
     const rect = chartCanvas.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const paddingLeft = 45;

@@ -24,11 +24,7 @@ const onChange = (id, value) => {
       {{ label }}
     </label>
     <div class="mt-2.5 flex flex-col gap-3">
-      <div
-        v-for="item in items"
-        :key="item.id"
-        class="flex items-center gap-3"
-      >
+      <div v-for="item in items" :key="item.id" class="flex items-center gap-3">
         <RelayCheckbox
           :id="`checkbox-condition-${item.value}`"
           :model-value="item.model"

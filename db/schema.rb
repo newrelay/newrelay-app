@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2026_08_25_180000) do
+ActiveRecord::Schema[7.1].define(version: 2026_08_27_140000) do
   # These extensions should be enabled to support this database
   enable_extension "pg_stat_statements"
   enable_extension "pg_trgm"
@@ -1199,6 +1199,13 @@ ActiveRecord::Schema[7.1].define(version: 2026_08_25_180000) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "push_flags", default: 0, null: false
+    t.boolean "quiet_hours_enabled", default: false, null: false
+    t.integer "quiet_hours_from_hour"
+    t.integer "quiet_hours_from_minute"
+    t.integer "quiet_hours_to_hour"
+    t.integer "quiet_hours_to_minute"
+    t.string "quiet_hours_timezone"
+    t.integer "quiet_hours_days", default: 0, null: false
     t.index ["account_id", "user_id"], name: "by_account_user", unique: true
   end
 

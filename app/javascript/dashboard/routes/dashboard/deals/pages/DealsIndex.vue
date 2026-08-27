@@ -48,10 +48,7 @@ onMounted(load);
           {{ $t('DEALS.DESCRIPTION') }}
         </p>
       </div>
-      <RelayButton
-        class="h-9 px-4 text-[13px] font-medium"
-        @click="openCreate"
-      >
+      <RelayButton class="h-9 px-4 text-[13px] font-medium" @click="openCreate">
         <Icon icon="i-lucide-plus" class="size-4" />
         {{ $t('DEALS.NEW') }}
       </RelayButton>
@@ -59,7 +56,9 @@ onMounted(load);
 
     <DealMetricsRow :metrics="metrics" />
 
-    <div class="flex items-center gap-3 border-b border-border bg-card px-6 py-3">
+    <div
+      class="flex items-center gap-3 border-b border-border bg-card px-6 py-3"
+    >
       <div class="relative w-full max-w-xs">
         <Icon
           icon="i-lucide-search"
@@ -103,28 +102,44 @@ onMounted(load);
         <table class="min-w-full table-auto">
           <thead>
             <tr class="border-b border-border text-left">
-              <th class="px-4 py-3 text-[12px] font-medium text-muted-foreground">
+              <th
+                class="px-4 py-3 text-[12px] font-medium text-muted-foreground"
+              >
                 {{ $t('DEALS.TABLE.NAME') }}
               </th>
-              <th class="px-4 py-3 text-[12px] font-medium text-muted-foreground">
+              <th
+                class="px-4 py-3 text-[12px] font-medium text-muted-foreground"
+              >
                 {{ $t('DEALS.TABLE.COMPANY') }}
               </th>
-              <th class="px-4 py-3 text-[12px] font-medium text-muted-foreground">
+              <th
+                class="px-4 py-3 text-[12px] font-medium text-muted-foreground"
+              >
                 {{ $t('DEALS.TABLE.STAGE') }}
               </th>
-              <th class="px-4 py-3 text-[12px] font-medium text-muted-foreground">
+              <th
+                class="px-4 py-3 text-[12px] font-medium text-muted-foreground"
+              >
                 {{ $t('DEALS.TABLE.AMOUNT') }}
               </th>
-              <th class="px-4 py-3 text-[12px] font-medium text-muted-foreground">
+              <th
+                class="px-4 py-3 text-[12px] font-medium text-muted-foreground"
+              >
                 {{ $t('DEALS.TABLE.CLOSE_ON') }}
               </th>
-              <th class="px-4 py-3 text-[12px] font-medium text-muted-foreground">
+              <th
+                class="px-4 py-3 text-[12px] font-medium text-muted-foreground"
+              >
                 {{ $t('DEALS.TABLE.PRIORITY') }}
               </th>
-              <th class="px-4 py-3 text-[12px] font-medium text-muted-foreground">
+              <th
+                class="px-4 py-3 text-[12px] font-medium text-muted-foreground"
+              >
                 {{ $t('DEALS.TABLE.OWNER') }}
               </th>
-              <th class="px-4 py-3 text-[12px] font-medium text-muted-foreground">
+              <th
+                class="px-4 py-3 text-[12px] font-medium text-muted-foreground"
+              >
                 {{ $t('DEALS.TABLE.UPDATED') }}
               </th>
               <th class="px-4 py-3" />

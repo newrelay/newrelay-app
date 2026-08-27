@@ -5,6 +5,7 @@ class Notification::PushNotificationService
 
   def perform
     return unless user_subscribed_to_notification?
+    return if notification_setting&.quiet_hours_now?
 
     notification_subscriptions.each do |subscription|
       send_browser_push(subscription)
@@ -19,8 +20,11 @@ class Notification::PushNotificationService
   delegate :notification_subscriptions, to: :user
   delegate :notification_settings, to: :user
 
+  def notification_setting
+    @notification_setting ||= notification_settings.find_by(account_id: notification.account.id)
+  end
+
   def user_subscribed_to_notification?
-    notification_setting = notification_settings.find_by(account_id: notification.account.id)
     return true if notification_setting.public_send("push_#{notification.notification_type}?")
 
     false

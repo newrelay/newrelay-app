@@ -49,7 +49,10 @@ const stageTotals = computed(() => {
     const list = columns.value[stage.id] || [];
     totals[stage.id] = {
       count: list.length,
-      amount: list.reduce((sum, deal) => sum + Number(deal.amountCents || 0), 0),
+      amount: list.reduce(
+        (sum, deal) => sum + Number(deal.amountCents || 0),
+        0
+      ),
       currency: list[0]?.currency || 'USD',
     };
   });
@@ -77,10 +80,7 @@ onMounted(load);
           {{ $t('PIPELINES.DESCRIPTION') }}
         </p>
       </div>
-      <RelayButton
-        class="h-9 px-4 text-[13px] font-medium"
-        @click="openCreate"
-      >
+      <RelayButton class="h-9 px-4 text-[13px] font-medium" @click="openCreate">
         <Icon icon="i-lucide-plus" class="size-4" />
         {{ $t('DEALS.NEW') }}
       </RelayButton>
@@ -173,6 +173,5 @@ onMounted(load);
       :is-loading="uiFlags.creatingItem || uiFlags.updatingItem"
       @submit="submitDeal"
     />
-
   </div>
 </template>

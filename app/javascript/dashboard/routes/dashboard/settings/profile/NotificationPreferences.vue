@@ -16,6 +16,7 @@ import {
   verifyServiceWorkerExistence,
 } from 'dashboard/helper/pushHelper.js';
 import { FEATURE_FLAGS } from 'dashboard/featureFlags';
+import { timeZoneOptions } from 'dashboard/routes/dashboard/settings/inbox/helpers/businessHour';
 import { NOTIFICATION_TYPES } from './constants';
 
 const props = defineProps({
@@ -24,6 +25,16 @@ const props = defineProps({
     default: false,
   },
 });
+
+const DAY_OPTIONS = [
+  { label: 'Mon', flag: 'monday' },
+  { label: 'Tue', flag: 'tuesday' },
+  { label: 'Wed', flag: 'wednesday' },
+  { label: 'Thu', flag: 'thursday' },
+  { label: 'Fri', flag: 'friday' },
+  { label: 'Sat', flag: 'saturday' },
+  { label: 'Sun', flag: 'sunday' },
+];
 
 const INITIAL_VISIBLE = 4;
 
@@ -38,6 +49,7 @@ const pushFlags = useMapGetter('userNotificationSettings/getSelectedPushFlags');
 const isFeatureEnabledonAccount = useMapGetter(
   'accounts/isFeatureEnabledonAccount'
 );
+const quietHoursRecord = useMapGetter('userNotificationSettings/getQuietHours');
 
 const selectedEmailFlags = ref([]);
 const selectedPushFlags = ref([]);
@@ -52,13 +64,43 @@ const deliveryPush = ref(true);
 const deliverySlack = ref(false);
 const deliveryTeams = ref(false);
 
-// Quiet hours state
+// Quiet hours state (initialized from userNotificationSettings/getQuietHours, see watcher below)
 const quietHoursEnabled = ref(false);
 const quietHoursFrom = ref('22:00');
 const quietHoursTo = ref('07:00');
-const selectedTimezone = ref('(GMT+05:30) Asia/Kolkata');
-const activeDays = ref(['Mon', 'Tue', 'Wed', 'Thu', 'Fri']);
-const availableDays = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+const selectedTimezone = ref(Intl.DateTimeFormat().resolvedOptions().timeZone);
+const activeDays = ref([
+  'monday',
+  'tuesday',
+  'wednesday',
+  'thursday',
+  'friday',
+]);
+const availableDays = DAY_OPTIONS;
+const availableTimezones = timeZoneOptions();
+
+const padTimePart = value => String(value ?? 0).padStart(2, '0');
+
+watch(
+  quietHoursRecord,
+  record => {
+    if (!record) return;
+    quietHoursEnabled.value = record.enabled;
+    if (record.fromHour != null) {
+      quietHoursFrom.value = `${padTimePart(record.fromHour)}:${padTimePart(record.fromMinute)}`;
+    }
+    if (record.toHour != null) {
+      quietHoursTo.value = `${padTimePart(record.toHour)}:${padTimePart(record.toMinute)}`;
+    }
+    if (record.timezone) {
+      selectedTimezone.value = record.timezone;
+    }
+    if (record.days?.length) {
+      activeDays.value = record.days;
+    }
+  },
+  { immediate: true }
+);
 
 const isSLAEnabled = computed(() =>
   isFeatureEnabledonAccount.value(accountId.value, FEATURE_FLAGS.SLA)
@@ -81,8 +123,12 @@ const filteredNotificationTypes = computed(() => {
   if (!query) return notificationTypes.value;
 
   return notificationTypes.value.filter(notification => {
-    const title = (notification.defaultTitle || t(notification.label)).toLowerCase();
-    const description = (notification.defaultDescription || t(notification.description)).toLowerCase();
+    const title = (
+      notification.defaultTitle || t(notification.label)
+    ).toLowerCase();
+    const description = (
+      notification.defaultDescription || t(notification.description)
+    ).toLowerCase();
     return title.includes(query) || description.includes(query);
   });
 });
@@ -130,10 +176,21 @@ const toggleInput = (selected, current) => {
 };
 
 const updateNotificationSettings = async () => {
+  const [fromHour, fromMinute] = quietHoursFrom.value.split(':').map(Number);
+  const [toHour, toMinute] = quietHoursTo.value.split(':').map(Number);
   try {
     await store.dispatch('userNotificationSettings/update', {
       selectedEmailFlags: selectedEmailFlags.value,
       selectedPushFlags: selectedPushFlags.value,
+      quietHours: {
+        enabled: quietHoursEnabled.value,
+        fromHour,
+        fromMinute,
+        toHour,
+        toMinute,
+        timezone: selectedTimezone.value,
+        days: activeDays.value,
+      },
     });
     useAlert(t('PROFILE_SETTINGS.FORM.API.UPDATE_SUCCESS'));
   } catch (error) {
@@ -224,14 +281,25 @@ onMounted(() => {
 </script>
 
 <template>
-  <div id="profile-settings-notifications" class="flex-1 w-full max-w-4xl min-w-0">
+  <div
+    id="profile-settings-notifications"
+    class="flex-1 w-full max-w-4xl min-w-0"
+  >
     <div class="max-w-3xl space-y-8">
       <!-- CARD 1: Notification preferences -->
-      <div class="border border-border/60 bg-card rounded-xl shadow-xs overflow-hidden">
-        <div class="p-4 sm:p-6 border-b border-border/40 flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div
+        class="border border-border/60 bg-card rounded-xl shadow-xs overflow-hidden"
+      >
+        <div
+          class="p-4 sm:p-6 border-b border-border/40 flex flex-col md:flex-row md:items-center justify-between gap-4"
+        >
           <div>
-            <h3 class="text-base font-semibold text-foreground">Notification preferences</h3>
-            <p class="text-sm text-muted-foreground mt-1">Choose the events you want to be notified about.</p>
+            <h3 class="text-base font-semibold text-foreground">
+              Notification preferences
+            </h3>
+            <p class="text-sm text-muted-foreground mt-1">
+              Choose the events you want to be notified about.
+            </p>
           </div>
           <div class="relative w-full md:w-64">
             <svg
@@ -247,8 +315,8 @@ onMounted(() => {
               class="lucide absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground lucide-search-icon lucide-search absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground"
               aria-hidden="true"
             >
-              <path d="m21 21-4.34-4.34"></path>
-              <circle cx="11" cy="11" r="8"></circle>
+              <path d="m21 21-4.34-4.34" />
+              <circle cx="11" cy="11" r="8" />
             </svg>
             <input
               v-model="searchQuery"
@@ -261,11 +329,29 @@ onMounted(() => {
         <div class="overflow-x-auto">
           <div class="min-w-[600px]">
             <!-- Header Row -->
-            <div class="grid grid-cols-[1fr_auto_auto_auto] gap-4 p-4 border-b border-border/40 bg-muted/20">
-              <div class="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider pl-2">Event</div>
-              <div class="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider w-16 text-center">In-app</div>
-              <div class="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider w-16 text-center">Email</div>
-              <div class="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider w-16 text-center">Push</div>
+            <div
+              class="grid grid-cols-[1fr_auto_auto_auto] gap-4 p-4 border-b border-border/40 bg-muted/20"
+            >
+              <div
+                class="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider pl-2"
+              >
+                Event
+              </div>
+              <div
+                class="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider w-16 text-center"
+              >
+                In-app
+              </div>
+              <div
+                class="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider w-16 text-center"
+              >
+                Email
+              </div>
+              <div
+                class="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider w-16 text-center"
+              >
+                Push
+              </div>
             </div>
 
             <!-- Table Rows -->
@@ -276,15 +362,23 @@ onMounted(() => {
                 class="grid grid-cols-[1fr_auto_auto_auto] gap-4 p-4 items-center hover:bg-muted/10 transition-colors"
               >
                 <div class="flex items-start gap-4">
-                  <div class="size-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
-                    <Icon :icon="notification.icon" class="size-5 text-primary" />
+                  <div
+                    class="size-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0"
+                  >
+                    <Icon
+                      :icon="notification.icon"
+                      class="size-5 text-primary"
+                    />
                   </div>
                   <div>
                     <h4 class="text-sm font-medium text-foreground">
                       {{ notification.defaultTitle || t(notification.label) }}
                     </h4>
                     <p class="text-xs text-muted-foreground mt-0.5">
-                      {{ notification.defaultDescription || t(notification.description) }}
+                      {{
+                        notification.defaultDescription ||
+                        t(notification.description)
+                      }}
                     </p>
                   </div>
                 </div>
@@ -292,8 +386,14 @@ onMounted(() => {
                 <!-- In-app Checkbox -->
                 <div class="w-16 flex justify-center">
                   <RelayCheckbox
-                    :model-value="checkFlagStatus('push', notification.value) || checkFlagStatus('email', notification.value)"
-                    @update:model-value="enabled => handleChannelToggle('push', notification.value, enabled)"
+                    :model-value="
+                      checkFlagStatus('push', notification.value) ||
+                      checkFlagStatus('email', notification.value)
+                    "
+                    @update:model-value="
+                      enabled =>
+                        handleChannelToggle('push', notification.value, enabled)
+                    "
                   />
                 </div>
 
@@ -301,7 +401,14 @@ onMounted(() => {
                 <div class="w-16 flex justify-center">
                   <RelayCheckbox
                     :model-value="checkFlagStatus('email', notification.value)"
-                    @update:model-value="enabled => handleChannelToggle('email', notification.value, enabled)"
+                    @update:model-value="
+                      enabled =>
+                        handleChannelToggle(
+                          'email',
+                          notification.value,
+                          enabled
+                        )
+                    "
                   />
                 </div>
 
@@ -309,7 +416,10 @@ onMounted(() => {
                 <div class="w-16 flex justify-center">
                   <RelayCheckbox
                     :model-value="checkFlagStatus('push', notification.value)"
-                    @update:model-value="enabled => handleChannelToggle('push', notification.value, enabled)"
+                    @update:model-value="
+                      enabled =>
+                        handleChannelToggle('push', notification.value, enabled)
+                    "
                   />
                 </div>
               </div>
@@ -335,10 +445,16 @@ onMounted(() => {
       </div>
 
       <!-- CARD 2: Delivery channels -->
-      <div class="border border-border/60 bg-card rounded-xl shadow-xs overflow-hidden mt-8">
+      <div
+        class="border border-border/60 bg-card rounded-xl shadow-xs overflow-hidden mt-8"
+      >
         <div class="p-4 sm:p-6 border-b border-border/40">
-          <h3 class="text-base font-semibold text-foreground">Delivery channels</h3>
-          <p class="text-sm text-muted-foreground mt-1">Choose where you want to receive notifications.</p>
+          <h3 class="text-base font-semibold text-foreground">
+            Delivery channels
+          </h3>
+          <p class="text-sm text-muted-foreground mt-1">
+            Choose where you want to receive notifications.
+          </p>
         </div>
 
         <div class="p-4 sm:p-6 space-y-6">
@@ -346,11 +462,16 @@ onMounted(() => {
           <div class="flex items-center justify-between">
             <div class="flex items-center gap-4">
               <div class="size-10 flex items-center justify-center shrink-0">
-                <Icon icon="i-lucide-monitor" class="size-5 text-muted-foreground" />
+                <Icon
+                  icon="i-lucide-monitor"
+                  class="size-5 text-muted-foreground"
+                />
               </div>
               <div>
                 <h4 class="text-sm font-medium text-foreground">In-app</h4>
-                <p class="text-xs text-muted-foreground mt-0.5">Receive notifications inside the platform.</p>
+                <p class="text-xs text-muted-foreground mt-0.5">
+                  Receive notifications inside the platform.
+                </p>
               </div>
             </div>
             <RelayCheckbox v-model="deliveryInApp" />
@@ -360,11 +481,16 @@ onMounted(() => {
           <div class="flex items-center justify-between">
             <div class="flex items-center gap-4">
               <div class="size-10 flex items-center justify-center shrink-0">
-                <Icon icon="i-lucide-mail" class="size-5 text-muted-foreground" />
+                <Icon
+                  icon="i-lucide-mail"
+                  class="size-5 text-muted-foreground"
+                />
               </div>
               <div>
                 <h4 class="text-sm font-medium text-foreground">Email</h4>
-                <p class="text-xs text-muted-foreground mt-0.5">Receive notifications via email.</p>
+                <p class="text-xs text-muted-foreground mt-0.5">
+                  Receive notifications via email.
+                </p>
               </div>
             </div>
             <RelayCheckbox v-model="deliveryEmail" />
@@ -374,11 +500,18 @@ onMounted(() => {
           <div class="flex items-center justify-between">
             <div class="flex items-center gap-4">
               <div class="size-10 flex items-center justify-center shrink-0">
-                <Icon icon="i-lucide-smartphone" class="size-5 text-muted-foreground" />
+                <Icon
+                  icon="i-lucide-smartphone"
+                  class="size-5 text-muted-foreground"
+                />
               </div>
               <div>
-                <h4 class="text-sm font-medium text-foreground">Push notifications</h4>
-                <p class="text-xs text-muted-foreground mt-0.5">Receive push notifications on your device.</p>
+                <h4 class="text-sm font-medium text-foreground">
+                  Push notifications
+                </h4>
+                <p class="text-xs text-muted-foreground mt-0.5">
+                  Receive push notifications on your device.
+                </p>
               </div>
             </div>
             <RelayCheckbox
@@ -395,7 +528,9 @@ onMounted(() => {
               </div>
               <div>
                 <h4 class="text-sm font-medium text-foreground">Slack</h4>
-                <p class="text-xs text-muted-foreground mt-0.5">Receive notifications in Slack.</p>
+                <p class="text-xs text-muted-foreground mt-0.5">
+                  Receive notifications in Slack.
+                </p>
               </div>
             </div>
             <RelayCheckbox v-model="deliverySlack" />
@@ -405,11 +540,18 @@ onMounted(() => {
           <div class="flex items-center justify-between">
             <div class="flex items-center gap-4">
               <div class="size-10 flex items-center justify-center shrink-0">
-                <Icon icon="i-lucide-message-square" class="size-5 text-[#6264A7]" />
+                <Icon
+                  icon="i-lucide-message-square"
+                  class="size-5 text-[#6264A7]"
+                />
               </div>
               <div>
-                <h4 class="text-sm font-medium text-foreground">Microsoft Teams</h4>
-                <p class="text-xs text-muted-foreground mt-0.5">Receive notifications in Microsoft Teams.</p>
+                <h4 class="text-sm font-medium text-foreground">
+                  Microsoft Teams
+                </h4>
+                <p class="text-xs text-muted-foreground mt-0.5">
+                  Receive notifications in Microsoft Teams.
+                </p>
               </div>
             </div>
             <RelayCheckbox v-model="deliveryTeams" />
@@ -429,14 +571,18 @@ onMounted(() => {
       </div>
 
       <!-- CARD 3: Quiet hours -->
-      <div class="border border-border/60 bg-card rounded-xl shadow-xs overflow-hidden mt-8 mb-4">
+      <div
+        class="border border-border/60 bg-card rounded-xl shadow-xs overflow-hidden mt-8 mb-4"
+      >
         <div
           class="p-4 sm:p-6 flex flex-col md:flex-row md:items-center justify-between gap-4"
           :class="{ 'border-b border-border/40': quietHoursEnabled }"
         >
           <div>
             <h3 class="text-base font-semibold text-foreground">Quiet hours</h3>
-            <p class="text-sm text-muted-foreground mt-1">Pause non-urgent notifications during these hours.</p>
+            <p class="text-sm text-muted-foreground mt-1">
+              Pause non-urgent notifications during these hours.
+            </p>
           </div>
           <RelaySwitch v-model="quietHoursEnabled" />
         </div>
@@ -446,34 +592,28 @@ onMounted(() => {
           <div class="flex flex-col sm:flex-row items-center gap-6">
             <!-- From -->
             <div class="flex items-center gap-4 w-full sm:w-1/2">
-              <span class="text-sm font-medium text-muted-foreground w-12 shrink-0">From</span>
+              <span
+                class="text-sm font-medium text-muted-foreground w-12 shrink-0"
+                >From</span>
               <div class="relative flex-1">
                 <input
                   v-model="quietHoursFrom"
-                  type="text"
-                  class="w-full h-11 rounded-xl border border-border/60 bg-muted/20 px-4 pr-10 text-sm font-medium text-foreground shadow-xs transition-colors focus:border-primary focus:outline-none"
-                  placeholder="22:00"
-                />
-                <Icon
-                  icon="i-lucide-clock"
-                  class="pointer-events-none absolute right-3.5 top-1/2 -translate-y-1/2 size-4 text-muted-foreground"
+                  type="time"
+                  class="w-full h-11 rounded-xl border border-border/60 bg-muted/20 px-4 text-sm font-medium text-foreground shadow-xs transition-colors focus:border-primary focus:outline-none"
                 />
               </div>
             </div>
 
             <!-- To -->
             <div class="flex items-center gap-4 w-full sm:w-1/2">
-              <span class="text-sm font-medium text-muted-foreground w-8 text-center shrink-0">To</span>
+              <span
+                class="text-sm font-medium text-muted-foreground w-8 text-center shrink-0"
+                >To</span>
               <div class="relative flex-1">
                 <input
                   v-model="quietHoursTo"
-                  type="text"
-                  class="w-full h-11 rounded-xl border border-border/60 bg-muted/20 px-4 pr-10 text-sm font-medium text-foreground shadow-xs transition-colors focus:border-primary focus:outline-none"
-                  placeholder="07:00"
-                />
-                <Icon
-                  icon="i-lucide-clock"
-                  class="pointer-events-none absolute right-3.5 top-1/2 -translate-y-1/2 size-4 text-muted-foreground"
+                  type="time"
+                  class="w-full h-11 rounded-xl border border-border/60 bg-muted/20 px-4 text-sm font-medium text-foreground shadow-xs transition-colors focus:border-primary focus:outline-none"
                 />
               </div>
             </div>
@@ -481,16 +621,21 @@ onMounted(() => {
 
           <!-- Time zone -->
           <div class="flex flex-col sm:flex-row sm:items-center gap-4">
-            <span class="text-sm font-medium text-muted-foreground w-12 shrink-0 leading-tight">Time<br class="hidden sm:inline" />zone</span>
+            <span
+              class="text-sm font-medium text-muted-foreground w-12 shrink-0 leading-tight"
+              >Time<br class="hidden sm:inline" />zone</span>
             <div class="relative flex-1">
               <select
                 v-model="selectedTimezone"
                 class="w-full appearance-none h-11 rounded-xl border border-border/60 bg-background px-4 pr-10 text-sm font-medium text-foreground shadow-xs transition-colors focus:border-primary focus:outline-none cursor-pointer"
               >
-                <option value="(GMT+05:30) Asia/Kolkata">(GMT+05:30) Asia/Kolkata</option>
-                <option value="(GMT+00:00) UTC">(GMT+00:00) UTC</option>
-                <option value="(GMT-05:00) Eastern Time">(GMT-05:00) Eastern Time</option>
-                <option value="(GMT-08:00) Pacific Time">(GMT-08:00) Pacific Time</option>
+                <option
+                  v-for="tz in availableTimezones"
+                  :key="tz.value"
+                  :value="tz.value"
+                >
+                  {{ tz.label }}
+                </option>
               </select>
               <Icon
                 icon="i-lucide-chevron-down"
@@ -503,24 +648,26 @@ onMounted(() => {
           <div class="flex flex-wrap gap-2 pt-2">
             <button
               v-for="day in availableDays"
-              :key="day"
+              :key="day.flag"
               type="button"
               class="px-4 py-2 text-xs font-medium rounded transition-colors border"
               :class="[
-                activeDays.includes(day)
+                activeDays.includes(day.flag)
                   ? 'border-primary/20 bg-primary/10 text-primary'
-                  : 'border-border bg-background text-muted-foreground hover:bg-muted'
+                  : 'border-border bg-background text-muted-foreground hover:bg-muted',
               ]"
-              @click="toggleDay(day)"
+              @click="toggleDay(day.flag)"
             >
-              {{ day }}
+              {{ day.label }}
             </button>
           </div>
         </div>
       </div>
 
       <!-- Action Buttons -->
-      <div class="pt-6 pb-2 flex justify-end gap-3 border-t border-border/40 mt-8">
+      <div
+        class="pt-6 pb-2 flex justify-end gap-3 border-t border-border/40 mt-8"
+      >
         <button
           type="button"
           class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-hidden focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 border border-input bg-background shadow-xs hover:bg-accent hover:text-accent-foreground hover:border-transparent h-9 px-4 py-2"

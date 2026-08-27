@@ -161,7 +161,10 @@ export default {
 </script>
 
 <template>
-  <form class="flex flex-col h-full max-h-[calc(90vh-140px)] -m-6 p-6 pb-0" @submit.prevent="onSubmit">
+  <form
+    class="flex flex-col h-full max-h-[calc(90vh-140px)] -m-6 p-6 pb-0"
+    @submit.prevent="onSubmit"
+  >
     <!-- Scrollable Body Content -->
     <div class="flex-1 overflow-y-auto space-y-5 pr-1 custom-scrollbar">
       <!-- SLA Name -->
@@ -257,7 +260,9 @@ export default {
     </div>
 
     <!-- Static Footer Buttons -->
-    <div class="shrink-0 py-4 border-t border-border/40 bg-background flex items-center justify-end gap-3 mt-4">
+    <div
+      class="shrink-0 py-4 border-t border-border/40 bg-background flex items-center justify-end gap-3 mt-4"
+    >
       <button
         type="button"
         class="text-muted-foreground hover:text-foreground font-medium text-[13.5px] px-4 py-2 rounded-lg transition-colors"

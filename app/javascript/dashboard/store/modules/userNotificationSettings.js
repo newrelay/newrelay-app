@@ -19,6 +19,18 @@ export const getters = {
   getSelectedPushFlags: $state => {
     return $state.record.selected_push_flags;
   },
+  getQuietHours: $state => {
+    const record = $state.record;
+    return {
+      enabled: record.quiet_hours_enabled || false,
+      fromHour: record.quiet_hours_from_hour,
+      fromMinute: record.quiet_hours_from_minute,
+      toHour: record.quiet_hours_to_hour,
+      toMinute: record.quiet_hours_to_minute,
+      timezone: record.quiet_hours_timezone,
+      days: record.selected_quiet_hours_days || [],
+    };
+  },
 };
 
 export const actions = {
@@ -37,14 +49,27 @@ export const actions = {
     }
   },
 
-  update: async ({ commit }, { selectedEmailFlags, selectedPushFlags }) => {
+  update: async (
+    { commit },
+    { selectedEmailFlags, selectedPushFlags, quietHours }
+  ) => {
     commit(types.default.SET_USER_NOTIFICATION_UI_FLAG, { isUpdating: true });
     try {
+      const notificationSettings = {
+        selected_email_flags: selectedEmailFlags,
+        selected_push_flags: selectedPushFlags,
+      };
+      if (quietHours) {
+        notificationSettings.quiet_hours_enabled = quietHours.enabled;
+        notificationSettings.quiet_hours_from_hour = quietHours.fromHour;
+        notificationSettings.quiet_hours_from_minute = quietHours.fromMinute;
+        notificationSettings.quiet_hours_to_hour = quietHours.toHour;
+        notificationSettings.quiet_hours_to_minute = quietHours.toMinute;
+        notificationSettings.quiet_hours_timezone = quietHours.timezone;
+        notificationSettings.selected_quiet_hours_days = quietHours.days;
+      }
       const response = await UserNotificationSettings.update({
-        notification_settings: {
-          selected_email_flags: selectedEmailFlags,
-          selected_push_flags: selectedPushFlags,
-        },
+        notification_settings: notificationSettings,
       });
       commit(types.default.SET_USER_NOTIFICATION, response.data);
       commit(types.default.SET_USER_NOTIFICATION_UI_FLAG, {

@@ -5,7 +5,10 @@ import { useAccount } from 'dashboard/composables/useAccount';
 import { useI18n } from 'vue-i18n';
 import { useToggle } from '@vueuse/core';
 import { useAlert } from 'dashboard/composables';
-import { RelayButton, RelayConfirmModal } from 'dashboard/components-next/relay';
+import {
+  RelayButton,
+  RelayConfirmModal,
+} from 'dashboard/components-next/relay';
 import SectionLayout from './SectionLayout.vue';
 
 const { t } = useI18n();

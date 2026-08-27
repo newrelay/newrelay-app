@@ -46,8 +46,12 @@ export function initSubmenu() {
   document.querySelectorAll('.sidebar-menu-item').forEach(item => {
     const trigger = item.querySelector('.sidebar-menu-btn');
     if (trigger) {
-      trigger.addEventListener('click', (e) => {
-        if (e.target.closest('.sidebar-menu-sub') || e.target.closest('.sidebar-flyout')) return;
+      trigger.addEventListener('click', e => {
+        if (
+          e.target.closest('.sidebar-menu-sub') ||
+          e.target.closest('.sidebar-flyout')
+        )
+          return;
         const isChevron = e.target.closest('.sidebar-chevron');
         if (isChevron) {
           e.preventDefault();
@@ -67,7 +71,9 @@ export function toggleFilterDropdown(dropdownId) {
   const dropdown = document.getElementById(dropdownId);
   if (!dropdown) return;
   const isOpen = dropdown.classList.contains('open');
-  document.querySelectorAll('.filter-dropdown.open').forEach(d => d.classList.remove('open'));
+  document
+    .querySelectorAll('.filter-dropdown.open')
+    .forEach(d => d.classList.remove('open'));
   if (!isOpen) {
     dropdown.classList.add('open');
   }
@@ -97,9 +103,11 @@ document.addEventListener('DOMContentLoaded', () => {
   initSidebarToggle();
   initSubmenu();
 
-  document.addEventListener('click', (e) => {
+  document.addEventListener('click', e => {
     if (!e.target.closest('.filter-dropdown')) {
-      document.querySelectorAll('.filter-dropdown.open').forEach(d => d.classList.remove('open'));
+      document
+        .querySelectorAll('.filter-dropdown.open')
+        .forEach(d => d.classList.remove('open'));
     }
   });
 

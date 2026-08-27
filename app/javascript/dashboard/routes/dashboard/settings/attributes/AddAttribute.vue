@@ -215,7 +215,9 @@ const addAttributes = async () => {
     @close="emit('close')"
   >
     <form @submit.prevent="addAttributes">
-      <div class="max-h-[60vh] space-y-5 overflow-y-auto px-7 pb-2 custom-scrollbar">
+      <div
+        class="max-h-[60vh] space-y-5 overflow-y-auto px-7 pb-2 custom-scrollbar"
+      >
         <!-- Applies to -->
         <div class="flex flex-col gap-2.5">
           <RelayLabel class="text-[13.5px] font-medium text-foreground">

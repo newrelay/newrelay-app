@@ -31,7 +31,11 @@ function bindFileInput(wrapper) {
 }
 
 function wrapNativeFileInput(input) {
-  if (input.closest('.custom-file-upload') || input.dataset.nrNative !== undefined) return;
+  if (
+    input.closest('.custom-file-upload') ||
+    input.dataset.nrNative !== undefined
+  )
+    return;
 
   const wrapper = document.createElement('div');
   wrapper.className = 'custom-file-upload';
@@ -52,9 +56,11 @@ function wrapNativeFileInput(input) {
 }
 
 export function initCustomFileInputs() {
-  document.querySelectorAll('input[type="file"]:not([data-nr-native])').forEach(input => {
-    wrapNativeFileInput(input);
-  });
+  document
+    .querySelectorAll('input[type="file"]:not([data-nr-native])')
+    .forEach(input => {
+      wrapNativeFileInput(input);
+    });
 
   document.querySelectorAll('.custom-file-upload').forEach(bindFileInput);
 }

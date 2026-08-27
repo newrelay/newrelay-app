@@ -8,6 +8,7 @@ class Notification::EmailNotificationService
     return if notification.user.confirmed_at.nil?
     return unless user_subscribed_to_notification?
     return unless notification.account.within_email_rate_limit?
+    return if notification_setting&.quiet_hours_now?
 
     send_notification_email
     notification.account.increment_email_sent_count
@@ -23,8 +24,11 @@ class Notification::EmailNotificationService
     ).deliver_later
   end
 
+  def notification_setting
+    @notification_setting ||= notification.user.notification_settings.find_by(account_id: notification.account.id)
+  end
+
   def user_subscribed_to_notification?
-    notification_setting = notification.user.notification_settings.find_by(account_id: notification.account.id)
     return true if notification_setting.public_send("email_#{notification.notification_type}?")
 
     false

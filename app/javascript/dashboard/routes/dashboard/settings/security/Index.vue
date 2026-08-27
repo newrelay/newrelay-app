@@ -48,7 +48,8 @@ const generateLogText = auditLogItem => {
   try {
     const payload = generateTranslationPayload(auditLogItem, agentList.value);
     const translationKey = generateLogActionKey(auditLogItem);
-    const joinIfArray = value => (Array.isArray(value) ? value.join(', ') : value);
+    const joinIfArray = value =>
+      Array.isArray(value) ? value.join(', ') : value;
     const mergedPayload = {
       ...payload,
       attributes: joinIfArray(payload.attributes),
@@ -87,19 +88,32 @@ onMounted(() => {
           <div>
             <h3 class="text-base font-semibold text-foreground">Audit Logs</h3>
             <p class="text-sm text-muted-foreground mt-1">
-              Audit Logs maintain a record of activities in your account, allowing you to track and audit your account, team, or services.
+              Audit Logs maintain a record of activities in your account,
+              allowing you to track and audit your account, team, or services.
             </p>
           </div>
 
-          <div class="overflow-hidden rounded-xl border border-border/60 bg-card shadow-xs">
-            <div v-if="!records.length" class="flex flex-col items-center justify-center bg-muted/10 py-14">
-              <div class="mb-4 flex size-14 items-center justify-center rounded-full border border-border/50 bg-muted/50 shadow-xs">
-                <Icon icon="i-lucide-file-check" class="size-7 text-muted-foreground/60" />
+          <div
+            class="overflow-hidden rounded-xl border border-border/60 bg-card shadow-xs"
+          >
+            <div
+              v-if="!records.length"
+              class="flex flex-col items-center justify-center bg-muted/10 py-14"
+            >
+              <div
+                class="mb-4 flex size-14 items-center justify-center rounded-full border border-border/50 bg-muted/50 shadow-xs"
+              >
+                <Icon
+                  icon="i-lucide-file-check"
+                  class="size-7 text-muted-foreground/60"
+                />
               </div>
               <h4 class="capitalize text-base font-medium text-foreground mb-1">
                 {{ $t('AUDIT_LOGS.LIST.EMPTY_TITLE') }}
               </h4>
-              <p class="max-w-sm text-center text-[13.5px] text-muted-foreground">
+              <p
+                class="max-w-sm text-center text-[13.5px] text-muted-foreground"
+              >
                 {{ $t('AUDIT_LOGS.LIST.404') }}
               </p>
             </div>
@@ -108,13 +122,19 @@ onMounted(() => {
               <table class="w-full border-collapse text-left">
                 <thead>
                   <tr class="border-b border-border/40">
-                    <th class="bg-transparent px-6 py-4 text-sm font-medium text-foreground">
+                    <th
+                      class="bg-transparent px-6 py-4 text-sm font-medium text-foreground"
+                    >
                       {{ $t('AUDIT_LOGS.LIST.TABLE_HEADER.ACTIVITY') }}
                     </th>
-                    <th class="w-48 bg-transparent px-6 py-4 text-sm font-medium text-foreground">
+                    <th
+                      class="w-48 bg-transparent px-6 py-4 text-sm font-medium text-foreground"
+                    >
                       {{ $t('AUDIT_LOGS.LIST.TABLE_HEADER.TIME') }}
                     </th>
-                    <th class="w-48 bg-transparent px-6 py-4 text-sm font-medium text-foreground">
+                    <th
+                      class="w-48 bg-transparent px-6 py-4 text-sm font-medium text-foreground"
+                    >
                       {{ $t('AUDIT_LOGS.LIST.TABLE_HEADER.IP_ADDRESS') }}
                     </th>
                   </tr>
@@ -128,7 +148,9 @@ onMounted(() => {
                     <td class="px-6 py-4 text-sm text-foreground">
                       {{ generateLogText(auditLogItem) }}
                     </td>
-                    <td class="whitespace-nowrap px-6 py-4 text-sm text-muted-foreground">
+                    <td
+                      class="whitespace-nowrap px-6 py-4 text-sm text-muted-foreground"
+                    >
                       {{
                         messageTimestamp(
                           auditLogItem.created_at,
@@ -136,7 +158,9 @@ onMounted(() => {
                         )
                       }}
                     </td>
-                    <td class="whitespace-nowrap px-6 py-4 text-sm text-muted-foreground">
+                    <td
+                      class="whitespace-nowrap px-6 py-4 text-sm text-muted-foreground"
+                    >
                       {{ auditLogItem.remote_address || '—' }}
                     </td>
                   </tr>

@@ -1,8 +1,7 @@
 export const NOTIFICATION_TYPES = [
   {
     label: 'PROFILE_SETTINGS.FORM.NOTIFICATIONS.TYPES.NEW_REVIEW',
-    description:
-      'PROFILE_SETTINGS.FORM.NOTIFICATIONS.DESCRIPTIONS.NEW_REVIEW',
+    description: 'PROFILE_SETTINGS.FORM.NOTIFICATIONS.DESCRIPTIONS.NEW_REVIEW',
     value: 'new_review',
     icon: 'i-lucide-star',
     defaultTitle: 'New review received',
@@ -28,8 +27,7 @@ export const NOTIFICATION_TYPES = [
   },
   {
     label: 'PROFILE_SETTINGS.FORM.NOTIFICATIONS.TYPES.SYNC_FAILED',
-    description:
-      'PROFILE_SETTINGS.FORM.NOTIFICATIONS.DESCRIPTIONS.SYNC_FAILED',
+    description: 'PROFILE_SETTINGS.FORM.NOTIFICATIONS.DESCRIPTIONS.SYNC_FAILED',
     value: 'sync_failed',
     icon: 'i-lucide-refresh-cw',
     defaultTitle: 'Sync failed',

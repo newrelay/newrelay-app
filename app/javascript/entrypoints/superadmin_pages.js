@@ -26,7 +26,12 @@ const renderComponent = (componentName, props) => {
 
 document.addEventListener('DOMContentLoaded', () => {
   const element = document.getElementById('app');
-  if (element && element.dataset && element.dataset.componentName && element.dataset.props) {
+  if (
+    element &&
+    element.dataset &&
+    element.dataset.componentName &&
+    element.dataset.props
+  ) {
     try {
       const componentName = element.dataset.componentName;
       const props = JSON.parse(element.dataset.props);
@@ -37,4 +42,3 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 });
-

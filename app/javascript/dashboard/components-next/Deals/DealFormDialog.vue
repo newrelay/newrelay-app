@@ -88,8 +88,7 @@ const applyDealToForm = deal => {
   form.pipelineStageId = deal?.pipelineStageId || props.stages?.[0]?.id || '';
   form.closeOn = deal?.closeOn || '';
   form.priority = deal?.priority || 'medium';
-  form.probability =
-    deal?.probability != null ? Number(deal.probability) : 50;
+  form.probability = deal?.probability != null ? Number(deal.probability) : 50;
   form.ownerId = deal?.ownerId || '';
   form.contactId = deal?.contactId || '';
   form.companyId = deal?.companyId || '';
@@ -209,7 +208,8 @@ defineExpose({ open, close, onSuccess, dialogRef: { open, close } });
           @close="close"
         />
         <form
-          :class="[RELAY_MODAL_BODY_CLASS, 'overflow-y-auto']"
+          class="overflow-y-auto"
+          :class="[RELAY_MODAL_BODY_CLASS]"
           @submit.prevent="submit"
         >
           <div class="flex flex-col gap-4">
@@ -285,10 +285,7 @@ defineExpose({ open, close, onSuccess, dialogRef: { open, close } });
                 <RelayLabel class="text-[13.5px] font-medium text-foreground">
                   {{ $t('DEALS.FORM.PRIORITY.LABEL') }}
                 </RelayLabel>
-                <ComboBox
-                  v-model="form.priority"
-                  :options="priorityOptions"
-                />
+                <ComboBox v-model="form.priority" :options="priorityOptions" />
               </div>
             </div>
 
@@ -340,9 +337,7 @@ defineExpose({ open, close, onSuccess, dialogRef: { open, close } });
               class="h-9 px-5 text-[13px] font-medium"
               :disabled="!isFormValid || isLoading"
             >
-              {{
-                isEdit ? $t('DEALS.FORM.SAVE') : $t('DEALS.FORM.CREATE')
-              }}
+              {{ isEdit ? $t('DEALS.FORM.SAVE') : $t('DEALS.FORM.CREATE') }}
             </RelayButton>
           </div>
         </form>

@@ -6,7 +6,7 @@ import {
   MessageSquare, Mail, MessageCircle, Video, Plus, Sparkles, Copy, Check,
   QrCode, Download, Printer, Bot, ShieldCheck, ChevronDown, Star, ExternalLink,
   Signal, Wifi, MoreVertical, Paperclip, Smile, Mic, Trash2, Archive, Phone, Info,
-  ChevronLeft, CheckCircle2,
+  ChevronLeft, CheckCircle2, Clock,
 } from 'lucide-vue-next';
 import {
   RelaySwitch,
@@ -83,6 +83,14 @@ const pvSms = computed(() => fillVars(smsMessage.value));
 const pvWaHeader = computed(() => fillVars(whatsappHeader.value));
 const pvWaBody = computed(() => fillVars(whatsappBody.value));
 const pvVideo = computed(() => fillVars(videoPrompt.value));
+const videoHeadline = 'Share Your Story with {{BusinessName}}';
+const videoQuestions = '1. What problem did you want to solve?\n2. How did we help you?\n3. Would you recommend us to others?';
+const videoButtonText = 'Record Video Testimonial 🎥';
+const videoMaxDuration = '60';
+const pvVideoHeadline = computed(() => fillVars(videoHeadline));
+const parsedVideoQuestions = computed(() =>
+  videoQuestions.split('\n').map(q => q.replace(/^\d+\.\s*/, '').trim()).filter(Boolean)
+);
 
 // ---------- Tab 2: Review Link & QR Hub ----------
 const customSlug = ref('apex-dental');
@@ -294,12 +302,45 @@ const autoFlagLabel = computed(() => autoFlagOptions.find(o => o.value === spamS
               </div>
 
               <!-- VIDEO -->
-              <div v-else-if="selectedChannel === 'video'" class="flex-1 flex flex-col overflow-hidden bg-muted/30">
-                <div class="px-3.5 py-2 flex items-center justify-between border-b border-border/40 shrink-0 bg-muted/20"><div class="flex items-center gap-1 text-primary"><ChevronLeft class="size-4 shrink-0" /><span class="text-[11px] font-medium">Record</span></div><Info class="size-3.5 text-primary shrink-0" /></div>
-                <div class="flex-1 flex flex-col items-center justify-center p-4 gap-4 text-center">
-                  <div class="size-16 rounded-full bg-primary/10 text-primary flex items-center justify-center"><Video class="size-7" /></div>
-                  <div class="text-[12.5px] leading-relaxed text-foreground whitespace-pre-wrap">{{ pvVideo }}</div>
-                  <div class="w-full py-2 rounded-lg bg-primary text-primary-foreground text-[11px] font-semibold flex items-center justify-center gap-1.5 shadow-xs">Record Video Testimonial 🎥</div>
+              <div v-else-if="selectedChannel === 'video'" class="flex-1 flex flex-col overflow-hidden">
+                <!-- Video App Header Bar -->
+                <div class="px-3.5 py-2 flex items-center justify-between border-b border-border/40 shrink-0 bg-muted/20">
+                  <div class="flex items-center gap-1.5 min-w-0">
+                    <div class="size-6 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold text-[9px] shrink-0">AD</div>
+                    <span class="text-[11px] font-semibold text-foreground truncate">Apex Dental · Video Reviews</span>
+                  </div>
+                  <div class="flex items-center gap-1 text-[10px] text-muted-foreground font-mono"><Clock class="size-3 text-primary" /> {{ videoMaxDuration }}s</div>
+                </div>
+
+                <!-- Video Content Area -->
+                <div class="flex-1 overflow-y-auto p-3 space-y-2.5 hide-scrollbar bg-slate-50/60 dark:bg-slate-900/40">
+                  <div class="p-3 bg-white dark:bg-card border border-border/60 rounded-2xl shadow-xs space-y-2.5">
+                    <div class="text-[12px] font-bold text-foreground leading-tight">{{ pvVideoHeadline }}</div>
+                    <div class="text-[11px] leading-relaxed text-muted-foreground whitespace-pre-wrap">{{ pvVideo }}</div>
+
+                    <!-- Guiding Questions -->
+                    <div class="p-2.5 bg-primary/5 border border-primary/15 rounded-xl space-y-1.5">
+                      <div class="text-[10.5px] font-semibold text-primary flex items-center gap-1"><Sparkles class="size-3" /> Guiding Questions:</div>
+                      <ul class="text-[10px] text-muted-foreground space-y-1 pl-1">
+                        <li v-for="(q, idx) in parsedVideoQuestions" :key="idx" class="flex items-start gap-1"><span class="text-primary font-bold shrink-0">•</span><span>{{ q }}</span></li>
+                      </ul>
+                    </div>
+
+                    <!-- Camera Viewfinder -->
+                    <div class="relative h-24 rounded-xl bg-slate-950 border border-slate-800 overflow-hidden flex flex-col items-center justify-center text-center p-2">
+                      <div class="relative z-10 flex flex-col items-center gap-1">
+                        <div class="size-7 rounded-full bg-white/10 flex items-center justify-center border border-white/20 text-white"><Video class="size-3.5" /></div>
+                        <span class="text-[9.5px] font-medium text-white/90">Camera Ready</span>
+                        <span class="text-[8.5px] text-white/60 font-mono">00:00 / {{ videoMaxDuration }}s</span>
+                      </div>
+                    </div>
+
+                    <!-- Record CTA -->
+                    <div class="pt-0.5">
+                      <div class="w-full py-2 rounded-xl bg-primary text-primary-foreground text-[10.5px] font-semibold flex items-center justify-center gap-1.5 shadow-xs"><div class="size-2 rounded-full bg-red-400 animate-pulse"></div><span>{{ videoButtonText }}</span></div>
+                      <div class="text-[8.5px] text-center text-muted-foreground pt-1.5">Instant browser recording · No app required</div>
+                    </div>
+                  </div>
                 </div>
               </div>
 

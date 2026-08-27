@@ -229,10 +229,10 @@ const autoFlagLabel = computed(() => autoFlagOptions.find(o => o.value === spamS
                 <label class="text-[13.5px] font-medium text-foreground">{{ selectedChannel === 'video' ? 'Video Prompt' : selectedChannel === 'email' ? 'Email Body Copy' : 'Message Content' }}</label>
                 <span v-if="selectedChannel === 'sms'" class="text-[11.5px] text-muted-foreground font-mono">{{ smsMessage.length }} / 160 characters ({{ Math.ceil(smsMessage.length / 160) || 1 }} SMS)</span>
               </div>
-              <textarea v-if="selectedChannel === 'sms'" v-model="smsMessage" rows="4" class="w-full text-[14px] p-3 rounded-lg border border-border bg-background text-foreground shadow-xs resize-none focus:outline-none focus:ring-1 focus:ring-primary/30 leading-relaxed"></textarea>
-              <textarea v-else-if="selectedChannel === 'email'" v-model="emailBody" rows="5" class="w-full text-[14px] p-3 rounded-lg border border-border bg-background text-foreground shadow-xs resize-none focus:outline-none focus:ring-1 focus:ring-primary/30 leading-relaxed"></textarea>
-              <textarea v-else-if="selectedChannel === 'whatsapp'" v-model="whatsappBody" rows="4" class="w-full text-[14px] p-3 rounded-lg border border-border bg-background text-foreground shadow-xs resize-none focus:outline-none focus:ring-1 focus:ring-primary/30 leading-relaxed"></textarea>
-              <textarea v-else v-model="videoPrompt" rows="4" class="w-full text-[14px] p-3 rounded-lg border border-border bg-background text-foreground shadow-xs resize-none focus:outline-none focus:ring-1 focus:ring-primary/30 leading-relaxed"></textarea>
+              <textarea v-if="selectedChannel === 'sms'" v-model="smsMessage" rows="4" class="w-full min-h-[150px] text-[14px] p-3 rounded-lg border border-border bg-background text-foreground shadow-xs resize-y focus:outline-none focus:ring-1 focus:ring-primary/30 leading-relaxed"></textarea>
+              <textarea v-else-if="selectedChannel === 'email'" v-model="emailBody" rows="5" class="w-full min-h-[150px] text-[14px] p-3 rounded-lg border border-border bg-background text-foreground shadow-xs resize-y focus:outline-none focus:ring-1 focus:ring-primary/30 leading-relaxed"></textarea>
+              <textarea v-else-if="selectedChannel === 'whatsapp'" v-model="whatsappBody" rows="4" class="w-full min-h-[150px] text-[14px] p-3 rounded-lg border border-border bg-background text-foreground shadow-xs resize-y focus:outline-none focus:ring-1 focus:ring-primary/30 leading-relaxed"></textarea>
+              <textarea v-else v-model="videoPrompt" rows="4" class="w-full min-h-[150px] text-[14px] p-3 rounded-lg border border-border bg-background text-foreground shadow-xs resize-y focus:outline-none focus:ring-1 focus:ring-primary/30 leading-relaxed"></textarea>
 
               <div class="flex items-center gap-2 flex-wrap pt-1">
                 <span class="text-[12.5px] text-muted-foreground font-medium">Insert tag:</span>
@@ -327,7 +327,7 @@ const autoFlagLabel = computed(() => autoFlagOptions.find(o => o.value === spamS
                     </div>
 
                     <!-- Camera Viewfinder -->
-                    <div class="relative h-24 rounded-xl bg-gradient-to-br from-slate-800 via-slate-900 to-slate-950 border border-slate-700/70 overflow-hidden flex flex-col items-center justify-center text-center p-2">
+                    <div class="relative h-24 rounded-xl bg-black border border-slate-800 overflow-hidden flex flex-col items-center justify-center text-center p-2">
                       <div class="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.08),transparent_70%)] pointer-events-none"></div>
                       <div class="absolute top-1.5 left-2 flex items-center gap-1 text-[8px] font-mono text-white/60"><div class="size-1.5 rounded-full bg-red-500 animate-pulse"></div>REC</div>
                       <div class="relative z-10 flex flex-col items-center gap-1">

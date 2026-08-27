@@ -327,12 +327,13 @@ const autoFlagLabel = computed(() => autoFlagOptions.find(o => o.value === spamS
                     </div>
 
                     <!-- Camera Viewfinder -->
-                    <div class="relative h-24 rounded-xl bg-muted/60 border border-border overflow-hidden flex flex-col items-center justify-center text-center p-2">
-                      <div class="absolute top-1.5 left-2 flex items-center gap-1 text-[8px] font-mono text-muted-foreground"><div class="size-1.5 rounded-full bg-red-500 animate-pulse"></div>REC</div>
+                    <div class="relative h-24 rounded-xl bg-gradient-to-br from-slate-800 via-slate-900 to-slate-950 border border-slate-700/70 overflow-hidden flex flex-col items-center justify-center text-center p-2">
+                      <div class="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.08),transparent_70%)] pointer-events-none"></div>
+                      <div class="absolute top-1.5 left-2 flex items-center gap-1 text-[8px] font-mono text-white/60"><div class="size-1.5 rounded-full bg-red-500 animate-pulse"></div>REC</div>
                       <div class="relative z-10 flex flex-col items-center gap-1">
-                        <div class="size-7 rounded-full bg-primary/10 text-primary flex items-center justify-center border border-primary/20"><Video class="size-3.5" /></div>
-                        <span class="text-[9.5px] font-medium text-foreground">Camera Ready</span>
-                        <span class="text-[8.5px] text-muted-foreground font-mono">00:00 / {{ videoMaxDuration }}s</span>
+                        <div class="size-7 rounded-full bg-white/10 flex items-center justify-center border border-white/20 text-white"><Video class="size-3.5" /></div>
+                        <span class="text-[9.5px] font-medium text-white/90">Camera Ready</span>
+                        <span class="text-[8.5px] text-white/60 font-mono">00:00 / {{ videoMaxDuration }}s</span>
                       </div>
                     </div>
 

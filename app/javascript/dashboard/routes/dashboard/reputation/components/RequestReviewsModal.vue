@@ -526,7 +526,7 @@ function close() {
                   <ChevronDown class="size-4 text-muted-foreground shrink-0 transition-transform" :class="showCompanyMenu ? 'rotate-180' : ''" />
                 </button>
 
-                <div v-if="showCompanyMenu" class="absolute left-0 right-0 mt-1 rounded-lg border border-border bg-popover shadow-lg p-1.5">
+                <div v-if="showCompanyMenu" class="absolute left-0 right-0 bottom-full mb-1 z-50 rounded-lg border border-border bg-popover shadow-lg p-1.5">
                   <div class="relative mb-1.5">
                     <Search class="absolute left-2.5 top-1/2 -translate-y-1/2 size-3.5 text-muted-foreground" />
                     <input

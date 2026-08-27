@@ -416,13 +416,28 @@ function saveSettings() {
       <!-- Filters & Toolbar -->
       <div class="px-8 py-5 border-b border-border bg-[#FAFAFA] dark:bg-background shrink-0 sticky top-0 z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div class="flex flex-wrap items-center gap-2">
-          <div class="relative w-48 mr-2">
-            <Search class="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <div class="relative w-full sm:w-64 mr-2">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              class="lucide absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground"
+              aria-hidden="true"
+            >
+              <path d="m21 21-4.34-4.34"></path>
+              <circle cx="11" cy="11" r="8"></circle>
+            </svg>
             <input
               v-model="query"
               type="text"
               placeholder="Search listings..."
-              class="w-full pl-9 bg-white dark:bg-card border border-border shadow-xs h-9 text-sm rounded-lg focus-visible:ring-1 focus-visible:ring-ring focus-visible:outline-none placeholder:text-muted-foreground px-3 py-1 transition-colors text-foreground"
+              class="placeholder:text-muted-foreground flex w-full rounded-md border px-3 py-1 transition-colors focus-visible:outline-hidden disabled:cursor-not-allowed disabled:opacity-50 pl-9 h-10 text-[14px] bg-muted/20 border-border/60 shadow-none focus-visible:ring-1 focus-visible:ring-primary/20 text-foreground"
             />
           </div>
 

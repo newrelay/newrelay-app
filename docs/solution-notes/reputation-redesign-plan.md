@@ -230,8 +230,9 @@ reference `VideoTestimonialWidgetModal` as `reputation/components/VideoTestimoni
 4-tab studio (Layout / Sources / Style / Embed) with the 4 video layouts (Wall-of-Love grid /
 carousel / corner bubble / stories strip), playback toggles, source platforms, appearance, embed
 snippets, and a compact video-player popup. `Switch`/`Checkbox` → `RelaySwitch`/`RelayCheckbox`;
-`Button`/`Badge` → tokened elements. Video thumbnails use **gradient placeholders** (the reference's
-Unsplash URLs are external → CSP; avatars use pravatar which is already allowlisted). The device
+`Button`/`Badge` → tokened elements. Video thumbnails + avatars use **pravatar** images (the
+reference's Unsplash stills are external → CSP-blocked; pravatar is already allowlisted, and a
+customer face is what a testimonial thumbnail shows). The device
 preview is driven only by the Background toggle (`isDark`), never the dashboard `dark:` theme — same
 rule as the review widget. Deferred vs reference: the full-screen "shortlist / manage videos"
 sub-modal and per-device (separate mobile) layout variants — mobile reuses a single-column grid.

@@ -134,6 +134,18 @@ const platformIcons = { Google: googleIcon, Facebook: facebookIcon, Yelp: yelpIc
 
 const getPlatformIcon = name => platformIcons[name] || googleIcon;
 
+// Deterministic gradient fallback when a listing has no fetched storefront photo.
+const GRADIENTS = [
+  'from-blue-500 to-indigo-600', 'from-emerald-500 to-teal-600', 'from-rose-500 to-pink-600',
+  'from-amber-500 to-orange-600', 'from-violet-500 to-purple-600', 'from-cyan-500 to-blue-600',
+];
+const gradientFor = key => {
+  const s = String(key || 'L');
+  let h = 0;
+  for (let i = 0; i < s.length; i += 1) h = s.charCodeAt(i) + ((h << 5) - h);
+  return GRADIENTS[Math.abs(h) % GRADIENTS.length];
+};
+
 const listings = ref([]);
 const usingMock = ref(false);
 const loading = ref(true);
@@ -148,7 +160,7 @@ function mapListing(row) {
     title: row.name || row.title,
     badge: row.primary ? 'Primary' : '',
     address: row.address || '',
-    image: row.image || 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=600&auto=format&fit=crop',
+    image: row.image || '',
     optimizationScore: row.optimized ?? row.optimizationScore ?? 90,
     rating: row.rating || 4.5,
     reviewsCount: row.reviews ?? row.reviewsCount ?? 0,
@@ -549,7 +561,10 @@ function saveSettings() {
           >
             <!-- Left Thumbnail -->
             <div class="w-56 shrink-0 relative border-r border-border">
-              <img :src="listing.image" class="w-full h-full object-cover" />
+              <img v-if="listing.image" :src="listing.image" class="w-full h-full object-cover" @error="listing.image = ''" />
+              <div v-else class="w-full h-full flex items-center justify-center bg-gradient-to-br text-white text-3xl font-bold select-none" :class="gradientFor(listing.title)">
+                {{ (listing.title || 'L').charAt(0).toUpperCase() }}
+              </div>
             </div>
 
             <!-- Right Content -->

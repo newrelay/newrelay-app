@@ -27,6 +27,19 @@ const loading = ref(true);
 const sortOption = ref('Newest First');
 const selectedPlatform = ref('All Platforms');
 const activeStatusFilter = ref('');
+const activeRatingFilter = ref(0); // 0 = no filter; else minimum star rating
+const activeDateRangeFilter = ref(''); // '', '7d', '30d', '90d'
+const RATING_OPTIONS = [
+  { label: '5 Stars', value: 5 },
+  { label: '4 Stars & Up', value: 4 },
+  { label: '3 Stars & Up', value: 3 },
+  { label: '2 Stars & Up', value: 2 },
+];
+const DATE_RANGE_OPTIONS = [
+  { label: 'Last 7 Days', value: '7d', days: 7 },
+  { label: 'Last 30 Days', value: '30d', days: 30 },
+  { label: 'Last 90 Days', value: '90d', days: 90 },
+];
 const isRequestModalOpen = ref(false);
 const isWidgetModalOpen = ref(false);
 
@@ -125,7 +138,10 @@ const filteredReviews = computed(() => {
       selectedPlatform.value === 'All Platforms' ||
       r.platform.toLowerCase() === selectedPlatform.value.toLowerCase();
     const matchesStatus = !activeStatusFilter.value || r.status === activeStatusFilter.value;
-    return matchesSearch && matchesPlatform && matchesStatus;
+    const matchesRating = !activeRatingFilter.value || r.rating >= activeRatingFilter.value;
+    const range = DATE_RANGE_OPTIONS.find(o => o.value === activeDateRangeFilter.value);
+    const matchesDateRange = !range || r.sortAt >= Date.now() - range.days * 86400000;
+    return matchesSearch && matchesPlatform && matchesStatus && matchesRating && matchesDateRange;
   });
 
   if (sortOption.value === 'Highest Rating') {
@@ -312,10 +328,16 @@ async function sendReply() {
             <button
               @click="showFilterDropdown = !showFilterDropdown"
               class="inline-flex items-center gap-1.5 h-9 px-3 rounded-lg border text-[13px] font-medium shadow-xs cursor-pointer"
-              :class="activeStatusFilter ? 'border-primary/40 text-primary bg-primary/5' : 'border-border bg-card text-foreground hover:bg-muted'"
+              :class="(activeStatusFilter || activeRatingFilter || activeDateRangeFilter) ? 'border-primary/40 text-primary bg-primary/5' : 'border-border bg-card text-foreground hover:bg-muted'"
             >
               <Filter class="size-3.5" />
-              <span>{{ activeStatusFilter || 'Filters' }}</span>
+              <span>Filters</span>
+              <span
+                v-if="[activeStatusFilter, activeRatingFilter, activeDateRangeFilter].filter(Boolean).length"
+                class="inline-flex items-center justify-center min-w-4 h-4 px-1 rounded-full bg-primary text-primary-foreground text-[10px] font-semibold"
+              >
+                {{ [activeStatusFilter, activeRatingFilter, activeDateRangeFilter].filter(Boolean).length }}
+              </span>
             </button>
             <div v-if="showFilterDropdown" class="absolute right-0 mt-2 w-64 rounded-xl border border-border bg-card p-2 shadow-xl z-30 space-y-1">
               <div class="max-h-[300px] overflow-y-auto space-y-1">
@@ -336,24 +358,29 @@ async function sendReply() {
                 </button>
 
                 <div class="my-1 border-t border-border/80"></div>
-                <div class="px-2 py-1 text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Properties</div>
-                <button class="w-full text-left px-2 py-1.5 text-xs rounded-md hover:bg-muted font-medium text-foreground flex items-center gap-2 cursor-pointer">
-                  <Star class="size-4 text-[#FFB020]" /> Rating (1-5)
-                </button>
-                <button class="w-full text-left px-2 py-1.5 text-xs rounded-md hover:bg-muted font-medium text-foreground flex items-center gap-2 cursor-pointer">
-                  <Calendar class="size-4 text-muted-foreground" /> Date Range
+                <div class="px-2 py-1 text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Rating</div>
+                <button
+                  v-for="opt in RATING_OPTIONS"
+                  :key="opt.value"
+                  class="w-full text-left px-2 py-1.5 text-xs rounded-md hover:bg-muted font-medium cursor-pointer flex items-center justify-between gap-2"
+                  :class="activeRatingFilter === opt.value ? 'text-primary' : 'text-foreground'"
+                  @click="activeRatingFilter = activeRatingFilter === opt.value ? 0 : opt.value; showFilterDropdown = false"
+                >
+                  <span class="flex items-center gap-2"><Star class="size-4 text-[#FFB020]" /> {{ opt.label }}</span>
+                  <Check v-if="activeRatingFilter === opt.value" class="size-3.5 shrink-0" />
                 </button>
 
                 <div class="my-1 border-t border-border/80"></div>
-                <div class="px-2 py-1 text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Content</div>
-                <button class="w-full text-left px-2 py-1.5 text-xs rounded-md hover:bg-muted font-medium text-foreground flex items-center gap-2 cursor-pointer">
-                  <ImageIcon class="size-4" /> With Photos
-                </button>
-                <button class="w-full text-left px-2 py-1.5 text-xs rounded-md hover:bg-muted font-medium text-foreground flex items-center gap-2 cursor-pointer">
-                  <FileText class="size-4" /> Has Attachments
-                </button>
-                <button class="w-full text-left px-2 py-1.5 text-xs rounded-md hover:bg-muted font-medium text-foreground flex items-center gap-2 cursor-pointer">
-                  <Check class="size-4 text-emerald-600" /> Verified Purchase
+                <div class="px-2 py-1 text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Date Range</div>
+                <button
+                  v-for="opt in DATE_RANGE_OPTIONS"
+                  :key="opt.value"
+                  class="w-full text-left px-2 py-1.5 text-xs rounded-md hover:bg-muted font-medium cursor-pointer flex items-center justify-between gap-2"
+                  :class="activeDateRangeFilter === opt.value ? 'text-primary' : 'text-foreground'"
+                  @click="activeDateRangeFilter = activeDateRangeFilter === opt.value ? '' : opt.value; showFilterDropdown = false"
+                >
+                  <span class="flex items-center gap-2"><Calendar class="size-4 text-muted-foreground" /> {{ opt.label }}</span>
+                  <Check v-if="activeDateRangeFilter === opt.value" class="size-3.5 shrink-0" />
                 </button>
               </div>
             </div>
@@ -620,7 +647,7 @@ async function sendReply() {
           <MessageSquare class="size-10 opacity-20 mb-3" />
           <h3 class="text-[20px] font-[600] text-foreground mb-1">No reviews found</h3>
           <p class="text-[13.5px] text-muted-foreground leading-relaxed mb-4">No customer reviews match your search filter.</p>
-          <button @click="searchQuery = ''; selectedPlatform = 'All Platforms'; activeStatusFilter = ''" class="px-4 py-2 rounded-lg border border-border bg-card text-[13.5px] font-medium text-foreground hover:bg-muted transition-colors border-input hover:border-transparent cursor-pointer">
+          <button @click="searchQuery = ''; selectedPlatform = 'All Platforms'; activeStatusFilter = ''; activeRatingFilter = 0; activeDateRangeFilter = ''" class="px-4 py-2 rounded-lg border border-border bg-card text-[13.5px] font-medium text-foreground hover:bg-muted transition-colors border-input hover:border-transparent cursor-pointer">
             Reset Filters
           </button>
         </div>

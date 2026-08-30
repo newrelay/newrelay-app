@@ -12,11 +12,7 @@ import {
   MonitorPlay, Clock, Play
 } from 'lucide-vue-next';
 import {
-  RelayButton as Button, RelayInput as Input, RelayBadge as Badge,
-  RelayDropdownMenu as DropdownMenu,
-  RelayDropdownMenuTrigger as DropdownMenuTrigger,
-  RelayDropdownMenuContent as DropdownMenuContent,
-  RelayDropdownMenuItem as DropdownMenuItem
+  RelayButton as Button, RelayInput as Input, RelayBadge as Badge
 } from 'dashboard/components-next/relay';
 import RelayDatePicker from 'dashboard/components-next/relay/calendar/DatePicker.vue';
 import RelayTimePicker from 'dashboard/components-next/relay/calendar/TimePicker.vue';
@@ -137,6 +133,8 @@ const previewMode = ref('video_page'); // 'video_page' | 'invite_message'
 const currentVideoTemplateName = computed(() =>
   prebuiltVideoTemplates.find(t => t.id === selectedVideoTemplateId.value)?.name || 'Select a template…'
 );
+const showVideoTemplateMenu = ref(false);
+const showDurationMenu = ref(false);
 function selectVideoTemplate(t) {
   selectedVideoTemplateId.value = t.id;
   videoHeadline.value = t.headline;
@@ -144,6 +142,7 @@ function selectVideoTemplate(t) {
   videoQuestions.value = t.questions.join('\n');
   videoButtonText.value = t.buttonText;
   videoMaxDuration.value = t.maxDuration;
+  showVideoTemplateMenu.value = false;
 }
 const formattedVideoHeadline = computed(() => fillVars(videoHeadline.value));
 const formattedVideoPrompt = computed(() => fillVars(videoPrompt.value));
@@ -746,20 +745,19 @@ function close() {
                 <label class="text-[13.5px] font-medium text-foreground flex items-center gap-1.5"><LayoutTemplate class="size-4 text-primary" /> Video Testimonial Template</label>
                 <Badge class="text-[11px] font-normal text-muted-foreground py-0.5 bg-muted">{{ prebuiltVideoTemplates.length }} templates</Badge>
               </div>
-              <DropdownMenu>
-                <DropdownMenuTrigger as-child>
-                  <button type="button" class="h-9 px-3 text-[13.5px] bg-background border border-border/80 rounded-md text-foreground flex items-center justify-between shadow-xs hover:border-border outline-none w-full text-left cursor-pointer transition-all">
-                    <div class="flex items-center gap-2.5 truncate"><div class="size-2 rounded-full bg-primary shrink-0"></div><span class="truncate font-medium">{{ currentVideoTemplateName }}</span></div>
-                    <ChevronDown class="size-3.5 opacity-50 ml-2 shrink-0" />
-                  </button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent class="w-[360px] max-h-[320px] overflow-y-auto" align="start">
-                  <DropdownMenuItem v-for="t in prebuiltVideoTemplates" :key="t.id" class="flex items-center justify-between py-2 px-3 cursor-pointer" @click="selectVideoTemplate(t)">
+              <div class="relative">
+                <button type="button" class="h-9 px-3 text-[13.5px] bg-background border border-border/80 rounded-md text-foreground flex items-center justify-between shadow-xs hover:border-border outline-none w-full text-left cursor-pointer transition-all" @click="showVideoTemplateMenu = !showVideoTemplateMenu">
+                  <div class="flex items-center gap-2.5 truncate"><div class="size-2 rounded-full bg-primary shrink-0"></div><span class="truncate font-medium">{{ currentVideoTemplateName }}</span></div>
+                  <ChevronDown class="size-3.5 opacity-50 ml-2 shrink-0 transition-transform" :class="showVideoTemplateMenu ? 'rotate-180' : ''" />
+                </button>
+                <div v-if="showVideoTemplateMenu" class="absolute left-0 right-0 top-full mt-1 z-50 w-[360px] max-h-[320px] overflow-y-auto rounded-lg border border-border bg-popover shadow-lg p-1.5">
+                  <button v-for="t in prebuiltVideoTemplates" :key="t.id" type="button" class="w-full flex items-center justify-between py-2 px-3 rounded-md cursor-pointer hover:bg-muted/80 transition-colors" @click="selectVideoTemplate(t)">
                     <div class="flex flex-col gap-0.5 min-w-0 pr-2"><span class="text-[13px] font-medium text-foreground truncate">{{ t.name }}</span><span class="text-[11px] text-muted-foreground truncate">{{ t.maxDuration }}</span></div>
                     <Check v-if="selectedVideoTemplateId === t.id" class="size-4 text-primary shrink-0" />
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
+                  </button>
+                </div>
+                <div v-if="showVideoTemplateMenu" class="fixed inset-0 z-10" @click="showVideoTemplateMenu = false"></div>
+              </div>
             </div>
 
             <!-- Recording-page content -->
@@ -782,14 +780,13 @@ function close() {
                 </div>
                 <div class="flex flex-col gap-1.5">
                   <label class="text-[13.5px] font-medium text-foreground">Max Duration</label>
-                  <DropdownMenu>
-                    <DropdownMenuTrigger as-child>
-                      <button type="button" class="h-9 px-3 text-[13.5px] bg-background border border-border/80 rounded-md text-foreground flex items-center justify-between shadow-xs hover:border-border outline-none w-full text-left cursor-pointer"><span class="truncate">{{ videoMaxDuration }}</span><ChevronDown class="size-3.5 opacity-50 ml-2 shrink-0" /></button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent class="w-[220px]" align="start">
-                      <DropdownMenuItem v-for="d in durationOptions" :key="d" class="cursor-pointer" @click="videoMaxDuration = d">{{ d }}</DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
+                  <div class="relative">
+                    <button type="button" class="h-9 px-3 text-[13.5px] bg-background border border-border/80 rounded-md text-foreground flex items-center justify-between shadow-xs hover:border-border outline-none w-full text-left cursor-pointer" @click="showDurationMenu = !showDurationMenu"><span class="truncate">{{ videoMaxDuration }}</span><ChevronDown class="size-3.5 opacity-50 ml-2 shrink-0 transition-transform" :class="showDurationMenu ? 'rotate-180' : ''" /></button>
+                    <div v-if="showDurationMenu" class="absolute left-0 right-0 top-full mt-1 z-50 w-[220px] rounded-lg border border-border bg-popover shadow-lg p-1.5">
+                      <button v-for="d in durationOptions" :key="d" type="button" class="w-full text-left px-3 py-1.5 text-[13.5px] rounded-md cursor-pointer hover:bg-muted/80 transition-colors" @click="videoMaxDuration = d; showDurationMenu = false">{{ d }}</button>
+                    </div>
+                    <div v-if="showDurationMenu" class="fixed inset-0 z-10" @click="showDurationMenu = false"></div>
+                  </div>
                 </div>
               </div>
             </div>

@@ -195,6 +195,11 @@ class Rack::Attack
     req.ip if req.path_without_extentions == '/reputation/feedback' && req.post?
   end
 
+  ## Public review-sync webhook (unauthenticated; id is capability)
+  throttle('reputation/sync/ip', limit: 30, period: 1.hour) do |req|
+    req.ip if req.path.match?(%r{\A/api/v1/reputation/sync/\d+\z})
+  end
+
   ##-----------------------------------------------##
 
   ###-----------------------------------------------###

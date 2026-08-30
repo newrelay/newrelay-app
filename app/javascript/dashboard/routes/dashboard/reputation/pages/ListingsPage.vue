@@ -560,10 +560,10 @@ function saveSettings() {
           <div
             v-for="listing in filtered"
             :key="listing.id"
-            class="bg-white dark:bg-card border border-border rounded-xl overflow-hidden hover:shadow-md transition-all duration-300 flex cursor-pointer relative shadow-xs"
+            class="bg-white dark:bg-card border border-border rounded-xl hover:shadow-md transition-all duration-300 flex cursor-pointer relative shadow-xs"
           >
             <!-- Left Thumbnail -->
-            <div class="w-56 shrink-0 relative border-r border-border">
+            <div class="w-56 shrink-0 relative border-r border-border rounded-l-xl overflow-hidden">
               <img v-if="listing.image" :src="listing.image" class="w-full h-full object-cover" @error="listing.image = ''" />
               <div v-else class="w-full h-full flex items-center justify-center bg-gradient-to-br text-white text-3xl font-bold select-none" :class="gradientFor(listing.title)">
                 {{ (listing.title || 'L').charAt(0).toUpperCase() }}

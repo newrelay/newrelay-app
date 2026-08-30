@@ -25,8 +25,16 @@ import {
   Mail,
   Link as LinkIcon,
   ArrowLeft,
+  Hash,
+  Store,
 } from 'lucide-vue-next';
-import { RelayInput as Input, RelaySwitch } from 'dashboard/components-next/relay';
+import {
+  RelayInput as Input, RelaySwitch,
+  RelayDropdownMenu as DropdownMenu,
+  RelayDropdownMenuTrigger as DropdownMenuTrigger,
+  RelayDropdownMenuContent as DropdownMenuContent,
+  RelayDropdownMenuItem as DropdownMenuItem,
+} from 'dashboard/components-next/relay';
 
 const router = useRouter();
 const accountId =
@@ -262,22 +270,30 @@ const closeExport = () => {
 
 const blankForm = () => ({
   name: '',
-  category: 'Digital Marketing Agency',
-  country: 'India',
+  category: 'Restaurant',
+  primaryPlatform: 'Google Business Profile',
+  country: 'United States',
   address: '',
   phone: '',
   website: '',
   email: '',
+  storeId: '',
 });
+const categoryOptions = ['Restaurant', 'Agency', 'Healthcare', 'Retail', 'Digital Marketing Agency', 'Other'];
+const addPlatformOptions = ['Google Business Profile', 'Facebook', 'Yelp', 'Manual'];
+const countryOptions = ['United States', 'India', 'United Kingdom', 'Canada'];
 const addOpen = ref(false);
 const addStep = ref('info');
 const addForm = ref(blankForm());
-const connectPlatforms = [
-  { name: 'Google', icon: googleIcon },
-  { name: 'Facebook', icon: facebookIcon },
-  { name: 'Bing', icon: bingIcon },
-];
-const connectSelected = ref('Google');
+const connectOption = ref('');
+const connectOptionsFor = computed(() => {
+  switch (addForm.value.primaryPlatform) {
+    case 'Facebook': return ['Login', 'Skip'];
+    case 'Yelp': return ['Connect', 'Skip'];
+    case 'Manual': return ['Create Manual Listing', 'Finish'];
+    default: return ['Connect Existing Account', 'Import Existing Listing', 'Skip for Now'];
+  }
+});
 const openAdd = type => {
   closeMenus();
   addOpen.value = true;
@@ -297,7 +313,8 @@ const addNext = async () => {
       phone: addForm.value.phone,
       website: addForm.value.website,
       email: addForm.value.email,
-      platforms: [{ name: connectSelected.value, ok: true }],
+      primary: addForm.value.primaryPlatform,
+      platforms: [{ name: addForm.value.primaryPlatform, ok: true }],
     });
     await loadListings();
   } catch (err) {
@@ -689,81 +706,154 @@ function saveSettings() {
           </button>
         </div>
 
-        <div class="px-6 py-5 overflow-y-auto">
-          <div v-if="addStep === 'info'" class="space-y-4">
-            <div class="space-y-1.5">
-              <label class="text-xs font-semibold text-foreground">Business name</label>
-              <input v-model="addForm.name" type="text" placeholder="e.g. Jaipur HQ" class="w-full h-10 rounded-lg border border-border bg-background px-3 text-sm shadow-xs focus-visible:ring-1 focus-visible:ring-ring focus-visible:outline-none text-foreground" />
+        <!-- Step 1: Info -->
+        <div v-if="addStep === 'info'" class="p-6 flex flex-col gap-6 overflow-y-auto">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div class="flex flex-col gap-1.5">
+              <label class="text-[13.5px] font-medium text-foreground">Business Name <span class="text-destructive">*</span></label>
+              <input v-model="addForm.name" type="text" placeholder="E.g. Jaipur HQ" class="h-10 px-4 text-[14px] shadow-sm rounded-md border border-border/80 bg-background text-foreground focus-visible:ring-1 focus-visible:ring-primary/30 focus-visible:outline-none" />
             </div>
-            <div class="grid grid-cols-2 gap-4">
-              <div class="space-y-1.5">
-                <label class="text-xs font-semibold text-foreground">Category</label>
-                <input v-model="addForm.category" type="text" class="w-full h-10 rounded-lg border border-border bg-background px-3 text-sm shadow-xs focus-visible:ring-1 focus-visible:ring-ring focus-visible:outline-none text-foreground" />
-              </div>
-              <div class="space-y-1.5">
-                <label class="text-xs font-semibold text-foreground">Country</label>
-                <input v-model="addForm.country" type="text" class="w-full h-10 rounded-lg border border-border bg-background px-3 text-sm shadow-xs focus-visible:ring-1 focus-visible:ring-ring focus-visible:outline-none text-foreground" />
-              </div>
-            </div>
-            <div class="space-y-1.5">
-              <label class="text-xs font-semibold text-foreground flex items-center gap-1.5"><MapPin class="size-3.5" /> Address</label>
-              <input v-model="addForm.address" type="text" placeholder="Street, city, state" class="w-full h-10 rounded-lg border border-border bg-background px-3 text-sm shadow-xs focus-visible:ring-1 focus-visible:ring-ring focus-visible:outline-none text-foreground" />
-            </div>
-            <div class="grid grid-cols-2 gap-4">
-              <div class="space-y-1.5">
-                <label class="text-xs font-semibold text-foreground flex items-center gap-1.5"><Phone class="size-3.5" /> Phone</label>
-                <input v-model="addForm.phone" type="text" class="w-full h-10 rounded-lg border border-border bg-background px-3 text-sm shadow-xs focus-visible:ring-1 focus-visible:ring-ring focus-visible:outline-none text-foreground" />
-              </div>
-              <div class="space-y-1.5">
-                <label class="text-xs font-semibold text-foreground flex items-center gap-1.5"><Globe class="size-3.5" /> Website</label>
-                <input v-model="addForm.website" type="text" class="w-full h-10 rounded-lg border border-border bg-background px-3 text-sm shadow-xs focus-visible:ring-1 focus-visible:ring-ring focus-visible:outline-none text-foreground" />
-              </div>
-            </div>
-            <div class="space-y-1.5">
-              <label class="text-xs font-semibold text-foreground flex items-center gap-1.5"><Mail class="size-3.5" /> Business email</label>
-              <input v-model="addForm.email" type="email" class="w-full h-10 rounded-lg border border-border bg-background px-3 text-sm shadow-xs focus-visible:ring-1 focus-visible:ring-ring focus-visible:outline-none text-foreground" />
+            <div class="flex flex-col gap-1.5">
+              <label class="text-[13.5px] font-medium text-foreground">Business Category <span class="text-destructive">*</span></label>
+              <DropdownMenu>
+                <DropdownMenuTrigger as-child>
+                  <button type="button" class="w-full h-10 px-4 inline-flex items-center justify-between text-[14px] font-normal shadow-sm rounded-md border border-border/80 bg-background text-foreground focus-visible:ring-1 focus-visible:ring-primary/30 focus-visible:outline-none cursor-pointer">
+                    <span class="truncate">{{ addForm.category }}</span> <ChevronDown class="size-4 opacity-50 shrink-0" />
+                  </button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent class="min-w-[12rem]">
+                  <DropdownMenuItem v-for="c in categoryOptions" :key="c" class="text-[13px] cursor-pointer" @click="addForm.category = c">{{ c }}</DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
           </div>
 
-          <div v-else-if="addStep === 'connect'" class="space-y-3">
-            <p class="text-sm text-muted-foreground">Choose a platform to connect this listing to.</p>
-            <button
-              v-for="p in connectPlatforms"
-              :key="p.name"
-              class="w-full flex items-center gap-3 p-3 rounded-xl border transition-colors"
-              :class="connectSelected === p.name ? 'border-primary bg-primary/5' : 'border-border hover:bg-muted/50'"
-              @click="connectSelected = p.name"
-            >
-              <span class="size-9 rounded-full bg-white border border-border shadow-xs flex items-center justify-center p-1.5" v-html="p.icon"></span>
-              <span class="text-sm font-medium text-foreground">{{ p.name }} Business Profile</span>
-              <Check v-if="connectSelected === p.name" class="size-4 text-primary ml-auto" />
-            </button>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div class="flex flex-col gap-1.5">
+              <label class="text-[13.5px] font-medium text-foreground">Primary Platform <span class="text-destructive">*</span></label>
+              <DropdownMenu>
+                <DropdownMenuTrigger as-child>
+                  <button type="button" class="w-full h-10 px-4 inline-flex items-center justify-between text-[14px] font-normal shadow-sm rounded-md border border-border/80 bg-background text-foreground focus-visible:ring-1 focus-visible:ring-primary/30 focus-visible:outline-none cursor-pointer">
+                    <span class="truncate">{{ addForm.primaryPlatform }}</span> <ChevronDown class="size-4 opacity-50 shrink-0" />
+                  </button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent class="min-w-[12rem]">
+                  <DropdownMenuItem v-for="p in addPlatformOptions" :key="p" class="text-[13px] cursor-pointer" @click="addForm.primaryPlatform = p">{{ p }}</DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
+            <div class="flex flex-col gap-1.5">
+              <label class="text-[13.5px] font-medium text-foreground">Country <span class="text-destructive">*</span></label>
+              <DropdownMenu>
+                <DropdownMenuTrigger as-child>
+                  <button type="button" class="w-full h-10 px-4 inline-flex items-center justify-between text-[14px] font-normal shadow-sm rounded-md border border-border/80 bg-background text-foreground focus-visible:ring-1 focus-visible:ring-primary/30 focus-visible:outline-none cursor-pointer">
+                    <span class="truncate">{{ addForm.country }}</span> <ChevronDown class="size-4 opacity-50 shrink-0" />
+                  </button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent class="min-w-[12rem]">
+                  <DropdownMenuItem v-for="c in countryOptions" :key="c" class="text-[13px] cursor-pointer" @click="addForm.country = c">{{ c }}</DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
           </div>
 
-          <div v-else class="flex flex-col items-center justify-center text-center py-8">
-            <div class="size-14 rounded-full bg-emerald-500/10 text-emerald-500 flex items-center justify-center mb-4">
-              <CircleCheck class="size-8" />
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div class="flex flex-col gap-1.5">
+              <label class="text-[13.5px] font-medium text-foreground">Address <span class="text-destructive">*</span></label>
+              <div class="relative">
+                <MapPin class="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
+                <input v-model="addForm.address" type="text" placeholder="123 Main St, City, State" class="w-full pl-9 pr-4 h-10 text-[14px] shadow-sm rounded-md border border-border/80 bg-background text-foreground focus-visible:ring-1 focus-visible:ring-primary/30 focus-visible:outline-none" />
+              </div>
             </div>
-            <h3 class="text-base font-semibold text-foreground">Listing added</h3>
-            <p class="text-sm text-muted-foreground mt-1 max-w-xs">
-              {{ addForm.name || 'Your listing' }} is set up. Reviews will sync once the platform connection is live.
-            </p>
+            <div class="flex flex-col gap-1.5">
+              <label class="text-[13.5px] font-medium text-foreground">Phone <span class="text-destructive">*</span></label>
+              <div class="relative">
+                <Phone class="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
+                <input v-model="addForm.phone" type="text" placeholder="+1 (555) 000-0000" class="w-full pl-9 pr-4 h-10 text-[14px] shadow-sm rounded-md border border-border/80 bg-background text-foreground focus-visible:ring-1 focus-visible:ring-primary/30 focus-visible:outline-none" />
+              </div>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div class="flex flex-col gap-1.5">
+              <label class="text-[13.5px] font-medium text-foreground">Website</label>
+              <div class="relative">
+                <Globe class="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
+                <input v-model="addForm.website" type="text" placeholder="https://example.com" class="w-full pl-9 pr-4 h-10 text-[14px] shadow-sm rounded-md border border-border/80 bg-background text-foreground focus-visible:ring-1 focus-visible:ring-primary/30 focus-visible:outline-none" />
+              </div>
+            </div>
+            <div class="flex flex-col gap-1.5">
+              <label class="text-[13.5px] font-medium text-foreground">Business Email</label>
+              <div class="relative">
+                <Mail class="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
+                <input v-model="addForm.email" type="email" placeholder="hello@company.com" class="w-full pl-9 pr-4 h-10 text-[14px] shadow-sm rounded-md border border-border/80 bg-background text-foreground focus-visible:ring-1 focus-visible:ring-primary/30 focus-visible:outline-none" />
+              </div>
+            </div>
+          </div>
+
+          <div class="flex flex-col gap-1.5">
+            <label class="text-[13.5px] font-medium text-foreground">Store ID <span class="text-muted-foreground font-normal">(Optional)</span></label>
+            <div class="relative">
+              <Hash class="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
+              <input v-model="addForm.storeId" type="text" placeholder="Internal ID or Code" class="w-full pl-9 pr-4 h-10 text-[14px] shadow-sm rounded-md border border-border/80 bg-background text-foreground focus-visible:ring-1 focus-visible:ring-primary/30 focus-visible:outline-none" />
+            </div>
           </div>
         </div>
 
-        <div class="px-6 py-4 border-t border-border flex items-center justify-between shrink-0 bg-muted/20">
-          <button v-if="addStep === 'connect'" class="inline-flex items-center gap-1.5 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors" @click="addBack">
-            <ArrowLeft class="size-4" /> Back
-          </button>
-          <span v-else></span>
-          <div class="flex items-center gap-2">
-            <button class="rounded-lg border border-border px-4 py-2 text-sm font-medium text-muted-foreground hover:bg-muted/50 transition-colors" @click="closeAdd">
-              {{ addStep === 'success' ? 'Close' : 'Cancel' }}
-            </button>
-            <button v-if="addStep !== 'success'" class="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow-xs hover:bg-primary/90 transition-colors disabled:opacity-50" :disabled="addStep === 'info' && !addForm.name" @click="addNext">
-              {{ addStep === 'info' ? 'Next' : 'Connect' }}
-            </button>
+        <!-- Step 2: Connect -->
+        <div v-else-if="addStep === 'connect'" class="p-6 flex flex-col gap-6 overflow-y-auto">
+          <div class="flex items-center gap-3 mb-1">
+            <div class="size-10 rounded-full flex items-center justify-center shadow-sm border border-border shrink-0"
+                 :class="addForm.primaryPlatform === 'Manual' ? 'bg-muted text-muted-foreground' : 'bg-white'"
+                 v-html="addForm.primaryPlatform === 'Manual' ? '' : getPlatformIcon(addForm.primaryPlatform.split(' ')[0])">
+            </div>
+            <div>
+              <h3 class="text-lg font-bold text-foreground">
+                {{ addForm.primaryPlatform === 'Manual' ? 'Create Manual Listing' : `Connect ${addForm.primaryPlatform}` }}
+              </h3>
+              <p class="text-[13px] text-muted-foreground">
+                {{ addForm.primaryPlatform === 'Manual' ? 'This listing will not be synced to external platforms.' : 'Select how you want to connect.' }}
+              </p>
+            </div>
           </div>
+
+          <div class="flex flex-col gap-3">
+            <label v-for="opt in connectOptionsFor" :key="opt" class="flex items-center gap-3 p-4 border rounded-lg cursor-pointer transition-colors" :class="connectOption === opt ? 'bg-primary/5 border-primary ring-1 ring-primary/20' : 'border-border hover:bg-muted/50'">
+              <input type="radio" :value="opt" v-model="connectOption" class="size-4 accent-[color:var(--primary)]" />
+              <span class="text-[14px] font-semibold text-foreground">{{ opt }}</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Step 3: Success -->
+        <div v-else class="p-8 flex flex-col items-center justify-center gap-6 min-h-[320px] text-center">
+          <div class="size-16 rounded-full bg-emerald-500/10 text-emerald-500 flex items-center justify-center border-4 border-emerald-500/15">
+            <CircleCheck class="size-8" />
+          </div>
+          <div>
+            <div class="text-xl font-bold text-foreground">Listing Created</div>
+            <div class="text-[15px] font-semibold text-primary mt-1">{{ addForm.name || 'Your Business' }}</div>
+          </div>
+          <div class="w-full mt-2 flex flex-col items-center gap-4">
+            <p class="text-[13px] text-muted-foreground font-semibold">What would you like to do?</p>
+            <div class="flex flex-col w-full max-w-xs gap-3">
+              <button class="w-full h-10 rounded-lg font-semibold border border-border bg-card shadow-sm text-[14px] text-foreground hover:bg-muted transition-colors" @click="closeAdd">Connect Platform</button>
+              <button class="w-full h-10 rounded-lg font-semibold border border-border bg-card shadow-sm text-[14px] text-foreground hover:bg-muted transition-colors" @click="closeAdd">Add Business Hours</button>
+              <button class="w-full h-10 rounded-lg font-semibold border border-border bg-card shadow-sm text-[14px] text-foreground hover:bg-muted transition-colors" @click="closeAdd">Open Listing</button>
+              <button class="w-full h-10 rounded-lg font-semibold bg-primary hover:bg-primary/90 text-primary-foreground shadow-sm text-[14px] transition-colors" @click="closeAdd">Done</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Footer -->
+        <div v-if="addStep === 'info' || addStep === 'connect'" class="px-6 py-4 border-t border-border flex items-center justify-between shrink-0 bg-muted/20">
+          <button class="inline-flex items-center gap-1.5 text-sm font-semibold text-muted-foreground hover:text-foreground transition-colors px-2" @click="addStep === 'info' ? closeAdd() : addBack()">
+            <template v-if="addStep === 'connect'"><ArrowLeft class="size-4" /> Back</template>
+            <template v-else>Cancel</template>
+          </button>
+          <button class="rounded-md bg-primary px-6 py-2 text-sm font-semibold text-primary-foreground shadow-sm hover:bg-primary/90 transition-colors disabled:opacity-50 inline-flex items-center gap-1.5" :disabled="addStep === 'info' && !addForm.name" @click="addNext">
+            {{ addStep === 'info' ? 'Continue →' : 'Create Listing' }}
+          </button>
         </div>
       </div>
     </div>

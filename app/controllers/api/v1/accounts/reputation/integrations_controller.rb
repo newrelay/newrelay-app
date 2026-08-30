@@ -1,4 +1,4 @@
-# rubocop:disable Metrics/ClassLength, Metrics/MethodLength, Metrics/AbcSize, Metrics/PerceivedComplexity
+# rubocop:disable Metrics/ClassLength, Metrics/MethodLength, Metrics/AbcSize, Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity
 class Api::V1::Accounts::Reputation::IntegrationsController < Api::V1::Accounts::BaseController
   before_action :integration, only: [:destroy]
 
@@ -130,7 +130,14 @@ class Api::V1::Accounts::Reputation::IntegrationsController < Api::V1::Accounts:
     )
 
     if integration.save
-      Reputation::ReviewSyncJob.perform_later(integration.id)
+      # Mock mode seeds fake reviews with no network, so run it inline — the reviews
+      # are then visible the instant the user opens the Reviews page (matching the
+      # synchronous seeding of manually-connected providers).
+      if Reputation::Providers.mock?
+        Reputation::ReviewSyncJob.perform_now(integration.id)
+      else
+        Reputation::ReviewSyncJob.perform_later(integration.id)
+      end
       render json: integration.as_json(
         only: [:id, :provider, :location_id, :location_name, :status, :created_at]
       ), status: :created
@@ -255,4 +262,4 @@ class Api::V1::Accounts::Reputation::IntegrationsController < Api::V1::Accounts:
     end
   end
 end
-# rubocop:enable Metrics/ClassLength, Metrics/MethodLength, Metrics/AbcSize, Metrics/PerceivedComplexity
+# rubocop:enable Metrics/ClassLength, Metrics/MethodLength, Metrics/AbcSize, Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity

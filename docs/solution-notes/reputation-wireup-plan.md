@@ -50,19 +50,22 @@ Frontend owns the shape; strong params permit the whole `config` hash. Lazy + ro
 - [x] backend round-trips verified via rails runner (settings merge, widget config, route recognize)
 - [x] this doc updated
 
-### Phase D — Make IntegrationsPage the real connect page (replaces SettingsPage usage)
+### Phase D — Make IntegrationsPage the real connect page (replaces SettingsPage usage) ✅ DONE
 User decision (reversed earlier): IntegrationsPage should DO what SettingsPage does; Settings
-page will no longer be used. Port the real `/reputation/integrations` flow into Integrations.
-- [ ] load live integrations on mount; overlay connected state onto the catalog grid
-- [ ] Connect: google → OAuth, facebook → OAuth, others → manual URL+name modal
-- [ ] provider enum gotcha: only google/facebook/agoda/airbnb/aliexpress/amazon/angi/
-      apple_app_store/avvo/custom are valid. Non-enum grid ids (yelp/trustpilot/tripadvisor/
-      apple_maps/g2/capterra/bbb/opentable) must POST as provider='custom', name encoded in
-      location_name as `"<Name> - <id>"`, matched back by that suffix.
-- [ ] Google OAuth callback (google_oauth param) → location modal → POST
-- [ ] Configure modal Disconnect → real DELETE /integrations/:id
-- [ ] remove Demo badge + preview-empty toggle
-- [ ] smoke test create/list/destroy via rails runner
+page will no longer be used. Ported the real `/reputation/integrations` flow into Integrations.
+- [x] load live integrations on mount; overlay connected state onto the catalog grid
+- [x] Connect: google → OAuth, facebook → OAuth, others → manual URL+name modal
+- [x] provider enum gotcha handled: non-enum grid ids POST as provider='custom', name encoded
+      in location_name as `"<Name> - <id>"`, matched back by that suffix (verified in rails runner)
+- [x] Google OAuth callback (google_oauth param) → location modal → POST
+- [x] Configure modal Disconnect → real DELETE /integrations/:id
+- [x] Demo badge + preview-empty toggle removed
+- [x] smoke test create/list/match/destroy via rails runner
+- commit: `e2f3f4b8`
+- Note: SettingsPage.vue left intact (still routable) — user just won't use it. Its autoSync/
+  autoReply toggles in the Configure modal remain cosmetic (no per-integration columns exist).
+- Reused, not duplicated: identical OAuth/manual/disconnect calls as SettingsPage; if the
+  integrations contract changes, update BOTH (or later delete SettingsPage).
 
 ## Left intentionally as demo (not a gap)
 - (none for Integrations after Phase D — now functional)

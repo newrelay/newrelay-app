@@ -208,8 +208,10 @@ const locationFilter = ref('All');
 const scoreFilter = ref('All');
 
 const statusOptions = ['All', 'Connected', 'Needs Attention'];
-const platformOptions = ['All', 'Google', 'Facebook', 'Yelp', 'Trustpilot', 'Bing'];
-const locationOptions = ['All', 'Jaipur', 'Delhi', 'Mumbai'];
+// Derived from the actual listings so the options always match what's really
+// connected/entered, instead of a hardcoded list that never matches real data.
+const platformOptions = computed(() => ['All', ...new Set(listings.value.flatMap(l => l.platforms.map(p => p.name)))]);
+const locationOptions = computed(() => ['All', ...new Set(listings.value.map(l => l.address).filter(Boolean))]);
 const scoreOptions = ['All', '90% - 100%', '80% - 89%', '< 80%'];
 
 const matchesScoreRange = (score, range) => {
@@ -231,7 +233,7 @@ const filtered = computed(() => {
     const matchesPlatform =
       platformFilter.value === 'All' || l.platforms.some(p => p.name === platformFilter.value);
     const matchesLocation =
-      locationFilter.value === 'All' || l.address.includes(locationFilter.value);
+      locationFilter.value === 'All' || l.address === locationFilter.value;
     const matchesScore =
       scoreFilter.value === 'All' || matchesScoreRange(l.optimizationScore, scoreFilter.value);
     return matchesQuery && matchesStatus && matchesPlatform && matchesLocation && matchesScore;

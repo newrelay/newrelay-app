@@ -152,6 +152,7 @@ function getChannelIcon(channel) {
   return Smartphone;
 }
 function selectTemplate(template, channel) {
+  showTemplateMenu.value = false;
   if (channel === 'SMS') {
     selectedSmsTemplateId.value = template.id;
     smsMessage.value = template.message;
@@ -289,6 +290,7 @@ const companyList = computed(() =>
 
 // Searchable company dropdown state.
 const showCompanyMenu = ref(false);
+const showTemplateMenu = ref(false);
 const companySearch = ref('');
 const filteredCompanyList = computed(() => {
   const q = companySearch.value.toLowerCase();
@@ -736,26 +738,25 @@ function close() {
                 </label>
                 <Badge class="text-[11px] font-normal text-muted-foreground py-0.5 bg-muted">{{ currentChannelTemplates.length }} templates</Badge>
               </div>
-              <DropdownMenu>
-                <DropdownMenuTrigger as-child>
-                  <button type="button" class="h-9 px-3 text-[13.5px] bg-background border border-border/80 rounded-md text-foreground flex items-center justify-between shadow-xs hover:border-border focus-visible:ring-1 focus-visible:ring-primary/30 outline-none w-full text-left cursor-pointer transition-all">
-                    <div class="flex items-center gap-2.5 truncate">
-                      <div class="size-2 rounded-full bg-primary shrink-0"></div>
-                      <span class="truncate font-medium">{{ currentActiveTemplateName }}</span>
-                    </div>
-                    <ChevronDown class="size-3.5 opacity-50 ml-2 shrink-0" />
-                  </button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent class="w-[360px] max-h-[320px] overflow-y-auto" align="start">
-                  <DropdownMenuItem v-for="t in currentChannelTemplates" :key="t.id" class="flex items-center justify-between py-2 px-3 cursor-pointer" @click="selectTemplate(t, activeEditingChannel)">
+              <div class="relative">
+                <button type="button" class="h-9 px-3 text-[13.5px] bg-background border border-border/80 rounded-md text-foreground flex items-center justify-between shadow-xs hover:border-border focus-visible:ring-1 focus-visible:ring-primary/30 outline-none w-full text-left cursor-pointer transition-all" @click="showTemplateMenu = !showTemplateMenu">
+                  <div class="flex items-center gap-2.5 truncate">
+                    <div class="size-2 rounded-full bg-primary shrink-0"></div>
+                    <span class="truncate font-medium">{{ currentActiveTemplateName }}</span>
+                  </div>
+                  <ChevronDown class="size-3.5 opacity-50 ml-2 shrink-0 transition-transform" :class="showTemplateMenu ? 'rotate-180' : ''" />
+                </button>
+                <div v-if="showTemplateMenu" class="absolute left-0 right-0 top-full mt-1 z-50 max-h-[280px] overflow-y-auto rounded-lg border border-border bg-popover shadow-lg p-1.5">
+                  <button v-for="t in currentChannelTemplates" :key="t.id" type="button" class="w-full flex items-center justify-between gap-2 py-2 px-2.5 rounded-md hover:bg-muted text-left cursor-pointer" @click="selectTemplate(t, activeEditingChannel)">
                     <div class="flex flex-col gap-0.5 min-w-0 pr-2">
                       <span class="text-[13px] font-medium text-foreground truncate">{{ t.name }}</span>
                       <span class="text-[11px] text-muted-foreground truncate">{{ t.autoDelay }}</span>
                     </div>
                     <Check v-if="currentActiveTemplateId === t.id" class="size-4 text-primary shrink-0" />
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
+                  </button>
+                </div>
+                <div v-if="showTemplateMenu" class="fixed inset-0 z-10" @click="showTemplateMenu = false"></div>
+              </div>
             </div>
 
             <!-- Email editor -->

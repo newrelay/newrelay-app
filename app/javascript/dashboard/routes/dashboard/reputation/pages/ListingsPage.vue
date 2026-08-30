@@ -283,6 +283,8 @@ async function duplicateListing(listing) {
   }
 }
 
+const isListingDisconnected = listing => listing.platforms.every(p => p.status !== 'Connected');
+
 async function disconnectListing(listing) {
   closeMenus();
   if (!confirm(`Disconnect all platforms for ${listing.title}?`)) return;
@@ -293,6 +295,18 @@ async function disconnectListing(listing) {
     showToast('Listing disconnected');
   } catch (err) {
     showToast('Failed to disconnect listing');
+  }
+}
+
+async function connectListing(listing) {
+  closeMenus();
+  const platforms = listing.platforms.map(p => ({ ...p, status: 'Connected' }));
+  try {
+    await axios.patch(`${baseUrl()}/listings/${listing.id}`, { platforms: platformsToApi(platforms) });
+    listing.platforms = platforms;
+    showToast('Listing connected');
+  } catch (err) {
+    showToast('Failed to connect listing');
   }
 }
 
@@ -781,7 +795,8 @@ function saveSettings() {
                   >
                     <button class="w-full text-left px-3 py-2 text-sm text-foreground hover:bg-muted transition-colors" @click.stop="renameListing(listing)">Rename</button>
                     <button class="w-full text-left px-3 py-2 text-sm text-foreground hover:bg-muted transition-colors" @click.stop="duplicateListing(listing)">Duplicate</button>
-                    <button class="w-full text-left px-3 py-2 text-sm text-foreground hover:bg-muted transition-colors" @click.stop="disconnectListing(listing)">Disconnect</button>
+                    <button v-if="isListingDisconnected(listing)" class="w-full text-left px-3 py-2 text-sm text-primary hover:bg-muted transition-colors" @click.stop="connectListing(listing)">Connect</button>
+                    <button v-else class="w-full text-left px-3 py-2 text-sm text-foreground hover:bg-muted transition-colors" @click.stop="disconnectListing(listing)">Disconnect</button>
                     <button class="w-full text-left px-3 py-2 text-sm text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950 transition-colors" @click.stop="deleteListing(listing)">Delete</button>
                     <div class="my-1 border-t border-border"></div>
                     <button class="w-full text-left px-3 py-2 text-sm text-foreground hover:bg-muted transition-colors" @click.stop="viewHistory(listing)">View History</button>

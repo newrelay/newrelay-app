@@ -164,9 +164,9 @@ async function oauthState() {
   const { data } = await axios.get(`${baseApi()}/integrations/oauth_state`);
   return encodeURIComponent(data.state);
 }
-// Mock/GMBapi mode skips OAuth: pick a sample location and the backend persists +
+// Mock mode skips OAuth: pick a sample location and the backend persists +
 // seeds reviews. Falls back to real Google OAuth only when a client id is configured.
-const googleMockMode = computed(() => !!window.newrelayConfig?.reputationGoogleViaGmbapi);
+const googleMockMode = computed(() => !!window.newrelayConfig?.reputationGoogleMock);
 async function connectGoogle() {
   if (googleMockMode.value) {
     currentOauthSessionId.value = '';

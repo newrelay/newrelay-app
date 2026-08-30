@@ -1,4 +1,4 @@
-# Posts a saved reply back to the review's provider (Google/GMBapi/Facebook) and
+# Posts a saved reply back to the review's provider (Google/Facebook) and
 # marks it published. Provider HTTP lives in Reputation::Providers::*.
 class Reputation::ReplyPublisherJob < ApplicationJob
   queue_as :default

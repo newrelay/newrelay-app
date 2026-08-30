@@ -1,4 +1,4 @@
-# Pulls new reviews from the integration's provider (Google/GMBapi/Facebook) and
+# Pulls new reviews from the integration's provider (Google/Facebook) and
 # upserts them. Provider HTTP + normalization lives in Reputation::Providers::*.
 # Scheduled via TriggerScheduledItemsJob on the `scheduled_jobs` queue.
 class Reputation::ReviewSyncJob < ApplicationJob

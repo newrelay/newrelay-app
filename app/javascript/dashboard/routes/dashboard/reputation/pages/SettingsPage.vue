@@ -128,9 +128,9 @@ const connectFacebook = async () => {
 };
 
 const connectGoogle = async () => {
-  // GMBapi mode: no Google OAuth — connect with just the client's location id.
-  if (window.newrelayConfig?.reputationGoogleViaGmbapi) {
-    const locationId = window.prompt('Enter the GMBapi location ID for this business:');
+  // Mock mode: no Google OAuth — connect with just a location id.
+  if (window.newrelayConfig?.reputationGoogleMock) {
+    const locationId = window.prompt('Enter a location ID for this business:');
     if (!locationId) return;
     try {
       await axios.post(`${baseApi()}/integrations`, {
@@ -138,7 +138,7 @@ const connectGoogle = async () => {
       });
       await loadData();
     } catch (err) {
-      alert(err.response?.data?.errors?.[0] || 'Failed to connect Google via GMBapi');
+      alert(err.response?.data?.errors?.[0] || 'Failed to connect Google');
     }
     return;
   }

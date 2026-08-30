@@ -212,6 +212,13 @@ const platformOptions = ['All', 'Google', 'Facebook', 'Yelp', 'Trustpilot', 'Bin
 const locationOptions = ['All', 'Jaipur', 'Delhi', 'Mumbai'];
 const scoreOptions = ['All', '90% - 100%', '80% - 89%', '< 80%'];
 
+const matchesScoreRange = (score, range) => {
+  if (range === '90% - 100%') return score >= 90;
+  if (range === '80% - 89%') return score >= 80 && score <= 89;
+  if (range === '< 80%') return score < 80;
+  return true;
+};
+
 const filtered = computed(() => {
   const q = query.value.trim().toLowerCase();
   return listings.value.filter(l => {
@@ -221,7 +228,13 @@ const filtered = computed(() => {
       statusFilter.value === 'All' ||
       (statusFilter.value === 'Connected' && l.platforms.every(p => p.status === 'Connected')) ||
       (statusFilter.value === 'Needs Attention' && l.platforms.some(p => p.status !== 'Connected'));
-    return matchesQuery && matchesStatus;
+    const matchesPlatform =
+      platformFilter.value === 'All' || l.platforms.some(p => p.name === platformFilter.value);
+    const matchesLocation =
+      locationFilter.value === 'All' || l.address.includes(locationFilter.value);
+    const matchesScore =
+      scoreFilter.value === 'All' || matchesScoreRange(l.optimizationScore, scoreFilter.value);
+    return matchesQuery && matchesStatus && matchesPlatform && matchesLocation && matchesScore;
   });
 });
 
@@ -343,9 +356,20 @@ function viewHistory(listing) {
   historyListing.value = listing;
 }
 
+function downloadCsv(rows, filename) {
+  const csv = rows.map(r => r.map(v => `"${String(v ?? '').replaceAll('"', '""')}"`).join(',')).join('\n');
+  const blob = new Blob([csv], { type: 'text/csv' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
 function exportListing(listing) {
   closeMenus();
-  const rows = [
+  downloadCsv([
     ['Field', 'Value'],
     ['Business name', listing.title],
     ['Address', listing.address],
@@ -354,15 +378,7 @@ function exportListing(listing) {
     ['Health score', `${listing.optimizationScore}%`],
     ['Connected platforms', listing.platforms.map(p => `${p.name} (${p.status})`).join('; ')],
     ['Last sync', listing.lastSync],
-  ];
-  const csv = rows.map(r => r.map(v => `"${String(v ?? '').replaceAll('"', '""')}"`).join(',')).join('\n');
-  const blob = new Blob([csv], { type: 'text/csv' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = `${listing.title.replace(/\s+/g, '_')}.csv`;
-  a.click();
-  URL.revokeObjectURL(url);
+  ], `${listing.title.replace(/\s+/g, '_')}.csv`);
   showToast('Listing exported');
 }
 
@@ -399,16 +415,77 @@ const exportFieldLabels = {
   website: 'Website',
   syncStatus: 'Sync status',
 };
+const EXPORT_FIELD_GETTERS = {
+  businessName: l => l.title,
+  address: l => l.address,
+  phone: l => l.phone,
+  rating: l => l.rating,
+  reviews: l => l.reviewsCount,
+  platforms: l => l.platforms.map(p => `${p.name} (${p.status})`).join('; '),
+  healthScore: l => `${l.optimizationScore}%`,
+  website: l => l.website,
+  syncStatus: l => l.lastSync,
+};
+function listingsToRows(list, fields) {
+  const keys = Object.keys(EXPORT_FIELD_GETTERS).filter(k => fields[k]);
+  return [keys.map(k => exportFieldLabels[k]), ...list.map(l => keys.map(k => EXPORT_FIELD_GETTERS[k](l)))];
+}
+const escapeHtml = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+function printListingsReport(list) {
+  const win = window.open('', '_blank');
+  if (!win) {
+    showToast('Allow pop-ups to export a PDF report');
+    return;
+  }
+  const rowsHtml = list.map(l => `
+    <tr>
+      <td>${escapeHtml(l.title)}</td>
+      <td>${escapeHtml(l.address)}</td>
+      <td>${escapeHtml(l.rating)}</td>
+      <td>${escapeHtml(l.reviewsCount)}</td>
+      <td>${escapeHtml(l.optimizationScore)}%</td>
+      <td>${escapeHtml(l.platforms.map(p => `${p.name} (${p.status})`).join(', '))}</td>
+    </tr>`).join('');
+  win.document.write(`<!doctype html><html><head><title>Listings Report</title>
+    <style>
+      body{font-family:Arial,sans-serif;padding:24px;color:#111}
+      h1{font-size:18px;margin-bottom:4px}
+      p{color:#666;margin-top:0;margin-bottom:20px;font-size:13px}
+      table{width:100%;border-collapse:collapse;font-size:12px}
+      th,td{border:1px solid #ddd;padding:8px;text-align:left}
+      th{background:#f5f5f5}
+    </style></head><body>
+      <h1>Listings Report</h1>
+      <p>${list.length} listing${list.length === 1 ? '' : 's'} &middot; generated ${escapeHtml(new Date().toLocaleString())}</p>
+      <table>
+        <thead><tr><th>Business</th><th>Address</th><th>Rating</th><th>Reviews</th><th>Health Score</th><th>Platforms</th></tr></thead>
+        <tbody>${rowsHtml}</tbody>
+      </table>
+    </body></html>`);
+  win.document.close();
+  win.focus();
+  win.print();
+}
 const handleExport = type => {
   closeMenus();
   if (type === 'advanced') {
     exportOpen.value = true;
     exportDone.value = false;
-  } else {
-    showToast(`Exporting ${type} file...`);
+    return;
   }
+  if (!filtered.value.length) {
+    showToast('No listings to export');
+    return;
+  }
+  if (type === 'PDF Report') {
+    printListingsReport(filtered.value);
+    return;
+  }
+  downloadCsv(listingsToRows(filtered.value, exportFields.value), 'listings-export.csv');
+  showToast(`Exported ${filtered.value.length} listing${filtered.value.length === 1 ? '' : 's'}`);
 };
 const runExport = () => {
+  downloadCsv(listingsToRows(filtered.value, exportFields.value), 'listings-export.csv');
   exportDone.value = true;
 };
 const closeExport = () => {
@@ -599,9 +676,10 @@ function saveSettings() {
           <div class="relative">
             <button
               class="inline-flex items-center h-9 gap-1.5 rounded-lg text-xs font-medium bg-white dark:bg-card border border-border shadow-xs px-3 hover:bg-muted transition-colors text-foreground"
+              :class="platformFilter !== 'All' ? 'text-primary border-primary/40' : ''"
               @click.stop="toggleMenu('platform')"
             >
-              Platform <ChevronDown class="size-3 opacity-50 ml-1" />
+              {{ platformFilter === 'All' ? 'Platform' : platformFilter }} <ChevronDown class="size-3 opacity-50 ml-1" />
             </button>
             <div v-if="openMenu === 'platform'" class="absolute left-0 mt-1 w-44 rounded-lg border border-border bg-card shadow-lg py-1 z-40">
               <button
@@ -642,9 +720,10 @@ function saveSettings() {
           <div class="relative">
             <button
               class="inline-flex items-center h-9 gap-1.5 rounded-lg text-xs font-medium bg-white dark:bg-card border border-border shadow-xs px-3 hover:bg-muted transition-colors text-foreground"
+              :class="locationFilter !== 'All' ? 'text-primary border-primary/40' : ''"
               @click.stop="toggleMenu('location')"
             >
-              Location <ChevronDown class="size-3 opacity-50 ml-1" />
+              {{ locationFilter === 'All' ? 'Location' : locationFilter }} <ChevronDown class="size-3 opacity-50 ml-1" />
             </button>
             <div v-if="openMenu === 'location'" class="absolute left-0 mt-1 w-44 rounded-lg border border-border bg-card shadow-lg py-1 z-40">
               <button
@@ -663,9 +742,10 @@ function saveSettings() {
           <div class="relative">
             <button
               class="inline-flex items-center h-9 gap-1.5 rounded-lg text-xs font-medium bg-white dark:bg-card border border-border shadow-xs px-3 hover:bg-muted transition-colors text-foreground"
+              :class="scoreFilter !== 'All' ? 'text-primary border-primary/40' : ''"
               @click.stop="toggleMenu('score')"
             >
-              Score <ChevronDown class="size-3 opacity-50 ml-1" />
+              {{ scoreFilter === 'All' ? 'Score' : scoreFilter }} <ChevronDown class="size-3 opacity-50 ml-1" />
             </button>
             <div v-if="openMenu === 'score'" class="absolute left-0 mt-1 w-44 rounded-lg border border-border bg-card shadow-lg py-1 z-40">
               <button
@@ -691,7 +771,7 @@ function saveSettings() {
       <!-- List Area -->
       <div class="px-8 pb-10 pt-6">
         <div v-if="filtered.length === 0" class="py-16 text-center text-sm text-muted-foreground">
-          No listings match “{{ query }}”.
+          No listings match your filters.
         </div>
         <div v-else class="flex flex-col gap-5">
           <div

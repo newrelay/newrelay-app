@@ -172,6 +172,26 @@ function addInternalNote() {
   selectedReview.value.notes.push({ author: 'You', text: internalNote.value });
   internalNote.value = '';
 }
+
+const isSendingReply = ref(false);
+async function sendReply() {
+  if (!selectedReview.value || !replyText.value.trim() || isSendingReply.value) return;
+  isSendingReply.value = true;
+  try {
+    await axios.post(`${baseUrl()}/reviews/${selectedReview.value.id}/reply`, {
+      body: replyText.value,
+      publish: true,
+    });
+    selectedReview.value.reply = replyText.value;
+    selectedReview.value.status = 'Replied';
+    const inList = reviews.value.find(r => r.id === selectedReview.value.id);
+    if (inList) { inList.reply = replyText.value; inList.status = 'Replied'; }
+  } catch (err) {
+    console.error('Failed to send reply', err);
+  } finally {
+    isSendingReply.value = false;
+  }
+}
 </script>
 
 <template>
@@ -722,8 +742,8 @@ function addInternalNote() {
                   <button class="p-1.5 text-muted-foreground hover:text-foreground rounded-lg hover:bg-muted cursor-pointer"><ImageIcon class="size-4" /></button>
                   <button class="p-1.5 text-primary hover:bg-primary/10 rounded-lg cursor-pointer" @click="useAiSuggestion(aiSuggestions[0])"><Sparkles class="size-4" /></button>
                 </div>
-                <button class="inline-flex items-center gap-1.5 bg-primary text-primary-foreground px-3.5 py-1.5 rounded-lg text-xs font-semibold hover:bg-primary/90 transition-colors shadow-sm cursor-pointer">
-                  Send <Send class="size-3.5" />
+                <button class="inline-flex items-center gap-1.5 bg-primary text-primary-foreground px-3.5 py-1.5 rounded-lg text-xs font-semibold hover:bg-primary/90 transition-colors shadow-sm cursor-pointer disabled:opacity-50" :disabled="isSendingReply || !replyText.trim()" @click="sendReply">
+                  {{ isSendingReply ? 'Sending…' : 'Send' }} <Send class="size-3.5" />
                 </button>
               </div>
             </div>

@@ -21,9 +21,17 @@ class Api::V1::Accounts::Reputation::ReviewsController < Api::V1::Accounts::Base
     reply = review.reputation_review_reply || review.build_reputation_review_reply(account: current_account)
     reply.update!(body: params.require(:body), status: :draft)
 
-    Reputation::ReplyPublisherJob.perform_later(reply.id) if params[:publish]
+    if params[:publish]
+      # Mock mode has no external API, so publish inline — the review flips to
+      # replied immediately instead of waiting on the async job.
+      if Reputation::Providers.mock?
+        Reputation::ReplyPublisherJob.perform_now(reply.id)
+      else
+        Reputation::ReplyPublisherJob.perform_later(reply.id)
+      end
+    end
 
-    render json: reply, status: :ok
+    render json: reply.reload, status: :ok
   end
 
   # GET /api/v1/accounts/:account_id/reputation/reviews/:id/ai_draft

@@ -50,10 +50,22 @@ Frontend owns the shape; strong params permit the whole `config` hash. Lazy + ro
 - [x] backend round-trips verified via rails runner (settings merge, widget config, route recognize)
 - [x] this doc updated
 
+### Phase D — Make IntegrationsPage the real connect page (replaces SettingsPage usage)
+User decision (reversed earlier): IntegrationsPage should DO what SettingsPage does; Settings
+page will no longer be used. Port the real `/reputation/integrations` flow into Integrations.
+- [ ] load live integrations on mount; overlay connected state onto the catalog grid
+- [ ] Connect: google → OAuth, facebook → OAuth, others → manual URL+name modal
+- [ ] provider enum gotcha: only google/facebook/agoda/airbnb/aliexpress/amazon/angi/
+      apple_app_store/avvo/custom are valid. Non-enum grid ids (yelp/trustpilot/tripadvisor/
+      apple_maps/g2/capterra/bbb/opentable) must POST as provider='custom', name encoded in
+      location_name as `"<Name> - <id>"`, matched back by that suffix.
+- [ ] Google OAuth callback (google_oauth param) → location modal → POST
+- [ ] Configure modal Disconnect → real DELETE /integrations/:id
+- [ ] remove Demo badge + preview-empty toggle
+- [ ] smoke test create/list/destroy via rails runner
+
 ## Left intentionally as demo (not a gap)
-- IntegrationsPage — hardcoded showcase; the real platform-connect flow already lives in
-  SettingsPage (`/reputation/integrations` OAuth). Wiring the 12-platform grid (mostly
-  "Coming Soon", no backend) would duplicate SettingsPage. Keep badged "Demo".
+- (none for Integrations after Phase D — now functional)
 - Sample-data fallbacks (Overview AI/trend, Listings, Feedback, Widgets preview) — correct
   behaviour: real API first, badged sample only when the account is empty.
 

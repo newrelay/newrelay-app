@@ -1,10 +1,10 @@
 <!-- eslint-disable vue/no-bare-strings-in-template, @intlify/vue-i18n/no-raw-text -->
 <script setup>
 /* eslint-disable */
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import {
   RefreshCw, Search, Plus, Check, X, RotateCcw, ChevronDown,
-  LayoutGrid, Grid2X2, List, Building2, Send, CheckCircle2,
+  LayoutGrid, Grid2X2, List, Building2, Send, CheckCircle2, Loader2,
 } from 'lucide-vue-next';
 import {
   RelayInput as Input, RelaySwitch,
@@ -13,6 +13,14 @@ import {
   RelayDropdownMenuContent as DropdownMenuContent,
   RelayDropdownMenuItem as DropdownMenuItem,
 } from 'dashboard/components-next/relay';
+
+const axios = window.axios;
+const accountId =
+  window.__STORE__?.getters['auth/getCurrentAccount']?.id ||
+  window.location.pathname.match(/accounts\/(\d+)/)?.[1];
+const baseApi = () => `/api/v1/accounts/${accountId}/reputation`;
+// Providers the backend enum accepts directly; everything else connects as `custom`.
+const ENUM_PROVIDERS = ['google', 'facebook', 'agoda', 'airbnb', 'aliexpress', 'amazon', 'angi', 'apple_app_store', 'avvo', 'custom'];
 
 const isDemoLoaded = ref(true);
 const searchQuery = ref('');
@@ -29,6 +37,27 @@ const requestedPlatformName = ref('');
 const requestEmail = ref('');
 const requestNotes = ref('');
 const isRequestSubmitted = ref(false);
+
+// Live integrations loaded from the backend, keyed by grid-item id.
+const liveIntegrations = ref([]);
+const disconnectLoading = ref(false);
+
+// Manual connect modal (non-OAuth platforms: review-page URL + business name)
+const isConnectModalOpen = ref(false);
+const connectTarget = ref(null);
+const connectUrl = ref('');
+const connectName = ref('');
+const connectSaving = ref(false);
+const connectError = ref('');
+
+// Google Business location picker (after OAuth redirect)
+const showLocationModal = ref(false);
+const googleLocations = ref([]);
+const selectedLocation = ref(null);
+const loadingLocations = ref(false);
+const connectingLocation = ref(false);
+const locationError = ref('');
+const currentOauthSessionId = ref('');
 
 const niches = [
   { id: 'all', label: 'All Categories' },
@@ -57,10 +86,10 @@ const tpIcon = `<svg viewBox="0 0 24 24" class="size-6" xmlns="http://www.w3.org
 const genIcon = c => `<svg viewBox="0 0 24 24" class="size-6" xmlns="http://www.w3.org/2000/svg"><rect width="24" height="24" rx="6" fill="${c}"/><path d="M12 6l6 12h-3.2l-1.2-2.6h-3.2L9.2 18H6l6-12z" fill="#FFF"/></svg>`;
 
 const integrations = ref([
-  { id: 'google', name: 'Google', niches: ['local_search'], nicheLabel: 'Local & Search', description: 'Connect with Google Business Profile to sync Google Maps ratings, customer reviews, and automate Relay AI responses.', connected: true, tag: '✓ Popular', tagVariant: 'emerald', isComingSoon: false, autoSync: true, autoReply: true, iconSvg: gIcon },
-  { id: 'yelp', name: 'Yelp', niches: ['local_search', 'home_services'], nicheLabel: 'Local & Services', description: 'Monitor Yelp local ratings, pull customer feedback in real time, and trigger notifications when mixed sentiment is detected.', connected: true, tag: '✓ Easy setup', tagVariant: 'emerald', isComingSoon: false, autoSync: true, autoReply: false, iconSvg: yIcon },
-  { id: 'trustpilot', name: 'Trustpilot', niches: ['ecommerce', 'b2b_software'], nicheLabel: 'E-Commerce & B2B', description: 'Sync verified customer reviews, monitor your TrustScore badge, and direct post-purchase reviewers to your official Trustpilot portal.', connected: true, tag: '✓ Recommended', tagVariant: 'primary', isComingSoon: false, autoSync: true, autoReply: false, iconSvg: tpIcon },
-  { id: 'facebook', name: 'Facebook', niches: ['local_search'], nicheLabel: 'Social & Local', description: 'Aggregate Facebook recommendations, post replies directly from Relay, and display verified social proof on your landing pages.', connected: true, tag: '✓ Popular', tagVariant: 'emerald', isComingSoon: false, autoSync: true, autoReply: true, iconSvg: fbIcon },
+  { id: 'google', name: 'Google', niches: ['local_search'], nicheLabel: 'Local & Search', description: 'Connect with Google Business Profile to sync Google Maps ratings, customer reviews, and automate Relay AI responses.', connected: false, tag: '✓ Popular', tagVariant: 'emerald', isComingSoon: false, autoSync: true, autoReply: true, iconSvg: gIcon },
+  { id: 'yelp', name: 'Yelp', niches: ['local_search', 'home_services'], nicheLabel: 'Local & Services', description: 'Monitor Yelp local ratings, pull customer feedback in real time, and trigger notifications when mixed sentiment is detected.', connected: false, tag: '✓ Easy setup', tagVariant: 'emerald', isComingSoon: false, autoSync: true, autoReply: false, iconSvg: yIcon },
+  { id: 'trustpilot', name: 'Trustpilot', niches: ['ecommerce', 'b2b_software'], nicheLabel: 'E-Commerce & B2B', description: 'Sync verified customer reviews, monitor your TrustScore badge, and direct post-purchase reviewers to your official Trustpilot portal.', connected: false, tag: '✓ Recommended', tagVariant: 'primary', isComingSoon: false, autoSync: true, autoReply: false, iconSvg: tpIcon },
+  { id: 'facebook', name: 'Facebook', niches: ['local_search'], nicheLabel: 'Social & Local', description: 'Aggregate Facebook recommendations, post replies directly from Relay, and display verified social proof on your landing pages.', connected: false, tag: '✓ Popular', tagVariant: 'emerald', isComingSoon: false, autoSync: true, autoReply: true, iconSvg: fbIcon },
   { id: 'tripadvisor', name: 'TripAdvisor', niches: ['hospitality'], nicheLabel: 'Hospitality & Travel', description: 'Collect and manage hospitality, dining, and venue traveler feedback with automatic ranking and traveler score insights.', connected: false, tag: '✓ Easy setup', tagVariant: 'emerald', isComingSoon: false, autoSync: false, autoReply: false, iconSvg: genIcon('#00AF87') },
   { id: 'apple_maps', name: 'Apple Maps', niches: ['local_search'], nicheLabel: 'Local & Search', description: 'Publish verified business details, showcase photos, and sync ratings from millions of iOS Apple Maps and Spotlight users.', connected: false, tag: '• Beta', tagVariant: 'amber', isComingSoon: false, autoSync: false, autoReply: false, iconSvg: genIcon('#111827') },
   { id: 'amazon', name: 'Amazon', niches: ['ecommerce'], nicheLabel: 'E-Commerce & Retail', description: 'Aggregate verified Amazon buyer ratings, monitor product feedback, and sync seller performance metrics.', connected: false, tag: '⚡ Coming Soon', tagVariant: 'amber', isComingSoon: true, iconSvg: genIcon('#FF9900') },
@@ -101,17 +130,178 @@ function resetFilters() {
   selectedNiche.value = 'all';
   sortOrder.value = 'recommended';
 }
-function handleSyncAll() {
+// ---- Real integration wiring (ported from SettingsPage) ----
+function integrationFor(item) {
+  return liveIntegrations.value.find(i =>
+    i.provider === item.id || (i.provider === 'custom' && (i.location_name || '').endsWith(`- ${item.id}`))
+  );
+}
+function applyLiveState() {
+  integrations.value.forEach(item => {
+    const live = integrationFor(item);
+    item.connected = !!live;
+    item.integrationId = live?.id || null;
+  });
+}
+async function loadIntegrations() {
+  try {
+    const { data } = await axios.get(`${baseApi()}/integrations`);
+    liveIntegrations.value = data || [];
+  } catch (e) {
+    liveIntegrations.value = [];
+  }
+  applyLiveState();
+}
+
+async function oauthState() {
+  const { data } = await axios.get(`${baseApi()}/integrations/oauth_state`);
+  return encodeURIComponent(data.state);
+}
+async function connectGoogle() {
+  if (window.newrelayConfig?.reputationGoogleViaGmbapi) {
+    const locationId = window.prompt('Enter the GMBapi location ID for this business:');
+    if (!locationId) return;
+    try {
+      await axios.post(`${baseApi()}/integrations`, { integration: { provider: 'google', location_id: locationId } });
+      await loadIntegrations();
+    } catch (err) {
+      alert(err.response?.data?.errors?.[0] || 'Failed to connect Google via GMBapi');
+    }
+    return;
+  }
+  const clientId = window.newrelayConfig?.reputationGoogleClientId;
+  if (!clientId) {
+    alert('Google Client ID is not configured. Add REPUTATION_GOOGLE_CLIENT_ID to your .env and restart the server.');
+    return;
+  }
+  const redirect = `${window.location.origin}/reputation/oauth/callback?provider=google`;
+  const state = await oauthState();
+  window.location.href =
+    `https://accounts.google.com/o/oauth2/v2/auth?client_id=${clientId}&redirect_uri=${redirect}&scope=https://www.googleapis.com/auth/business.manage&response_type=code&access_type=offline&prompt=consent&state=${state}`;
+}
+async function connectFacebook() {
+  const appId = window.newrelayConfig?.reputationFacebookAppId;
+  if (!appId) {
+    alert('Facebook App ID is not configured in the environment.');
+    return;
+  }
+  const redirect = `${window.location.origin}/reputation/oauth/callback?provider=facebook`;
+  const state = await oauthState();
+  window.location.href =
+    `https://www.facebook.com/v18.0/dialog/oauth?client_id=${appId}&redirect_uri=${redirect}&scope=pages_show_list,pages_read_engagement&state=${state}`;
+}
+function connect(item) {
+  if (item.isComingSoon) { openRequestModal(item.name); return; }
+  if (item.id === 'google') { connectGoogle(); return; }
+  if (item.id === 'facebook') { connectFacebook(); return; }
+  connectTarget.value = item;
+  connectUrl.value = '';
+  connectName.value = '';
+  connectError.value = '';
+  isConnectModalOpen.value = true;
+}
+async function submitManualConnect() {
+  if (!connectUrl.value || !connectName.value) {
+    connectError.value = 'Enter both the review-page URL and business name.';
+    return;
+  }
+  const item = connectTarget.value;
+  const isEnum = ENUM_PROVIDERS.includes(item.id);
+  connectSaving.value = true;
+  connectError.value = '';
+  try {
+    await axios.post(`${baseApi()}/integrations`, {
+      integration: {
+        provider: isEnum ? item.id : 'custom',
+        location_id: connectUrl.value,
+        location_name: isEnum ? connectName.value : `${connectName.value} - ${item.id}`,
+      },
+    });
+    isConnectModalOpen.value = false;
+    await loadIntegrations();
+  } catch (err) {
+    connectError.value = err.response?.data?.errors?.[0] || 'Failed to connect. This listing may already be connected.';
+  } finally {
+    connectSaving.value = false;
+  }
+}
+
+async function checkGoogleOauthCallback() {
+  const params = new URLSearchParams(window.location.search);
+  const oauthStatus = params.get('google_oauth');
+  if (!oauthStatus) return;
+  const cleanUrl = window.location.pathname;
+  window.history.replaceState({}, document.title, cleanUrl);
+  if (oauthStatus === 'error') {
+    alert(`Google Authentication Failed: ${params.get('message') || 'Unknown OAuth error'}`);
+    return;
+  }
+  if (oauthStatus !== 'success') return;
+  currentOauthSessionId.value = params.get('oauth_session_id');
+  showLocationModal.value = true;
+  loadingLocations.value = true;
+  locationError.value = '';
+  try {
+    const { data } = await axios.get(`${baseApi()}/integrations/google_locations?oauth_session_id=${currentOauthSessionId.value}`);
+    googleLocations.value = data;
+    if (data.length > 0) selectedLocation.value = data[0];
+  } catch (err) {
+    locationError.value = err?.response?.data?.errors?.[0] || 'Failed to fetch Google locations. Please authenticate again.';
+  } finally {
+    loadingLocations.value = false;
+  }
+}
+async function submitGoogleLocation() {
+  if (!selectedLocation.value) { locationError.value = 'Select a Google Business location to connect.'; return; }
+  connectingLocation.value = true;
+  locationError.value = '';
+  try {
+    await axios.post(`${baseApi()}/integrations`, {
+      integration: {
+        provider: 'google',
+        location_id: selectedLocation.value.location_id,
+        location_name: selectedLocation.value.location_name,
+        oauth_session_id: currentOauthSessionId.value,
+      },
+    });
+    showLocationModal.value = false;
+    await loadIntegrations();
+  } catch (err) {
+    locationError.value = err?.response?.data?.errors?.[0] || 'Failed to connect Google Business location.';
+  } finally {
+    connectingLocation.value = false;
+  }
+}
+
+async function disconnectIntegration(item) {
+  if (!item.integrationId) { item.connected = false; isConfigModalOpen.value = false; return; }
+  if (!confirm(`Disconnect ${item.name}?`)) return;
+  disconnectLoading.value = true;
+  try {
+    await axios.delete(`${baseApi()}/integrations/${item.integrationId}`);
+    isConfigModalOpen.value = false;
+    await loadIntegrations();
+  } catch (err) {
+    alert('Failed to disconnect integration');
+  } finally {
+    disconnectLoading.value = false;
+  }
+}
+
+async function handleSyncAll() {
   isSyncing.value = true;
-  setTimeout(() => { isSyncing.value = false; }, 1200);
+  await loadIntegrations();
+  setTimeout(() => { isSyncing.value = false; }, 600);
 }
 function openConfigure(item) {
   selectedIntegration.value = item;
   isConfigModalOpen.value = true;
 }
-function toggleConnection(item) {
-  item.connected = !item.connected;
-}
+
+onMounted(async () => {
+  await loadIntegrations();
+  await checkGoogleOauthCallback();
+});
 function openRequestModal(platformName) {
   requestedPlatformName.value = platformName || '';
   requestEmail.value = '';
@@ -125,7 +315,7 @@ function submitRequest() {
   setTimeout(() => { isRequestModalOpen.value = false; }, 2000);
 }
 const webhookUrl = computed(() =>
-  selectedIntegration.value ? `${window.location.origin}/api/v1/reputation/sync/${selectedIntegration.value.id}` : ''
+  selectedIntegration.value?.integrationId ? `${window.location.origin}/api/v1/reputation/sync/${selectedIntegration.value.integrationId}` : ''
 );
 function tagStyles(variant) {
   if (variant === 'emerald') return 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400';
@@ -141,16 +331,10 @@ function tagStyles(variant) {
       <!-- Header -->
       <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-border/60">
         <div>
-          <div class="flex items-center gap-2">
-            <h1 class="text-base font-medium tracking-tight text-foreground">Integrations</h1>
-            <span class="rounded bg-amber-500/15 px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wide text-amber-600 dark:text-amber-400" title="Showcase — real platform connection lives in Reputation Settings">Demo</span>
-          </div>
+          <h1 class="text-base font-medium tracking-tight text-foreground">Integrations</h1>
           <p class="text-[13.5px] text-muted-foreground mt-0.5">Connect external review platforms to automatically monitor ratings, aggregate reviews, and route Relay AI responses.</p>
         </div>
         <div class="flex items-center gap-3">
-          <button class="h-9 gap-2 rounded-lg border border-border bg-card hover:bg-muted text-[13.5px] font-medium px-3 inline-flex items-center cursor-pointer" @click="isDemoLoaded = false">
-            Preview Empty State
-          </button>
           <button class="h-9 gap-2 rounded-lg border border-border bg-card hover:bg-muted shadow-xs text-[13.5px] font-medium px-3 inline-flex items-center cursor-pointer disabled:opacity-60" :disabled="isSyncing" @click="handleSyncAll">
             <RefreshCw :class="['size-3.5', isSyncing ? 'animate-spin' : '']" />
             {{ isSyncing ? 'Syncing…' : 'Sync All Accounts' }}
@@ -241,7 +425,7 @@ function tagStyles(variant) {
             <div class="flex items-center gap-1 text-[12px] font-medium px-2.5 py-0.5 rounded-md" :class="tagStyles(item.tagVariant)"><span>{{ item.tag }}</span></div>
             <button v-if="item.isComingSoon" class="text-[13px] font-medium text-primary hover:underline cursor-pointer" @click="openRequestModal(item.name)">Notify Me →</button>
             <button v-else-if="item.connected" class="text-[13px] font-medium text-primary hover:underline cursor-pointer" @click="openConfigure(item)">Configure →</button>
-            <button v-else class="text-[13px] font-medium text-primary hover:underline cursor-pointer" @click="toggleConnection(item)">Connect →</button>
+            <button v-else class="text-[13px] font-medium text-primary hover:underline cursor-pointer" @click="connect(item)">Connect →</button>
           </div>
         </div>
         <div v-if="selectedStatus === 'all' || selectedStatus === 'coming_soon'" class="bg-card rounded-2xl border border-dashed border-border p-6 shadow-xs flex flex-col justify-between hover:border-primary/50 hover:bg-muted/10 transition-all">
@@ -275,7 +459,7 @@ function tagStyles(variant) {
           <div class="flex items-center gap-3 shrink-0 self-end sm:self-center w-full sm:w-auto justify-end">
             <button v-if="item.isComingSoon" class="h-8 px-3 text-[12.5px] rounded-lg border border-border hover:bg-muted text-primary inline-flex items-center cursor-pointer" @click="openRequestModal(item.name)">Notify Me</button>
             <button v-else-if="item.connected" class="h-8 px-3 text-[12.5px] rounded-lg border border-border hover:bg-muted text-primary inline-flex items-center cursor-pointer" @click="openConfigure(item)">Configure</button>
-            <button v-else class="h-8 px-3 text-[12.5px] rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 inline-flex items-center cursor-pointer" @click="toggleConnection(item)">Connect</button>
+            <button v-else class="h-8 px-3 text-[12.5px] rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 inline-flex items-center cursor-pointer" @click="connect(item)">Connect</button>
           </div>
         </div>
       </div>
@@ -323,7 +507,7 @@ function tagStyles(variant) {
           </div>
         </div>
         <div class="flex items-center justify-between pt-3 border-t border-border">
-          <button class="text-[13px] text-destructive border border-border hover:bg-muted rounded-lg px-3 py-2 font-medium cursor-pointer" @click="toggleConnection(selectedIntegration); isConfigModalOpen = false">Disconnect Account</button>
+          <button class="text-[13px] text-destructive border border-border hover:bg-muted rounded-lg px-3 py-2 font-medium cursor-pointer" @click="disconnectIntegration(selectedIntegration)">Disconnect Account</button>
           <div class="flex items-center gap-2">
             <button class="rounded-lg border border-border px-4 py-2 text-sm font-medium text-muted-foreground hover:bg-muted/50 cursor-pointer" @click="isConfigModalOpen = false">Cancel</button>
             <button class="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow-sm hover:bg-primary/90 cursor-pointer" @click="isConfigModalOpen = false">Save Changes</button>
@@ -366,6 +550,70 @@ function tagStyles(variant) {
           <div class="size-14 rounded-full bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 flex items-center justify-center mb-4"><CheckCircle2 class="size-7" /></div>
           <h3 class="text-base font-semibold text-foreground mb-1">Request received</h3>
           <p class="text-sm text-muted-foreground">We'll notify you when {{ requestedPlatformName || 'this platform' }} is available.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Manual connect modal (non-OAuth platforms) -->
+    <div v-if="isConnectModalOpen && connectTarget" class="fixed inset-0 z-50 flex items-center justify-center p-4">
+      <div class="absolute inset-0 bg-background/80 backdrop-blur-sm" @click="isConnectModalOpen = false"></div>
+      <div class="relative bg-card border border-border rounded-2xl shadow-lg max-w-md w-full p-6 space-y-5">
+        <div class="flex items-center justify-between pb-3 border-b border-border">
+          <div class="flex items-center gap-2.5">
+            <div class="size-6 flex items-center justify-center" v-html="connectTarget.iconSvg"></div>
+            <h2 class="text-[15px] font-semibold text-foreground">Connect {{ connectTarget.name }}</h2>
+          </div>
+          <button class="text-muted-foreground hover:text-foreground" @click="isConnectModalOpen = false"><X class="size-4" /></button>
+        </div>
+        <div class="space-y-4">
+          <div class="flex flex-col gap-1.5">
+            <label class="text-[13px] font-medium text-foreground">Review page URL</label>
+            <Input v-model="connectUrl" placeholder="https://…/your-business" class="h-9 text-[14px]" />
+          </div>
+          <div class="flex flex-col gap-1.5">
+            <label class="text-[13px] font-medium text-foreground">Business / listing name</label>
+            <Input v-model="connectName" placeholder="e.g. Apex Dental — Downtown" class="h-9 text-[14px]" />
+          </div>
+          <p v-if="connectError" class="text-[12.5px] text-destructive">{{ connectError }}</p>
+        </div>
+        <div class="flex items-center justify-end gap-2 pt-3 border-t border-border">
+          <button class="rounded-lg border border-border px-4 py-2 text-sm font-medium text-muted-foreground hover:bg-muted/50 cursor-pointer" @click="isConnectModalOpen = false">Cancel</button>
+          <button class="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow-sm hover:bg-primary/90 inline-flex items-center gap-1.5 cursor-pointer disabled:opacity-50" :disabled="connectSaving" @click="submitManualConnect">
+            <Loader2 v-if="connectSaving" class="size-3.5 animate-spin" /><Check v-else class="size-3.5" /> Connect
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Google Business location picker -->
+    <div v-if="showLocationModal" class="fixed inset-0 z-50 flex items-center justify-center p-4">
+      <div class="absolute inset-0 bg-background/80 backdrop-blur-sm" @click="showLocationModal = false"></div>
+      <div class="relative bg-card border border-border rounded-2xl shadow-lg max-w-md w-full p-6 space-y-5">
+        <div class="flex items-center justify-between pb-3 border-b border-border">
+          <div class="flex items-center gap-2.5">
+            <div class="size-6 flex items-center justify-center" v-html="gIcon"></div>
+            <h2 class="text-[15px] font-semibold text-foreground">Select a Google Business location</h2>
+          </div>
+          <button class="text-muted-foreground hover:text-foreground" @click="showLocationModal = false"><X class="size-4" /></button>
+        </div>
+        <div v-if="loadingLocations" class="py-8 flex items-center justify-center text-muted-foreground gap-2 text-sm">
+          <Loader2 class="size-4 animate-spin" /> Loading your locations…
+        </div>
+        <template v-else>
+          <div v-if="googleLocations.length" class="space-y-2 max-h-72 overflow-y-auto">
+            <button v-for="loc in googleLocations" :key="loc.location_id" type="button" class="w-full text-left p-3 rounded-xl border transition-colors cursor-pointer" :class="selectedLocation && selectedLocation.location_id === loc.location_id ? 'border-primary bg-primary/5' : 'border-border hover:bg-muted/40'" @click="selectedLocation = loc">
+              <div class="text-[13.5px] font-medium text-foreground">{{ loc.location_name }}</div>
+              <div class="text-[12px] text-muted-foreground truncate">{{ loc.location_id }}</div>
+            </button>
+          </div>
+          <p v-else class="text-[13px] text-muted-foreground py-4 text-center">No Google Business locations found for this account.</p>
+        </template>
+        <p v-if="locationError" class="text-[12.5px] text-destructive">{{ locationError }}</p>
+        <div class="flex items-center justify-end gap-2 pt-3 border-t border-border">
+          <button class="rounded-lg border border-border px-4 py-2 text-sm font-medium text-muted-foreground hover:bg-muted/50 cursor-pointer" @click="showLocationModal = false">Cancel</button>
+          <button class="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow-sm hover:bg-primary/90 inline-flex items-center gap-1.5 cursor-pointer disabled:opacity-50" :disabled="connectingLocation || !selectedLocation" @click="submitGoogleLocation">
+            <Loader2 v-if="connectingLocation" class="size-3.5 animate-spin" /><Check v-else class="size-3.5" /> Connect Location
+          </button>
         </div>
       </div>
     </div>

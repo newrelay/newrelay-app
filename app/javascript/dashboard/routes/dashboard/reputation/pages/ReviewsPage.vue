@@ -26,6 +26,7 @@ const viewMode = ref('list');
 const loading = ref(true);
 const sortOption = ref('Newest First');
 const selectedPlatform = ref('All Platforms');
+const activeStatusFilter = ref('');
 const isRequestModalOpen = ref(false);
 const isWidgetModalOpen = ref(false);
 
@@ -123,7 +124,8 @@ const filteredReviews = computed(() => {
     const matchesPlatform =
       selectedPlatform.value === 'All Platforms' ||
       r.platform.toLowerCase() === selectedPlatform.value.toLowerCase();
-    return matchesSearch && matchesPlatform;
+    const matchesStatus = !activeStatusFilter.value || r.status === activeStatusFilter.value;
+    return matchesSearch && matchesPlatform && matchesStatus;
   });
 
   if (sortOption.value === 'Highest Rating') {
@@ -231,7 +233,7 @@ async function sendReply() {
       </div>
 
       <!-- Unified toolbar: select + search | sort / platform / filters / view / pagination -->
-      <div class="px-8 py-2.5 border-b border-border/80 bg-card/70 shrink-0 flex items-center justify-between gap-4 overflow-x-auto hide-scrollbar">
+      <div class="px-8 py-2.5 border-b border-border/80 bg-card/70 shrink-0 flex items-center justify-between gap-4 flex-wrap">
         <!-- Left: select-all + selected count + search -->
         <div class="flex items-center gap-3 min-w-0">
           <Checkbox
@@ -309,17 +311,29 @@ async function sendReply() {
           <div class="relative">
             <button
               @click="showFilterDropdown = !showFilterDropdown"
-              class="inline-flex items-center gap-1.5 h-9 px-3 rounded-lg border border-border bg-card text-[13px] font-medium text-foreground hover:bg-muted shadow-xs cursor-pointer"
+              class="inline-flex items-center gap-1.5 h-9 px-3 rounded-lg border text-[13px] font-medium shadow-xs cursor-pointer"
+              :class="activeStatusFilter ? 'border-primary/40 text-primary bg-primary/5' : 'border-border bg-card text-foreground hover:bg-muted'"
             >
               <Filter class="size-3.5" />
-              <span>Filters</span>
+              <span>{{ activeStatusFilter || 'Filters' }}</span>
             </button>
             <div v-if="showFilterDropdown" class="absolute right-0 mt-2 w-64 rounded-xl border border-border bg-card p-2 shadow-xl z-30 space-y-1">
               <div class="max-h-[300px] overflow-y-auto space-y-1">
                 <div class="px-2 py-1 text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Status</div>
-                <button class="w-full text-left px-2 py-1.5 text-xs rounded-md hover:bg-muted font-medium text-foreground cursor-pointer">Needs Reply</button>
-                <button class="w-full text-left px-2 py-1.5 text-xs rounded-md hover:bg-muted font-medium text-foreground cursor-pointer">Replied</button>
-                <button class="w-full text-left px-2 py-1.5 text-xs rounded-md hover:bg-muted font-medium text-foreground cursor-pointer">Assigned To...</button>
+                <button
+                  class="w-full text-left px-2 py-1.5 text-xs rounded-md hover:bg-muted font-medium cursor-pointer flex items-center justify-between"
+                  :class="activeStatusFilter === 'Needs Reply' ? 'text-primary' : 'text-foreground'"
+                  @click="activeStatusFilter = activeStatusFilter === 'Needs Reply' ? '' : 'Needs Reply'; showFilterDropdown = false"
+                >
+                  Needs Reply <Check v-if="activeStatusFilter === 'Needs Reply'" class="size-3.5" />
+                </button>
+                <button
+                  class="w-full text-left px-2 py-1.5 text-xs rounded-md hover:bg-muted font-medium cursor-pointer flex items-center justify-between"
+                  :class="activeStatusFilter === 'Replied' ? 'text-primary' : 'text-foreground'"
+                  @click="activeStatusFilter = activeStatusFilter === 'Replied' ? '' : 'Replied'; showFilterDropdown = false"
+                >
+                  Replied <Check v-if="activeStatusFilter === 'Replied'" class="size-3.5" />
+                </button>
 
                 <div class="my-1 border-t border-border/80"></div>
                 <div class="px-2 py-1 text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Properties</div>
@@ -606,7 +620,7 @@ async function sendReply() {
           <MessageSquare class="size-10 opacity-20 mb-3" />
           <h3 class="text-[20px] font-[600] text-foreground mb-1">No reviews found</h3>
           <p class="text-[13.5px] text-muted-foreground leading-relaxed mb-4">No customer reviews match your search filter.</p>
-          <button @click="searchQuery = ''" class="px-4 py-2 rounded-lg border border-border bg-card text-[13.5px] font-medium text-foreground hover:bg-muted transition-colors border-input hover:border-transparent cursor-pointer">
+          <button @click="searchQuery = ''; selectedPlatform = 'All Platforms'; activeStatusFilter = ''" class="px-4 py-2 rounded-lg border border-border bg-card text-[13.5px] font-medium text-foreground hover:bg-muted transition-colors border-input hover:border-transparent cursor-pointer">
             Reset Filters
           </button>
         </div>

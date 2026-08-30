@@ -353,8 +353,8 @@ const isDark = computed(() => widgetConfig.value.theme === 'dark' || previewBg.v
             <div class="flex items-center gap-2">
               <span class="text-xs text-muted-foreground font-medium hidden md:inline">Background:</span>
               <div class="flex items-center gap-1 bg-muted p-1 rounded-lg border border-border/60">
-                <button @click="previewBg = 'light'" class="size-6 rounded-md flex items-center justify-center text-xs transition-colors cursor-pointer" :class="previewBg === 'light' ? 'bg-white text-slate-800 shadow-xs' : 'text-muted-foreground'" title="Light background"><Sun class="size-3.5" /></button>
-                <button @click="previewBg = 'dark'" class="size-6 rounded-md flex items-center justify-center text-xs transition-colors cursor-pointer" :class="previewBg === 'dark' ? 'bg-slate-900 text-white shadow-xs' : 'text-muted-foreground'" title="Dark background"><Moon class="size-3.5" /></button>
+                <button @click="previewBg = 'light'" class="size-8 rounded-md flex items-center justify-center text-xs transition-colors cursor-pointer" :class="previewBg === 'light' ? 'bg-white text-slate-800 shadow-xs' : 'text-muted-foreground'" title="Light background"><Sun class="size-4" /></button>
+                <button @click="previewBg = 'dark'" class="size-8 rounded-md flex items-center justify-center text-xs transition-colors cursor-pointer" :class="previewBg === 'dark' ? 'bg-slate-900 text-white shadow-xs' : 'text-muted-foreground'" title="Dark background"><Moon class="size-4" /></button>
               </div>
             </div>
           </div>

@@ -21,6 +21,13 @@ const accountId =
 const baseApi = () => `/api/v1/accounts/${accountId}/reputation`;
 // Providers the backend enum accepts directly; everything else connects as `custom`.
 const ENUM_PROVIDERS = ['google', 'facebook', 'agoda', 'airbnb', 'aliexpress', 'amazon', 'angi', 'apple_app_store', 'avvo', 'custom'];
+// Sample Google Business locations shown in mock mode (REPUTATION_GOOGLE_PROVIDER=mock),
+// where the backend skips OAuth and seeds fake reviews on connect.
+const MOCK_GOOGLE_LOCATIONS = [
+  { location_id: 'accounts/mock/locations/0001', location_name: 'Apex Dental — Downtown' },
+  { location_id: 'accounts/mock/locations/0002', location_name: 'Apex Dental — Westside Clinic' },
+  { location_id: 'accounts/mock/locations/0003', location_name: 'Apex Dental — North Branch' },
+];
 
 const isDemoLoaded = ref(true);
 const searchQuery = ref('');
@@ -157,16 +164,17 @@ async function oauthState() {
   const { data } = await axios.get(`${baseApi()}/integrations/oauth_state`);
   return encodeURIComponent(data.state);
 }
+// Mock/GMBapi mode skips OAuth: pick a sample location and the backend persists +
+// seeds reviews. Falls back to real Google OAuth only when a client id is configured.
+const googleMockMode = computed(() => !!window.newrelayConfig?.reputationGoogleViaGmbapi);
 async function connectGoogle() {
-  if (window.newrelayConfig?.reputationGoogleViaGmbapi) {
-    const locationId = window.prompt('Enter the GMBapi location ID for this business:');
-    if (!locationId) return;
-    try {
-      await axios.post(`${baseApi()}/integrations`, { integration: { provider: 'google', location_id: locationId } });
-      await loadIntegrations();
-    } catch (err) {
-      alert(err.response?.data?.errors?.[0] || 'Failed to connect Google via GMBapi');
-    }
+  if (googleMockMode.value) {
+    currentOauthSessionId.value = '';
+    googleLocations.value = MOCK_GOOGLE_LOCATIONS;
+    selectedLocation.value = MOCK_GOOGLE_LOCATIONS[0];
+    loadingLocations.value = false;
+    locationError.value = '';
+    showLocationModal.value = true;
     return;
   }
   const clientId = window.newrelayConfig?.reputationGoogleClientId;
@@ -181,10 +189,6 @@ async function connectGoogle() {
 }
 async function connectFacebook() {
   const appId = window.newrelayConfig?.reputationFacebookAppId;
-  if (!appId) {
-    alert('Facebook App ID is not configured in the environment.');
-    return;
-  }
   const redirect = `${window.location.origin}/reputation/oauth/callback?provider=facebook`;
   const state = await oauthState();
   window.location.href =
@@ -193,10 +197,12 @@ async function connectFacebook() {
 function connect(item) {
   if (item.isComingSoon) { openRequestModal(item.name); return; }
   if (item.id === 'google') { connectGoogle(); return; }
-  if (item.id === 'facebook') { connectFacebook(); return; }
+  // Facebook only redirects to OAuth when an app id exists; otherwise it connects
+  // through the manual modal like every other platform (and seeds mock reviews).
+  if (item.id === 'facebook' && window.newrelayConfig?.reputationFacebookAppId) { connectFacebook(); return; }
   connectTarget.value = item;
-  connectUrl.value = '';
-  connectName.value = '';
+  connectUrl.value = `https://${item.id.replace(/_/g, '')}.com/apex-dental`;
+  connectName.value = 'Apex Dental';
   connectError.value = '';
   isConnectModalOpen.value = true;
 }

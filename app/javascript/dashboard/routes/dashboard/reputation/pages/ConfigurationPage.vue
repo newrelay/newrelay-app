@@ -55,7 +55,7 @@ const whatsappBody = ref(defaultWhatsAppTemplates[0].bodyText);
 const videoPrompt = ref('Hi {{FirstName}}, we would love a quick 45-second video sharing your experience with {{BusinessName}}!');
 
 // User-created templates per channel, persisted in the settings config blob.
-const customTemplates = ref({ sms: [], email: [], whatsapp: [] });
+const customTemplates = ref({ sms: [], email: [], whatsapp: [], video: [] });
 const channelTemplates = computed(() => {
   const custom = customTemplates.value[selectedChannel.value] || [];
   if (selectedChannel.value === 'sms') return [...defaultSmsTemplates, ...custom];
@@ -64,29 +64,67 @@ const channelTemplates = computed(() => {
   return [];
 });
 
-// New Template modal
+// -------- Create New Outreach Template modal (channel-agnostic composer) --------
+const durationOptions = ['30 Seconds', '45 Seconds', '60 Seconds (Recommended)', '90 Seconds', '2 Minutes'];
 const showNewTemplate = ref(false);
-const newTpl = ref({ name: '', message: '', subject: '' });
+const newTemplateForm = ref({
+  channel: 'sms', name: '',
+  smsMessage: '',
+  emailSubject: '', emailPreheader: '', emailBody: '', emailButtonText: 'Rate Us on Google ★★★★★',
+  waHeader: 'Hi {{FirstName}} 👋', waBody: '', waButton1: '⭐ Leave a 5★ Review', waButton2: '💬 Talk with Support',
+  videoHeadline: 'Share Your Story with {{BusinessName}}', videoMessage: '',
+  videoQuestions: '1. What problem did you want to solve?\n2. How did we help you?\n3. Would you recommend us to others?',
+  videoButtonText: 'Record Video Testimonial 🎥', videoMaxDuration: '60 Seconds (Recommended)',
+});
 function openNewTemplate() {
-  newTpl.value = {
+  newTemplateForm.value = {
+    channel: selectedChannel.value,
     name: '',
-    message: selectedChannel.value === 'sms' ? smsMessage.value
-      : selectedChannel.value === 'email' ? emailBody.value : whatsappBody.value,
-    subject: emailSubject.value,
+    smsMessage: smsMessage.value || 'Hi {{FirstName}}, thank you for choosing {{BusinessName}}! Share your experience: {{ReviewLink}}',
+    emailSubject: emailSubject.value || 'How was your experience with {{BusinessName}}?',
+    emailPreheader: 'We value your feedback. Take 30 seconds to rate us.',
+    emailBody: emailBody.value || 'Could you take a moment to leave us an honest review on Google?',
+    emailButtonText: 'Rate Us on Google ★★★★★',
+    waHeader: whatsappHeader.value || 'Hi {{FirstName}} 👋',
+    waBody: whatsappBody.value || 'Thank you for visiting {{BusinessName}} today! Tap below to share a quick 5-star review: {{ReviewLink}}',
+    waButton1: '⭐ Leave a 5★ Review', waButton2: '💬 Talk with Support',
+    videoHeadline: 'Share Your Story with {{BusinessName}}',
+    videoMessage: videoPrompt.value || 'Hi {{FirstName}}, could you record a quick video review sharing your experience?',
+    videoQuestions: '1. What problem did you want to solve?\n2. How did we help you?\n3. Would you recommend us to others?',
+    videoButtonText: 'Record Video Testimonial 🎥', videoMaxDuration: '60 Seconds (Recommended)',
   };
   showNewTemplate.value = true;
 }
+function insertTagIntoModal(tag) {
+  const f = newTemplateForm.value;
+  if (f.channel === 'sms') f.smsMessage += ` ${tag}`;
+  else if (f.channel === 'email') f.emailBody += ` ${tag}`;
+  else if (f.channel === 'whatsapp') f.waBody += ` ${tag}`;
+  else f.videoMessage += ` ${tag}`;
+}
+const isNewTemplateValid = computed(() => {
+  const f = newTemplateForm.value;
+  if (!f.name.trim()) return false;
+  if (f.channel === 'sms') return !!f.smsMessage.trim();
+  if (f.channel === 'email') return !!f.emailSubject.trim() && !!f.emailBody.trim();
+  if (f.channel === 'whatsapp') return !!f.waHeader.trim() && !!f.waBody.trim() && !!f.waButton1.trim();
+  return !!f.videoHeadline.trim() && !!f.videoMessage.trim();
+});
 function saveNewTemplate() {
-  const name = newTpl.value.name.trim();
-  if (!name) return;
-  const id = `custom-${selectedChannel.value}-${Date.now()}`;
+  if (!isNewTemplateValid.value) return;
+  const f = newTemplateForm.value;
+  const id = `custom-${f.channel}-${Date.now()}`;
+  const name = f.name.trim();
   let obj;
-  if (selectedChannel.value === 'sms') obj = { id, name, message: newTpl.value.message };
-  else if (selectedChannel.value === 'email') obj = { id, name, subject: newTpl.value.subject, body: newTpl.value.message };
-  else obj = { id, name, headerText: name, bodyText: newTpl.value.message };
-  customTemplates.value[selectedChannel.value] = [...(customTemplates.value[selectedChannel.value] || []), obj];
+  if (f.channel === 'sms') obj = { id, name, message: f.smsMessage.trim() };
+  else if (f.channel === 'email') obj = { id, name, subject: f.emailSubject.trim(), preheader: f.emailPreheader.trim(), body: f.emailBody.trim(), buttonText: f.emailButtonText.trim() };
+  else if (f.channel === 'whatsapp') obj = { id, name, headerText: f.waHeader.trim(), bodyText: f.waBody.trim(), button1: f.waButton1.trim(), button2: f.waButton2.trim() };
+  else obj = { id, name, headline: f.videoHeadline.trim(), message: f.videoMessage.trim(), questions: f.videoQuestions.split('\n').filter(Boolean), buttonText: f.videoButtonText.trim(), maxDuration: f.videoMaxDuration };
+  customTemplates.value[f.channel] = [...(customTemplates.value[f.channel] || []), obj];
   persist({ customTemplates: customTemplates.value });
-  channelTemplateId.value = id;
+  selectedChannel.value = f.channel;
+  if (f.channel === 'video') videoPrompt.value = obj.message;
+  else channelTemplateId.value = id;
   showNewTemplate.value = false;
 }
 const channelTemplateId = computed({
@@ -653,32 +691,153 @@ const autoFlagLabel = computed(() => autoFlagOptions.find(o => o.value === spamS
       </div>
     </div>
 
-    <!-- New Template modal -->
-    <div v-if="showNewTemplate" class="fixed inset-0 z-50 flex items-center justify-center p-4">
-      <div class="absolute inset-0 bg-background/80 backdrop-blur-sm" @click="showNewTemplate = false"></div>
-      <div class="relative bg-card border border-border rounded-2xl shadow-lg max-w-lg w-full p-6 space-y-5">
-        <div class="flex items-center justify-between pb-3 border-b border-border">
-          <h2 class="text-[15px] font-semibold text-foreground">New {{ channelLabel }} Template</h2>
-          <button type="button" class="text-muted-foreground hover:text-foreground" @click="showNewTemplate = false"><X class="size-4" /></button>
+    <!-- Create New Outreach Template modal -->
+    <div v-if="showNewTemplate" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-background/80 backdrop-blur-sm" @click.self="showNewTemplate = false">
+      <div class="bg-card border border-border w-full max-w-lg rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+        <!-- Header -->
+        <div class="px-6 py-4 border-b border-border flex items-center justify-between shrink-0">
+          <div>
+            <h3 class="text-[16px] font-semibold text-foreground">Create New Outreach Template</h3>
+            <p class="text-[12.5px] text-muted-foreground mt-0.5">Design a custom message template for review outreach.</p>
+          </div>
+          <button type="button" class="h-8 w-8 p-0 rounded-full border border-border hover:border-transparent hover:bg-muted inline-flex items-center justify-center text-muted-foreground cursor-pointer" @click="showNewTemplate = false"><X class="size-4" /></button>
         </div>
-        <div class="space-y-4">
+
+        <!-- Body -->
+        <div class="p-6 space-y-5 overflow-y-auto flex-1">
+          <!-- Target Channel -->
           <div class="flex flex-col gap-1.5">
-            <label class="text-[13px] font-medium text-foreground">Template name <span class="text-destructive">*</span></label>
-            <input v-model="newTpl.name" type="text" placeholder="e.g. Post-visit follow-up" class="reset-base h-9 px-3 text-[13.5px] rounded-md border border-border/80 bg-background text-foreground shadow-2xs focus-visible:ring-1 focus-visible:ring-primary/30 focus-visible:outline-none" />
+            <label class="text-[13.5px] font-medium text-foreground">Target Channel</label>
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+              <button v-for="ch in CHANNELS" :key="ch.id" type="button" class="px-2.5 py-2 rounded-lg border text-xs text-center cursor-pointer transition-colors flex items-center justify-center gap-1.5" :class="newTemplateForm.channel === ch.id ? 'bg-primary/10 border-primary text-primary font-semibold' : 'bg-card border-border hover:bg-muted text-muted-foreground'" @click="newTemplateForm.channel = ch.id">
+                <component :is="ch.icon" class="size-3.5" /> {{ ch.id === 'video' ? 'Video' : ch.label }}
+              </button>
+            </div>
           </div>
-          <div v-if="selectedChannel === 'email'" class="flex flex-col gap-1.5">
-            <label class="text-[13px] font-medium text-foreground">Subject</label>
-            <input v-model="newTpl.subject" type="text" class="reset-base h-9 px-3 text-[13.5px] rounded-md border border-border/80 bg-background text-foreground shadow-2xs focus-visible:ring-1 focus-visible:ring-primary/30 focus-visible:outline-none" />
-          </div>
+
+          <!-- Template Name -->
           <div class="flex flex-col gap-1.5">
-            <label class="text-[13px] font-medium text-foreground">Message</label>
-            <textarea v-model="newTpl.message" class="reset-base min-h-[120px] p-3 text-[13.5px] rounded-md border border-border/80 bg-background text-foreground shadow-2xs focus-visible:ring-1 focus-visible:ring-primary/30 focus-visible:outline-none resize-y"></textarea>
+            <label class="text-[13.5px] font-medium text-foreground">Template Name</label>
+            <input v-model="newTemplateForm.name" type="text" :placeholder="newTemplateForm.channel === 'sms' ? 'e.g. VIP Client 5-Star Prompt' : newTemplateForm.channel === 'email' ? 'e.g. Elegant Post-Service Follow-up' : newTemplateForm.channel === 'whatsapp' ? 'e.g. Quick WhatsApp 1-Tap Feedback' : 'e.g. Customer Experience Video'" class="reset-base h-9 px-3 text-[14px] rounded-md border border-border/80 bg-background text-foreground shadow-2xs focus-visible:ring-1 focus-visible:ring-primary/30 focus-visible:outline-none" />
           </div>
+
+          <!-- SMS -->
+          <template v-if="newTemplateForm.channel === 'sms'">
+            <div class="flex flex-col gap-2">
+              <div class="flex items-center justify-between">
+                <label class="text-[13.5px] font-medium text-foreground">SMS Message Content</label>
+                <span class="text-[11.5px] text-muted-foreground font-mono">{{ newTemplateForm.smsMessage.length }} / 160 chars</span>
+              </div>
+              <textarea v-model="newTemplateForm.smsMessage" rows="4" placeholder="Type your SMS message here..." class="reset-base w-full text-[14px] p-3 rounded-lg border border-border bg-background text-foreground shadow-xs focus-visible:ring-1 focus-visible:ring-primary/30 outline-none leading-relaxed resize-none"></textarea>
+              <div class="flex items-center gap-2 flex-wrap pt-0.5">
+                <span class="text-[12px] text-muted-foreground font-medium">Insert tag:</span>
+                <button v-for="tag in TAGS" :key="tag" type="button" class="px-2 py-0.5 bg-muted/60 hover:bg-muted text-[11px] font-mono rounded text-foreground border border-border/50 cursor-pointer" @click="insertTagIntoModal(tag)">{{ tag }}</button>
+              </div>
+            </div>
+          </template>
+
+          <!-- Email -->
+          <template v-else-if="newTemplateForm.channel === 'email'">
+            <div class="space-y-4">
+              <div class="flex flex-col gap-1.5">
+                <label class="text-[13.5px] font-medium text-foreground">Email Subject Line</label>
+                <input v-model="newTemplateForm.emailSubject" type="text" placeholder="How was your experience with {{BusinessName}}?" class="reset-base h-9 px-3 text-[14px] rounded-md border border-border/80 bg-background text-foreground shadow-2xs focus-visible:ring-1 focus-visible:ring-primary/30 focus-visible:outline-none" />
+              </div>
+              <div class="flex flex-col gap-1.5">
+                <label class="text-[13.5px] font-medium text-foreground">Preheader Text</label>
+                <input v-model="newTemplateForm.emailPreheader" type="text" placeholder="We value your feedback. Take 30 seconds to rate us." class="reset-base h-9 px-3 text-[14px] rounded-md border border-border/80 bg-background text-foreground shadow-2xs focus-visible:ring-1 focus-visible:ring-primary/30 focus-visible:outline-none" />
+              </div>
+              <div class="flex flex-col gap-2">
+                <label class="text-[13.5px] font-medium text-foreground">Email Body Copy</label>
+                <textarea v-model="newTemplateForm.emailBody" rows="3" placeholder="Write your email body copy..." class="reset-base w-full text-[14px] p-3 rounded-lg border border-border bg-background text-foreground shadow-xs focus-visible:ring-1 focus-visible:ring-primary/30 outline-none leading-relaxed resize-none"></textarea>
+                <div class="flex items-center gap-2 flex-wrap pt-0.5">
+                  <span class="text-[12px] text-muted-foreground font-medium">Insert tag:</span>
+                  <button v-for="tag in TAGS" :key="tag" type="button" class="px-2 py-0.5 bg-muted/60 hover:bg-muted text-[11px] font-mono rounded text-foreground border border-border/50 cursor-pointer" @click="insertTagIntoModal(tag)">{{ tag }}</button>
+                </div>
+              </div>
+              <div class="flex flex-col gap-1.5">
+                <label class="text-[13.5px] font-medium text-foreground">Rating Button Text</label>
+                <input v-model="newTemplateForm.emailButtonText" type="text" placeholder="Rate Us on Google ★★★★★" class="reset-base h-9 px-3 text-[14px] rounded-md border border-border/80 bg-background text-foreground shadow-2xs focus-visible:ring-1 focus-visible:ring-primary/30 focus-visible:outline-none" />
+              </div>
+            </div>
+          </template>
+
+          <!-- WhatsApp -->
+          <template v-else-if="newTemplateForm.channel === 'whatsapp'">
+            <div class="space-y-4">
+              <div class="flex flex-col gap-1.5">
+                <label class="text-[13.5px] font-medium text-foreground">WhatsApp Header Greeting</label>
+                <input v-model="newTemplateForm.waHeader" type="text" placeholder="Hi {{FirstName}} 👋" class="reset-base h-9 px-3 text-[14px] rounded-md border border-border/80 bg-background text-foreground shadow-2xs focus-visible:ring-1 focus-visible:ring-primary/30 focus-visible:outline-none" />
+              </div>
+              <div class="flex flex-col gap-2">
+                <label class="text-[13.5px] font-medium text-foreground">Body Content</label>
+                <textarea v-model="newTemplateForm.waBody" rows="3" placeholder="Write your WhatsApp message body..." class="reset-base w-full text-[14px] p-3 rounded-lg border border-border bg-background text-foreground shadow-xs focus-visible:ring-1 focus-visible:ring-primary/30 outline-none leading-relaxed resize-none"></textarea>
+                <div class="flex items-center gap-2 flex-wrap pt-0.5">
+                  <span class="text-[12px] text-muted-foreground font-medium">Insert tag:</span>
+                  <button v-for="tag in TAGS" :key="tag" type="button" class="px-2 py-0.5 bg-muted/60 hover:bg-muted text-[11px] font-mono rounded text-foreground border border-border/50 cursor-pointer" @click="insertTagIntoModal(tag)">{{ tag }}</button>
+                </div>
+              </div>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                <div class="flex flex-col gap-1.5">
+                  <label class="text-[13.5px] font-medium text-foreground">Primary CTA Button</label>
+                  <input v-model="newTemplateForm.waButton1" type="text" placeholder="⭐ Leave a 5★ Review" class="reset-base h-9 px-3 text-[14px] rounded-md border border-border/80 bg-background text-foreground shadow-2xs focus-visible:ring-1 focus-visible:ring-primary/30 focus-visible:outline-none" />
+                </div>
+                <div class="flex flex-col gap-1.5">
+                  <label class="text-[13.5px] font-medium text-foreground">Secondary Button</label>
+                  <input v-model="newTemplateForm.waButton2" type="text" placeholder="💬 Talk with Support" class="reset-base h-9 px-3 text-[14px] rounded-md border border-border/80 bg-background text-foreground shadow-2xs focus-visible:ring-1 focus-visible:ring-primary/30 focus-visible:outline-none" />
+                </div>
+              </div>
+            </div>
+          </template>
+
+          <!-- Video -->
+          <template v-else>
+            <div class="space-y-4">
+              <div class="flex flex-col gap-1.5">
+                <label class="text-[13.5px] font-medium text-foreground">Recording Page Headline</label>
+                <input v-model="newTemplateForm.videoHeadline" type="text" placeholder="Share Your Story with {{BusinessName}}" class="reset-base h-9 px-3 text-[14px] rounded-md border border-border/80 bg-background text-foreground shadow-2xs focus-visible:ring-1 focus-visible:ring-primary/30 focus-visible:outline-none" />
+              </div>
+              <div class="flex flex-col gap-2">
+                <label class="text-[13.5px] font-medium text-foreground">Prompt Message</label>
+                <textarea v-model="newTemplateForm.videoMessage" rows="3" placeholder="Hi {{FirstName}}, could you record a quick video review sharing your experience?" class="reset-base w-full text-[14px] p-3 rounded-lg border border-border bg-background text-foreground shadow-xs focus-visible:ring-1 focus-visible:ring-primary/30 outline-none leading-relaxed resize-none"></textarea>
+                <div class="flex items-center gap-2 flex-wrap pt-0.5">
+                  <span class="text-[12px] text-muted-foreground font-medium">Insert tag:</span>
+                  <button v-for="tag in TAGS" :key="tag" type="button" class="px-2 py-0.5 bg-muted/60 hover:bg-muted text-[11px] font-mono rounded text-foreground border border-border/50 cursor-pointer" @click="insertTagIntoModal(tag)">{{ tag }}</button>
+                </div>
+              </div>
+              <div class="flex flex-col gap-1.5">
+                <label class="text-[13.5px] font-medium text-foreground">Guiding Questions (One per line)</label>
+                <textarea v-model="newTemplateForm.videoQuestions" rows="3" class="reset-base w-full text-[12.5px] p-3 rounded-lg border border-border bg-background text-foreground shadow-xs focus-visible:ring-1 focus-visible:ring-primary/30 outline-none leading-relaxed resize-none font-mono"></textarea>
+              </div>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                <div class="flex flex-col gap-1.5">
+                  <label class="text-[13.5px] font-medium text-foreground">Recording Button Text</label>
+                  <input v-model="newTemplateForm.videoButtonText" type="text" placeholder="Record Video Testimonial 🎥" class="reset-base h-9 px-3 text-[14px] rounded-md border border-border/80 bg-background text-foreground shadow-2xs focus-visible:ring-1 focus-visible:ring-primary/30 focus-visible:outline-none" />
+                </div>
+                <div class="flex flex-col gap-1.5">
+                  <label class="text-[13.5px] font-medium text-foreground">Max Duration</label>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger as-child>
+                      <button type="button" class="h-9 px-3 text-[13.5px] bg-background border border-border/80 rounded-md text-foreground flex items-center justify-between shadow-2xs hover:border-border focus-visible:ring-1 focus-visible:ring-primary/30 outline-none w-full text-left cursor-pointer">
+                        <span class="truncate">{{ newTemplateForm.videoMaxDuration }}</span>
+                        <ChevronDown class="size-3.5 opacity-50 ml-2 shrink-0" />
+                      </button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent class="w-[220px]">
+                      <DropdownMenuItem v-for="d in durationOptions" :key="d" class="text-[13px] cursor-pointer" @click="newTemplateForm.videoMaxDuration = d">{{ d }}</DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </div>
+              </div>
+            </div>
+          </template>
         </div>
-        <div class="flex items-center justify-end gap-2 pt-3 border-t border-border">
-          <button type="button" class="rounded-lg border border-border px-4 py-2 text-sm font-medium text-muted-foreground hover:bg-muted/50 cursor-pointer" @click="showNewTemplate = false">Cancel</button>
-          <button type="button" class="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow-sm hover:bg-primary/90 cursor-pointer disabled:opacity-50 inline-flex items-center gap-1.5" :disabled="!newTpl.name.trim()" @click="saveNewTemplate">
-            <Plus class="size-3.5" /> Create Template
+
+        <!-- Footer -->
+        <div class="px-6 py-3.5 border-t border-border bg-muted/20 flex items-center justify-end gap-2 shrink-0">
+          <button type="button" class="rounded-lg border border-border px-4 py-2 text-[13px] font-medium text-muted-foreground hover:bg-muted/50 cursor-pointer" @click="showNewTemplate = false">Cancel</button>
+          <button type="button" class="rounded-lg bg-primary px-4 py-2 text-[13px] font-semibold text-primary-foreground shadow-sm hover:bg-primary/90 cursor-pointer disabled:opacity-50 inline-flex items-center gap-1.5" :disabled="!isNewTemplateValid" @click="saveNewTemplate">
+            <Check class="size-3.5" /> Create Template
           </button>
         </div>
       </div>

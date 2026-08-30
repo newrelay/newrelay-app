@@ -54,6 +54,7 @@ onMounted(() => {
     return;
   }
   loadListings();
+  loadConnectedPlatforms();
 });
 
 // ---------------------------------------------------------------------------
@@ -497,10 +498,38 @@ const closeExport = () => {
   }, 300);
 };
 
+const PLATFORM_LABELS = {
+  google: 'Google Business Profile',
+  facebook: 'Facebook',
+  yelp: 'Yelp',
+  trustpilot: 'Trustpilot',
+  bing: 'Bing',
+};
+function platformLabel(provider, locationName = '') {
+  if (PLATFORM_LABELS[provider]) return PLATFORM_LABELS[provider];
+  if (provider === 'custom') {
+    const suffix = (locationName || '').split(' - ').pop();
+    return PLATFORM_LABELS[suffix] || (suffix ? suffix.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase()) : 'Custom');
+  }
+  return String(provider || '').replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+}
+const connectedIntegrations = ref([]);
+async function loadConnectedPlatforms() {
+  try {
+    const { data } = await axios.get(`${baseUrl()}/integrations`);
+    connectedIntegrations.value = (data || []).filter(i => i.status !== 'disconnected');
+  } catch {
+    connectedIntegrations.value = [];
+  }
+}
+const addPlatformOptions = computed(() => {
+  const names = [...new Set(connectedIntegrations.value.map(i => platformLabel(i.provider, i.location_name)))];
+  return [...names, 'Manual'];
+});
 const blankForm = () => ({
   name: '',
   category: 'Restaurant',
-  primaryPlatform: 'Google Business Profile',
+  primaryPlatform: addPlatformOptions.value[0] || 'Manual',
   country: 'United States',
   address: '',
   phone: '',
@@ -510,7 +539,6 @@ const blankForm = () => ({
   image: '',
 });
 const categoryOptions = ['Restaurant', 'Agency', 'Healthcare', 'Retail', 'Digital Marketing Agency', 'Other'];
-const addPlatformOptions = ['Google Business Profile', 'Facebook', 'Yelp', 'Manual'];
 const countryOptions = ['United States', 'India', 'United Kingdom', 'Canada'];
 const addOpen = ref(false);
 const addStep = ref('info');
@@ -524,8 +552,10 @@ const connectOptionsFor = computed(() => {
     default: return ['Connect Existing Account', 'Import Existing Listing', 'Skip for Now'];
   }
 });
-const openAdd = type => {
+const openAdd = async type => {
   closeMenus();
+  await loadConnectedPlatforms();
+  addForm.value = blankForm();
   addOpen.value = true;
   addStep.value = type === 'connect' ? 'connect' : 'info';
 };
@@ -662,7 +692,7 @@ function saveSettings() {
       </div>
 
       <!-- Filters & Toolbar -->
-      <div class="px-8 py-5 border-b border-border bg-[#FAFAFA] dark:bg-background shrink-0 sticky top-0 z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div class="px-8 py-5 border-b border-border bg-[#FAFAFA] dark:bg-background shrink-0 sticky top-0 z-40 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div class="flex flex-wrap items-center gap-2">
           <div class="relative w-48 mr-2">
             <Search class="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground z-10" />

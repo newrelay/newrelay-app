@@ -733,31 +733,21 @@ const stats = computed(() => {
         <div class="flex-1 overflow-y-auto bg-card hide-scrollbar">
           <!-- Video Player Block -->
           <div class="w-full bg-black relative aspect-video max-h-[240px] shrink-0 group">
-            <img :src="selectedVideo.thumbnail" class="w-full h-full object-cover opacity-80" />
-            <div class="absolute inset-0 flex items-center justify-center">
-              <div class="size-14 rounded-full bg-black/40 backdrop-blur-xs flex items-center justify-center text-white cursor-pointer hover:bg-black/60 transition-colors shadow-lg border border-white/20">
-                <Play class="size-6 ml-1 fill-white" />
+            <video
+              v-if="selectedVideo.videoUrl"
+              :key="selectedVideo.id"
+              :src="selectedVideo.videoUrl"
+              :poster="selectedVideo.thumbnail"
+              class="w-full h-full object-contain"
+              controls
+              playsinline
+            />
+            <template v-else>
+              <img :src="selectedVideo.thumbnail" class="w-full h-full object-cover opacity-80" />
+              <div class="absolute inset-0 flex items-center justify-center">
+                <span class="text-white/70 text-xs font-medium">Video not available</span>
               </div>
-            </div>
-            <!-- Controls overlay -->
-            <div class="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/80 via-black/40 to-transparent flex flex-col gap-3">
-              <div class="flex items-center justify-between text-white text-[11px] font-medium tracking-wider">
-                <div class="flex items-center gap-3">
-                  <span>0:00 / {{ selectedVideo.duration }}</span>
-                </div>
-                <div class="flex items-center gap-3">
-                  <button class="relative group/btn opacity-90 hover:opacity-100 hover:text-primary transition-colors cursor-pointer">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20V10M18 20V4M6 20v-4"/></svg>
-                  </button>
-                  <button class="relative group/btn opacity-90 hover:opacity-100 hover:text-primary transition-colors cursor-pointer">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
-                  </button>
-                </div>
-              </div>
-              <div class="h-1 bg-white/30 rounded-full overflow-hidden cursor-pointer">
-                <div class="h-full bg-white w-1/4 relative rounded-full"></div>
-              </div>
-            </div>
+            </template>
           </div>
         
           <!-- Quick Info Row -->

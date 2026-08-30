@@ -234,6 +234,21 @@ const closeMenus = () => {
   openMenu.value = null;
 };
 
+// The per-listing actions menu flips to open upward when there isn't enough
+// room below the trigger (e.g. the last row in the list).
+const actionsMenuUp = ref(false);
+const ACTIONS_MENU_HEIGHT = 300;
+function toggleActionsMenu(listing, event) {
+  const key = `actions_${listing.id}`;
+  if (openMenu.value === key) {
+    openMenu.value = null;
+    return;
+  }
+  const rect = event.currentTarget.getBoundingClientRect();
+  actionsMenuUp.value = window.innerHeight - rect.bottom < ACTIONS_MENU_HEIGHT;
+  openMenu.value = key;
+}
+
 // Toast
 const toastState = ref({ visible: false, message: '' });
 let toastTimer = null;
@@ -785,13 +800,14 @@ function saveSettings() {
                 <div class="relative">
                   <button
                     class="inline-flex items-center justify-center size-8 bg-white dark:bg-card border border-border hover:bg-muted rounded-md shadow-xs transition-colors"
-                    @click.stop="toggleMenu('actions_' + listing.id)"
+                    @click.stop="toggleActionsMenu(listing, $event)"
                   >
                     <MoreHorizontal class="size-4 text-muted-foreground" />
                   </button>
                   <div
                     v-if="openMenu === 'actions_' + listing.id"
-                    class="absolute right-0 mt-1 w-48 rounded-lg border border-border bg-card shadow-lg py-1 z-40"
+                    class="absolute right-0 w-48 rounded-lg border border-border bg-card shadow-lg py-1 z-40"
+                    :class="actionsMenuUp ? 'bottom-full mb-1' : 'top-full mt-1'"
                   >
                     <button class="w-full text-left px-3 py-2 text-sm text-foreground hover:bg-muted transition-colors" @click.stop="renameListing(listing)">Rename</button>
                     <button class="w-full text-left px-3 py-2 text-sm text-foreground hover:bg-muted transition-colors" @click.stop="duplicateListing(listing)">Duplicate</button>

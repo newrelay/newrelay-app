@@ -565,8 +565,9 @@ function saveSettings() {
             <!-- Left Thumbnail -->
             <div class="w-56 shrink-0 relative border-r border-border rounded-l-xl overflow-hidden">
               <img v-if="listing.image" :src="listing.image" class="w-full h-full object-cover" @error="listing.image = ''" />
-              <div v-else class="w-full h-full flex items-center justify-center bg-gradient-to-br text-white text-3xl font-bold select-none" :class="gradientFor(listing.title)">
-                {{ (listing.title || 'L').charAt(0).toUpperCase() }}
+              <div v-else class="w-full h-full flex flex-col items-center justify-center gap-2 bg-gradient-to-br text-white select-none" :class="gradientFor(listing.title)">
+                <ImageIcon class="size-7 opacity-80" />
+                <span class="text-3xl font-bold">{{ (listing.title || 'L').charAt(0).toUpperCase() }}</span>
               </div>
             </div>
 

@@ -12,6 +12,13 @@ class Api::V1::Accounts::Reputation::ListingsController < Api::V1::Accounts::Bas
     render json: listing, status: :created
   end
 
+  # PATCH /api/v1/accounts/:account_id/reputation/listings/:id
+  def update
+    listing = current_account.reputation_listings.find(params[:id])
+    listing.update!(listing_params)
+    render json: listing
+  end
+
   # DELETE /api/v1/accounts/:account_id/reputation/listings/:id
   def destroy
     current_account.reputation_listings.find(params[:id]).destroy!

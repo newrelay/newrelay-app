@@ -161,17 +161,25 @@ function mapListing(row) {
     title: row.name || row.title,
     badge: row.primary ? 'Primary' : '',
     address: row.address || '',
+    category: row.category || '',
+    country: row.country || '',
+    phone: row.phone || '',
+    website: row.website || '',
+    email: row.email || '',
     image: row.image || '',
     optimizationScore: row.optimized ?? row.optimizationScore ?? 90,
     rating: row.rating || 4.5,
     reviewsCount: row.reviews ?? row.reviewsCount ?? 0,
     lastSync: row.synced_at ? new Date(row.synced_at).toLocaleString() : 'Just now',
+    createdAt: row.created_at || null,
+    updatedAt: row.updated_at || null,
     platforms: platforms.length ? platforms : [
       { name: 'Google', status: 'Connected' },
       { name: 'Facebook', status: 'Connected' },
     ],
   };
 }
+const platformsToApi = platforms => (platforms || []).map(p => ({ name: p.name, ok: p.status === 'Connected' }));
 
 async function loadListings() {
   loading.value = true;
@@ -236,6 +244,106 @@ const showToast = message => {
     toastState.value.visible = false;
   }, 3000);
 };
+
+// Per-listing menu actions (Rename / Duplicate / Disconnect / Delete / History / Export / Copy Link)
+const formatDate = d => (d ? new Date(d).toLocaleString() : '—');
+
+async function renameListing(listing) {
+  closeMenus();
+  const name = window.prompt('Rename listing', listing.title);
+  if (!name || !name.trim() || name.trim() === listing.title) return;
+  const trimmed = name.trim();
+  try {
+    await axios.patch(`${baseUrl()}/listings/${listing.id}`, { name: trimmed });
+    listing.title = trimmed;
+    showToast('Listing renamed');
+  } catch (err) {
+    showToast('Failed to rename listing');
+  }
+}
+
+async function duplicateListing(listing) {
+  closeMenus();
+  try {
+    await axios.post(`${baseUrl()}/listings`, {
+      name: `${listing.title} (Copy)`,
+      address: listing.address,
+      category: listing.category,
+      country: listing.country,
+      phone: listing.phone,
+      website: listing.website,
+      email: listing.email,
+      image: listing.image,
+      platforms: platformsToApi(listing.platforms),
+    });
+    await loadListings();
+    showToast('Listing duplicated');
+  } catch (err) {
+    showToast('Failed to duplicate listing');
+  }
+}
+
+async function disconnectListing(listing) {
+  closeMenus();
+  if (!confirm(`Disconnect all platforms for ${listing.title}?`)) return;
+  const platforms = listing.platforms.map(p => ({ ...p, status: 'Not Connected' }));
+  try {
+    await axios.patch(`${baseUrl()}/listings/${listing.id}`, { platforms: platformsToApi(platforms) });
+    listing.platforms = platforms;
+    showToast('Listing disconnected');
+  } catch (err) {
+    showToast('Failed to disconnect listing');
+  }
+}
+
+async function deleteListing(listing) {
+  closeMenus();
+  if (!confirm(`Delete ${listing.title}? This cannot be undone.`)) return;
+  try {
+    await axios.delete(`${baseUrl()}/listings/${listing.id}`);
+    listings.value = listings.value.filter(l => l.id !== listing.id);
+    showToast('Listing deleted');
+  } catch (err) {
+    showToast('Failed to delete listing');
+  }
+}
+
+const historyListing = ref(null);
+function viewHistory(listing) {
+  closeMenus();
+  historyListing.value = listing;
+}
+
+function exportListing(listing) {
+  closeMenus();
+  const rows = [
+    ['Field', 'Value'],
+    ['Business name', listing.title],
+    ['Address', listing.address],
+    ['Rating', listing.rating],
+    ['Reviews', listing.reviewsCount],
+    ['Health score', `${listing.optimizationScore}%`],
+    ['Connected platforms', listing.platforms.map(p => `${p.name} (${p.status})`).join('; ')],
+    ['Last sync', listing.lastSync],
+  ];
+  const csv = rows.map(r => r.map(v => `"${String(v ?? '').replaceAll('"', '""')}"`).join(',')).join('\n');
+  const blob = new Blob([csv], { type: 'text/csv' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `${listing.title.replace(/\s+/g, '_')}.csv`;
+  a.click();
+  URL.revokeObjectURL(url);
+  showToast('Listing exported');
+}
+
+function copyReviewLink() {
+  closeMenus();
+  const link = `${window.location.origin}/reputation/review/${accountId}/new`;
+  navigator.clipboard.writeText(link)
+    .then(() => showToast('Review link copied!'))
+    .catch(() => showToast('Failed to copy link'));
+}
 
 // Export modal & Add modal
 const exportOpen = ref(false);
@@ -671,14 +779,14 @@ function saveSettings() {
                     v-if="openMenu === 'actions_' + listing.id"
                     class="absolute right-0 mt-1 w-48 rounded-lg border border-border bg-card shadow-lg py-1 z-40"
                   >
-                    <button class="w-full text-left px-3 py-2 text-sm text-foreground hover:bg-muted transition-colors" @click="showToast('Rename action')">Rename</button>
-                    <button class="w-full text-left px-3 py-2 text-sm text-foreground hover:bg-muted transition-colors" @click="showToast('Duplicate action')">Duplicate</button>
-                    <button class="w-full text-left px-3 py-2 text-sm text-foreground hover:bg-muted transition-colors" @click="showToast('Disconnect action')">Disconnect</button>
-                    <button class="w-full text-left px-3 py-2 text-sm text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950 transition-colors" @click="showToast('Delete action')">Delete</button>
+                    <button class="w-full text-left px-3 py-2 text-sm text-foreground hover:bg-muted transition-colors" @click.stop="renameListing(listing)">Rename</button>
+                    <button class="w-full text-left px-3 py-2 text-sm text-foreground hover:bg-muted transition-colors" @click.stop="duplicateListing(listing)">Duplicate</button>
+                    <button class="w-full text-left px-3 py-2 text-sm text-foreground hover:bg-muted transition-colors" @click.stop="disconnectListing(listing)">Disconnect</button>
+                    <button class="w-full text-left px-3 py-2 text-sm text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950 transition-colors" @click.stop="deleteListing(listing)">Delete</button>
                     <div class="my-1 border-t border-border"></div>
-                    <button class="w-full text-left px-3 py-2 text-sm text-foreground hover:bg-muted transition-colors" @click="showToast('View history')">View History</button>
-                    <button class="w-full text-left px-3 py-2 text-sm text-foreground hover:bg-muted transition-colors" @click="showToast('Exporting listing...')">Export</button>
-                    <button class="w-full text-left px-3 py-2 text-sm text-foreground hover:bg-muted transition-colors" @click="showToast('Copied review link!')">Copy Review Link</button>
+                    <button class="w-full text-left px-3 py-2 text-sm text-foreground hover:bg-muted transition-colors" @click.stop="viewHistory(listing)">View History</button>
+                    <button class="w-full text-left px-3 py-2 text-sm text-foreground hover:bg-muted transition-colors" @click.stop="exportListing(listing)">Export</button>
+                    <button class="w-full text-left px-3 py-2 text-sm text-foreground hover:bg-muted transition-colors" @click.stop="copyReviewLink()">Copy Review Link</button>
                   </div>
                 </div>
               </div>
@@ -977,6 +1085,40 @@ function saveSettings() {
           <button class="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow-xs hover:bg-primary/90 transition-colors" @click="saveSettings">
             Save Changes
           </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Listing History Modal -->
+    <div v-if="historyListing" class="fixed inset-0 z-50 flex items-center justify-center p-4">
+      <div class="absolute inset-0 bg-background/80 backdrop-blur-sm" @click="historyListing = null"></div>
+      <div class="relative bg-card border border-border rounded-2xl shadow-lg max-w-md w-full p-6 space-y-5">
+        <div class="flex items-center justify-between pb-3 border-b border-border">
+          <h2 class="text-[15px] font-semibold text-foreground">{{ historyListing.title }} — History</h2>
+          <button class="text-muted-foreground hover:text-foreground" @click="historyListing = null">
+            <X class="size-4" />
+          </button>
+        </div>
+        <div class="space-y-2.5 text-[13.5px]">
+          <div class="flex items-center justify-between">
+            <span class="text-muted-foreground">Created</span>
+            <span class="font-medium text-foreground">{{ formatDate(historyListing.createdAt) }}</span>
+          </div>
+          <div class="flex items-center justify-between">
+            <span class="text-muted-foreground">Last updated</span>
+            <span class="font-medium text-foreground">{{ formatDate(historyListing.updatedAt) }}</span>
+          </div>
+          <div class="flex items-center justify-between">
+            <span class="text-muted-foreground">Last synced</span>
+            <span class="font-medium text-foreground">{{ historyListing.lastSync }}</span>
+          </div>
+          <div class="pt-2.5 border-t border-border">
+            <div class="text-muted-foreground mb-2">Platform connections</div>
+            <div v-for="p in historyListing.platforms" :key="p.name" class="flex items-center justify-between py-1">
+              <span class="text-foreground">{{ p.name }}</span>
+              <span :class="p.status === 'Connected' ? 'text-emerald-600 dark:text-emerald-400' : 'text-muted-foreground'">{{ p.status }}</span>
+            </div>
+          </div>
         </div>
       </div>
     </div>

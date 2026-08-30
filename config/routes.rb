@@ -216,7 +216,7 @@ Rails.application.routes.draw do
             resources :templates, only: [:index, :create, :update, :destroy]
             resources :review_requests, only: [:index, :create]
             resources :feedback, only: [:index], path: 'feedback'
-            resources :listings, only: [:index, :create, :destroy]
+            resources :listings, only: [:index, :create, :update, :destroy]
             resources :reports, only: [:create]
             resource :summary, only: [:show], controller: 'summaries'
             resource :ai_insights, only: [:show], controller: 'ai_insights'

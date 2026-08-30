@@ -734,6 +734,9 @@ Rails.application.routes.draw do
   post 'reputation/feedback', to: 'reputation/feedback#create'
   get 'reputation/reports/:token', to: 'reputation/reports#show', as: :reputation_report
 
+  get 'reputation/review/:account_id/new', to: 'reputation/public_reviews#new', as: :new_reputation_review
+  post 'reputation/review/:account_id', to: 'reputation/public_reviews#create', as: :reputation_reviews
+
   get 'reputation/video/:account_id/new', to: 'reputation/public_video_testimonials#new', as: :new_reputation_video_testimonial
   post 'reputation/video/:account_id', to: 'reputation/public_video_testimonials#create', as: :reputation_video_testimonials
   get 'reputation/testimonials/:token', to: 'reputation/public_video_testimonials#show', as: :reputation_testimonial

@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Rate <%= @account.name %></title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: Roboto, Arial, sans-serif; background: #f1f3f4; color: #202124; min-height: 100vh; display: flex; align-items: flex-start; justify-content: center; padding: 24px 16px; }
+    .card { background: #fff; width: 100%; max-width: 560px; border-radius: 12px; box-shadow: 0 1px 3px rgba(60,64,67,.3), 0 4px 8px rgba(60,64,67,.15); overflow: hidden; }
+    .bar { height: 8px; background: linear-gradient(90deg,#4285F4,#34A853,#FBBC05,#EA4335); }
+    .body { padding: 24px; }
+    .head { display: flex; align-items: center; gap: 14px; margin-bottom: 20px; }
+    .avatar { width: 48px; height: 48px; border-radius: 50%; background: #1a73e8; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 22px; font-weight: 500; flex-shrink: 0; }
+    .head h1 { font-size: 18px; font-weight: 500; line-height: 1.3; }
+    .head p { font-size: 13px; color: #5f6368; margin-top: 2px; }
+    .posting { display: flex; align-items: center; gap: 8px; font-size: 13px; color: #5f6368; margin-bottom: 16px; }
+    .posting .dot { width: 20px; height: 20px; border-radius: 50%; background: #e8eaed; display: inline-flex; align-items: center; justify-content: center; font-size: 12px; }
+    .stars { display: flex; gap: 6px; margin-bottom: 22px; }
+    .star { width: 40px; height: 40px; cursor: pointer; color: #dadce0; transition: color .1s, transform .1s; }
+    .star:hover { transform: scale(1.08); }
+    .star.on { color: #fbbc04; }
+    label { display: block; font-size: 13px; color: #5f6368; margin-bottom: 6px; }
+    textarea, input[type=text] { width: 100%; border: 1px solid #dadce0; border-radius: 8px; padding: 12px 14px; font: inherit; font-size: 15px; color: #202124; outline: none; }
+    textarea { min-height: 120px; resize: vertical; margin-bottom: 18px; }
+    input[type=text] { margin-bottom: 22px; }
+    textarea:focus, input[type=text]:focus { border-color: #1a73e8; box-shadow: 0 0 0 1px #1a73e8; }
+    .actions { display: flex; justify-content: flex-end; }
+    button { background: #1a73e8; color: #fff; border: none; border-radius: 20px; padding: 10px 24px; font-size: 14px; font-weight: 500; cursor: pointer; }
+    button:hover { background: #1765cc; }
+    .done { text-align: center; padding: 40px 24px; }
+    .done .check { width: 64px; height: 64px; border-radius: 50%; background: #e6f4ea; color: #34A853; display: flex; align-items: center; justify-content: center; margin: 0 auto 18px; font-size: 34px; }
+    .done h2 { font-size: 20px; font-weight: 500; margin-bottom: 8px; }
+    .done p { font-size: 14px; color: #5f6368; margin-bottom: 22px; }
+    .done a { color: #1a73e8; text-decoration: none; font-weight: 500; font-size: 14px; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="bar"></div>
+    <% if @submitted %>
+      <div class="done">
+        <div class="check">&#10003;</div>
+        <h2>Thanks for your review!</h2>
+        <p>Your feedback for <%= @account.name %> has been posted.</p>
+        <a href="<%= new_reputation_review_path(account_id: @account.id) %>">Write another review</a>
+      </div>
+    <% else %>
+      <div class="body">
+        <div class="head">
+          <div class="avatar"><%= @account.name.to_s.first&.upcase %></div>
+          <div>
+            <h1><%= @account.name %></h1>
+            <p>Rate your experience</p>
+          </div>
+        </div>
+
+        <div class="posting">
+          <span class="dot">&#128100;</span>
+          <span>Posting publicly across Google</span>
+        </div>
+
+        <form method="post" action="<%= reputation_reviews_path(account_id: @account.id) %>">
+          <input type="hidden" name="rating" id="rating" value="5" />
+          <div class="stars" id="stars">
+            <% (1..5).each do |i| %>
+              <svg class="star on" data-v="<%= i %>" viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.27l6.18 3.73-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+            <% end %>
+          </div>
+
+          <label for="body">Share details of your own experience</label>
+          <textarea id="body" name="body" placeholder="What did you like or dislike?"></textarea>
+
+          <label for="reviewer_name">Your name</label>
+          <input type="text" id="reviewer_name" name="reviewer_name" placeholder="e.g. Sarah J." />
+
+          <div class="actions">
+            <button type="submit">Post</button>
+          </div>
+        </form>
+      </div>
+    <% end %>
+  </div>
+
+  <script>
+    (function () {
+      var stars = Array.prototype.slice.call(document.querySelectorAll('#stars .star'));
+      var input = document.getElementById('rating');
+      function paint(n) { stars.forEach(function (s) { s.classList.toggle('on', Number(s.dataset.v) <= n); }); }
+      stars.forEach(function (s) {
+        s.addEventListener('click', function () { input.value = s.dataset.v; paint(Number(s.dataset.v)); });
+        s.addEventListener('mouseenter', function () { paint(Number(s.dataset.v)); });
+      });
+      var wrap = document.getElementById('stars');
+      if (wrap) wrap.addEventListener('mouseleave', function () { paint(Number(input.value)); });
+    })();
+  </script>
+</body>
+</html>

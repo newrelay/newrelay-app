@@ -7,7 +7,7 @@ import {
   MessageSquare, Mail, MessageCircle, Video, Plus, Sparkles, Copy, Check,
   QrCode, Download, Printer, Bot, ShieldCheck, ChevronDown, Star, ExternalLink,
   Signal, Wifi, MoreVertical, Paperclip, Smile, Mic, Trash2, Archive, Phone, Info,
-  ChevronLeft, CheckCircle2, Clock,
+  ChevronLeft, CheckCircle2, Clock, X,
 } from 'lucide-vue-next';
 import {
   RelaySwitch,
@@ -54,12 +54,41 @@ const whatsappHeader = ref(defaultWhatsAppTemplates[0].headerText);
 const whatsappBody = ref(defaultWhatsAppTemplates[0].bodyText);
 const videoPrompt = ref('Hi {{FirstName}}, we would love a quick 45-second video sharing your experience with {{BusinessName}}!');
 
+// User-created templates per channel, persisted in the settings config blob.
+const customTemplates = ref({ sms: [], email: [], whatsapp: [] });
 const channelTemplates = computed(() => {
-  if (selectedChannel.value === 'sms') return defaultSmsTemplates;
-  if (selectedChannel.value === 'email') return defaultEmailTemplates;
-  if (selectedChannel.value === 'whatsapp') return defaultWhatsAppTemplates;
+  const custom = customTemplates.value[selectedChannel.value] || [];
+  if (selectedChannel.value === 'sms') return [...defaultSmsTemplates, ...custom];
+  if (selectedChannel.value === 'email') return [...defaultEmailTemplates, ...custom];
+  if (selectedChannel.value === 'whatsapp') return [...defaultWhatsAppTemplates, ...custom];
   return [];
 });
+
+// New Template modal
+const showNewTemplate = ref(false);
+const newTpl = ref({ name: '', message: '', subject: '' });
+function openNewTemplate() {
+  newTpl.value = {
+    name: '',
+    message: selectedChannel.value === 'sms' ? smsMessage.value
+      : selectedChannel.value === 'email' ? emailBody.value : whatsappBody.value,
+    subject: emailSubject.value,
+  };
+  showNewTemplate.value = true;
+}
+function saveNewTemplate() {
+  const name = newTpl.value.name.trim();
+  if (!name) return;
+  const id = `custom-${selectedChannel.value}-${Date.now()}`;
+  let obj;
+  if (selectedChannel.value === 'sms') obj = { id, name, message: newTpl.value.message };
+  else if (selectedChannel.value === 'email') obj = { id, name, subject: newTpl.value.subject, body: newTpl.value.message };
+  else obj = { id, name, headerText: name, bodyText: newTpl.value.message };
+  customTemplates.value[selectedChannel.value] = [...(customTemplates.value[selectedChannel.value] || []), obj];
+  persist({ customTemplates: customTemplates.value });
+  channelTemplateId.value = id;
+  showNewTemplate.value = false;
+}
 const channelTemplateId = computed({
   get() {
     if (selectedChannel.value === 'sms') return smsTemplateId.value;
@@ -221,6 +250,7 @@ async function loadConfig() {
     if (typeof c.includeLogo === 'boolean') includeLogo.value = c.includeLogo;
     if (c.aiSettings) aiSettings.value = { ...aiSettings.value, ...c.aiSettings };
     if (c.spamSettings) spamSettings.value = { ...spamSettings.value, ...c.spamSettings };
+    if (c.customTemplates) customTemplates.value = { sms: [], email: [], whatsapp: [], ...c.customTemplates };
   } catch (e) { /* no saved settings yet */ }
 }
 onMounted(loadConfig);
@@ -283,7 +313,7 @@ const autoFlagLabel = computed(() => autoFlagOptions.find(o => o.value === spamS
                 </DropdownMenu>
               </div>
               <div class="sm:col-span-4">
-                <button class="h-9 w-full px-3 rounded-md border border-border hover:border-transparent bg-background hover:bg-muted text-[13px] font-medium inline-flex items-center justify-center gap-1.5 shadow-xs cursor-pointer"><Plus class="size-3.5" /> New Template</button>
+                <button type="button" class="h-9 w-full px-3 rounded-md border border-border hover:border-transparent bg-background hover:bg-muted text-[13px] font-medium inline-flex items-center justify-center gap-1.5 shadow-xs cursor-pointer" @click="openNewTemplate"><Plus class="size-3.5" /> New Template</button>
               </div>
             </div>
 
@@ -619,6 +649,37 @@ const autoFlagLabel = computed(() => autoFlagOptions.find(o => o.value === spamS
           <div class="flex items-center justify-end pt-3 border-t border-border">
             <button class="h-9 px-4 rounded-md bg-primary text-primary-foreground text-sm font-semibold inline-flex items-center gap-2 cursor-pointer hover:bg-primary/90" @click="saveSpamConfig"><Check v-if="isSpamSaved" class="size-4" /><ShieldCheck v-else class="size-4" /> {{ isSpamSaved ? 'Saved' : 'Save Spam Config' }}</button>
           </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- New Template modal -->
+    <div v-if="showNewTemplate" class="fixed inset-0 z-50 flex items-center justify-center p-4">
+      <div class="absolute inset-0 bg-background/80 backdrop-blur-sm" @click="showNewTemplate = false"></div>
+      <div class="relative bg-card border border-border rounded-2xl shadow-lg max-w-lg w-full p-6 space-y-5">
+        <div class="flex items-center justify-between pb-3 border-b border-border">
+          <h2 class="text-[15px] font-semibold text-foreground">New {{ channelLabel }} Template</h2>
+          <button type="button" class="text-muted-foreground hover:text-foreground" @click="showNewTemplate = false"><X class="size-4" /></button>
+        </div>
+        <div class="space-y-4">
+          <div class="flex flex-col gap-1.5">
+            <label class="text-[13px] font-medium text-foreground">Template name <span class="text-destructive">*</span></label>
+            <input v-model="newTpl.name" type="text" placeholder="e.g. Post-visit follow-up" class="reset-base h-9 px-3 text-[13.5px] rounded-md border border-border/80 bg-background text-foreground shadow-2xs focus-visible:ring-1 focus-visible:ring-primary/30 focus-visible:outline-none" />
+          </div>
+          <div v-if="selectedChannel === 'email'" class="flex flex-col gap-1.5">
+            <label class="text-[13px] font-medium text-foreground">Subject</label>
+            <input v-model="newTpl.subject" type="text" class="reset-base h-9 px-3 text-[13.5px] rounded-md border border-border/80 bg-background text-foreground shadow-2xs focus-visible:ring-1 focus-visible:ring-primary/30 focus-visible:outline-none" />
+          </div>
+          <div class="flex flex-col gap-1.5">
+            <label class="text-[13px] font-medium text-foreground">Message</label>
+            <textarea v-model="newTpl.message" class="reset-base min-h-[120px] p-3 text-[13.5px] rounded-md border border-border/80 bg-background text-foreground shadow-2xs focus-visible:ring-1 focus-visible:ring-primary/30 focus-visible:outline-none resize-y"></textarea>
+          </div>
+        </div>
+        <div class="flex items-center justify-end gap-2 pt-3 border-t border-border">
+          <button type="button" class="rounded-lg border border-border px-4 py-2 text-sm font-medium text-muted-foreground hover:bg-muted/50 cursor-pointer" @click="showNewTemplate = false">Cancel</button>
+          <button type="button" class="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow-sm hover:bg-primary/90 cursor-pointer disabled:opacity-50 inline-flex items-center gap-1.5" :disabled="!newTpl.name.trim()" @click="saveNewTemplate">
+            <Plus class="size-3.5" /> Create Template
+          </button>
         </div>
       </div>
     </div>

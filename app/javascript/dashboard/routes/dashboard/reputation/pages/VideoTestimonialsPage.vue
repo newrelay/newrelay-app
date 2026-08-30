@@ -6,7 +6,7 @@ import {
   Play, MoreHorizontal, MessageSquare, Heart, Share2, 
   CheckCircle, Search, Filter, Calendar, ExternalLink, 
   X, Eye, Download, LayoutGrid, List, Sparkles, TrendingUp, TrendingDown,
-  Trash2, Edit, Check, ChevronDown, Clock, Scissors, Quote,
+  Trash2, Edit, Check, ChevronDown, Clock, Quote,
   Bot, ThumbsUp, Send, Globe, FileText, Plus, Star
 } from 'lucide-vue-next';
 import RequestVideoTestimonialModal from '../components/RequestVideoTestimonialModal.vue';
@@ -76,6 +76,7 @@ function mapVideo(v) {
     publishedAt: v.published_at || null,
     rejectedAt: v.rejected_at || null,
     notes: v.notes || [],
+    email: v.email || '',
     status: STATUS_LABEL[v.status] || 'Pending Approval',
     platform: v.platform || '',
     rating: v.rating || 0,
@@ -198,6 +199,8 @@ const getPlatformIcon = (name) => platforms.find(p => p.name === name)?.icon || 
 
 const selectVideo = (video) => {
   selectedVideo.value = video;
+  replyVariant.value = 0;
+  if (!tabs.value.includes(activeTab.value)) activeTab.value = 'Overview';
 };
 
 const closePanel = () => {
@@ -233,7 +236,34 @@ async function addNote() {
   }
 }
 
-const handleReply = () => showToast(`Opening reply composer for ${selectedVideo.value?.author}...`);
+function localReply(video, variant = 0) {
+  const name = (video?.author || 'there').split(' ')[0];
+  const variants = [
+    `Thank you so much, ${name}! We're thrilled you took the time to share this. We're always here if you need anything.`,
+    `Hi ${name}, we really appreciate this testimonial — it means a lot to the team. Thank you!`,
+    `Thanks ${name}! Hearing this from you made our day. We'll keep working to earn that trust.`,
+  ];
+  return variants[variant % variants.length];
+}
+const replyVariant = ref(0);
+const displayedReply = computed(() => {
+  const v = selectedVideo.value;
+  if (!v) return '';
+  if (replyVariant.value === 0 && insights.value.suggested_reply) return insights.value.suggested_reply;
+  const offset = insights.value.suggested_reply ? replyVariant.value - 1 : replyVariant.value;
+  return localReply(v, Math.max(0, offset));
+});
+const handleReply = async () => {
+  const v = selectedVideo.value;
+  if (!v) return;
+  const text = displayedReply.value;
+  try { await navigator.clipboard.writeText(text); } catch { /* ignore */ }
+  if (v.email) {
+    window.location.href = `mailto:${encodeURIComponent(v.email)}?subject=${encodeURIComponent('Thank you for your testimonial')}&body=${encodeURIComponent(text)}`;
+    return;
+  }
+  showToast('Reply copied. No customer email on this video.');
+};
 const handleShare = async () => {
   const url = selectedVideo.value?.shareUrl || selectedVideo.value?.videoUrl;
   if (!url) { showToast('No shareable link yet.'); return; }
@@ -255,7 +285,21 @@ const handleDownload = () => {
   a.remove();
   showToast('Downloading video…');
 };
-const handleEdit = () => showToast(`Opening editor for ${selectedVideo.value?.author}'s video...`);
+const handleEdit = async () => {
+  const v = selectedVideo.value;
+  if (!v) return;
+  const name = window.prompt('Customer name', v.author);
+  if (!name || !name.trim() || name.trim() === v.author) return;
+  try {
+    await axios.patch(`${baseUrl()}/${v.id}`, { customer_name: name.trim() });
+    v.author = name.trim();
+    const idx = mockVideos.value.findIndex(row => row.id === v.id);
+    if (idx !== -1) mockVideos.value[idx].author = name.trim();
+    showToast('Name updated');
+  } catch (err) {
+    showToast('Failed to update name');
+  }
+};
 // F6: embed = an iframe of the public share page (reuses F2; no separate video widget).
 const handleEmbed = async () => {
   const url = selectedVideo.value?.shareUrl;
@@ -277,6 +321,13 @@ const handleStatusChange = async (newStatus) => {
   showDetailStatusDropdown.value = false;
   try {
     await axios.patch(`${baseUrl()}/${video.id}`, { status: STATUS_KEY[newStatus] });
+    const now = Math.floor(Date.now() / 1000);
+    if (newStatus === 'Approved') video.approvedAt = now;
+    if (newStatus === 'Published') {
+      video.publishedAt = now;
+      video.approvedAt = video.approvedAt || now;
+    }
+    if (newStatus === 'Rejected') video.rejectedAt = now;
     const idx = mockVideos.value.findIndex(v => v.id === video.id);
     if (idx !== -1) mockVideos.value[idx].status = newStatus;
     showToast(`Status changed to ${newStatus}`);
@@ -300,13 +351,18 @@ const handleDelete = async () => {
 };
 
 const handleGenerateNew = () => {
-  if (selectedVideo.value) showToast('Generating new Relay AI suggestions...');
+  if (!selectedVideo.value) return;
+  replyVariant.value += 1;
+  showToast('New reply suggestion ready');
 };
-const handleUseReply = () => {
-  if (selectedVideo.value) showToast('Reply text populated in composer!');
-};
-const handleGenerateClip = () => {
-  if (selectedVideo.value) showToast('Analyzing video and generating highlight clips...');
+const handleUseReply = async () => {
+  if (!displayedReply.value) return;
+  try {
+    await navigator.clipboard.writeText(displayedReply.value);
+    showToast('Reply copied to clipboard');
+  } catch (e) {
+    showToast('Could not copy reply');
+  }
 };
 
 // B7: distinct AI topic tags across loaded rows (only analyzed videos have any).
@@ -346,7 +402,7 @@ const stats = computed(() => {
 <template>
   <div class="relative flex h-[calc(100vh-4rem)] w-full overflow-hidden bg-background">
     <VideoTestimonialWidgetModal v-model:open="isWidgetModalOpen" />
-    <RequestVideoTestimonialModal v-model:open="isRequestModalOpen" />
+    <RequestVideoTestimonialModal v-model:open="isRequestModalOpen" @submit="handleModalSubmit" />
 
     <!-- Main Content Area (Left) -->
     <div 
@@ -620,7 +676,12 @@ const stats = computed(() => {
                 <div class="flex items-start justify-between mb-2 gap-2">
                   <h3 class="font-bold text-[13px] text-foreground truncate flex-1">{{ video.author }}</h3>
                   <div class="flex text-amber-400 shrink-0 mt-0.5">
-                    <Star v-for="i in 5" :key="i" class="size-3 fill-amber-400 text-amber-400" />
+                    <Star
+                      v-for="i in 5"
+                      :key="i"
+                      class="size-3"
+                      :class="i <= Math.round(video.rating || 0) ? 'fill-amber-400 text-amber-400' : 'text-muted-foreground/30'"
+                    />
                   </div>
                 </div>
                 
@@ -657,7 +718,12 @@ const stats = computed(() => {
                   <h3 class="font-bold text-[14.5px] text-foreground mb-2">{{ video.author }}</h3>
 
                   <div class="flex text-amber-400 shrink-0 mb-3">
-                    <Star v-for="i in 5" :key="i" class="size-3.5 fill-amber-400 text-amber-400" />
+                    <Star
+                      v-for="i in 5"
+                      :key="i"
+                      class="size-3.5"
+                      :class="i <= Math.round(video.rating || 0) ? 'fill-amber-400 text-amber-400' : 'text-muted-foreground/30'"
+                    />
                   </div>
                   <Badge
                     class="inline-flex items-center transition-colors focus:outline-none focus:ring-1 focus:ring-ring shadow-none font-medium text-[10.5px] px-2.5 py-0.5 rounded-full border w-max mb-1"
@@ -722,7 +788,7 @@ const stats = computed(() => {
           <div class="flex items-center gap-3">
             <div class="size-6 bg-white rounded-full overflow-hidden flex items-center justify-center shrink-0 p-1 border border-border" v-html="getPlatformIcon(selectedVideo.platform)"></div>
             <h2 class="font-bold text-foreground text-sm">{{ selectedVideo.author }}</h2>
-            <Badge v-if="selectedVideo.aiTags.includes('Marketing Ready')" class="bg-primary/10 text-primary border border-primary/20 shadow-none font-medium text-[10px] px-2 py-0.5 rounded-md ml-1">Marketing Ready</Badge>
+            <Badge v-if="insights.marketing_score >= 70" class="bg-primary/10 text-primary border border-primary/20 shadow-none font-medium text-[10px] px-2 py-0.5 rounded-md ml-1">Marketing Ready</Badge>
           </div>
           <button class="p-1.5 text-muted-foreground hover:text-foreground rounded-lg hover:bg-muted cursor-pointer" @click="closePanel">
             <X class="size-4" />
@@ -758,18 +824,29 @@ const stats = computed(() => {
               <span class="flex items-center gap-1.5"><Clock class="size-3.5 opacity-70" /> {{ selectedVideo.duration }}</span>
             </div>
             <div class="flex text-amber-400">
-              <Star v-for="i in 5" :key="i" class="size-3 fill-amber-400 text-amber-400" />
+              <Star
+                v-for="i in 5"
+                :key="i"
+                class="size-3"
+                :class="i <= Math.round(selectedVideo.rating || 0) ? 'fill-amber-400 text-amber-400' : 'text-muted-foreground/30'"
+              />
             </div>
           </div>
         
           <!-- Tabs Nav -->
-          <div class="px-6 border-b border-border flex gap-5 text-[13px] font-semibold shrink-0 pt-2 bg-card">
-            <button 
+          <div class="px-6 border-b border-border flex gap-5 text-[13px] font-semibold shrink-0 pt-2 bg-card" role="tablist">
+            <button
               v-for="tab in tabs" :key="tab"
+              type="button"
+              role="tab"
+              :aria-selected="activeTab === tab"
+              class="relative -mb-px py-3 px-0.5 whitespace-nowrap cursor-pointer bg-transparent"
+              :class="activeTab === tab ? 'text-primary' : 'text-muted-foreground hover:text-foreground'"
               @click="activeTab = tab"
-              class="py-3 border-b-2 rounded-none transition-colors -mb-[1px] whitespace-nowrap cursor-pointer"
-              :class="activeTab === tab ? 'border-primary text-primary' : 'border-transparent text-muted-foreground hover:text-foreground'"
-            >{{ tab }}</button>
+            >
+              {{ tab }}
+              <span v-if="activeTab === tab" class="absolute inset-x-0 bottom-0 h-0.5 bg-primary" aria-hidden="true" />
+            </button>
           </div>
         
           <!-- Tab Content -->
@@ -781,39 +858,26 @@ const stats = computed(() => {
                   <div class="size-5 rounded-full bg-primary/10 text-primary flex items-center justify-center"><Sparkles class="size-3" /></div>
                   Relay AI Summary
                 </h3>
-                <div class="bg-muted/30 border border-border/50 rounded-xl p-4 text-[13px] text-muted-foreground leading-relaxed">
+                <div v-if="selectedVideo.transcriptSummary" class="bg-muted/30 border border-border/50 rounded-xl p-4 text-[13px] text-muted-foreground leading-relaxed">
                   {{ selectedVideo.transcriptSummary }}
+                </div>
+                <div v-else class="bg-muted/30 border border-border/50 rounded-xl p-4 text-center space-y-2">
+                  <p class="text-[13px] text-muted-foreground">{{ analyzing ? 'Analyzing this video…' : 'No summary yet.' }}</p>
+                  <button v-if="showDemoSurfaces && !analyzing" type="button" class="inline-flex items-center gap-1.5 text-[13px] font-semibold text-primary hover:underline" @click="analyzeVideo">
+                    <Sparkles class="size-4" /> Analyze video
+                  </button>
                 </div>
               </div>
               
               <!-- Topics Box -->
               <div class="space-y-3">
                 <h3 class="text-xs font-bold tracking-wide text-foreground">Topics</h3>
-                <div class="flex flex-wrap gap-2">
+                <div v-if="selectedVideo.topics.length" class="flex flex-wrap gap-2">
                   <Badge v-for="topic in selectedVideo.topics" :key="topic" class="bg-muted text-muted-foreground border border-border shadow-none font-medium text-xs px-3 py-1 rounded-full">
                     {{ topic }}
                   </Badge>
                 </div>
-              </div>
-              
-              <!-- AI Magic Clips -->
-              <div class="space-y-2.5">
-                <div class="flex items-center justify-between">
-                  <h3 class="text-xs font-bold tracking-wide text-foreground flex items-center gap-2">
-                    <div class="size-5 rounded-full bg-primary/10 text-primary flex items-center justify-center"><Scissors class="size-3" /></div>
-                    Generate Clips
-                  </h3>
-                </div>
-                <div class="bg-muted/30 border border-border/50 rounded-xl p-4 flex flex-col items-center justify-center text-center gap-2">
-                  <div class="size-10 rounded-full bg-primary/10 text-primary flex items-center justify-center mb-1">
-                    <Sparkles class="size-5" />
-                  </div>
-                  <h4 class="text-[13px] font-semibold text-foreground">Extract Highlights</h4>
-                  <p class="text-[11.5px] text-muted-foreground mb-2 px-2 leading-relaxed">Let Relay AI automatically find and clip the best moments from this testimonial for social media.</p>
-                  <button @click="handleGenerateClip" class="h-8 gap-1.5 text-xs w-full max-w-[200px] shadow-xs bg-primary text-primary-foreground font-semibold rounded-lg inline-flex items-center justify-center cursor-pointer hover:bg-primary/90">
-                    <Scissors class="size-3.5" /> Generate Clips
-                  </button>
-                </div>
+                <p v-else class="text-[13px] text-muted-foreground">No topics yet. Analyze the video to extract them.</p>
               </div>
               
               <!-- Suggested Reply Box -->
@@ -823,15 +887,12 @@ const stats = computed(() => {
                     <div class="size-5 rounded-full bg-primary/10 text-primary flex items-center justify-center"><Sparkles class="size-3 fill-current" /></div>
                     Suggested Reply
                   </h3>
-                  <button @click="handleGenerateNew" class="text-[11px] font-semibold text-primary hover:text-primary/90 cursor-pointer">Generate New</button>
+                  <button type="button" class="text-[11px] font-semibold text-primary hover:text-primary/90 cursor-pointer" @click="handleGenerateNew">Generate New</button>
                 </div>
                 <div class="bg-card border border-primary/20 rounded-xl p-4 shadow-xs relative group">
-                  <p class="text-[13px] text-muted-foreground leading-relaxed mb-4">
-                    Thank you so much, {{ selectedVideo.author.split(' ')[0] }}! 😊<br><br>
-                    We're thrilled to hear our team was able to resolve your issue quickly and that you're enjoying the platform. We're always here if you need anything!
-                  </p>
+                  <p class="text-[13px] text-muted-foreground leading-relaxed mb-4 whitespace-pre-line">{{ displayedReply }}</p>
                   <div class="flex justify-end">
-                    <button @click="handleUseReply" class="h-7 text-xs font-semibold border border-primary/30 text-primary hover:bg-primary/10 rounded-md px-3 cursor-pointer">
+                    <button type="button" class="h-7 text-xs font-semibold border border-primary/30 text-primary hover:bg-primary/10 rounded-md px-3 cursor-pointer" @click="handleUseReply">
                       Use this Reply
                     </button>
                   </div>
@@ -1008,20 +1069,13 @@ const stats = computed(() => {
         </div>
       </div>
     </div>
-  </div>
 
-  <!-- Custom Toast Notification -->
-  <div 
-    class="fixed bottom-6 right-6 z-50 bg-foreground text-background px-4 py-3 rounded-xl shadow-2xl font-medium text-xs transition-all duration-300 transform flex items-center gap-2"
-    :class="toastState.visible ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0 pointer-events-none'"
-  >
-    <CheckCircle class="size-4 text-emerald-400" />
-    {{ toastState.message }}
+    <div
+      class="fixed bottom-6 right-6 z-50 bg-foreground text-background px-4 py-3 rounded-xl shadow-2xl font-medium text-xs transition-all duration-300 transform flex items-center gap-2"
+      :class="toastState.visible ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0 pointer-events-none'"
+    >
+      <CheckCircle class="size-4 text-emerald-400" />
+      {{ toastState.message }}
+    </div>
   </div>
-
-  <!-- Modals -->
-  <RequestVideoTestimonialModal 
-    v-model:open="isRequestModalOpen" 
-    @submit="handleModalSubmit"
-  />
 </template>

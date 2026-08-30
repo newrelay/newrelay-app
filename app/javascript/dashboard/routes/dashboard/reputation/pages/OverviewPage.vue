@@ -1,6 +1,7 @@
 <script setup>
 /* eslint-disable */
 import { ref, computed, onMounted } from 'vue';
+import { useRouter } from 'vue-router';
 import { RelayButton as Button, RelayBadge as Badge } from 'dashboard/components-next/relay';
 import {
   Star, TrendingUp, TrendingDown, MessageSquare, Bot,
@@ -14,6 +15,7 @@ import FeedbackBreakdownModal from '../components/FeedbackBreakdownModal.vue';
 import { isReputationDemoSurfacesEnabled } from 'dashboard/featureFlags';
 
 const axios = window.axios;
+const router = useRouter();
 const accountId = window.__STORE__?.getters['auth/getCurrentAccount']?.id ||
   window.location.pathname.match(/accounts\/(\d+)/)?.[1];
 const baseUrl = () => `/api/v1/accounts/${accountId}/reputation`;
@@ -212,6 +214,44 @@ function handleShareReport() {
 function handleRequestReviews() {
   isRequestModalOpen.value = true;
 }
+
+const generatingReplies = ref(false);
+function localDraft(review) {
+  const name = (review.reviewer_name || 'there').split(' ')[0];
+  if ((review.rating || 0) >= 4) {
+    return `Hi ${name}, thank you for the kind review — we really appreciate you taking the time.`;
+  }
+  return `Hi ${name}, thank you for the feedback. We're sorry this wasn't up to standard and we'd like to make it right.`;
+}
+async function generateReviewReplies() {
+  const pending = allReviews.value.filter(r =>
+    r.status === 'pending' && !(r.reputation_review_reply && r.reputation_review_reply.body)
+  );
+  if (!pending.length) {
+    showToast('No reviews need a reply');
+    return;
+  }
+  generatingReplies.value = true;
+  try {
+    const batch = pending.slice(0, 5);
+    await Promise.all(batch.map(async r => {
+      let draft = '';
+      try {
+        const { data } = await axios.get(`${baseUrl()}/reviews/${r.id}/ai_draft`);
+        draft = (data && data.draft) || '';
+      } catch {
+        draft = '';
+      }
+      await axios.post(`${baseUrl()}/reviews/${r.id}/reply`, { body: draft || localDraft(r) });
+    }));
+    showToast(`Drafted ${batch.length} review ${batch.length === 1 ? 'reply' : 'replies'}`);
+    router.push({ name: 'reputation_reviews' });
+  } catch (err) {
+    showToast('Could not draft replies');
+  } finally {
+    generatingReplies.value = false;
+  }
+}
 </script>
 
 <template>
@@ -380,8 +420,12 @@ function handleRequestReviews() {
               </div>
             </div>
 
-            <button @click="showToast('Relay AI generating review replies...')" class="w-full mt-6 h-9 text-xs font-semibold gap-2 bg-primary/10 text-primary hover:bg-primary/20 rounded-lg inline-flex items-center justify-center cursor-pointer transition-colors">
-              <Bot class="size-4" /> Generate Review Replies
+            <button
+              :disabled="generatingReplies"
+              class="w-full mt-6 h-9 text-xs font-semibold gap-2 bg-primary/10 text-primary hover:bg-primary/20 rounded-lg inline-flex items-center justify-center cursor-pointer transition-colors disabled:opacity-50"
+              @click="generateReviewReplies"
+            >
+              <Bot class="size-4" /> {{ generatingReplies ? 'Drafting replies…' : 'Generate Review Replies' }}
             </button>
           </div>
         </div>

@@ -9,7 +9,11 @@ json.array! @video_testimonials do |testimonial|
   json.platform testimonial.platform
   json.duration_seconds testimonial.duration_seconds
   json.views testimonial.views
+  json.email testimonial.email
   json.created_at testimonial.created_at.to_i
+  json.approved_at testimonial.approved_at&.to_i
+  json.published_at testimonial.published_at&.to_i
+  json.rejected_at testimonial.rejected_at&.to_i
   json.contact do
     if testimonial.contact
       json.id testimonial.contact.id

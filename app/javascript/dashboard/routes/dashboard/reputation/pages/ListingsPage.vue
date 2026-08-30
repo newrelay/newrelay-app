@@ -27,6 +27,7 @@ import {
   ArrowLeft,
   Hash,
   Store,
+  Image as ImageIcon,
 } from 'lucide-vue-next';
 import {
   RelayInput as Input, RelaySwitch,
@@ -290,6 +291,7 @@ const blankForm = () => ({
   website: '',
   email: '',
   storeId: '',
+  image: '',
 });
 const categoryOptions = ['Restaurant', 'Agency', 'Healthcare', 'Retail', 'Digital Marketing Agency', 'Other'];
 const addPlatformOptions = ['Google Business Profile', 'Facebook', 'Yelp', 'Manual'];
@@ -325,6 +327,7 @@ const addNext = async () => {
       phone: addForm.value.phone,
       website: addForm.value.website,
       email: addForm.value.email,
+      image: addForm.value.image,
       primary: addForm.value.primaryPlatform,
       platforms: [{ name: addForm.value.primaryPlatform, ok: true }],
     });
@@ -806,13 +809,23 @@ function saveSettings() {
             </div>
           </div>
 
-          <div class="flex flex-col gap-1.5">
-            <label class="text-[13.5px] font-medium text-foreground">Store ID <span class="text-muted-foreground font-normal">(Optional)</span></label>
-            <div class="relative">
-              <Hash class="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground pointer-events-none" />
-              <input v-model="addForm.storeId" type="text" placeholder="Internal ID or Code" class="reset-base w-full pl-9 pr-4 h-10 text-[14px] shadow-sm rounded-md border border-border/80 bg-background text-foreground focus-visible:ring-1 focus-visible:ring-primary/30 focus-visible:outline-none" />
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div class="flex flex-col gap-1.5">
+              <label class="text-[13.5px] font-medium text-foreground">Store ID <span class="text-muted-foreground font-normal">(Optional)</span></label>
+              <div class="relative">
+                <Hash class="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground pointer-events-none" />
+                <input v-model="addForm.storeId" type="text" placeholder="Internal ID or Code" class="reset-base w-full pl-9 pr-4 h-10 text-[14px] shadow-sm rounded-md border border-border/80 bg-background text-foreground focus-visible:ring-1 focus-visible:ring-primary/30 focus-visible:outline-none" />
+              </div>
+            </div>
+            <div class="flex flex-col gap-1.5">
+              <label class="text-[13.5px] font-medium text-foreground">Photo URL <span class="text-muted-foreground font-normal">(Optional)</span></label>
+              <div class="relative">
+                <ImageIcon class="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground pointer-events-none" />
+                <input v-model="addForm.image" type="text" placeholder="https://…/photo.jpg" class="reset-base w-full pl-9 pr-4 h-10 text-[14px] shadow-sm rounded-md border border-border/80 bg-background text-foreground focus-visible:ring-1 focus-visible:ring-primary/30 focus-visible:outline-none" />
+              </div>
             </div>
           </div>
+          <p class="text-[12px] text-muted-foreground -mt-2">Leave Photo URL blank to auto-fetch the storefront photo from Google.</p>
         </div>
 
         <!-- Step 2: Connect -->

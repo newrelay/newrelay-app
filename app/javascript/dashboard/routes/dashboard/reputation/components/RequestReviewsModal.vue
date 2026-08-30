@@ -108,6 +108,16 @@ const activeEditingChannel = ref('Email');
 const prebuiltSms = defaultSmsTemplates;
 const prebuiltEmail = defaultEmailTemplates;
 const prebuiltWhatsApp = defaultWhatsAppTemplates;
+const customTemplates = ref({ sms: [], email: [], whatsapp: [] });
+async function loadCustomTemplates() {
+  if (!accountId) return;
+  try {
+    const { data } = await axios.get(`/api/v1/accounts/${accountId}/reputation/settings`);
+    customTemplates.value = { sms: [], email: [], whatsapp: [], ...(data.config?.customTemplates || {}) };
+  } catch (err) {
+    // keep defaults-only on failure
+  }
+}
 const selectedSmsTemplateId = ref(defaultSmsTemplates[0].id);
 const selectedEmailTemplateId = ref(defaultEmailTemplates[0].id);
 const selectedWhatsAppTemplateId = ref(defaultWhatsAppTemplates[0].id);
@@ -121,9 +131,9 @@ const whatsappButton2 = ref(defaultWhatsAppTemplates[0].button2);
 const isAiEnhancing = ref(false);
 
 const currentChannelTemplates = computed(() => {
-  if (activeEditingChannel.value === 'SMS') return prebuiltSms;
-  if (activeEditingChannel.value === 'Email') return prebuiltEmail;
-  return prebuiltWhatsApp;
+  if (activeEditingChannel.value === 'SMS') return [...prebuiltSms, ...customTemplates.value.sms];
+  if (activeEditingChannel.value === 'Email') return [...prebuiltEmail, ...customTemplates.value.email];
+  return [...prebuiltWhatsApp, ...customTemplates.value.whatsapp];
 });
 const currentActiveTemplateId = computed(() => {
   if (activeEditingChannel.value === 'SMS') return selectedSmsTemplateId.value;
@@ -280,7 +290,7 @@ async function loadContacts() {
   }
 }
 
-watch(() => props.open, isOpen => { if (isOpen) { ensureDefaultLabels(); loadContacts(); loadRequests(); } }, { immediate: true });
+watch(() => props.open, isOpen => { if (isOpen) { ensureDefaultLabels(); loadContacts(); loadRequests(); loadCustomTemplates(); } }, { immediate: true });
 watch(activeFilter, () => { if (props.open) loadContacts(); });
 
 // Company options come from the loaded contacts (real data).

@@ -120,7 +120,17 @@ const whatsappButton2 = ref('💬 Ask a Question');
 const isAiEnhancing = ref(false);
 
 // --- Video landing page (recording screen) content ---
-const prebuiltVideoTemplates = defaultVideoTemplates;
+const customTemplates = ref({ sms: [], email: [], whatsapp: [], video: [] });
+async function loadCustomTemplates() {
+  if (!accountId) return;
+  try {
+    const { data } = await axios.get(`/api/v1/accounts/${accountId}/reputation/settings`);
+    customTemplates.value = { sms: [], email: [], whatsapp: [], video: [], ...(data.config?.customTemplates || {}) };
+  } catch (err) {
+    // keep defaults-only on failure
+  }
+}
+const prebuiltVideoTemplates = computed(() => [...defaultVideoTemplates, ...customTemplates.value.video]);
 const selectedVideoTemplateId = ref(defaultVideoTemplates[0].id);
 const videoHeadline = ref(defaultVideoTemplates[0].headline);
 const videoPrompt = ref(defaultVideoTemplates[0].message);
@@ -131,7 +141,7 @@ const durationOptions = ['30 Seconds', '45 Seconds', '60 Seconds (Recommended)',
 const previewMode = ref('video_page'); // 'video_page' | 'invite_message'
 
 const currentVideoTemplateName = computed(() =>
-  prebuiltVideoTemplates.find(t => t.id === selectedVideoTemplateId.value)?.name || 'Select a template…'
+  prebuiltVideoTemplates.value.find(t => t.id === selectedVideoTemplateId.value)?.name || 'Select a template…'
 );
 const showVideoTemplateMenu = ref(false);
 const showDurationMenu = ref(false);
@@ -311,7 +321,7 @@ async function loadContacts() {
   }
 }
 
-watch(() => props.open, isOpen => { if (isOpen) { ensureDefaultLabels(); loadContacts(); loadRequests(); } }, { immediate: true });
+watch(() => props.open, isOpen => { if (isOpen) { ensureDefaultLabels(); loadContacts(); loadRequests(); loadCustomTemplates(); } }, { immediate: true });
 watch(activeFilter, () => { if (props.open) loadContacts(); });
 
 // Company options come from the loaded contacts (real data).

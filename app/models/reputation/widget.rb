@@ -4,6 +4,7 @@
 #
 #  id             :bigint           not null, primary key
 #  active         :boolean          default(TRUE)
+#  config         :jsonb            not null
 #  hide_watermark :boolean          default(FALSE), not null
 #  min_rating     :integer          default(4)
 #  name           :string           not null

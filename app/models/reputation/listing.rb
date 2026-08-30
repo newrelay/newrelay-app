@@ -7,6 +7,7 @@
 #  category   :string
 #  country    :string
 #  email      :string
+#  image      :string
 #  name       :string           not null
 #  phone      :string
 #  platforms  :jsonb            not null

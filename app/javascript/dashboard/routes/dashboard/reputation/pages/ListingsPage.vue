@@ -711,7 +711,7 @@ function saveSettings() {
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div class="flex flex-col gap-1.5">
               <label class="text-[13.5px] font-medium text-foreground">Business Name <span class="text-destructive">*</span></label>
-              <input v-model="addForm.name" type="text" placeholder="E.g. Jaipur HQ" class="h-10 px-4 text-[14px] shadow-sm rounded-md border border-border/80 bg-background text-foreground focus-visible:ring-1 focus-visible:ring-primary/30 focus-visible:outline-none" />
+              <input v-model="addForm.name" type="text" placeholder="E.g. Jaipur HQ" class="reset-base h-10 px-4 text-[14px] shadow-sm rounded-md border border-border/80 bg-background text-foreground focus-visible:ring-1 focus-visible:ring-primary/30 focus-visible:outline-none" />
             </div>
             <div class="flex flex-col gap-1.5">
               <label class="text-[13.5px] font-medium text-foreground">Business Category <span class="text-destructive">*</span></label>
@@ -761,15 +761,15 @@ function saveSettings() {
             <div class="flex flex-col gap-1.5">
               <label class="text-[13.5px] font-medium text-foreground">Address <span class="text-destructive">*</span></label>
               <div class="relative">
-                <MapPin class="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
-                <input v-model="addForm.address" type="text" placeholder="123 Main St, City, State" class="w-full pl-9 pr-4 h-10 text-[14px] shadow-sm rounded-md border border-border/80 bg-background text-foreground focus-visible:ring-1 focus-visible:ring-primary/30 focus-visible:outline-none" />
+                <MapPin class="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground pointer-events-none" />
+                <input v-model="addForm.address" type="text" placeholder="123 Main St, City, State" class="reset-base w-full pl-9 pr-4 h-10 text-[14px] shadow-sm rounded-md border border-border/80 bg-background text-foreground focus-visible:ring-1 focus-visible:ring-primary/30 focus-visible:outline-none" />
               </div>
             </div>
             <div class="flex flex-col gap-1.5">
               <label class="text-[13.5px] font-medium text-foreground">Phone <span class="text-destructive">*</span></label>
               <div class="relative">
-                <Phone class="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
-                <input v-model="addForm.phone" type="text" placeholder="+1 (555) 000-0000" class="w-full pl-9 pr-4 h-10 text-[14px] shadow-sm rounded-md border border-border/80 bg-background text-foreground focus-visible:ring-1 focus-visible:ring-primary/30 focus-visible:outline-none" />
+                <Phone class="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground pointer-events-none" />
+                <input v-model="addForm.phone" type="text" placeholder="+1 (555) 000-0000" class="reset-base w-full pl-9 pr-4 h-10 text-[14px] shadow-sm rounded-md border border-border/80 bg-background text-foreground focus-visible:ring-1 focus-visible:ring-primary/30 focus-visible:outline-none" />
               </div>
             </div>
           </div>
@@ -778,15 +778,15 @@ function saveSettings() {
             <div class="flex flex-col gap-1.5">
               <label class="text-[13.5px] font-medium text-foreground">Website</label>
               <div class="relative">
-                <Globe class="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
-                <input v-model="addForm.website" type="text" placeholder="https://example.com" class="w-full pl-9 pr-4 h-10 text-[14px] shadow-sm rounded-md border border-border/80 bg-background text-foreground focus-visible:ring-1 focus-visible:ring-primary/30 focus-visible:outline-none" />
+                <Globe class="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground pointer-events-none" />
+                <input v-model="addForm.website" type="text" placeholder="https://example.com" class="reset-base w-full pl-9 pr-4 h-10 text-[14px] shadow-sm rounded-md border border-border/80 bg-background text-foreground focus-visible:ring-1 focus-visible:ring-primary/30 focus-visible:outline-none" />
               </div>
             </div>
             <div class="flex flex-col gap-1.5">
               <label class="text-[13.5px] font-medium text-foreground">Business Email</label>
               <div class="relative">
-                <Mail class="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
-                <input v-model="addForm.email" type="email" placeholder="hello@company.com" class="w-full pl-9 pr-4 h-10 text-[14px] shadow-sm rounded-md border border-border/80 bg-background text-foreground focus-visible:ring-1 focus-visible:ring-primary/30 focus-visible:outline-none" />
+                <Mail class="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground pointer-events-none" />
+                <input v-model="addForm.email" type="email" placeholder="hello@company.com" class="reset-base w-full pl-9 pr-4 h-10 text-[14px] shadow-sm rounded-md border border-border/80 bg-background text-foreground focus-visible:ring-1 focus-visible:ring-primary/30 focus-visible:outline-none" />
               </div>
             </div>
           </div>
@@ -794,8 +794,8 @@ function saveSettings() {
           <div class="flex flex-col gap-1.5">
             <label class="text-[13.5px] font-medium text-foreground">Store ID <span class="text-muted-foreground font-normal">(Optional)</span></label>
             <div class="relative">
-              <Hash class="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
-              <input v-model="addForm.storeId" type="text" placeholder="Internal ID or Code" class="w-full pl-9 pr-4 h-10 text-[14px] shadow-sm rounded-md border border-border/80 bg-background text-foreground focus-visible:ring-1 focus-visible:ring-primary/30 focus-visible:outline-none" />
+              <Hash class="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground pointer-events-none" />
+              <input v-model="addForm.storeId" type="text" placeholder="Internal ID or Code" class="reset-base w-full pl-9 pr-4 h-10 text-[14px] shadow-sm rounded-md border border-border/80 bg-background text-foreground focus-visible:ring-1 focus-visible:ring-primary/30 focus-visible:outline-none" />
             </div>
           </div>
         </div>

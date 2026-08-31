@@ -732,6 +732,7 @@ Rails.application.routes.draw do
   get 'tiktok/callback', to: 'tiktok/callbacks#show'
   get 'notion/callback', to: 'notion/callbacks#show'
   get 'reputation/oauth/callback', to: 'reputation/oauth_callbacks#show'
+  get 'reputation/widget/:token', to: 'reputation/public_widgets#show', as: :reputation_widget
   get 'reputation/widget/:token/reviews', to: 'reputation/public_widgets#reviews'
   get 'r/:token', to: 'reputation/public_widgets#redirect'
   post 'reputation/feedback', to: 'reputation/feedback#create'

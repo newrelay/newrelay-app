@@ -78,16 +78,11 @@ const layoutOptions = [
   { id: 'compact', name: 'Sidebar Feed', description: 'Compact vertical list designed for product sidebars, pricing pages & checkouts.', icon: Sliders },
 ];
 
-const embedFormat = ref('html'); // 'html' | 'iframe' | 'react'
+const widgetToken = ref('');
+const widgetUrl = computed(() => widgetToken.value ? `${window.location.origin}/reputation/widget/${widgetToken.value}` : '');
 const activeSnippet = computed(() => {
-  const c = widgetConfig.value;
-  if (embedFormat.value === 'html') {
-    return `<!-- Relay Review Widget -->\n<div id="relay-reviews-widget" \n  data-widget-id="rw_${c.layout}_9482" \n  data-theme="${c.theme}">\n</div>\n<script src="https://cdn.relay.to/widgets/v2/reviews.js" async defer><\/script>`;
-  }
-  if (embedFormat.value === 'iframe') {
-    return `<iframe \n  src="https://embed.relay.to/widget/rw_9482?layout=${c.layout}&theme=${c.theme}" \n  width="100%" \n  height="480" \n  frameborder="0" \n  loading="lazy">\n</iframe>`;
-  }
-  return `import { ReviewWidget } from '@relay/react-widgets'\n\nexport default function TestimonialSection() {\n  return (\n    <ReviewWidget \n      widgetId="rw_9482"\n      layout="${c.layout}"\n      theme="${c.theme}"\n    />\n  )\n}`;
+  if (!widgetUrl.value) return 'Save the widget to generate your live embed code.';
+  return `<iframe\n  src="${widgetUrl.value}"\n  width="100%"\n  height="480"\n  frameborder="0"\n  loading="lazy">\n</iframe>`;
 });
 
 function copyEmbedCode() {
@@ -111,6 +106,7 @@ async function loadWidget() {
     const existing = (data || []).find(w => w.config && w.config.source === 'review_studio');
     if (!existing) return;
     widgetId.value = existing.id;
+    widgetToken.value = existing.token || '';
     if (existing.config) widgetConfig.value = { ...widgetConfig.value, ...existing.config };
   } catch (e) { /* none yet */ }
 }
@@ -127,10 +123,12 @@ async function handleSaveWidget() {
   };
   try {
     if (widgetId.value) {
-      await axios.patch(`${widgetsUrl()}/${widgetId.value}`, { widget: payload });
+      const { data } = await axios.patch(`${widgetsUrl()}/${widgetId.value}`, { widget: payload });
+      widgetToken.value = data?.token || widgetToken.value;
     } else {
       const { data } = await axios.post(widgetsUrl(), { widget: payload });
       widgetId.value = data?.id || null;
+      widgetToken.value = data?.token || '';
     }
   } catch (e) { /* keep UI optimistic */ }
   isSaved.value = true;
@@ -384,12 +382,8 @@ const isDark = computed(() => widgetConfig.value.theme === 'dark' || previewBg.v
             <div v-if="activeTab === 'embed'" class="space-y-5 animate-in fade-in duration-200">
               <div>
                 <label class="text-[13.5px] font-medium text-foreground block mb-1">Integration Format</label>
-                <p class="text-[12px] text-muted-foreground mb-3">Select your preferred embedding method to install on your website.</p>
-                <div class="grid grid-cols-3 gap-2">
-                  <button v-for="fmt in [{ id: 'html', label: 'HTML / JS' }, { id: 'iframe', label: 'iFrame' }, { id: 'react', label: 'React / Next' }]" :key="fmt.id" type="button" @click="embedFormat = fmt.id" class="py-2 px-3 rounded-lg border text-xs text-center cursor-pointer transition-colors" :class="embedFormat === fmt.id ? 'bg-primary/10 border-primary text-primary font-semibold' : 'bg-card border-border hover:bg-muted text-muted-foreground'">
-                    {{ fmt.label }}
-                  </button>
-                </div>
+                <p class="text-[12px] text-muted-foreground mb-3">Paste this iframe anywhere on your website.</p>
+                <a v-if="widgetUrl" :href="widgetUrl" target="_blank" rel="noopener" class="text-[12px] text-primary hover:underline inline-flex items-center gap-1">View live widget <Globe class="size-3" /></a>
               </div>
 
               <!-- Code terminal (intentional theme-independent surface) -->
@@ -401,9 +395,7 @@ const isDark = computed(() => widgetConfig.value.theme === 'dark' || previewBg.v
                       <div class="size-2 rounded-full bg-slate-600"></div>
                       <div class="size-2 rounded-full bg-slate-600"></div>
                     </div>
-                    <span class="text-[11px] font-mono text-slate-400 ml-1 font-medium">
-                      {{ embedFormat === 'html' ? 'widget-embed.html' : embedFormat === 'iframe' ? 'iframe-embed.html' : 'ReviewWidget.tsx' }}
-                    </span>
+                    <span class="text-[11px] font-mono text-slate-400 ml-1 font-medium">iframe-embed.html</span>
                   </div>
                   <button class="inline-flex items-center h-7 px-2.5 text-[11px] gap-1.5 rounded-md text-slate-300 hover:text-white hover:bg-slate-800 border border-slate-700/80 hover:border-transparent transition-all cursor-pointer" @click="copyEmbedCode">
                     <Check v-if="isCopied" class="size-3.5 text-emerald-400" />

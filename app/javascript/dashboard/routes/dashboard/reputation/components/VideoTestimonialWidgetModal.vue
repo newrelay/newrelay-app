@@ -77,16 +77,11 @@ function prevSlide() {
   else carouselIndex.value = previewVideos.value.length - 1;
 }
 
-const embedType = ref('script'); // script | iframe | react
+const widgetToken = ref('');
+const widgetUrl = computed(() => widgetToken.value ? `${window.location.origin}/reputation/widget/${widgetToken.value}` : '');
 const currentEmbedSnippet = computed(() => {
-  const c = widgetConfig.value;
-  if (embedType.value === 'script') {
-    return `<!-- Relay Video Testimonials Widget -->\n<div id="relay-video-widget" \n  data-widget-id="vw_${c.layout}_9482" \n  data-layout="${c.layout}" \n  data-theme="${c.theme}">\n</div>\n<script src="https://cdn.relay.to/widgets/v2/video-testimonials.js" async defer><\/script>`;
-  }
-  if (embedType.value === 'iframe') {
-    return `<iframe \n  src="https://embed.relay.to/video-widget/vw_9482?layout=${c.layout}&theme=${c.theme}" \n  width="100%" \n  height="540" \n  frameborder="0" \n  allow="autoplay; fullscreen"\n  loading="lazy">\n</iframe>`;
-  }
-  return `import { VideoTestimonialWidget } from '@relay/react-widgets'\n\nexport default function TestimonialSection() {\n  return (\n    <VideoTestimonialWidget \n      widgetId="vw_9482"\n      layout="${c.layout}"\n      theme="${c.theme}"\n      autoPlayHover={${c.autoPlayHover}}\n    />\n  )\n}`;
+  if (!widgetUrl.value) return 'Save the widget to generate your live embed code.';
+  return `<iframe\n  src="${widgetUrl.value}"\n  width="100%"\n  height="540"\n  frameborder="0"\n  allow="autoplay; fullscreen"\n  loading="lazy">\n</iframe>`;
 });
 
 function copyEmbedCode() {
@@ -109,6 +104,7 @@ async function loadWidget() {
     const existing = (data || []).find(w => w.config && w.config.source === 'video_studio');
     if (!existing) return;
     widgetId.value = existing.id;
+    widgetToken.value = existing.token || '';
     if (existing.config) widgetConfig.value = { ...widgetConfig.value, ...existing.config };
   } catch (e) { /* none yet */ }
 }
@@ -125,10 +121,12 @@ async function handleSaveWidget() {
   };
   try {
     if (widgetId.value) {
-      await axios.patch(`${widgetsUrl()}/${widgetId.value}`, { widget: payload });
+      const { data } = await axios.patch(`${widgetsUrl()}/${widgetId.value}`, { widget: payload });
+      widgetToken.value = data?.token || widgetToken.value;
     } else {
       const { data } = await axios.post(widgetsUrl(), { widget: payload });
       widgetId.value = data?.id || null;
+      widgetToken.value = data?.token || '';
     }
   } catch (e) { /* keep UI optimistic */ }
   isSaved.value = true;
@@ -311,10 +309,8 @@ const isDark = computed(() => widgetConfig.value.theme === 'dark' || previewBg.v
             <div v-else-if="activeTab === 'embed'" class="space-y-5 animate-in fade-in duration-200">
               <div>
                 <label class="text-[13.5px] font-medium text-foreground block mb-1">Integration Format</label>
-                <p class="text-[12px] text-muted-foreground mb-3">Copy and paste this snippet anywhere on your website.</p>
-                <div class="grid grid-cols-3 gap-2">
-                  <button v-for="fmt in [{ id: 'script', label: 'HTML / JS' }, { id: 'iframe', label: 'iFrame' }, { id: 'react', label: 'React / Next' }]" :key="fmt.id" type="button" @click="embedType = fmt.id" class="py-2 px-3 rounded-lg border text-xs text-center cursor-pointer transition-colors" :class="embedType === fmt.id ? 'bg-primary/10 border-primary text-primary font-semibold' : 'bg-card border-border hover:bg-muted text-muted-foreground'">{{ fmt.label }}</button>
-                </div>
+                <p class="text-[12px] text-muted-foreground mb-3">Paste this iframe anywhere on your website.</p>
+                <a v-if="widgetUrl" :href="widgetUrl" target="_blank" rel="noopener" class="text-[12px] text-primary hover:underline inline-flex items-center gap-1">View live widget <Globe class="size-3" /></a>
               </div>
               <div class="relative rounded-xl border border-slate-800 bg-slate-950 text-slate-100 p-4 font-mono text-xs overflow-x-auto shadow-inner">
                 <pre class="whitespace-pre-wrap break-all leading-relaxed">{{ currentEmbedSnippet }}</pre>

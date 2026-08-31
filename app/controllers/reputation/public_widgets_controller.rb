@@ -3,6 +3,16 @@
 # GET /reputation/widget/:token/reviews?rating_min=4
 class Reputation::PublicWidgetsController < ApplicationController
   skip_before_action :verify_authenticity_token, raise: false
+  layout false
+
+  # GET /reputation/widget/:token — the actual embeddable page (iframe src).
+  def show
+    @widget = Reputation::Widget.find_by!(token: params[:token])
+    return head :not_found unless @widget.active?
+
+    @is_video = @widget.config['source'] == 'video_studio'
+    @items = @is_video ? video_items : review_items
+  end
 
   def reviews
     widget = Reputation::Widget.find_by!(token: params[:token])
@@ -32,6 +42,23 @@ class Reputation::PublicWidgetsController < ApplicationController
   end
 
   private
+
+  def review_items
+    Reputation::Review
+      .where(account_id: @widget.account_id)
+      .where.not(status: :ignored)
+      .where('rating >= ?', @widget.min_rating)
+      .order(reviewed_at: :desc)
+      .limit(12)
+  end
+
+  def video_items
+    Reputation::VideoTestimonial
+      .where(account_id: @widget.account_id, status: :published)
+      .where('rating >= ?', @widget.min_rating)
+      .order(created_at: :desc)
+      .limit(12)
+  end
 
   # Build a real write-review URL for the primary destination if that platform is
   # connected for the account. ponytail: only Google resolves to a real deep link

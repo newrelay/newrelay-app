@@ -152,7 +152,7 @@ function insertTag(tag) {
 const fillVars = t => (t || '')
   .replaceAll('{{FirstName}}', 'Sarah')
   .replaceAll('{{BusinessName}}', 'New Relay')
-  .replaceAll('{{ReviewLink}}', 'relay.to/r/apex-dental')
+  .replaceAll('{{ReviewLink}}', reviewLinkShort.value)
   .replaceAll('{{EmployeeName}}', 'Alex');
 const pvEmailSubject = computed(() => fillVars(emailSubject.value));
 const pvEmailBody = computed(() => fillVars(emailBody.value));
@@ -170,8 +170,8 @@ const parsedVideoQuestions = computed(() =>
 );
 
 // ---------- Tab 2: Review Link & QR Hub ----------
-const customSlug = ref('apex-dental');
-const reviewLink = computed(() => `https://relay.to/r/${customSlug.value}`);
+const reviewLink = computed(() => `${window.location.origin}/reputation/review/${accountId}/new`);
+const reviewLinkShort = computed(() => `${window.location.host}/reputation/review/${accountId}/new`);
 const qrDataUrl = ref('');
 async function renderQr() {
   try {
@@ -259,7 +259,7 @@ function saveTemplates() {
     emailTemplateId: emailTemplateId.value, emailSubject: emailSubject.value, emailBody: emailBody.value,
     whatsappTemplateId: whatsappTemplateId.value, whatsappHeader: whatsappHeader.value, whatsappBody: whatsappBody.value,
     videoPrompt: videoPrompt.value,
-    customSlug: customSlug.value, selectedDestination: selectedDestination.value,
+    selectedDestination: selectedDestination.value,
     qrFrame: qrFrame.value, qrTitle: qrTitle.value, qrSubtitle: qrSubtitle.value, includeLogo: includeLogo.value,
   });
   isTemplateSaved.value = true;
@@ -280,7 +280,6 @@ async function loadConfig() {
     if (c.whatsappHeader != null) whatsappHeader.value = c.whatsappHeader;
     if (c.whatsappBody != null) whatsappBody.value = c.whatsappBody;
     if (c.videoPrompt != null) videoPrompt.value = c.videoPrompt;
-    if (c.customSlug) customSlug.value = c.customSlug;
     if (c.selectedDestination) selectedDestination.value = c.selectedDestination;
     if (c.qrFrame) qrFrame.value = c.qrFrame;
     if (c.qrTitle != null) qrTitle.value = c.qrTitle;
@@ -506,7 +505,7 @@ const autoFlagLabel = computed(() => autoFlagOptions.find(o => o.value === spamS
           <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3.5 border-b border-border">
             <div>
               <h2 class="text-[15px] font-semibold text-foreground">Review Shortlink & Routing</h2>
-              <p class="text-[12.5px] text-muted-foreground mt-0.5">Customize your permanent review shortlink and primary destination platform.</p>
+              <p class="text-[12.5px] text-muted-foreground mt-0.5">Your permanent review link and primary destination platform.</p>
             </div>
             <div class="flex items-center gap-2">
               <span class="text-[11px] font-medium px-2 py-0.5 rounded-md bg-muted text-muted-foreground">SSL Encrypted</span>
@@ -515,10 +514,9 @@ const autoFlagLabel = computed(() => autoFlagOptions.find(o => o.value === spamS
           </div>
           <div class="grid grid-cols-1 md:grid-cols-12 gap-5 items-end">
             <div class="md:col-span-7 flex flex-col gap-1.5">
-              <label class="text-[13.5px] font-medium text-foreground">Custom Link Slug</label>
+              <label class="text-[13.5px] font-medium text-foreground">Permanent Review Link</label>
               <div class="flex items-center">
-                <span class="h-10 inline-flex items-center px-3 bg-muted/50 text-muted-foreground border border-r-0 border-border rounded-l-md text-[13px] font-mono select-none">https://relay.to/r/</span>
-                <input v-model="customSlug" class="h-10 flex-1 min-w-0 px-3 text-[13.5px] font-mono border-y border-border bg-background text-foreground focus:outline-none focus-visible:ring-1 focus-visible:ring-primary/30" />
+                <span class="h-10 flex-1 min-w-0 flex items-center px-3 text-[13px] font-mono border border-r-0 border-border rounded-l-md bg-background text-foreground truncate">{{ reviewLinkShort }}</span>
                 <button class="h-10 px-3.5 rounded-r-md border border-border bg-background hover:bg-muted text-[13px] inline-flex items-center gap-1.5 shrink-0 cursor-pointer" @click="copyReviewLink">
                   <Check v-if="isLinkCopied" class="size-3.5 text-emerald-500" /><Copy v-else class="size-3.5 text-muted-foreground" /> {{ isLinkCopied ? 'Copied' : 'Copy' }}
                 </button>
@@ -605,7 +603,7 @@ const autoFlagLabel = computed(() => autoFlagOptions.find(o => o.value === spamS
                 <div v-else class="size-full rounded-md bg-muted animate-pulse"></div>
                 <div v-if="includeLogo" class="absolute size-7 rounded-full bg-primary text-primary-foreground flex items-center justify-center shadow-md ring-2 ring-white"><Star class="size-3.5 fill-current" /></div>
               </div>
-              <div class="text-[11px] font-mono text-muted-foreground truncate w-full">relay.to/r/{{ customSlug }}</div>
+              <div class="text-[11px] font-mono text-muted-foreground truncate w-full">{{ reviewLinkShort }}</div>
             </div>
             <div class="w-full space-y-2 pt-1 z-10">
               <div class="grid grid-cols-2 gap-2">

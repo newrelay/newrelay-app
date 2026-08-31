@@ -26,6 +26,7 @@ import {
   Compass,
   Image as ImageIcon,
   Star,
+  ArrowRight,
 } from 'lucide-vue-next';
 import {
   RelayButton,
@@ -229,6 +230,58 @@ async function loadListing() {
   }
 }
 
+// Reviews aren't scoped per-listing in the schema (reputation_reviews has no
+// listing_id) — this shows the account's real recent reviews, same as the
+// Reviews page, rather than fabricating listing-specific data.
+const accountReviews = ref([]);
+async function loadAccountReviews() {
+  try {
+    const { data } = await axios.get(`${baseUrl()}/reviews`);
+    accountReviews.value = data || [];
+  } catch {
+    accountReviews.value = [];
+  }
+}
+const recentReviews = computed(() => accountReviews.value.slice(0, 3));
+const reviewStats = computed(() => {
+  const rows = accountReviews.value;
+  const total = rows.length;
+  const avgRating = total ? (rows.reduce((s, r) => s + (r.rating || 0), 0) / total).toFixed(1) : '—';
+  const needsReply = rows.filter(r => r.status === 'pending' && !(r.reputation_review_reply && r.reputation_review_reply.body)).length;
+  return { total, avgRating, needsReply };
+});
+// Real weekly review counts for the last 5 weeks (no fabricated trend deltas).
+const weeklyTrend = computed(() => {
+  const now = Date.now();
+  const week = 7 * 86400000;
+  const buckets = [4, 3, 2, 1, 0].map(i => ({ start: now - (i + 1) * week, end: now - i * week, count: 0 }));
+  accountReviews.value.forEach(r => {
+    if (!r.reviewed_at) return;
+    const t = new Date(r.reviewed_at).getTime();
+    const bucket = buckets.find(b => t >= b.start && t < b.end);
+    if (bucket) bucket.count += 1;
+  });
+  return buckets;
+});
+const trendMax = computed(() => Math.max(1, ...weeklyTrend.value.map(b => b.count)));
+const trendPoints = computed(() =>
+  weeklyTrend.value
+    .map((b, i) => `${(i / 4) * 100},${100 - (b.count / trendMax.value) * 90}`)
+    .join(' ')
+);
+function relativeDate(dateStr) {
+  if (!dateStr) return '';
+  const diff = Date.now() - new Date(dateStr).getTime();
+  const days = Math.floor(diff / 86400000);
+  if (days < 1) return 'Today';
+  if (days === 1) return '1 day ago';
+  if (days < 7) return `${days} days ago`;
+  return `${Math.floor(days / 7)}w ago`;
+}
+function reviewHasReply(review) {
+  return !!(review.reputation_review_reply && review.reputation_review_reply.body);
+}
+
 function openEdit() {
   if (!listing.value) return;
   editForm.value = {
@@ -365,6 +418,7 @@ onMounted(() => {
     return;
   }
   loadListing();
+  loadAccountReviews();
 });
 
 watch(() => route.params.listingId, () => {
@@ -538,6 +592,14 @@ watch(() => route.params.listingId, () => {
                 </div>
               </div>
             </div>
+
+            <div class="flex flex-col gap-4">
+              <span class="text-[13px] font-medium text-foreground">Photos</span>
+              <div v-if="listing.image" class="flex gap-4">
+                <img :src="listing.image" class="h-[120px] w-[180px] object-cover rounded-xl shadow-xs border border-border shrink-0" />
+              </div>
+              <p v-else class="text-[13px] text-muted-foreground">No photos yet.</p>
+            </div>
           </div>
 
           <div class="bg-card border border-border rounded-xl p-6 shadow-xs flex flex-col gap-6">
@@ -585,23 +647,123 @@ watch(() => route.params.listingId, () => {
             </div>
           </div>
 
-          <div v-if="disconnectedPlatforms.length" class="bg-card border border-border rounded-xl p-6 shadow-xs">
-            <div class="flex items-center justify-between mb-4">
-              <h3 class="text-base font-medium text-foreground">Needs Attention</h3>
-              <span class="bg-rose-50 text-rose-600 dark:bg-rose-950 dark:text-rose-400 px-2 rounded-full font-semibold text-[12px]">{{ disconnectedPlatforms.length }}</span>
+          <!-- Recent Reviews (account-wide — reviews aren't scoped per listing) -->
+          <div class="bg-card border border-border rounded-xl p-6 shadow-xs flex flex-col gap-6">
+            <div class="flex items-center justify-between">
+              <h3 class="text-base font-medium text-foreground">Recent Reviews</h3>
+              <RelayButton variant="ghost" class="h-8 gap-2 text-[13px] text-primary font-semibold px-3" @click="router.push({ name: 'reputation_reviews' })">
+                View All Reviews <ArrowRight class="size-3.5" />
+              </RelayButton>
             </div>
-            <div class="flex flex-col gap-4">
-              <div v-for="platform in disconnectedPlatforms" :key="platform.name" class="flex items-start gap-3">
-                <div class="size-8 rounded-full bg-rose-50 dark:bg-rose-950 flex items-center justify-center shrink-0 mt-1">
-                  <AlertTriangle class="size-4 text-rose-600" />
+            <div v-if="!recentReviews.length" class="text-[13px] text-muted-foreground py-4 text-center">No reviews yet.</div>
+            <div v-else class="flex flex-col gap-6">
+              <div v-for="review in recentReviews" :key="review.id" class="flex items-start gap-4 pb-6 border-b border-border/50 last:border-0 last:pb-0">
+                <div class="size-10 shrink-0 bg-card border border-border rounded-full flex items-center justify-center p-2 shadow-xs" v-html="getPlatformIcon((review.provider || 'google').charAt(0).toUpperCase() + (review.provider || 'google').slice(1))"></div>
+                <div class="flex-1 flex flex-col gap-1 min-w-0">
+                  <div class="flex items-center gap-4 flex-wrap">
+                    <span class="text-[14px] font-medium text-foreground">{{ review.reviewer_name || 'Anonymous' }}</span>
+                    <div class="flex gap-0.5 text-amber-400">
+                      <Star v-for="i in 5" :key="i" class="size-3.5" :class="i <= (review.rating || 0) ? 'fill-amber-400' : 'text-muted-foreground/30'" />
+                    </div>
+                    <span class="text-[12px] font-medium text-muted-foreground">{{ relativeDate(review.reviewed_at) }}</span>
+                  </div>
+                  <p class="text-[13px] font-medium text-muted-foreground leading-relaxed">{{ review.body }}</p>
                 </div>
-                <div class="flex flex-col gap-0.5 flex-1">
-                  <span class="text-[13px] font-medium text-foreground">{{ platform.name }} is disconnected</span>
-                  <span class="text-[11.5px] text-muted-foreground">Reconnect to keep this listing in sync.</span>
+                <span
+                  class="px-3 py-0.5 rounded-full font-semibold text-[11px] shrink-0"
+                  :class="reviewHasReply(review) ? 'bg-emerald-50 text-emerald-600 dark:bg-emerald-950 dark:text-emerald-400' : 'bg-muted text-muted-foreground'"
+                >
+                  {{ reviewHasReply(review) ? 'Replied' : 'Pending' }}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Review Performance (real account review stats, no fabricated trend deltas) -->
+          <div class="bg-card border border-border rounded-xl p-6 shadow-xs flex flex-col gap-6">
+            <h3 class="text-base font-medium text-foreground">Review Performance</h3>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div class="border border-border rounded-xl p-4 flex flex-col gap-2">
+                <div class="flex items-center gap-2"><Star class="size-4 text-amber-400 fill-amber-400" /><span class="text-[20px] font-semibold text-foreground leading-none">{{ reviewStats.avgRating }}</span></div>
+                <span class="text-[12px] font-medium text-muted-foreground">Average Rating</span>
+              </div>
+              <div class="border border-border rounded-xl p-4 flex flex-col gap-2">
+                <span class="text-[20px] font-semibold text-foreground leading-none">{{ reviewStats.total }}</span>
+                <span class="text-[12px] font-medium text-muted-foreground">Total Reviews</span>
+              </div>
+              <div class="border border-border rounded-xl p-4 flex flex-col gap-2">
+                <span class="text-[20px] font-semibold text-foreground leading-none">{{ reviewStats.needsReply }}</span>
+                <span class="text-[12px] font-medium text-muted-foreground">Needs Replies</span>
+              </div>
+            </div>
+            <div v-if="reviewStats.total" class="relative h-[140px] w-full">
+              <svg class="absolute inset-0 size-full" viewBox="0 0 100 100" preserveAspectRatio="none">
+                <defs>
+                  <linearGradient id="listingTrendGradient" x1="0" x2="0" y1="0" y2="1">
+                    <stop offset="0%" stop-color="currentColor" class="text-primary" stop-opacity="0.25" />
+                    <stop offset="100%" stop-color="currentColor" class="text-primary" stop-opacity="0.01" />
+                  </linearGradient>
+                </defs>
+                <polygon :points="`0,100 ${trendPoints} 100,100`" fill="url(#listingTrendGradient)" />
+                <polyline :points="trendPoints" fill="none" class="stroke-primary" stroke-width="1.5" vector-effect="non-scaling-stroke" stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+              <div class="absolute bottom-0 left-0 right-0 flex justify-between text-[11px] font-medium text-muted-foreground translate-y-full pt-2">
+                <span v-for="(b, i) in weeklyTrend" :key="i">{{ b.count }}</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Bottom grid: Business Health + Needs Attention -->
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div class="bg-card border border-border rounded-xl p-6 shadow-xs flex flex-col gap-6">
+              <h3 class="text-base font-medium text-foreground">Business Health</h3>
+              <div class="flex flex-col items-center gap-4">
+                <div class="relative size-28 flex items-center justify-center">
+                  <svg class="size-full -rotate-90" viewBox="0 0 100 100">
+                    <circle cx="50" cy="50" r="42" fill="none" class="stroke-emerald-50 dark:stroke-emerald-950" stroke-width="8" />
+                    <circle cx="50" cy="50" r="42" fill="none" class="stroke-emerald-500" stroke-width="8" stroke-linecap="round"
+                      :stroke-dasharray="263.89" :stroke-dashoffset="263.89 - (263.89 * listing.optimizationScore) / 100" />
+                  </svg>
+                  <div class="absolute inset-0 flex flex-col items-center justify-center">
+                    <span class="text-[28px] font-extrabold text-foreground tracking-tight leading-none">{{ listing.optimizationScore }}</span>
+                    <span class="text-[11px] font-semibold text-muted-foreground">/100</span>
+                  </div>
                 </div>
-                <RelayButton variant="outline" class="h-7 text-[11px] font-semibold text-primary px-3 mt-1 shrink-0" @click="togglePlatform(platform)">
-                  Connect
-                </RelayButton>
+              </div>
+              <div class="flex flex-col gap-2.5">
+                <div class="flex items-center gap-3">
+                  <CheckCircle2 class="size-4 text-emerald-500 shrink-0" />
+                  <span class="text-[12.5px] font-medium text-muted-foreground">Connected to {{ connectedCount }} of {{ platformTotal }} platforms</span>
+                </div>
+                <div v-if="listing.address" class="flex items-center gap-3">
+                  <CheckCircle2 class="size-4 text-emerald-500 shrink-0" />
+                  <span class="text-[12.5px] font-medium text-muted-foreground">Business info is filled in</span>
+                </div>
+                <div v-for="platform in disconnectedPlatforms" :key="platform.name" class="flex items-center gap-3">
+                  <AlertTriangle class="size-4 text-amber-500 shrink-0" />
+                  <span class="text-[12.5px] font-medium text-muted-foreground">{{ platform.name }} is disconnected</span>
+                </div>
+              </div>
+            </div>
+
+            <div v-if="disconnectedPlatforms.length" class="bg-card border border-border rounded-xl p-6 shadow-xs flex flex-col gap-6">
+              <div class="flex items-center justify-between">
+                <h3 class="text-base font-medium text-foreground">Needs Attention</h3>
+                <span class="bg-rose-50 text-rose-600 dark:bg-rose-950 dark:text-rose-400 px-2 rounded-full font-semibold text-[12px]">{{ disconnectedPlatforms.length }}</span>
+              </div>
+              <div class="flex flex-col gap-4">
+                <div v-for="platform in disconnectedPlatforms" :key="platform.name" class="flex items-start gap-3">
+                  <div class="size-8 rounded-full bg-rose-50 dark:bg-rose-950 flex items-center justify-center shrink-0 mt-1">
+                    <AlertTriangle class="size-4 text-rose-600" />
+                  </div>
+                  <div class="flex flex-col gap-0.5 flex-1">
+                    <span class="text-[13px] font-medium text-foreground">{{ platform.name }} is disconnected</span>
+                    <span class="text-[11.5px] text-muted-foreground">Reconnect to keep this listing in sync.</span>
+                  </div>
+                  <RelayButton variant="outline" class="h-7 text-[11px] font-semibold text-primary px-3 mt-1 shrink-0" @click="togglePlatform(platform)">
+                    Connect
+                  </RelayButton>
+                </div>
               </div>
             </div>
           </div>

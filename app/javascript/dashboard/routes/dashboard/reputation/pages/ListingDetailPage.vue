@@ -529,17 +529,20 @@ watch(() => route.params.listingId, () => {
           </div>
         </div>
 
-        <div class="flex gap-8 text-[14px] font-medium mt-4 -mb-[1px] border-b border-border overflow-x-auto">
+        <div class="flex gap-8 text-[14px] font-medium mt-4 border-b border-border overflow-x-auto" role="tablist">
           <button
             v-for="tab in tabs"
             :key="tab.id"
             type="button"
-            class="py-3 border-b-2 transition-colors whitespace-nowrap flex items-center gap-2"
-            :class="activeTab === tab.id ? 'border-primary text-primary' : 'border-transparent text-muted-foreground hover:text-foreground'"
+            role="tab"
+            :aria-selected="activeTab === tab.id"
+            class="relative -mb-px py-3 transition-colors whitespace-nowrap flex items-center gap-2 bg-transparent"
+            :class="activeTab === tab.id ? 'text-primary' : 'text-muted-foreground hover:text-foreground'"
             @click="activeTab = tab.id"
           >
             <component :is="tab.icon" class="size-4" />
             {{ tab.id }}
+            <span v-if="activeTab === tab.id" class="absolute inset-x-0 bottom-0 h-0.5 bg-primary" aria-hidden="true" />
           </button>
         </div>
       </div>

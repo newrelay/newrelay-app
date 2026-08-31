@@ -298,7 +298,9 @@ async function loadAiInsights() {
   aiInsightsLoading.value = true;
   try {
     const { data } = await axios.get(`${baseUrl()}/ai_insights`);
-    aiInsights.value = data && data.sentiment != null ? data : null;
+    aiInsights.value = data && data.sentiment != null
+      ? { topics: [], keywords: [], suggestions: [], ...data }
+      : null;
   } catch {
     aiInsights.value = null;
   } finally {
@@ -1070,6 +1072,37 @@ watch(() => route.params.listingId, () => {
                   <span class="text-[22px] font-bold leading-none">{{ reviewStats.avgRating }}</span>
                   <span class="text-[11.5px] opacity-80">Average Rating</span>
                 </div>
+              </div>
+            </div>
+          </div>
+
+          <div v-if="aiInsights.topics.length || aiInsights.keywords.length" class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div v-if="aiInsights.topics.length" class="bg-card border border-border rounded-xl p-6 shadow-xs flex flex-col gap-4">
+              <h3 class="text-base font-medium text-foreground flex items-center gap-2"><TrendingUp class="size-4 text-primary" /> Trending Topics</h3>
+              <div class="flex flex-col gap-3">
+                <div v-for="topic in aiInsights.topics" :key="topic.name" class="flex items-center justify-between gap-3">
+                  <span class="text-[13.5px] font-medium text-foreground">{{ topic.name }}</span>
+                  <div class="flex gap-0.5 text-amber-400 shrink-0">
+                    <Star v-for="i in 5" :key="i" class="size-3.5" :class="i <= Math.round(topic.rating) ? 'fill-amber-400' : 'text-muted-foreground/30'" />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div v-if="aiInsights.keywords.length" class="bg-card border border-border rounded-xl p-6 shadow-xs flex flex-col gap-4">
+              <h3 class="text-base font-medium text-foreground">Keyword Cloud</h3>
+              <div class="flex flex-wrap gap-2">
+                <span v-for="kw in aiInsights.keywords" :key="kw" class="px-2.5 py-1 rounded-md bg-primary/10 text-primary text-[12.5px] font-medium">{{ kw }}</span>
+              </div>
+            </div>
+          </div>
+
+          <div v-if="aiInsights.suggestions.length" class="bg-card border border-border rounded-xl p-6 shadow-xs flex flex-col gap-4">
+            <h3 class="text-base font-medium text-foreground flex items-center gap-2"><Sparkles class="size-4 text-primary" /> AI Suggestions</h3>
+            <div class="flex flex-col gap-3">
+              <div v-for="(suggestion, i) in aiInsights.suggestions" :key="i" class="flex items-start gap-3">
+                <span class="size-1.5 rounded-full bg-primary shrink-0 mt-2"></span>
+                <span class="text-[13px] text-muted-foreground leading-relaxed">{{ suggestion }}</span>
               </div>
             </div>
           </div>

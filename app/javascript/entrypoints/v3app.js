@@ -38,6 +38,8 @@ if (window.errorLoggingConfig) {
   Sentry.init({
     app,
     dsn: window.errorLoggingConfig,
+    environment: window.globalConfig?.ENVIRONMENT || 'production',
+    release: window.globalConfig?.GIT_SHA || window.globalConfig?.APP_VERSION,
     denyUrls: [
       // Chrome extensions
       /^chrome:\/\//i,

@@ -50,7 +50,7 @@ class Rack::Attack
   # Safelist health check endpoint so it never touches Redis for throttle tracking.
   # This keeps /health fully dependency-free for ALB liveness checks.
   Rack::Attack.safelist('health check') do |req|
-    req.path == '/health'
+    req.path == '/health' || req.path == '/ready'
   end
 
   ### Throttle Spammy Clients ###

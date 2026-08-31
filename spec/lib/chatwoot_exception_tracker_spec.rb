@@ -4,7 +4,7 @@ require 'sentry-ruby'
 
 describe ChatwootExceptionTracker do
   it 'use rails logger if no tracker is configured' do
-    expect(Rails.logger).to receive(:error).with('random')
+    expect(Rails.logger).to receive(:error).with('[exception] String: random')
     described_class.new('random').capture_exception
   end
 

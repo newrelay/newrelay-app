@@ -12,7 +12,17 @@ import {
   MonitorPlay, Clock, Play
 } from 'lucide-vue-next';
 import {
-  RelayButton as Button, RelayInput as Input, RelayBadge as Badge
+  RelayButton as Button, RelayInput as Input, RelayBadge as Badge,
+  RelayDropdownMenu as DropdownMenu,
+  RelayDropdownMenuTrigger as DropdownMenuTrigger,
+  RelayDropdownMenuContent as DropdownMenuContent,
+  RelayDropdownMenuItem as DropdownMenuItem,
+  DROPDOWN_MENU_MODAL_SEARCHABLE_CONTENT_CLASS,
+  DROPDOWN_MENU_MODAL_SEARCHABLE_LIST_CLASS,
+  DROPDOWN_MENU_SEARCH_HEADER_CLASS,
+  DROPDOWN_MENU_SEARCH_WRAPPER_CLASS,
+  DROPDOWN_MENU_SEARCH_ICON_CLASS,
+  DROPDOWN_MENU_SEARCH_INPUT_CLASS,
 } from 'dashboard/components-next/relay';
 import RelayDatePicker from 'dashboard/components-next/relay/calendar/DatePicker.vue';
 import RelayTimePicker from 'dashboard/components-next/relay/calendar/TimePicker.vue';
@@ -343,6 +353,10 @@ function selectCompany(comp) {
   companySearch.value = '';
 }
 
+watch(showCompanyMenu, open => {
+  if (!open) companySearch.value = '';
+});
+
 // A contact is eligible only if it has the field(s) the chosen channels need.
 function isCustomerEligible(customer) {
   if (!form.value.channels.length) return true;
@@ -552,58 +566,63 @@ function close() {
               </div>
             </div>
             <div class="pt-4 border-t border-border flex flex-col gap-1.5">
-              <label class="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-1.5">Company</label>
-              <div class="relative z-20">
-                <button
-                  type="button"
-                  class="w-full h-9 px-3 text-sm shadow-xs rounded-md border bg-background flex items-center justify-between gap-2 cursor-pointer transition-colors"
-                  :class="selectedCompanyFilter ? 'border-primary/50 text-primary font-medium' : 'border-border text-foreground hover:bg-muted/50'"
-                  @click="showCompanyMenu = !showCompanyMenu"
-                >
-                  <span class="truncate">{{ selectedCompanyFilter || 'All companies' }}</span>
-                  <ChevronDown class="size-4 text-muted-foreground shrink-0 transition-transform" :class="showCompanyMenu ? 'rotate-180' : ''" />
-                </button>
-
-                <div v-if="showCompanyMenu" class="absolute left-0 right-0 bottom-full mb-1 z-50 rounded-lg border border-border bg-popover shadow-lg p-1.5">
-                  <div class="mb-1.5 flex items-center gap-2 h-8 px-2.5 rounded-md border border-border bg-background focus-within:ring-1 focus-within:ring-primary/30">
-                    <Search class="size-3.5 text-muted-foreground shrink-0" />
-                    <input
-                      v-model="companySearch"
-                      type="text"
-                      placeholder="Search company…"
-                      class="flex-1 min-w-0 h-full border-0 bg-transparent p-0 text-xs text-foreground focus:outline-none placeholder:text-muted-foreground"
+              <label class="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Company</label>
+              <DropdownMenu v-model:open="showCompanyMenu">
+                <DropdownMenuTrigger as-child>
+                  <button
+                    type="button"
+                    class="reset-base relative flex h-9 w-full items-center rounded-md border border-border/80 bg-background pl-8 pr-8 text-left text-[14px] leading-none shadow-sm cursor-pointer focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary/30"
+                    :class="selectedCompanyFilter ? 'text-foreground' : 'text-muted-foreground'"
+                  >
+                    <span class="i-lucide-search pointer-events-none absolute left-2.5 top-1/2 size-3.5 -translate-y-1/2 text-muted-foreground" />
+                    <span class="min-w-0 truncate">{{ selectedCompanyFilter || 'Search companies...' }}</span>
+                    <span
+                      class="pointer-events-none absolute right-2.5 top-1/2 size-3.5 -translate-y-1/2 text-muted-foreground"
+                      :class="showCompanyMenu ? 'i-lucide-chevron-up' : 'i-lucide-chevron-down'"
                     />
+                  </button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent
+                  align="start"
+                  :side-offset="4"
+                  :class="DROPDOWN_MENU_MODAL_SEARCHABLE_CONTENT_CLASS"
+                >
+                  <div :class="DROPDOWN_MENU_SEARCH_HEADER_CLASS" @click.stop @keydown.stop>
+                    <div :class="DROPDOWN_MENU_SEARCH_WRAPPER_CLASS">
+                      <span :class="DROPDOWN_MENU_SEARCH_ICON_CLASS" />
+                      <input
+                        v-model="companySearch"
+                        type="text"
+                        placeholder="Search companies..."
+                        :class="DROPDOWN_MENU_SEARCH_INPUT_CLASS"
+                      />
+                    </div>
                   </div>
-                  <div class="max-h-52 overflow-y-auto space-y-0.5">
-                    <button
-                      type="button"
-                      class="w-full flex items-center justify-between px-2.5 py-1.5 text-xs rounded-md cursor-pointer hover:bg-muted/80 transition-colors"
-                      :class="!selectedCompanyFilter ? 'bg-primary/10 text-primary font-medium' : 'text-foreground'"
+                  <div :class="DROPDOWN_MENU_MODAL_SEARCHABLE_LIST_CLASS">
+                    <DropdownMenuItem
+                      class="justify-between"
                       @click="selectCompany('')"
                     >
                       <span>All companies</span>
                       <Check v-if="!selectedCompanyFilter" class="size-3.5 text-primary" />
-                    </button>
-                    <button
-                      v-for="company in filteredCompanyList" :key="company"
-                      type="button"
-                      class="w-full flex items-center justify-between gap-2 px-2.5 py-1.5 text-xs rounded-md cursor-pointer hover:bg-muted/80 transition-colors"
-                      :class="selectedCompanyFilter === company ? 'bg-primary/10 text-primary font-medium' : 'text-foreground'"
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      v-for="company in filteredCompanyList"
+                      :key="company"
+                      class="justify-between gap-2"
                       @click="selectCompany(company)"
                     >
-                      <span class="flex items-center gap-2 min-w-0">
-                        <Building2 class="size-3.5 opacity-70 shrink-0" />
+                      <span class="flex min-w-0 items-center gap-2">
+                        <Building2 class="size-3.5 shrink-0 opacity-70" />
                         <span class="truncate">{{ company }}</span>
                       </span>
-                      <span class="text-[10.5px] px-1.5 py-0.5 rounded-full bg-muted text-muted-foreground font-medium shrink-0">{{ companyCount(company) }}</span>
-                    </button>
+                      <span class="shrink-0 rounded-full bg-muted px-1.5 py-0.5 text-[10.5px] font-medium text-muted-foreground">{{ companyCount(company) }}</span>
+                    </DropdownMenuItem>
                     <div v-if="!companyList.length" class="px-2.5 py-4 text-center text-xs text-muted-foreground">No companies on your contacts.</div>
                     <div v-else-if="!filteredCompanyList.length" class="px-2.5 py-4 text-center text-xs text-muted-foreground">No match.</div>
                   </div>
-                </div>
-              </div>
-              <!-- click-away -->
-              <div v-if="showCompanyMenu" class="fixed inset-0 z-10" @click="showCompanyMenu = false"></div>
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
           </div>
 

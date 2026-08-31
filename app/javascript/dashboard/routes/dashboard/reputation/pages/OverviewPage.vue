@@ -260,7 +260,7 @@ async function generateReviewReplies() {
     <ShareReportModal v-if="showDemoSurfaces" v-model:open="isShareModalOpen" />
     <FeedbackBreakdownModal v-model:open="isFeedbackModalOpen" :reviews="allReviews" :show-demo="showDemoSurfaces" />
     
-    <div class="max-w-7xl mx-auto space-y-6">
+    <div class="max-w-7xl mx-auto">
       <!-- Header matching AGENTS.md rule (h1 text-xl font-semibold text-foreground) -->
       <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
         <div>
@@ -279,6 +279,12 @@ async function generateReviewReplies() {
         </div>
       </div>
 
+      <div v-if="loading" class="flex flex-col items-center justify-center py-24 space-y-4">
+        <div class="size-10 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+        <p class="text-sm font-medium text-muted-foreground">Loading overview...</p>
+      </div>
+
+      <div v-else class="space-y-6">
       <!-- Section 1: Top Summary Metrics -->
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <!-- Reputation Score (real — /summary) -->
@@ -544,8 +550,7 @@ async function generateReviewReplies() {
           </router-link>
         </div>
 
-        <div v-if="loading" class="p-12 text-center text-muted-foreground text-sm">Loading reviews...</div>
-        <div v-else-if="recentReviews.length === 0" class="p-12 text-center text-muted-foreground text-sm">No reviews yet. Connect a platform to get started.</div>
+        <div v-if="recentReviews.length === 0" class="p-12 text-center text-muted-foreground text-sm">No reviews yet. Connect a platform to get started.</div>
         <div v-else class="divide-y divide-border">
           <div v-for="review in recentReviews" :key="review.id" class="p-6 hover:bg-muted/30 transition-colors flex flex-col sm:flex-row gap-5">
             <div class="shrink-0">
@@ -574,6 +579,7 @@ async function generateReviewReplies() {
             </div>
           </div>
         </div>
+      </div>
       </div>
 
     </div>

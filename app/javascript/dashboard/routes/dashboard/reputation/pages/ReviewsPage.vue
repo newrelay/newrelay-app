@@ -2,6 +2,8 @@
 /* eslint-disable */
 import { ref, computed, onMounted } from 'vue';
 import { RelayInput as Input, RelayCheckbox as Checkbox } from 'dashboard/components-next/relay';
+import { useMapGetter } from 'dashboard/composables/store';
+import { useAlert } from 'dashboard/composables';
 import {
   Search, Filter, ChevronDown, CheckSquare, Sparkles, MessageSquare,
   Clock, Check, Calendar, Star, MoreHorizontal, X, ArrowRight,
@@ -15,6 +17,15 @@ const axios = window.axios;
 const accountId = window.__STORE__?.getters['auth/getCurrentAccount']?.id ||
   window.location.pathname.match(/accounts\/(\d+)/)?.[1];
 const baseUrl = () => `/api/v1/accounts/${accountId}/reputation`;
+const agents = useMapGetter('agents/getAgents');
+const currentUser = useMapGetter('getCurrentUser');
+const assigneeOptions = computed(() => {
+  const names = (agents.value || []).map(a => a.name).filter(Boolean);
+  if (currentUser.value?.name && !names.includes(currentUser.value.name)) {
+    names.unshift(currentUser.value.name);
+  }
+  return names;
+});
 
 const searchQuery = ref('');
 const selectedReviews = ref([]);
@@ -192,6 +203,129 @@ function addInternalNote() {
 }
 
 const isSendingReply = ref(false);
+const bulkBusy = ref(false);
+const showBulkAssign = ref(false);
+
+function selectedReviewObjects() {
+  return reviews.value.filter(r => selectedReviews.value.includes(r.id));
+}
+
+function clearSelection() {
+  selectedReviews.value = [];
+  showBulkAssign.value = false;
+  activeReviewMenuId.value = null;
+}
+
+function applyAssignee(name, ids) {
+  const targetIds = ids || selectedReviews.value;
+  reviews.value.forEach(r => {
+    if (targetIds.includes(r.id)) r.assignee = name;
+  });
+  if (selectedReview.value && targetIds.includes(selectedReview.value.id)) {
+    selectedReview.value.assignee = name;
+  }
+}
+
+function assignSelected(name) {
+  if (!selectedReviews.value.length) return;
+  applyAssignee(name);
+  showBulkAssign.value = false;
+  useAlert(name ? `Assigned to ${name}` : 'Unassigned');
+  clearSelection();
+}
+
+function assignOne(review, name) {
+  applyAssignee(name, [review.id]);
+  activeReviewMenuId.value = null;
+  showAssigneeDropdown.value = false;
+  useAlert(name ? `Assigned to ${name}` : 'Unassigned');
+}
+
+function localDraft(review) {
+  const name = (review.author || 'there').split(' ')[0];
+  if ((review.rating || 0) >= 4) {
+    return `Hi ${name}, thank you for the kind review — we really appreciate you taking the time.`;
+  }
+  return `Hi ${name}, thank you for the feedback. We're sorry this wasn't up to standard and we'd like to make it right.`;
+}
+
+async function markResolved(ids) {
+  const targetIds = ids || [...selectedReviews.value];
+  if (!targetIds.length) return;
+  bulkBusy.value = true;
+  try {
+    await Promise.all(targetIds.map(id =>
+      axios.patch(`${baseUrl()}/reviews/${id}/ignore`).catch(() => null)
+    ));
+    reviews.value.forEach(r => {
+      if (targetIds.includes(r.id)) r.status = 'Replied';
+    });
+    if (selectedReview.value && targetIds.includes(selectedReview.value.id)) {
+      selectedReview.value.status = 'Replied';
+    }
+    useAlert(targetIds.length === 1 ? 'Marked resolved' : `Marked ${targetIds.length} reviews resolved`);
+    clearSelection();
+  } catch {
+    useAlert('Could not mark reviews resolved');
+  } finally {
+    bulkBusy.value = false;
+  }
+}
+
+async function sendAiReplies(ids) {
+  const targetIds = ids || [...selectedReviews.value];
+  const pending = reviews.value.filter(r => targetIds.includes(r.id) && r.status === 'Needs Reply');
+  if (!pending.length) {
+    useAlert('No reviews need a reply');
+    return;
+  }
+  bulkBusy.value = true;
+  try {
+    await Promise.all(pending.slice(0, 10).map(async r => {
+      let draft = '';
+      try {
+        const { data } = await axios.get(`${baseUrl()}/reviews/${r.id}/ai_draft`);
+        draft = (data && data.draft) || '';
+      } catch {
+        draft = '';
+      }
+      const body = draft || localDraft(r);
+      await axios.post(`${baseUrl()}/reviews/${r.id}/reply`, { body, publish: true });
+      r.reply = body;
+      r.status = 'Replied';
+      if (selectedReview.value && selectedReview.value.id === r.id) {
+        selectedReview.value.reply = body;
+        selectedReview.value.status = 'Replied';
+        replyText.value = body;
+      }
+    }));
+    useAlert(pending.length === 1 ? 'Relay AI reply sent' : `Sent ${pending.length} Relay AI replies`);
+    clearSelection();
+  } catch {
+    useAlert('Could not send Relay AI replies');
+  } finally {
+    bulkBusy.value = false;
+  }
+}
+
+function exportSelected() {
+  const rows = selectedReviewObjects();
+  if (!rows.length) return;
+  const header = ['Author', 'Platform', 'Rating', 'Status', 'Assignee', 'Date', 'Content'];
+  const csv = [header, ...rows.map(r => [r.author, r.platform, r.rating, r.status, r.assignee || '', r.date, r.content])]
+    .map(line => line.map(v => `"${String(v ?? '').replaceAll('"', '""')}"`).join(','))
+    .join('\n');
+  const blob = new Blob([csv], { type: 'text/csv' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'reviews.csv';
+  a.click();
+  URL.revokeObjectURL(url);
+  useAlert('Reviews exported');
+  clearSelection();
+}
+
 async function sendReply() {
   if (!selectedReview.value || !replyText.value.trim() || isSendingReply.value) return;
   isSendingReply.value = true;
@@ -616,20 +750,26 @@ async function sendReply() {
                         <MessageSquare class="size-4" /> View Details
                       </button>
                       <button 
-                        @click="activeReviewMenuId = null" 
+                        @click="openReviewDetail(review); showAssigneeDropdown = true; activeReviewMenuId = null" 
                         class="w-full text-left px-3 py-1.5 text-xs rounded-md hover:bg-muted font-medium text-foreground flex items-center gap-2 cursor-pointer"
                       >
                         <UserPlus class="size-4" /> Assign
                       </button>
                       <div class="my-1 border-t border-border/80"></div>
                       <button 
-                        @click="review.status = 'Replied'; activeReviewMenuId = null" 
+                        @click="sendAiReplies([review.id]); activeReviewMenuId = null" 
+                        class="w-full text-left px-3 py-1.5 text-xs rounded-md hover:bg-muted font-medium text-foreground flex items-center gap-2 cursor-pointer"
+                      >
+                        <Sparkles class="size-4" /> Relay AI Reply
+                      </button>
+                      <button 
+                        @click="markResolved([review.id]); activeReviewMenuId = null" 
                         class="w-full text-left px-3 py-1.5 text-xs rounded-md hover:bg-muted font-medium text-foreground flex items-center gap-2 cursor-pointer"
                       >
                         <CheckSquare class="size-4 text-emerald-600" /> Mark Resolved
                       </button>
                       <button 
-                        @click="reviews = reviews.filter(r => r.id !== review.id); activeReviewMenuId = null" 
+                        @click="markResolved([review.id]); activeReviewMenuId = null" 
                         class="w-full text-left px-3 py-1.5 text-xs rounded-md hover:bg-rose-500/10 text-rose-600 dark:text-rose-400 font-medium flex items-center gap-2 cursor-pointer"
                       >
                         <X class="size-4" /> Delete
@@ -708,16 +848,25 @@ async function sendReply() {
                 v-if="showAssigneeDropdown" 
                 class="absolute left-0 right-0 mt-1 bg-card border border-border rounded-xl p-1 shadow-xl z-50 space-y-0.5 animate-in fade-in duration-150"
               >
-                <button 
-                  v-for="person in ['Unassigned', 'Jane Doe', 'John Smith', 'Sarah Jenkins']"
-                  :key="person"
-                  @click="selectedReview.assignee = person === 'Unassigned' ? null : person; showAssigneeDropdown = false"
+                <button
                   class="w-full text-left px-3 py-1.5 text-xs rounded-md font-medium flex items-center justify-between cursor-pointer"
-                  :class="(selectedReview.assignee === person || (!selectedReview.assignee && person === 'Unassigned')) ? 'bg-primary/10 text-primary font-semibold' : 'hover:bg-muted text-foreground'"
+                  :class="!selectedReview.assignee ? 'bg-primary/10 text-primary font-semibold' : 'hover:bg-muted text-foreground'"
+                  @click="assignOne(selectedReview, null)"
+                >
+                  <span>Unassigned</span>
+                  <Check v-if="!selectedReview.assignee" class="size-3.5" />
+                </button>
+                <button
+                  v-for="person in assigneeOptions"
+                  :key="person"
+                  class="w-full text-left px-3 py-1.5 text-xs rounded-md font-medium flex items-center justify-between cursor-pointer"
+                  :class="selectedReview.assignee === person ? 'bg-primary/10 text-primary font-semibold' : 'hover:bg-muted text-foreground'"
+                  @click="assignOne(selectedReview, person)"
                 >
                   <span>{{ person }}</span>
-                  <Check v-if="(selectedReview.assignee === person || (!selectedReview.assignee && person === 'Unassigned'))" class="size-3.5" />
+                  <Check v-if="selectedReview.assignee === person" class="size-3.5" />
                 </button>
+                <p v-if="!assigneeOptions.length" class="px-3 py-2 text-[11px] text-muted-foreground">No agents in this account.</p>
               </div>
             </div>
 
@@ -739,7 +888,7 @@ async function sendReply() {
                 <button 
                   v-for="st in ['Needs Reply', 'Replied', 'Pending']"
                   :key="st"
-                  @click="selectedReview.status = st; showStatusDropdown = false"
+                  @click="st === 'Replied' ? markResolved([selectedReview.id]) : (selectedReview.status = st); showStatusDropdown = false"
                   class="w-full text-left px-3 py-1.5 text-xs rounded-md font-medium flex items-center justify-between cursor-pointer"
                   :class="selectedReview.status === st ? 'bg-primary/10 text-primary font-semibold' : 'hover:bg-muted text-foreground'"
                 >
@@ -834,22 +983,66 @@ async function sendReply() {
       </div>
 
       <div class="flex items-center gap-1 px-2">
-        <button class="inline-flex items-center gap-1.5 rounded-full h-8 px-3 hover:bg-muted text-sm font-medium text-foreground transition-colors cursor-pointer">
-          <UserPlus class="size-4" /> Assign
-        </button>
-        <button class="inline-flex items-center gap-1.5 rounded-full h-8 px-3 hover:bg-primary/10 hover:text-primary text-sm font-medium text-foreground transition-colors cursor-pointer">
+        <div class="relative">
+          <button
+            type="button"
+            class="inline-flex items-center gap-1.5 rounded-full h-8 px-3 hover:bg-muted text-sm font-medium text-foreground transition-colors cursor-pointer disabled:opacity-50"
+            :disabled="bulkBusy"
+            @click="showBulkAssign = !showBulkAssign"
+          >
+            <UserPlus class="size-4" /> Assign
+          </button>
+          <div
+            v-if="showBulkAssign"
+            class="absolute bottom-full left-0 mb-2 w-48 rounded-xl border border-border bg-card p-1 shadow-xl z-50"
+          >
+            <button
+              type="button"
+              class="w-full text-left px-3 py-1.5 text-xs rounded-md hover:bg-muted font-medium text-foreground cursor-pointer"
+              @click="assignSelected(null)"
+            >
+              Unassigned
+            </button>
+            <button
+              v-for="person in assigneeOptions"
+              :key="person"
+              type="button"
+              class="w-full text-left px-3 py-1.5 text-xs rounded-md hover:bg-muted font-medium text-foreground cursor-pointer"
+              @click="assignSelected(person)"
+            >
+              {{ person }}
+            </button>
+            <p v-if="!assigneeOptions.length" class="px-3 py-2 text-[11px] text-muted-foreground">No agents in this account.</p>
+          </div>
+        </div>
+        <button
+          type="button"
+          class="inline-flex items-center gap-1.5 rounded-full h-8 px-3 hover:bg-primary/10 hover:text-primary text-sm font-medium text-foreground transition-colors cursor-pointer disabled:opacity-50"
+          :disabled="bulkBusy"
+          @click="sendAiReplies()"
+        >
           <Sparkles class="size-4" /> Relay AI Reply
         </button>
-        <button class="inline-flex items-center gap-1.5 rounded-full h-8 px-3 hover:bg-emerald-500/10 hover:text-emerald-600 text-sm font-medium text-foreground transition-colors cursor-pointer">
+        <button
+          type="button"
+          class="inline-flex items-center gap-1.5 rounded-full h-8 px-3 hover:bg-emerald-500/10 hover:text-emerald-600 text-sm font-medium text-foreground transition-colors cursor-pointer disabled:opacity-50"
+          :disabled="bulkBusy"
+          @click="markResolved()"
+        >
           <CheckSquare class="size-4" /> Mark Resolved
         </button>
-        <button class="inline-flex items-center gap-1.5 rounded-full h-8 px-3 hover:bg-muted text-sm font-medium text-foreground transition-colors cursor-pointer">
+        <button
+          type="button"
+          class="inline-flex items-center gap-1.5 rounded-full h-8 px-3 hover:bg-muted text-sm font-medium text-foreground transition-colors cursor-pointer disabled:opacity-50"
+          :disabled="bulkBusy"
+          @click="exportSelected"
+        >
           <CornerDownRight class="size-4" /> Export
         </button>
       </div>
 
       <div class="pl-2 border-l border-border/50 shrink-0">
-        <button class="inline-flex items-center justify-center rounded-full size-8 text-rose-500 hover:text-rose-600 hover:bg-rose-500/10 transition-colors cursor-pointer" @click="selectedReviews = []">
+        <button class="inline-flex items-center justify-center rounded-full size-8 text-rose-500 hover:text-rose-600 hover:bg-rose-500/10 transition-colors cursor-pointer" @click="clearSelection">
           <X class="size-4" />
         </button>
       </div>

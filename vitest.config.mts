@@ -11,13 +11,24 @@ export default defineConfig({
     environment: 'jsdom',
     include: ['app/**/*.{test,spec}.?(c|m)[jt]s?(x)'],
     coverage: {
-      reporter: ['lcov', 'text'],
+      reporter: ['lcov', 'text', 'json-summary'],
       include: ['app/**/*.js', 'app/**/*.vue'],
       exclude: [
         'app/**/*.@(spec|stories|routes).js',
         '**/specs/**/*',
         '**/i18n/**/*',
       ],
+      // Unset VITEST_COVERAGE_MIN = report only. Target for new critical
+      // paths is 95% (docs/adr/0003).
+      ...(Number(process.env.VITEST_COVERAGE_MIN) > 0
+        ? {
+            thresholds: {
+              lines: Number(process.env.VITEST_COVERAGE_MIN),
+              functions: Number(process.env.VITEST_COVERAGE_MIN),
+              statements: Number(process.env.VITEST_COVERAGE_MIN),
+            },
+          }
+        : {}),
     },
     globals: true,
     outputFile: 'coverage/sonar-report.xml',

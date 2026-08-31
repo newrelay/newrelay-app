@@ -16,13 +16,16 @@ import {
   RelayDropdownMenuContent as DropdownMenuContent,
   RelayDropdownMenuItem as DropdownMenuItem,
 } from 'dashboard/components-next/relay';
+import { useMapGetter } from 'dashboard/composables/store';
+import { useAlert } from 'dashboard/composables';
 import { defaultSmsTemplates, defaultEmailTemplates, defaultWhatsAppTemplates } from '../components/data/outreachTemplates';
 
 const axios = window.axios;
-const accountId =
-  window.__STORE__?.getters['auth/getCurrentAccount']?.id ||
-  window.location.pathname.match(/accounts\/(\d+)/)?.[1];
-const settingsUrl = () => `/api/v1/accounts/${accountId}/reputation/settings`;
+const storeAccountId = useMapGetter('getCurrentAccountId');
+const accountId = computed(
+  () => storeAccountId.value || window.location.pathname.match(/accounts\/(\d+)/)?.[1]
+);
+const settingsUrl = () => `/api/v1/accounts/${accountId.value}/reputation/settings`;
 async function persist(patch) {
   try { await axios.patch(settingsUrl(), { config: patch }); } catch (e) { /* keep UI optimistic */ }
 }
@@ -170,8 +173,8 @@ const parsedVideoQuestions = computed(() =>
 );
 
 // ---------- Tab 2: Review Link & QR Hub ----------
-const reviewLink = computed(() => `${window.location.origin}/reputation/review/${accountId}/new`);
-const reviewLinkShort = computed(() => `${window.location.host}/reputation/review/${accountId}/new`);
+const reviewLink = computed(() => `${window.location.origin}/reputation/review/${accountId.value}/new`);
+const reviewLinkShort = computed(() => `${window.location.host}/reputation/review/${accountId.value}/new`);
 const qrDataUrl = ref('');
 async function renderQr() {
   try {
@@ -189,9 +192,17 @@ onMounted(renderQr);
 watch(reviewLink, renderQr);
 const isLinkCopied = ref(false);
 function copyReviewLink() {
-  navigator.clipboard?.writeText(reviewLink.value);
-  isLinkCopied.value = true;
-  setTimeout(() => { isLinkCopied.value = false; }, 2000);
+  const text = reviewLink.value;
+  if (!navigator.clipboard?.writeText) {
+    useAlert('Could not copy the review link.');
+    return;
+  }
+  navigator.clipboard.writeText(text).then(() => {
+    isLinkCopied.value = true;
+    setTimeout(() => { isLinkCopied.value = false; }, 2000);
+  }).catch(() => {
+    useAlert('Could not copy the review link.');
+  });
 }
 const selectedDestination = ref('google');
 const destinationLabels = {
@@ -205,15 +216,292 @@ const qrTitle = ref('Scan to Rate Us on Google');
 const qrSubtitle = ref('Takes only 30 seconds!');
 const includeLogo = ref(true);
 const isQrDownloaded = ref(false);
+const qrBusy = ref(false);
+const QR_OPTIONS = {
+  width: 1024,
+  margin: 1,
+  errorCorrectionLevel: 'H',
+  color: { dark: '#0f172a', light: '#ffffff' },
+};
+
+function persistQrSettings() {
+  persist({
+    selectedDestination: selectedDestination.value,
+    qrFrame: qrFrame.value,
+    qrTitle: qrTitle.value,
+    qrSubtitle: qrSubtitle.value,
+    includeLogo: includeLogo.value,
+  });
+}
+
 function selectQrFrame(frame) {
   qrFrame.value = frame;
   if (frame === 'badge') { qrTitle.value = 'Scan to Rate Us on Google'; qrSubtitle.value = 'Takes only 30 seconds!'; }
   else if (frame === 'stars') { qrTitle.value = 'How Was Your Visit?'; qrSubtitle.value = 'We appreciate your feedback!'; }
   else { qrTitle.value = 'Scan with Camera'; qrSubtitle.value = ''; }
+  persistQrSettings();
 }
-function downloadQrCode() {
-  isQrDownloaded.value = true;
-  setTimeout(() => { isQrDownloaded.value = false; }, 2000);
+
+function triggerDownload(href, filename) {
+  const link = document.createElement('a');
+  link.href = href;
+  link.download = filename;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+}
+
+async function downloadQrPng() {
+  const url = await QRCode.toDataURL(reviewLink.value, QR_OPTIONS);
+  triggerDownload(url, 'review-qr-stand.png');
+}
+
+async function downloadQrSvg() {
+  const svg = await QRCode.toString(reviewLink.value, { ...QR_OPTIONS, type: 'svg' });
+  const blob = new Blob([svg], { type: 'image/svg+xml;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  triggerDownload(url, 'review-qr-stand.svg');
+  URL.revokeObjectURL(url);
+}
+
+function concatBytes(chunks) {
+  const out = new Uint8Array(chunks.reduce((n, c) => n + c.length, 0));
+  let offset = 0;
+  chunks.forEach(chunk => {
+    out.set(chunk, offset);
+    offset += chunk.length;
+  });
+  return out;
+}
+
+function asciiBytes(str) {
+  const out = new Uint8Array(str.length);
+  for (let i = 0; i < str.length; i += 1) out[i] = str.charCodeAt(i) & 0xff;
+  return out;
+}
+
+function pdfFromJpeg(jpeg, imgW, imgH) {
+  const pageW = 612;
+  const pageH = 792;
+  const margin = 48;
+  const scale = Math.min((pageW - margin * 2) / imgW, (pageH - margin * 2) / imgH);
+  const w = Math.round(imgW * scale * 100) / 100;
+  const h = Math.round(imgH * scale * 100) / 100;
+  const x = Math.round(((pageW - w) / 2) * 100) / 100;
+  const y = Math.round(((pageH - h) / 2) * 100) / 100;
+  const content = `q ${w} 0 0 ${h} ${x} ${y} cm /Im0 Do Q`;
+  const chunks = [];
+  const offsets = [];
+  let pos = 0;
+  const add = bytes => {
+    chunks.push(bytes);
+    pos += bytes.length;
+  };
+  const writeObj = (n, body) => {
+    offsets[n] = pos;
+    add(asciiBytes(`${n} 0 obj\n${body}\nendobj\n`));
+  };
+
+  add(asciiBytes('%PDF-1.4\n'));
+  writeObj(1, '<< /Type /Catalog /Pages 2 0 R >>');
+  writeObj(2, '<< /Type /Pages /Kids [3 0 R] /Count 1 >>');
+  writeObj(3, `<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ${pageW} ${pageH}] /Resources << /XObject << /Im0 4 0 R >> >> /Contents 5 0 R >>`);
+  offsets[4] = pos;
+  add(asciiBytes(`4 0 obj\n<< /Type /XObject /Subtype /Image /Width ${imgW} /Height ${imgH} /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Length ${jpeg.length} >>\nstream\n`));
+  add(jpeg);
+  add(asciiBytes('\nendstream\nendobj\n'));
+  writeObj(5, `<< /Length ${content.length} >>\nstream\n${content}\nendstream`);
+
+  const xrefPos = pos;
+  let xref = 'xref\n0 6\n0000000000 65535 f \n';
+  for (let i = 1; i <= 5; i += 1) {
+    xref += `${String(offsets[i]).padStart(10, '0')} 00000 n \n`;
+  }
+  add(asciiBytes(xref));
+  add(asciiBytes(`trailer\n<< /Size 6 /Root 1 0 R >>\nstartxref\n${xrefPos}\n%%EOF`));
+  return concatBytes(chunks);
+}
+
+function loadImage(src) {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.onload = () => resolve(img);
+    img.onerror = () => reject(new Error('Could not load QR image'));
+    img.src = src;
+  });
+}
+
+function canvasToJpeg(canvas) {
+  return new Promise((resolve, reject) => {
+    canvas.toBlob(blob => {
+      if (!blob) {
+        reject(new Error('Could not encode JPEG'));
+        return;
+      }
+      blob.arrayBuffer().then(buf => resolve(new Uint8Array(buf))).catch(reject);
+    }, 'image/jpeg', 0.92);
+  });
+}
+
+function wrapCanvasText(ctx, text, maxWidth) {
+  const words = String(text || '').split(/\s+/).filter(Boolean);
+  const lines = [];
+  let line = '';
+  words.forEach(word => {
+    const test = line ? `${line} ${word}` : word;
+    if (ctx.measureText(test).width > maxWidth && line) {
+      lines.push(line);
+      line = word;
+    } else {
+      line = test;
+    }
+  });
+  if (line) lines.push(line);
+  return lines.length ? lines : [''];
+}
+
+function roundedRect(ctx, x, y, w, h, r) {
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.arcTo(x + w, y, x + w, y + h, r);
+  ctx.arcTo(x + w, y + h, x, y + h, r);
+  ctx.arcTo(x, y + h, x, y, r);
+  ctx.arcTo(x, y, x + w, y, r);
+  ctx.closePath();
+}
+
+function fillStar(ctx, cx, cy, outer, inner) {
+  ctx.beginPath();
+  for (let i = 0; i < 10; i += 1) {
+    const r = i % 2 === 0 ? outer : inner;
+    const a = -Math.PI / 2 + (i * Math.PI) / 5;
+    const x = cx + r * Math.cos(a);
+    const y = cy + r * Math.sin(a);
+    if (i === 0) ctx.moveTo(x, y);
+    else ctx.lineTo(x, y);
+  }
+  ctx.closePath();
+  ctx.fill();
+}
+
+async function renderStandCanvas() {
+  const W = 1080;
+  const pad = 72;
+  const qrSize = 560;
+  const qrUrl = await QRCode.toDataURL(reviewLink.value, QR_OPTIONS);
+  const qrImg = await loadImage(qrUrl);
+  const canvas = document.createElement('canvas');
+  const ctx = canvas.getContext('2d');
+  ctx.font = '700 44px ui-sans-serif, system-ui, sans-serif';
+  const titleLines = wrapCanvasText(ctx, qrTitle.value, W - pad * 2);
+  ctx.font = '400 28px ui-sans-serif, system-ui, sans-serif';
+  const subtitleLines = qrSubtitle.value ? wrapCanvasText(ctx, qrSubtitle.value, W - pad * 2) : [];
+  const headerH = qrFrame.value === 'simple' ? 0 : 56;
+  const H = pad + headerH + titleLines.length * 54 + subtitleLines.length * 36 + 36 + qrSize + 48 + 36 + pad;
+  canvas.width = W;
+  canvas.height = H;
+
+  ctx.fillStyle = '#ffffff';
+  ctx.fillRect(0, 0, W, H);
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'top';
+  let y = pad;
+
+  if (qrFrame.value === 'badge') {
+    const label = 'Rated 5.0 on Google';
+    ctx.font = '600 22px ui-sans-serif, system-ui, sans-serif';
+    const tw = ctx.measureText(label).width;
+    const bw = tw + 72;
+    const bx = (W - bw) / 2;
+    ctx.fillStyle = '#f1f5f9';
+    ctx.strokeStyle = '#e2e8f0';
+    ctx.lineWidth = 2;
+    roundedRect(ctx, bx, y, bw, 40, 20);
+    ctx.fill();
+    ctx.stroke();
+    ctx.fillStyle = '#f59e0b';
+    fillStar(ctx, bx + 22, y + 20, 9, 4);
+    ctx.fillStyle = '#0f172a';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(label, W / 2 + 8, y + 20);
+    ctx.textBaseline = 'top';
+    y += 56;
+  } else if (qrFrame.value === 'stars') {
+    ctx.fillStyle = '#f59e0b';
+    for (let i = 0; i < 5; i += 1) fillStar(ctx, W / 2 - 64 + i * 32, y + 16, 12, 5);
+    y += 48;
+  }
+
+  ctx.fillStyle = '#0f172a';
+  ctx.font = '700 44px ui-sans-serif, system-ui, sans-serif';
+  titleLines.forEach(line => {
+    ctx.fillText(line, W / 2, y);
+    y += 54;
+  });
+  if (subtitleLines.length) {
+    ctx.fillStyle = '#475569';
+    ctx.font = '400 28px ui-sans-serif, system-ui, sans-serif';
+    subtitleLines.forEach(line => {
+      ctx.fillText(line, W / 2, y);
+      y += 36;
+    });
+  }
+  y += 28;
+
+  const qx = (W - qrSize) / 2;
+  ctx.fillStyle = '#ffffff';
+  ctx.strokeStyle = '#e2e8f0';
+  ctx.lineWidth = 2;
+  roundedRect(ctx, qx - 16, y - 16, qrSize + 32, qrSize + 32, 24);
+  ctx.fill();
+  ctx.stroke();
+  ctx.drawImage(qrImg, qx, y, qrSize, qrSize);
+
+  if (includeLogo.value) {
+    const cx = W / 2;
+    const cy = y + qrSize / 2;
+    ctx.fillStyle = '#ffffff';
+    ctx.beginPath();
+    ctx.arc(cx, cy, 38, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = '#4f46e5';
+    ctx.beginPath();
+    ctx.arc(cx, cy, 30, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = '#ffffff';
+    fillStar(ctx, cx, cy, 14, 6);
+  }
+  y += qrSize + 40;
+
+  ctx.fillStyle = '#64748b';
+  ctx.font = '400 24px ui-monospace, SFMono-Regular, Menlo, monospace';
+  ctx.fillText(reviewLinkShort.value, W / 2, y);
+  return canvas;
+}
+
+async function downloadQrPdf() {
+  const canvas = await renderStandCanvas();
+  const jpeg = await canvasToJpeg(canvas);
+  const pdf = pdfFromJpeg(jpeg, canvas.width, canvas.height);
+  const url = URL.createObjectURL(new Blob([pdf], { type: 'application/pdf' }));
+  triggerDownload(url, 'review-qr-stand.pdf');
+  URL.revokeObjectURL(url);
+}
+
+async function downloadQrCode(format) {
+  if (qrBusy.value) return;
+  qrBusy.value = true;
+  try {
+    if (format === 'svg') await downloadQrSvg();
+    else if (format === 'pdf') await downloadQrPdf();
+    else await downloadQrPng();
+    isQrDownloaded.value = true;
+    setTimeout(() => { isQrDownloaded.value = false; }, 2000);
+  } catch (e) {
+    useAlert('Could not download the QR stand. Try again.');
+  } finally {
+    qrBusy.value = false;
+  }
 }
 
 // ---------- Tab 3: Relay AI Automations ----------
@@ -289,8 +577,15 @@ async function loadConfig() {
     if (c.spamSettings) spamSettings.value = { ...spamSettings.value, ...c.spamSettings };
     if (c.customTemplates) customTemplates.value = { sms: [], email: [], whatsapp: [], ...c.customTemplates };
   } catch (e) { /* no saved settings yet */ }
+  qrSettingsReady.value = true;
 }
 onMounted(loadConfig);
+
+const qrSettingsReady = ref(false);
+watch([includeLogo, selectedDestination], () => {
+  if (!qrSettingsReady.value) return;
+  persistQrSettings();
+});
 
 // Selected-label helpers for the custom dropdowns
 const channelTemplateLabel = computed(() => channelTemplates.value.find(t => t.id === channelTemplateId.value)?.name || 'Select template');
@@ -583,34 +878,34 @@ const autoFlagLabel = computed(() => autoFlagOptions.find(o => o.value === spamS
               <span class="text-[13px] font-medium text-foreground">Stand Mockup</span>
               <span class="text-[11px] font-medium px-2 py-0.5 rounded-md bg-muted text-muted-foreground">300 DPI Vector</span>
             </div>
-            <div class="w-full max-w-[240px] bg-card border border-border rounded-2xl p-5 shadow-md flex flex-col items-center text-center space-y-3.5 z-10">
+            <div class="w-full max-w-[240px] bg-white border border-border rounded-2xl p-5 shadow-md flex flex-col items-center text-center space-y-3.5 z-10">
               <div v-if="qrFrame === 'badge'" class="space-y-1.5 w-full flex flex-col items-center">
-                <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-muted/80 border border-border/80 text-[10.5px] font-semibold text-foreground"><Star class="size-3 text-amber-500 fill-amber-500" /><span>Rated 5.0 on Google</span></div>
-                <div class="text-[13px] font-bold text-foreground leading-tight">{{ qrTitle }}</div>
-                <div v-if="qrSubtitle" class="text-[11px] text-muted-foreground">{{ qrSubtitle }}</div>
+                <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-muted/80 border border-border/80 text-[10.5px] font-semibold text-slate-900"><Star class="size-3 text-amber-500 fill-amber-500" /><span>Rated 5.0 on Google</span></div>
+                <div class="text-[13px] font-bold text-slate-900 leading-tight">{{ qrTitle }}</div>
+                <div v-if="qrSubtitle" class="text-[11px] text-slate-600">{{ qrSubtitle }}</div>
               </div>
               <div v-else-if="qrFrame === 'stars'" class="space-y-1 w-full flex flex-col items-center">
                 <div class="flex items-center justify-center gap-1 text-amber-500"><Star v-for="s in 5" :key="s" class="size-3.5 fill-amber-500" /></div>
-                <div class="text-[13px] font-bold text-foreground leading-tight">{{ qrTitle }}</div>
-                <div v-if="qrSubtitle" class="text-[11px] text-muted-foreground">{{ qrSubtitle }}</div>
+                <div class="text-[13px] font-bold text-slate-900 leading-tight">{{ qrTitle }}</div>
+                <div v-if="qrSubtitle" class="text-[11px] text-slate-600">{{ qrSubtitle }}</div>
               </div>
               <div v-else class="space-y-0.5 w-full flex flex-col items-center pt-0.5">
-                <div class="text-[12.5px] font-semibold text-foreground leading-tight">{{ qrTitle }}</div>
-                <div v-if="qrSubtitle" class="text-[10.5px] text-muted-foreground">{{ qrSubtitle }}</div>
+                <div class="text-[12.5px] font-semibold text-slate-900 leading-tight">{{ qrTitle }}</div>
+                <div v-if="qrSubtitle" class="text-[10.5px] text-slate-600">{{ qrSubtitle }}</div>
               </div>
               <div class="size-36 bg-white p-2.5 rounded-xl border border-border shadow-xs flex items-center justify-center relative">
                 <img v-if="qrDataUrl" :src="qrDataUrl" alt="Review link QR code" class="size-full rounded-md" />
                 <div v-else class="size-full rounded-md bg-muted animate-pulse"></div>
                 <div v-if="includeLogo" class="absolute size-7 rounded-full bg-primary text-primary-foreground flex items-center justify-center shadow-md ring-2 ring-white"><Star class="size-3.5 fill-current" /></div>
               </div>
-              <div class="text-[11px] font-mono text-muted-foreground truncate w-full">{{ reviewLinkShort }}</div>
+              <div class="text-[11px] font-mono text-slate-500 truncate w-full">{{ reviewLinkShort }}</div>
             </div>
             <div class="w-full space-y-2 pt-1 z-10">
               <div class="grid grid-cols-2 gap-2">
-                <button class="h-9 rounded-md border border-border bg-background hover:bg-muted text-[12px] font-medium inline-flex items-center justify-center gap-1.5 cursor-pointer" @click="downloadQrCode"><Download class="size-3.5 text-primary" /> PNG</button>
-                <button class="h-9 rounded-md border border-border bg-background hover:bg-muted text-[12px] font-medium inline-flex items-center justify-center gap-1.5 cursor-pointer" @click="downloadQrCode"><Download class="size-3.5 text-primary" /> SVG</button>
+                <button type="button" :disabled="qrBusy" class="h-9 rounded-md border border-border bg-background hover:bg-muted text-[12px] font-medium inline-flex items-center justify-center gap-1.5 cursor-pointer disabled:opacity-50" @click="downloadQrCode('png')"><Download class="size-3.5 text-primary" /> PNG</button>
+                <button type="button" :disabled="qrBusy" class="h-9 rounded-md border border-border bg-background hover:bg-muted text-[12px] font-medium inline-flex items-center justify-center gap-1.5 cursor-pointer disabled:opacity-50" @click="downloadQrCode('svg')"><Download class="size-3.5 text-primary" /> SVG</button>
               </div>
-              <button class="w-full h-9 rounded-md bg-primary text-primary-foreground text-[12.5px] font-medium inline-flex items-center justify-center gap-1.5 cursor-pointer hover:bg-primary/90" @click="downloadQrCode">
+              <button type="button" :disabled="qrBusy" class="w-full h-9 rounded-md bg-primary text-primary-foreground text-[12.5px] font-medium inline-flex items-center justify-center gap-1.5 cursor-pointer hover:bg-primary/90 disabled:opacity-50" @click="downloadQrCode('pdf')">
                 <Check v-if="isQrDownloaded" class="size-3.5" /><Printer v-else class="size-3.5" /> {{ isQrDownloaded ? 'Downloaded' : 'Print Signage (PDF)' }}
               </button>
             </div>

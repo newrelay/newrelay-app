@@ -1013,56 +1013,57 @@ const stats = computed(() => {
         
         <!-- Footer Actions -->
         <div class="p-4 border-t border-border bg-card shrink-0 space-y-2">
-          <RelayButton class="w-full" @click="handleReply">
-            <MessageSquare class="size-4" /> Reply
-          </RelayButton>
-          <div class="grid grid-cols-3 gap-2">
-            <RelayButton variant="outline" class="w-full min-w-0" @click="handleShare">
+          <div class="flex flex-wrap gap-2">
+            <RelayButton class="h-9 flex-1 px-2.5 text-xs" @click="handleReply">
+              <MessageSquare class="size-4" /> Reply
+            </RelayButton>
+            <RelayButton variant="outline" class="h-9 flex-1 px-2.5 text-xs" @click="handleShare">
               <Share2 class="size-3.5" /> Share
             </RelayButton>
-            <RelayButton variant="outline" class="w-full min-w-0" @click="handleDownload">
+            <RelayButton variant="outline" class="h-9 flex-1 px-2.5 text-xs" @click="handleDownload">
               <Download class="size-3.5" /> Download
             </RelayButton>
-            <RelayButton variant="outline" class="w-full min-w-0" title="Copy embed code" @click="handleEmbed">
-              <MoreHorizontal class="size-4" /> Embed
+            <RelayButton variant="outline" size="icon" class="h-9 w-9 shrink-0" title="Copy embed code" @click="handleEmbed">
+              <MoreHorizontal class="size-4" />
             </RelayButton>
           </div>
-          
+
           <div class="flex flex-wrap items-center gap-2">
-            <div class="relative min-w-0">
-              <button 
+            <div class="relative min-w-0 flex-1">
+              <button
                 type="button"
-                @click="showDetailStatusDropdown = !showDetailStatusDropdown"
-                class="h-9 max-w-full gap-1.5 text-xs font-semibold rounded-lg px-3 border inline-flex items-center cursor-pointer"
+                class="inline-flex h-9 w-full min-w-0 items-center justify-between gap-1.5 rounded-lg border px-3 text-xs font-semibold cursor-pointer"
                 :class="selectedVideo.status === 'Approved' || selectedVideo.status === 'Published' ? 'text-emerald-600 dark:text-emerald-400 border-emerald-500/20 bg-emerald-500/10' : 'text-amber-600 dark:text-amber-400 border-amber-500/20 bg-amber-500/10'"
+                @click="showDetailStatusDropdown = !showDetailStatusDropdown"
               >
-                <span class="truncate">{{ selectedVideo.status }}</span> <ChevronDown class="size-3 opacity-50 shrink-0" />
+                <span class="truncate">{{ selectedVideo.status }}</span>
+                <ChevronDown class="size-3 opacity-50 shrink-0" />
               </button>
               <div v-if="showDetailStatusDropdown" class="absolute bottom-full mb-1.5 left-0 w-44 bg-popover text-popover-foreground border border-border rounded-md p-1 shadow-md z-50 space-y-0.5">
-                <button type="button" @click="handleStatusChange('Approved')" class="w-full text-left px-2 py-1.5 text-sm rounded-sm hover:bg-accent hover:text-accent-foreground cursor-pointer flex items-center justify-between">
+                <button type="button" class="w-full text-left px-2 py-1.5 text-sm rounded-sm hover:bg-accent hover:text-accent-foreground cursor-pointer flex items-center justify-between" @click="handleStatusChange('Approved')">
                   <span>Approved</span>
                   <Check v-if="selectedVideo.status === 'Approved'" class="size-3.5 text-emerald-600" />
                 </button>
-                <button type="button" @click="handleStatusChange('Published')" class="w-full text-left px-2 py-1.5 text-sm rounded-sm hover:bg-accent hover:text-accent-foreground cursor-pointer flex items-center justify-between">
+                <button type="button" class="w-full text-left px-2 py-1.5 text-sm rounded-sm hover:bg-accent hover:text-accent-foreground cursor-pointer flex items-center justify-between" @click="handleStatusChange('Published')">
                   <span>Published</span>
                   <Check v-if="selectedVideo.status === 'Published'" class="size-3.5 text-emerald-600" />
                 </button>
-                <button type="button" @click="handleStatusChange('Pending Approval')" class="w-full text-left px-2 py-1.5 text-sm rounded-sm hover:bg-accent hover:text-accent-foreground cursor-pointer flex items-center justify-between">
+                <button type="button" class="w-full text-left px-2 py-1.5 text-sm rounded-sm hover:bg-accent hover:text-accent-foreground cursor-pointer flex items-center justify-between" @click="handleStatusChange('Pending Approval')">
                   <span>Pending Approval</span>
                   <Check v-if="selectedVideo.status === 'Pending Approval'" class="size-3.5 text-amber-600" />
                 </button>
-                <button type="button" @click="handleStatusChange('Rejected')" class="w-full text-left px-2 py-1.5 text-sm rounded-sm hover:bg-accent hover:text-accent-foreground cursor-pointer flex items-center justify-between">
+                <button type="button" class="w-full text-left px-2 py-1.5 text-sm rounded-sm hover:bg-accent hover:text-accent-foreground cursor-pointer flex items-center justify-between" @click="handleStatusChange('Rejected')">
                   <span>Rejected</span>
                   <Check v-if="selectedVideo.status === 'Rejected'" class="size-3.5 text-rose-600" />
                 </button>
               </div>
             </div>
-            
-            <div class="flex gap-2 ml-auto">
-              <RelayButton variant="outline" size="sm" @click="handleEdit">
+
+            <div class="flex gap-2 shrink-0">
+              <RelayButton variant="outline" class="h-9 px-2.5 text-xs" @click="handleEdit">
                 <Edit class="size-3.5" /> Edit
               </RelayButton>
-              <RelayButton variant="outline" size="sm" class="text-destructive border-destructive/20 hover:bg-destructive/10 hover:text-destructive hover:border-transparent" @click="handleDelete">
+              <RelayButton variant="outline" class="h-9 px-2.5 text-xs text-destructive border-destructive/20 hover:bg-destructive/10 hover:text-destructive hover:border-transparent" @click="handleDelete">
                 <Trash2 class="size-3.5" /> Delete
               </RelayButton>
             </div>

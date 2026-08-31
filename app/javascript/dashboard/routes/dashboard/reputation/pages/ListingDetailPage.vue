@@ -470,6 +470,23 @@ async function togglePlatform(platform) {
   await persistPlatforms(next);
 }
 
+// Platforms this listing doesn't have a row for yet. Connecting one adds a
+// real entry via the same PATCH endpoint — not a fake "coming soon" tile.
+const AVAILABLE_PLATFORM_CATALOG = [
+  { name: 'Apple Maps', tag: 'AM', tone: 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-200' },
+  { name: 'TripAdvisor', tag: 'TA', tone: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900 dark:text-emerald-300' },
+  { name: 'Yellow Pages', tag: 'YP', tone: 'bg-amber-100 text-amber-700 dark:bg-amber-900 dark:text-amber-300' },
+  { name: 'Nextdoor', tag: 'N', tone: 'bg-lime-100 text-lime-700 dark:bg-lime-900 dark:text-lime-300' },
+];
+const availablePlatforms = computed(() => {
+  const existing = new Set((listing.value?.platforms || []).map(p => p.name));
+  return AVAILABLE_PLATFORM_CATALOG.filter(p => !existing.has(p.name));
+});
+async function addPlatform(name) {
+  const next = [...listing.value.platforms, { name, status: 'Connected' }];
+  await persistPlatforms(next);
+}
+
 async function renameListing() {
   const name = window.prompt('Rename listing', listing.value.title);
   if (!name || !name.trim() || name.trim() === listing.value.title) return;
@@ -973,24 +990,53 @@ watch(() => route.params.listingId, () => {
               </div>
             </div>
           </div>
+          <h3 class="text-base font-medium text-foreground -mb-1">Connected Platforms</h3>
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div
               v-for="platform in listing.platforms"
               :key="platform.name"
-              class="bg-card border border-border rounded-xl shadow-xs p-5 flex items-center justify-between gap-4"
+              class="rounded-xl shadow-xs p-5 flex flex-col gap-4"
+              :class="platform.status === 'Connected' ? 'bg-card border border-border' : 'bg-rose-50/60 border border-rose-200 dark:bg-rose-950/30 dark:border-rose-900/50'"
             >
-              <div class="flex items-center gap-3">
-                <div class="size-10 border border-border rounded-lg bg-card flex items-center justify-center" v-html="getPlatformIcon(platform.name)"></div>
-                <div class="flex flex-col gap-0.5">
-                  <span class="text-[15px] font-medium text-foreground">{{ platform.name }}</span>
-                  <span class="text-[12px] text-muted-foreground">{{ platform.status }}</span>
+              <div class="flex items-center justify-between gap-3">
+                <div class="flex items-center gap-3 min-w-0">
+                  <div class="size-10 border border-border rounded-lg bg-card flex items-center justify-center shrink-0" v-html="getPlatformIcon(platform.name)"></div>
+                  <div class="flex flex-col gap-0.5 min-w-0">
+                    <span class="text-[15px] font-medium text-foreground truncate">{{ platform.name }}</span>
+                    <span class="text-[12px]" :class="platform.status === 'Connected' ? 'text-muted-foreground' : 'text-rose-600 font-medium'">
+                      {{ platform.status === 'Connected' ? `Last Sync: ${listing.lastSync}` : 'Authentication expired' }}
+                    </span>
+                  </div>
                 </div>
+                <span
+                  class="px-2.5 py-0.5 rounded-full font-semibold text-[11px] inline-flex items-center gap-1 shrink-0"
+                  :class="platform.status === 'Connected' ? 'bg-emerald-50 text-emerald-600 dark:bg-emerald-950 dark:text-emerald-400' : 'bg-rose-100 text-rose-600 dark:bg-rose-950 dark:text-rose-400'"
+                >
+                  <CheckCircle2 v-if="platform.status === 'Connected'" class="size-3" />
+                  <AlertTriangle v-else class="size-3" />
+                  {{ platform.status === 'Connected' ? 'Connected' : 'Action Required' }}
+                </span>
               </div>
-              <RelayButton variant="outline" size="sm" @click="togglePlatform(platform)">
-                {{ platform.status === 'Connected' ? 'Disconnect' : 'Connect' }}
+              <RelayButton v-if="platform.status !== 'Connected'" class="bg-rose-600 hover:bg-rose-700 text-white" @click="togglePlatform(platform)">
+                Reconnect {{ platform.name }}
               </RelayButton>
+              <div v-else class="flex items-center gap-3">
+                <RelayButton variant="outline" size="sm" class="flex-1">Manage</RelayButton>
+                <button type="button" class="text-[13px] font-semibold text-rose-600 hover:text-rose-700" @click="togglePlatform(platform)">Disconnect</button>
+              </div>
             </div>
           </div>
+
+          <template v-if="availablePlatforms.length">
+            <h3 class="text-base font-medium text-foreground -mb-1 mt-2">Available Platforms</h3>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <div v-for="platform in availablePlatforms" :key="platform.name" class="bg-card border border-border rounded-xl shadow-xs p-5 flex flex-col items-center text-center gap-3">
+                <div class="size-11 rounded-full flex items-center justify-center text-[13px] font-bold" :class="platform.tone">{{ platform.tag }}</div>
+                <span class="text-[13.5px] font-medium text-foreground">{{ platform.name }}</span>
+                <RelayButton variant="outline" size="sm" class="w-full" @click="addPlatform(platform.name)">Connect</RelayButton>
+              </div>
+            </div>
+          </template>
         </div>
 
         <div v-else-if="activeTab === 'Insights'" class="flex flex-col gap-6 pb-12">

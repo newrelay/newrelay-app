@@ -203,11 +203,75 @@ const websiteHref = computed(() => {
 });
 const editValid = computed(() => !!editForm.value.name?.trim());
 
-// Real activity, built only from timestamps this record actually has (created_at /
-// updated_at / synced_at) — there's no audit log for reputation_listings, so this
-// can't show a rich per-event history (who edited what, sync results, etc.) the way
-// the reference mockup does. No fabricated events.
+// Real activity log — Reputation::Listing is now `audited` (enterprise/app/models/
+// enterprise/audit/listing.rb), so every create/update is recorded with a real
+// field-level diff and the acting user. Audits only exist from the point audited
+// was enabled onward, so a listing with none yet falls back to its own
+// created_at/updated_at/synced_at timestamps.
+const activityAudits = ref([]);
+async function loadActivities() {
+  const id = route.params.listingId;
+  try {
+    const { data } = await axios.get(`${baseUrl()}/listings/${id}/activities`);
+    activityAudits.value = data || [];
+  } catch {
+    activityAudits.value = [];
+  }
+}
+
+function describePlatformChange(change) {
+  const [before, after] = change;
+  const beforeMap = new Map((before || []).map(p => [p.name, p.ok]));
+  const diffs = (after || [])
+    .filter(p => beforeMap.get(p.name) !== p.ok)
+    .map(p => `${p.name} ${p.ok ? 'connected' : 'disconnected'}`);
+  return diffs.length ? diffs.join(', ') : 'Platform connections updated';
+}
+
+function describeAudit(audit) {
+  if (audit.action === 'create') return 'Listing created';
+  if (audit.action === 'destroy') return 'Listing deleted';
+  const changes = audit.audited_changes || {};
+  if (changes.platforms) return describePlatformChange(changes.platforms);
+  if (changes.name) return `Renamed to "${changes.name[1]}"`;
+  const fields = Object.keys(changes).filter(k => k !== 'name');
+  return fields.length ? `Updated ${fields.join(', ')}` : 'Listing details updated';
+}
+
+function auditTone(audit) {
+  if (audit.action === 'create') return 'bg-primary/10 text-primary';
+  const changes = audit.audited_changes || {};
+  if (changes.platforms) {
+    const [before, after] = changes.platforms;
+    const beforeMap = new Map((before || []).map(p => [p.name, p.ok]));
+    const nowDisconnected = (after || []).some(p => beforeMap.get(p.name) === true && p.ok === false);
+    return nowDisconnected
+      ? 'bg-rose-100 text-rose-600 dark:bg-rose-950 dark:text-rose-400'
+      : 'bg-emerald-100 text-emerald-600 dark:bg-emerald-950 dark:text-emerald-400';
+  }
+  return 'bg-amber-100 text-amber-600 dark:bg-amber-950 dark:text-amber-400';
+}
+
+function auditIcon(audit) {
+  if (audit.action === 'create') return Building2;
+  const changes = audit.audited_changes || {};
+  if (changes.platforms) return RotateCw;
+  return Pencil;
+}
+
 const activityEvents = computed(() => {
+  if (activityAudits.value.length) {
+    return activityAudits.value.map(audit => ({
+      key: audit.id,
+      icon: auditIcon(audit),
+      tone: auditTone(audit),
+      label: describeAudit(audit),
+      actor: audit.username || null,
+      time: audit.created_at,
+    }));
+  }
+  // No audit trail yet (listing untouched since audited was enabled) — fall back
+  // to the listing's own real timestamps rather than showing nothing.
   if (!listing.value) return [];
   const events = [];
   if (listing.value.createdAt) {
@@ -330,6 +394,7 @@ async function saveEdit() {
     if (!usingMock.value) {
       const { data } = await axios.patch(`${baseUrl()}/listings/${listing.value.id}`, patch);
       listing.value = mapListing(data);
+      loadActivities();
     } else {
       Object.assign(listing.value, {
         title: patch.name,
@@ -355,6 +420,7 @@ async function persistPlatforms(platforms) {
   try {
     if (!usingMock.value) {
       await axios.patch(`${baseUrl()}/listings/${listing.value.id}`, { platforms: platformsToApi(next) });
+      loadActivities();
     }
     listing.value.platforms = next;
   } catch {
@@ -439,10 +505,14 @@ onMounted(() => {
   }
   loadListing();
   loadAccountReviews();
+  loadActivities();
 });
 
 watch(() => route.params.listingId, () => {
-  if (showDemoSurfaces.value) loadListing();
+  if (showDemoSurfaces.value) {
+    loadListing();
+    loadActivities();
+  }
 });
 </script>
 
@@ -922,6 +992,7 @@ watch(() => route.params.listingId, () => {
                     <span class="text-[14px] font-semibold text-foreground">{{ event.label }}</span>
                     <span class="text-[12px] text-muted-foreground font-medium whitespace-nowrap">{{ formatDate(event.time) }}</span>
                   </div>
+                  <span v-if="event.actor" class="text-[13px] text-muted-foreground">by <span class="font-semibold text-foreground">{{ event.actor }}</span></span>
                 </div>
               </div>
             </div>

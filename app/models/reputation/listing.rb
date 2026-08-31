@@ -29,3 +29,5 @@ class Reputation::Listing < ApplicationRecord
 
   validates :name, presence: true
 end
+
+Reputation::Listing.include_mod_with('Audit::Listing')

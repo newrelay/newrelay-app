@@ -10,6 +10,13 @@ class Api::V1::Accounts::Reputation::ListingsController < Api::V1::Accounts::Bas
     render json: current_account.reputation_listings.find(params[:id])
   end
 
+  # GET /api/v1/accounts/:account_id/reputation/listings/:id/activities
+  def activities
+    listing = current_account.reputation_listings.find(params[:id])
+    audits = listing.audits.order(created_at: :desc).limit(30)
+    render json: audits.as_json(only: %i[id action audited_changes username created_at])
+  end
+
   # POST /api/v1/accounts/:account_id/reputation/listings
   def create
     listing = current_account.reputation_listings.create!(listing_params)

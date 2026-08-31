@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2026_08_27_170000) do
+ActiveRecord::Schema[7.1].define(version: 2026_08_31_113027) do
   # These extensions should be enabled to support this database
   enable_extension "pg_stat_statements"
   enable_extension "pg_trgm"
@@ -1448,6 +1448,13 @@ ActiveRecord::Schema[7.1].define(version: 2026_08_27_170000) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "image"
+    t.text "description"
+    t.string "additional_categories"
+    t.string "service_area"
+    t.jsonb "hours", default: {}, null: false
+    t.jsonb "holiday_hours", default: [], null: false
+    t.jsonb "amenities", default: {}, null: false
+    t.jsonb "social_links", default: {}, null: false
     t.index ["account_id"], name: "index_reputation_listings_on_account_id"
   end
 

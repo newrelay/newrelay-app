@@ -2,12 +2,27 @@ class Api::V1::Accounts::Reputation::ListingsController < Api::V1::Accounts::Bas
   # GET /api/v1/accounts/:account_id/reputation/listings
   def index
     enqueue_missing_images
-    render json: current_account.reputation_listings.order(primary: :desc, created_at: :asc)
+    listings = current_account.reputation_listings.order(primary: :desc, created_at: :asc)
+    render json: listings.as_json(methods: :photo_urls)
   end
 
   # GET /api/v1/accounts/:account_id/reputation/listings/:id
   def show
-    render json: current_account.reputation_listings.find(params[:id])
+    render json: current_account.reputation_listings.find(params[:id]).as_json(methods: :photo_urls)
+  end
+
+  # POST /api/v1/accounts/:account_id/reputation/listings/:id/photos
+  def upload_photos
+    listing = current_account.reputation_listings.find(params[:id])
+    listing.photos.attach(params[:photos])
+    render json: listing.as_json(methods: :photo_urls)
+  end
+
+  # DELETE /api/v1/accounts/:account_id/reputation/listings/:id/photos/:photo_id
+  def destroy_photo
+    listing = current_account.reputation_listings.find(params[:id])
+    listing.photos.find(params[:photo_id]).purge
+    render json: listing.as_json(methods: :photo_urls)
   end
 
   # GET /api/v1/accounts/:account_id/reputation/listings/:id/activities
@@ -21,14 +36,14 @@ class Api::V1::Accounts::Reputation::ListingsController < Api::V1::Accounts::Bas
   def create
     listing = current_account.reputation_listings.create!(listing_params)
     Reputation::ListingImageJob.perform_later(listing.id) if listing.image.blank?
-    render json: listing, status: :created
+    render json: listing.as_json(methods: :photo_urls), status: :created
   end
 
   # PATCH /api/v1/accounts/:account_id/reputation/listings/:id
   def update
     listing = current_account.reputation_listings.find(params[:id])
     listing.update!(listing_params)
-    render json: listing
+    render json: listing.as_json(methods: :photo_urls)
   end
 
   # DELETE /api/v1/accounts/:account_id/reputation/listings/:id
@@ -49,6 +64,7 @@ class Api::V1::Accounts::Reputation::ListingsController < Api::V1::Accounts::Bas
 
   def listing_params
     params.permit(:name, :address, :category, :country, :phone, :website, :email, :primary, :image,
-                  platforms: [:name, :ok])
+                  :description, :additional_categories, :service_area,
+                  platforms: [:name, :ok], hours: {}, holiday_hours: [:date, :label], amenities: {}, social_links: {})
   end
 end

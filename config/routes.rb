@@ -223,6 +223,8 @@ Rails.application.routes.draw do
             resources :listings, only: [:index, :show, :create, :update, :destroy] do
               member do
                 get :activities
+                post :upload_photos, path: 'photos'
+                delete :destroy_photo, path: 'photos/:photo_id'
               end
             end
             resources :reports, only: [:create]

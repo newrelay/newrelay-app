@@ -9,6 +9,7 @@ import SettingsPage from './pages/SettingsPage.vue';
 import AutomationPage from './pages/AutomationPage.vue';
 import VideoTestimonialsPage from './pages/VideoTestimonialsPage.vue';
 import ListingsPage from './pages/ListingsPage.vue';
+import ListingDetailPage from './pages/ListingDetailPage.vue';
 import FeedbackPage from './pages/FeedbackPage.vue';
 import IntegrationsPage from './pages/IntegrationsPage.vue';
 import ConfigurationPage from './pages/ConfigurationPage.vue';
@@ -70,6 +71,12 @@ export const routes = [
         path: 'listings',
         name: 'reputation_listings',
         component: ListingsPage,
+        meta: { ...meta, featureFlag: FEATURE_FLAGS.REPUTATION_DEMO_SURFACES },
+      },
+      {
+        path: 'listings/:listingId',
+        name: 'reputation_listing_detail',
+        component: ListingDetailPage,
         meta: { ...meta, featureFlag: FEATURE_FLAGS.REPUTATION_DEMO_SURFACES },
       },
       {

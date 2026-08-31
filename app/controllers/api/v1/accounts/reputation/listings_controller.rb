@@ -5,6 +5,11 @@ class Api::V1::Accounts::Reputation::ListingsController < Api::V1::Accounts::Bas
     render json: current_account.reputation_listings.order(primary: :desc, created_at: :asc)
   end
 
+  # GET /api/v1/accounts/:account_id/reputation/listings/:id
+  def show
+    render json: current_account.reputation_listings.find(params[:id])
+  end
+
   # POST /api/v1/accounts/:account_id/reputation/listings
   def create
     listing = current_account.reputation_listings.create!(listing_params)

@@ -20,6 +20,8 @@ import {
   Globe,
   Tag,
   Mail,
+  Clock,
+  Camera,
   Check,
   CheckCircle2,
   AlertTriangle,
@@ -33,6 +35,8 @@ import {
 import {
   RelayButton,
   RelayInput,
+  RelayTextarea,
+  RelayCheckbox,
   RelayDropdownMenu as DropdownMenu,
   RelayDropdownMenuTrigger as DropdownMenuTrigger,
   RelayDropdownMenuContent as DropdownMenuContent,
@@ -165,6 +169,14 @@ function mapListing(row) {
     website: row.website || '',
     email: row.email || '',
     image: row.image || '',
+    description: row.description || '',
+    additionalCategories: row.additional_categories || '',
+    serviceArea: row.service_area || '',
+    hours: row.hours || {},
+    holidayHours: row.holiday_hours || [],
+    amenities: row.amenities || {},
+    socialLinks: row.social_links || {},
+    photoUrls: row.photo_urls || [],
     optimizationScore: row.optimized ?? row.optimizationScore ?? 90,
     rating: row.rating || 4.5,
     reviewsCount: row.reviews ?? row.reviewsCount ?? 0,
@@ -189,7 +201,28 @@ const listing = ref(null);
 const activeTab = ref('Overview');
 const busy = ref(false);
 const editOpen = ref(false);
-const editForm = ref({ name: '', address: '', phone: '', website: '', email: '', category: '' });
+const WEEKDAYS = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
+const AMENITY_OPTIONS = [
+  { key: 'wheelchair_accessible', label: 'Wheelchair Accessible' },
+  { key: 'free_wifi', label: 'Free WiFi' },
+  { key: 'on_site_parking', label: 'On-site Parking' },
+  { key: 'outdoor_seating', label: 'Outdoor Seating' },
+];
+const SOCIAL_PLATFORMS = [
+  { key: 'facebook', label: 'Facebook', icon: 'facebook' },
+  { key: 'instagram', label: 'Instagram', icon: 'instagram' },
+  { key: 'linkedin', label: 'LinkedIn', icon: 'linkedin' },
+];
+function blankEditForm() {
+  return {
+    name: '', address: '', phone: '', website: '', email: '', category: '',
+    description: '', additionalCategories: '', serviceArea: '',
+    hours: Object.fromEntries(WEEKDAYS.map(d => [d, ''])),
+    amenities: Object.fromEntries(AMENITY_OPTIONS.map(a => [a.key, false])),
+    socialLinks: Object.fromEntries(SOCIAL_PLATFORMS.map(s => [s.key, ''])),
+  };
+}
+const editForm = ref(blankEditForm());
 
 const connectedCount = computed(
   () => listing.value?.platforms.filter(p => p.status === 'Connected').length || 0
@@ -409,6 +442,12 @@ function openEdit() {
     website: listing.value.website || '',
     email: listing.value.email || '',
     category: listing.value.category || '',
+    description: listing.value.description || '',
+    additionalCategories: listing.value.additionalCategories || '',
+    serviceArea: listing.value.serviceArea || '',
+    hours: { ...Object.fromEntries(WEEKDAYS.map(d => [d, ''])), ...listing.value.hours },
+    amenities: { ...Object.fromEntries(AMENITY_OPTIONS.map(a => [a.key, false])), ...listing.value.amenities },
+    socialLinks: { ...Object.fromEntries(SOCIAL_PLATFORMS.map(s => [s.key, ''])), ...listing.value.socialLinks },
   };
   editOpen.value = true;
 }
@@ -423,6 +462,12 @@ async function saveEdit() {
     website: editForm.value.website.trim(),
     email: editForm.value.email.trim(),
     category: editForm.value.category.trim(),
+    description: editForm.value.description.trim(),
+    additional_categories: editForm.value.additionalCategories.trim(),
+    service_area: editForm.value.serviceArea.trim(),
+    hours: editForm.value.hours,
+    amenities: editForm.value.amenities,
+    social_links: editForm.value.socialLinks,
   };
   try {
     if (!usingMock.value) {
@@ -437,6 +482,12 @@ async function saveEdit() {
         website: patch.website,
         email: patch.email,
         category: patch.category,
+        description: patch.description,
+        additionalCategories: patch.additional_categories,
+        serviceArea: patch.service_area,
+        hours: patch.hours,
+        amenities: patch.amenities,
+        socialLinks: patch.social_links,
       });
     }
     editOpen.value = false;
@@ -445,6 +496,46 @@ async function saveEdit() {
     useAlert('Failed to update listing');
   } finally {
     busy.value = false;
+  }
+}
+
+async function addHolidayHours() {
+  if (!listing.value) return;
+  const date = window.prompt('Holiday date (e.g. Dec 25, 2026)');
+  if (!date || !date.trim()) return;
+  const label = window.prompt('Hours for that day (e.g. "Closed" or "10:00 AM - 2:00 PM")', 'Closed');
+  if (label == null) return;
+  const next = [...listing.value.holidayHours, { date: date.trim(), label: label.trim() }];
+  try {
+    if (!usingMock.value) {
+      const { data } = await axios.patch(`${baseUrl()}/listings/${listing.value.id}`, { holiday_hours: next });
+      listing.value = mapListing(data);
+    } else {
+      listing.value.holidayHours = next;
+    }
+  } catch {
+    useAlert('Failed to add holiday hours');
+  }
+}
+
+const uploadingPhotos = ref(false);
+async function uploadPhotos(event) {
+  const files = event.target.files;
+  if (!files || !files.length || !listing.value || usingMock.value) return;
+  uploadingPhotos.value = true;
+  const formData = new FormData();
+  Array.from(files).forEach(file => formData.append('photos[]', file));
+  try {
+    const { data } = await axios.post(`${baseUrl()}/listings/${listing.value.id}/photos`, formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
+    listing.value = mapListing(data);
+    useAlert('Photos uploaded');
+  } catch {
+    useAlert('Failed to upload photos');
+  } finally {
+    uploadingPhotos.value = false;
+    event.target.value = '';
   }
 }
 
@@ -515,6 +606,12 @@ async function duplicateListing() {
         website: listing.value.website,
         email: listing.value.email,
         image: listing.value.image,
+        description: listing.value.description,
+        additional_categories: listing.value.additionalCategories,
+        service_area: listing.value.serviceArea,
+        hours: listing.value.hours,
+        amenities: listing.value.amenities,
+        social_links: listing.value.socialLinks,
         platforms: platformsToApi(listing.value.platforms),
       });
     }
@@ -935,6 +1032,14 @@ watch(() => route.params.listingId, () => {
                 <span v-if="listing.category" class="inline-flex w-fit px-2.5 py-0.5 rounded-full bg-primary/10 text-primary text-[12.5px] font-semibold">{{ listing.category }}</span>
                 <span v-else class="text-[14px] text-muted-foreground">—</span>
               </div>
+              <div class="flex flex-col gap-1.5">
+                <span class="text-[13px] font-medium text-foreground">Additional Categories</span>
+                <span class="text-[14px] text-muted-foreground">{{ listing.additionalCategories || '—' }}</span>
+              </div>
+              <div class="flex flex-col gap-1.5 md:col-span-2">
+                <span class="text-[13px] font-medium text-foreground">Business Description</span>
+                <p class="text-[14px] text-muted-foreground leading-relaxed">{{ listing.description || '—' }}</p>
+              </div>
             </div>
           </div>
 
@@ -970,7 +1075,81 @@ watch(() => route.params.listingId, () => {
                   <span class="text-[14px] text-muted-foreground leading-relaxed">{{ listing.address || '—' }}</span>
                 </div>
               </div>
+              <div class="flex items-start gap-4">
+                <MapPin class="size-4 text-emerald-500 mt-0.5 shrink-0" />
+                <div class="flex flex-col gap-1">
+                  <span class="text-[13px] font-medium text-foreground">Service Area</span>
+                  <span class="text-[14px] text-muted-foreground">{{ listing.serviceArea || '—' }}</span>
+                </div>
+              </div>
             </div>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="bg-card border border-border rounded-xl shadow-xs p-6 flex flex-col gap-5">
+              <h3 class="text-[15px] font-semibold text-foreground border-b border-border/60 pb-4">Attributes</h3>
+              <div v-if="Object.values(listing.amenities).some(Boolean)" class="grid grid-cols-2 gap-4">
+                <div v-for="a in AMENITY_OPTIONS.filter(o => listing.amenities[o.key])" :key="a.key" class="flex items-center gap-2.5">
+                  <div class="size-5 rounded-full bg-emerald-50 text-emerald-500 flex items-center justify-center shrink-0"><Check class="size-3 stroke-[3]" /></div>
+                  <span class="text-[14px] text-muted-foreground font-medium">{{ a.label }}</span>
+                </div>
+              </div>
+              <p v-else class="text-[13.5px] text-muted-foreground">No attributes set yet.</p>
+            </div>
+
+            <div class="bg-card border border-border rounded-xl shadow-xs p-6 flex flex-col gap-5">
+              <h3 class="text-[15px] font-semibold text-foreground border-b border-border/60 pb-4">Social Links</h3>
+              <div v-if="Object.values(listing.socialLinks).some(Boolean)" class="flex flex-col gap-4">
+                <div v-for="s in SOCIAL_PLATFORMS.filter(p => listing.socialLinks[p.key])" :key="s.key" class="flex items-center justify-between">
+                  <span class="text-[14px] font-semibold text-foreground">{{ s.label }}</span>
+                  <a :href="listing.socialLinks[s.key]" target="_blank" rel="noopener" class="text-[13px] text-primary hover:underline truncate max-w-[220px]">{{ listing.socialLinks[s.key] }}</a>
+                </div>
+              </div>
+              <p v-else class="text-[13.5px] text-muted-foreground">No social links added yet.</p>
+            </div>
+          </div>
+
+          <div class="bg-card border border-border rounded-xl shadow-xs p-6 flex flex-col gap-5">
+            <h3 class="text-[15px] font-semibold text-foreground border-b border-border/60 pb-4 flex items-center gap-2"><Clock class="size-4 text-muted-foreground" /> Hours</h3>
+            <div v-if="WEEKDAYS.some(d => listing.hours[d])" class="grid grid-cols-2 gap-y-2 text-[13px] max-w-sm">
+              <template v-for="d in WEEKDAYS" :key="d">
+                <span v-if="listing.hours[d]" class="text-muted-foreground font-medium capitalize">{{ d }}</span>
+                <span v-if="listing.hours[d]" class="font-semibold" :class="listing.hours[d].toLowerCase() === 'closed' ? 'text-rose-500' : 'text-foreground'">{{ listing.hours[d] }}</span>
+              </template>
+            </div>
+            <p v-else class="text-[13.5px] text-muted-foreground">Business hours not set yet.</p>
+
+            <div class="flex flex-col gap-3 pt-4 border-t border-border/50">
+              <div class="flex items-center justify-between text-[13px] font-semibold text-foreground">
+                <span>Holiday Hours</span>
+                <button type="button" class="text-[12px] font-semibold text-primary hover:underline" @click="addHolidayHours">Add</button>
+              </div>
+              <div v-if="listing.holidayHours.length" class="flex flex-col gap-2">
+                <div v-for="(h, i) in listing.holidayHours" :key="i" class="flex justify-between text-[13px] p-2.5 bg-muted/40 rounded-lg border border-border/40">
+                  <span class="text-foreground font-medium">{{ h.date }}</span>
+                  <span class="text-muted-foreground">{{ h.label }}</span>
+                </div>
+              </div>
+              <p v-else class="text-[13px] text-muted-foreground p-3 bg-muted/50 rounded-lg border border-border/50 text-center font-medium">
+                No upcoming holiday hours set.
+              </p>
+            </div>
+          </div>
+
+          <div class="bg-card border border-border rounded-xl shadow-xs p-6 flex flex-col gap-5">
+            <div class="flex items-center justify-between border-b border-border/60 pb-4">
+              <h3 class="text-[15px] font-semibold text-foreground">Photos Gallery</h3>
+              <label class="inline-flex items-center gap-2 h-8 px-3 rounded-md border border-border text-[12px] font-semibold text-foreground hover:bg-muted cursor-pointer">
+                <Camera class="size-3.5" /> {{ uploadingPhotos ? 'Uploading…' : 'Upload Photos' }}
+                <input type="file" accept="image/*" multiple class="hidden" :disabled="uploadingPhotos" @change="uploadPhotos" />
+              </label>
+            </div>
+            <div v-if="listing.photoUrls.length" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+              <div v-for="url in listing.photoUrls" :key="url" class="aspect-square rounded-xl overflow-hidden border border-border bg-muted">
+                <img :src="url" class="w-full h-full object-cover" />
+              </div>
+            </div>
+            <p v-else class="text-[13.5px] text-muted-foreground">No photos uploaded yet.</p>
           </div>
         </div>
 
@@ -1220,25 +1399,39 @@ watch(() => route.params.listingId, () => {
   </div>
 
   <div v-if="editOpen" :class="RELAY_DIALOG_OVERLAY_CLASS" class="flex items-center justify-center p-4" @click.self="editOpen = false">
-    <div class="relative w-full max-w-lg bg-card border border-border shadow-2xl rounded-2xl overflow-hidden flex flex-col">
+    <div class="relative w-full max-w-2xl bg-card border border-border shadow-2xl rounded-2xl overflow-hidden flex flex-col max-h-[90vh]">
       <div :class="RELAY_MODAL_HEADER_CLASS">
         <div>
           <h2 :class="RELAY_MODAL_TITLE_CLASS">Edit Listing</h2>
           <p :class="RELAY_MODAL_DESCRIPTION_CLASS">Update the details shown on this listing.</p>
         </div>
       </div>
-      <div class="p-6 flex flex-col gap-4">
+      <div class="p-6 flex flex-col gap-4 overflow-y-auto">
         <div :class="RELAY_FORM_FIELD_CLASS">
           <label :class="RELAY_FORM_LABEL_CLASS">Business Name</label>
           <RelayInput v-model="editForm.name" placeholder="Business name" />
         </div>
+        <div class="grid grid-cols-2 gap-4">
+          <div :class="RELAY_FORM_FIELD_CLASS">
+            <label :class="RELAY_FORM_LABEL_CLASS">Primary Category</label>
+            <RelayInput v-model="editForm.category" placeholder="Category" />
+          </div>
+          <div :class="RELAY_FORM_FIELD_CLASS">
+            <label :class="RELAY_FORM_LABEL_CLASS">Additional Categories</label>
+            <RelayInput v-model="editForm.additionalCategories" placeholder="e.g. Consultant, Agency" />
+          </div>
+        </div>
         <div :class="RELAY_FORM_FIELD_CLASS">
-          <label :class="RELAY_FORM_LABEL_CLASS">Category</label>
-          <RelayInput v-model="editForm.category" placeholder="Category" />
+          <label :class="RELAY_FORM_LABEL_CLASS">Business Description</label>
+          <RelayTextarea v-model="editForm.description" placeholder="Describe this business…" rows="3" />
         </div>
         <div :class="RELAY_FORM_FIELD_CLASS">
           <label :class="RELAY_FORM_LABEL_CLASS">Address</label>
           <RelayInput v-model="editForm.address" placeholder="Address" />
+        </div>
+        <div :class="RELAY_FORM_FIELD_CLASS">
+          <label :class="RELAY_FORM_LABEL_CLASS">Service Area</label>
+          <RelayInput v-model="editForm.serviceArea" placeholder="e.g. Jaipur, Delhi, Gurgaon" />
         </div>
         <div class="grid grid-cols-2 gap-4">
           <div :class="RELAY_FORM_FIELD_CLASS">
@@ -1254,8 +1447,35 @@ watch(() => route.params.listingId, () => {
           <label :class="RELAY_FORM_LABEL_CLASS">Website</label>
           <RelayInput v-model="editForm.website" placeholder="Website" />
         </div>
+
+        <div class="pt-2 border-t border-border/60">
+          <label :class="RELAY_FORM_LABEL_CLASS">Business Hours</label>
+          <div class="grid grid-cols-2 gap-3 mt-2">
+            <div v-for="d in WEEKDAYS" :key="d" class="flex flex-col gap-1">
+              <span class="text-[12px] text-muted-foreground capitalize">{{ d }}</span>
+              <RelayInput v-model="editForm.hours[d]" placeholder="e.g. 9:00 AM - 7:00 PM or Closed" />
+            </div>
+          </div>
+        </div>
+
+        <div class="pt-2 border-t border-border/60">
+          <label :class="RELAY_FORM_LABEL_CLASS">Attributes</label>
+          <div class="grid grid-cols-2 gap-3 mt-2">
+            <label v-for="a in AMENITY_OPTIONS" :key="a.key" class="flex items-center gap-2 cursor-pointer">
+              <RelayCheckbox v-model="editForm.amenities[a.key]" />
+              <span class="text-[13.5px] text-foreground">{{ a.label }}</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="pt-2 border-t border-border/60 flex flex-col gap-3">
+          <label :class="RELAY_FORM_LABEL_CLASS">Social Links</label>
+          <div v-for="s in SOCIAL_PLATFORMS" :key="s.key" :class="RELAY_FORM_FIELD_CLASS">
+            <RelayInput v-model="editForm.socialLinks[s.key]" :placeholder="`${s.label} URL`" />
+          </div>
+        </div>
       </div>
-      <div class="px-6 pb-6 flex justify-end gap-2">
+      <div class="px-6 py-4 border-t border-border/60 flex justify-end gap-2 shrink-0">
         <RelayButton variant="outline" @click="editOpen = false">Cancel</RelayButton>
         <RelayButton :disabled="!editValid || busy" @click="saveEdit">Save</RelayButton>
       </div>

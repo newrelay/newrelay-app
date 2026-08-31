@@ -384,19 +384,85 @@ async function sendReply() {
 
       <!-- Unified toolbar: select + search | sort / platform / filters / view / pagination -->
       <div class="px-8 py-2.5 border-b border-border/80 bg-card/70 shrink-0 flex items-center justify-between gap-4 flex-wrap">
-        <!-- Left: select-all + selected count + search -->
-        <div class="flex items-center gap-3 min-w-0">
+        <!-- Left: select-all + search (bulk actions replace search when rows are selected) -->
+        <div class="flex items-center gap-3 min-w-0 flex-1">
           <Checkbox
             v-if="viewMode === 'list'"
             :model-value="isAllSelected"
             @update:model-value="toggleSelectAll"
             class="rounded-sm shrink-0"
           />
-          <span v-if="viewMode === 'list' && selectedReviews.length > 0" class="text-xs text-primary font-semibold shrink-0">
-            {{ selectedReviews.length }} selected
-          </span>
-          <div class="relative w-52 sm:w-64 lg:w-72">
-            <Search class="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+          <div
+            v-if="selectedReviews.length > 0"
+            class="flex items-center gap-1 min-w-0 h-9 px-1.5 rounded-lg border border-border bg-card shadow-xs overflow-visible"
+          >
+            <span class="inline-flex items-center justify-center min-w-5 h-5 px-1.5 rounded-md bg-primary text-primary-foreground text-[11px] font-semibold shrink-0">{{ selectedReviews.length }}</span>
+            <div class="relative shrink-0">
+              <button
+                type="button"
+                class="inline-flex items-center gap-1.5 rounded-md h-7 px-2 hover:bg-muted text-[12.5px] font-medium text-foreground transition-colors cursor-pointer disabled:opacity-50"
+                :disabled="bulkBusy"
+                @click="showBulkAssign = !showBulkAssign"
+              >
+                <UserPlus class="size-3.5" /> Assign
+              </button>
+              <div
+                v-if="showBulkAssign"
+                class="absolute left-0 top-full mt-1 w-48 rounded-xl border border-border bg-card p-1 shadow-xl z-50"
+              >
+                <button
+                  type="button"
+                  class="w-full text-left px-3 py-1.5 text-xs rounded-md hover:bg-muted font-medium text-foreground cursor-pointer"
+                  @click="assignSelected(null)"
+                >
+                  Unassigned
+                </button>
+                <button
+                  v-for="person in assigneeOptions"
+                  :key="person"
+                  type="button"
+                  class="w-full text-left px-3 py-1.5 text-xs rounded-md hover:bg-muted font-medium text-foreground cursor-pointer"
+                  @click="assignSelected(person)"
+                >
+                  {{ person }}
+                </button>
+                <p v-if="!assigneeOptions.length" class="px-3 py-2 text-[11px] text-muted-foreground">No agents in this account.</p>
+              </div>
+            </div>
+            <button
+              type="button"
+              class="inline-flex items-center gap-1.5 rounded-md h-7 px-2 hover:bg-primary/10 hover:text-primary text-[12.5px] font-medium text-foreground transition-colors cursor-pointer disabled:opacity-50 shrink-0"
+              :disabled="bulkBusy"
+              @click="sendAiReplies()"
+            >
+              <Sparkles class="size-3.5" /> Relay AI Reply
+            </button>
+            <button
+              type="button"
+              class="inline-flex items-center gap-1.5 rounded-md h-7 px-2 hover:bg-emerald-500/10 hover:text-emerald-600 text-[12.5px] font-medium text-foreground transition-colors cursor-pointer disabled:opacity-50 shrink-0"
+              :disabled="bulkBusy"
+              @click="markResolved()"
+            >
+              <CheckSquare class="size-3.5" /> Mark Resolved
+            </button>
+            <button
+              type="button"
+              class="inline-flex items-center gap-1.5 rounded-md h-7 px-2 hover:bg-muted text-[12.5px] font-medium text-foreground transition-colors cursor-pointer disabled:opacity-50 shrink-0"
+              :disabled="bulkBusy"
+              @click="exportSelected"
+            >
+              <CornerDownRight class="size-3.5" /> Export
+            </button>
+            <button
+              type="button"
+              class="inline-flex items-center justify-center rounded-md size-7 text-rose-500 hover:text-rose-600 hover:bg-rose-500/10 transition-colors cursor-pointer shrink-0"
+              @click="clearSelection"
+            >
+              <X class="size-3.5" />
+            </button>
+          </div>
+          <div v-else class="relative w-52 sm:w-64 lg:w-72">
+            <Search class="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
               v-model="searchQuery"
               type="text"
@@ -972,79 +1038,6 @@ async function sendReply() {
             </div>
           </div>
         </div>
-      </div>
-    </div>
-
-    <!-- Floating Bulk Actions Pill -->
-    <div v-if="selectedReviews.length > 0" class="fixed bottom-10 left-1/2 -translate-x-1/2 z-50 flex items-center gap-2 p-2 bg-card/90 backdrop-blur-md border border-border rounded-full shadow-2xl animate-in slide-in-from-bottom-10 fade-in duration-300">
-      <div class="flex items-center justify-center px-4 shrink-0 border-r border-border/50">
-        <span class="inline-flex items-center justify-center min-w-5 h-5 px-1.5 rounded-md bg-primary text-primary-foreground text-xs font-semibold mr-2">{{ selectedReviews.length }}</span>
-        <span class="text-sm font-semibold text-foreground">Selected</span>
-      </div>
-
-      <div class="flex items-center gap-1 px-2">
-        <div class="relative">
-          <button
-            type="button"
-            class="inline-flex items-center gap-1.5 rounded-full h-8 px-3 hover:bg-muted text-sm font-medium text-foreground transition-colors cursor-pointer disabled:opacity-50"
-            :disabled="bulkBusy"
-            @click="showBulkAssign = !showBulkAssign"
-          >
-            <UserPlus class="size-4" /> Assign
-          </button>
-          <div
-            v-if="showBulkAssign"
-            class="absolute bottom-full left-0 mb-2 w-48 rounded-xl border border-border bg-card p-1 shadow-xl z-50"
-          >
-            <button
-              type="button"
-              class="w-full text-left px-3 py-1.5 text-xs rounded-md hover:bg-muted font-medium text-foreground cursor-pointer"
-              @click="assignSelected(null)"
-            >
-              Unassigned
-            </button>
-            <button
-              v-for="person in assigneeOptions"
-              :key="person"
-              type="button"
-              class="w-full text-left px-3 py-1.5 text-xs rounded-md hover:bg-muted font-medium text-foreground cursor-pointer"
-              @click="assignSelected(person)"
-            >
-              {{ person }}
-            </button>
-            <p v-if="!assigneeOptions.length" class="px-3 py-2 text-[11px] text-muted-foreground">No agents in this account.</p>
-          </div>
-        </div>
-        <button
-          type="button"
-          class="inline-flex items-center gap-1.5 rounded-full h-8 px-3 hover:bg-primary/10 hover:text-primary text-sm font-medium text-foreground transition-colors cursor-pointer disabled:opacity-50"
-          :disabled="bulkBusy"
-          @click="sendAiReplies()"
-        >
-          <Sparkles class="size-4" /> Relay AI Reply
-        </button>
-        <button
-          type="button"
-          class="inline-flex items-center gap-1.5 rounded-full h-8 px-3 hover:bg-emerald-500/10 hover:text-emerald-600 text-sm font-medium text-foreground transition-colors cursor-pointer disabled:opacity-50"
-          :disabled="bulkBusy"
-          @click="markResolved()"
-        >
-          <CheckSquare class="size-4" /> Mark Resolved
-        </button>
-        <button
-          type="button"
-          class="inline-flex items-center gap-1.5 rounded-full h-8 px-3 hover:bg-muted text-sm font-medium text-foreground transition-colors cursor-pointer disabled:opacity-50"
-          :disabled="bulkBusy"
-          @click="exportSelected"
-        >
-          <CornerDownRight class="size-4" /> Export
-        </button>
-      </div>
-
-      <div class="pl-2 border-l border-border/50 shrink-0">
-        <button class="inline-flex items-center justify-center rounded-full size-8 text-rose-500 hover:text-rose-600 hover:bg-rose-500/10 transition-colors cursor-pointer" @click="clearSelection">
-          <X class="size-4" />
-        </button>
       </div>
     </div>
   </div>

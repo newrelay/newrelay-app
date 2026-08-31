@@ -1013,6 +1013,19 @@ watch(() => route.params.listingId, () => {
           </div>
 
           <div v-else class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div class="lg:col-span-2 bg-card border border-border rounded-xl p-6 shadow-xs flex flex-col gap-5">
+              <h3 class="text-base font-medium text-foreground flex items-center gap-2"><Sparkles class="size-4 text-primary" /> AI Review Summary</h3>
+              <div class="flex flex-col gap-4">
+                <div v-for="(insight, i) in aiInsights.insights" :key="i" class="flex items-start gap-3">
+                  <CheckCircle2 class="size-4 text-emerald-500 shrink-0 mt-0.5" />
+                  <div class="flex flex-col gap-0.5">
+                    <span class="text-[13.5px] font-semibold text-foreground">{{ insight.title }}</span>
+                    <span class="text-[13px] text-muted-foreground leading-relaxed">{{ insight.text }}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
             <div class="bg-card border border-border rounded-xl p-6 shadow-xs flex flex-col items-center gap-3">
               <h3 class="text-base font-medium text-foreground self-start">Overall Sentiment</h3>
               <div class="relative size-28 flex items-center justify-center mt-2">
@@ -1026,19 +1039,7 @@ watch(() => route.params.listingId, () => {
                 </div>
               </div>
               <span class="text-[13px] font-semibold text-emerald-600">{{ sentimentLabel }}</span>
-            </div>
-
-            <div class="lg:col-span-2 bg-card border border-border rounded-xl p-6 shadow-xs flex flex-col gap-4">
-              <h3 class="text-base font-medium text-foreground flex items-center gap-2"><Sparkles class="size-4 text-primary" /> AI Review Summary</h3>
-              <div class="flex flex-col gap-4">
-                <div v-for="(insight, i) in aiInsights.insights" :key="i" class="flex items-start gap-3">
-                  <div class="size-6 rounded-full bg-primary/10 text-primary flex items-center justify-center shrink-0 mt-0.5 text-[11px] font-bold">{{ i + 1 }}</div>
-                  <div class="flex flex-col gap-0.5">
-                    <span class="text-[13.5px] font-semibold text-foreground">{{ insight.title }}</span>
-                    <span class="text-[13px] text-muted-foreground leading-relaxed">{{ insight.text }}</span>
-                  </div>
-                </div>
-              </div>
+              <span v-if="reviewStats.total" class="text-[11.5px] text-muted-foreground">Based on {{ reviewStats.total }} recent reviews</span>
             </div>
           </div>
         </div>

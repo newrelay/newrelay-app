@@ -1,7 +1,7 @@
 <script setup>
 /* eslint-disable */
 import { ref, computed, onMounted, watch } from 'vue';
-import { RelayInput as Input, RelayBadge as Badge } from 'dashboard/components-next/relay';
+import { RelayInput as Input, RelayBadge as Badge, RelayButton } from 'dashboard/components-next/relay';
 import {
   Play, MoreHorizontal, MessageSquare, Heart, Share2, 
   CheckCircle, Search, Filter, Calendar, ExternalLink, 
@@ -779,7 +779,7 @@ const stats = computed(() => {
     
     <!-- Side Panel (Master-Detail Video Panel) -->
     <div 
-      class="h-full border-l border-border bg-card transition-all duration-300 shadow-2xl lg:shadow-none absolute lg:relative right-0 flex flex-col z-40"
+      class="h-full min-w-0 border-l border-border bg-card transition-all duration-300 shadow-2xl lg:shadow-none absolute lg:relative right-0 flex flex-col z-40"
       :class="selectedVideo ? 'w-full sm:w-[450px] lg:w-[35%] xl:w-[30%] translate-x-0' : 'w-full sm:w-[450px] lg:w-[35%] xl:w-[30%] translate-x-full lg:hidden hidden'"
     >
       <div v-if="selectedVideo" class="flex flex-col h-full overflow-hidden">
@@ -834,13 +834,13 @@ const stats = computed(() => {
           </div>
         
           <!-- Tabs Nav -->
-          <div class="px-6 border-b border-border flex gap-5 text-[13px] font-semibold shrink-0 pt-2 bg-card" role="tablist">
+          <div class="px-6 border-b border-border flex gap-4 text-[13px] font-semibold shrink-0 pt-2 bg-card overflow-x-auto hide-scrollbar" role="tablist">
             <button
               v-for="tab in tabs" :key="tab"
               type="button"
               role="tab"
               :aria-selected="activeTab === tab"
-              class="relative -mb-px py-3 px-0.5 whitespace-nowrap cursor-pointer bg-transparent"
+              class="relative -mb-px py-3 px-0.5 whitespace-nowrap shrink-0 cursor-pointer bg-transparent border-0"
               :class="activeTab === tab ? 'text-primary' : 'text-muted-foreground hover:text-foreground'"
               @click="activeTab = tab"
             >
@@ -1012,58 +1012,59 @@ const stats = computed(() => {
         </div>
         
         <!-- Footer Actions -->
-        <div class="p-5 border-t border-border bg-white dark:bg-card shrink-0 space-y-3">
-          <div class="flex gap-2">
-            <button @click="handleReply" class="bg-primary hover:bg-primary/90 text-primary-foreground h-9 gap-2 flex-1 shadow-xs font-semibold text-xs rounded-lg inline-flex items-center justify-center cursor-pointer">
-              <MessageSquare class="size-4" /> Reply
-            </button>
-            <button @click="handleShare" class="h-9 gap-1.5 bg-card border border-border hover:bg-muted text-foreground flex-1 shadow-xs font-semibold text-xs rounded-lg inline-flex items-center justify-center cursor-pointer">
+        <div class="p-4 border-t border-border bg-card shrink-0 space-y-2">
+          <RelayButton class="w-full" @click="handleReply">
+            <MessageSquare class="size-4" /> Reply
+          </RelayButton>
+          <div class="grid grid-cols-3 gap-2">
+            <RelayButton variant="outline" class="w-full min-w-0" @click="handleShare">
               <Share2 class="size-3.5" /> Share
-            </button>
-            <button @click="handleDownload" class="h-9 gap-1.5 bg-card border border-border hover:bg-muted text-foreground flex-1 shadow-xs font-semibold text-xs rounded-lg inline-flex items-center justify-center cursor-pointer">
+            </RelayButton>
+            <RelayButton variant="outline" class="w-full min-w-0" @click="handleDownload">
               <Download class="size-3.5" /> Download
-            </button>
-            <button @click="handleEmbed" title="Copy embed code" class="h-9 w-9 shrink-0 bg-card border border-border hover:bg-muted text-foreground shadow-xs rounded-lg inline-flex items-center justify-center cursor-pointer">
-              <MoreHorizontal class="size-4" />
-            </button>
+            </RelayButton>
+            <RelayButton variant="outline" class="w-full min-w-0" title="Copy embed code" @click="handleEmbed">
+              <MoreHorizontal class="size-4" /> Embed
+            </RelayButton>
           </div>
           
-          <div class="flex gap-2 justify-between relative">
-            <div class="relative">
+          <div class="flex flex-wrap items-center gap-2">
+            <div class="relative min-w-0">
               <button 
+                type="button"
                 @click="showDetailStatusDropdown = !showDetailStatusDropdown"
-                class="h-9 gap-1.5 bg-card text-xs font-semibold rounded-lg px-3 border border-border flex items-center cursor-pointer"
+                class="h-9 max-w-full gap-1.5 text-xs font-semibold rounded-lg px-3 border inline-flex items-center cursor-pointer"
                 :class="selectedVideo.status === 'Approved' || selectedVideo.status === 'Published' ? 'text-emerald-600 dark:text-emerald-400 border-emerald-500/20 bg-emerald-500/10' : 'text-amber-600 dark:text-amber-400 border-amber-500/20 bg-amber-500/10'"
               >
-                {{ selectedVideo.status }} <ChevronDown class="size-3 opacity-50 ml-1" />
+                <span class="truncate">{{ selectedVideo.status }}</span> <ChevronDown class="size-3 opacity-50 shrink-0" />
               </button>
-              <div v-if="showDetailStatusDropdown" class="absolute bottom-full mb-1.5 left-0 w-44 bg-card border border-border rounded-xl p-1 shadow-xl z-50 space-y-0.5">
-                <button @click="handleStatusChange('Approved')" class="w-full text-left px-3 py-1.5 text-xs rounded-md font-medium hover:bg-muted text-foreground cursor-pointer flex items-center justify-between">
+              <div v-if="showDetailStatusDropdown" class="absolute bottom-full mb-1.5 left-0 w-44 bg-popover text-popover-foreground border border-border rounded-md p-1 shadow-md z-50 space-y-0.5">
+                <button type="button" @click="handleStatusChange('Approved')" class="w-full text-left px-2 py-1.5 text-sm rounded-sm hover:bg-accent hover:text-accent-foreground cursor-pointer flex items-center justify-between">
                   <span>Approved</span>
                   <Check v-if="selectedVideo.status === 'Approved'" class="size-3.5 text-emerald-600" />
                 </button>
-                <button @click="handleStatusChange('Published')" class="w-full text-left px-3 py-1.5 text-xs rounded-md font-medium hover:bg-muted text-foreground cursor-pointer flex items-center justify-between">
+                <button type="button" @click="handleStatusChange('Published')" class="w-full text-left px-2 py-1.5 text-sm rounded-sm hover:bg-accent hover:text-accent-foreground cursor-pointer flex items-center justify-between">
                   <span>Published</span>
                   <Check v-if="selectedVideo.status === 'Published'" class="size-3.5 text-emerald-600" />
                 </button>
-                <button @click="handleStatusChange('Pending Approval')" class="w-full text-left px-3 py-1.5 text-xs rounded-md font-medium hover:bg-muted text-foreground cursor-pointer flex items-center justify-between">
+                <button type="button" @click="handleStatusChange('Pending Approval')" class="w-full text-left px-2 py-1.5 text-sm rounded-sm hover:bg-accent hover:text-accent-foreground cursor-pointer flex items-center justify-between">
                   <span>Pending Approval</span>
                   <Check v-if="selectedVideo.status === 'Pending Approval'" class="size-3.5 text-amber-600" />
                 </button>
-                <button @click="handleStatusChange('Rejected')" class="w-full text-left px-3 py-1.5 text-xs rounded-md font-medium hover:bg-muted text-foreground cursor-pointer flex items-center justify-between">
+                <button type="button" @click="handleStatusChange('Rejected')" class="w-full text-left px-2 py-1.5 text-sm rounded-sm hover:bg-accent hover:text-accent-foreground cursor-pointer flex items-center justify-between">
                   <span>Rejected</span>
                   <Check v-if="selectedVideo.status === 'Rejected'" class="size-3.5 text-rose-600" />
                 </button>
               </div>
             </div>
             
-            <div class="flex gap-2">
-              <button @click="handleEdit" class="h-9 gap-1.5 text-xs font-semibold bg-card border border-border rounded-lg px-3 hover:bg-muted inline-flex items-center cursor-pointer">
+            <div class="flex gap-2 ml-auto">
+              <RelayButton variant="outline" size="sm" @click="handleEdit">
                 <Edit class="size-3.5" /> Edit
-              </button>
-              <button @click="handleDelete" class="h-9 gap-1.5 text-rose-600 dark:text-rose-400 bg-rose-500/10 border border-rose-500/20 hover:bg-rose-500/20 text-xs font-semibold rounded-lg px-3 inline-flex items-center cursor-pointer">
+              </RelayButton>
+              <RelayButton variant="outline" size="sm" class="text-destructive border-destructive/20 hover:bg-destructive/10 hover:text-destructive hover:border-transparent" @click="handleDelete">
                 <Trash2 class="size-3.5" /> Delete
-              </button>
+              </RelayButton>
             </div>
           </div>
         </div>

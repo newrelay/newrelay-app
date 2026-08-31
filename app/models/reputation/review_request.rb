@@ -40,8 +40,16 @@ class Reputation::ReviewRequest < ApplicationRecord
   enum :channel, { sms: 'sms', email: 'email' }
   enum :status, { scheduled: 'scheduled', sent: 'sent', delivered: 'delivered', clicked: 'clicked', completed: 'completed' }
 
+  # Public video /r/:token / feedback may write only while the request is in-flight.
+  #   scheduled ──send──> sent|delivered|clicked ──submit──> completed
+  LIVE_PUBLIC_STATUSES = %w[sent delivered clicked].freeze
+
   validates :token, :channel, presence: true
   validates :token, uniqueness: true
+
+  def live_for_public_submit?
+    LIVE_PUBLIC_STATUSES.include?(status)
+  end
 
   before_validation :set_token, on: :create
 

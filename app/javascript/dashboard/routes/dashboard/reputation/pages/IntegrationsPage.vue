@@ -320,9 +320,6 @@ function submitRequest() {
   isRequestSubmitted.value = true;
   setTimeout(() => { isRequestModalOpen.value = false; }, 2000);
 }
-const webhookUrl = computed(() =>
-  selectedIntegration.value?.integrationId ? `${window.location.origin}/api/v1/reputation/sync/${selectedIntegration.value.integrationId}` : ''
-);
 function tagStyles(variant) {
   if (variant === 'emerald') return 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400';
   if (variant === 'primary') return 'bg-primary/10 text-primary';
@@ -506,10 +503,6 @@ function tagStyles(variant) {
               <div class="text-[12px] text-muted-foreground">Auto-draft and publish on-brand responses to 5-star ratings</div>
             </div>
             <RelaySwitch v-model="selectedIntegration.autoReply" />
-          </div>
-          <div class="flex flex-col gap-1.5">
-            <label class="text-[13.5px] font-medium text-foreground">Sync Webhook Endpoint</label>
-            <input readonly :value="webhookUrl" class="h-9 px-3 text-[13px] rounded-md border border-border bg-muted/30 font-mono text-muted-foreground focus:outline-none" />
           </div>
         </div>
         <div class="flex items-center justify-between pt-3 border-t border-border">

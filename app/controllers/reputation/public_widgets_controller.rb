@@ -32,13 +32,15 @@ class Reputation::PublicWidgetsController < ApplicationController
   # GET /r/:token  — tracks click, then sends the customer to the chosen review
   # destination (a connected platform's write-review URL) or the testimonial funnel.
   def redirect
-    request = Reputation::ReviewRequest.find_by!(token: params[:token])
-    request.update!(status: :clicked, clicked_at: Time.current) if request.sent? || request.delivered?
+    review_request = Reputation::ReviewRequest.find_by(token: params[:token])
+    return head :not_found unless review_request&.live_for_public_submit?
 
-    url = destination_review_url(request)
+    review_request.update!(status: :clicked, clicked_at: Time.current) if review_request.sent? || review_request.delivered?
+
+    url = destination_review_url(review_request)
     return redirect_to url, allow_other_host: true if url.present?
 
-    redirect_to new_reputation_video_testimonial_path(account_id: request.account_id, token: params[:token])
+    redirect_to new_reputation_video_testimonial_path(account_id: review_request.account_id, token: params[:token])
   end
 
   private

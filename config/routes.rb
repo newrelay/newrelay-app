@@ -43,9 +43,6 @@ Rails.application.routes.draw do
   get '/api', to: 'api#index'
   namespace :api, defaults: { format: 'json' } do
     namespace :v1 do
-      # Public inbound webhook shown in listing/integration settings. Id is an
-      # integration id, or a listing id (syncs that account's connected platforms).
-      match 'reputation/sync/:id', to: 'reputation/sync#create', via: [:get, :post]
       # ----------------------------------
       # start of account scoped api routes
       resources :accounts, only: [:create, :show, :update] do

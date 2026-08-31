@@ -1,9 +1,9 @@
 class Reputation::PublicVideoTestimonialsController < ApplicationController
   skip_before_action :verify_authenticity_token, raise: false
+  before_action :require_live_review_request, only: [:new, :create]
   layout false
 
   def new
-    @account = Account.find(params[:account_id])
     # Renders app/views/reputation/public_video_testimonials/new.html.erb
   end
 
@@ -16,12 +16,10 @@ class Reputation::PublicVideoTestimonialsController < ApplicationController
   end
 
   def create
-    @account = Account.find(params[:account_id])
-    review_request = params[:token].present? ? @account.reputation_review_requests.find_by(token: params[:token]) : nil
-    @testimonial = build_testimonial(review_request)
+    @testimonial = build_testimonial
 
     if @testimonial.save
-      review_request&.update(status: :completed)
+      @review_request.update(status: :completed, completed_at: Time.current)
       render json: { success: true, message: 'Video uploaded successfully!' }
     else
       render json: { success: false, errors: @testimonial.errors.full_messages }, status: :unprocessable_entity
@@ -30,15 +28,22 @@ class Reputation::PublicVideoTestimonialsController < ApplicationController
 
   private
 
-  def build_testimonial(review_request)
-    testimonial = @account.reputation_video_testimonials.new(testimonial_attributes(review_request))
+  def require_live_review_request
+    @review_request = Reputation::ReviewRequest.find_by(token: params[:token])
+    return head :not_found unless @review_request&.live_for_public_submit?
+
+    @account = @review_request.account
+  end
+
+  def build_testimonial
+    testimonial = @account.reputation_video_testimonials.new(testimonial_attributes)
     testimonial.video.attach(params[:video]) if params[:video].present?
     # Client-captured poster frame (canvas → blob); optional.
     testimonial.thumbnail.attach(params[:thumbnail]) if params[:thumbnail].present?
     testimonial
   end
 
-  def testimonial_attributes(review_request)
+  def testimonial_attributes
     {
       title: params[:title],
       email: params[:email],
@@ -49,8 +54,8 @@ class Reputation::PublicVideoTestimonialsController < ApplicationController
       # Consent is the hard gate — only stamp it when the checkbox was ticked;
       # a blank consented_at fails model validation and returns 422.
       consented_at: (Time.current if ActiveModel::Type::Boolean.new.cast(params[:consent])),
-      contact: review_request&.contact || find_or_create_contact,
-      reputation_review_request: review_request
+      contact: @review_request.contact || find_or_create_contact,
+      reputation_review_request: @review_request
     }
   end
 

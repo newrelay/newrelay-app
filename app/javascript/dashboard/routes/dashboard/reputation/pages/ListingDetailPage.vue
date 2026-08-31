@@ -167,6 +167,7 @@ function mapListing(row) {
     rating: row.rating || 4.5,
     reviewsCount: row.reviews ?? row.reviewsCount ?? 0,
     lastSync: row.lastSync || (row.synced_at ? new Date(row.synced_at).toLocaleString() : 'Just now'),
+    syncedAt: row.synced_at || null,
     createdAt: row.created_at || row.createdAt || null,
     updatedAt: row.updated_at || row.updatedAt || null,
     platforms: platforms.length
@@ -201,6 +202,25 @@ const websiteHref = computed(() => {
   return /^https?:\/\//i.test(url) ? url : `https://${url}`;
 });
 const editValid = computed(() => !!editForm.value.name?.trim());
+
+// Real activity, built only from timestamps this record actually has (created_at /
+// updated_at / synced_at) — there's no audit log for reputation_listings, so this
+// can't show a rich per-event history (who edited what, sync results, etc.) the way
+// the reference mockup does. No fabricated events.
+const activityEvents = computed(() => {
+  if (!listing.value) return [];
+  const events = [];
+  if (listing.value.createdAt) {
+    events.push({ key: 'created', icon: Building2, tone: 'bg-primary/10 text-primary', label: 'Listing created', time: listing.value.createdAt });
+  }
+  if (listing.value.updatedAt && listing.value.updatedAt !== listing.value.createdAt) {
+    events.push({ key: 'updated', icon: Pencil, tone: 'bg-amber-100 text-amber-600 dark:bg-amber-950 dark:text-amber-400', label: 'Listing details updated', time: listing.value.updatedAt });
+  }
+  if (listing.value.syncedAt) {
+    events.push({ key: 'synced', icon: RotateCw, tone: 'bg-emerald-100 text-emerald-600 dark:bg-emerald-950 dark:text-emerald-400', label: 'Platforms synced', time: listing.value.syncedAt });
+  }
+  return events.sort((a, b) => new Date(b.time) - new Date(a.time));
+});
 
 const tabs = [
   { id: 'Overview', icon: Compass },
@@ -881,20 +901,40 @@ watch(() => route.params.listingId, () => {
           </RelayButton>
         </div>
 
-        <div v-else class="bg-card border border-border rounded-xl p-6 shadow-xs">
-          <h3 class="text-base font-medium text-foreground mb-4">Activity</h3>
-          <div class="flex flex-col gap-3 text-sm">
-            <div class="flex items-center justify-between py-2 border-b border-border">
-              <span class="text-muted-foreground">Last sync</span>
-              <span class="font-medium text-foreground">{{ listing.lastSync }}</span>
+        <div v-else class="flex flex-col gap-2 pb-12">
+          <h2 class="text-xl font-bold text-foreground">Activity Timeline</h2>
+          <p class="text-[13px] text-muted-foreground mb-4">Everything recorded for this listing, chronologically.</p>
+
+          <div v-if="!activityEvents.length" class="bg-card border border-dashed border-border rounded-xl p-10 text-center">
+            <Activity class="size-8 mx-auto text-muted-foreground mb-3" />
+            <p class="text-sm text-muted-foreground">No activity recorded yet.</p>
+          </div>
+
+          <div v-else class="flex flex-col relative pl-2">
+            <div class="absolute left-[13px] top-2 bottom-4 w-px bg-border/60"></div>
+            <div class="flex flex-col gap-6">
+              <div v-for="event in activityEvents" :key="event.key" class="flex gap-4">
+                <div class="size-5 rounded-full flex items-center justify-center shrink-0 mt-0.5 z-10 ring-4 ring-background" :class="event.tone">
+                  <component :is="event.icon" class="size-3 stroke-[3]" />
+                </div>
+                <div class="flex flex-col gap-1 flex-1 pt-0.5">
+                  <div class="flex items-center justify-between gap-2">
+                    <span class="text-[14px] font-semibold text-foreground">{{ event.label }}</span>
+                    <span class="text-[12px] text-muted-foreground font-medium whitespace-nowrap">{{ formatDate(event.time) }}</span>
+                  </div>
+                </div>
+              </div>
             </div>
-            <div class="flex items-center justify-between py-2 border-b border-border">
-              <span class="text-muted-foreground">Updated</span>
-              <span class="font-medium text-foreground">{{ formatDate(listing.updatedAt) }}</span>
-            </div>
-            <div class="flex items-center justify-between py-2">
-              <span class="text-muted-foreground">Created</span>
-              <span class="font-medium text-foreground">{{ formatDate(listing.createdAt) }}</span>
+          </div>
+
+          <div class="bg-card border border-border rounded-xl p-5 shadow-xs mt-2">
+            <h4 class="text-[13px] font-semibold text-foreground mb-3">Current platform status</h4>
+            <div class="flex flex-col gap-2.5">
+              <div v-for="platform in listing.platforms" :key="platform.name" class="flex items-center gap-3">
+                <CheckCircle2 v-if="platform.status === 'Connected'" class="size-4 text-emerald-500 shrink-0" />
+                <AlertTriangle v-else class="size-4 text-rose-500 shrink-0" />
+                <span class="text-[12.5px] font-medium text-muted-foreground">{{ platform.name }} — {{ platform.status }}</span>
+              </div>
             </div>
           </div>
         </div>

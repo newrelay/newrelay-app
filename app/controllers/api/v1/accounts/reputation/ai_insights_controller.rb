@@ -10,7 +10,9 @@ class Api::V1::Accounts::Reputation::AiInsightsController < Api::V1::Accounts::B
 
   private
 
+  # v2: bumped when the response shape changes (added topics/keywords/suggestions)
+  # so stale cached entries from the old shape don't linger for the rest of the day.
   def cache_key
-    "reputation_ai_insights/#{current_account.id}/#{Date.current}"
+    "reputation_ai_insights/v2/#{current_account.id}/#{Date.current}"
   end
 end

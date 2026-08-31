@@ -19,6 +19,7 @@ import {
   Phone,
   Globe,
   Tag,
+  Mail,
   Check,
   CheckCircle2,
   AlertTriangle,
@@ -922,31 +923,53 @@ watch(() => route.params.listingId, () => {
               <Pencil class="size-3.5" /> Edit Information
             </RelayButton>
           </div>
-          <div class="bg-card border border-border rounded-xl shadow-xs p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div class="flex flex-col gap-1.5">
-              <span class="text-[13px] font-medium text-foreground">Business Name</span>
-              <span class="text-[14px] text-muted-foreground">{{ listing.title }}</span>
+          <div class="bg-card border border-border rounded-xl shadow-xs p-6 flex flex-col gap-5">
+            <h3 class="text-[15px] font-semibold text-foreground border-b border-border/60 pb-4">Basic Information</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div class="flex flex-col gap-1.5">
+                <span class="text-[13px] font-medium text-foreground">Business Name</span>
+                <span class="text-[14px] text-muted-foreground">{{ listing.title }}</span>
+              </div>
+              <div class="flex flex-col gap-1.5">
+                <span class="text-[13px] font-medium text-foreground">Primary Category</span>
+                <span v-if="listing.category" class="inline-flex w-fit px-2.5 py-0.5 rounded-full bg-primary/10 text-primary text-[12.5px] font-semibold">{{ listing.category }}</span>
+                <span v-else class="text-[14px] text-muted-foreground">—</span>
+              </div>
             </div>
-            <div class="flex flex-col gap-1.5">
-              <span class="text-[13px] font-medium text-foreground">Category</span>
-              <span class="text-[14px] text-muted-foreground">{{ listing.category || '—' }}</span>
-            </div>
-            <div class="flex flex-col gap-1.5">
-              <span class="text-[13px] font-medium text-foreground">Phone</span>
-              <span class="text-[14px] text-muted-foreground">{{ listing.phone || '—' }}</span>
-            </div>
-            <div class="flex flex-col gap-1.5">
-              <span class="text-[13px] font-medium text-foreground">Website</span>
-              <a v-if="websiteHref" :href="websiteHref" target="_blank" rel="noopener" class="text-[14px] text-primary hover:underline">{{ listing.website }}</a>
-              <span v-else class="text-[14px] text-muted-foreground">—</span>
-            </div>
-            <div class="flex flex-col gap-1.5">
-              <span class="text-[13px] font-medium text-foreground">Email</span>
-              <span class="text-[14px] text-muted-foreground">{{ listing.email || '—' }}</span>
-            </div>
-            <div class="flex flex-col gap-1.5 md:col-span-2">
-              <span class="text-[13px] font-medium text-foreground">Address</span>
-              <span class="text-[14px] text-muted-foreground">{{ listing.address || '—' }}</span>
+          </div>
+
+          <div class="bg-card border border-border rounded-xl shadow-xs p-6 flex flex-col gap-5">
+            <h3 class="text-[15px] font-semibold text-foreground border-b border-border/60 pb-4">Contact Information</h3>
+            <div class="flex flex-col gap-5">
+              <div class="flex items-start gap-4">
+                <Phone class="size-4 text-muted-foreground mt-0.5 shrink-0" />
+                <div class="flex flex-col gap-1">
+                  <span class="text-[13px] font-medium text-foreground">Phone Number</span>
+                  <span class="text-[14px] text-muted-foreground">{{ listing.phone || '—' }}</span>
+                </div>
+              </div>
+              <div class="flex items-start gap-4">
+                <Globe class="size-4 text-muted-foreground mt-0.5 shrink-0" />
+                <div class="flex flex-col gap-1">
+                  <span class="text-[13px] font-medium text-foreground">Website</span>
+                  <a v-if="websiteHref" :href="websiteHref" target="_blank" rel="noopener" class="text-[14px] text-primary hover:underline">{{ listing.website }}</a>
+                  <span v-else class="text-[14px] text-muted-foreground">—</span>
+                </div>
+              </div>
+              <div class="flex items-start gap-4">
+                <Mail class="size-4 text-muted-foreground mt-0.5 shrink-0" />
+                <div class="flex flex-col gap-1">
+                  <span class="text-[13px] font-medium text-foreground">Email</span>
+                  <span class="text-[14px] text-muted-foreground">{{ listing.email || '—' }}</span>
+                </div>
+              </div>
+              <div class="flex items-start gap-4">
+                <MapPin class="size-4 text-muted-foreground mt-0.5 shrink-0" />
+                <div class="flex flex-col gap-1">
+                  <span class="text-[13px] font-medium text-foreground">Address</span>
+                  <span class="text-[14px] text-muted-foreground leading-relaxed">{{ listing.address || '—' }}</span>
+                </div>
+              </div>
             </div>
           </div>
         </div>

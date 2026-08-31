@@ -27,6 +27,7 @@ import {
   Image as ImageIcon,
   Star,
   ArrowRight,
+  Sparkles,
 } from 'lucide-vue-next';
 import {
   RelayButton,
@@ -284,6 +285,36 @@ const activityEvents = computed(() => {
     events.push({ key: 'synced', icon: RotateCw, tone: 'bg-emerald-100 text-emerald-600 dark:bg-emerald-950 dark:text-emerald-400', label: 'Platforms synced', time: listing.value.syncedAt });
   }
   return events.sort((a, b) => new Date(b.time) - new Date(a.time));
+});
+
+// Real AI insights — reuses the account-level Reputation::AiInsightsService
+// (already built for the Overview page) rather than a listing-scoped copy;
+// reviews aren't tied to a specific listing in the schema, same caveat as
+// Recent Reviews / Review Performance above.
+const aiInsights = ref(null);
+const aiInsightsLoading = ref(false);
+async function loadAiInsights() {
+  if (aiInsights.value || aiInsightsLoading.value) return;
+  aiInsightsLoading.value = true;
+  try {
+    const { data } = await axios.get(`${baseUrl()}/ai_insights`);
+    aiInsights.value = data && data.sentiment != null ? data : null;
+  } catch {
+    aiInsights.value = null;
+  } finally {
+    aiInsightsLoading.value = false;
+  }
+}
+const sentimentLabel = computed(() => {
+  const s = aiInsights.value?.sentiment;
+  if (s == null) return '';
+  if (s >= 80) return 'Highly Positive';
+  if (s >= 60) return 'Positive';
+  if (s >= 40) return 'Mixed';
+  return 'Needs Attention';
+});
+watch(activeTab, tab => {
+  if (tab === 'Insights') loadAiInsights();
 });
 
 const tabs = [
@@ -960,15 +991,56 @@ watch(() => route.params.listingId, () => {
           </div>
         </div>
 
-        <div v-else-if="activeTab === 'Insights'" class="bg-card border border-dashed border-border rounded-xl p-10 text-center">
-          <TrendingUp class="size-8 mx-auto text-muted-foreground mb-3" />
-          <p class="text-base font-medium text-foreground">Insights need review history</p>
-          <p class="text-sm text-muted-foreground mt-1 max-w-md mx-auto">
-            Rating trends and reply stats show up here once this listing has synced reviews.
-          </p>
-          <RelayButton variant="outline" class="mt-4" @click="router.push({ name: 'reputation_reviews' })">
-            View Reviews
-          </RelayButton>
+        <div v-else-if="activeTab === 'Insights'" class="flex flex-col gap-6 pb-12">
+          <div>
+            <h2 class="text-xl font-bold text-foreground flex items-center gap-2"><Sparkles class="size-5 text-primary" /> Insights</h2>
+            <p class="text-[13px] text-muted-foreground mt-1">AI analysis of your account's reviews.</p>
+          </div>
+
+          <div v-if="aiInsightsLoading" class="bg-card border border-border rounded-xl p-10 text-center text-sm text-muted-foreground">
+            Analyzing reviews…
+          </div>
+
+          <div v-else-if="!aiInsights" class="bg-card border border-dashed border-border rounded-xl p-10 text-center">
+            <TrendingUp class="size-8 mx-auto text-muted-foreground mb-3" />
+            <p class="text-base font-medium text-foreground">Insights need review history</p>
+            <p class="text-sm text-muted-foreground mt-1 max-w-md mx-auto">
+              Rating trends and reply stats show up here once this account has synced reviews.
+            </p>
+            <RelayButton variant="outline" class="mt-4" @click="router.push({ name: 'reputation_reviews' })">
+              View Reviews
+            </RelayButton>
+          </div>
+
+          <div v-else class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div class="bg-card border border-border rounded-xl p-6 shadow-xs flex flex-col items-center gap-3">
+              <h3 class="text-base font-medium text-foreground self-start">Overall Sentiment</h3>
+              <div class="relative size-28 flex items-center justify-center mt-2">
+                <svg class="size-full -rotate-90" viewBox="0 0 100 100">
+                  <circle cx="50" cy="50" r="42" fill="none" class="stroke-emerald-50 dark:stroke-emerald-950" stroke-width="8" />
+                  <circle cx="50" cy="50" r="42" fill="none" class="stroke-emerald-500" stroke-width="8" stroke-linecap="round"
+                    :stroke-dasharray="263.89" :stroke-dashoffset="263.89 - (263.89 * aiInsights.sentiment) / 100" />
+                </svg>
+                <div class="absolute inset-0 flex flex-col items-center justify-center">
+                  <span class="text-[24px] font-extrabold text-foreground tracking-tight leading-none">{{ aiInsights.sentiment }}%</span>
+                </div>
+              </div>
+              <span class="text-[13px] font-semibold text-emerald-600">{{ sentimentLabel }}</span>
+            </div>
+
+            <div class="lg:col-span-2 bg-card border border-border rounded-xl p-6 shadow-xs flex flex-col gap-4">
+              <h3 class="text-base font-medium text-foreground flex items-center gap-2"><Sparkles class="size-4 text-primary" /> AI Review Summary</h3>
+              <div class="flex flex-col gap-4">
+                <div v-for="(insight, i) in aiInsights.insights" :key="i" class="flex items-start gap-3">
+                  <div class="size-6 rounded-full bg-primary/10 text-primary flex items-center justify-center shrink-0 mt-0.5 text-[11px] font-bold">{{ i + 1 }}</div>
+                  <div class="flex flex-col gap-0.5">
+                    <span class="text-[13.5px] font-semibold text-foreground">{{ insight.title }}</span>
+                    <span class="text-[13px] text-muted-foreground leading-relaxed">{{ insight.text }}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
 
         <div v-else class="flex flex-col gap-2 pb-12">

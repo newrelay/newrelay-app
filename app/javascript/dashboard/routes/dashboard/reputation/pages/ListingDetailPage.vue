@@ -1041,6 +1041,37 @@ watch(() => route.params.listingId, () => {
               <span class="text-[13px] font-semibold text-emerald-600">{{ sentimentLabel }}</span>
               <span v-if="reviewStats.total" class="text-[11.5px] text-muted-foreground">Based on {{ reviewStats.total }} recent reviews</span>
             </div>
+
+            <div class="lg:col-span-2 bg-card border border-border rounded-xl p-6 shadow-xs flex flex-col gap-4">
+              <h3 class="text-base font-medium text-foreground">Rating Trend</h3>
+              <div class="relative h-[140px] w-full">
+                <svg class="absolute inset-0 size-full" viewBox="0 0 100 100" preserveAspectRatio="none">
+                  <defs>
+                    <linearGradient id="insightsTrendGradient" x1="0" x2="0" y1="0" y2="1">
+                      <stop offset="0%" stop-color="currentColor" class="text-primary" stop-opacity="0.25" />
+                      <stop offset="100%" stop-color="currentColor" class="text-primary" stop-opacity="0.01" />
+                    </linearGradient>
+                  </defs>
+                  <polygon :points="`0,100 ${trendPoints} 100,100`" fill="url(#insightsTrendGradient)" />
+                  <polyline :points="trendPoints" fill="none" class="stroke-primary" stroke-width="1.5" vector-effect="non-scaling-stroke" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+              </div>
+              <p class="text-[11px] text-muted-foreground text-center">Review volume, last 5 weeks</p>
+            </div>
+
+            <div class="bg-primary text-primary-foreground rounded-xl p-6 shadow-xs flex flex-col gap-4">
+              <h3 class="text-base font-medium">Monthly Summary</h3>
+              <div class="grid grid-cols-2 gap-4">
+                <div class="flex flex-col gap-0.5">
+                  <span class="text-[22px] font-bold leading-none">{{ reviewStats.total }}</span>
+                  <span class="text-[11.5px] opacity-80">Total Reviews</span>
+                </div>
+                <div class="flex flex-col gap-0.5">
+                  <span class="text-[22px] font-bold leading-none">{{ reviewStats.avgRating }}</span>
+                  <span class="text-[11.5px] opacity-80">Average Rating</span>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 

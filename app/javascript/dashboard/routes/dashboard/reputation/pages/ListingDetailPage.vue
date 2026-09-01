@@ -31,7 +31,9 @@ import {
   Star,
   ArrowRight,
   Sparkles,
+  Users,
 } from 'lucide-vue-next';
+import ListingMembersPanel from '../components/ListingMembersPanel.vue';
 import {
   RelayButton,
   RelayInput,
@@ -154,10 +156,6 @@ const mockListings = [
 ];
 
 function mapListing(row) {
-  const platforms = (row.platforms || []).map(p => ({
-    name: p.name,
-    status: p.status || (p.ok ? 'Connected' : 'Not Connected'),
-  }));
   return {
     id: row.id,
     title: row.name || row.title,
@@ -184,16 +182,8 @@ function mapListing(row) {
     syncedAt: row.synced_at || null,
     createdAt: row.created_at || row.createdAt || null,
     updatedAt: row.updated_at || row.updatedAt || null,
-    platforms: platforms.length
-      ? platforms
-      : [
-          { name: 'Google', status: 'Connected' },
-          { name: 'Facebook', status: 'Connected' },
-        ],
   };
 }
-
-const platformsToApi = platforms => (platforms || []).map(p => ({ name: p.name, ok: p.status === 'Connected' }));
 
 const loading = ref(true);
 const usingMock = ref(false);
@@ -224,13 +214,49 @@ function blankEditForm() {
 }
 const editForm = ref(blankEditForm());
 
-const connectedCount = computed(
-  () => listing.value?.platforms.filter(p => p.status === 'Connected').length || 0
+// Real per-listing platform connections — reputation_integrations now carries a
+// listing_id (see AddListingToReputationIntegrations migration), so this is the
+// account's real Reputation::Integration rows for this listing, not a fake toggle.
+const PROVIDER_LABELS = {
+  google: 'Google', facebook: 'Facebook', agoda: 'Agoda', airbnb: 'Airbnb',
+  aliexpress: 'AliExpress', amazon: 'Amazon', angi: 'Angi',
+  apple_app_store: 'Apple App Store', avvo: 'Avvo', custom: 'Custom',
+};
+const listingIntegrations = ref([]);
+async function loadListingIntegrations() {
+  const id = route.params.listingId;
+  try {
+    const { data } = await axios.get(`${baseUrl()}/integrations?listing_id=${id}`);
+    listingIntegrations.value = data || [];
+  } catch {
+    listingIntegrations.value = [];
+  }
+}
+const connectedPlatforms = computed(() =>
+  listingIntegrations.value.map(i => ({
+    id: i.id,
+    name: i.location_name || PROVIDER_LABELS[i.provider] || i.provider,
+    status: i.status === 'active' ? 'Connected' : 'Not Connected',
+  }))
 );
-const platformTotal = computed(() => listing.value?.platforms.length || 0);
-const disconnectedPlatforms = computed(
-  () => listing.value?.platforms.filter(p => p.status !== 'Connected') || []
-);
+const connectedCount = computed(() => listingIntegrations.value.filter(i => i.status === 'active').length);
+const platformTotal = computed(() => listingIntegrations.value.length);
+const disconnectedPlatforms = computed(() => connectedPlatforms.value.filter(p => p.status !== 'Connected'));
+
+async function disconnectIntegration(integrationId) {
+  if (!confirm('Disconnect this platform?')) return;
+  try {
+    await axios.delete(`${baseUrl()}/integrations/${integrationId}`);
+    await loadListingIntegrations();
+    useAlert('Platform disconnected');
+  } catch {
+    useAlert('Failed to disconnect platform');
+  }
+}
+
+function goToConnectPlatform() {
+  router.push({ name: 'reputation_integrations', query: { listing_id: listing.value?.id } });
+}
 const websiteHref = computed(() => {
   const url = listing.value?.website;
   if (!url) return '';
@@ -321,17 +347,14 @@ const activityEvents = computed(() => {
   return events.sort((a, b) => new Date(b.time) - new Date(a.time));
 });
 
-// Real AI insights — reuses the account-level Reputation::AiInsightsService
-// (already built for the Overview page) rather than a listing-scoped copy;
-// reviews aren't tied to a specific listing in the schema, same caveat as
-// Recent Reviews / Review Performance above.
+// Real AI insights, scoped to this listing's reviews via listing_id.
 const aiInsights = ref(null);
 const aiInsightsLoading = ref(false);
 async function loadAiInsights() {
   if (aiInsights.value || aiInsightsLoading.value) return;
   aiInsightsLoading.value = true;
   try {
-    const { data } = await axios.get(`${baseUrl()}/ai_insights`);
+    const { data } = await axios.get(`${baseUrl()}/ai_insights?listing_id=${route.params.listingId}`);
     aiInsights.value = data && data.sentiment != null
       ? { topics: [], keywords: [], suggestions: [], ...data }
       : null;
@@ -358,6 +381,7 @@ const tabs = [
   { id: 'Listing Info', icon: Building2 },
   { id: 'Connections', icon: Layers },
   { id: 'Insights', icon: TrendingUp },
+  { id: 'Team', icon: Users },
   { id: 'Activity', icon: Activity },
 ];
 
@@ -381,13 +405,13 @@ async function loadListing() {
   }
 }
 
-// Reviews aren't scoped per-listing in the schema (reputation_reviews has no
-// listing_id) — this shows the account's real recent reviews, same as the
-// Reviews page, rather than fabricating listing-specific data.
+// Reviews for this listing's connected platforms only (reputation_reviews joins
+// through reputation_integration -> reputation_listing_id).
 const accountReviews = ref([]);
 async function loadAccountReviews() {
+  const id = route.params.listingId;
   try {
-    const { data } = await axios.get(`${baseUrl()}/reviews`);
+    const { data } = await axios.get(`${baseUrl()}/reviews?listing_id=${id}`);
     accountReviews.value = data || [];
   } catch {
     accountReviews.value = [];
@@ -539,46 +563,6 @@ async function uploadPhotos(event) {
   }
 }
 
-async function persistPlatforms(platforms) {
-  if (!listing.value) return;
-  const next = platforms.map(p => ({ ...p }));
-  try {
-    if (!usingMock.value) {
-      await axios.patch(`${baseUrl()}/listings/${listing.value.id}`, { platforms: platformsToApi(next) });
-      loadActivities();
-    }
-    listing.value.platforms = next;
-  } catch {
-    useAlert('Failed to update platforms');
-  }
-}
-
-async function togglePlatform(platform) {
-  const next = listing.value.platforms.map(p =>
-    p.name === platform.name
-      ? { ...p, status: p.status === 'Connected' ? 'Not Connected' : 'Connected' }
-      : p
-  );
-  await persistPlatforms(next);
-}
-
-// Platforms this listing doesn't have a row for yet. Connecting one adds a
-// real entry via the same PATCH endpoint — not a fake "coming soon" tile.
-const AVAILABLE_PLATFORM_CATALOG = [
-  { name: 'Apple Maps', tag: 'AM', tone: 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-200' },
-  { name: 'TripAdvisor', tag: 'TA', tone: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900 dark:text-emerald-300' },
-  { name: 'Yellow Pages', tag: 'YP', tone: 'bg-amber-100 text-amber-700 dark:bg-amber-900 dark:text-amber-300' },
-  { name: 'Nextdoor', tag: 'N', tone: 'bg-lime-100 text-lime-700 dark:bg-lime-900 dark:text-lime-300' },
-];
-const availablePlatforms = computed(() => {
-  const existing = new Set((listing.value?.platforms || []).map(p => p.name));
-  return AVAILABLE_PLATFORM_CATALOG.filter(p => !existing.has(p.name));
-});
-async function addPlatform(name) {
-  const next = [...listing.value.platforms, { name, status: 'Connected' }];
-  await persistPlatforms(next);
-}
-
 async function renameListing() {
   const name = window.prompt('Rename listing', listing.value.title);
   if (!name || !name.trim() || name.trim() === listing.value.title) return;
@@ -612,7 +596,6 @@ async function duplicateListing() {
         hours: listing.value.hours,
         amenities: listing.value.amenities,
         social_links: listing.value.socialLinks,
-        platforms: platformsToApi(listing.value.platforms),
       });
     }
     useAlert('Listing duplicated');
@@ -654,12 +637,17 @@ onMounted(() => {
   loadListing();
   loadAccountReviews();
   loadActivities();
+  loadListingIntegrations();
 });
 
 watch(() => route.params.listingId, () => {
   if (showDemoSurfaces.value) {
     loadListing();
+    loadAccountReviews();
     loadActivities();
+    loadListingIntegrations();
+    aiInsights.value = null;
+    if (activeTab.value === 'Insights') loadAiInsights();
   }
 });
 </script>
@@ -850,10 +838,14 @@ watch(() => route.params.listingId, () => {
                 Manage All
               </RelayButton>
             </div>
-            <div class="flex gap-4 overflow-x-auto pb-2">
+            <div v-if="!connectedPlatforms.length" class="text-[13px] text-muted-foreground py-2">
+              No platforms connected yet.
+              <button type="button" class="text-primary font-semibold hover:underline" @click="goToConnectPlatform">Connect one</button>
+            </div>
+            <div v-else class="flex gap-4 overflow-x-auto pb-2">
               <div
-                v-for="platform in listing.platforms"
-                :key="platform.name"
+                v-for="platform in connectedPlatforms"
+                :key="platform.id"
                 class="flex flex-col justify-between p-5 border rounded-xl min-w-[260px] bg-card shadow-xs"
                 :class="platform.status === 'Connected' ? 'border-border' : 'border-rose-200/60 dark:border-rose-900/40'"
               >
@@ -862,7 +854,7 @@ watch(() => route.params.listingId, () => {
                   <div class="flex flex-col gap-0.5">
                     <span class="text-[14px] font-medium text-foreground">{{ platform.name }}</span>
                     <span class="text-[12px] font-medium" :class="platform.status === 'Connected' ? 'text-muted-foreground' : 'text-rose-500'">
-                      {{ platform.status === 'Connected' ? `Last Sync: ${listing.lastSync}` : platform.status }}
+                      {{ platform.status === 'Connected' ? `Last Sync: ${listing.lastSync}` : 'Action required' }}
                     </span>
                   </div>
                 </div>
@@ -876,19 +868,22 @@ watch(() => route.params.listingId, () => {
                     {{ platform.status === 'Connected' ? 'Connected' : 'Not Connected' }}
                   </span>
                   <button
+                    v-if="platform.status === 'Connected'"
                     type="button"
-                    class="h-6 px-2 text-[11px] font-semibold"
-                    :class="platform.status === 'Connected' ? 'text-primary' : 'text-rose-600'"
-                    @click="togglePlatform(platform)"
+                    class="h-6 px-2 text-[11px] font-semibold text-rose-600"
+                    @click="disconnectIntegration(platform.id)"
                   >
-                    {{ platform.status === 'Connected' ? 'Disconnect' : 'Connect' }}
+                    Disconnect
+                  </button>
+                  <button v-else type="button" class="h-6 px-2 text-[11px] font-semibold text-primary" @click="goToConnectPlatform">
+                    Reconnect
                   </button>
                 </div>
               </div>
             </div>
           </div>
 
-          <!-- Recent Reviews (account-wide — reviews aren't scoped per listing) -->
+          <!-- Recent Reviews (this listing's connected platforms only) -->
           <div class="bg-card border border-border rounded-xl p-6 shadow-xs flex flex-col gap-6">
             <div class="flex items-center justify-between">
               <h3 class="text-base font-medium text-foreground">Recent Reviews</h3>
@@ -920,7 +915,7 @@ watch(() => route.params.listingId, () => {
             </div>
           </div>
 
-          <!-- Review Performance (real account review stats, no fabricated trend deltas) -->
+          <!-- Review Performance (real per-listing review stats, no fabricated trend deltas) -->
           <div class="bg-card border border-border rounded-xl p-6 shadow-xs flex flex-col gap-6">
             <h3 class="text-base font-medium text-foreground">Review Performance</h3>
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
@@ -972,17 +967,17 @@ watch(() => route.params.listingId, () => {
                 </div>
               </div>
               <div class="flex flex-col gap-2.5">
-                <div class="flex items-center gap-3">
+                <div v-if="connectedCount" class="flex items-center gap-3">
                   <CheckCircle2 class="size-4 text-emerald-500 shrink-0" />
-                  <span class="text-[12.5px] font-medium text-muted-foreground">Connected to {{ connectedCount }} of {{ platformTotal }} platforms</span>
+                  <span class="text-[12.5px] font-medium text-muted-foreground">Connected to {{ connectedCount }} platform{{ connectedCount === 1 ? '' : 's' }}</span>
                 </div>
                 <div v-if="listing.address" class="flex items-center gap-3">
                   <CheckCircle2 class="size-4 text-emerald-500 shrink-0" />
                   <span class="text-[12.5px] font-medium text-muted-foreground">Business info is filled in</span>
                 </div>
-                <div v-for="platform in disconnectedPlatforms" :key="platform.name" class="flex items-center gap-3">
+                <div v-for="platform in disconnectedPlatforms" :key="platform.id" class="flex items-center gap-3">
                   <AlertTriangle class="size-4 text-amber-500 shrink-0" />
-                  <span class="text-[12.5px] font-medium text-muted-foreground">{{ platform.name }} is disconnected</span>
+                  <span class="text-[12.5px] font-medium text-muted-foreground">{{ platform.name }} needs reconnecting</span>
                 </div>
               </div>
             </div>
@@ -993,16 +988,16 @@ watch(() => route.params.listingId, () => {
                 <span class="bg-rose-50 text-rose-600 dark:bg-rose-950 dark:text-rose-400 px-2 rounded-full font-semibold text-[12px]">{{ disconnectedPlatforms.length }}</span>
               </div>
               <div class="flex flex-col gap-4">
-                <div v-for="platform in disconnectedPlatforms" :key="platform.name" class="flex items-start gap-3">
+                <div v-for="platform in disconnectedPlatforms" :key="platform.id" class="flex items-start gap-3">
                   <div class="size-8 rounded-full bg-rose-50 dark:bg-rose-950 flex items-center justify-center shrink-0 mt-1">
                     <AlertTriangle class="size-4 text-rose-600" />
                   </div>
                   <div class="flex flex-col gap-0.5 flex-1">
-                    <span class="text-[13px] font-medium text-foreground">{{ platform.name }} is disconnected</span>
+                    <span class="text-[13px] font-medium text-foreground">{{ platform.name }} needs reconnecting</span>
                     <span class="text-[11.5px] text-muted-foreground">Reconnect to keep this listing in sync.</span>
                   </div>
-                  <RelayButton variant="outline" class="h-7 text-[11px] font-semibold text-primary px-3 mt-1 shrink-0" @click="togglePlatform(platform)">
-                    Connect
+                  <RelayButton variant="outline" class="h-7 text-[11px] font-semibold text-primary px-3 mt-1 shrink-0" @click="goToConnectPlatform">
+                    Reconnect
                   </RelayButton>
                 </div>
               </div>
@@ -1159,9 +1154,14 @@ watch(() => route.params.listingId, () => {
               <h2 class="text-base font-medium text-foreground">Connections</h2>
               <p class="text-[13px] text-muted-foreground mt-1">Connect or disconnect listing platforms for this location.</p>
             </div>
-            <RelayButton class="gap-2 text-xs font-semibold px-4" @click="syncNow">
-              <RotateCw class="size-3.5" /> Sync All
-            </RelayButton>
+            <div class="flex items-center gap-2">
+              <RelayButton variant="outline" class="gap-2 text-xs font-semibold px-4" @click="goToConnectPlatform">
+                Connect Platform
+              </RelayButton>
+              <RelayButton class="gap-2 text-xs font-semibold px-4" @click="syncNow">
+                <RotateCw class="size-3.5" /> Sync All
+              </RelayButton>
+            </div>
           </div>
           <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div class="bg-card border border-border rounded-xl shadow-xs p-4 flex items-center gap-4">
@@ -1193,10 +1193,15 @@ watch(() => route.params.listingId, () => {
             </div>
           </div>
           <h3 class="text-base font-medium text-foreground -mb-1">Connected Platforms</h3>
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div v-if="!connectedPlatforms.length" class="bg-card border border-dashed border-border rounded-xl p-10 text-center">
+            <Layers class="size-8 mx-auto text-muted-foreground mb-3" />
+            <p class="text-sm text-muted-foreground">No platforms connected to this listing yet.</p>
+            <RelayButton variant="outline" class="mt-4" @click="goToConnectPlatform">Connect Platform</RelayButton>
+          </div>
+          <div v-else class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div
-              v-for="platform in listing.platforms"
-              :key="platform.name"
+              v-for="platform in connectedPlatforms"
+              :key="platform.id"
               class="rounded-xl shadow-xs p-5 flex flex-col gap-4"
               :class="platform.status === 'Connected' ? 'bg-card border border-border' : 'bg-rose-50/60 border border-rose-200 dark:bg-rose-950/30 dark:border-rose-900/50'"
             >
@@ -1219,32 +1224,20 @@ watch(() => route.params.listingId, () => {
                   {{ platform.status === 'Connected' ? 'Connected' : 'Action Required' }}
                 </span>
               </div>
-              <RelayButton v-if="platform.status !== 'Connected'" class="bg-rose-600 hover:bg-rose-700 text-white" @click="togglePlatform(platform)">
+              <RelayButton v-if="platform.status !== 'Connected'" class="bg-rose-600 hover:bg-rose-700 text-white" @click="goToConnectPlatform">
                 Reconnect {{ platform.name }}
               </RelayButton>
-              <div v-else class="flex items-center gap-3">
-                <RelayButton variant="outline" size="sm" class="flex-1">Manage</RelayButton>
-                <button type="button" class="text-[13px] font-semibold text-rose-600 hover:text-rose-700" @click="togglePlatform(platform)">Disconnect</button>
+              <div v-else class="flex items-center justify-end">
+                <button type="button" class="text-[13px] font-semibold text-rose-600 hover:text-rose-700" @click="disconnectIntegration(platform.id)">Disconnect</button>
               </div>
             </div>
           </div>
-
-          <template v-if="availablePlatforms.length">
-            <h3 class="text-base font-medium text-foreground -mb-1 mt-2">Available Platforms</h3>
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-              <div v-for="platform in availablePlatforms" :key="platform.name" class="bg-card border border-border rounded-xl shadow-xs p-5 flex flex-col items-center text-center gap-3">
-                <div class="size-11 rounded-full flex items-center justify-center text-[13px] font-bold" :class="platform.tone">{{ platform.tag }}</div>
-                <span class="text-[13.5px] font-medium text-foreground">{{ platform.name }}</span>
-                <RelayButton variant="outline" size="sm" class="w-full" @click="addPlatform(platform.name)">Connect</RelayButton>
-              </div>
-            </div>
-          </template>
         </div>
 
         <div v-else-if="activeTab === 'Insights'" class="flex flex-col gap-6 pb-12">
           <div>
             <h2 class="text-xl font-bold text-foreground flex items-center gap-2"><Sparkles class="size-5 text-primary" /> Insights</h2>
-            <p class="text-[13px] text-muted-foreground mt-1">AI analysis of your account's reviews.</p>
+            <p class="text-[13px] text-muted-foreground mt-1">AI analysis of this listing's reviews.</p>
           </div>
 
           <div v-if="aiInsightsLoading" class="bg-card border border-border rounded-xl p-10 text-center text-sm text-muted-foreground">
@@ -1356,7 +1349,13 @@ watch(() => route.params.listingId, () => {
           </div>
         </div>
 
-        <div v-else class="flex flex-col gap-2 pb-12">
+        <ListingMembersPanel
+          v-else-if="activeTab === 'Team' && listing"
+          :listing-id="listing.id"
+          :account-id="accountId"
+        />
+
+        <div v-else-if="activeTab === 'Activity'" class="flex flex-col gap-2 pb-12">
           <h2 class="text-xl font-bold text-foreground">Activity Timeline</h2>
           <p class="text-[13px] text-muted-foreground mb-4">Everything recorded for this listing, chronologically.</p>
 
@@ -1383,10 +1382,10 @@ watch(() => route.params.listingId, () => {
             </div>
           </div>
 
-          <div class="bg-card border border-border rounded-xl p-5 shadow-xs mt-2">
+          <div v-if="connectedPlatforms.length" class="bg-card border border-border rounded-xl p-5 shadow-xs mt-2">
             <h4 class="text-[13px] font-semibold text-foreground mb-3">Current platform status</h4>
             <div class="flex flex-col gap-2.5">
-              <div v-for="platform in listing.platforms" :key="platform.name" class="flex items-center gap-3">
+              <div v-for="platform in connectedPlatforms" :key="platform.id" class="flex items-center gap-3">
                 <CheckCircle2 v-if="platform.status === 'Connected'" class="size-4 text-emerald-500 shrink-0" />
                 <AlertTriangle v-else class="size-4 text-rose-500 shrink-0" />
                 <span class="text-[12.5px] font-medium text-muted-foreground">{{ platform.name }} — {{ platform.status }}</span>

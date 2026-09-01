@@ -3,11 +3,14 @@
 class Reputation::SummaryBuilder
   HISTORY_DAYS = 30
 
-  def initialize(account)
+  def initialize(account, listing_ids: nil)
     @account = account
+    @listing_ids = listing_ids
   end
 
   def as_json
+    return live_only_json if @listing_ids
+
     ensure_today_snapshot
     current = snapshot_on(Date.current, Reputation::Snapshot::ROLLUP_PROVIDER)
     prior = snapshot_on(Date.current - HISTORY_DAYS, Reputation::Snapshot::ROLLUP_PROVIDER)
@@ -41,8 +44,29 @@ class Reputation::SummaryBuilder
     Rails.logger.error("Reputation summary snapshot capture failed for account #{@account.id}: #{e.message}")
   end
 
+  def live_only_json
+    live = live_metrics
+    {
+      score: live[:score],
+      score_delta: nil,
+      avg_rating: live[:avg_rating].to_f,
+      rating_delta: nil,
+      reviews_count: live[:reviews_count],
+      reviews_delta_pct: nil,
+      response_rate: live[:response_rate].to_f,
+      history_days: 0,
+      deltas_ready: false,
+      platforms: []
+    }
+  end
+
   def live_metrics
-    Reputation::ScoreCalculator.new(@account.reputation_reviews.to_a).metrics
+    reviews = @account.reputation_reviews
+    if @listing_ids
+      reviews = reviews.joins(:reputation_integration)
+                       .where(reputation_integrations: { reputation_listing_id: @listing_ids })
+    end
+    Reputation::ScoreCalculator.new(reviews.to_a).metrics
   end
 
   def snapshot_on(on, provider)

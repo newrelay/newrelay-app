@@ -2,27 +2,31 @@
 #
 # Table name: reputation_integrations
 #
-#  id               :bigint           not null, primary key
-#  access_token     :text
-#  location_name    :string
-#  provider         :string           not null
-#  refresh_token    :text
-#  status           :string           default("active")
-#  token_expires_at :datetime
-#  created_at       :datetime         not null
-#  updated_at       :datetime         not null
-#  account_id       :bigint           not null
-#  location_id      :string           not null
+#  id                    :bigint           not null, primary key
+#  access_token          :text
+#  location_name         :string
+#  provider              :string           not null
+#  refresh_token         :text
+#  status                :string           default("active")
+#  token_expires_at      :datetime
+#  created_at            :datetime         not null
+#  updated_at            :datetime         not null
+#  account_id            :bigint           not null
+#  location_id           :string           not null
+#  reputation_listing_id :bigint
 #
 # Indexes
 #
-#  idx_reputation_integrations_unique           (account_id,provider,location_id) UNIQUE
-#  index_reputation_integrations_on_account_id  (account_id)
+#  idx_reputation_integrations_unique                      (account_id,provider,location_id) UNIQUE
+#  index_reputation_integrations_on_account_id             (account_id)
+#  index_reputation_integrations_on_reputation_listing_id  (reputation_listing_id)
 #
 class Reputation::Integration < ApplicationRecord
   self.table_name = 'reputation_integrations'
 
   belongs_to :account
+  belongs_to :listing, class_name: 'Reputation::Listing', foreign_key: :reputation_listing_id, optional: true,
+                       inverse_of: :reputation_integrations
   has_many :reputation_reviews,
            class_name: 'Reputation::Review',
            foreign_key: :reputation_integration_id,

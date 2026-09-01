@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2026_08_31_140000) do
+ActiveRecord::Schema[7.1].define(version: 2026_09_01_053000) do
   # These extensions should be enabled to support this database
   enable_extension "pg_stat_statements"
   enable_extension "pg_trgm"
@@ -1429,8 +1429,21 @@ ActiveRecord::Schema[7.1].define(version: 2026_08_31_140000) do
     t.string "status", default: "active"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "reputation_listing_id"
     t.index ["account_id", "provider", "location_id"], name: "idx_reputation_integrations_unique", unique: true
     t.index ["account_id"], name: "index_reputation_integrations_on_account_id"
+    t.index ["reputation_listing_id"], name: "index_reputation_integrations_on_reputation_listing_id"
+  end
+
+  create_table "reputation_listing_members", force: :cascade do |t|
+    t.bigint "account_id", null: false
+    t.bigint "reputation_listing_id", null: false
+    t.bigint "user_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["account_id"], name: "index_reputation_listing_members_on_account_id"
+    t.index ["reputation_listing_id", "user_id"], name: "idx_reputation_listing_members_unique", unique: true
+    t.index ["reputation_listing_id"], name: "index_reputation_listing_members_on_reputation_listing_id"
   end
 
   create_table "reputation_listings", force: :cascade do |t|
@@ -1494,9 +1507,11 @@ ActiveRecord::Schema[7.1].define(version: 2026_08_31_140000) do
     t.datetime "scheduled_at"
     t.text "message"
     t.jsonb "destinations", default: []
+    t.bigint "reputation_listing_id"
     t.index ["account_id", "status"], name: "index_reputation_review_requests_on_account_id_and_status"
     t.index ["account_id"], name: "index_reputation_review_requests_on_account_id"
     t.index ["contact_id"], name: "index_reputation_review_requests_on_contact_id"
+    t.index ["reputation_listing_id"], name: "index_reputation_review_requests_on_reputation_listing_id"
     t.index ["reputation_template_id"], name: "index_reputation_review_requests_on_reputation_template_id"
     t.index ["status", "scheduled_at"], name: "index_reputation_review_requests_on_status_and_scheduled_at"
     t.index ["token"], name: "index_reputation_review_requests_on_token", unique: true
@@ -1578,9 +1593,11 @@ ActiveRecord::Schema[7.1].define(version: 2026_08_31_140000) do
     t.datetime "rejected_at"
     t.jsonb "notes", default: [], null: false
     t.jsonb "ai_insights", default: {}, null: false
+    t.bigint "reputation_listing_id"
     t.index ["account_id", "status"], name: "index_reputation_video_testimonials_on_account_id_and_status"
     t.index ["account_id"], name: "index_reputation_video_testimonials_on_account_id"
     t.index ["contact_id"], name: "index_reputation_video_testimonials_on_contact_id"
+    t.index ["reputation_listing_id"], name: "index_reputation_video_testimonials_on_reputation_listing_id"
     t.index ["review_request_id"], name: "index_reputation_video_testimonials_on_review_request_id", unique: true, where: "(review_request_id IS NOT NULL)"
     t.index ["token"], name: "index_reputation_video_testimonials_on_token", unique: true
   end

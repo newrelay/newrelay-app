@@ -3,12 +3,13 @@ class Api::V1::Accounts::Reputation::ReviewsController < Api::V1::Accounts::Repu
 
   # GET /api/v1/accounts/:account_id/reputation/reviews
   def index
-    reviews = current_account.reputation_reviews
-                             .includes(:reputation_integration, :reputation_review_reply)
-                             .order(reviewed_at: :desc)
+    reviews = scoped_reviews
+              .includes(:reputation_integration, :reputation_review_reply)
+              .order(reviewed_at: :desc)
 
     reviews = reviews.where(status: params[:status]) if params[:status].present?
     reviews = reviews.where(provider: params[:provider]) if params[:provider].present?
+    reviews = reviews.where(reputation_integration: { reputation_listing_id: params[:listing_id] }) if params[:listing_id].present?
 
     render json: reviews.limit(50).as_json(
       only: %i[id external_id provider rating body reviewer_name status reviewed_at],
@@ -49,6 +50,6 @@ class Api::V1::Accounts::Reputation::ReviewsController < Api::V1::Accounts::Repu
   private
 
   def review
-    @review ||= current_account.reputation_reviews.find(params[:id])
+    @review ||= scoped_reviews.find(params[:id])
   end
 end

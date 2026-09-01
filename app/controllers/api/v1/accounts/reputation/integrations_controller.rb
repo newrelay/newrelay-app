@@ -1,11 +1,16 @@
 # rubocop:disable Metrics/ClassLength, Metrics/MethodLength, Metrics/AbcSize, Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity
 class Api::V1::Accounts::Reputation::IntegrationsController < Api::V1::Accounts::Reputation::BaseController
   before_action :integration, only: [:destroy]
+  before_action :assert_assignable_listing!, only: [:create]
 
   # GET /api/v1/accounts/:account_id/reputation/integrations
+  # GET /api/v1/accounts/:account_id/reputation/integrations?listing_id=X
   def index
-    render json: current_account.reputation_integrations.order(created_at: :desc).as_json(
-      only: [:id, :provider, :location_id, :location_name, :status, :created_at]
+    integrations = scoped_integrations.order(created_at: :desc)
+    integrations = integrations.where(reputation_listing_id: params[:listing_id]) if params[:listing_id].present?
+
+    render json: integrations.as_json(
+      only: [:id, :provider, :location_id, :location_name, :status, :created_at, :reputation_listing_id]
     )
   end
 
@@ -79,7 +84,8 @@ class Api::V1::Accounts::Reputation::IntegrationsController < Api::V1::Accounts:
         access_token: token_data['access_token'],
         refresh_token: token_data['refresh_token'],
         token_expires_at: token_data['expires_in'] ? Time.current + token_data['expires_in'].to_i.seconds : nil,
-        status: :active
+        status: :active,
+        reputation_listing_id: integration_params[:listing_id]
       )
 
       if integration.save
@@ -88,21 +94,22 @@ class Api::V1::Accounts::Reputation::IntegrationsController < Api::V1::Accounts:
         session[:reputation_google_oauth] = nil
 
         render json: integration.as_json(
-          only: [:id, :provider, :location_id, :location_name, :status, :created_at]
+          only: [:id, :provider, :location_id, :location_name, :status, :created_at, :reputation_listing_id]
         ), status: :created
       else
         render json: { errors: integration.errors.full_messages }, status: :unprocessable_entity
       end
     else
-      integration = current_account.reputation_integrations.new(integration_params)
+      integration = current_account.reputation_integrations.new(integration_params.except(:listing_id))
       integration.status = :active
       integration.location_id ||= SecureRandom.uuid
+      integration.reputation_listing_id = integration_params[:listing_id]
 
       if integration.save
         # Seed realistic reviews for all manually-connected providers (including Google)
         seed_mock_reviews(integration)
         render json: integration.as_json(
-          only: [:id, :provider, :location_id, :location_name, :status, :created_at]
+          only: [:id, :provider, :location_id, :location_name, :status, :created_at, :reputation_listing_id]
         ), status: :created
       else
         render json: { errors: integration.errors.full_messages }, status: :unprocessable_entity
@@ -125,7 +132,8 @@ class Api::V1::Accounts::Reputation::IntegrationsController < Api::V1::Accounts:
       provider: 'google',
       location_id: integration_params[:location_id],
       location_name: integration_params[:location_name],
-      status: :active
+      status: :active,
+      reputation_listing_id: integration_params[:listing_id]
     )
 
     if integration.save
@@ -138,7 +146,7 @@ class Api::V1::Accounts::Reputation::IntegrationsController < Api::V1::Accounts:
         Reputation::ReviewSyncJob.perform_later(integration.id)
       end
       render json: integration.as_json(
-        only: [:id, :provider, :location_id, :location_name, :status, :created_at]
+        only: [:id, :provider, :location_id, :location_name, :status, :created_at, :reputation_listing_id]
       ), status: :created
     else
       render json: { errors: integration.errors.full_messages }, status: :unprocessable_entity
@@ -146,11 +154,17 @@ class Api::V1::Accounts::Reputation::IntegrationsController < Api::V1::Accounts:
   end
 
   def integration
-    @integration ||= current_account.reputation_integrations.find(params[:id])
+    @integration ||= scoped_integrations.find(params[:id])
+  end
+
+  def assert_assignable_listing!
+    id = integration_params[:listing_id]
+    return if id.blank?
+    raise ActiveRecord::RecordNotFound unless scoped_listings.exists?(id)
   end
 
   def integration_params
-    params.require(:integration).permit(:provider, :location_id, :location_name, :oauth_session_id)
+    params.require(:integration).permit(:provider, :location_id, :location_name, :oauth_session_id, :listing_id)
   end
 
   def seed_mock_reviews(integration)

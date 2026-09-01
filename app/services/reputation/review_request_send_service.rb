@@ -1,10 +1,11 @@
 # Renders the template body with contact merge fields and sends via SMS or Email.
 # ponytail: uses existing email/SMS Rails infrastructure — no new mailer gem
 class Reputation::ReviewRequestSendService
-  def initialize(account:, template_id:, contact_id:)
+  def initialize(account:, template_id:, contact_id:, listing_id: nil)
     @account  = account
     @template = account.reputation_templates.find(template_id)
     @contact  = account.contacts.find(contact_id)
+    @listing_id = listing_id
   end
 
   # scheduled_at in the future → persist as :scheduled and let the cron dispatch it later.
@@ -14,6 +15,7 @@ class Reputation::ReviewRequestSendService
     request = @account.reputation_review_requests.create!(
       reputation_template: @template,
       contact: @contact,
+      reputation_listing_id: @listing_id,
       channel: @template.channel,
       message: message.presence,
       destinations: Array(destinations),

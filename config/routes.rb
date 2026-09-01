@@ -218,6 +218,7 @@ Rails.application.routes.draw do
             resources :review_requests, only: [:index, :create]
             resources :feedback, only: [:index], path: 'feedback'
             resources :listings, only: [:index, :show, :create, :update, :destroy] do
+              resources :members, controller: 'listing_members', only: [:index, :create, :destroy]
               member do
                 get :activities
                 post :upload_photos, path: 'photos'

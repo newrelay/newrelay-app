@@ -2,9 +2,9 @@ class Api::V1::Accounts::Reputation::VideoTestimonialsController < Api::V1::Acco
 
   def index
     # eager-load attachments + contact to avoid an N+1 per row (jbuilder reads video_url/thumbnail_url/contact).
-    scope = Current.account.reputation_video_testimonials
-                   .with_attached_video.with_attached_thumbnail
-                   .includes(:contact)
+    scope = scoped_video_testimonials
+            .with_attached_video.with_attached_thumbnail
+            .includes(:contact)
     scope = scope.where(status: params[:status]) if params[:status].present?
     scope = scope.where(platform: params[:platform]) if params[:platform].present?
     scope = scope.where(rating: params[:min_rating]..) if params[:min_rating].present?
@@ -14,7 +14,7 @@ class Api::V1::Accounts::Reputation::VideoTestimonialsController < Api::V1::Acco
 
   # Moderation: pending → approved → published / rejected, stamping the transition time.
   def update
-    @video_testimonial = Current.account.reputation_video_testimonials.find(params[:id])
+    @video_testimonial = video_testimonial
     apply_status(params[:status]) if params[:status].present?
     @video_testimonial.assign_attributes(params.permit(:title, :customer_name).to_h.compact)
     @video_testimonial.save!
@@ -22,8 +22,7 @@ class Api::V1::Accounts::Reputation::VideoTestimonialsController < Api::V1::Acco
   end
 
   def destroy
-    @video_testimonial = Current.account.reputation_video_testimonials.find(params[:id])
-    @video_testimonial.destroy!
+    video_testimonial.destroy!
     head :ok
   end
 
@@ -32,9 +31,8 @@ class Api::V1::Accounts::Reputation::VideoTestimonialsController < Api::V1::Acco
   def add_note
     return head :unprocessable_entity if params[:body].blank?
 
-    testimonial = Current.account.reputation_video_testimonials.find(params[:id])
     note = { 'author' => Current.user.name, 'body' => params[:body].to_s, 'at' => Time.current.to_i }
-    testimonial.update!(notes: testimonial.notes + [note])
+    video_testimonial.update!(notes: video_testimonial.notes + [note])
     render json: note
   end
 
@@ -43,14 +41,13 @@ class Api::V1::Accounts::Reputation::VideoTestimonialsController < Api::V1::Acco
   def analyze
     return head :forbidden unless Current.account.feature_enabled?('reputation_demo_surfaces')
 
-    testimonial = Current.account.reputation_video_testimonials.find(params[:id])
-    Reputation::VideoInsightsJob.perform_later(testimonial)
+    Reputation::VideoInsightsJob.perform_later(video_testimonial)
     render json: { processing: true }
   end
 
   # F5: stream the library as CSV (stdlib CSV, no export gem).
   def export
-    rows = Current.account.reputation_video_testimonials.includes(:contact).order(created_at: :desc)
+    rows = scoped_video_testimonials.includes(:contact).order(created_at: :desc)
     csv = CSV.generate do |out|
       out << %w[id customer_name company email rating status platform duration_seconds views created_at]
       rows.each do |t|
@@ -62,12 +59,12 @@ class Api::V1::Accounts::Reputation::VideoTestimonialsController < Api::V1::Acco
   end
 
   def requests_index
-    requests = current_account.reputation_review_requests
-                              .joins(:reputation_template)
-                              .where(reputation_templates: { template_type: 'video' })
-                              .includes(:reputation_template, :contact)
-                              .order(created_at: :desc)
-                              .limit(50)
+    requests = scoped_review_requests
+               .joins(:reputation_template)
+               .where(reputation_templates: { template_type: 'video' })
+               .includes(:reputation_template, :contact)
+               .order(created_at: :desc)
+               .limit(50)
     render json: requests.as_json(
       only: %i[id channel status created_at clicked_at completed_at],
       include: {
@@ -81,7 +78,8 @@ class Api::V1::Accounts::Reputation::VideoTestimonialsController < Api::V1::Acco
     review_request = Current.account.reputation_review_requests.create!(
       contact: find_or_create_request_contact,
       reputation_template: video_template,
-      channel: 'email'
+      channel: 'email',
+      reputation_listing_id: assignable_listing_id
     )
     ReputationRequestMailer.send_request(
       to: params[:email],
@@ -92,6 +90,10 @@ class Api::V1::Accounts::Reputation::VideoTestimonialsController < Api::V1::Acco
   end
 
   private
+
+  def video_testimonial
+    @video_testimonial ||= scoped_video_testimonials.find(params[:id])
+  end
 
   def find_or_create_request_contact
     Current.account.contacts.from_email(params[:email]) ||

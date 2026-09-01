@@ -4,17 +4,19 @@
 class Reputation::AiInsightsService < Llm::BaseAiService
   MAX_REVIEWS = 50
 
-  def initialize(account:)
+  def initialize(account:, listing_id: nil, listing_ids: nil)
     super()
     @account = account
+    @listing_ids = Array(listing_ids.presence || listing_id)
   end
 
   def generate
     reviews = @account.reputation_reviews
-                      .includes(:reputation_review_reply)
+                      .includes(:reputation_review_reply, :reputation_integration)
                       .order(reviewed_at: :desc)
                       .limit(MAX_REVIEWS)
-                      .to_a
+    reviews = reviews.where(reputation_integration: { reputation_listing_id: @listing_ids }) if @listing_ids.present?
+    reviews = reviews.to_a
     return nil if reviews.empty?
 
     from_llm(reviews) || from_reviews(reviews)

@@ -36,6 +36,12 @@ class Reputation::Listing < ApplicationRecord
 
   belongs_to :account
   has_many_attached :photos
+  has_many :reputation_integrations, class_name: 'Reputation::Integration', foreign_key: :reputation_listing_id,
+                                     dependent: :nullify, inverse_of: :listing
+  has_many :reputation_reviews, through: :reputation_integrations
+  has_many :listing_members, class_name: 'Reputation::ListingMember', foreign_key: :reputation_listing_id,
+                             dependent: :destroy, inverse_of: :listing
+  has_many :members, through: :listing_members, source: :user
 
   validates :name, presence: true
 

@@ -15,6 +15,7 @@
 #  updated_at             :datetime         not null
 #  account_id             :bigint           not null
 #  contact_id             :bigint           not null
+#  reputation_listing_id  :bigint
 #  reputation_template_id :bigint           not null
 #
 # Indexes
@@ -22,6 +23,7 @@
 #  index_reputation_review_requests_on_account_id               (account_id)
 #  index_reputation_review_requests_on_account_id_and_status    (account_id,status)
 #  index_reputation_review_requests_on_contact_id               (contact_id)
+#  index_reputation_review_requests_on_reputation_listing_id    (reputation_listing_id)
 #  index_reputation_review_requests_on_reputation_template_id   (reputation_template_id)
 #  index_reputation_review_requests_on_status_and_scheduled_at  (status,scheduled_at)
 #  index_reputation_review_requests_on_token                    (token) UNIQUE
@@ -32,6 +34,7 @@ class Reputation::ReviewRequest < ApplicationRecord
   belongs_to :account
   belongs_to :reputation_template, class_name: 'Reputation::Template'
   belongs_to :contact
+  belongs_to :listing, class_name: 'Reputation::Listing', foreign_key: :reputation_listing_id, optional: true
   has_one :reputation_feedback_submission, class_name: 'Reputation::FeedbackSubmission',
                                            foreign_key: :reputation_review_request_id, dependent: :destroy
   has_one :video_testimonial, class_name: 'Reputation::VideoTestimonial',

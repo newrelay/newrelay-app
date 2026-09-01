@@ -1,7 +1,8 @@
 <!-- eslint-disable vue/no-bare-strings-in-template, @intlify/vue-i18n/no-raw-text -->
 <script setup>
 /* eslint-disable */
-import { ref, computed, onMounted } from 'vue';
+import { ref, computed, onMounted, watch } from 'vue';
+import { useRoute } from 'vue-router';
 import {
   RefreshCw, Search, Plus, Check, X, RotateCcw, ChevronDown,
   LayoutGrid, Grid2X2, List, Building2, Send, CheckCircle2, Loader2,
@@ -15,6 +16,7 @@ import {
 } from 'dashboard/components-next/relay';
 
 const axios = window.axios;
+const route = useRoute();
 const accountId =
   window.__STORE__?.getters['auth/getCurrentAccount']?.id ||
   window.location.pathname.match(/accounts\/(\d+)/)?.[1];
@@ -44,10 +46,28 @@ const requestedPlatformName = ref('');
 const requestEmail = ref('');
 const requestNotes = ref('');
 const isRequestSubmitted = ref(false);
+const requestSaving = ref(false);
+const requestError = ref('');
 
 // Live integrations loaded from the backend, keyed by grid-item id.
 const liveIntegrations = ref([]);
 const disconnectLoading = ref(false);
+
+// Which listing a new connection attaches to (reputation_integrations.listing_id).
+// Defaults to ?listing_id= (arriving from a listing's Connections tab) or the
+// account's primary listing.
+const listings = ref([]);
+const selectedListingId = ref('');
+const selectedListing = computed(() => listings.value.find(l => String(l.id) === String(selectedListingId.value)));
+async function loadListings() {
+  try {
+    const { data } = await axios.get(`${baseApi()}/listings`);
+    listings.value = data || [];
+    selectedListingId.value = route.query.listing_id || listings.value[0]?.id || '';
+  } catch (e) {
+    listings.value = [];
+  }
+}
 
 // Manual connect modal (non-OAuth platforms: review-page URL + business name)
 const isConnectModalOpen = ref(false);
@@ -152,7 +172,8 @@ function applyLiveState() {
 }
 async function loadIntegrations() {
   try {
-    const { data } = await axios.get(`${baseApi()}/integrations`);
+    const qs = selectedListingId.value ? `?listing_id=${selectedListingId.value}` : '';
+    const { data } = await axios.get(`${baseApi()}/integrations${qs}`);
     liveIntegrations.value = data || [];
   } catch (e) {
     liveIntegrations.value = [];
@@ -221,6 +242,7 @@ async function submitManualConnect() {
         provider: isEnum ? item.id : 'custom',
         location_id: connectUrl.value,
         location_name: isEnum ? connectName.value : `${connectName.value} - ${item.id}`,
+        listing_id: selectedListingId.value,
       },
     });
     isConnectModalOpen.value = false;
@@ -268,6 +290,7 @@ async function submitGoogleLocation() {
         location_id: selectedLocation.value.location_id,
         location_name: selectedLocation.value.location_name,
         oauth_session_id: currentOauthSessionId.value,
+        listing_id: selectedListingId.value,
       },
     });
     showLocationModal.value = false;
@@ -305,20 +328,37 @@ function openConfigure(item) {
 }
 
 onMounted(async () => {
+  await loadListings();
   await loadIntegrations();
   await checkGoogleOauthCallback();
 });
+watch(selectedListingId, loadIntegrations);
 function openRequestModal(platformName) {
   requestedPlatformName.value = platformName || '';
   requestEmail.value = '';
   requestNotes.value = '';
   isRequestSubmitted.value = false;
+  requestError.value = '';
   isRequestModalOpen.value = true;
 }
-function submitRequest() {
+async function submitRequest() {
   if (!requestedPlatformName.value) return;
-  isRequestSubmitted.value = true;
-  setTimeout(() => { isRequestModalOpen.value = false; }, 2000);
+  requestSaving.value = true;
+  try {
+    await axios.post(`${baseApi()}/integration_requests`, {
+      integration_request: {
+        platform: requestedPlatformName.value,
+        email: requestEmail.value,
+        notes: requestNotes.value,
+      },
+    });
+    isRequestSubmitted.value = true;
+    setTimeout(() => { isRequestModalOpen.value = false; }, 2000);
+  } catch (err) {
+    requestError.value = 'Failed to submit your request. Please try again.';
+  } finally {
+    requestSaving.value = false;
+  }
 }
 function tagStyles(variant) {
   if (variant === 'emerald') return 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400';
@@ -338,6 +378,18 @@ function tagStyles(variant) {
           <p class="text-[13.5px] text-muted-foreground mt-0.5">Connect external review platforms to automatically monitor ratings, aggregate reviews, and route Relay AI responses.</p>
         </div>
         <div class="flex items-center gap-3">
+          <div v-if="listings.length > 1" class="flex items-center gap-2 text-[13px]">
+            <span class="text-muted-foreground">Connecting to:</span>
+            <select
+              v-model="selectedListingId"
+              class="h-9 rounded-lg border border-border bg-card shadow-xs text-[13px] font-medium px-2.5 cursor-pointer"
+            >
+              <option v-for="l in listings" :key="l.id" :value="l.id">{{ l.name }}</option>
+            </select>
+          </div>
+          <span v-else-if="selectedListing" class="text-[13px] text-muted-foreground">
+            Connecting to <span class="font-medium text-foreground">{{ selectedListing.name }}</span>
+          </span>
           <button class="h-9 gap-2 rounded-lg border border-border bg-card hover:bg-muted shadow-xs text-[13.5px] font-medium px-3 inline-flex items-center cursor-pointer disabled:opacity-60" :disabled="isSyncing" @click="handleSyncAll">
             <RefreshCw :class="['size-3.5', isSyncing ? 'animate-spin' : '']" />
             {{ isSyncing ? 'Syncing…' : 'Sync All Accounts' }}
@@ -537,11 +589,12 @@ function tagStyles(variant) {
               <label class="text-[13px] font-medium text-foreground">Notes <span class="text-muted-foreground font-normal">(optional)</span></label>
               <textarea v-model="requestNotes" rows="3" class="w-full text-[13.5px] p-3 rounded-lg border border-border bg-background resize-none focus:outline-none focus:ring-1 focus:ring-primary/30"></textarea>
             </div>
+            <p v-if="requestError" class="text-[13px] text-destructive">{{ requestError }}</p>
           </div>
           <div class="flex items-center justify-end gap-2 pt-3 border-t border-border">
             <button class="rounded-lg border border-border px-4 py-2 text-sm font-medium text-muted-foreground hover:bg-muted/50 cursor-pointer" @click="isRequestModalOpen = false">Cancel</button>
-            <button class="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow-sm hover:bg-primary/90 inline-flex items-center gap-1.5 cursor-pointer disabled:opacity-50" :disabled="!requestedPlatformName" @click="submitRequest">
-              <Send class="size-3.5" /> Submit Request
+            <button class="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow-sm hover:bg-primary/90 inline-flex items-center gap-1.5 cursor-pointer disabled:opacity-50" :disabled="!requestedPlatformName || requestSaving" @click="submitRequest">
+              <Send class="size-3.5" /> {{ requestSaving ? 'Submitting…' : 'Submit Request' }}
             </button>
           </div>
         </template>

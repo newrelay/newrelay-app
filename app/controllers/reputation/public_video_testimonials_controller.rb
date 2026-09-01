@@ -70,7 +70,8 @@ class Reputation::PublicVideoTestimonialsController < ApplicationController
       # a blank consented_at fails model validation and returns 422.
       consented_at: (Time.current if ActiveModel::Type::Boolean.new.cast(params[:consent])),
       contact: @review_request.contact || find_or_create_contact,
-      reputation_review_request: @review_request
+      reputation_review_request: @review_request,
+      reputation_listing_id: @review_request.reputation_listing_id
     }
   end
 

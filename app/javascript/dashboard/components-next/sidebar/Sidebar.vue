@@ -557,6 +557,49 @@ const primaryMenuItems = computed(() => {
       ],
     },
     {
+      name: 'Autoresponder',
+      icon: 'i-lucide-zap',
+      label: t('SIDEBAR.AUTORESPONDER'),
+      children: [
+        {
+          name: 'Autoresponder Overview',
+          label: t('SIDEBAR.AUTORESPONDER_OVERVIEW'),
+          to: accountScopedRoute('autoresponder_overview'),
+          activeOn: ['autoresponder_overview'],
+        },
+        {
+          name: 'Autoresponder Automations',
+          label: t('SIDEBAR.AUTORESPONDER_AUTOMATIONS'),
+          to: accountScopedRoute('autoresponder_automations'),
+          activeOn: ['autoresponder_automations'],
+        },
+        {
+          name: 'Autoresponder Response Controls',
+          label: t('SIDEBAR.AUTORESPONDER_RESPONSE_CONTROLS'),
+          to: accountScopedRoute('autoresponder_response_controls'),
+          activeOn: ['autoresponder_response_controls'],
+        },
+        {
+          name: 'Autoresponder Templates',
+          label: t('SIDEBAR.AUTORESPONDER_TEMPLATES'),
+          to: accountScopedRoute('autoresponder_templates'),
+          activeOn: ['autoresponder_templates'],
+        },
+        {
+          name: 'Autoresponder Activity',
+          label: t('SIDEBAR.AUTORESPONDER_ACTIVITY'),
+          to: accountScopedRoute('autoresponder_activity'),
+          activeOn: ['autoresponder_activity'],
+        },
+        {
+          name: 'Autoresponder Settings',
+          label: t('SIDEBAR.AUTORESPONDER_SETTINGS'),
+          to: accountScopedRoute('autoresponder_settings'),
+          activeOn: ['autoresponder_settings'],
+        },
+      ],
+    },
+    {
       name: 'Analytics',
       label: t('SIDEBAR.ANALYTICS'),
       icon: 'i-lucide-chart-bar',

@@ -1,0 +1,11 @@
+// Mock/demo channel branding used across the (pre-backend) Autoresponder UI port.
+// Delete once real inbox/channel data is wired in.
+export const CHANNEL_LOGO_URLS = {
+  Instagram:
+    'https://upload.wikimedia.org/wikipedia/commons/e/e7/Instagram_logo_2016.svg',
+  Facebook:
+    'https://upload.wikimedia.org/wikipedia/commons/b/be/Facebook_Messenger_logo_2020.svg',
+  WhatsApp: 'https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg',
+};
+
+export const CHANNEL_NAMES = Object.keys(CHANNEL_LOGO_URLS);

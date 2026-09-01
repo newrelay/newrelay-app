@@ -39,6 +39,8 @@ class Instagram::WebhooksBaseService
   end
 
   def apply_comment_automation_attribution(commenter_id)
+    return if @contact.custom_attributes['comment_automation_campaign_id'].present?
+
     log = CommentAutomation::MessageLog.where(inbox: @inbox, commenter_id: commenter_id, status: :dm_sent).order(created_at: :desc).first
     return if log.blank?
 

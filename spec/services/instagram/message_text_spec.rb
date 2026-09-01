@@ -37,6 +37,34 @@ RSpec.describe Instagram::MessageText do
       expect(log.reload.status).to eq 'engaged'
       expect(log.contact).to eq contact
     end
+
+    context 'when the commenter has a second dm_sent log from a different campaign' do
+      let(:other_campaign) { create(:comment_automation_campaign, account: account, inbox: inbox) }
+      let(:other_trigger) { create(:comment_automation_trigger, campaign: other_campaign, account: account) }
+      # Override `log` (the outer let!) so it is the newest dm_sent row, and make `other_log`
+      # older, so the ordering is deterministic regardless of let! evaluation order.
+      let!(:log) do
+        create(:comment_automation_message_log, trigger: trigger, account: account, inbox: inbox,
+                                                comment_id: 'comment-1', commenter_id: 'commenter-1', status: :dm_sent,
+                                                created_at: 1.minute.ago)
+      end
+      let!(:other_log) do
+        create(:comment_automation_message_log, trigger: other_trigger, account: account, inbox: inbox,
+                                                comment_id: 'comment-2', commenter_id: 'commenter-1', status: :dm_sent,
+                                                created_at: 2.minutes.ago)
+      end
+
+      it 'keeps attribution pinned to whichever campaign engaged first across repeated inbound DMs' do
+        service.ensure_contact('commenter-1')
+        service.ensure_contact('commenter-1')
+
+        contact = inbox.contact_inboxes.find_by(source_id: 'commenter-1').contact
+        expect(contact.custom_attributes['comment_automation_campaign_id']).to eq campaign.id
+        expect(contact.custom_attributes['comment_automation_trigger_id']).to eq trigger.id
+        expect(log.reload.status).to eq 'engaged'
+        expect(other_log.reload.status).to eq 'dm_sent'
+      end
+    end
   end
 
   context 'when the commenter has no comment automation log' do

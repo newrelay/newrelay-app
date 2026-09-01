@@ -319,8 +319,13 @@ async function disconnectIntegration(item) {
 
 async function handleSyncAll() {
   isSyncing.value = true;
+  try {
+    await axios.post(`${baseApi()}/integrations/sync_all`);
+  } catch (e) {
+    // ignore — reload picks up whatever synced
+  }
   await loadIntegrations();
-  setTimeout(() => { isSyncing.value = false; }, 600);
+  isSyncing.value = false;
 }
 function openConfigure(item) {
   selectedIntegration.value = item;

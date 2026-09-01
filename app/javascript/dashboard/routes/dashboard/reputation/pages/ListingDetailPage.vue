@@ -621,8 +621,19 @@ async function deleteListing() {
   }
 }
 
-function syncNow() {
-  useAlert(`Syncing ${listing.value?.title || 'listing'}...`);
+const syncing = ref(false);
+async function syncNow() {
+  if (!listing.value || usingMock.value || syncing.value) return;
+  syncing.value = true;
+  try {
+    await axios.post(`${baseUrl()}/integrations/sync_all?listing_id=${listing.value.id}`);
+    await Promise.all([loadListingIntegrations(), loadAccountReviews()]);
+    useAlert(`Synced ${listing.value.title}`);
+  } catch {
+    useAlert('Failed to sync');
+  } finally {
+    syncing.value = false;
+  }
 }
 
 function formatDate(d) {
@@ -706,8 +717,8 @@ watch(() => route.params.listingId, () => {
 
           <div class="flex flex-col items-start xl:items-end gap-4">
             <div class="flex items-center gap-3">
-              <RelayButton variant="outline" class="h-9 gap-2 text-xs font-semibold px-4" :disabled="busy" @click="syncNow">
-                <RotateCw class="size-3.5" /> Sync Now
+              <RelayButton variant="outline" class="h-9 gap-2 text-xs font-semibold px-4" :disabled="busy || syncing" @click="syncNow">
+                <RotateCw class="size-3.5" :class="syncing ? 'animate-spin' : ''" /> {{ syncing ? 'Syncing…' : 'Sync Now' }}
               </RelayButton>
               <RelayButton class="h-9 gap-2 text-xs font-semibold px-4" :disabled="busy" @click="openEdit">
                 <Pencil class="size-3.5" /> Edit Listing
@@ -1158,8 +1169,8 @@ watch(() => route.params.listingId, () => {
               <RelayButton variant="outline" class="gap-2 text-xs font-semibold px-4" @click="goToConnectPlatform">
                 Connect Platform
               </RelayButton>
-              <RelayButton class="gap-2 text-xs font-semibold px-4" @click="syncNow">
-                <RotateCw class="size-3.5" /> Sync All
+              <RelayButton class="gap-2 text-xs font-semibold px-4" :disabled="syncing" @click="syncNow">
+                <RotateCw class="size-3.5" :class="syncing ? 'animate-spin' : ''" /> {{ syncing ? 'Syncing…' : 'Sync All' }}
               </RelayButton>
             </div>
           </div>

@@ -212,6 +212,10 @@ Rails.application.routes.draw do
               collection do
                 get :google_locations
                 get :oauth_state
+                post :sync_all
+              end
+              member do
+                post :sync
               end
             end
             resources :templates, only: [:index, :create, :update, :destroy]

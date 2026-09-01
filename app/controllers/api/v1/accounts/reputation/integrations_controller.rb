@@ -1,6 +1,6 @@
 # rubocop:disable Metrics/ClassLength, Metrics/MethodLength, Metrics/AbcSize, Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity
 class Api::V1::Accounts::Reputation::IntegrationsController < Api::V1::Accounts::Reputation::BaseController
-  before_action :integration, only: [:destroy]
+  before_action :integration, only: [:destroy, :sync]
   before_action :assert_assignable_listing!, only: [:create]
 
   # GET /api/v1/accounts/:account_id/reputation/integrations
@@ -123,7 +123,35 @@ class Api::V1::Accounts::Reputation::IntegrationsController < Api::V1::Accounts:
     head :no_content
   end
 
+  # POST /api/v1/accounts/:account_id/reputation/integrations/:id/sync
+  def sync
+    enqueue_sync(@integration.id)
+    render json: @integration.as_json(
+      only: [:id, :provider, :location_id, :location_name, :status, :created_at, :reputation_listing_id]
+    )
+  end
+
+  # POST /api/v1/accounts/:account_id/reputation/integrations/sync_all
+  # POST /api/v1/accounts/:account_id/reputation/integrations/sync_all?listing_id=X
+  def sync_all
+    integrations = scoped_integrations.active
+    integrations = integrations.where(reputation_listing_id: params[:listing_id]) if params[:listing_id].present?
+    ids = integrations.pluck(:id)
+    ids.each { |id| enqueue_sync(id) }
+    render json: { synced: ids.size }
+  end
+
   private
+
+  # Mock mode has no network, so run inline for instant feedback; real providers
+  # sync in the background via the same job the hourly scheduler uses.
+  def enqueue_sync(integration_id)
+    if Reputation::Providers.mock?
+      Reputation::ReviewSyncJob.perform_now(integration_id)
+    else
+      Reputation::ReviewSyncJob.perform_later(integration_id)
+    end
+  end
 
   # Mock mode holds no Google OAuth, so a Google integration connects with just a
   # location_id — no OAuth session. Reviews arrive via ReviewSyncJob using the Mock adapter.

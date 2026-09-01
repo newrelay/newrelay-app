@@ -1418,6 +1418,16 @@ ActiveRecord::Schema[7.1].define(version: 2026_09_01_053000) do
     t.index ["reputation_review_request_id"], name: "idx_on_reputation_review_request_id_f7ad17c20e"
   end
 
+  create_table "reputation_integration_requests", force: :cascade do |t|
+    t.bigint "account_id", null: false
+    t.string "platform", null: false
+    t.string "email"
+    t.text "notes"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["account_id"], name: "index_reputation_integration_requests_on_account_id"
+  end
+
   create_table "reputation_integrations", force: :cascade do |t|
     t.bigint "account_id", null: false
     t.string "provider", null: false
@@ -1824,6 +1834,7 @@ ActiveRecord::Schema[7.1].define(version: 2026_09_01_053000) do
   add_foreign_key "pipeline_stages", "accounts"
   add_foreign_key "pipeline_stages", "pipelines"
   add_foreign_key "pipelines", "accounts"
+  add_foreign_key "reputation_integration_requests", "accounts"
   add_foreign_key "reputation_video_testimonials", "accounts"
   add_foreign_key "subscriptions", "accounts"
   add_foreign_key "subscriptions", "connected_accounts"

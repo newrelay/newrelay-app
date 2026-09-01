@@ -215,6 +215,7 @@ Rails.application.routes.draw do
               end
             end
             resources :templates, only: [:index, :create, :update, :destroy]
+            resources :integration_requests, only: [:create]
             resources :review_requests, only: [:index, :create]
             resources :feedback, only: [:index], path: 'feedback'
             resources :listings, only: [:index, :show, :create, :update, :destroy] do

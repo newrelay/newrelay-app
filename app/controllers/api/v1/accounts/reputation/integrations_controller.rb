@@ -77,40 +77,40 @@ class Api::V1::Accounts::Reputation::IntegrationsController < Api::V1::Accounts:
         return
       end
 
-      integration = current_account.reputation_integrations.new(
-        provider: 'google',
-        location_id: integration_params[:location_id],
+      integration = build_or_relink('google', integration_params[:location_id])
+      was_new = integration.new_record?
+      integration.assign_attributes(
         location_name: integration_params[:location_name],
         access_token: token_data['access_token'],
         refresh_token: token_data['refresh_token'],
-        token_expires_at: token_data['expires_in'] ? Time.current + token_data['expires_in'].to_i.seconds : nil,
-        status: :active,
-        reputation_listing_id: integration_params[:listing_id]
+        token_expires_at: token_data['expires_in'] ? Time.current + token_data['expires_in'].to_i.seconds : nil
       )
 
       if integration.save
-        # Sync reviews in background
-        Reputation::ReviewSyncJob.perform_later(integration.id)
+        # Sync reviews in background — only needed for a genuinely new connection,
+        # a relinked one already has its reviews.
+        Reputation::ReviewSyncJob.perform_later(integration.id) if was_new
         session[:reputation_google_oauth] = nil
 
         render json: integration.as_json(
           only: [:id, :provider, :location_id, :location_name, :status, :created_at, :reputation_listing_id]
-        ), status: :created
+        ), status: was_new ? :created : :ok
       else
         render json: { errors: integration.errors.full_messages }, status: :unprocessable_entity
       end
     else
-      integration = current_account.reputation_integrations.new(integration_params.except(:listing_id))
-      integration.status = :active
-      integration.location_id ||= SecureRandom.uuid
-      integration.reputation_listing_id = integration_params[:listing_id]
+      location_id = integration_params[:location_id].presence || SecureRandom.uuid
+      integration = build_or_relink(integration_params[:provider], location_id)
+      was_new = integration.new_record?
+      integration.location_name = integration_params[:location_name] if integration_params[:location_name].present?
 
       if integration.save
-        # Seed realistic reviews for all manually-connected providers (including Google)
-        seed_mock_reviews(integration)
+        # Seed realistic reviews for all manually-connected providers (including Google) —
+        # only for a genuinely new connection, a relinked one already has its reviews.
+        seed_mock_reviews(integration) if was_new
         render json: integration.as_json(
           only: [:id, :provider, :location_id, :location_name, :status, :created_at, :reputation_listing_id]
-        ), status: :created
+        ), status: was_new ? :created : :ok
       else
         render json: { errors: integration.errors.full_messages }, status: :unprocessable_entity
       end
@@ -156,26 +156,25 @@ class Api::V1::Accounts::Reputation::IntegrationsController < Api::V1::Accounts:
   # Mock mode holds no Google OAuth, so a Google integration connects with just a
   # location_id — no OAuth session. Reviews arrive via ReviewSyncJob using the Mock adapter.
   def create_google_without_oauth
-    integration = current_account.reputation_integrations.new(
-      provider: 'google',
-      location_id: integration_params[:location_id],
-      location_name: integration_params[:location_name],
-      status: :active,
-      reputation_listing_id: integration_params[:listing_id]
-    )
+    integration = build_or_relink('google', integration_params[:location_id])
+    was_new = integration.new_record?
+    integration.location_name = integration_params[:location_name]
 
     if integration.save
       # Mock mode seeds fake reviews with no network, so run it inline — the reviews
       # are then visible the instant the user opens the Reviews page (matching the
-      # synchronous seeding of manually-connected providers).
-      if Reputation::Providers.mock?
-        Reputation::ReviewSyncJob.perform_now(integration.id)
-      else
-        Reputation::ReviewSyncJob.perform_later(integration.id)
+      # synchronous seeding of manually-connected providers). Only for a genuinely
+      # new connection — a relinked one already has its reviews.
+      if was_new
+        if Reputation::Providers.mock?
+          Reputation::ReviewSyncJob.perform_now(integration.id)
+        else
+          Reputation::ReviewSyncJob.perform_later(integration.id)
+        end
       end
       render json: integration.as_json(
         only: [:id, :provider, :location_id, :location_name, :status, :created_at, :reputation_listing_id]
-      ), status: :created
+      ), status: was_new ? :created : :ok
     else
       render json: { errors: integration.errors.full_messages }, status: :unprocessable_entity
     end
@@ -189,6 +188,18 @@ class Api::V1::Accounts::Reputation::IntegrationsController < Api::V1::Accounts:
     id = integration_params[:listing_id]
     return if id.blank?
     raise ActiveRecord::RecordNotFound unless scoped_listings.exists?(id)
+  end
+
+  # Finds an already-connected integration for this account+provider+location and
+  # relinks it to the requesting listing instead of failing on the uniqueness
+  # constraint — the same physical platform connection can only exist once per
+  # account, so reconnecting it from a different listing means "this listing owns
+  # it now," not "create a duplicate."
+  def build_or_relink(provider, location_id)
+    integration = current_account.reputation_integrations.find_or_initialize_by(provider: provider, location_id: location_id)
+    integration.status = :active
+    integration.reputation_listing_id = integration_params[:listing_id]
+    integration
   end
 
   def integration_params

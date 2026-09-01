@@ -1,4 +1,4 @@
-class Api::V1::Accounts::Reputation::SettingsController < Api::V1::Accounts::BaseController
+class Api::V1::Accounts::Reputation::SettingsController < Api::V1::Accounts::Reputation::BaseController
   def show
     render json: { config: settings.config }
   end

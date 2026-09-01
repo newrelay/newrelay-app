@@ -1,4 +1,4 @@
-class Api::V1::Accounts::Reputation::ReportsController < Api::V1::Accounts::BaseController
+class Api::V1::Accounts::Reputation::ReportsController < Api::V1::Accounts::Reputation::BaseController
   # POST /api/v1/accounts/:account_id/reputation/reports
   def create
     report = current_account.reputation_reports.create!(config: report_config)

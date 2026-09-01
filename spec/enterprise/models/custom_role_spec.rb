@@ -8,5 +8,10 @@ RSpec.describe CustomRole, type: :model do
 
   describe 'validations' do
     it { is_expected.to validate_presence_of(:name) }
+
+    it 'allows reputation_manage' do
+      role = build(:custom_role, permissions: ['reputation_manage'])
+      expect(role).to be_valid
+    end
   end
 end

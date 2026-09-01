@@ -1,4 +1,4 @@
-class Api::V1::Accounts::Reputation::ReviewsController < Api::V1::Accounts::BaseController
+class Api::V1::Accounts::Reputation::ReviewsController < Api::V1::Accounts::Reputation::BaseController
   before_action :review, only: [:reply, :ai_draft, :ignore]
 
   # GET /api/v1/accounts/:account_id/reputation/reviews

@@ -1,4 +1,4 @@
-class Api::V1::Accounts::Reputation::FeedbackController < Api::V1::Accounts::BaseController
+class Api::V1::Accounts::Reputation::FeedbackController < Api::V1::Accounts::Reputation::BaseController
   # GET /api/v1/accounts/:account_id/reputation/feedback
   def index
     submissions = current_account.reputation_feedback_submissions

@@ -1,5 +1,5 @@
 # rubocop:disable Metrics/ClassLength, Metrics/MethodLength, Metrics/AbcSize, Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity
-class Api::V1::Accounts::Reputation::IntegrationsController < Api::V1::Accounts::BaseController
+class Api::V1::Accounts::Reputation::IntegrationsController < Api::V1::Accounts::Reputation::BaseController
   before_action :integration, only: [:destroy]
 
   # GET /api/v1/accounts/:account_id/reputation/integrations

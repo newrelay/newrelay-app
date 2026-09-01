@@ -1,4 +1,4 @@
-class Api::V1::Accounts::Reputation::AiInsightsController < Api::V1::Accounts::BaseController
+class Api::V1::Accounts::Reputation::AiInsightsController < Api::V1::Accounts::Reputation::BaseController
   # GET /api/v1/accounts/:account_id/reputation/ai_insights
   # Cached per account per day — one LLM call, not one per page load.
   def show

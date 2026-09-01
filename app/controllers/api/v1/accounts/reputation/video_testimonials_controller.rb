@@ -1,5 +1,4 @@
-class Api::V1::Accounts::Reputation::VideoTestimonialsController < Api::V1::Accounts::BaseController
-  before_action :check_authorization
+class Api::V1::Accounts::Reputation::VideoTestimonialsController < Api::V1::Accounts::Reputation::BaseController
 
   def index
     # eager-load attachments + contact to avoid an N+1 per row (jbuilder reads video_url/thumbnail_url/contact).
@@ -93,10 +92,6 @@ class Api::V1::Accounts::Reputation::VideoTestimonialsController < Api::V1::Acco
   end
 
   private
-
-  def check_authorization
-    authorize(Current.account, :show?)
-  end
 
   def find_or_create_request_contact
     Current.account.contacts.from_email(params[:email]) ||

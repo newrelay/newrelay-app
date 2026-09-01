@@ -1,4 +1,4 @@
-class Api::V1::Accounts::Reputation::TemplatesController < Api::V1::Accounts::BaseController
+class Api::V1::Accounts::Reputation::TemplatesController < Api::V1::Accounts::Reputation::BaseController
   before_action :template, only: [:show, :update, :destroy]
 
   # GET /api/v1/accounts/:account_id/reputation/templates

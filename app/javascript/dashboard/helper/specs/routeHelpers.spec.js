@@ -44,6 +44,13 @@ describe('#defaultRedirectPage', () => {
     expect(defaultRedirectPage(to, permissions)).toBe('accounts/2/portals');
   });
 
+  it('should return reputation route for users with reputation permissions', () => {
+    const permissions = ['reputation_manage'];
+    expect(defaultRedirectPage(to, permissions)).toBe(
+      'accounts/2/reputation/overview'
+    );
+  });
+
   it('should return dashboard route as default for users with custom roles', () => {
     const permissions = ['custom_role'];
     expect(defaultRedirectPage(to, permissions)).toBe('accounts/2/dashboard');

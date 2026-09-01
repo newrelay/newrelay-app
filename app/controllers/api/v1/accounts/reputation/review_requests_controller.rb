@@ -1,4 +1,4 @@
-class Api::V1::Accounts::Reputation::ReviewRequestsController < Api::V1::Accounts::BaseController
+class Api::V1::Accounts::Reputation::ReviewRequestsController < Api::V1::Accounts::Reputation::BaseController
   # GET /api/v1/accounts/:account_id/reputation/review_requests
   def index
     requests = current_account.reputation_review_requests

@@ -1,4 +1,4 @@
-class Api::V1::Accounts::Reputation::WidgetsController < Api::V1::Accounts::BaseController
+class Api::V1::Accounts::Reputation::WidgetsController < Api::V1::Accounts::Reputation::BaseController
   before_action :widget, only: [:update, :destroy]
 
   def index

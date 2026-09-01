@@ -1,4 +1,4 @@
-class Api::V1::Accounts::Reputation::ListingsController < Api::V1::Accounts::BaseController
+class Api::V1::Accounts::Reputation::ListingsController < Api::V1::Accounts::Reputation::BaseController
   # GET /api/v1/accounts/:account_id/reputation/listings
   def index
     enqueue_missing_images

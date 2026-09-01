@@ -41,7 +41,8 @@
       "CONTACT_MANAGE": "Manage contacts",
       "REPORT_MANAGE": "Manage reports",
       "KNOWLEDGE_BASE_MANAGE": "Manage knowledge base",
-      "REPUTATION_MANAGE": "Manage reputation"
+      "REPUTATION_MANAGE": "Manage reputation",
+      "MARKETING_MANAGE": "Manage marketing"
     },
     "FORM": {
       "NAME": {

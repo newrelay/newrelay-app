@@ -51,6 +51,13 @@ describe('#defaultRedirectPage', () => {
     );
   });
 
+  it('should return campaigns route for users with marketing permissions', () => {
+    const permissions = ['marketing_manage'];
+    expect(defaultRedirectPage(to, permissions)).toBe(
+      'accounts/2/campaigns/live_chat'
+    );
+  });
+
   it('should return dashboard route as default for users with custom roles', () => {
     const permissions = ['custom_role'];
     expect(defaultRedirectPage(to, permissions)).toBe('accounts/2/dashboard');

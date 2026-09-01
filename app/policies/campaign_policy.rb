@@ -1,21 +1,27 @@
 class CampaignPolicy < ApplicationPolicy
   def index?
-    @account_user.administrator?
+    allowed?
   end
 
   def update?
-    @account_user.administrator?
+    allowed?
   end
 
   def show?
-    @account_user.administrator?
+    allowed?
   end
 
   def create?
-    @account_user.administrator?
+    allowed?
   end
 
   def destroy?
-    @account_user.administrator?
+    allowed?
+  end
+
+  private
+
+  def allowed?
+    @account_user.permissions.intersect?(%w[administrator marketing_manage])
   end
 end

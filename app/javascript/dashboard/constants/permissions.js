@@ -6,6 +6,7 @@ export const AVAILABLE_CUSTOM_ROLE_PERMISSIONS = [
   'report_manage',
   'knowledge_base_manage',
   'reputation_manage',
+  'marketing_manage',
 ];
 
 export const ROLES = ['agent', 'administrator'];
@@ -31,6 +32,8 @@ export const REPORTS_PERMISSIONS = 'report_manage';
 export const PORTAL_PERMISSIONS = 'knowledge_base_manage';
 
 export const REPUTATION_PERMISSIONS = 'reputation_manage';
+
+export const MARKETING_PERMISSIONS = 'marketing_manage';
 
 export const ASSIGNEE_TYPE_TAB_PERMISSIONS = {
   me: {

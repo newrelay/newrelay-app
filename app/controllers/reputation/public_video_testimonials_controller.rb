@@ -1,6 +1,7 @@
 class Reputation::PublicVideoTestimonialsController < ApplicationController
   skip_before_action :verify_authenticity_token, raise: false
-  before_action :require_live_review_request, only: [:new, :create]
+  before_action :require_review_request, only: [:new, :create]
+  before_action :require_live_review_request, only: [:new]
   layout false
 
   def new
@@ -16,23 +17,37 @@ class Reputation::PublicVideoTestimonialsController < ApplicationController
   end
 
   def create
-    @testimonial = build_testimonial
+    return render_uploaded if @review_request.video_testimonial
+    return head :not_found unless @review_request.live_for_public_submit?
 
+    @testimonial = build_testimonial
     if @testimonial.save
       @review_request.update(status: :completed, completed_at: Time.current)
-      render json: { success: true, message: 'Video uploaded successfully!' }
+      render_uploaded
     else
       render json: { success: false, errors: @testimonial.errors.full_messages }, status: :unprocessable_entity
     end
+  rescue ActiveRecord::RecordNotUnique
+    raise unless @review_request.reload.video_testimonial
+
+    render_uploaded
   end
 
   private
 
-  def require_live_review_request
+  def require_review_request
     @review_request = Reputation::ReviewRequest.find_by(token: params[:token])
-    return head :not_found unless @review_request&.live_for_public_submit?
+    return head :not_found unless @review_request
 
     @account = @review_request.account
+  end
+
+  def require_live_review_request
+    head :not_found unless @review_request.live_for_public_submit?
+  end
+
+  def render_uploaded
+    render json: { success: true, message: 'Video uploaded successfully!' }
   end
 
   def build_testimonial

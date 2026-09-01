@@ -30,6 +30,7 @@
 #  index_reputation_video_testimonials_on_account_id             (account_id)
 #  index_reputation_video_testimonials_on_account_id_and_status  (account_id,status)
 #  index_reputation_video_testimonials_on_contact_id             (contact_id)
+#  index_reputation_video_testimonials_on_review_request_id      (review_request_id) UNIQUE WHERE (review_request_id IS NOT NULL)
 #  index_reputation_video_testimonials_on_token                  (token) UNIQUE
 #
 # Foreign Keys
@@ -62,6 +63,7 @@ class Reputation::VideoTestimonial < ApplicationRecord
   # Consent is a hard gate: a video may not be stored without rights-to-use
   # (the public record page checkbox alone is bypassable — enforce server-side).
   validates :consented_at, presence: true
+  validates :review_request_id, uniqueness: true, allow_nil: true
 
   scope :publicly_visible, -> { where(status: %w[approved published]) }
 end

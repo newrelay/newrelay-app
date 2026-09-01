@@ -48,6 +48,19 @@ RSpec.describe 'Reputation tenant isolation', type: :request do
       expect(response).to have_http_status(:ok)
       expect(request_row.reload).to be_completed
     end
+
+    it 'returns 200 on a second POST with the same token and does not insert another row' do
+      params = { token: request_row.token, consent: true, title: 'Pat', rating: 5 }
+      post reputation_video_testimonials_path(account_id: account.id), params: params
+      expect(response).to have_http_status(:ok)
+
+      expect do
+        post reputation_video_testimonials_path(account_id: account.id), params: params
+      end.not_to change(Reputation::VideoTestimonial, :count)
+
+      expect(response).to have_http_status(:ok)
+      expect(account.reputation_video_testimonials.count).to eq(1)
+    end
   end
 
   describe 'GET /r/:token' do

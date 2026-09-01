@@ -143,7 +143,7 @@ This plan does **not** add schema-per-tenant, Postgres RLS, or reseller-as-opera
 | Video create | Save fail | none | Y | 422 JSON | default |
 | Public sync | Route deleted | routing | Y | 404 | default |
 | Dashboard find | Other tenant id | `RecordNotFound` | Y | 404 | default |
-| Parallel video POST | Two rows | none this PR | N | two testimonials | **critical gap → TODO unique index** |
+| Parallel video POST | Two rows | `RecordNotUnique` | Y | 200 existing | unique index |
 
 ## Implementation tasks
 
@@ -184,7 +184,7 @@ _No new tasks from Performance._
 4. Public sync URL 404s; does not enqueue.
 5. Logged-in A cannot GET B’s listing id.
 6. Mock-sent `/r/:token` still opens the form (log still prints the link).
-7. **DEFERRED** Parallel video POSTs with one token create one row (TODO unique index).
+7. Parallel video POSTs with one token create one row (unique index + 200 replay).
 
 ## Failure modes
 
@@ -196,7 +196,7 @@ _No new tasks from Performance._
 | Feedback 422 | Token spent before row | T6 | txn order | 422, retry works |
 | Public sync guess | Quota theft | T6 | route gone | 404 |
 | Mock completed | Real customer hits spent link | T6 | status sent | form still opens |
-| Parallel video POST | Two rows | **no** | **no** | two videos — **critical gap, TODO** |
+| Parallel video POST | Two rows | T6 | unique index + 200 | one video |
 
 ## Worktree parallelization
 

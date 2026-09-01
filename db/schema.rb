@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2026_08_31_113027) do
+ActiveRecord::Schema[7.1].define(version: 2026_08_31_140000) do
   # These extensions should be enabled to support this database
   enable_extension "pg_stat_statements"
   enable_extension "pg_trgm"
@@ -1581,6 +1581,7 @@ ActiveRecord::Schema[7.1].define(version: 2026_08_31_113027) do
     t.index ["account_id", "status"], name: "index_reputation_video_testimonials_on_account_id_and_status"
     t.index ["account_id"], name: "index_reputation_video_testimonials_on_account_id"
     t.index ["contact_id"], name: "index_reputation_video_testimonials_on_contact_id"
+    t.index ["review_request_id"], name: "index_reputation_video_testimonials_on_review_request_id", unique: true, where: "(review_request_id IS NOT NULL)"
     t.index ["token"], name: "index_reputation_video_testimonials_on_token", unique: true
   end
 

@@ -2,18 +2,6 @@
 
 ## Reputation isolation
 
-### Unique index on video testimonials per review request
-
-**What:** Add a unique index on `reputation_video_testimonials.review_request_id` and make create return 200 when the row already exists (`RecordNotUnique` rescue). Check for duplicate rows before the migration.
-
-**Why:** Two parallel POSTs with one live token can insert two videos. Eng review Step 0 cut this from the isolation PR.
-
-**Context:** CEO 4A. Feedback submissions have a non-unique index on `reputation_review_request_id` (`idx_on_reputation_review_request_id_f7ad17c20e`) — same race, videos first. Friday test 7 is the spec. After token-required create, `review_request_id` should be present.
-
-**Effort:** S (human) → S (CC)
-**Priority:** P2
-**Depends on:** Isolation PR (T1 token-required video create)
-
 ### ADR 0005 reputation tenant isolation
 
 **What:** Write `docs/adr/0005-reputation-tenant-isolation.md` (Context / Decision / Consequences). Link from `docs/adr/README.md`.
@@ -75,3 +63,7 @@
 **Depends on:** Isolation PR + ADR 0005
 
 ## Completed
+
+### Unique index on video testimonials per review request
+
+Unique index on `review_request_id` (NULLs allowed). Duplicate POSTs return 200 and keep one row. Migration deletes extra rows keeping the oldest.

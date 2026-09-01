@@ -9,7 +9,7 @@ RSpec.describe CommentAutomation::DmDispatchJob do
   let(:trigger) { create(:comment_automation_trigger, campaign: campaign, account: account, dm_text_body: 'Here is the link!') }
   let(:log) do
     create(:comment_automation_message_log, trigger: trigger, account: account, inbox: inbox,
-                                             comment_id: 'comment-1', commenter_id: 'commenter-1', status: :public_replied)
+                                            comment_id: 'comment-1', commenter_id: 'commenter-1', status: :public_replied)
   end
 
   # The job appends the channel's access_token as a query param (matching the rest of the
@@ -37,7 +37,8 @@ RSpec.describe CommentAutomation::DmDispatchJob do
   end
 
   it 'marks the log dm_failed when the API returns an error' do
-    stub_request(:post, messages_url).to_return(status: 200, body: '{"error":{"message":"bad token"}}', headers: { 'Content-Type' => 'application/json' })
+    stub_request(:post, messages_url).to_return(status: 200, body: '{"error":{"message":"bad token"}}',
+                                                headers: { 'Content-Type' => 'application/json' })
 
     described_class.perform_now(log.id)
 
@@ -53,7 +54,7 @@ RSpec.describe CommentAutomation::DmDispatchJob do
   end
 
   it 'requeues instead of sending when the inbox is over the rate limit' do
-    allow_any_instance_of(CommentAutomation::RateLimiter).to receive(:within_limit?).and_return(false)
+    allow_any_instance_of(CommentAutomation::RateLimiter).to receive(:within_limit?).and_return(false) # rubocop:disable RSpec/AnyInstance
 
     expect { described_class.perform_now(log.id) }.to have_enqueued_job(described_class).with(log.id)
   end

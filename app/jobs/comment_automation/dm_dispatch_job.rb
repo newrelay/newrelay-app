@@ -16,9 +16,8 @@ class CommentAutomation::DmDispatchJob < ApplicationJob
     response = send_dm(log)
     rate_limiter.track_send
 
-    if response.success? && response.parsed_response.is_a?(Hash) && response.parsed_response['error'].blank?
-      log.update!(status: :dm_sent, sent_at: Time.current)
-      Rails.logger.info("[comment_automation] event=dm_sent campaign_id=#{log.trigger.campaign_id} trigger_id=#{log.trigger_id} comment_id=#{log.comment_id}")
+    if success_response?(response)
+      mark_sent(log)
     else
       fail_log(log, response.parsed_response)
     end
@@ -27,6 +26,18 @@ class CommentAutomation::DmDispatchJob < ApplicationJob
   end
 
   private
+
+  def success_response?(response)
+    response.success? && response.parsed_response.is_a?(Hash) && response.parsed_response['error'].blank?
+  end
+
+  def mark_sent(log)
+    log.update!(status: :dm_sent, sent_at: Time.current)
+    Rails.logger.info(
+      "[comment_automation] event=dm_sent campaign_id=#{log.trigger.campaign_id} " \
+      "trigger_id=#{log.trigger_id} comment_id=#{log.comment_id}"
+    )
+  end
 
   def send_dm(log)
     channel = log.inbox.channel

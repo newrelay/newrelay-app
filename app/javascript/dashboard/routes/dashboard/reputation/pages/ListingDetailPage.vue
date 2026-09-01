@@ -352,7 +352,7 @@ const activityEvents = computed(() => {
 const aiInsights = ref(null);
 const aiInsightsLoading = ref(false);
 async function loadAiInsights() {
-  if (aiInsights.value || aiInsightsLoading.value) return;
+  if (aiInsights.value || aiInsightsLoading.value || usingMock.value) return;
   aiInsightsLoading.value = true;
   try {
     const { data } = await axios.get(`${baseUrl()}/ai_insights?listing_id=${route.params.listingId}`);
@@ -656,24 +656,29 @@ function formatDate(d) {
   return d ? new Date(d).toLocaleString() : '—';
 }
 
+// The listing-scoped endpoints (reviews/activities/integrations/insights) 404
+// for a mock/demo listing — its id has no matching backend record — so they
+// only fire once loadListing() has resolved and confirmed a real listing.
+async function loadListingScopedData() {
+  await loadListing();
+  if (usingMock.value) return;
+  loadAccountReviews();
+  loadActivities();
+  loadListingIntegrations();
+}
+
 onMounted(() => {
   if (!showDemoSurfaces.value) {
     router.replace({ name: 'reputation_overview' });
     return;
   }
-  loadListing();
-  loadAccountReviews();
-  loadActivities();
-  loadListingIntegrations();
+  loadListingScopedData();
 });
 
-watch(() => route.params.listingId, () => {
+watch(() => route.params.listingId, async () => {
   if (showDemoSurfaces.value) {
-    loadListing();
-    loadAccountReviews();
-    loadActivities();
-    loadListingIntegrations();
     aiInsights.value = null;
+    await loadListingScopedData();
     if (activeTab.value === 'Insights') loadAiInsights();
   }
 });

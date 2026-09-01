@@ -60,7 +60,7 @@ export const routes = [
         component: CompaniesView,
         meta: {
           featureFlag: FEATURE_FLAGS.CRM,
-          permissions: ['administrator', 'agent', 'company_manage'],
+          permissions: ['administrator', 'company_manage'],
         },
       },
     ],

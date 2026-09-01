@@ -17,7 +17,7 @@ RSpec.describe 'Api::V1::Accounts::Captain::Inboxes', type: :request do
     context 'when user is authorized' do
       it 'returns a list of inboxes for the assistant' do
         get "/api/v1/accounts/#{account.id}/captain/assistants/#{assistant.id}/inboxes",
-            headers: agent.create_new_auth_token
+            headers: admin.create_new_auth_token
 
         expect(response).to have_http_status(:ok)
         expect(json_response[:payload].first[:id]).to eq(captain_inbox.inbox.id)
@@ -35,7 +35,7 @@ RSpec.describe 'Api::V1::Accounts::Captain::Inboxes', type: :request do
     context 'when assistant does not exist' do
       it 'returns not found status' do
         get "/api/v1/accounts/#{account.id}/captain/assistants/999999/inboxes",
-            headers: agent.create_new_auth_token
+            headers: admin.create_new_auth_token
 
         expect(response).to have_http_status(:not_found)
       end

@@ -19,25 +19,7 @@ RSpec.describe Captain::AssistantPolicy, type: :policy do
     { user: user, account: account, account_user: account_user }
   end
 
-  permissions :index?, :show?, :playground? do
-    context 'when administrator' do
-      it { expect(assistant_policy).to permit(administrator_context, assistant) }
-    end
-
-    context 'when agent' do
-      it { expect(assistant_policy).to permit(agent_context, assistant) }
-    end
-
-    context 'when captain_manage' do
-      it { expect(assistant_policy).to permit(context_for(['captain_manage']), assistant) }
-    end
-
-    context 'when custom role without captain_manage' do
-      it { expect(assistant_policy).not_to permit(context_for(['contact_manage']), assistant) }
-    end
-  end
-
-  permissions :tools?, :create?, :update?, :destroy?, :sync? do
+  permissions :index?, :show?, :playground?, :tools?, :create?, :update?, :destroy?, :sync? do
     context 'when administrator' do
       it { expect(assistant_policy).to permit(administrator_context, assistant) }
     end

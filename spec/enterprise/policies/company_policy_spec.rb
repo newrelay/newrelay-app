@@ -18,25 +18,7 @@ RSpec.describe CompanyPolicy, type: :policy do
     { user: user, account: account, account_user: account_user }
   end
 
-  permissions :index?, :show?, :create?, :update? do
-    context 'when administrator' do
-      it { expect(company_policy).to permit(administrator_context, company) }
-    end
-
-    context 'when agent' do
-      it { expect(company_policy).to permit(agent_context, company) }
-    end
-
-    context 'when company_manage' do
-      it { expect(company_policy).to permit(context_for(['company_manage']), company) }
-    end
-
-    context 'when custom role without company_manage' do
-      it { expect(company_policy).not_to permit(context_for(['contact_manage']), company) }
-    end
-  end
-
-  permissions :destroy? do
+  permissions :index?, :show?, :create?, :update?, :destroy? do
     context 'when administrator' do
       it { expect(company_policy).to permit(administrator_context, company) }
     end

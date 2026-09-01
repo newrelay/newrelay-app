@@ -20,14 +20,12 @@ RSpec.describe 'Api::V1::Accounts::Captain::CustomTools', type: :request do
     end
 
     context 'when it is an agent' do
-      it 'returns success status' do
-        create_list(:captain_custom_tool, 3, account: account)
+      it 'returns unauthorized status' do
         get "/api/v1/accounts/#{account.id}/captain/custom_tools",
             headers: agent.create_new_auth_token,
             as: :json
 
-        expect(response).to have_http_status(:success)
-        expect(json_response[:payload].length).to eq(3)
+        expect(response).to have_http_status(:unauthorized)
       end
     end
 
@@ -66,21 +64,19 @@ RSpec.describe 'Api::V1::Accounts::Captain::CustomTools', type: :request do
     end
 
     context 'when it is an agent' do
-      it 'returns success status and custom tool' do
+      it 'returns unauthorized status' do
         get "/api/v1/accounts/#{account.id}/captain/custom_tools/#{custom_tool.id}",
             headers: agent.create_new_auth_token,
             as: :json
 
-        expect(response).to have_http_status(:success)
-        expect(json_response[:id]).to eq(custom_tool.id)
-        expect(json_response[:title]).to eq(custom_tool.title)
+        expect(response).to have_http_status(:unauthorized)
       end
     end
 
     context 'when custom tool does not exist' do
       it 'returns not found status' do
         get "/api/v1/accounts/#{account.id}/captain/custom_tools/999999",
-            headers: agent.create_new_auth_token
+            headers: admin.create_new_auth_token
 
         expect(response).to have_http_status(:not_found)
       end

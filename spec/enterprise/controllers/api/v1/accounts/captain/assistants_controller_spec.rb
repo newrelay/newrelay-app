@@ -19,10 +19,20 @@ RSpec.describe 'Api::V1::Accounts::Captain::Assistants', type: :request do
     end
 
     context 'when it is an agent' do
+      it 'does not fetch assistants' do
+        get "/api/v1/accounts/#{account.id}/captain/assistants",
+            headers: agent.create_new_auth_token,
+            as: :json
+
+        expect(response).to have_http_status(:unauthorized)
+      end
+    end
+
+    context 'when it is an admin' do
       it 'fetches assistants for the account' do
         create_list(:captain_assistant, 3, account: account)
         get "/api/v1/accounts/#{account.id}/captain/assistants",
-            headers: agent.create_new_auth_token,
+            headers: admin.create_new_auth_token,
             as: :json
 
         expect(response).to have_http_status(:success)
@@ -46,9 +56,19 @@ RSpec.describe 'Api::V1::Accounts::Captain::Assistants', type: :request do
     end
 
     context 'when it is an agent' do
-      it 'fetches the assistant' do
+      it 'does not fetch the assistant' do
         get "/api/v1/accounts/#{account.id}/captain/assistants/#{assistant.id}",
             headers: agent.create_new_auth_token,
+            as: :json
+
+        expect(response).to have_http_status(:unauthorized)
+      end
+    end
+
+    context 'when it is an admin' do
+      it 'fetches the assistant' do
+        get "/api/v1/accounts/#{account.id}/captain/assistants/#{assistant.id}",
+            headers: admin.create_new_auth_token,
             as: :json
 
         expect(response).to have_http_status(:success)
@@ -231,7 +251,7 @@ RSpec.describe 'Api::V1::Accounts::Captain::Assistants', type: :request do
     end
 
     context 'when it is an agent' do
-      it 'delete the assistant' do
+      it 'does not delete the assistant' do
         delete "/api/v1/accounts/#{account.id}/captain/assistants/#{assistant.id}",
                headers: agent.create_new_auth_token,
                as: :json
@@ -287,7 +307,7 @@ RSpec.describe 'Api::V1::Accounts::Captain::Assistants', type: :request do
 
         post "/api/v1/accounts/#{account.id}/captain/assistants/#{assistant.id}/playground",
              params: valid_params,
-             headers: agent.create_new_auth_token,
+             headers: admin.create_new_auth_token,
              as: :json
 
         expect(response).to have_http_status(:success)
@@ -309,7 +329,7 @@ RSpec.describe 'Api::V1::Accounts::Captain::Assistants', type: :request do
 
         post "/api/v1/accounts/#{account.id}/captain/assistants/#{assistant.id}/playground",
              params: params_without_history,
-             headers: agent.create_new_auth_token,
+             headers: admin.create_new_auth_token,
              as: :json
 
         expect(response).to have_http_status(:success)
@@ -335,7 +355,7 @@ RSpec.describe 'Api::V1::Accounts::Captain::Assistants', type: :request do
 
         post "/api/v1/accounts/#{account.id}/captain/assistants/#{assistant.id}/playground",
              params: valid_params,
-             headers: agent.create_new_auth_token,
+             headers: admin.create_new_auth_token,
              as: :json
 
         expect(response).to have_http_status(:success)
@@ -358,7 +378,7 @@ RSpec.describe 'Api::V1::Accounts::Captain::Assistants', type: :request do
 
         post "/api/v1/accounts/#{account.id}/captain/assistants/#{assistant.id}/playground",
              params: params_with_latest_message,
-             headers: agent.create_new_auth_token,
+             headers: admin.create_new_auth_token,
              as: :json
 
         expect(response).to have_http_status(:success)

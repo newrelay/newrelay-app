@@ -4,7 +4,7 @@ import PipelinesIndex from './pages/PipelinesIndex.vue';
 import OpportunitiesIndex from './pages/OpportunitiesIndex.vue';
 
 const commonMeta = {
-  permissions: ['administrator', 'agent', 'crm_manage'],
+  permissions: ['administrator', 'crm_manage'],
 };
 
 export const routes = [

@@ -19,14 +19,12 @@ RSpec.describe 'Api::V1::Accounts::Captain::Scenarios', type: :request do
     end
 
     context 'when it is an agent' do
-      it 'returns success status' do
-        create_list(:captain_scenario, 3, assistant: assistant, account: account)
+      it 'returns unauthorized status' do
         get "/api/v1/accounts/#{account.id}/captain/assistants/#{assistant.id}/scenarios",
             headers: agent.create_new_auth_token,
             as: :json
 
-        expect(response).to have_http_status(:success)
-        expect(json_response[:payload].length).to eq(3)
+        expect(response).to have_http_status(:unauthorized)
       end
     end
 
@@ -66,21 +64,19 @@ RSpec.describe 'Api::V1::Accounts::Captain::Scenarios', type: :request do
     end
 
     context 'when it is an agent' do
-      it 'returns success status and scenario' do
+      it 'returns unauthorized status' do
         get "/api/v1/accounts/#{account.id}/captain/assistants/#{assistant.id}/scenarios/#{scenario.id}",
             headers: agent.create_new_auth_token,
             as: :json
 
-        expect(response).to have_http_status(:success)
-        expect(json_response[:id]).to eq(scenario.id)
-        expect(json_response[:title]).to eq(scenario.title)
+        expect(response).to have_http_status(:unauthorized)
       end
     end
 
     context 'when scenario does not exist' do
       it 'returns not found status' do
         get "/api/v1/accounts/#{account.id}/captain/assistants/#{assistant.id}/scenarios/999999",
-            headers: agent.create_new_auth_token
+            headers: admin.create_new_auth_token
 
         expect(response).to have_http_status(:not_found)
       end

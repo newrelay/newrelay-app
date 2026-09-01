@@ -35,7 +35,7 @@ RSpec.describe 'Api::V1::Accounts::Captain::Documents', type: :request do
         end
 
         it 'returns the first page of documents' do
-          get "/api/v1/accounts/#{account.id}/captain/documents", headers: agent.create_new_auth_token, as: :json
+          get "/api/v1/accounts/#{account.id}/captain/documents", headers: admin.create_new_auth_token, as: :json
 
           expect(response).to have_http_status(:ok)
           expect(json_response[:payload].length).to eq(25)
@@ -45,7 +45,7 @@ RSpec.describe 'Api::V1::Accounts::Captain::Documents', type: :request do
         it 'returns the second page of documents' do
           get "/api/v1/accounts/#{account.id}/captain/documents",
               params: { page: 2 },
-              headers: agent.create_new_auth_token, as: :json
+              headers: admin.create_new_auth_token, as: :json
 
           expect(response).to have_http_status(:ok)
           expect(json_response[:payload].length).to eq(5)
@@ -62,7 +62,7 @@ RSpec.describe 'Api::V1::Accounts::Captain::Documents', type: :request do
         it 'returns only documents for the specified assistant' do
           get "/api/v1/accounts/#{account.id}/captain/documents",
               params: { assistant_id: assistant.id },
-              headers: agent.create_new_auth_token, as: :json
+              headers: admin.create_new_auth_token, as: :json
           expect(response).to have_http_status(:ok)
           expect(json_response[:payload].length).to eq(3)
           expect(json_response[:payload][0][:assistant][:id]).to eq(assistant.id)
@@ -72,7 +72,7 @@ RSpec.describe 'Api::V1::Accounts::Captain::Documents', type: :request do
           new_assistant = create(:captain_assistant, account: account)
           get "/api/v1/accounts/#{account.id}/captain/documents",
               params: { assistant_id: new_assistant.id },
-              headers: agent.create_new_auth_token, as: :json
+              headers: admin.create_new_auth_token, as: :json
           expect(response).to have_http_status(:ok)
           expect(json_response[:payload]).to be_empty
         end
@@ -88,7 +88,7 @@ RSpec.describe 'Api::V1::Accounts::Captain::Documents', type: :request do
 
         it 'only returns documents for the current account' do
           get "/api/v1/accounts/#{account.id}/captain/documents",
-              headers: agent.create_new_auth_token, as: :json
+              headers: admin.create_new_auth_token, as: :json
           expect(response).to have_http_status(:ok)
           expect(json_response[:payload].length).to eq(3)
           document_account_ids = json_response[:payload].pluck(:account_id).uniq
@@ -105,7 +105,7 @@ RSpec.describe 'Api::V1::Accounts::Captain::Documents', type: :request do
         it 'returns paginated results for specific assistant' do
           get "/api/v1/accounts/#{account.id}/captain/documents",
               params: { assistant_id: assistant.id, page: 2 },
-              headers: agent.create_new_auth_token, as: :json
+              headers: admin.create_new_auth_token, as: :json
           expect(response).to have_http_status(:ok)
           expect(json_response[:payload].length).to eq(5)
           expect(json_response[:payload][0][:assistant][:id]).to eq(assistant.id)
@@ -129,7 +129,7 @@ RSpec.describe 'Api::V1::Accounts::Captain::Documents', type: :request do
     context 'when it is an agent' do
       before do
         get "/api/v1/accounts/#{account.id}/captain/documents/#{document.id}",
-            headers: agent.create_new_auth_token, as: :json
+            headers: admin.create_new_auth_token, as: :json
       end
 
       it 'returns success status' do
@@ -147,7 +147,7 @@ RSpec.describe 'Api::V1::Accounts::Captain::Documents', type: :request do
         document.update!(sync_status: :synced, last_synced_at: synced_at)
 
         get "/api/v1/accounts/#{account.id}/captain/documents/#{document.id}",
-            headers: agent.create_new_auth_token, as: :json
+            headers: admin.create_new_auth_token, as: :json
 
         expect(json_response[:sync_status]).to eq('synced')
         expect(json_response[:last_synced_at]).to eq(synced_at.to_i)
@@ -157,7 +157,7 @@ RSpec.describe 'Api::V1::Accounts::Captain::Documents', type: :request do
         document.update!(sync_status: :failed, last_sync_attempted_at: 1.minute.ago)
 
         get "/api/v1/accounts/#{account.id}/captain/documents/#{document.id}",
-            headers: agent.create_new_auth_token, as: :json
+            headers: admin.create_new_auth_token, as: :json
 
         expect(json_response[:sync_status]).to eq('failed')
         expect(json_response[:last_synced_at]).to be_nil

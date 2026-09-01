@@ -18,19 +18,19 @@ import ResponsesPendingIndex from './responses/Pending.vue';
 import CustomToolsIndex from './tools/Index.vue';
 
 const meta = {
-  permissions: ['administrator', 'agent', 'captain_manage'],
+  permissions: ['administrator', 'captain_manage'],
   featureFlag: FEATURE_FLAGS.CAPTAIN,
   installationTypes: [INSTALLATION_TYPES.CLOUD, INSTALLATION_TYPES.ENTERPRISE],
 };
 
 const metaCustomTools = {
-  permissions: ['administrator', 'agent', 'captain_manage'],
+  permissions: ['administrator', 'captain_manage'],
   featureFlag: FEATURE_FLAGS.CAPTAIN_CUSTOM_TOOLS,
   installationTypes: [INSTALLATION_TYPES.CLOUD, INSTALLATION_TYPES.ENTERPRISE],
 };
 
 const metaV2 = {
-  permissions: ['administrator', 'agent', 'captain_manage'],
+  permissions: ['administrator', 'captain_manage'],
   featureFlag: FEATURE_FLAGS.CAPTAIN_V2,
   installationTypes: [INSTALLATION_TYPES.CLOUD, INSTALLATION_TYPES.ENTERPRISE],
 };
@@ -106,7 +106,7 @@ const assistantRoutes = [
     component: AssistantEmptyStateIndex,
     name: 'captain_assistants_create_index',
     meta: {
-      permissions: ['administrator', 'agent', 'captain_manage'],
+      permissions: ['administrator', 'captain_manage'],
       installationTypes: [
         INSTALLATION_TYPES.CLOUD,
         INSTALLATION_TYPES.ENTERPRISE,

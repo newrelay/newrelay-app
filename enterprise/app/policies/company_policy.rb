@@ -32,12 +32,12 @@ class CompanyPolicy < ApplicationPolicy
   end
 
   def destroy?
-    @account_user.permissions.intersect?(%w[administrator company_manage])
+    allowed?
   end
 
   private
 
   def allowed?
-    @account_user.permissions.intersect?(%w[administrator agent company_manage])
+    @account_user.permissions.intersect?(%w[administrator company_manage])
   end
 end

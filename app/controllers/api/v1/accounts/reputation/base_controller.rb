@@ -4,7 +4,7 @@ class Api::V1::Accounts::Reputation::BaseController < Api::V1::Accounts::BaseCon
   private
 
   def authorize_reputation_access!
-    return if Current.account_user.permissions.intersect?(%w[administrator agent reputation_manage])
+    return if Current.account_user.permissions.intersect?(%w[administrator reputation_manage])
 
     raise Pundit::NotAuthorizedError
   end

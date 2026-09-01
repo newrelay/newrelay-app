@@ -22,6 +22,6 @@ class DealPolicy < ApplicationPolicy
   private
 
   def allowed?
-    @account_user.permissions.intersect?(%w[administrator agent crm_manage])
+    @account_user.permissions.intersect?(%w[administrator crm_manage])
   end
 end

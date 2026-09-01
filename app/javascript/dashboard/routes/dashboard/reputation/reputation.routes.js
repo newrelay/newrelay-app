@@ -14,7 +14,7 @@ import FeedbackPage from './pages/FeedbackPage.vue';
 import IntegrationsPage from './pages/IntegrationsPage.vue';
 import ConfigurationPage from './pages/ConfigurationPage.vue';
 
-const meta = { permissions: ['administrator', 'agent', 'reputation_manage'] };
+const meta = { permissions: ['administrator', 'reputation_manage'] };
 
 export const routes = [
   {

@@ -28,5 +28,15 @@ RSpec.describe 'Reputation reviews API', type: :request do
 
       expect(response).to have_http_status(:unauthorized)
     end
+
+    it 'denies agents without reputation_manage' do
+      plain_agent = create(:user, account: account, role: :agent)
+
+      get "/api/v1/accounts/#{account.id}/reputation/reviews",
+          headers: plain_agent.create_new_auth_token,
+          as: :json
+
+      expect(response).to have_http_status(:unauthorized)
+    end
   end
 end

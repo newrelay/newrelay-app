@@ -24,7 +24,7 @@ RSpec.describe 'Api::V1::Accounts::Captain::AssistantResponses', type: :request 
 
       it 'returns first page of responses with default pagination' do
         get "/api/v1/accounts/#{account.id}/captain/assistant_responses",
-            headers: agent.create_new_auth_token,
+            headers: admin.create_new_auth_token,
             as: :json
 
         expect(response).to have_http_status(:ok)
@@ -34,7 +34,7 @@ RSpec.describe 'Api::V1::Accounts::Captain::AssistantResponses', type: :request 
       it 'returns second page of responses' do
         get "/api/v1/accounts/#{account.id}/captain/assistant_responses",
             params: { page: 2 },
-            headers: agent.create_new_auth_token,
+            headers: admin.create_new_auth_token,
             as: :json
 
         expect(response).to have_http_status(:ok)
@@ -58,7 +58,7 @@ RSpec.describe 'Api::V1::Accounts::Captain::AssistantResponses', type: :request 
       it 'returns only responses for the specified assistant' do
         get "/api/v1/accounts/#{account.id}/captain/assistant_responses",
             params: { assistant_id: assistant.id },
-            headers: agent.create_new_auth_token,
+            headers: admin.create_new_auth_token,
             as: :json
 
         expect(response).to have_http_status(:ok)
@@ -82,7 +82,7 @@ RSpec.describe 'Api::V1::Accounts::Captain::AssistantResponses', type: :request 
       it 'returns only responses for the specified document' do
         get "/api/v1/accounts/#{account.id}/captain/assistant_responses",
             params: { document_id: document.id },
-            headers: agent.create_new_auth_token,
+            headers: admin.create_new_auth_token,
             as: :json
 
         expect(response).to have_http_status(:ok)
@@ -108,7 +108,7 @@ RSpec.describe 'Api::V1::Accounts::Captain::AssistantResponses', type: :request 
       it 'finds responses by question text' do
         get "/api/v1/accounts/#{account.id}/captain/assistant_responses",
             params: { search: 'password' },
-            headers: agent.create_new_auth_token,
+            headers: admin.create_new_auth_token,
             as: :json
 
         expect(response).to have_http_status(:ok)
@@ -119,7 +119,7 @@ RSpec.describe 'Api::V1::Accounts::Captain::AssistantResponses', type: :request 
       it 'finds responses by answer text' do
         get "/api/v1/accounts/#{account.id}/captain/assistant_responses",
             params: { search: 'settings' },
-            headers: agent.create_new_auth_token,
+            headers: admin.create_new_auth_token,
             as: :json
 
         expect(response).to have_http_status(:ok)
@@ -130,7 +130,7 @@ RSpec.describe 'Api::V1::Accounts::Captain::AssistantResponses', type: :request 
       it 'returns empty when no matches' do
         get "/api/v1/accounts/#{account.id}/captain/assistant_responses",
             params: { search: 'nonexistent' },
-            headers: agent.create_new_auth_token,
+            headers: admin.create_new_auth_token,
             as: :json
 
         expect(response).to have_http_status(:ok)
@@ -142,9 +142,9 @@ RSpec.describe 'Api::V1::Accounts::Captain::AssistantResponses', type: :request 
   describe 'GET /api/v1/accounts/:account_id/captain/assistant_responses/:id' do
     let!(:response_record) { create(:captain_assistant_response, assistant: assistant, account: account) }
 
-    it 'returns the requested response if the user is agent or admin' do
+    it 'returns the requested response if the user is an admin' do
       get "/api/v1/accounts/#{account.id}/captain/assistant_responses/#{response_record.id}",
-          headers: agent.create_new_auth_token,
+          headers: admin.create_new_auth_token,
           as: :json
 
       expect(response).to have_http_status(:ok)

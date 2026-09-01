@@ -8,8 +8,15 @@ import { useUISettings } from 'dashboard/composables/useUISettings';
 import { useCamelCase } from 'dashboard/composables/useTransformKeys';
 import wootConstants from 'dashboard/constants/globals';
 import { INBOX_EVENTS } from 'dashboard/helper/AnalyticsHelper/events';
-import { INBOX_TYPES } from 'dashboard/helper/inbox';
 import ConversationApi from 'dashboard/api/inbox/conversation';
+import {
+  mineCountFromMeta,
+  mineCountFromList,
+  unreadCountFromConversations,
+  inboxesForChannelNav,
+  viewCountsFromTotals,
+  mergeInboxCounts,
+} from './helpers/inboxNavTotals';
 
 import InboxCard from 'dashboard/components-next/Inbox/InboxCard.vue';
 import InboxListHeader from './components/InboxListHeader.vue';
@@ -40,6 +47,15 @@ const showTabMoreMenu = ref(false);
 const items = ref([]);
 const isFetching = ref(false);
 const totalCount = ref(0);
+// Sidebar badges must stay as all-status totals. They used to be derived from
+// `items`, which is refetched per New / In Progress / On Hold / Closed tab.
+const navTotals = ref({
+  all: 0,
+  unread: 0,
+  snoozed: 0,
+  archived: 0,
+  byInbox: {},
+});
 
 // Starred conversation ids are persisted in UI settings so favourites survive
 // reloads and stay in sync across the agent's sessions.
@@ -121,43 +137,78 @@ const reloadConversations = () => {
   fetchConversations();
 };
 
-const channelsForNav = computed(() => {
-  const preferred = [
-    INBOX_TYPES.WHATSAPP,
-    INBOX_TYPES.EMAIL,
-    INBOX_TYPES.INSTAGRAM,
-    INBOX_TYPES.WEB,
-    INBOX_TYPES.SMS,
-    INBOX_TYPES.TWILIO,
-  ];
-  const list = (inboxesList.value || []).filter(inbox => {
-    const channelType = inbox.channelType || inbox.channel_type;
-    return preferred.includes(channelType);
-  });
+let navTotalsRequestId = 0;
 
-  return list.map(inbox => {
-    const count = items.value.filter(
-      n => n.primaryActor?.inboxId === inbox.id
-    ).length;
-    return { ...inbox, count };
-  });
-});
+const fetchNavTotals = async () => {
+  const assigneeType = wootConstants.ASSIGNEE_TYPE.ME;
+  const statusAll = wootConstants.STATUS_TYPE.ALL;
+  const channelInboxes = inboxesForChannelNav(inboxesList.value);
+  navTotalsRequestId += 1;
+  const requestId = navTotalsRequestId;
 
-const viewCounts = computed(() => {
-  const list = items.value;
+  try {
+    const [allList, snoozedMeta, archivedMeta, ...inboxMetas] =
+      await Promise.all([
+        ConversationApi.get({
+          assigneeType,
+          status: statusAll,
+          page: 1,
+        }),
+        ConversationApi.meta({
+          assigneeType,
+          status: wootConstants.STATUS_TYPE.SNOOZED,
+        }),
+        ConversationApi.meta({
+          assigneeType,
+          status: wootConstants.STATUS_TYPE.RESOLVED,
+        }),
+        ...channelInboxes.map(inbox =>
+          ConversationApi.meta({
+            assigneeType,
+            status: statusAll,
+            inboxId: inbox.id,
+          })
+        ),
+      ]);
 
-  return {
-    // All the loaded rows are the current user's conversations for the active
-    // status tab; the total comes from the API's `mine_count`.
-    all: totalCount.value || list.length,
-    unread: list.filter(n => !n.readAt).length,
-    assigned: list.length,
-    starred: list.filter(n => starredIds.value.has(n.primaryActor?.id)).length,
-    snoozed: list.filter(n => n.primaryActor?.status === 'snoozed').length,
-    archived: list.filter(n => n.primaryActor?.status === 'resolved').length,
-    spam: 0,
-  };
-});
+    const payload = allList?.data?.data?.payload || [];
+    const byInbox = {};
+    channelInboxes.forEach((inbox, index) => {
+      byInbox[inbox.id] = mineCountFromMeta(inboxMetas[index]);
+    });
+
+    if (requestId !== navTotalsRequestId) return;
+
+    navTotals.value = {
+      all: mineCountFromList(allList) || payload.length,
+      // ponytail: unread is first page of assigned conversations (status=all).
+      // Upgrade: add unread_count to GET /conversations/meta.
+      unread: unreadCountFromConversations(payload),
+      snoozed: mineCountFromMeta(snoozedMeta),
+      archived: mineCountFromMeta(archivedMeta),
+      byInbox,
+    };
+  } catch {
+    // Keep the last totals rather than flashing zeros on a failed refresh.
+  }
+};
+
+const channelsForNav = computed(() =>
+  mergeInboxCounts(
+    inboxesForChannelNav(inboxesList.value),
+    navTotals.value.byInbox
+  )
+);
+
+const viewCounts = computed(() =>
+  viewCountsFromTotals({
+    all: navTotals.value.all,
+    unread: navTotals.value.unread,
+    starred: starredIds.value.size,
+    snoozed: navTotals.value.snoozed,
+    archived: navTotals.value.archived,
+  })
+);
 
 const filteredConversations = computed(() => {
   let list = items.value;
@@ -280,6 +331,8 @@ watch(activeStatusTab, () => reloadConversations());
 watch(currentConversationId, () => {
   nextTick(scrollActiveIntoView);
 });
+
+watch(inboxesList, fetchNavTotals, { immediate: true });
 
 onMounted(() => {
   scrollActiveIntoView();

@@ -45,6 +45,43 @@ RSpec.describe 'Webhooks::InstagramController', type: :request do
     let!(:dm_params) { build(:instagram_message_create_event).with_indifferent_access }
     let(:body) { dm_params.merge(object: 'instagram').to_json }
 
+    context 'with a comment webhook payload' do
+      let(:comment_params) do
+        {
+          object: 'instagram',
+          entry: [
+            {
+              id: 'ig-account-1',
+              changes: [
+                { field: 'comments', value: { id: 'comment-1', text: 'how much?', from: { id: 'commenter-1' }, media: { id: 'media-1' } } }
+              ]
+            }
+          ]
+        }
+      end
+      let(:comment_body) { comment_params.to_json }
+
+      it 'routes comment entries to CommentAutomation::InboundCommentJob and not to Webhooks::InstagramEventsJob' do
+        allow(CommentAutomation::InboundCommentJob).to receive(:perform_later)
+        allow(Webhooks::InstagramEventsJob).to receive(:perform_later)
+
+        post_instagram_webhook(comment_body, signature: signature_for(comment_body))
+
+        expect(CommentAutomation::InboundCommentJob).to have_received(:perform_later).with(comment_params[:entry].map(&:deep_stringify_keys))
+        expect(Webhooks::InstagramEventsJob).not_to have_received(:perform_later)
+      end
+    end
+
+    it 'still routes a message-only payload to Webhooks::InstagramEventsJob and not to CommentAutomation::InboundCommentJob' do
+      allow(Webhooks::InstagramEventsJob).to receive(:perform_later)
+      allow(CommentAutomation::InboundCommentJob).to receive(:perform_later)
+
+      post_instagram_webhook(body)
+
+      expect(Webhooks::InstagramEventsJob).to have_received(:perform_later)
+      expect(CommentAutomation::InboundCommentJob).not_to have_received(:perform_later)
+    end
+
     it 'calls the instagram events job with the params for a valid signature' do
       allow(Webhooks::InstagramEventsJob).to receive(:perform_later)
       expect(Webhooks::InstagramEventsJob).to receive(:perform_later)

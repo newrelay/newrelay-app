@@ -8,13 +8,8 @@ class Webhooks::InstagramController < ActionController::API
     if params['object'].casecmp('instagram').zero?
       entry_params = params.to_unsafe_hash[:entry]
 
-      if contains_echo_event?(entry_params)
-        # Add delay to prevent race condition where echo arrives before send message API completes
-        # This avoids duplicate messages when echo comes early during API processing
-        ::Webhooks::InstagramEventsJob.set(wait: 2.seconds).perform_later(entry_params)
-      else
-        ::Webhooks::InstagramEventsJob.perform_later(entry_params)
-      end
+      route_comment_entries(entry_params)
+      route_message_entries(entry_params)
 
       render json: :ok
     else
@@ -24,6 +19,28 @@ class Webhooks::InstagramController < ActionController::API
   end
 
   private
+
+  def route_comment_entries(entry_params)
+    comment_entries = Array(entry_params).select { |entry| comment_entry?(entry.with_indifferent_access) }
+    return if comment_entries.blank?
+
+    ::CommentAutomation::InboundCommentJob.perform_later(comment_entries)
+  end
+
+  def route_message_entries(entry_params)
+    message_entries = Array(entry_params).reject { |entry| comment_entry?(entry.with_indifferent_access) }
+    return if message_entries.blank?
+
+    if contains_echo_event?(message_entries)
+      ::Webhooks::InstagramEventsJob.set(wait: 2.seconds).perform_later(message_entries)
+    else
+      ::Webhooks::InstagramEventsJob.perform_later(message_entries)
+    end
+  end
+
+  def comment_entry?(entry)
+    Array(entry[:changes]).any? { |change| change[:field] == 'comments' }
+  end
 
   def contains_echo_event?(entry_params)
     return false unless entry_params.is_a?(Array)

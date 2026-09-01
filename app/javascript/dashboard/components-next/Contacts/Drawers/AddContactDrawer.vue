@@ -50,6 +50,7 @@ const isSaving = ref(false);
 const showErrors = ref(false);
 const avatarInput = ref(null);
 const avatarPreview = ref('');
+const avatarFile = ref(null);
 const moreDetailsOpen = ref(false);
 const contactTypeSearch = ref('');
 const timeZoneSearch = ref('');
@@ -170,6 +171,7 @@ const resetForm = () => {
   additionalEmails.value = [];
   additionalPhones.value = [];
   avatarPreview.value = '';
+  avatarFile.value = null;
   showErrors.value = false;
   moreDetailsOpen.value = false;
   contactTypeSearch.value = '';
@@ -208,8 +210,12 @@ const close = () => {
 const handleAvatarUpload = event => {
   const file = event.target?.files?.[0];
   if (!file) return;
+  avatarFile.value = file;
   avatarPreview.value = URL.createObjectURL(file);
 };
+
+const avatarPayload = () =>
+  avatarFile.value ? { avatar: avatarFile.value, isFormData: true } : {};
 
 const selectContactType = value => {
   form.contactType = value;
@@ -250,6 +256,7 @@ const handleSubmit = async () => {
         company_name: form.company.trim(),
         timezone: form.timezone,
       },
+      ...avatarPayload(),
     });
     isSaving.value = false;
     close();
@@ -290,6 +297,7 @@ const handleSubmit = async () => {
         inbound: false,
       },
     },
+    ...avatarPayload(),
   });
 
   isSaving.value = false;

@@ -1,5 +1,5 @@
 <script setup>
-import { computed } from 'vue';
+import { computed, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { dynamicTime } from 'shared/helpers/timeHelper';
 import { usePolicy } from 'dashboard/composables/usePolicy';
@@ -28,10 +28,25 @@ const emit = defineEmits([
   'logActivity',
   'block',
   'delete',
+  'upload',
+  'avatarDelete',
 ]);
 
 const { t } = useI18n();
 const { checkPermissions } = usePolicy();
+
+const avatarPreviewUrl = ref('');
+
+watch(
+  () => props.contact?.id,
+  () => {
+    avatarPreviewUrl.value = '';
+  }
+);
+
+const avatarSrc = computed(
+  () => avatarPreviewUrl.value || props.contact?.thumbnail || ''
+);
 
 const attrs = computed(() => props.contact?.additionalAttributes || {});
 
@@ -92,6 +107,16 @@ const handleMoreAction = ({ action }) => {
   if (action === 'block') emit('block', isBlocked.value);
   if (action === 'delete') emit('delete');
 };
+
+const handleAvatarUpload = payload => {
+  avatarPreviewUrl.value = payload.url;
+  emit('upload', payload);
+};
+
+const handleAvatarDelete = () => {
+  avatarPreviewUrl.value = '';
+  emit('avatarDelete');
+};
 </script>
 
 <template>
@@ -111,10 +136,13 @@ const handleMoreAction = ({ action }) => {
 
       <div class="flex min-w-0 items-center gap-3">
         <Avatar
-          :src="contact?.thumbnail || ''"
+          :src="avatarSrc"
           :name="contact?.name || ''"
           :size="40"
           rounded-full
+          allow-upload
+          @upload="handleAvatarUpload"
+          @delete="handleAvatarDelete"
         />
         <div class="min-w-0">
           <h1

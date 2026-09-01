@@ -18,19 +18,27 @@ const buildContactFormData = contactParams => {
       formData.append(key, contactProperties[key]);
     }
   });
-  const { social_profiles, ...additionalAttributesProperties } =
-    additional_attributes;
+  const { social_profiles = {}, ...additionalAttributesProperties } =
+    additional_attributes || {};
   Object.keys(additionalAttributesProperties).forEach(key => {
     const value = additionalAttributesProperties[key];
     if (Array.isArray(value)) {
       value.forEach(item =>
         formData.append(`additional_attributes[${key}][]`, item)
       );
-    } else {
+    } else if (value && typeof value === 'object' && !(value instanceof File)) {
+      Object.entries(value).forEach(([nestedKey, nestedValue]) => {
+        if (nestedValue === undefined || nestedValue === null) return;
+        formData.append(
+          `additional_attributes[${key}][${nestedKey}]`,
+          nestedValue
+        );
+      });
+    } else if (value !== undefined && value !== null) {
       formData.append(`additional_attributes[${key}]`, value);
     }
   });
-  Object.keys(social_profiles).forEach(key => {
+  Object.keys(social_profiles || {}).forEach(key => {
     formData.append(
       `additional_attributes[social_profiles][${key}]`,
       social_profiles[key]
@@ -145,9 +153,12 @@ export const actions = {
   },
 
   create: async ({ commit }, { isFormData = false, ...contactParams }) => {
-    const decamelizedContactParams = snakecaseKeys(contactParams, {
-      deep: true,
-    });
+    const { avatar, customAttributes, ...paramsToDecamelize } = contactParams;
+    const decamelizedContactParams = {
+      ...snakecaseKeys(paramsToDecamelize, { deep: true }),
+      ...(customAttributes && { custom_attributes: customAttributes }),
+      ...(avatar && { avatar }),
+    };
     commit(types.SET_CONTACT_UI_FLAG, { isCreating: true });
     try {
       const response = await ContactAPI.create(

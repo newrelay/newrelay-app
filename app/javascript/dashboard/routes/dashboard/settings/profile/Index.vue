@@ -15,7 +15,6 @@ import FontSize from './FontSize.vue';
 import UserLanguageSelect from './UserLanguageSelect.vue';
 import ChangePassword from './ChangePassword.vue';
 import NotificationPreferences from './NotificationPreferences.vue';
-import AudioNotifications from './AudioNotifications.vue';
 import SectionLayout from '../account/components/SectionLayout.vue';
 import BaseSettingsHeader from '../components/BaseSettingsHeader.vue';
 import AccessToken from './AccessToken.vue';
@@ -39,7 +38,6 @@ export default {
     RadioCard,
     ChangePassword,
     NotificationPreferences,
-    AudioNotifications,
     AccessToken,
     MfaSettingsCard,
     BaseSettingsHeader,
@@ -167,9 +165,24 @@ export default {
 
       await this.dispatchUpdate(payload, successMessage, errorMessage);
     },
-    updateProfilePicture({ file, url }) {
+    async updateProfilePicture({ file, url }) {
+      const previousUrl = this.avatarUrl;
       this.avatarFile = file;
       this.avatarUrl = url;
+      const success = await this.dispatchUpdate(
+        {
+          name: this.name,
+          email: this.email,
+          displayName: this.displayName,
+          avatar: file,
+        },
+        this.$t('PROFILE_SETTINGS.UPDATE_SUCCESS'),
+        this.$t('RESET_PASSWORD.API.ERROR_MESSAGE')
+      );
+      if (!success) {
+        this.avatarUrl = previousUrl;
+        this.avatarFile = '';
+      }
     },
     async deleteProfilePicture() {
       try {

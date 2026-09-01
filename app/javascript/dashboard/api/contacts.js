@@ -31,6 +31,15 @@ class ContactAPI extends ApiClient {
     return axios.get(`${this.url}/${id}?include_contact_inboxes=false`);
   }
 
+  create(data) {
+    if (data instanceof FormData) {
+      return axios.post(this.url, data, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      });
+    }
+    return axios.post(this.url, data);
+  }
+
   update(id, data) {
     const config =
       data instanceof FormData

@@ -145,9 +145,48 @@ describe('#actions', () => {
         [types.SET_CONTACT_UI_FLAG, { isUpdating: false }],
       ]);
     });
+
+    it('sends avatar as FormData without social profiles', async () => {
+      const avatar = new File(['x'], 'avatar.png', { type: 'image/png' });
+      axios.patch.mockResolvedValue({ data: { payload: contactList[0] } });
+      await actions.update(
+        { commit },
+        {
+          id: contactList[0].id,
+          name: 'Jane',
+          avatar,
+          isFormData: true,
+          additionalAttributes: { companyName: 'Acme' },
+        }
+      );
+      const payload = axios.patch.mock.calls[0][1];
+      expect(payload).toBeInstanceOf(FormData);
+      expect(payload.get('avatar')).toBe(avatar);
+      expect(payload.get('additional_attributes[company_name]')).toBe('Acme');
+    });
   });
 
   describe('#create', () => {
+    it('keeps File avatar when creating with FormData', async () => {
+      const avatar = new File(['x'], 'avatar.png', { type: 'image/png' });
+      axios.post.mockResolvedValue({
+        data: { payload: { contact: contactList[0] } },
+      });
+      await actions.create(
+        { commit },
+        {
+          name: 'Jane',
+          avatar,
+          isFormData: true,
+          additionalAttributes: { companyName: 'Acme' },
+        }
+      );
+      const payload = axios.post.mock.calls[0][1];
+      expect(payload).toBeInstanceOf(FormData);
+      expect(payload.get('avatar')).toBe(avatar);
+      expect(payload.get('additional_attributes[company_name]')).toBe('Acme');
+    });
+
     it('sends correct mutations if API is success', async () => {
       axios.post.mockResolvedValue({
         data: { payload: { contact: contactList[0] } },

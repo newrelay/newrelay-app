@@ -109,6 +109,28 @@ const openDeleteDialog = () => {
   confirmDeleteContactDialogRef.value?.dialogRef.open();
 };
 
+const handleAvatarUpload = async ({ file }) => {
+  try {
+    await store.dispatch('contacts/update', {
+      id: contactId.value,
+      avatar: file,
+      isFormData: true,
+    });
+    useAlert(t('CONTACTS_LAYOUT.DETAILS.AVATAR.UPLOAD.SUCCESS_MESSAGE'));
+  } catch {
+    useAlert(t('CONTACTS_LAYOUT.DETAILS.AVATAR.UPLOAD.ERROR_MESSAGE'));
+  }
+};
+
+const handleAvatarDelete = async () => {
+  try {
+    await store.dispatch('contacts/deleteAvatar', contactId.value);
+    useAlert(t('CONTACTS_LAYOUT.DETAILS.AVATAR.DELETE.SUCCESS_MESSAGE'));
+  } catch {
+    useAlert(t('CONTACTS_LAYOUT.DETAILS.AVATAR.DELETE.ERROR_MESSAGE'));
+  }
+};
+
 watch(
   contactId,
   async id => {
@@ -147,6 +169,8 @@ onMounted(() => {
       @log-activity="showLogActivity = true"
       @block="toggleContactBlock"
       @delete="openDeleteDialog"
+      @upload="handleAvatarUpload"
+      @avatar-delete="handleAvatarDelete"
     />
 
     <div

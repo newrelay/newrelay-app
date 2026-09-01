@@ -6,6 +6,27 @@ module Avatarable
 
   ALLOWED_AVATAR_CONTENT_TYPES = %w[image/jpeg image/png image/gif image/webp].freeze
 
+  class << self
+    def image_processing_available?
+      return @image_processing_available if defined?(@image_processing_available)
+
+      @image_processing_available = libvips_available?
+    end
+
+    def reset_image_processing_available!
+      remove_instance_variable(:@image_processing_available) if defined?(@image_processing_available)
+    end
+
+    private
+
+    def libvips_available?
+      require 'vips'
+      true
+    rescue LoadError
+      false
+    end
+  end
+
   included do
     has_one_attached :avatar
     validate :acceptable_avatar, if: -> { avatar.changed? }
@@ -13,9 +34,13 @@ module Avatarable
   end
 
   def avatar_url
-    return url_for(avatar.representation(resize_to_fill: [250, nil])) if avatar.attached? && avatar.representable?
+    return '' unless avatar.attached?
 
-    ''
+    if Avatarable.image_processing_available? && avatar.representable?
+      url_for(avatar.representation(resize_to_fill: [250, nil]))
+    else
+      url_for(avatar)
+    end
   end
 
   def fetch_avatar_from_gravatar

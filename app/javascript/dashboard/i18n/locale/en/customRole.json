@@ -44,7 +44,8 @@
       "REPUTATION_MANAGE": "Manage reputation",
       "MARKETING_MANAGE": "Manage marketing",
       "CRM_MANAGE": "Manage deals and pipelines",
-      "COMPANY_MANAGE": "Manage companies"
+      "COMPANY_MANAGE": "Manage companies",
+      "CAPTAIN_MANAGE": "Manage Relay AI"
     },
     "FORM": {
       "NAME": {

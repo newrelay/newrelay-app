@@ -68,6 +68,11 @@ describe('#defaultRedirectPage', () => {
     );
   });
 
+  it('should return captain route for users with captain permissions', () => {
+    const permissions = ['captain_manage'];
+    expect(defaultRedirectPage(to, permissions)).toBe('accounts/2/captain');
+  });
+
   it('should return dashboard route as default for users with custom roles', () => {
     const permissions = ['custom_role'];
     expect(defaultRedirectPage(to, permissions)).toBe('accounts/2/dashboard');

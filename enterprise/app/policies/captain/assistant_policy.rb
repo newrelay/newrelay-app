@@ -1,37 +1,47 @@
 class Captain::AssistantPolicy < ApplicationPolicy
   def index?
-    true
+    readable?
   end
 
   def show?
-    true
+    readable?
   end
 
   def stats?
-    true
-  end
-
-  def tools?
-    @account_user.administrator?
-  end
-
-  def create?
-    @account_user.administrator?
-  end
-
-  def update?
-    @account_user.administrator?
-  end
-
-  def destroy?
-    @account_user.administrator?
-  end
-
-  def sync?
-    @account_user.administrator?
+    readable?
   end
 
   def playground?
-    true
+    readable?
+  end
+
+  def tools?
+    manageable?
+  end
+
+  def create?
+    manageable?
+  end
+
+  def update?
+    manageable?
+  end
+
+  def destroy?
+    manageable?
+  end
+
+  def sync?
+    manageable?
+  end
+
+  private
+
+  def readable?
+    @account_user.permissions.intersect?(%w[administrator agent captain_manage])
+  end
+
+  def manageable?
+    @account_user.permissions.intersect?(%w[administrator captain_manage])
   end
 end

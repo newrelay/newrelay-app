@@ -27,6 +27,7 @@
 # - 'marketing_manage': Can manage campaigns and other marketing tools.
 # - 'crm_manage': Can manage deals, pipelines, and opportunities.
 # - 'company_manage': Can manage companies.
+# - 'captain_manage': Can manage Relay AI (assistants, documents, responses, tools).
 
 class CustomRole < ApplicationRecord
   belongs_to :account
@@ -43,6 +44,7 @@ class CustomRole < ApplicationRecord
     marketing_manage
     crm_manage
     company_manage
+    captain_manage
   ].freeze
 
   validates :name, presence: true

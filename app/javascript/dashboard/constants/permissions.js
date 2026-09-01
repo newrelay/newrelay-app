@@ -9,6 +9,7 @@ export const AVAILABLE_CUSTOM_ROLE_PERMISSIONS = [
   'marketing_manage',
   'crm_manage',
   'company_manage',
+  'captain_manage',
 ];
 
 export const ROLES = ['agent', 'administrator'];
@@ -40,6 +41,8 @@ export const MARKETING_PERMISSIONS = 'marketing_manage';
 export const CRM_PERMISSIONS = 'crm_manage';
 
 export const COMPANY_PERMISSIONS = 'company_manage';
+
+export const CAPTAIN_PERMISSIONS = 'captain_manage';
 
 export const ASSIGNEE_TYPE_TAB_PERMISSIONS = {
   me: {

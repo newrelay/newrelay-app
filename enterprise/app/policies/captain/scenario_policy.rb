@@ -1,21 +1,31 @@
 class Captain::ScenarioPolicy < ApplicationPolicy
   def index?
-    true
+    readable?
   end
 
   def show?
-    true
+    readable?
   end
 
   def create?
-    @account_user.administrator?
+    manageable?
   end
 
   def update?
-    @account_user.administrator?
+    manageable?
   end
 
   def destroy?
-    @account_user.administrator?
+    manageable?
+  end
+
+  private
+
+  def readable?
+    @account_user.permissions.intersect?(%w[administrator agent captain_manage])
+  end
+
+  def manageable?
+    @account_user.permissions.intersect?(%w[administrator captain_manage])
   end
 end

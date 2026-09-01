@@ -1,42 +1,25 @@
-<%#
-# Edit
-
-This view is the template for the edit page.
-
-It displays a header, and renders the `_form` partial to do the heavy lifting.
-
-## Local variables:
-
-- `page`:
-  An instance of [Administrate::Page::Form][1].
-  Contains helper methods to help display a form,
-  and knows which attributes should be displayed in the resource's form.
-
-[1]: http://www.rubydoc.info/gems/administrate/Administrate/Page/Form
-%>
-
 <% content_for(:title) { t("administrate.actions.edit_resource", name: page.page_title) } %>
 
 <div class="space-y-6 w-full">
-  <div class="page-header flex items-center justify-between mb-6">
+  <div class="page-header">
     <h1 class="page-title">
       <%= content_for(:title) %>
     </h1>
-    <div class="page-actions flex items-center gap-2">
-      <%= link_to polymorphic_path([namespace, page.resource_name.to_s.pluralize.to_sym]), class: "inline-flex h-9 items-center justify-center rounded-md border border-input bg-background px-4 text-sm font-medium text-foreground shadow-xs hover:bg-accent hover:border-ring transition-colors" do %>
+    <div class="page-actions">
+      <%= link_to polymorphic_path([namespace, page.resource_name.to_s.pluralize.to_sym]), class: "btn btn-outline" do %>
         <span>Back</span>
       <% end %>
       <% if accessible_action?(page.resource, :show) %>
         <%= link_to(
           t("administrate.actions.show_resource", name: page.page_title),
           [namespace, page.resource],
-          class: "inline-flex h-9 items-center justify-center rounded-md border border-input bg-background px-4 text-sm font-medium text-foreground shadow-xs hover:bg-accent hover:border-ring transition-colors",
+          class: "btn btn-outline",
         ) %>
       <% end %>
     </div>
   </div>
 
-  <section class="form-card rounded-xl border border-border bg-card p-6 md:p-8 shadow-xs w-full">
+  <section class="form-card">
     <%= render "form", page: page %>
   </section>
 </div>

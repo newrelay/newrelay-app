@@ -7,11 +7,11 @@
   selected_features = field.selected_features
 %>
 
-<div class="field-unit w-full" style="grid-column: 1 / -1; display: block;">
+<div class="field-unit field-unit--wide">
   <div class="feature-section-header">
     <span class="feature-section-title">Manually managed features</span>
   </div>
-  <p class="text-xs italic text-muted-foreground mb-3">Features that remain enabled even when account plan is downgraded</p>
+  <p class="feature-flags-helper">Features that remain enabled even when account plan is downgraded</p>
 
   <%= hidden_field_tag 'account[manually_managed_features][]', '', id: nil %>
 
@@ -19,7 +19,7 @@
     <% premium_features_with_display.each do |feature_key, display_name| %>
       <label class="feature-flag-card">
         <div class="feature-flag-icon-wrap">
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          <%= super_admin_feature_icon(feature_key) %>
         </div>
         <span class="feature-flag-name"><%= display_name %></span>
         <%= check_box_tag 'account[manually_managed_features][]',

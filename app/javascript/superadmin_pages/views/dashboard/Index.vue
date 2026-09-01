@@ -1,4 +1,5 @@
 <script setup>
+/* eslint-disable vue/no-bare-strings-in-template, @intlify/vue-i18n/no-raw-text */
 import { computed } from 'vue';
 import LineChart from 'shared/components/charts/LineChart.vue';
 
@@ -13,11 +14,17 @@ const rawValues = computed(() =>
   (props.componentData.chartData || []).map(item => item[1])
 );
 
+const formatChartLabel = value => {
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return String(value);
+  return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+};
+
 const prepareData = sourceData => {
   const labels = [];
   const data = [];
-  sourceData.forEach(item => {
-    labels.push(item[0]);
+  (sourceData || []).forEach(item => {
+    labels.push(formatChartLabel(item[0]));
     data.push(item[1]);
   });
   return {
@@ -26,32 +33,31 @@ const prepareData = sourceData => {
       {
         label: 'Conversations',
         data,
-        borderColor: 'rgba(91, 91, 214, 1)',
+        fill: true,
+        tension: 0.4,
+        borderWidth: 2.2,
+        pointRadius: 0,
+        pointHoverRadius: 5,
+        pointBorderWidth: 2,
+        pointHoverBorderWidth: 2,
         backgroundColor: ctx => {
           const chart = ctx.chart;
           const { chartArea } = chart;
-          if (!chartArea) return 'rgba(91, 91, 214, 0.15)';
+          const primary =
+            getComputedStyle(document.documentElement)
+              .getPropertyValue('--primary')
+              .trim() || '#4f46e5';
+          if (!chartArea) return `${primary}26`;
           const gradient = chart.ctx.createLinearGradient(
             0,
             chartArea.top,
             0,
             chartArea.bottom
           );
-          gradient.addColorStop(0, 'rgba(91, 91, 214, 0.25)');
-          gradient.addColorStop(1, 'rgba(91, 91, 214, 0)');
+          gradient.addColorStop(0, `${primary}40`);
+          gradient.addColorStop(1, `${primary}00`);
           return gradient;
         },
-        fill: true,
-        tension: 0.4,
-        borderWidth: 2.2,
-        pointRadius: 0,
-        pointHoverRadius: 5,
-        pointBackgroundColor: 'rgba(91, 91, 214, 1)',
-        pointBorderColor: '#fff',
-        pointBorderWidth: 2,
-        pointHoverBackgroundColor: 'rgba(91, 91, 214, 1)',
-        pointHoverBorderColor: '#fff',
-        pointHoverBorderWidth: 2,
       },
     ],
   };
@@ -191,60 +197,65 @@ const stats = [
     </div>
 
     <div
-      class="rounded-xl border border-border bg-card shadow-xs overflow-hidden"
+      class="activity-card rounded-xl border border-border bg-card shadow-xs"
     >
       <div
-        class="px-6 pt-5 pb-4 border-b border-border/40 flex items-start justify-between gap-6 flex-wrap"
+        class="px-6 pt-5 pb-4 border-b border-border flex items-start justify-between gap-6 flex-wrap"
       >
         <div>
-          <h2 class="text-base font-semibold text-foreground">
+          <h2 class="text-base font-medium text-foreground">
             Conversation Activity
           </h2>
-          <p class="text-sm text-muted-foreground mt-0.5">
+          <p class="text-[13.5px] text-muted-foreground mt-0.5">
             Volume of conversations over time
           </p>
         </div>
 
-        <div class="flex items-center divide-x divide-border/60">
-          <div class="pr-5 text-right">
+        <div class="flex items-center gap-8">
+          <div class="text-right">
             <div
-              class="text-xs font-medium text-muted-foreground uppercase tracking-wide"
+              class="text-[11px] font-medium text-muted-foreground uppercase tracking-wide"
             >
               Total
             </div>
-            <div class="text-xl font-bold text-foreground tabular-nums mt-0.5">
+            <div
+              class="text-xl font-semibold text-foreground tabular-nums mt-0.5"
+            >
               {{ totalConversations.toLocaleString() }}
             </div>
           </div>
-          <div class="px-5 text-right">
+          <div class="text-right">
             <div
-              class="text-xs font-medium text-muted-foreground uppercase tracking-wide"
+              class="text-[11px] font-medium text-muted-foreground uppercase tracking-wide"
             >
               Peak
             </div>
-            <div class="text-xl font-bold text-foreground tabular-nums mt-0.5">
+            <div
+              class="text-xl font-semibold text-foreground tabular-nums mt-0.5"
+            >
               {{ peakConversations.toLocaleString() }}
             </div>
           </div>
-          <div class="pl-5 text-right">
+          <div class="text-right">
             <div
-              class="text-xs font-medium text-muted-foreground uppercase tracking-wide"
+              class="text-[11px] font-medium text-muted-foreground uppercase tracking-wide"
             >
               Avg / period
             </div>
-            <div class="text-xl font-bold text-foreground tabular-nums mt-0.5">
+            <div
+              class="text-xl font-semibold text-foreground tabular-nums mt-0.5"
+            >
               {{ avgConversations.toLocaleString() }}
             </div>
           </div>
-          <div v-if="trendPercent !== null" class="pl-5 text-right">
+          <div v-if="trendPercent !== null" class="text-right">
             <div
-              class="text-xs font-medium text-muted-foreground uppercase tracking-wide"
+              class="text-[11px] font-medium text-muted-foreground uppercase tracking-wide"
             >
               Trend
             </div>
             <div
-              class="inline-flex items-center gap-1 text-base font-bold tabular-nums mt-0.5"
-              :class="trendPercent >= 0 ? 'text-success' : 'text-destructive'"
+              class="inline-flex items-center gap-1 text-base font-semibold tabular-nums mt-0.5 text-destructive"
             >
               <span
                 :class="
@@ -261,12 +272,9 @@ const stats = [
         </div>
       </div>
 
-      <!-- eslint-disable-next-line vue/no-static-inline-styles -->
-      <LineChart
-        class="px-4 pt-4 pb-2 w-full"
-        :collection="chartData"
-        style="max-height: 360px"
-      />
+      <div class="h-[320px] w-full px-4 pt-4 pb-2">
+        <LineChart class="h-full w-full" :collection="chartData" />
+      </div>
     </div>
   </div>
 </template>

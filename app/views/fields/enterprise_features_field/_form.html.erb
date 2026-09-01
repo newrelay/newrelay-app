@@ -6,12 +6,12 @@
   regular_keys, premium_keys = available.partition { |key| premium_feature_names.exclude?(key) }
 %>
 
-<div class="field-unit w-full" style="grid-column: 1 / -1; display: block; margin-top: 2rem;">
+<div class="field-unit field-unit--wide">
   <!-- Hidden field to ensure an empty array is sent if all checkboxes are unchecked -->
   <%= hidden_field_tag "#{f.object_name}[#{field.attribute}][]", "" %>
 
   <% if regular_keys.any? %>
-    <div class="feature-section-header flex items-center justify-between mb-4 pb-2 border-b border-border/40">
+    <div class="feature-section-header">
       <span class="feature-section-title text-sm font-semibold text-foreground">Basic Features</span>
       <button type="button" class="btn-toggle-all" onclick="const cbs = document.querySelectorAll('input[data-basic-feature=true]'); const allChecked = Array.from(cbs).every(cb => cb.checked); cbs.forEach(cb => cb.checked = !allChecked); this.innerText = allChecked ? 'Select All' : 'Deselect All';">
         Select All
@@ -23,8 +23,8 @@
         <% is_checked = field.enabled?(feature_key) %>
         <% title = display_names[feature_key] || feature_key.titleize %>
         <label for="feature_<%= feature_key %>" class="feature-flag-card flex items-center gap-2.5 p-2.5 border border-border rounded-xl bg-card hover:bg-accent hover:border-ring transition-all cursor-pointer select-none">
-          <div class="feature-flag-icon-wrap size-8 rounded-lg bg-primary/10 text-primary flex items-center justify-center shrink-0">
-            <svg class="size-4 text-primary" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          <div class="feature-flag-icon-wrap">
+            <%= super_admin_feature_icon(feature_key) %>
           </div>
           <span class="feature-flag-name text-xs font-medium text-foreground truncate flex-1"><%= title %></span>
           <%= check_box_tag "#{f.object_name}[#{field.attribute}][]", feature_key, is_checked, class: "feature-flag-checkbox size-4 rounded border-input text-primary focus:ring-ring cursor-pointer shrink-0 ml-auto", id: "feature_#{feature_key}", data: { basic_feature: true } %>
@@ -34,7 +34,7 @@
   <% end %>
 
   <% if premium_keys.any? %>
-    <div class="feature-section-header flex items-center justify-between mb-4 pb-2 border-b border-border/40">
+    <div class="feature-section-header">
       <span class="feature-section-title premium text-sm font-semibold text-foreground flex items-center gap-1">
         <span class="premium-star text-destructive font-bold text-lg">*</span> Premium Features
       </span>
@@ -48,8 +48,8 @@
         <% is_checked = field.enabled?(feature_key) %>
         <% title = display_names[feature_key] || feature_key.titleize %>
         <label for="feature_<%= feature_key %>" class="feature-flag-card is-premium flex items-center gap-2.5 p-2.5 border border-border rounded-xl bg-card hover:bg-accent hover:border-ring transition-all cursor-pointer select-none relative">
-          <div class="feature-flag-icon-wrap size-8 rounded-lg bg-primary/10 text-primary flex items-center justify-center shrink-0">
-            <svg class="size-4 text-primary" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <div class="feature-flag-icon-wrap">
+            <%= super_admin_feature_icon(feature_key) %>
           </div>
           <span class="feature-flag-name text-xs font-medium text-foreground truncate flex-1"><%= title %></span>
           <%= check_box_tag "#{f.object_name}[#{field.attribute}][]", feature_key, is_checked, class: "feature-flag-checkbox size-4 rounded border-input text-primary focus:ring-ring cursor-pointer shrink-0 ml-auto", id: "feature_#{feature_key}", data: { premium_feature: true } %>

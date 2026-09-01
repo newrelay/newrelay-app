@@ -1,15 +1,15 @@
 <% content_for(:title) { "Cloudflare Domains" } %>
 
 <div class="space-y-6">
-  <div class="page-header mb-6">
+  <div class="page-header">
     <div>
       <h1 class="page-title">Cloudflare Domains</h1>
-      <p class="text-sm text-muted-foreground mt-1">Custom hostnames issued on Cloudflare for this installation.</p>
+      <p class="text-[13.5px] text-muted-foreground mt-1">Custom hostnames issued on Cloudflare for this installation.</p>
     </div>
   </div>
 
   <% if @error.present? %>
-    <div class="rounded-md border border-border bg-muted/30 px-4 py-3 text-sm text-muted-foreground">
+    <div class="rounded-lg border border-border bg-muted/30 px-4 py-3 text-sm text-muted-foreground">
       <%= @error %>
     </div>
   <% end %>
@@ -30,11 +30,29 @@
           <tr><td colspan="5" class="text-muted-foreground text-center py-6">No custom hostnames found on Cloudflare.</td></tr>
         <% end %>
         <% @hostnames.each do |h| %>
+          <% status = h['status'].to_s %>
+          <% ssl_status = h.dig('ssl', 'status').to_s %>
           <tr>
-            <td class="font-medium text-foreground break-all"><%= h['hostname'] %></td>
-            <td><%= h['status'] %></td>
-            <td><%= h.dig('ssl', 'status') %></td>
-            <td class="text-muted-foreground"><%= h['created_at'] %></td>
+            <td class="font-medium text-foreground break-all"><%= h['hostname'].presence || '—' %></td>
+            <td>
+              <% if status.blank? %>
+                <span class="text-muted-foreground">—</span>
+              <% elsif status.match?(/active/i) %>
+                <span class="status-text-active"><%= status %></span>
+              <% else %>
+                <%= status %>
+              <% end %>
+            </td>
+            <td>
+              <% if ssl_status.blank? %>
+                <span class="text-muted-foreground">—</span>
+              <% elsif ssl_status.match?(/active/i) %>
+                <span class="status-text-active"><%= ssl_status %></span>
+              <% else %>
+                <%= ssl_status %>
+              <% end %>
+            </td>
+            <td class="text-muted-foreground"><%= h['created_at'].presence || '—' %></td>
             <td class="text-right">
               <%= button_to "Delete",
                     super_admin_cloudflare_domains_path(hostname: h['hostname']),
@@ -49,4 +67,3 @@
     </table>
   </div>
 </div>
-

@@ -3,12 +3,10 @@
 <% end %>
 
 <div class="space-y-6">
-  <div class="flex items-center justify-between mb-6">
+  <div class="page-header">
     <div>
-      <h1 class="page-title">
-        Enterprise Inquiries
-      </h1>
-      <p class="text-sm text-muted-foreground mt-1">Lead captures and demo requests waiting for review</p>
+      <h1 class="page-title">Enterprise Inquiries</h1>
+      <p class="text-[13.5px] text-muted-foreground mt-1">Lead captures and demo requests waiting for review</p>
     </div>
   </div>
 
@@ -27,37 +25,37 @@
     <p class="text-muted-foreground">No Enterprise plan inquiries have been submitted yet.</p>
   <% else %>
     <div class="table-card mb-6">
-      <table class="w-full text-sm text-left">
-        <thead class="bg-muted/50 border-b border-border text-muted-foreground font-medium">
+      <table>
+        <thead>
           <tr>
-            <th class="px-4 py-3 align-middle font-medium" scope="col">Account</th>
-            <th class="px-4 py-3 align-middle font-medium" scope="col">Requested by</th>
-            <th class="px-4 py-3 align-middle font-medium" scope="col">Company</th>
-            <th class="px-4 py-3 align-middle font-medium" scope="col">Needs</th>
-            <th class="px-4 py-3 align-middle font-medium" scope="col">Status</th>
-            <th class="px-4 py-3 align-middle font-medium" scope="col">Plan</th>
-            <th class="px-4 py-3 align-middle text-right font-medium" scope="col">Actions</th>
+            <th scope="col">Account</th>
+            <th scope="col">Requested by</th>
+            <th scope="col">Company</th>
+            <th scope="col">Needs</th>
+            <th scope="col">Status</th>
+            <th scope="col">Plan</th>
+            <th class="text-right" scope="col">Actions</th>
           </tr>
         </thead>
         <tbody>
           <% @accounts.each do |account| %>
             <% inquiry = Enterprise::Billing::EnterpriseInquiryAttributes.enterprise_inquiry(account) || {} %>
-            <tr class="border-b border-border last:border-0 hover:bg-muted/50 transition-colors">
-              <td class="px-4 py-3 align-middle font-medium text-foreground">
+            <tr>
+              <td class="font-medium text-foreground">
                 <%= link_to "##{account.id} #{account.name}", [namespace, account], class: "hover:underline" %>
                 <div class="text-xs text-muted-foreground mt-0.5">
                   <%= inquiry['requested_at'].present? ? Time.zone.parse(inquiry['requested_at']).strftime('%d %b %Y, %H:%M') : '—' %>
                 </div>
               </td>
-              <td class="px-4 py-3 align-middle text-muted-foreground"><%= inquiry['requested_by'] %></td>
-              <td class="px-4 py-3 align-middle text-muted-foreground">
+              <td class="text-muted-foreground"><%= inquiry['requested_by'].presence || '—' %></td>
+              <td class="text-muted-foreground">
                 <%= inquiry['company_size'].presence || '—' %> employees<br>
                 <%= inquiry['team_size'].presence || '—' %> seats
               </td>
-              <td class="px-4 py-3 align-middle text-muted-foreground max-w-[200px] truncate" title="<%= Array(inquiry['desired_features']).join(', ') %>">
+              <td class="text-muted-foreground max-w-[200px] truncate" title="<%= Array(inquiry['desired_features']).join(', ') %>">
                 <%= Array(inquiry['desired_features']).join(', ').presence || '—' %>
               </td>
-              <td class="px-4 py-3 align-middle">
+              <td>
                 <% if inquiry['rejected_at'].present? %>
                   <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-destructive/10 text-destructive">Rejected</span>
                 <% elsif inquiry['processed_at'].present? %>
@@ -66,7 +64,7 @@
                   <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium badge-warning">Pending</span>
                 <% end %>
               </td>
-              <td class="px-4 py-3 align-middle">
+              <td>
                 <% contract = account.enterprise_contract %>
                 <% if contract.present? %>
                   <% if contract.contract_end_date < Time.zone.today %>
@@ -74,14 +72,14 @@
                   <% elsif contract.contract_start_date > Time.zone.today %>
                     <span class="status-warning">Upcoming</span>
                   <% else %>
-                    <span class="text-success font-medium">Active</span>
+                    <span class="status-text-active">Active</span>
                   <% end %>
                   <div class="text-xs text-muted-foreground mt-0.5"><%= contract.currency %> <%= number_with_precision(contract.negotiated_price, precision: 2) %>/<%= contract.billing_interval == 'annual' ? 'yr' : 'mo' %></div>
                 <% else %>
                   <span class="text-muted-foreground text-xs">No plan yet</span>
                 <% end %>
               </td>
-              <td class="px-4 py-3 align-middle text-right">
+              <td class="text-right">
                 <button 
                   onclick="document.getElementById('inquiry-modal-<%= account.id %>').showModal()"
                   class="btn btn-outline btn-sm reset-base"
@@ -103,7 +101,7 @@
 
                   <div class="inquiry-modal-body space-y-6 text-left">
                       <% if inquiry['message'].present? %>
-                        <div class="bg-muted/50 p-3 rounded-lg border border-border/50 text-sm text-foreground">
+                        <div class="bg-muted/50 p-3 rounded-lg border border-border text-sm text-foreground">
                           <strong class="block text-xs text-muted-foreground mb-1">Message from customer:</strong>
                           <%= inquiry['message'] %>
                         </div>
@@ -119,8 +117,8 @@
                           <%= form_tag send_payment_link_super_admin_enterprise_inquiry_path(account), method: :post, class: 'space-y-3' do %>
                             <div class="flex items-center gap-3">
                               <div class="relative flex-1">
-                                <span class="absolute left-3 top-2 text-muted-foreground"><%= (Enterprise::Billing::EnterpriseInquiryAttributes.stored_custom_attributes(account)['billing_country'].to_s.upcase == 'IN') ? '₹' : '$' %></span>
-                                <%= number_field_tag :monthly_price, contract&.negotiated_price, min: 1, step: 0.01, placeholder: 'e.g. 499', required: true, class: 'w-full rounded-md border border-border bg-background px-3 py-2 pl-7 text-sm focus:ring-2 focus:ring-primary focus:border-transparent' %>
+                                <span class="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"><%= (Enterprise::Billing::EnterpriseInquiryAttributes.stored_custom_attributes(account)['billing_country'].to_s.upcase == 'IN') ? '₹' : '$' %></span>
+                                <%= number_field_tag :monthly_price, contract&.negotiated_price, min: 1, step: 0.01, placeholder: 'e.g. 499', required: true, class: 'form-input !pl-7' %>
                               </div>
                               <div class="flex-1">
                                 <%= select_tag :payment_provider,
@@ -130,7 +128,7 @@
                                       },
                                       Enterprise::Billing::PaymentGatewayRegistry.resolve_provider(country: Enterprise::Billing::EnterpriseInquiryAttributes.stored_custom_attributes(account)['billing_country'])
                                     ),
-                                    class: 'w-full rounded-md border border-border bg-background px-3 py-2 text-sm focus:ring-2 focus:ring-primary focus:border-transparent' %>
+                                    class: 'form-input' %>
                               </div>
                             </div>
                             <%= submit_tag 'Send Link', class: 'btn btn-primary w-full reset-base cursor-pointer' %>
@@ -159,8 +157,10 @@
                             <%= button_to 'Mark as Processed', mark_processed_super_admin_enterprise_inquiry_path(account), method: :post, class: 'btn btn-outline w-full reset-base' %>
                             
                             <%= form_tag reject_super_admin_enterprise_inquiry_path(account), method: :post, class: 'flex gap-2 mt-2' do %>
-                              <%= text_field_tag :note, nil, placeholder: 'Rejection reason (optional)', class: 'flex-1 rounded-md border border-border bg-background px-3 py-2 text-sm focus:ring-2 focus:ring-primary focus:border-transparent' %>
-                              <%= submit_tag 'Reject', class: 'btn btn-danger reset-base cursor-pointer' %>
+                              <div class="flex-1 min-w-0">
+                                <%= text_field_tag :note, nil, placeholder: 'Rejection reason (optional)', class: 'form-input' %>
+                              </div>
+                              <%= submit_tag 'Reject', class: 'btn btn-danger reset-base cursor-pointer shrink-0' %>
                             <% end %>
                           <% end %>
                           

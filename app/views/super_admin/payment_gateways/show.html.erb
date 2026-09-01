@@ -3,10 +3,11 @@
 <% end %>
 
 <div class="space-y-6">
-  <div class="flex items-center justify-between mb-6">
-    <h1 class="page-title">
-      Payment Gateways
-    </h1>
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">Payment Gateways</h1>
+      <p class="text-[13.5px] text-muted-foreground mt-1">Enable or disable payment gateways for cloud billing</p>
+    </div>
   </div>
 
   <% if notice.present? %>
@@ -20,8 +21,8 @@
     </div>
   <% end %>
 
-  <p class="mb-6 text-sm text-muted-foreground max-w-3xl">
-    Enable or disable payment gateways for cloud billing. Search and select country codes to route checkout
+  <p class="mb-6 text-[13.5px] text-muted-foreground max-w-3xl">
+    Search and select country codes to route checkout
     (for example, India → <code>IN</code>). Each country can only be assigned to one enabled gateway.
     Leave country codes empty to use a gateway as the default fallback for countries not matched elsewhere.
     When multiple gateways are enabled, exactly one must be left as the fallback (empty country codes).
@@ -62,7 +63,7 @@
                   <div class="relative">
                     <input
                       type="text"
-                      class="js-country-search block w-full rounded-md border border-input bg-background px-3 py-1.5 text-sm text-foreground focus:border-ring"
+                      class="js-country-search form-input"
                       placeholder="Search country to add..."
                       autocomplete="off"
                     />
@@ -74,7 +75,7 @@
               <td class="uppercase text-foreground font-mono"><%= gateway['currency'] %></td>
               <td>
                 <% if gateway['configured'] %>
-                  <span class="text-success text-sm font-medium">Ready</span>
+                  <span class="status-text-active text-sm font-medium">Ready</span>
                 <% else %>
                   <span class="text-warning text-sm font-medium">Not configured (missing ENV keys)</span>
                 <% end %>
@@ -85,7 +86,7 @@
       </table>
     </div>
 
-    <div class="rounded-xl border border-border bg-card p-4 text-xs text-muted-foreground max-w-3xl mb-6">
+    <div class="show-sub-card text-[13px] text-muted-foreground max-w-3xl">
       <p class="font-semibold text-foreground mb-1">Adding a new gateway later</p>
       <p>
         Register the gateway in
@@ -94,9 +95,8 @@
       </p>
     </div>
 
-    <div class="flex justify-end">
-      <%= submit_tag 'Save gateway settings', class: 'inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors bg-primary text-primary-foreground hover:bg-primary/90 h-9 px-4 py-2 cursor-pointer shadow-xs' %>
+    <div class="form-actions-bar">
+      <%= submit_tag 'Save gateway settings', class: 'btn btn-primary reset-base cursor-pointer' %>
     </div>
   <% end %>
 </div>
-

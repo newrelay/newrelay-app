@@ -31,20 +31,20 @@
             <% end %>
 
             <div class="space-y-1.5">
-              <label class="block text-sm font-medium text-foreground">Email address</label>
+              <label class="block text-[13.5px] font-medium leading-normal text-foreground">Email address</label>
               <%= f.email_field :email, autofocus: true, autocomplete: "email",
                   placeholder: "admin@example.com",
-                  class: "flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring" %>
+                  class: "form-input" %>
             </div>
 
             <div class="space-y-1.5">
-              <label class="block text-sm font-medium text-foreground">Password</label>
+              <label class="block text-[13.5px] font-medium leading-normal text-foreground">Password</label>
               <%= f.password_field :password, autocomplete: "current-password",
                   placeholder: "••••••••",
-                  class: "flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring" %>
+                  class: "form-input" %>
             </div>
 
-            <button type="submit" class="inline-flex mt-1 w-full h-9 items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring cursor-pointer">
+            <button type="submit" class="btn btn-primary w-full mt-1 cursor-pointer">
               Sign in
             </button>
           <% end %>

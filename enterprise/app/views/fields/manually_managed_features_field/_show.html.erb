@@ -7,14 +7,14 @@
   <div class="feature-section-header">
     <span class="feature-section-title">Manually managed features</span>
   </div>
-  <p class="text-xs italic text-muted-foreground mb-3">Features that remain enabled even when account plan is downgraded</p>
+  <p class="feature-flags-helper">Features that remain enabled even when account plan is downgraded</p>
 
   <% if selected_features.present? %>
     <div class="feature-flags-grid">
       <% selected_features.each do |feature| %>
         <div class="feature-flag-card is-read-only is-enabled">
           <div class="feature-flag-icon-wrap">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            <%= super_admin_feature_icon(feature) %>
           </div>
           <span class="feature-flag-name"><%= all_feature_display_names[feature] || feature.humanize %></span>
           <span class="feature-flag-check-badge">
@@ -24,6 +24,6 @@
       <% end %>
     </div>
   <% else %>
-    <p class="text-sm italic text-muted-foreground">No manually managed features configured</p>
+    <p class="text-[13.5px] text-muted-foreground">No manually managed features configured</p>
   <% end %>
 </div>

@@ -10,8 +10,8 @@ window.toggleBillingCouponDiscountFields =
     if (!percentFields || !amountFields) return;
 
     const isAmount = value === 'amount';
-    percentFields.style.display = isAmount ? 'none' : 'flex';
-    amountFields.style.display = isAmount ? 'block' : 'none';
+    percentFields.classList.toggle('hidden', isAmount);
+    amountFields.classList.toggle('hidden', !isAmount);
   };
 
 document.addEventListener('DOMContentLoaded', () => {

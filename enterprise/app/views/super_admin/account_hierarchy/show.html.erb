@@ -4,11 +4,11 @@
   <div class="page-header flex items-center justify-between gap-4 flex-wrap mb-2">
     <div>
       <h1 class="page-title">Account Hierarchy</h1>
-      <p class="text-sm text-muted-foreground mt-1">Parent organizations and linked sub-accounts</p>
+      <p class="text-[13.5px] text-muted-foreground mt-1">Parent organizations and linked sub-accounts</p>
     </div>
     <div class="table-search-wrap relative">
       <svg class="size-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.34-4.34"/></svg>
-      <input id="hierarchySearch" type="search" placeholder="Search accounts" class="table-search h-9 w-64 rounded-md border border-input bg-background pl-9 pr-3 text-sm text-foreground shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring" />
+      <input id="hierarchySearch" type="search" placeholder="Search accounts" class="table-search-input" />
     </div>
   </div>
 
@@ -80,8 +80,8 @@
               </div>
             </div>
             <div class="flex items-center gap-2 shrink-0">
-              <%= link_to 'Billing', account_super_admin_account_hierarchy_path(reseller), class: 'inline-flex h-8 items-center rounded-md px-3 text-xs font-medium text-primary hover:underline' %>
-              <%= link_to 'View Account', super_admin_account_path(reseller), class: 'inline-flex h-8 items-center rounded-md border border-input bg-background px-3 text-xs font-medium text-foreground hover:bg-accent hover:border-ring transition-colors' %>
+              <%= link_to 'Billing', account_super_admin_account_hierarchy_path(reseller), class: 'btn btn-outline btn-sm' %>
+              <%= link_to 'View Account', super_admin_account_path(reseller), class: 'btn btn-outline btn-sm' %>
             </div>
           </div>
 
@@ -102,8 +102,8 @@
                     </div>
                   </div>
                   <div class="flex items-center gap-2 shrink-0">
-                    <%= link_to 'Billing', account_super_admin_account_hierarchy_path(child), class: 'inline-flex h-8 items-center rounded-md px-3 text-xs font-medium text-primary hover:underline' %>
-                    <%= link_to 'View Account', super_admin_account_path(child), class: 'inline-flex h-8 items-center rounded-md border border-input bg-background px-3 text-xs font-medium text-foreground hover:bg-accent hover:border-ring transition-colors' %>
+                    <%= link_to 'Billing', account_super_admin_account_hierarchy_path(child), class: 'btn btn-outline btn-sm' %>
+                    <%= link_to 'View Account', super_admin_account_path(child), class: 'btn btn-outline btn-sm' %>
                   </div>
                 </div>
               <% end %>

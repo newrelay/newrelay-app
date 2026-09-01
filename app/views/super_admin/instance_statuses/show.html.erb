@@ -1,26 +1,24 @@
 <% content_for(:title) { 'Instance Health' } %>
 
 <div class="space-y-6">
-  <div class="page-header mb-6">
+  <div class="page-header">
     <div>
       <h1 class="page-title">Instance Health</h1>
-      <p class="text-sm text-muted-foreground mt-1">Version, database, and Redis diagnostics for this installation.</p>
+      <p class="text-[13.5px] text-muted-foreground mt-1">Version, database, and Redis diagnostics for this installation.</p>
     </div>
   </div>
 
-  <section class="rounded-xl border border-border bg-card text-card-foreground shadow-xs overflow-hidden">
-    <div class="divide-y divide-border/50">
+  <section class="show-details-card">
+    <div class="show-details-inner">
       <% @metrics.each do |key, value| %>
-        <% value_text = value.to_s %>
+        <% value_text = value.to_s.presence || '—' %>
         <% status_class = case value_text
              when 'true', 'completed' then 'status-text-active'
              when 'false', 'pending' then 'status-failed'
              end %>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 px-6 py-4 hover:bg-muted/10 transition-colors">
-          <div class="text-sm font-medium text-muted-foreground capitalize">
-            <%= key.to_s.humanize %>
-          </div>
-          <div class="text-sm md:col-span-2 font-mono break-all <%= status_class.presence || 'text-foreground' %>">
+        <div class="show-row">
+          <div class="show-label"><%= key.to_s.humanize %></div>
+          <div class="show-value font-mono break-all <%= status_class.presence || 'text-foreground' %>">
             <%= value_text %>
           </div>
         </div>

@@ -7,17 +7,17 @@
 
 <%= form_for([namespace, resource], html: { class: 'form billing-coupon-form', id: 'billing-coupon-form' }) do |f| %>
   <% if resource.errors.any? %>
-    <div id="error_explanation">
-      <h2>
+    <div class="rounded-lg bg-destructive/15 p-4 border border-destructive/20 text-sm">
+      <h2 class="font-medium text-destructive mb-2">
         <%= t(
           'administrate.form.errors',
           pluralized_errors: pluralize(resource.errors.count, t('administrate.form.error')),
           resource_name: display_resource_name(page.resource_name, count: 1)
         ) %>
       </h2>
-      <ul>
+      <ul class="list-disc pl-5 space-y-1 text-destructive">
         <% resource.errors.full_messages.each do |message| %>
-          <li class="flash-error"><%= message %></li>
+          <li><%= message %></li>
         <% end %>
       </ul>
     </div>
@@ -56,8 +56,7 @@
 
   <div
     id="billing-coupon-percent-fields"
-    class="field-unit field-unit--number"
-    style="<%= is_amount ? 'display:none;' : '' %>"
+    class="field-unit field-unit--number <%= 'hidden' if is_amount %>"
   >
     <div class="field-unit__label"><%= f.label :percent_off, 'Percent off' %></div>
     <div class="field-unit__field">
@@ -65,7 +64,7 @@
     </div>
   </div>
 
-  <div id="billing-coupon-amount-fields" style="<%= is_amount ? '' : 'display:none;' %>">
+  <div id="billing-coupon-amount-fields" class="<%= 'hidden' unless is_amount %>">
     <div class="field-unit field-unit--number">
       <div class="field-unit__label"><%= f.label :amount_off, 'Amount off' %></div>
       <div class="field-unit__field">
@@ -118,7 +117,7 @@
     </div>
   </div>
 
-  <div class="form-actions">
-    <%= f.submit %>
+  <div class="form-actions-bar">
+    <%= f.submit class: 'btn btn-primary' %>
   </div>
 <% end %>

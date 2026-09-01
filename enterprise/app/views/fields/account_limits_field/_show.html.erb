@@ -1,3 +1,13 @@
-<% JSON.parse(field.to_s).each do |k,v| %>
-<%= k %>: <%= v %> </br>
+<% parsed = JSON.parse(field.to_s) rescue {} %>
+<% if parsed.blank? %>
+  <span class="text-muted-foreground">—</span>
+<% else %>
+  <div class="limits-show-list">
+    <% parsed.each do |key, val| %>
+      <div class="limits-show-row">
+        <span class="limits-show-key"><%= key %>:</span>
+        <span class="limits-show-val"><%= val.presence || '—' %></span>
+      </div>
+    <% end %>
+  </div>
 <% end %>

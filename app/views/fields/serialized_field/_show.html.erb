@@ -1,9 +1,21 @@
 <% if field.array? %>
-  <% field.data.each do |sub_field| %>
-    <div> 
-      <%= sub_field.to_s %>
-    </div>
+  <% if field.data.blank? %>
+    <span class="text-muted-foreground">—</span>
+  <% else %>
+    <% field.data.each do |sub_field| %>
+      <div class="serialized-block">
+        <%= sub_field.to_s %>
+      </div>
+    <% end %>
   <% end %>
+<% elsif field.data.is_a?(Hash) %>
+  <% if field.data.blank? %>
+    <span class="text-muted-foreground">—</span>
+  <% else %>
+    <pre class="serialized-json"><%= JSON.pretty_generate(field.data) %></pre>
+  <% end %>
+<% elsif field.data.blank? %>
+  <span class="text-muted-foreground">—</span>
 <% else %>
-  <%= field.to_s %>
+  <div class="serialized-block"><%= field.to_s %></div>
 <% end %>

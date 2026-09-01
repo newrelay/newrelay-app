@@ -1,26 +1,26 @@
 <% content_for(:title) do %>Push Diagnostics<% end %>
 
 <div class="space-y-6">
-  <div class="flex items-center justify-between mb-6">
+  <div class="page-header">
     <div>
       <h1 class="page-title" id="page-title">Push Diagnostics</h1>
-      <p class="text-sm text-muted-foreground mt-1">Diagnose FCM and Web Push delivery for a specific user</p>
+      <p class="text-[13.5px] text-muted-foreground mt-1">Diagnose FCM and Web Push delivery for a specific user</p>
     </div>
   </div>
 
-  <p class="text-sm text-muted-foreground mb-6">
+  <p class="text-[13.5px] text-muted-foreground">
     Send a test push notification to a specific user's registered devices to diagnose delivery issues.
     Results show the raw FCM / Web Push / relay response so you can see exactly what failed.
   </p>
 
-  <div class="mb-8">
-    <h2 class="text-base font-semibold mb-2">1. Look up user</h2>
-    <%= form_with url: super_admin_push_diagnostics_path, method: :get, local: true, class: 'flex gap-2 items-center' do |f| %>
+  <div>
+    <h2 class="text-base font-medium mb-2">1. Look up user</h2>
+    <%= form_with url: super_admin_push_diagnostics_path, method: :get, local: true, class: 'flex gap-2 items-center max-w-xl' do |f| %>
       <%= f.text_field :user_query,
                        value: @query,
                        placeholder: 'user@example.com or numeric user ID',
-                       class: 'border border-input bg-background p-1.5 rounded-md w-80 text-sm text-foreground focus:border-ring' %>
-      <%= f.submit 'Look up', class: 'inline-flex h-9 items-center rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground hover:bg-primary/90 cursor-pointer' %>
+                       class: 'form-input' %>
+      <%= f.submit 'Look up', class: 'btn btn-primary reset-base cursor-pointer shrink-0' %>
     <% end %>
     <% if @query.present? && @user.nil? %>
       <p class="text-sm text-destructive mt-2">No user found for "<%= @query %>".</p>
@@ -28,7 +28,7 @@
   </div>
 
   <% if @user %>
-    <div class="mb-6 rounded-xl border border-border bg-card p-4 shadow-xs">
+    <section class="show-sub-card">
       <p class="text-sm">
         <strong><%= @user.name %></strong>
         &middot; <%= @user.email %>
@@ -43,10 +43,10 @@
           <% end %>
         </p>
       <% end %>
-    </div>
+    </section>
 
-    <div class="mb-8">
-      <h2 class="text-base font-semibold mb-2">2. Select subscriptions (<%= @subscriptions.count %>)</h2>
+    <div>
+      <h2 class="text-base font-medium mb-2">2. Select subscriptions (<%= @subscriptions.count %>)</h2>
       <p class="text-xs text-warning mb-3">
         ⚠️ This sends a real push to every selected device. Use only when diagnosing a reported issue.
       </p>
@@ -57,125 +57,130 @@
         <%= form_with url: super_admin_push_diagnostics_path, method: :post, local: true do |f| %>
           <%= f.hidden_field :user_id, value: @user.id %>
           <div class="mb-4 max-w-2xl">
-            <div class="mb-3">
-              <%= label_tag :push_title, 'Title', class: 'block text-xs font-medium text-muted-foreground mb-1' %>
+            <div class="mb-3 flex flex-col gap-1.5">
+              <%= label_tag :push_title, 'Title', class: 'text-[13.5px] font-medium leading-normal text-foreground' %>
               <%= text_field_tag :push_title,
                                   params[:push_title].presence || Notification::PushTestService.default_title,
-                                  class: 'border border-border p-1.5 rounded-md w-full text-sm' %>
+                                  class: 'form-input' %>
             </div>
-            <div>
-              <%= label_tag :push_body, 'Body', class: 'block text-xs font-medium text-muted-foreground mb-1' %>
+            <div class="flex flex-col gap-1.5">
+              <%= label_tag :push_body, 'Body', class: 'text-[13.5px] font-medium leading-normal text-foreground' %>
               <%= text_area_tag :push_body,
                                  params[:push_body].presence || Notification::PushTestService.default_body,
                                  rows: 2,
-                                 class: 'border border-border p-1.5 rounded-md w-full text-sm' %>
+                                 class: 'form-input' %>
             </div>
             <p class="text-xs text-muted-foreground mt-1">Customers will see this text as a real push notification on their device.</p>
           </div>
-          <table class="w-full text-sm border border-border rounded-md">
-            <thead class="text-left text-xs text-muted-foreground bg-muted">
-              <tr>
-                <th class="px-3 py-2 align-middle first:!pl-4 last:!pr-4"><input type="checkbox" id="toggle-all"></th>
-                <th class="px-3 py-2 first:!pl-4 last:!pr-4">ID</th>
-                <th class="px-3 py-2 first:!pl-4 last:!pr-4">Type</th>
-                <th class="px-3 py-2 first:!pl-4 last:!pr-4">Device / endpoint</th>
-                <th class="px-3 py-2 first:!pl-4 last:!pr-4">Push token</th>
-                <th class="px-3 py-2 first:!pl-4 last:!pr-4">Device details</th>
-                <th class="px-3 py-2 first:!pl-4 last:!pr-4">Created</th>
-                <th class="px-3 py-2 first:!pl-4 last:!pr-4">Last updated</th>
-              </tr>
-            </thead>
-            <tbody>
-              <% @subscriptions.each do |sub| %>
-                <% attrs = (sub.subscription_attributes || {}).stringify_keys %>
-                <% if sub.browser_push? %>
-                  <% endpoint = attrs['endpoint'].to_s %>
-                  <% host = (begin; URI.parse(endpoint).host; rescue URI::InvalidURIError; nil; end) %>
-                  <% device_display = host.presence || endpoint.presence || '—' %>
-                  <% token_display = endpoint.present? ? "…#{endpoint.last(6)}" : '—' %>
-                <% else %>
-                  <% device_display = attrs['device_id'].present? ? "…#{attrs['device_id'].to_s.last(6)}" : '—' %>
-                  <% token_display = attrs['push_token'].present? ? "…#{attrs['push_token'].to_s.last(6)}" : '—' %>
-                <% end %>
-                <% extra_attrs = attrs.except('endpoint', 'p256dh', 'auth', 'push_token', 'device_id') %>
-                <tr class="border-t border-border align-middle">
-                  <td class="px-3 py-2 first:!pl-4 last:!pr-4">
-                    <%= check_box_tag 'subscription_ids[]', sub.id, false, class: 'subscription-checkbox' %>
-                  </td>
-                  <td class="px-3 py-2 first:!pl-4 last:!pr-4"><%= sub.id %></td>
-                  <td class="px-3 py-2 first:!pl-4 last:!pr-4"><%= sub.subscription_type %></td>
-                  <td class="px-3 py-2 first:!pl-4 last:!pr-4 font-mono text-xs break-all"><%= device_display %></td>
-                  <td class="px-3 py-2 first:!pl-4 last:!pr-4 font-mono text-xs break-all"><%= token_display %></td>
-                  <td class="px-3 py-2 first:!pl-4 last:!pr-4 text-xs align-top">
-                    <% if extra_attrs.present? %>
-                      <% extra_attrs.each do |k, v| %>
-                        <div><span class="text-muted-foreground"><%= k %>:</span> <span class="font-mono"><%= v.to_s.truncate(40) %></span></div>
-                      <% end %>
-                    <% else %>
-                      <span class="text-muted-foreground">—</span>
-                    <% end %>
-                  </td>
-                  <td class="px-3 py-2 first:!pl-4 last:!pr-4 whitespace-nowrap"><%= sub.created_at.strftime('%Y-%m-%d %H:%M') %></td>
-                  <td class="px-3 py-2 first:!pl-4 last:!pr-4 whitespace-nowrap">
-                    <%= sub.updated_at.strftime('%Y-%m-%d %H:%M') %>
-                    <span class="text-xs text-muted-foreground">(<%= time_ago_in_words(sub.updated_at) %> ago)</span>
-                  </td>
+          <div class="table-card">
+            <table>
+              <thead>
+                <tr>
+                  <th><input type="checkbox" id="toggle-all"></th>
+                  <th>ID</th>
+                  <th>Type</th>
+                  <th>Device / endpoint</th>
+                  <th>Push token</th>
+                  <th>Device details</th>
+                  <th>Created</th>
+                  <th>Last updated</th>
                 </tr>
-              <% end %>
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                <% @subscriptions.each do |sub| %>
+                  <% attrs = (sub.subscription_attributes || {}).stringify_keys %>
+                  <% if sub.browser_push? %>
+                    <% endpoint = attrs['endpoint'].to_s %>
+                    <% host = (begin; URI.parse(endpoint).host; rescue URI::InvalidURIError; nil; end) %>
+                    <% device_display = host.presence || endpoint.presence || '—' %>
+                    <% token_display = endpoint.present? ? "…#{endpoint.last(6)}" : '—' %>
+                  <% else %>
+                    <% device_display = attrs['device_id'].present? ? "…#{attrs['device_id'].to_s.last(6)}" : '—' %>
+                    <% token_display = attrs['push_token'].present? ? "…#{attrs['push_token'].to_s.last(6)}" : '—' %>
+                  <% end %>
+                  <% extra_attrs = attrs.except('endpoint', 'p256dh', 'auth', 'push_token', 'device_id') %>
+                  <tr>
+                    <td>
+                      <%= check_box_tag 'subscription_ids[]', sub.id, false, class: 'subscription-checkbox' %>
+                    </td>
+                    <td><%= sub.id %></td>
+                    <td><%= sub.subscription_type %></td>
+                    <td class="font-mono text-xs break-all"><%= device_display %></td>
+                    <td class="font-mono text-xs break-all"><%= token_display %></td>
+                    <td class="text-xs">
+                      <% if extra_attrs.present? %>
+                        <% extra_attrs.each do |k, v| %>
+                          <div><span class="text-muted-foreground"><%= k %>:</span> <span class="font-mono"><%= v.to_s.truncate(40) %></span></div>
+                        <% end %>
+                      <% else %>
+                        <span class="text-muted-foreground">—</span>
+                      <% end %>
+                    </td>
+                    <td class="whitespace-nowrap"><%= sub.created_at.strftime('%Y-%m-%d %H:%M') %></td>
+                    <td class="whitespace-nowrap">
+                      <%= sub.updated_at.strftime('%Y-%m-%d %H:%M') %>
+                      <span class="text-xs text-muted-foreground">(<%= time_ago_in_words(sub.updated_at) %> ago)</span>
+                    </td>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+          </div>
           <div class="mt-4 flex gap-2">
             <%= f.submit 'Send Test Push to Selected',
-                         class: 'inline-flex h-9 items-center rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground hover:bg-primary/90 cursor-pointer' %>
+                         class: 'btn btn-primary reset-base cursor-pointer' %>
             <%= submit_tag 'Delete Selected Subscriptions',
                            formaction: destroy_subscriptions_super_admin_push_diagnostics_path,
                            formmethod: 'post',
                            data: { confirm: "Delete the selected subscription(s)? The user won't receive pushes on those devices until their app re-registers." },
-                           class: 'inline-flex h-9 items-center rounded-md border border-destructive/20 bg-destructive/10 px-4 text-sm font-medium text-destructive hover:bg-destructive/15 cursor-pointer' %>
+                           class: 'btn btn-danger-soft reset-base cursor-pointer' %>
           </div>
         <% end %>
       <% end %>
     </div>
 
     <% if @results.present? %>
-      <div class="mb-8">
-        <h2 class="text-base font-semibold mb-2">3. Results</h2>
-        <table class="w-full text-sm border border-border rounded-md">
-          <thead class="text-left text-xs text-muted-foreground bg-muted">
-            <tr>
-              <th class="px-3 py-2 first:!pl-4 last:!pr-4">Sub ID</th>
-              <th class="px-3 py-2 first:!pl-4 last:!pr-4">Type</th>
-              <th class="px-3 py-2 first:!pl-4 last:!pr-4">Device</th>
-              <th class="px-3 py-2 first:!pl-4 last:!pr-4">Push token</th>
-              <th class="px-3 py-2 first:!pl-4 last:!pr-4">Status</th>
-              <th class="px-3 py-2 first:!pl-4 last:!pr-4">Details</th>
-            </tr>
-          </thead>
-          <tbody>
-            <% @results.each do |r| %>
-              <tr class="border-t border-border align-top">
-                <td class="px-3 py-2 first:!pl-4 last:!pr-4"><%= r[:id] %></td>
-                <td class="px-3 py-2 first:!pl-4 last:!pr-4"><%= r[:type] %></td>
-                <td class="px-3 py-2 first:!pl-4 last:!pr-4 font-mono text-xs break-all"><%= r[:device] %></td>
-                <td class="px-3 py-2 first:!pl-4 last:!pr-4 font-mono text-xs break-all"><%= r[:token_tail] %></td>
-                <td class="px-3 py-2 first:!pl-4 last:!pr-4">
-                  <%
-                    color = {
-                      success: 'bg-success/10 text-success',
-                      failure: 'bg-destructive/10 text-destructive',
-                      skipped: 'bg-muted text-muted-foreground'
-                    }[r[:status]]
-                  %>
-                  <span class="px-2 py-0.5 rounded-full text-xs <%= color %>"><%= r[:status] %></span>
-                </td>
-                <td class="px-3 py-2 first:!pl-4 last:!pr-4 font-mono text-xs break-all whitespace-pre-wrap"><%= r[:message] %></td>
+      <div>
+        <h2 class="text-base font-medium mb-2">3. Results</h2>
+        <div class="table-card">
+          <table>
+            <thead>
+              <tr>
+                <th>Sub ID</th>
+                <th>Type</th>
+                <th>Device</th>
+                <th>Push token</th>
+                <th>Status</th>
+                <th>Details</th>
               </tr>
-            <% end %>
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              <% @results.each do |r| %>
+                <tr>
+                  <td><%= r[:id] %></td>
+                  <td><%= r[:type] %></td>
+                  <td class="font-mono text-xs break-all"><%= r[:device] %></td>
+                  <td class="font-mono text-xs break-all"><%= r[:token_tail] %></td>
+                  <td>
+                    <%
+                      color = {
+                        success: 'bg-success/10 text-success',
+                        failure: 'bg-destructive/10 text-destructive',
+                        skipped: 'bg-muted text-muted-foreground'
+                      }[r[:status]]
+                    %>
+                    <span class="px-2 py-0.5 rounded-full text-xs <%= color %>"><%= r[:status] %></span>
+                  </td>
+                  <td class="font-mono text-xs break-all whitespace-pre-wrap"><%= r[:message] %></td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
       </div>
     <% end %>
   <% end %>
+</div>
 
 <% content_for :javascript do %>
   <script>

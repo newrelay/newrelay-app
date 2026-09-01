@@ -1,22 +1,16 @@
-<%#
-# Account User Form Partial
+<section class="show-sub-card">
+  <div class="show-sub-header">
+    <div>
+      <h3 class="show-sub-title">User</h3>
+      <p class="show-sub-subtitle">Add this <%= resource_type %> to a user or account</p>
+    </div>
+  </div>
 
-This partial renders the account user creation form.
-Used by both account and user show pages.
-
-## Local variables:
-
-- `page`: The Administrate page object (Account or User)
-- `namespace`: The current namespace (usually :super_admin)
-- `resource_type`: Either 'account' or 'user' to determine hidden field
-%>
-
-<section class="main-content__body">
   <% account_user_page = Administrate::Page::Form.new(AccountUserDashboard.new, AccountUser.new) %>
-  <%= form_for([namespace, account_user_page.resource], html: { class: "form" }) do |f| %>
+  <%= form_for([namespace, account_user_page.resource], html: { class: "sa-inline-form" }) do |f| %>
     <% if account_user_page.resource.errors.any? %>
-      <div id="error_explanation">
-        <h2>
+      <div class="rounded-lg bg-destructive/15 p-4 border border-destructive/20 text-sm mb-4">
+        <h2 class="font-medium text-destructive mb-2">
           <%= t(
             "administrate.form.errors",
             pluralized_errors: pluralize(
@@ -26,10 +20,9 @@ Used by both account and user show pages.
             resource_name: display_resource_name(account_user_page.resource_name)
           ) %>
         </h2>
-
-        <ul>
+        <ul class="list-disc pl-5 space-y-1 text-destructive">
           <% account_user_page.resource.errors.full_messages.each do |message| %>
-            <li class="flash-error"><%= message %></li>
+            <li><%= message %></li>
           <% end %>
         </ul>
       </div>
@@ -47,8 +40,8 @@ Used by both account and user show pages.
       <% end %>
     <% end -%>
 
-    <div class="form-actions">
-      <%= f.submit %>
+    <div class="form-actions-bar">
+      <%= f.submit class: "btn btn-primary" %>
     </div>
   <% end %>
 </section>

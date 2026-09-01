@@ -1,7 +1,11 @@
-<section class="rounded-xl border border-border bg-card p-6 shadow-xs">
-  <h3 class="text-base font-semibold text-foreground mb-1">Frontend Cache</h3>
-  <p class="text-sm text-muted-foreground mb-4">Clears the IndexedDB cache keys from Redis. The next page load will fetch fresh data from the backend server.</p>
+<section class="show-sub-card">
+  <div class="show-sub-header">
+    <div>
+      <h3 class="show-sub-title">Frontend Cache</h3>
+      <p class="show-sub-subtitle">Clears IndexedDB cache keys from Redis. The next page load will fetch fresh data from the backend.</p>
+    </div>
+  </div>
   <%= form_for([:reset_cache, namespace, page.resource], method: :post) do |f| %>
-    <%= f.submit 'Reset Frontend Cache', class: "inline-flex h-9 items-center justify-center rounded-md border border-input bg-background px-4 text-sm font-medium text-foreground shadow-xs hover:bg-accent hover:border-ring transition-colors cursor-pointer" %>
+    <%= f.submit 'Reset Frontend Cache', class: "btn btn-outline" %>
   <% end %>
 </section>

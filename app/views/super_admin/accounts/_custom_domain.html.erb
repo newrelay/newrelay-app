@@ -1,24 +1,26 @@
 <% portals_with_domain = page.resource.portals.where.not(custom_domain: [nil, '']) %>
 <% if page.resource.custom_domain.present? || portals_with_domain.any? %>
-  <section class="main-content__body">
-    <hr/>
-    <p class="pb-3">Remove a custom domain mapping. On cloud this also queues Cloudflare hostname cleanup.</p>
+  <section class="show-sub-card">
+    <div class="show-sub-header">
+      <div>
+        <h3 class="show-sub-title">Custom domain</h3>
+        <p class="show-sub-subtitle">Remove a custom domain mapping. On cloud this also queues Cloudflare hostname cleanup.</p>
+      </div>
+    </div>
 
-    <% if page.resource.custom_domain.present? %>
-      <%= form_for([:clear_custom_domain, namespace, page.resource], method: :post, html: { class: "form" }) do |f| %>
-        <div class="form-actions">
-          <%= f.submit "Remove account domain (#{page.resource.custom_domain})" %>
-        </div>
+    <div class="flex flex-col gap-3">
+      <% if page.resource.custom_domain.present? %>
+        <%= form_for([:clear_custom_domain, namespace, page.resource], method: :post) do |f| %>
+          <%= f.submit "Remove account domain (#{page.resource.custom_domain})", class: "btn btn-danger-soft" %>
+        <% end %>
       <% end %>
-    <% end %>
 
-    <% portals_with_domain.each do |portal| %>
-      <%= form_for([:clear_portal_custom_domain, namespace, page.resource], method: :post, html: { class: "form" }) do |f| %>
-        <%= hidden_field_tag :portal_id, portal.id %>
-        <div class="form-actions">
-          <%= f.submit "Remove portal '#{portal.name}' domain (#{portal.custom_domain})" %>
-        </div>
+      <% portals_with_domain.each do |portal| %>
+        <%= form_for([:clear_portal_custom_domain, namespace, page.resource], method: :post) do |f| %>
+          <%= hidden_field_tag :portal_id, portal.id %>
+          <%= f.submit "Remove portal '#{portal.name}' domain (#{portal.custom_domain})", class: "btn btn-danger-soft" %>
+        <% end %>
       <% end %>
-    <% end %>
+    </div>
   </section>
 <% end %>

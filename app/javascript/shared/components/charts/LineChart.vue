@@ -1,5 +1,5 @@
 <script setup>
-import { computed } from 'vue';
+import { computed, onMounted, onUnmounted, ref } from 'vue';
 import { Line } from 'vue-chartjs';
 import {
   Chart as ChartJS,
@@ -36,56 +36,124 @@ ChartJS.register(
 const fontFamily =
   'Geist,-apple-system,system-ui,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif';
 
-const defaultChartOptions = {
-  responsive: true,
-  maintainAspectRatio: false,
-  animation: { duration: 400 },
-  interaction: { mode: 'index', intersect: false },
-  plugins: {
-    legend: { display: false },
-    tooltip: {
-      backgroundColor: 'rgba(24, 29, 39, 0.92)',
-      padding: 10,
-      cornerRadius: 8,
-      titleFont: { family: fontFamily, size: 12 },
-      bodyFont: { family: fontFamily, size: 13, weight: 'bold' },
-      callbacks: {
-        label: context => `Conversations: ${context.parsed.y}`,
-      },
-    },
-  },
-  scales: {
-    x: {
-      ticks: {
-        font: { family: fontFamily, size: 10.5 },
-        color: '#94a3b8',
-        maxRotation: 45,
-        minRotation: 45,
-      },
-      grid: { display: false },
-      border: { display: false },
-    },
-    y: {
-      type: 'linear',
-      position: 'left',
-      beginAtZero: true,
-      ticks: {
-        font: { family: fontFamily, size: 11 },
-        color: '#9ca3af',
-        stepSize: 1,
-      },
-      grid: { color: 'rgba(148, 163, 184, 0.18)' },
-      border: { display: false },
-    },
-  },
+const themeTick = ref(0);
+
+const cssVar = (name, fallback) => {
+  if (typeof document === 'undefined') return fallback;
+  return (
+    getComputedStyle(document.documentElement).getPropertyValue(name).trim() ||
+    fallback
+  );
 };
 
+const chartTheme = computed(() => ({
+  primary: cssVar('--primary', '#4f46e5'),
+  muted: cssVar('--muted-foreground', '#6c727e'),
+  border: cssVar('--border', '#e4e7ee'),
+  popover: cssVar('--popover', '#ffffff'),
+  popoverFg: cssVar('--popover-foreground', '#141822'),
+  card: cssVar('--card', '#ffffff'),
+  revision: themeTick.value,
+}));
+
+const themedCollection = computed(() => {
+  const { primary, card } = chartTheme.value;
+  const source = props.collection || {};
+  const datasets = (source.datasets || []).map(dataset => ({
+    ...dataset,
+    borderColor: primary,
+    pointBackgroundColor: primary,
+    pointHoverBackgroundColor: primary,
+    pointBorderColor: card,
+    pointHoverBorderColor: card,
+    clip: false,
+  }));
+  return { ...source, datasets };
+});
+
+const defaultChartOptions = computed(() => {
+  const { muted, border, popover, popoverFg, primary } = chartTheme.value;
+  return {
+    responsive: true,
+    maintainAspectRatio: false,
+    animation: { duration: 400 },
+    interaction: { mode: 'index', intersect: false },
+    layout: {
+      padding: { top: 16, right: 8, bottom: 12, left: 4 },
+    },
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        backgroundColor: popover,
+        titleColor: muted,
+        bodyColor: popoverFg,
+        borderColor: border,
+        borderWidth: 1,
+        padding: 10,
+        cornerRadius: 8,
+        displayColors: true,
+        boxPadding: 4,
+        titleFont: { family: fontFamily, size: 12, weight: '500' },
+        bodyFont: { family: fontFamily, size: 13, weight: '600' },
+        callbacks: {
+          label: context => `Conversations: ${context.parsed.y}`,
+        },
+      },
+    },
+    scales: {
+      x: {
+        ticks: {
+          font: { family: fontFamily, size: 11 },
+          color: muted,
+          maxRotation: 0,
+          minRotation: 0,
+          autoSkip: true,
+          maxTicksLimit: 10,
+          padding: 8,
+        },
+        grid: { display: false },
+        border: { display: false },
+      },
+      y: {
+        type: 'linear',
+        position: 'left',
+        beginAtZero: true,
+        ticks: {
+          font: { family: fontFamily, size: 11 },
+          color: muted,
+          stepSize: 1,
+          padding: 6,
+        },
+        grid: { color: border },
+        border: { display: false },
+      },
+    },
+    elements: {
+      point: {
+        hoverBorderColor: primary,
+      },
+    },
+  };
+});
+
 const options = computed(() => ({
-  ...defaultChartOptions,
+  ...defaultChartOptions.value,
   ...props.chartOptions,
 }));
+
+const onThemeChange = () => {
+  themeTick.value += 1;
+};
+
+onMounted(() => {
+  window.addEventListener('nr-theme-changed', onThemeChange);
+});
+
+onUnmounted(() => {
+  window.removeEventListener('nr-theme-changed', onThemeChange);
+});
 </script>
 
 <template>
-  <Line :data="collection" :options="options" />
+  <Line :data="themedCollection" :options="options" />
 </template>

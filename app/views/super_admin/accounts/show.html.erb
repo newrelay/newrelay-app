@@ -3,8 +3,8 @@
 %>
 
 <div class="space-y-6">
-  <div class="flex items-center gap-3 mb-6">
-    <%= link_to super_admin_accounts_path, class: "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md border border-input bg-background text-sm font-medium text-foreground hover:bg-accent hover:border-ring transition-colors" do %>
+  <div class="page-header">
+    <%= link_to super_admin_accounts_path, class: "btn btn-outline" do %>
       <svg class="size-4" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
       <span>Back</span>
     <% end %>
@@ -13,7 +13,7 @@
     </h1>
     <% if accessible_action?(page.resource, :edit) %>
       <div class="ml-auto">
-        <%= link_to [:edit, namespace, page.resource], class: "inline-flex h-9 items-center justify-center rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground shadow-xs hover:bg-primary/90 transition-colors gap-2" do %>
+        <%= link_to [:edit, namespace, page.resource], class: "btn btn-primary" do %>
           <svg class="size-4" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg>
           <span>Edit Account</span>
         <% end %>
@@ -21,30 +21,35 @@
     <% end %>
   </div>
 
-
-  <section class="rounded-xl border border-border bg-card text-card-foreground shadow-xs overflow-hidden">
-    <div class="divide-y divide-border/50">
+  <section class="show-details-card">
+    <div class="show-details-inner">
       <% page.attributes.each do |title, attributes| %>
         <% if title.present? %>
-          <div class="bg-muted/30 px-6 py-3">
-            <h3 class="text-sm font-medium text-muted-foreground uppercase tracking-wider">
-              <%= t "helpers.label.#{page.resource_name}.#{title}", default: title %>
-            </h3>
-          </div>
+          <h3 class="show-section-title">
+            <%= t "helpers.label.#{page.resource_name}.#{title}", default: title %>
+          </h3>
         <% end %>
 
         <% attributes.each do |attribute| %>
           <% if %w[all_features manually_managed_features].include?(attribute.name.to_s) %>
-            <div class="px-6 py-6 attribute-data attribute-data--<%= attribute.html_class %>" id="<%= attribute.name %>">
+            <div class="show-feature-block attribute-data attribute-data--<%= attribute.html_class %>" id="<%= attribute.name %>">
               <%= render_field attribute, page: page %>
             </div>
           <% else %>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 px-6 py-4 hover:bg-muted/10 transition-colors">
-              <div class="text-sm font-medium text-muted-foreground" id="<%= attribute.name %>">
+            <div class="show-row">
+              <div class="show-label" id="<%= attribute.name %>">
                 <%= t("helpers.label.#{resource_name}.#{attribute.name}", default: page.resource.class.human_attribute_name(attribute.name)) %>
               </div>
-              <div class="text-sm text-foreground md:col-span-2 attribute-data attribute-data--<%= attribute.html_class %> break-words">
-                <%= render_field attribute, page: page %>
+              <div class="show-value attribute-data attribute-data--<%= attribute.html_class %>">
+                <% if attribute.name.to_s == 'status' %>
+                  <span class="<%= attribute.data.to_s == 'suspended' ? 'text-muted-foreground font-medium' : 'status-text-active' %>">
+                    <%= render_field attribute, page: page %>
+                  </span>
+                <% elsif super_admin_blank_value?(attribute.data) %>
+                  <span class="text-muted-foreground">—</span>
+                <% else %>
+                  <%= render_field attribute, page: page %>
+                <% end %>
               </div>
             </div>
           <% end %>

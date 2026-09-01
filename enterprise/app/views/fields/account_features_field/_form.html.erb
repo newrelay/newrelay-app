@@ -1,7 +1,7 @@
 <% regular_features, premium_features = SuperAdmin::AccountFeaturesHelper.partition_features(field.data || {}) %>
 <% premium_disabled = ChatwootHub.pricing_plan == 'community' %>
 
-<div class="field-unit w-full" style="grid-column: 1 / -1; display: block;">
+<div class="field-unit field-unit--wide">
   <% if regular_features.any? %>
     <div class="feature-section-header">
       <span class="feature-section-title">Basic Features</span>
@@ -14,7 +14,7 @@
         <% feature_key, display_name = key_array %>
         <label class="feature-flag-card">
           <div class="feature-flag-icon-wrap">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            <%= super_admin_feature_icon(feature_key) %>
           </div>
           <span class="feature-flag-name"><%= display_name %></span>
           <%= check_box 'enabled_features', "feature_#{feature_key}", { checked: enabled, class: 'feature-flag-checkbox basic-feature-checkbox' }, true, false %>
@@ -37,7 +37,7 @@
         <% feature_key, display_name = key_array %>
         <label class="feature-flag-card is-premium">
           <div class="feature-flag-icon-wrap">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            <%= super_admin_feature_icon(feature_key) %>
           </div>
           <span class="feature-flag-name"><%= display_name %></span>
           <%= check_box 'enabled_features', "feature_#{feature_key}", { checked: enabled, disabled: premium_disabled, class: 'feature-flag-checkbox premium-feature-checkbox' }, true, false %>

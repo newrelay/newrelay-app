@@ -12,13 +12,13 @@
       <%= content_for(:title) %>
     </h1>
     <div class="page-actions">
-      <%= link_to :back, class: "inline-flex h-9 items-center justify-center rounded-md border border-input bg-background px-4 text-sm font-medium text-foreground shadow-xs hover:bg-accent hover:border-ring transition-colors" do %>
+      <%= link_to :back, class: "btn btn-outline" do %>
         <span><%= t('administrate.actions.back') %></span>
       <% end %>
     </div>
   </div>
 
-  <section class="form-card rounded-xl border border-border bg-card p-6 md:p-8 shadow-xs w-full">
+  <section class="form-card">
     <%= render 'form', page: page %>
   </section>
 </div>

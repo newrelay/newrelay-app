@@ -1,26 +1,8 @@
-<%#
-# Show
-
-This view is the template for the show page.
-It renders the attributes of a resource,
-as well as a link to its edit page.
-
-## Local variables:
-
-- `page`:
-  An instance of [Administrate::Page::Show][1].
-  Contains methods for accessing the resource to be displayed on the page,
-  as well as helpers for describing how each attribute of the resource
-  should be displayed.
-
-[1]: http://www.rubydoc.info/gems/administrate/Administrate/Page/Show
-%>
-
 <% content_for(:title) { t("administrate.actions.show_resource", name: page.page_title) } %>
 
 <div class="space-y-6">
-  <div class="flex items-center gap-3 mb-6">
-    <%= link_to super_admin_users_path, class: "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md border border-input bg-background text-sm font-medium text-foreground hover:bg-accent hover:border-ring transition-colors" do %>
+  <div class="page-header">
+    <%= link_to super_admin_users_path, class: "btn btn-outline" do %>
       <svg class="size-4" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
       <span>Back</span>
     <% end %>
@@ -29,7 +11,7 @@ as well as a link to its edit page.
     </h1>
     <% if authorized_action?(page.resource, :edit) %>
       <div class="ml-auto">
-        <%= link_to [:edit, namespace, page.resource.becomes(User)], class: "inline-flex h-9 items-center justify-center rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground shadow-xs hover:bg-primary/90 transition-colors gap-2" do %>
+        <%= link_to [:edit, namespace, page.resource.becomes(User)], class: "btn btn-primary" do %>
           <svg class="size-4" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg>
           <span>Edit User</span>
         <% end %>
@@ -37,28 +19,24 @@ as well as a link to its edit page.
     <% end %>
   </div>
 
-
-  <section class="rounded-xl border border-border bg-card text-card-foreground shadow-xs overflow-hidden">
-    <div class="divide-y divide-border/50">
+  <section class="show-details-card">
+    <div class="show-details-inner">
       <% page.attributes.each do |title, attributes| %>
         <% if title.present? %>
-          <div class="bg-muted/30 px-6 py-3">
-            <h3 class="text-sm font-medium text-muted-foreground uppercase tracking-wider">
-              <%= t "helpers.label.#{page.resource_name}.#{title}", default: title %>
-            </h3>
-          </div>
+          <h3 class="show-section-title">
+            <%= t "helpers.label.#{page.resource_name}.#{title}", default: title %>
+          </h3>
         <% end %>
 
         <% attributes.each do |attribute| %>
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-4 px-6 py-4 hover:bg-muted/10 transition-colors">
-            <div class="text-sm font-medium text-muted-foreground" id="<%= attribute.name %>">
+          <div class="show-row">
+            <div class="show-label" id="<%= attribute.name %>">
               <%= t(
                 "helpers.label.#{resource_name}.#{attribute.name}",
                 default: page.resource.class.human_attribute_name(attribute.name),
               ) %>
             </div>
-
-            <div class="text-sm text-foreground md:col-span-2 attribute-data attribute-data--<%=attribute.html_class%> break-words">
+            <div class="show-value attribute-data attribute-data--<%=attribute.html_class%>">
               <% if attribute.name.to_s == 'access_token' %>
                 <% token = page.resource.access_token&.token %>
                 <% if token.present? %>
@@ -72,9 +50,13 @@ as well as a link to its edit page.
                       <svg width="16" height="16" class="fill-current"><use xlink:href="#icon-copy" /></svg>
                     </button>
                   </div>
-                <% else %>
+                <% elsif super_admin_blank_value?(attribute.data) %>
                   <span class="text-muted-foreground">—</span>
+                <% else %>
+                  <%= render_field attribute, page: page %>
                 <% end %>
+              <% elsif super_admin_blank_value?(attribute.data) %>
+                <span class="text-muted-foreground">—</span>
               <% else %>
                 <%= render_field attribute, page: page %>
               <% end %>
@@ -83,16 +65,15 @@ as well as a link to its edit page.
         <% end %>
       <% end %>
 
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 px-6 py-4 hover:bg-muted/10 transition-colors">
-        <dt class="text-sm font-medium text-muted-foreground attribute-label" id="mfa_enabled">MFA</dt>
-        <dd class="text-sm text-foreground md:col-span-2 attribute-data attribute-data--string break-words">
+      <div class="show-row">
+        <div class="show-label" id="mfa_enabled">MFA</div>
+        <div class="show-value">
           <% mfa_enabled = page.resource.mfa_enabled? %>
-          <span class="<%= mfa_enabled ? 'bg-success/10 text-success' : 'bg-muted text-muted-foreground' %> inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium">
+          <span class="<%= mfa_enabled ? 'status-text-active' : 'text-muted-foreground' %> font-medium">
             <%= mfa_enabled ? 'Enabled' : 'Disabled' %>
           </span>
-        </dd>
+        </div>
       </div>
-
     </div>
   </section>
 

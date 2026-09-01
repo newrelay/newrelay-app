@@ -1,5 +1,5 @@
-<div class="field-unit w-full" style="grid-column: 1 / -1; display: block; margin-top: 1.5rem;">
-  <div class="mb-4 pb-2 border-b border-border/40">
+<div class="field-unit field-unit--wide">
+  <div class="mb-4 pb-2 border-b border-border">
     <h3 class="text-sm font-semibold text-foreground">Limits</h3>
   </div>
 
@@ -7,7 +7,7 @@
     <% field.available_limits.each do |key, display_name| %>
       <div class="limit-field-group flex flex-col gap-1.5">
         <label for="limit_<%= key %>" class="limit-field-label text-xs font-medium text-muted-foreground"><%= display_name.downcase %>:</label>
-        <%= number_field_tag "#{f.object_name}[#{field.attribute}][#{key}]", field.limit_value(key), min: 0, class: "form-input flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm shadow-xs text-foreground focus:border-ring transition-colors", id: "limit_#{key}" %>
+        <%= number_field_tag "#{f.object_name}[#{field.attribute}][#{key}]", field.limit_value(key), min: 0, class: "form-input", id: "limit_#{key}" %>
       </div>
     <% end %>
   </div>

@@ -1,5 +1,7 @@
 # PRD: Social Media Comment-to-DM Automation (OpenReply Alternative)
 
+> **Superseded 2026-09-01** — see [`comment-to-dm-automation-prd.md`](comment-to-dm-automation-prd.md). This proposal's core idea (extend `AutomationRule` with `send_dm`/`reply_to_comment` actions) was reviewed against the current codebase and rejected: `AutomationRule` has no comment/lead concepts today and is enterprise-audited, so extending it is more invasive than building an isolated module. Kept here for history only.
+
 ## 1. Overview
 The goal is to build an automation feature similar to **OpenReply** (or ManyChat) directly into the Chatwoot/NewRelay platform. This feature will allow businesses to automatically send Direct Messages (DMs) or publicly reply to users who comment on their Instagram Posts/Reels or Facebook Posts with specific keywords. 
 

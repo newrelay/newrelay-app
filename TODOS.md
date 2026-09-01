@@ -1,5 +1,19 @@
 # TODOS
 
+## Comment-to-DM automation
+
+### Generalize short-link infra
+
+**What:** Extract `comment_automation_short_links` + its redirect controller into a feature-agnostic short-link service (e.g. `app/services/short_link/`) other modules can point at.
+
+**Why:** No short-link precedent exists anywhere in this repo today (confirmed by full-repo grep during the 2026-09-01 CEO review of the comment-to-DM automation plan). Comment automation will be the first and only consumer at launch — generalizing now would be speculative.
+
+**Context:** CEO review 2026-09-01, `docs/solution-notes/comment-to-dm-automation-prd.md` §11. Do this once a second real consumer (CRM, reputation, etc.) needs tracked redirects — not before.
+
+**Effort:** M (human) → S (CC)
+**Priority:** P3
+**Depends on:** A second consumer actually needing it
+
 ## Reputation isolation
 
 ### ADR 0005 reputation tenant isolation

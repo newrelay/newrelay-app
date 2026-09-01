@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2026_09_01_053000) do
+ActiveRecord::Schema[7.1].define(version: 2026_09_02_000000) do
   # These extensions should be enabled to support this database
   enable_extension "pg_stat_statements"
   enable_extension "pg_trgm"
@@ -670,6 +670,50 @@ ActiveRecord::Schema[7.1].define(version: 2026_09_01_053000) do
     t.jsonb "message_templates", default: {}
     t.datetime "message_templates_last_updated", precision: nil
     t.index ["phone_number"], name: "index_channel_whatsapp_on_phone_number", unique: true
+  end
+
+  create_table "comment_automation_campaigns", force: :cascade do |t|
+    t.bigint "account_id", null: false
+    t.bigint "inbox_id", null: false
+    t.string "name", null: false
+    t.string "post_id", null: false
+    t.boolean "is_active", default: true, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["account_id", "post_id"], name: "index_comment_automation_campaigns_on_account_id_and_post_id"
+    t.index ["account_id"], name: "index_comment_automation_campaigns_on_account_id"
+    t.index ["inbox_id"], name: "index_comment_automation_campaigns_on_inbox_id"
+  end
+
+  create_table "comment_automation_message_logs", force: :cascade do |t|
+    t.bigint "trigger_id", null: false
+    t.bigint "account_id", null: false
+    t.bigint "inbox_id", null: false
+    t.bigint "contact_id"
+    t.string "comment_id", null: false
+    t.string "commenter_id", null: false
+    t.integer "status", default: 0, null: false
+    t.datetime "sent_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["account_id"], name: "index_comment_automation_message_logs_on_account_id"
+    t.index ["contact_id"], name: "index_comment_automation_message_logs_on_contact_id"
+    t.index ["inbox_id", "comment_id"], name: "index_ca_msg_logs_on_inbox_comment", unique: true
+    t.index ["inbox_id"], name: "index_comment_automation_message_logs_on_inbox_id"
+    t.index ["trigger_id"], name: "index_comment_automation_message_logs_on_trigger_id"
+  end
+
+  create_table "comment_automation_triggers", force: :cascade do |t|
+    t.bigint "campaign_id", null: false
+    t.bigint "account_id", null: false
+    t.string "keyword"
+    t.integer "match_type", default: 0, null: false
+    t.text "public_replies", default: [], null: false, array: true
+    t.text "dm_text_body", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["account_id"], name: "index_comment_automation_triggers_on_account_id"
+    t.index ["campaign_id"], name: "index_comment_automation_triggers_on_campaign_id"
   end
 
   create_table "commission_rules", force: :cascade do |t|
@@ -1818,6 +1862,14 @@ ActiveRecord::Schema[7.1].define(version: 2026_09_01_053000) do
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "billing_activity_logs", "accounts"
   add_foreign_key "billing_activity_logs", "users"
+  add_foreign_key "comment_automation_campaigns", "accounts"
+  add_foreign_key "comment_automation_campaigns", "inboxes"
+  add_foreign_key "comment_automation_message_logs", "accounts"
+  add_foreign_key "comment_automation_message_logs", "comment_automation_triggers", column: "trigger_id"
+  add_foreign_key "comment_automation_message_logs", "contacts"
+  add_foreign_key "comment_automation_message_logs", "inboxes"
+  add_foreign_key "comment_automation_triggers", "accounts"
+  add_foreign_key "comment_automation_triggers", "comment_automation_campaigns", column: "campaign_id"
   add_foreign_key "commission_rules", "accounts"
   add_foreign_key "commission_rules", "users", column: "created_by_user_id"
   add_foreign_key "connected_accounts", "accounts"

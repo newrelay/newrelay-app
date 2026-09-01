@@ -16,6 +16,11 @@ RSpec.describe Channel::Instagram do
     expect(channel.name).to eq('Instagram')
   end
 
+  it 'subscribes to comment webhooks in addition to messages' do
+    expect(WebMock).to have_requested(:post, "https://graph.instagram.com/v22.0/#{channel.instagram_id}/subscribed_apps")
+      .with(query: { access_token: channel.access_token, subscribed_fields: %w[messages message_reactions messaging_seen comments] })
+  end
+
   describe 'concerns' do
     it_behaves_like 'reauthorizable'
 

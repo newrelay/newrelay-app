@@ -1,7 +1,8 @@
 class CommentAutomation::DmDispatchJob < ApplicationJob
   queue_as :default
 
-  NETWORK_ERRORS = [Net::ReadTimeout, Net::OpenTimeout, HTTParty::Error, SocketError].freeze
+  NETWORK_ERRORS = [Net::ReadTimeout, Net::OpenTimeout, HTTParty::Error, SocketError,
+                    Errno::ECONNREFUSED, OpenSSL::SSL::SSLError, Timeout::Error].freeze
 
   def perform(message_log_id)
     log = CommentAutomation::MessageLog.find_by(id: message_log_id)

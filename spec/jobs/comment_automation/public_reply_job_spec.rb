@@ -41,6 +41,13 @@ RSpec.describe CommentAutomation::PublicReplyJob do
     expect(log.reload.status).to eq 'dm_failed'
   end
 
+  it 'marks the log dm_failed when the connection is refused' do
+    stub_request(:post, reply_url).to_raise(Errno::ECONNREFUSED)
+
+    expect { described_class.perform_now(log.id) }.not_to have_enqueued_job(CommentAutomation::DmDispatchJob)
+    expect(log.reload.status).to eq 'dm_failed'
+  end
+
   it 'does nothing if the log is not pending' do
     log.update!(status: :engaged)
 

@@ -1343,7 +1343,7 @@ watch(() => route.params.listingId, async () => {
             </div>
 
             <div class="bg-primary text-primary-foreground rounded-xl p-6 shadow-xs flex flex-col gap-4">
-              <h3 class="text-base font-medium">Monthly Summary</h3>
+              <h3 class="text-base font-medium text-primary-foreground">Monthly Summary</h3>
               <div class="grid grid-cols-2 gap-4">
                 <div class="flex flex-col gap-0.5">
                   <span class="text-[22px] font-bold leading-none">{{ reviewStats.total }}</span>

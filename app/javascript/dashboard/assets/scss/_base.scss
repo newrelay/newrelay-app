@@ -2,13 +2,18 @@
 
 // Base typography
 // -------------------------
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
-  @apply font-medium text-n-slate-12;
+// Layered so Relay/new-ui Tailwind text-color utilities (e.g. text-primary-foreground
+// on a card title) can override the default heading color — see the same fix for
+// button/field-base below and in _relay-theme.scss.
+@layer base {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply font-medium text-n-slate-12;
+  }
 }
 
 p {

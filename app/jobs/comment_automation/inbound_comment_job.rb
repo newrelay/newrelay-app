@@ -19,7 +19,7 @@ class CommentAutomation::InboundCommentJob < ApplicationJob
   end
 
   def process_comment(inbox, comment)
-    return if comment[:id].blank?
+    return if comment[:id].blank? || comment.dig(:from, :id).blank?
 
     campaign = CommentAutomation::Campaign.find_by(account_id: inbox.account_id, post_id: comment.dig(:media, :id), is_active: true)
     return if campaign.blank?

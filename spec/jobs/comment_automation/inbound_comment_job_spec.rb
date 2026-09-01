@@ -39,6 +39,13 @@ RSpec.describe CommentAutomation::InboundCommentJob do
     expect { described_class.perform_now([comment_entry(media_id: 'some-other-post')]) }.not_to change(CommentAutomation::MessageLog, :count)
   end
 
+  it 'does nothing for a comment missing a commenter id' do
+    malformed = comment_entry
+    malformed['changes'][0]['value'].delete('from')
+
+    expect { described_class.perform_now([malformed]) }.not_to change(CommentAutomation::MessageLog, :count)
+  end
+
   it 'does not create a second log or enqueue a second reply for a duplicate comment_id' do
     described_class.perform_now([comment_entry])
 

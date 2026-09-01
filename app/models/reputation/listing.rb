@@ -46,7 +46,7 @@ class Reputation::Listing < ApplicationRecord
   validates :name, presence: true
 
   def photo_urls
-    photos.map { |photo| url_for(photo) }
+    photos.map { |photo| { id: photo.id, url: url_for(photo) } }
   end
 end
 

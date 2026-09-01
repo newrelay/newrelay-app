@@ -32,6 +32,7 @@ import {
   ArrowRight,
   Sparkles,
   Users,
+  Trash2,
 } from 'lucide-vue-next';
 import ListingMembersPanel from '../components/ListingMembersPanel.vue';
 import {
@@ -560,6 +561,21 @@ async function uploadPhotos(event) {
   } finally {
     uploadingPhotos.value = false;
     event.target.value = '';
+  }
+}
+
+const deletingPhotoId = ref(null);
+async function deletePhoto(photo) {
+  if (!listing.value || usingMock.value) return;
+  if (!confirm('Delete this photo?')) return;
+  deletingPhotoId.value = photo.id;
+  try {
+    const { data } = await axios.delete(`${baseUrl()}/listings/${listing.value.id}/photos/${photo.id}`);
+    listing.value = mapListing(data);
+  } catch {
+    useAlert('Failed to delete photo');
+  } finally {
+    deletingPhotoId.value = null;
   }
 }
 
@@ -1151,8 +1167,16 @@ watch(() => route.params.listingId, () => {
               </label>
             </div>
             <div v-if="listing.photoUrls.length" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
-              <div v-for="url in listing.photoUrls" :key="url" class="aspect-square rounded-xl overflow-hidden border border-border bg-muted">
-                <img :src="url" class="w-full h-full object-cover" />
+              <div v-for="photo in listing.photoUrls" :key="photo.id" class="group relative aspect-square rounded-xl overflow-hidden border border-border bg-muted">
+                <img :src="photo.url" class="w-full h-full object-cover" />
+                <button
+                  type="button"
+                  class="absolute top-1.5 right-1.5 size-6 rounded-full bg-black/60 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity disabled:opacity-60"
+                  :disabled="deletingPhotoId === photo.id"
+                  @click="deletePhoto(photo)"
+                >
+                  <Trash2 class="size-3.5" />
+                </button>
               </div>
             </div>
             <p v-else class="text-[13.5px] text-muted-foreground">No photos uploaded yet.</p>

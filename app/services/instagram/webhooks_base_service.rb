@@ -38,6 +38,16 @@ class Instagram::WebhooksBaseService
     @contact.update!(additional_attributes: @contact.additional_attributes.merge(instagram_attributes))
   end
 
+  # Runs on every inbound DM, not just contact creation: `ensure_contact` only fires for a
+  # contact's first message, so returning contacts would otherwise never get attributed.
+  # `contacts_first_message?` always sets @contact_inbox (found-or-nil) as a side effect.
+  def attribute_comment_automation(commenter_id)
+    @contact ||= @contact_inbox&.contact
+    return if @contact.blank?
+
+    apply_comment_automation_attribution(commenter_id)
+  end
+
   def apply_comment_automation_attribution(commenter_id)
     return if @contact.custom_attributes['comment_automation_campaign_id'].present?
 

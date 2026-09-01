@@ -67,6 +67,31 @@ RSpec.describe Instagram::MessageText do
     end
   end
 
+  context 'when the commenter already has a contact_inbox' do
+    # The returning-contact path: `ensure_contact` is skipped entirely because
+    # `contacts_first_message?` is false, so attribution has to happen in `perform`.
+    let!(:contact_inbox) { channel.create_contact_inbox('commenter-1', 'Jane') }
+    let!(:log) do
+      create(:comment_automation_message_log, trigger: trigger, account: account, inbox: inbox,
+                                              comment_id: 'comment-1', commenter_id: 'commenter-1', status: :dm_sent)
+    end
+    let(:messaging) do
+      { sender: { id: 'commenter-1' }, recipient: { id: 'ig-account-1' },
+        timestamp: Time.current.to_i, message: { mid: 'mid-1', text: 'hey' } }.with_indifferent_access
+    end
+
+    it 'attributes the campaign and engages the log without creating the contact' do
+      described_class.new(messaging, channel).perform
+
+      expect(contact_inbox.contact.reload.custom_attributes).to include(
+        'comment_automation_campaign_id' => campaign.id,
+        'comment_automation_trigger_id' => trigger.id
+      )
+      expect(log.reload.status).to eq 'engaged'
+      expect(log.contact).to eq contact_inbox.contact
+    end
+  end
+
   context 'when the commenter has no comment automation log' do
     it 'creates the contact without touching custom_attributes' do
       service.ensure_contact('commenter-1')

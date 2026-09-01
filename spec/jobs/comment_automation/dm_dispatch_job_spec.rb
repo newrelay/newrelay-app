@@ -64,7 +64,15 @@ RSpec.describe CommentAutomation::DmDispatchJob do
   it 'requeues instead of sending when the inbox is over the rate limit' do
     allow_any_instance_of(CommentAutomation::RateLimiter).to receive(:within_limit?).and_return(false) # rubocop:disable RSpec/AnyInstance
 
-    expect { described_class.perform_now(log.id) }.to have_enqueued_job(described_class).with(log.id)
+    expect { described_class.perform_now(log.id) }.to have_enqueued_job(described_class).with(log.id, 1)
+  end
+
+  it 'marks the log dm_failed instead of requeueing forever once the rate limit attempts are exhausted' do
+    allow_any_instance_of(CommentAutomation::RateLimiter).to receive(:within_limit?).and_return(false) # rubocop:disable RSpec/AnyInstance
+
+    expect { described_class.perform_now(log.id, described_class::MAX_RATE_LIMIT_ATTEMPTS) }
+      .not_to have_enqueued_job(described_class)
+    expect(log.reload.status).to eq 'dm_failed'
   end
 
   it 'does nothing if the log is not public_replied' do

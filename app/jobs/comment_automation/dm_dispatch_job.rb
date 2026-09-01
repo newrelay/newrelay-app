@@ -4,13 +4,16 @@ class CommentAutomation::DmDispatchJob < ApplicationJob
   NETWORK_ERRORS = [Net::ReadTimeout, Net::OpenTimeout, HTTParty::Error, SocketError,
                     Errno::ECONNREFUSED, OpenSSL::SSL::SSLError, Timeout::Error].freeze
 
-  def perform(message_log_id)
+  # ~30s of tolerance for a transient Redis blip (the rate limiter fails closed) before giving up.
+  MAX_RATE_LIMIT_ATTEMPTS = 30
+
+  def perform(message_log_id, rate_limit_attempt = 0)
     log = CommentAutomation::MessageLog.find_by(id: message_log_id)
     return if log.blank? || !log.public_replied?
 
     rate_limiter = CommentAutomation::RateLimiter.new(inbox: log.inbox)
     unless rate_limiter.within_limit?
-      self.class.set(wait: 1.second).perform_later(message_log_id)
+      requeue_for_rate_limit(log, rate_limit_attempt)
       return
     end
 
@@ -49,8 +52,21 @@ class CommentAutomation::DmDispatchJob < ApplicationJob
     )
   end
 
+  def requeue_for_rate_limit(log, rate_limit_attempt)
+    return fail_log(log, "rate limit not cleared after #{MAX_RATE_LIMIT_ATTEMPTS} attempts") if rate_limit_attempt >= MAX_RATE_LIMIT_ATTEMPTS
+
+    Rails.logger.info(
+      "[comment_automation] event=rate_limited campaign_id=#{log.trigger.campaign_id} " \
+      "trigger_id=#{log.trigger_id} comment_id=#{log.comment_id} attempt=#{rate_limit_attempt}"
+    )
+    self.class.set(wait: 1.second).perform_later(log.id, rate_limit_attempt + 1)
+  end
+
   def fail_log(log, error)
     log.update!(status: :dm_failed)
-    Rails.logger.error("[comment_automation] event=dm_failed comment_id=#{log.comment_id} error=#{error}")
+    Rails.logger.error(
+      "[comment_automation] event=dm_failed campaign_id=#{log.trigger.campaign_id} " \
+      "trigger_id=#{log.trigger_id} comment_id=#{log.comment_id} error=#{error}"
+    )
   end
 end

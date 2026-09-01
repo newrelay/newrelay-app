@@ -70,6 +70,20 @@ RSpec.describe 'Webhooks::InstagramController', type: :request do
         expect(CommentAutomation::InboundCommentJob).to have_received(:perform_later).with(comment_params[:entry].map(&:deep_stringify_keys))
         expect(Webhooks::InstagramEventsJob).not_to have_received(:perform_later)
       end
+
+      it 'resolves the channel from the comment entry so a per-channel app secret verifies the signature' do
+        channel = create(:channel_instagram, account: create(:account), instagram_id: 'ig-account-1')
+        channel_secret = 'per-channel-secret'
+        allow_any_instance_of(Webhooks::InstagramController).to receive(:channel_meta_app_secrets) do |_controller, resolved| # rubocop:disable RSpec/AnyInstance
+          resolved == channel ? [channel_secret] : []
+        end
+        allow(CommentAutomation::InboundCommentJob).to receive(:perform_later)
+
+        post_instagram_webhook(comment_body, signature: signature_for(comment_body, channel_secret), env: {})
+
+        expect(response).to have_http_status(:success)
+        expect(CommentAutomation::InboundCommentJob).to have_received(:perform_later)
+      end
     end
 
     it 'still routes a message-only payload to Webhooks::InstagramEventsJob and not to CommentAutomation::InboundCommentJob' do

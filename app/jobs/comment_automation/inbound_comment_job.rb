@@ -8,7 +8,7 @@ class CommentAutomation::InboundCommentJob < ApplicationJob
   private
 
   def process_entry(entry)
-    channel = Channel::Instagram.find_by(instagram_id: entry[:id]) || Channel::FacebookPage.find_by(instagram_id: entry[:id])
+    channel = Channel::Instagram.find_by(instagram_id: entry[:id])
     return if channel.blank? || channel.inbox.blank?
 
     Array(entry[:changes]).each do |change|
@@ -21,7 +21,8 @@ class CommentAutomation::InboundCommentJob < ApplicationJob
   def process_comment(inbox, comment)
     return if comment[:id].blank? || comment.dig(:from, :id).blank?
 
-    campaign = CommentAutomation::Campaign.find_by(account_id: inbox.account_id, post_id: comment.dig(:media, :id), is_active: true)
+    campaign = CommentAutomation::Campaign.find_by(account_id: inbox.account_id, inbox_id: inbox.id,
+                                                   post_id: comment.dig(:media, :id), is_active: true)
     return if campaign.blank?
 
     trigger = CommentAutomation::MatchEngine.new(campaign: campaign, comment: comment).match
@@ -40,7 +41,10 @@ class CommentAutomation::InboundCommentJob < ApplicationJob
       comment_id: comment[:id], commenter_id: comment.dig(:from, :id)
     )
   rescue ActiveRecord::RecordNotUnique
-    Rails.logger.info("[comment_automation] event=duplicate_comment comment_id=#{comment[:id]}")
+    Rails.logger.info(
+      "[comment_automation] event=duplicate_comment campaign_id=#{trigger.campaign_id} " \
+      "trigger_id=#{trigger.id} comment_id=#{comment[:id]}"
+    )
     nil
   end
 end

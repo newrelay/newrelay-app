@@ -42,7 +42,7 @@ class CommentAutomation::PublicReplyJob < ApplicationJob
 
   def post_reply(log, text)
     HTTParty.post(
-      "https://graph.instagram.com/#{GlobalConfigService.load('INSTAGRAM_API_VERSION', 'v22.0')}/#{log.comment_id}/replies",
+      "https://graph.instagram.com/#{GlobalConfigService.load('INSTAGRAM_API_VERSION', 'v22.0')}/#{CGI.escape(log.comment_id)}/replies",
       body: { message: text },
       query: { access_token: log.inbox.channel.access_token }
     )
@@ -50,6 +50,9 @@ class CommentAutomation::PublicReplyJob < ApplicationJob
 
   def fail_log(log, error)
     log.update!(status: :dm_failed)
-    Rails.logger.error("[comment_automation] event=public_reply_failed comment_id=#{log.comment_id} error=#{error}")
+    Rails.logger.error(
+      "[comment_automation] event=public_reply_failed campaign_id=#{log.trigger.campaign_id} " \
+      "trigger_id=#{log.trigger_id} comment_id=#{log.comment_id} error=#{error}"
+    )
   end
 end

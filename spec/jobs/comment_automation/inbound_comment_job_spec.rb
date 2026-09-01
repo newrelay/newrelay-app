@@ -39,6 +39,16 @@ RSpec.describe CommentAutomation::InboundCommentJob do
     expect { described_class.perform_now([comment_entry(media_id: 'some-other-post')]) }.not_to change(CommentAutomation::MessageLog, :count)
   end
 
+  it 'ignores a campaign on a different inbox that happens to share the post_id' do
+    other_inbox = create(:channel_instagram, account: account, instagram_id: 'ig-account-2').inbox
+    other_campaign = create(:comment_automation_campaign, account: account, inbox: other_inbox, post_id: 'media-2')
+    create(:comment_automation_trigger, campaign: other_campaign, account: account, keyword: 'price', match_type: :contains)
+    campaign.update!(post_id: 'media-2')
+
+    expect { described_class.perform_now([comment_entry(media_id: 'media-2')]) }.to change(CommentAutomation::MessageLog, :count).by(1)
+    expect(CommentAutomation::MessageLog.last.trigger).to eq trigger
+  end
+
   it 'does nothing for a comment missing a commenter id' do
     malformed = comment_entry
     malformed['changes'][0]['value'].delete('from')

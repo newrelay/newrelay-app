@@ -83,6 +83,10 @@ class Webhooks::InstagramController < ActionController::API
   end
 
   def instagram_ids_from_entry(entry)
+    # Comment entries carry the connected account's instagram id at the top level,
+    # not nested under a sender/recipient the way messaging entries do.
+    return [entry[:id]].compact if entry[:changes].present?
+
     messages = entry[:messaging].presence || entry[:standby] || []
     messages.filter_map { |messaging| instagram_id_from_messaging(messaging.with_indifferent_access) }
   end

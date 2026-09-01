@@ -42,7 +42,9 @@
       "REPORT_MANAGE": "Manage reports",
       "KNOWLEDGE_BASE_MANAGE": "Manage knowledge base",
       "REPUTATION_MANAGE": "Manage reputation",
-      "MARKETING_MANAGE": "Manage marketing"
+      "MARKETING_MANAGE": "Manage marketing",
+      "CRM_MANAGE": "Manage deals and pipelines",
+      "COMPANY_MANAGE": "Manage companies"
     },
     "FORM": {
       "NAME": {

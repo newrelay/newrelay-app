@@ -1,26 +1,26 @@
 class CompanyPolicy < ApplicationPolicy
   def index?
-    true
+    allowed?
   end
 
   def search?
-    true
+    allowed?
   end
 
   def show?
-    true
+    allowed?
   end
 
   def create?
-    true
+    allowed?
   end
 
   def import?
-    true
+    allowed?
   end
 
   def update?
-    true
+    allowed?
   end
 
   def avatar?
@@ -32,6 +32,12 @@ class CompanyPolicy < ApplicationPolicy
   end
 
   def destroy?
-    @account_user.administrator?
+    @account_user.permissions.intersect?(%w[administrator company_manage])
+  end
+
+  private
+
+  def allowed?
+    @account_user.permissions.intersect?(%w[administrator agent company_manage])
   end
 end

@@ -58,7 +58,10 @@ export const routes = [
         path: 'companies',
         name: 'contacts_dashboard_companies',
         component: CompaniesView,
-        meta: commonMeta,
+        meta: {
+          featureFlag: FEATURE_FLAGS.CRM,
+          permissions: ['administrator', 'agent', 'company_manage'],
+        },
       },
     ],
   },

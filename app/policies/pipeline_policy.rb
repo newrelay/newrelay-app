@@ -1,21 +1,27 @@
 class PipelinePolicy < ApplicationPolicy
   def index?
-    true
+    allowed?
   end
 
   def show?
-    true
+    allowed?
   end
 
   def create?
-    @account_user.administrator? || @account_user.agent?
+    allowed?
   end
 
   def update?
-    @account_user.administrator? || @account_user.agent?
+    allowed?
   end
 
   def destroy?
-    @account_user.administrator?
+    @account_user.permissions.intersect?(%w[administrator crm_manage])
+  end
+
+  private
+
+  def allowed?
+    @account_user.permissions.intersect?(%w[administrator agent crm_manage])
   end
 end

@@ -25,6 +25,8 @@
 # - 'knowledge_base_manage': Can manage knowledge base portals.
 # - 'reputation_manage': Can manage reputation (reviews, requests, listings, video).
 # - 'marketing_manage': Can manage campaigns and other marketing tools.
+# - 'crm_manage': Can manage deals, pipelines, and opportunities.
+# - 'company_manage': Can manage companies.
 
 class CustomRole < ApplicationRecord
   belongs_to :account
@@ -39,6 +41,8 @@ class CustomRole < ApplicationRecord
     knowledge_base_manage
     reputation_manage
     marketing_manage
+    crm_manage
+    company_manage
   ].freeze
 
   validates :name, presence: true

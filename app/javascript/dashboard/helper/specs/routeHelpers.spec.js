@@ -32,6 +32,16 @@ describe('#defaultRedirectPage', () => {
     expect(defaultRedirectPage(to, permissions)).toBe('accounts/2/contacts');
   });
 
+  it('should return companies route for users with company permissions', () => {
+    const permissions = ['company_manage'];
+    expect(defaultRedirectPage(to, permissions)).toBe('accounts/2/companies');
+  });
+
+  it('should return deals route for users with crm permissions', () => {
+    const permissions = ['crm_manage'];
+    expect(defaultRedirectPage(to, permissions)).toBe('accounts/2/deals');
+  });
+
   it('should return reports route for users with report permissions', () => {
     const permissions = ['report_manage'];
     expect(defaultRedirectPage(to, permissions)).toBe(

@@ -18,5 +18,15 @@ RSpec.describe CustomRole, type: :model do
       role = build(:custom_role, permissions: ['marketing_manage'])
       expect(role).to be_valid
     end
+
+    it 'allows crm_manage' do
+      role = build(:custom_role, permissions: ['crm_manage'])
+      expect(role).to be_valid
+    end
+
+    it 'allows company_manage' do
+      role = build(:custom_role, permissions: ['company_manage'])
+      expect(role).to be_valid
+    end
   end
 end

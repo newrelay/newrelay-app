@@ -12,6 +12,8 @@ import {
   PORTAL_PERMISSIONS,
   REPUTATION_PERMISSIONS,
   MARKETING_PERMISSIONS,
+  CRM_PERMISSIONS,
+  COMPANY_PERMISSIONS,
 } from 'dashboard/constants/permissions.js';
 
 export const routeIsAccessibleFor = (route, userPermissions = []) => {
@@ -28,6 +30,8 @@ export const defaultRedirectPage = (to, permissions) => {
       path: 'dashboard',
     },
     { permissions: [CONTACT_PERMISSIONS], path: 'contacts' },
+    { permissions: [COMPANY_PERMISSIONS], path: 'companies' },
+    { permissions: [CRM_PERMISSIONS], path: 'deals' },
     { permissions: [REPORTS_PERMISSIONS], path: 'reports/overview' },
     { permissions: [PORTAL_PERMISSIONS], path: 'portals' },
     { permissions: [REPUTATION_PERMISSIONS], path: 'reputation/overview' },

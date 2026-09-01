@@ -74,10 +74,11 @@
             <% is_account = attr_name == 'account' %>
             <td class="<%= index.zero? ? 'text-muted-foreground' : 'text-foreground' %>">
               <% if is_name && resource.respond_to?(:avatar_url) %>
+                <% row_avatar_url = resource.avatar_url %>
                 <div class="table-user-cell">
                   <div class="table-avatar">
-                    <% if resource.avatar_url.present? %>
-                      <%= image_tag resource.avatar_url, alt: '', class: 'size-full object-cover' %>
+                    <% if row_avatar_url.present? %>
+                      <%= image_tag row_avatar_url, alt: '', class: 'size-full object-cover' %>
                     <% else %>
                       <span class="table-avatar-placeholder"><%= table_initials.call(resource.try(:name)) %></span>
                     <% end %>

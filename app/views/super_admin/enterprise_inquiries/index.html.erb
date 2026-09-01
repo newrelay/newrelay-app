@@ -6,7 +6,7 @@
   <div class="page-header">
     <div>
       <h1 class="page-title">Enterprise Inquiries</h1>
-      <p class="text-[13.5px] text-muted-foreground mt-1">Lead captures and demo requests waiting for review</p>
+      <p class="text-[13.5px] text-muted-foreground mt-1">Review incoming enterprise plan upgrade requests, generate custom payment checkout links, and process contracts</p>
     </div>
   </div>
 
@@ -30,30 +30,44 @@
           <tr>
             <th scope="col">Account</th>
             <th scope="col">Requested by</th>
-            <th scope="col">Company</th>
-            <th scope="col">Needs</th>
+            <th scope="col">Seats</th>
+            <th scope="col">Features</th>
+            <th scope="col">Message</th>
+            <th scope="col">Requested at</th>
             <th scope="col">Status</th>
             <th scope="col">Plan</th>
-            <th class="text-right" scope="col">Actions</th>
+            <th scope="col">Payment link</th>
+            <th scope="col">Actions</th>
           </tr>
         </thead>
         <tbody>
           <% @accounts.each do |account| %>
             <% inquiry = Enterprise::Billing::EnterpriseInquiryAttributes.enterprise_inquiry(account) || {} %>
+            <% contract = account.enterprise_contract %>
+            <% stored_attrs = Enterprise::Billing::EnterpriseInquiryAttributes.stored_custom_attributes(account) %>
+            <% billing_symbol = stored_attrs['billing_country'].to_s.upcase == 'IN' ? '₹' : '$' %>
+            <% default_provider = Enterprise::Billing::PaymentGatewayRegistry.resolve_provider(country: stored_attrs['billing_country']) %>
+            <% features_text = Array(inquiry['desired_features']).join(', ') %>
+            <% open_inquiry = inquiry['processed_at'].blank? && inquiry['rejected_at'].blank? %>
             <tr>
-              <td class="font-medium text-foreground">
-                <%= link_to "##{account.id} #{account.name}", [namespace, account], class: "hover:underline" %>
-                <div class="text-xs text-muted-foreground mt-0.5">
-                  <%= inquiry['requested_at'].present? ? Time.zone.parse(inquiry['requested_at']).strftime('%d %b %Y, %H:%M') : '—' %>
-                </div>
+              <td class="font-medium text-foreground whitespace-nowrap">
+                <%= link_to "#{account.name} ##{account.id}", [namespace, account], class: 'hover:underline' %>
               </td>
-              <td class="text-muted-foreground"><%= inquiry['requested_by'].presence || '—' %></td>
               <td class="text-muted-foreground">
-                <%= inquiry['company_size'].presence || '—' %> employees<br>
-                <%= inquiry['team_size'].presence || '—' %> seats
+                <div><%= inquiry['requested_by'].presence || '—' %></div>
+                <% if inquiry['company_size'].present? %>
+                  <div class="text-xs"><%= inquiry['company_size'] %> size</div>
+                <% end %>
               </td>
-              <td class="text-muted-foreground max-w-[200px] truncate" title="<%= Array(inquiry['desired_features']).join(', ') %>">
-                <%= Array(inquiry['desired_features']).join(', ').presence || '—' %>
+              <td class="text-muted-foreground"><%= inquiry['team_size'].presence || '—' %></td>
+              <td class="text-muted-foreground max-w-[160px] truncate" title="<%= features_text %>">
+                <%= features_text.presence || '—' %>
+              </td>
+              <td class="text-muted-foreground max-w-[140px] truncate" title="<%= inquiry['message'] %>">
+                <%= inquiry['message'].presence || '—' %>
+              </td>
+              <td class="text-muted-foreground whitespace-nowrap">
+                <%= inquiry['requested_at'].present? ? Time.zone.parse(inquiry['requested_at']).strftime('%d %b %Y %H:%M') : '—' %>
               </td>
               <td>
                 <% if inquiry['rejected_at'].present? %>
@@ -65,7 +79,6 @@
                 <% end %>
               </td>
               <td>
-                <% contract = account.enterprise_contract %>
                 <% if contract.present? %>
                   <% if contract.contract_end_date < Time.zone.today %>
                     <span class="text-destructive font-medium">Expired</span>
@@ -74,101 +87,62 @@
                   <% else %>
                     <span class="status-text-active">Active</span>
                   <% end %>
-                  <div class="text-xs text-muted-foreground mt-0.5"><%= contract.currency %> <%= number_with_precision(contract.negotiated_price, precision: 2) %>/<%= contract.billing_interval == 'annual' ? 'yr' : 'mo' %></div>
+                  <div class="text-xs text-muted-foreground mt-0.5 whitespace-nowrap">
+                    <%= contract.currency %> <%= number_with_precision(contract.negotiated_price, precision: 2) %>/<%= contract.billing_interval == 'annual' ? 'yr' : 'mo' %>
+                    <% if contract.contract_end_date.present? %>
+                      until <%= contract.contract_end_date.strftime('%d %b %Y') %>
+                    <% end %>
+                  </div>
+                  <%= link_to 'Edit plan', [:edit, namespace, contract], class: 'text-xs text-primary hover:underline' %>
                 <% else %>
                   <span class="text-muted-foreground text-xs">No plan yet</span>
                 <% end %>
               </td>
-              <td class="text-right">
-                <button 
-                  onclick="document.getElementById('inquiry-modal-<%= account.id %>').showModal()"
-                  class="btn btn-outline btn-sm reset-base"
-                >
-                  Manage
-                </button>
-
-                <!-- HTML5 Dialog Modal -->
-                <dialog id="inquiry-modal-<%= account.id %>" class="inquiry-modal">
-                  <div class="inquiry-modal-header">
-                    <div>
-                      <h2 class="inquiry-modal-title">Manage Inquiry</h2>
-                      <p class="inquiry-modal-desc">Account: <%= account.name %> (#<%= account.id %>)</p>
+              <td class="min-w-[220px]">
+                <% if inquiry['payment_link_sent_at'].present? %>
+                  <div class="text-xs text-success">
+                    Sent (<%= billing_symbol %><%= inquiry['payment_link_amount'] %>/mo)
+                    <% if inquiry['payment_link_sent_by'].present? %>
+                      by <%= inquiry['payment_link_sent_by'] %>
+                    <% end %>
+                    on <%= Time.zone.parse(inquiry['payment_link_sent_at']).strftime('%d %b %Y') %>
+                  </div>
+                <% else %>
+                  <%= form_tag send_payment_link_super_admin_enterprise_inquiry_path(account), method: :post, class: 'flex flex-col gap-1.5' do %>
+                    <div class="relative">
+                      <span class="absolute left-2.5 top-1/2 -translate-y-1/2 text-xs text-muted-foreground"><%= billing_symbol %></span>
+                      <%= number_field_tag :monthly_price, contract&.negotiated_price, min: 1, step: 0.01, placeholder: 'e.g. 499', required: true, class: 'form-input !pl-6' %>
                     </div>
-                    <button type="button" onclick="document.getElementById('inquiry-modal-<%= account.id %>').close()" class="modal-close-btn reset-base">
-                      <span class="i-lucide-x size-5 block"></span>
-                    </button>
-                  </div>
-
-                  <div class="inquiry-modal-body space-y-6 text-left">
-                      <% if inquiry['message'].present? %>
-                        <div class="bg-muted/50 p-3 rounded-lg border border-border text-sm text-foreground">
-                          <strong class="block text-xs text-muted-foreground mb-1">Message from customer:</strong>
-                          <%= inquiry['message'] %>
-                        </div>
+                    <%= select_tag :payment_provider,
+                        options_for_select(
+                          @payment_gateways.map { |gateway|
+                            ["#{Enterprise::Billing::PaymentGatewayRegistry.label_for(gateway['id'])} (#{Enterprise::Billing::PaymentGatewayRegistry.currency_for(gateway['id']).upcase})", gateway['id']]
+                          },
+                          default_provider
+                        ),
+                        class: 'form-input' %>
+                    <%= submit_tag 'Send link', class: 'btn btn-primary btn-sm reset-base cursor-pointer w-full' %>
+                  <% end %>
+                <% end %>
+              </td>
+              <td class="min-w-[180px]">
+                <div class="flex flex-col gap-1.5">
+                  <% if open_inquiry %>
+                    <%= button_to 'Mark processed', mark_processed_super_admin_enterprise_inquiry_path(account), method: :post, class: 'btn btn-outline btn-sm reset-base w-full' %>
+                    <%= form_tag reject_super_admin_enterprise_inquiry_path(account), method: :post, class: 'flex flex-col gap-1.5' do %>
+                      <%= text_field_tag :note, nil, placeholder: 'Rejection reason', class: 'form-input' %>
+                      <%= submit_tag 'Reject', class: 'btn btn-danger btn-sm reset-base cursor-pointer w-full' %>
+                    <% end %>
+                  <% elsif inquiry['rejected_at'].present? %>
+                    <div class="text-xs text-muted-foreground">
+                      by <%= inquiry['rejected_by'] %>
+                      <% if inquiry['rejection_note'].present? %>
+                        <span class="block truncate" title="<%= inquiry['rejection_note'] %>">“<%= inquiry['rejection_note'] %>”</span>
                       <% end %>
-
-                      <div class="border-t border-border pt-4">
-                        <h3 class="text-sm font-medium mb-3 text-foreground">Payment Link</h3>
-                        <% if inquiry['payment_link_sent_at'].present? %>
-                          <div class="text-sm text-success bg-success/10 p-3 rounded-md border border-success/20">
-                            Sent ($<%= inquiry['payment_link_amount'] %>/mo) by <%= inquiry['payment_link_sent_by'] %> on <%= Time.zone.parse(inquiry['payment_link_sent_at']).strftime('%d %b %Y') %>
-                          </div>
-                        <% else %>
-                          <%= form_tag send_payment_link_super_admin_enterprise_inquiry_path(account), method: :post, class: 'space-y-3' do %>
-                            <div class="flex items-center gap-3">
-                              <div class="relative flex-1">
-                                <span class="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"><%= (Enterprise::Billing::EnterpriseInquiryAttributes.stored_custom_attributes(account)['billing_country'].to_s.upcase == 'IN') ? '₹' : '$' %></span>
-                                <%= number_field_tag :monthly_price, contract&.negotiated_price, min: 1, step: 0.01, placeholder: 'e.g. 499', required: true, class: 'form-input !pl-7' %>
-                              </div>
-                              <div class="flex-1">
-                                <%= select_tag :payment_provider,
-                                    options_for_select(
-                                      @payment_gateways.map { |gateway|
-                                        ["#{Enterprise::Billing::PaymentGatewayRegistry.label_for(gateway['id'])} (#{Enterprise::Billing::PaymentGatewayRegistry.currency_for(gateway['id']).upcase})", gateway['id']]
-                                      },
-                                      Enterprise::Billing::PaymentGatewayRegistry.resolve_provider(country: Enterprise::Billing::EnterpriseInquiryAttributes.stored_custom_attributes(account)['billing_country'])
-                                    ),
-                                    class: 'form-input' %>
-                              </div>
-                            </div>
-                            <%= submit_tag 'Send Link', class: 'btn btn-primary w-full reset-base cursor-pointer' %>
-                          <% end %>
-                        <% end %>
-                      </div>
-
-                      <div class="border-t border-border pt-4">
-                        <h3 class="text-sm font-medium mb-3 text-foreground">Inquiry Status</h3>
-                        
-                        <% if inquiry['rejected_at'].present? %>
-                          <div class="text-sm text-destructive bg-destructive/10 p-3 rounded-md border border-destructive/20 mb-4">
-                            Rejected by <%= inquiry['rejected_by'] %> on <%= Time.zone.parse(inquiry['rejected_at']).strftime('%d %b %Y') %><br>
-                            <% if inquiry['rejection_note'].present? %>
-                              <span class="text-muted-foreground mt-1 block">"<%= inquiry['rejection_note'] %>"</span>
-                            <% end %>
-                          </div>
-                        <% elsif inquiry['processed_at'].present? %>
-                          <div class="text-sm text-success bg-success/10 p-3 rounded-md border border-success/20 mb-4">
-                            Processed by <%= inquiry['processed_by'] %> on <%= Time.zone.parse(inquiry['processed_at']).strftime('%d %b %Y') %>
-                          </div>
-                        <% end %>
-
-                        <div class="flex flex-col gap-2">
-                          <% unless inquiry['processed_at'].present? || inquiry['rejected_at'].present? %>
-                            <%= button_to 'Mark as Processed', mark_processed_super_admin_enterprise_inquiry_path(account), method: :post, class: 'btn btn-outline w-full reset-base' %>
-                            
-                            <%= form_tag reject_super_admin_enterprise_inquiry_path(account), method: :post, class: 'flex gap-2 mt-2' do %>
-                              <div class="flex-1 min-w-0">
-                                <%= text_field_tag :note, nil, placeholder: 'Rejection reason (optional)', class: 'form-input' %>
-                              </div>
-                              <%= submit_tag 'Reject', class: 'btn btn-danger reset-base cursor-pointer shrink-0' %>
-                            <% end %>
-                          <% end %>
-                          
-                          <%= button_to 'Delete Inquiry', super_admin_enterprise_inquiry_path(account), method: :delete, data: { confirm: 'Delete this inquiry? This cannot be undone.' }, class: 'btn btn-danger-soft w-full reset-base mt-4' %>
-                        </div>
-                      </div>
-                  </div>
-                </dialog>
+                    </div>
+                  <% end %>
+                  <%= button_to 'Delete', super_admin_enterprise_inquiry_path(account), method: :delete, data: { confirm: 'Delete this inquiry? This cannot be undone.' }, class: 'btn btn-danger-soft btn-sm reset-base w-full' %>
+                </div>
               </td>
             </tr>
           <% end %>

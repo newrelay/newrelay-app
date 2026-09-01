@@ -2,28 +2,45 @@
   Plan Management
 <% end %>
 
-<div class="space-y-6">
-  <div class="page-header">
-    <div>
-      <h1 class="page-title">Plan Management</h1>
-      <p class="text-[13.5px] text-muted-foreground mt-1">Configure plan pricing, resource limits, and feature availability</p>
-    </div>
-  </div>
+<%
+  plan_blurbs = {
+    'hobby' => 'Starter tier for individuals',
+    'standard' => 'Core suite for growing teams',
+    'business' => 'High capacity & AI automations',
+    'enterprise' => 'Custom contracts & security'
+  }
+%>
 
+<div class="space-y-6">
   <% if notice.present? %>
-    <div class="mb-4 rounded-lg border border-success/20 bg-success/10 px-4 py-3 text-sm text-success">
+    <div class="rounded-lg border border-success/20 bg-success/10 px-4 py-3 text-sm text-success">
       <%= notice %>
     </div>
   <% end %>
 
   <%= form_tag super_admin_plan_management_path, method: :patch do %>
-    <%# Plan pricing cards %>
+    <div class="page-header">
+      <div>
+        <h1 class="page-title">Plan Management</h1>
+        <p class="text-[13.5px] text-muted-foreground mt-1">Configure pricing tiers, resource allocations, and feature availability</p>
+      </div>
+      <div class="page-actions">
+        <%= submit_tag 'Save Plans', class: 'btn btn-primary reset-base cursor-pointer' %>
+      </div>
+    </div>
+
     <div class="mb-8 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
       <% @plans.each do |plan| %>
-        <div class="rounded-xl border border-border bg-card p-5 shadow-xs">
-          <div class="flex items-center justify-between mb-4">
+        <% plan_key = plan['name'].to_s.downcase %>
+        <% is_enterprise = plan_key == 'enterprise' %>
+        <% is_standard = plan_key == 'standard' %>
+        <div class="relative rounded-xl border bg-card p-5 shadow-xs <%= is_standard ? 'border-primary' : 'border-border' %>">
+          <% if is_standard %>
+            <span class="absolute -top-2.5 right-4 inline-flex items-center rounded-full bg-primary px-2 py-0.5 text-[11px] font-medium text-primary-foreground">Popular</span>
+          <% end %>
+          <div class="flex items-start justify-between gap-2 mb-1">
             <h2 class="text-base font-semibold text-foreground"><%= plan['name'] %></h2>
-            <label class="flex items-center gap-2 text-sm text-muted-foreground cursor-pointer">
+            <label class="flex items-center gap-2 text-xs text-muted-foreground cursor-pointer shrink-0">
               <%= hidden_field_tag "plans[#{plan['name']}][enabled]", '0' %>
               <span class="custom-checkbox">
                 <%= check_box_tag "plans[#{plan['name']}][enabled]", '1', plan['enabled'] != false %>
@@ -32,57 +49,68 @@
               <span>Enabled</span>
             </label>
           </div>
-          <% if plan['name'].downcase == 'enterprise' %>
-            <div>
-              <span class="block text-xs font-medium text-muted-foreground mb-1">Price per agent</span>
-              <span class="block w-full rounded-lg border border-border bg-muted/40 px-3 py-2 text-sm text-muted-foreground">Customized per account</span>
+          <p class="text-[13px] text-muted-foreground mb-4"><%= plan_blurbs[plan_key] %></p>
+
+          <% if is_enterprise %>
+            <div class="mb-3">
+              <span class="block text-xs font-medium text-muted-foreground mb-1">Custom negotiated</span>
+              <span class="block w-full rounded-lg border border-border bg-muted/40 px-3 py-2 text-sm text-muted-foreground">Custom Quote</span>
             </div>
-            <p class="mt-2 text-xs text-muted-foreground">Pricing is negotiated per account - see Enterprise Inquiries and Enterprise Contracts.</p>
+            <p class="text-xs text-muted-foreground mb-4">Customized SLA, dedicated VPC, security compliance, and per-account invoicing.</p>
+            <%= link_to 'View Enterprise Contracts', super_admin_enterprise_contracts_path, class: 'btn btn-outline btn-sm w-full' %>
           <% else %>
-            <%
-              gateway_prices = plan['gateway_prices'] || {}
-            %>
-            <% Enterprise::Billing::PaymentGatewayRegistry.definitions.each do |gateway_id, definition| %>
-              <%
-                gw_price = gateway_prices.dig(gateway_id, 'amount') || plan['price_per_agent'] || 0
-                gw_plan_id = gateway_prices.dig(gateway_id, 'price_id') || gateway_prices.dig(gateway_id, 'plan_id')
-                if gateway_id == 'stripe'
-                  gw_plan_id ||= plan['price_ids']&.first
-                elsif gateway_id == 'razorpay'
-                  gw_plan_id ||= plan['razorpay_plan_ids']&.first || plan['razorpay_plan_id']
-                end
-              %>
-              <div class="mt-4 border-t border-border pt-4">
-                <p class="text-xs font-medium text-muted-foreground mb-2"><%= definition[:label] %></p>
-                <div class="grid grid-cols-2 gap-3">
-                  <div>
-                    <label class="block text-xs font-medium text-muted-foreground mb-1">Price (<%= definition[:currency].upcase %>/mo)</label>
+            <% gateway_prices = plan['gateway_prices'] || {} %>
+            <div class="mb-4">
+              <span class="block text-xs font-medium text-muted-foreground mb-2">Price per agent</span>
+              <div class="space-y-2">
+                <% Enterprise::Billing::PaymentGatewayRegistry.definitions.each do |gateway_id, definition| %>
+                  <%
+                    gw_price = gateway_prices.dig(gateway_id, 'amount') || plan['price_per_agent'] || 0
+                    symbol = definition[:currency].to_s.casecmp('inr').zero? ? '₹' : '$'
+                  %>
+                  <div class="flex items-center gap-2">
+                    <span class="w-16 shrink-0 text-xs text-muted-foreground"><%= definition[:label] %></span>
+                    <span class="text-sm text-muted-foreground"><%= symbol %></span>
                     <%= number_field_tag "plans[#{plan['name']}][gateway_prices][#{gateway_id}][amount]", gw_price, min: 0, step: 0.01, class: 'form-input' %>
+                    <span class="shrink-0 text-xs text-muted-foreground">/ mo</span>
                   </div>
+                <% end %>
+              </div>
+            </div>
+            <div>
+              <span class="block text-xs font-medium text-muted-foreground mb-2">Payment Gateway IDs</span>
+              <div class="space-y-2">
+                <% Enterprise::Billing::PaymentGatewayRegistry.definitions.each do |gateway_id, definition| %>
+                  <%
+                    gw_plan_id = gateway_prices.dig(gateway_id, 'price_id') || gateway_prices.dig(gateway_id, 'plan_id')
+                    if gateway_id == 'stripe'
+                      gw_plan_id ||= plan['price_ids']&.first
+                    elsif gateway_id == 'razorpay'
+                      gw_plan_id ||= plan['razorpay_plan_ids']&.first || plan['razorpay_plan_id']
+                    end
+                  %>
                   <div>
-                    <label class="block text-xs font-medium text-muted-foreground mb-1">Plan/Price ID</label>
+                    <label class="block text-[11px] text-muted-foreground mb-1"><%= definition[:label] %></label>
                     <%= text_field_tag "plans[#{plan['name']}][gateway_prices][#{gateway_id}][plan_id]", gw_plan_id, placeholder: 'id_...', class: 'form-input' %>
                   </div>
-                </div>
+                <% end %>
               </div>
-            <% end %>
+            </div>
           <% end %>
         </div>
       <% end %>
     </div>
 
-    <%# Resource Limits Matrix Heading %>
     <div class="mb-3">
       <h2 class="text-sm font-semibold text-foreground">Resource Limits</h2>
       <p class="text-xs text-muted-foreground mt-0.5">Define resource boundaries per subscription tier (leave blank for unlimited)</p>
     </div>
 
-    <%# Resource Limits Table %>
     <div class="table-card mb-8">
       <table>
         <thead>
           <tr>
-            <th class="w-1/3" scope="col">Resource Limit (Blank = Unlimited)</th>
+            <th class="w-1/3" scope="col">Resource Allowance</th>
             <% @plans.each do |plan| %>
               <th class="text-center" scope="col"><%= plan['name'] %></th>
             <% end %>
@@ -111,18 +139,16 @@
       </table>
     </div>
 
-    <%# Feature matrix heading %>
     <div class="mb-3">
       <h2 class="text-sm font-semibold text-foreground">Feature Matrix</h2>
       <p class="text-xs text-muted-foreground mt-0.5">Toggle modular platform feature availability across subscription tiers</p>
     </div>
 
-    <%# Feature matrix table %>
     <div class="table-card">
       <table>
         <thead>
           <tr>
-            <th class="w-1/3" scope="col">Feature</th>
+            <th class="w-1/3" scope="col">Feature Module</th>
             <% @plans.each do |plan| %>
               <th class="text-center" scope="col">
                 <%= plan['name'] %>

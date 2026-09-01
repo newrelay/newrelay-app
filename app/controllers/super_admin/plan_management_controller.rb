@@ -37,8 +37,8 @@ class SuperAdmin::PlanManagementController < SuperAdmin::ApplicationController
       { 'name' => 'conversations', 'display_name' => 'Conversations/month' },
       { 'name' => 't3_subaccounts', 'display_name' => 'T3 reseller sub-accounts' },
       { 'name' => 'automations', 'display_name' => 'Automations/workflows' },
-      { 'name' => 'captain_documents', 'display_name' => 'Captain AI documents' },
-      { 'name' => 'captain_responses', 'display_name' => 'Captain AI credits (responses)/month' },
+      { 'name' => 'captain_documents', 'display_name' => 'Relay AI documents' },
+      { 'name' => 'captain_responses', 'display_name' => 'Relay AI credits (responses)/month' },
       { 'name' => 'data_retention_months', 'display_name' => 'Data retention (months)' }
     ]
   end

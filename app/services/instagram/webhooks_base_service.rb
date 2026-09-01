@@ -15,7 +15,11 @@ class Instagram::WebhooksBaseService
     @contact_inbox = @inbox.contact_inboxes.where(source_id: user['id']).first
     @contact = @contact_inbox.contact if @contact_inbox
 
-    update_instagram_profile_link(user) && return if @contact
+    if @contact
+      update_instagram_profile_link(user)
+      apply_comment_automation_attribution(user['id'])
+      return
+    end
 
     @contact_inbox = @inbox.channel.create_contact_inbox(
       user['id'], user['name']
@@ -23,6 +27,7 @@ class Instagram::WebhooksBaseService
 
     @contact = @contact_inbox.contact
     update_instagram_profile_link(user)
+    apply_comment_automation_attribution(user['id'])
     Avatar::AvatarFromUrlJob.perform_later(@contact, user['profile_pic']) if user['profile_pic']
   end
 
@@ -31,6 +36,20 @@ class Instagram::WebhooksBaseService
 
     instagram_attributes = build_instagram_attributes(user)
     @contact.update!(additional_attributes: @contact.additional_attributes.merge(instagram_attributes))
+  end
+
+  def apply_comment_automation_attribution(commenter_id)
+    log = CommentAutomation::MessageLog.where(inbox: @inbox, commenter_id: commenter_id, status: :dm_sent).order(created_at: :desc).first
+    return if log.blank?
+
+    @contact.update!(custom_attributes: @contact.custom_attributes.merge(
+      'comment_automation_campaign_id' => log.trigger.campaign_id,
+      'comment_automation_trigger_id' => log.trigger_id
+    ))
+    log.update!(status: :engaged, contact: @contact)
+    Rails.logger.info(
+      "[comment_automation] event=engaged campaign_id=#{log.trigger.campaign_id} trigger_id=#{log.trigger_id} contact_id=#{@contact.id}"
+    )
   end
 
   def build_instagram_attributes(user)

@@ -23,6 +23,8 @@ export function initCustomSelects() {
     .querySelectorAll('select:not([multiple]):not([data-nr-native])')
     .forEach(select => {
       if (select.dataset.customized === 'true') return;
+      // BelongsToSearch uses selectize AJAX typeahead (account show User picker).
+      if (select.closest('.field-unit--belongs-to-search')) return;
       select.dataset.customized = 'true';
       select.classList.add('nr-select-native');
 

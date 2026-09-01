@@ -1640,7 +1640,7 @@ thead tr {
   background-color: var(--table-header-bg, #edecfc8f);
 }
 thead th {
-  padding: 14px 16px;
+  padding: 20px 32px;
   font-size: 14px;
   font-weight: 500;
   color: var(--foreground);
@@ -1651,9 +1651,11 @@ thead th {
 }
 thead th:first-child {
   border-radius: 12px 0 0 12px;
+  padding: 20px 32px;
 }
 thead th:last-child {
   border-radius: 0 12px 12px 0;
+  padding: 20px 32px;
 }
 /* Id is always the first collection column (see COLLECTION_ATTRIBUTES in
    app/dashboards/*.rb) and its content is short — without a width hint,
@@ -1694,7 +1696,11 @@ tbody tr {
 }
 tbody tr:last-child { border-bottom: none; }
 tbody tr:hover { background-color: color-mix(in srgb, var(--muted) 30%, transparent); }
-tbody td { padding: 16px; color: var(--foreground); vertical-align: middle; }
+tbody td { padding: 16px 32px; color: var(--foreground); vertical-align: middle; }
+tbody td:first-child,
+tbody td:last-child {
+  padding: 16px 32px;
+}
 tbody td strong,
 .table-card tbody td strong {
   font-weight: 600;
@@ -2021,11 +2027,9 @@ main[role="main"] textarea::placeholder {
   border-color: var(--border);
 }
 
-.field-unit__field input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="hidden"]):not([type="file"]),
-.field-unit__field textarea,
-.field-unit__field select,
-.form-card input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="hidden"]):not([type="file"]),
-.form-card textarea {
+.field-unit__field > input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="hidden"]):not([type="file"]),
+.field-unit__field > textarea,
+.field-unit__field > select {
   width: 100%;
   height: 36px;
   padding: 0 12px;
@@ -2135,9 +2139,69 @@ select.nr-select-native {
 /* Administrate's selectize.js still auto-inits on `.field-unit--select select`
    (app/assets/javascripts/administrate/components/select.js) and renders its
    own widget next to ours. Suppress it — the underlying <select> stays the
-   real form field either way. */
+   real form field either way. BelongsToSearch (account show User picker) is
+   an AJAX typeahead and has no static options, so that widget must stay. */
 .selectize-control {
   display: none !important;
+}
+.field-unit--belongs-to-search .selectize-control {
+  display: block !important;
+  width: 100%;
+}
+.field-unit--belongs-to-search .selectize-input {
+  display: flex;
+  align-items: center;
+  min-height: 38px;
+  height: 38px;
+  padding: 0 12px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background-color: var(--background);
+  box-shadow: none;
+  font-size: 14px;
+  color: var(--foreground);
+}
+.field-unit--belongs-to-search .selectize-input.focus,
+.field-unit--belongs-to-search .selectize-input.dropdown-active {
+  border-color: var(--ring);
+  box-shadow: 0 0 0 1px var(--ring);
+}
+.field-unit--belongs-to-search .selectize-input input {
+  width: auto !important;
+  height: auto !important;
+  min-height: 0;
+  padding: 0 !important;
+  margin: 0;
+  border: none !important;
+  box-shadow: none !important;
+  background: transparent !important;
+  font-size: 14px;
+  color: var(--foreground);
+}
+.field-unit--belongs-to-search .selectize-input input:focus,
+.field-unit--belongs-to-search .selectize-input input:focus-visible {
+  border: none !important;
+  box-shadow: none !important;
+  outline: none !important;
+}
+.field-unit--belongs-to-search .selectize-dropdown {
+  z-index: 250;
+  margin-top: 4px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background-color: var(--popover);
+  color: var(--popover-foreground);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08), 0 1px 4px rgba(0, 0, 0, 0.05);
+}
+.field-unit--belongs-to-search .selectize-dropdown .option {
+  padding: 7px 10px;
+  font-size: 13.5px;
+  border-radius: 6px;
+}
+.field-unit--belongs-to-search .selectize-dropdown .option.active,
+.field-unit--belongs-to-search .selectize-dropdown .option:hover {
+  background-color: var(--accent);
+  color: var(--accent-foreground);
 }
 
 button.nr-select-trigger {
@@ -3250,9 +3314,8 @@ button.file-upload-trigger,
   opacity: 1;
 }
 
-#billingCouponsTable th,
 #billingCouponsTable td {
-  padding: 16px 14px;
+  padding: 16px 32px;
 }
 
 .datepicker-header {
@@ -4217,11 +4280,7 @@ button.modal-close-btn {
   width: 100%;
   border-collapse: collapse;
 }
-.resource-limits-table thead tr {
-  background-color: var(--table-header-bg, #edecfc8f);
-}
 .resource-limits-table th {
-  padding: 14px 18px;
   text-align: center;
   font-size: 13.5px;
   font-weight: 500;
@@ -4484,13 +4543,6 @@ button.modal-close-btn {
 .enterprise-inquiries-table {
   width: 100%;
   border-collapse: collapse;
-}
-.enterprise-inquiries-table th {
-  padding: 14px 8px !important;
-  font-size: 13px !important;
-}
-.enterprise-inquiries-table td {
-  padding: 14px 8px !important;
 }
 .inquiry-paylink-card {
   background-color: var(--background);

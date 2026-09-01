@@ -36,11 +36,10 @@ class Api::V1::Accounts::Reputation::VideoTestimonialsController < Api::V1::Acco
     render json: note
   end
 
-  # Phase 3 (flag: reputation_demo_surfaces): kick off transcription + AI analysis.
-  # Async — the FE polls index for the filled-in ai_insights.
+  # Kick off transcription + AI analysis. Async — the FE polls index for ai_insights.
+  # Video Reviews is not a demo-flagged route; don't 403 analyze when ENV shows the tabs
+  # but the account feature is off (isReputationDemoSurfacesEnabled is ENV OR feature).
   def analyze
-    return head :forbidden unless Current.account.feature_enabled?('reputation_demo_surfaces')
-
     Reputation::VideoInsightsJob.perform_later(video_testimonial)
     render json: { processing: true }
   end

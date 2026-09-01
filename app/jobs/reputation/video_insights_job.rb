@@ -6,5 +6,9 @@ class Reputation::VideoInsightsJob < ApplicationJob
   def perform(testimonial)
     result = Reputation::VideoInsightsService.new(testimonial: testimonial).generate
     testimonial.update!(ai_insights: result)
+  rescue StandardError => e
+    # Client init (missing CAPTAIN_OPEN_AI_API_KEY) raises before #generate's rescue.
+    Rails.logger.error("Video insights job failed for testimonial #{testimonial.id}: #{e.message}")
+    testimonial.update!(ai_insights: { 'error' => e.message })
   end
 end

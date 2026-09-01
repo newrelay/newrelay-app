@@ -59,8 +59,11 @@ const timeline = computed(() => {
     .map(e => ({ ...e, at: formatEventTime(e.ts), dot: TIMELINE_META[e.key].dot, ic: TIMELINE_META[e.key].ic }));
 });
 
-// Map an API row to the shape the template expects. AI-only fields stay empty in Phase 1.
+// Map an API row to the shape the template expects.
 function mapVideo(v) {
+  const ai = v.ai_insights && typeof v.ai_insights === 'object' && !Array.isArray(v.ai_insights)
+    ? v.ai_insights
+    : {};
   return {
     id: v.id,
     author: v.customer_name || v.contact?.name || v.title || 'Customer',
@@ -83,15 +86,15 @@ function mapVideo(v) {
     views: v.views || 0,
     likes: 0,
     aiTags: [STATUS_LABEL[v.status] || 'Pending Approval'],
-    aiInsights: v.ai_insights || {},
-    topics: (v.ai_insights && v.ai_insights.topics) || [],
-    transcriptSummary: (v.ai_insights && v.ai_insights.summary) || ''
+    aiInsights: ai,
+    topics: Array.isArray(ai.topics) ? ai.topics : [],
+    transcriptSummary: ai.summary || ''
   };
 }
 
-async function loadVideos() {
+async function loadVideos({ silent } = {}) {
   if (!accountId) { loading.value = false; return; }
-  loading.value = true;
+  if (!silent) loading.value = true;
   try {
     const params = {};
     if (activeStatus.value) params.status = activeStatus.value;
@@ -104,29 +107,29 @@ async function loadVideos() {
     console.error('Failed to load video testimonials', err);
     mockVideos.value = [];
   } finally {
-    loading.value = false;
+    if (!silent) loading.value = false;
   }
 }
 
 const selectedVideo = ref(null);
 const viewMode = ref('grid');
 const activeTab = ref('Overview');
+const DETAIL_TABS = ['Overview', 'Transcript', 'AI Insights', 'Activity', 'Notes'];
 
-// Phase 3: AI tabs (Transcript / AI Insights) only exist behind the demo flag.
+// AI-tag filter is still demo-flagged; the detail tabs themselves are always shown.
 const showDemoSurfaces = computed(() =>
   isReputationDemoSurfacesEnabled(
     accountId,
     window.__STORE__?.getters['accounts/isFeatureEnabledonAccount']
   )
 );
-const tabs = computed(() =>
-  showDemoSurfaces.value
-    ? ['Overview', 'Transcript', 'AI Insights', 'Activity', 'Notes']
-    : ['Overview', 'Activity', 'Notes']
-);
 const insights = computed(() => selectedVideo.value?.aiInsights || {});
 const hasInsights = computed(() => !!insights.value.processed_at);
 const analyzing = ref(false);
+
+function selectTab(name) {
+  activeTab.value = name;
+}
 
 // POST /analyze, then poll index until this video's ai_insights fills in (or errors).
 async function analyzeVideo() {
@@ -135,14 +138,20 @@ async function analyzeVideo() {
   analyzing.value = true;
   try {
     await axios.post(`${baseUrl()}/${v.id}/analyze`);
+    let settled = false;
     for (let i = 0; i < 12; i += 1) {
       await new Promise(r => setTimeout(r, 4000));
-      await loadVideos();
+      await loadVideos({ silent: true });
       const fresh = mockVideos.value.find(x => x.id === v.id);
       if (fresh) selectedVideo.value = fresh;
       const ai = fresh?.aiInsights || {};
-      if (ai.processed_at || ai.error) break;
+      if (ai.processed_at || ai.error) {
+        settled = true;
+        if (ai.error) showToast(`Couldn't analyze: ${ai.error}`);
+        break;
+      }
     }
+    if (!settled) showToast('Analysis is still running. Check back in a moment.');
   } catch (err) {
     showToast('Could not start analysis.');
   } finally {
@@ -200,7 +209,7 @@ const getPlatformIcon = (name) => platforms.find(p => p.name === name)?.icon || 
 const selectVideo = (video) => {
   selectedVideo.value = video;
   replyVariant.value = 0;
-  if (!tabs.value.includes(activeTab.value)) activeTab.value = 'Overview';
+  if (!DETAIL_TABS.includes(activeTab.value)) activeTab.value = 'Overview';
 };
 
 const closePanel = () => {
@@ -400,7 +409,7 @@ const stats = computed(() => {
 </script>
 
 <template>
-  <div class="relative flex h-[calc(100vh-4rem)] w-full overflow-hidden bg-background">
+  <div class="relative flex h-[calc(100vh-4rem)] min-h-0 w-full overflow-hidden bg-background">
     <VideoTestimonialWidgetModal v-model:open="isWidgetModalOpen" />
     <RequestVideoTestimonialModal v-model:open="isRequestModalOpen" @submit="handleModalSubmit" />
 
@@ -764,10 +773,10 @@ const stats = computed(() => {
     
     <!-- Side Panel (Master-Detail Video Panel) -->
     <div 
-      class="h-full min-w-0 border-l border-border bg-card transition-all duration-300 shadow-2xl lg:shadow-none absolute lg:relative right-0 flex flex-col z-40"
+      class="h-full min-h-0 min-w-0 border-l border-border bg-card transition-all duration-300 shadow-2xl lg:shadow-none absolute lg:relative right-0 flex flex-col z-40"
       :class="selectedVideo ? 'w-full sm:w-[450px] lg:w-[35%] xl:w-[30%] translate-x-0' : 'w-full sm:w-[450px] lg:w-[35%] xl:w-[30%] translate-x-full lg:hidden hidden'"
     >
-      <div v-if="selectedVideo" class="flex flex-col h-full overflow-hidden">
+      <div v-if="selectedVideo" class="flex flex-col h-full min-h-0 overflow-hidden">
         <!-- Header -->
         <div class="px-6 py-4 border-b border-border flex items-center justify-between shrink-0 bg-muted/20">
           <div class="flex items-center gap-3">
@@ -780,63 +789,60 @@ const stats = computed(() => {
           </button>
         </div>
         
-        <!-- Scrollable Middle Section -->
-        <div class="flex-1 overflow-y-auto bg-card hide-scrollbar">
-          <!-- Video Player Block -->
-          <div class="w-full bg-black relative aspect-video max-h-[240px] shrink-0 group">
-            <video
-              v-if="selectedVideo.videoUrl"
-              :key="selectedVideo.id"
-              :src="selectedVideo.videoUrl"
-              :poster="selectedVideo.thumbnail"
-              class="w-full h-full object-contain"
-              controls
-              playsinline
-            />
-            <template v-else>
-              <img :src="selectedVideo.thumbnail" class="w-full h-full object-cover opacity-80" />
-              <div class="absolute inset-0 flex items-center justify-center">
-                <span class="text-white/70 text-xs font-medium">Video not available</span>
-              </div>
-            </template>
-          </div>
-        
-          <!-- Quick Info Row -->
-          <div class="px-6 py-3 border-b border-border flex items-center justify-between text-xs font-medium text-muted-foreground shrink-0 bg-card">
-            <div class="flex items-center gap-4">
-              <span class="flex items-center gap-1.5"><div class="size-3.5 flex items-center justify-center" v-html="getPlatformIcon(selectedVideo.platform)"></div> {{ selectedVideo.platform }}</span>
-              <span class="flex items-center gap-1.5"><Calendar class="size-3.5 opacity-70" /> {{ selectedVideo.date }}</span>
-              <span class="flex items-center gap-1.5"><Clock class="size-3.5 opacity-70" /> {{ selectedVideo.duration }}</span>
-            </div>
-            <div class="flex text-amber-400">
-              <Star
-                v-for="i in 5"
-                :key="i"
-                class="size-3"
-                :class="i <= Math.round(selectedVideo.rating || 0) ? 'fill-amber-400 text-amber-400' : 'text-muted-foreground/30'"
-              />
-            </div>
-          </div>
-        
           <!-- Tabs Nav -->
           <div class="px-6 border-b border-border flex gap-4 text-[13px] font-semibold shrink-0 pt-2 bg-card overflow-x-auto hide-scrollbar" role="tablist">
             <button
-              v-for="tab in tabs" :key="tab"
+              v-for="tab in DETAIL_TABS" :key="tab"
               type="button"
               role="tab"
               :aria-selected="activeTab === tab"
               class="relative -mb-px py-3 px-0.5 whitespace-nowrap shrink-0 cursor-pointer bg-transparent border-0"
               :class="activeTab === tab ? 'text-primary' : 'text-muted-foreground hover:text-foreground'"
-              @click="activeTab = tab"
+              @click.stop="selectTab(tab)"
             >
               {{ tab }}
               <span v-if="activeTab === tab" class="absolute inset-x-0 bottom-0 h-0.5 bg-primary" aria-hidden="true" />
             </button>
           </div>
         
+        <div class="flex-1 min-h-0 overflow-y-auto bg-card">
           <!-- Tab Content -->
           <div class="p-6 space-y-6">
             <div v-if="activeTab === 'Overview'" class="space-y-6">
+              <div class="-mx-6 -mt-6">
+                <div class="w-full bg-black relative aspect-video max-h-[120px] group">
+                  <video
+                    v-if="selectedVideo.videoUrl"
+                    :key="selectedVideo.id"
+                    :src="selectedVideo.videoUrl"
+                    :poster="selectedVideo.thumbnail"
+                    class="w-full h-full object-contain"
+                    controls
+                    playsinline
+                  />
+                  <template v-else>
+                    <img :src="selectedVideo.thumbnail" class="w-full h-full object-cover opacity-80" />
+                    <div class="absolute inset-0 flex items-center justify-center">
+                      <span class="text-white/70 text-xs font-medium">Video not available</span>
+                    </div>
+                  </template>
+                </div>
+                <div class="px-6 py-3 border-b border-border flex items-center justify-between text-xs font-medium text-muted-foreground bg-card">
+                  <div class="flex items-center gap-4">
+                    <span class="flex items-center gap-1.5"><div class="size-3.5 flex items-center justify-center" v-html="getPlatformIcon(selectedVideo.platform)"></div> {{ selectedVideo.platform }}</span>
+                    <span class="flex items-center gap-1.5"><Calendar class="size-3.5 opacity-70" /> {{ selectedVideo.date }}</span>
+                    <span class="flex items-center gap-1.5"><Clock class="size-3.5 opacity-70" /> {{ selectedVideo.duration }}</span>
+                  </div>
+                  <div class="flex text-amber-400">
+                    <Star
+                      v-for="i in 5"
+                      :key="i"
+                      class="size-3"
+                      :class="i <= Math.round(selectedVideo.rating || 0) ? 'fill-amber-400 text-amber-400' : 'text-muted-foreground/30'"
+                    />
+                  </div>
+                </div>
+              </div>
               <!-- AI Summary Box -->
               <div class="space-y-2.5">
                 <h3 class="text-xs font-bold tracking-wide text-foreground flex items-center gap-2">
@@ -848,7 +854,7 @@ const stats = computed(() => {
                 </div>
                 <div v-else class="bg-muted/30 border border-border/50 rounded-xl p-4 text-center space-y-2">
                   <p class="text-[13px] text-muted-foreground">{{ analyzing ? 'Analyzing this video…' : 'No summary yet.' }}</p>
-                  <button v-if="showDemoSurfaces && !analyzing" type="button" class="inline-flex items-center gap-1.5 text-[13px] font-semibold text-primary hover:underline" @click="analyzeVideo">
+                  <button v-if="!analyzing" type="button" class="inline-flex items-center gap-1.5 text-[13px] font-semibold text-primary hover:underline" @click="analyzeVideo">
                     <Sparkles class="size-4" /> Analyze video
                   </button>
                 </div>
@@ -885,20 +891,20 @@ const stats = computed(() => {
               </div>
             </div>
             
-            <div v-else-if="activeTab === 'Transcript'" class="p-6">
+            <div v-else-if="activeTab === 'Transcript'">
               <p v-if="insights.transcript" class="text-[13px] leading-relaxed text-foreground whitespace-pre-wrap">{{ insights.transcript }}</p>
               <div v-else class="flex flex-col items-center justify-center text-center py-10 gap-3">
                 <Bot class="size-8 text-muted-foreground" />
                 <p v-if="analyzing" class="text-[13px] text-muted-foreground">Transcribing this video… this can take a moment.</p>
                 <p v-else-if="insights.error" class="text-[13px] text-muted-foreground">Couldn't transcribe: {{ insights.error }}</p>
                 <p v-else class="text-[13px] text-muted-foreground">No transcript yet.</p>
-                <button v-if="!analyzing" @click="analyzeVideo" class="inline-flex items-center gap-1.5 text-[13px] font-semibold text-primary hover:underline">
+                <button v-if="!analyzing" type="button" @click="analyzeVideo" class="inline-flex items-center gap-1.5 text-[13px] font-semibold text-primary hover:underline">
                   <Sparkles class="size-4" /> Analyze video
                 </button>
               </div>
             </div>
 
-            <div v-else-if="activeTab === 'AI Insights'" class="p-6 space-y-6">
+            <div v-else-if="activeTab === 'AI Insights'" class="space-y-6">
               <template v-if="hasInsights && !insights.error">
                 <p v-if="insights.summary" class="text-[13px] leading-relaxed text-foreground">{{ insights.summary }}</p>
 
@@ -946,13 +952,13 @@ const stats = computed(() => {
                 <p v-if="analyzing" class="text-[13px] text-muted-foreground">Analyzing this video…</p>
                 <p v-else-if="insights.error" class="text-[13px] text-muted-foreground">Couldn't analyze: {{ insights.error }}</p>
                 <p v-else class="text-[13px] text-muted-foreground">No AI insights yet.</p>
-                <button v-if="!analyzing" @click="analyzeVideo" class="inline-flex items-center gap-1.5 text-[13px] font-semibold text-primary hover:underline">
+                <button v-if="!analyzing" type="button" @click="analyzeVideo" class="inline-flex items-center gap-1.5 text-[13px] font-semibold text-primary hover:underline">
                   <Sparkles class="size-4" /> Analyze video
                 </button>
               </div>
             </div>
 
-            <div v-else-if="activeTab === 'Activity'" class="p-6 pb-10">
+            <div v-else-if="activeTab === 'Activity'" class="pb-10">
               <div v-if="timeline.length === 0" class="text-[13px] text-muted-foreground text-center py-10">
                 No activity yet.
               </div>
@@ -967,7 +973,7 @@ const stats = computed(() => {
               </div>
             </div>
             
-            <div v-else-if="activeTab === 'Notes'" class="p-6">
+            <div v-else-if="activeTab === 'Notes'">
               <div class="flex items-center gap-2 text-foreground font-semibold text-[15px] mb-2">
                 <FileText class="size-4" /> Notes
               </div>

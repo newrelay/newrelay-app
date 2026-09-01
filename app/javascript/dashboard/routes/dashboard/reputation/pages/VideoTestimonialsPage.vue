@@ -5,7 +5,7 @@ import { RelayInput as Input, RelayBadge as Badge, RelayButton } from 'dashboard
 import {
   Play, MoreHorizontal, MessageSquare, Heart, Share2, 
   CheckCircle, Search, Filter, Calendar, ExternalLink, 
-  X, Eye, Download, LayoutGrid, List, Sparkles, TrendingUp, TrendingDown,
+  X, Eye, Download, LayoutGrid, List, Sparkles,
   Trash2, Edit, Check, ChevronDown, Clock, Quote,
   Bot, ThumbsUp, Send, Globe, FileText, Plus, Star
 } from 'lucide-vue-next';
@@ -414,11 +414,11 @@ const stats = computed(() => {
         <div class="flex items-center text-sm text-muted-foreground mb-2">
           <span>Reputation</span>
           <span class="mx-2">/</span>
-          <span class="text-foreground font-medium">Video Testimonials</span>
+          <span class="text-foreground font-medium">Video Reviews</span>
         </div>
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <h1 class="text-xl font-semibold text-foreground">Video Testimonials</h1>
+            <h1 class="text-xl font-semibold text-foreground">Video Reviews</h1>
             <p class="text-sm text-muted-foreground mt-1">Collect, manage and share authentic video testimonials from your customers.</p>
           </div>
           <div class="flex items-center gap-3">
@@ -450,10 +450,7 @@ const stats = computed(() => {
               </div>
               <span class="text-2xl font-bold text-foreground">{{ stats.total }}</span>
             </div>
-            <span class="text-xs text-muted-foreground font-medium mb-3">Total Videos</span>
-            <div class="text-[10px] text-emerald-600 font-semibold flex items-center gap-1">
-              <TrendingUp class="size-3" /> 18% vs last month
-            </div>
+            <span class="text-xs text-muted-foreground font-medium">Total Videos</span>
           </div>
           
           <div class="bg-card border border-border rounded-xl p-4 shadow-xs flex flex-col justify-between">
@@ -463,10 +460,7 @@ const stats = computed(() => {
               </div>
               <span class="text-2xl font-bold text-foreground">{{ stats.publishedPct }}%</span>
             </div>
-            <span class="text-xs text-muted-foreground font-medium mb-3">Published</span>
-            <div class="text-[10px] text-emerald-600 font-semibold flex items-center gap-1">
-              <TrendingUp class="size-3" /> 12% vs last month
-            </div>
+            <span class="text-xs text-muted-foreground font-medium">Published</span>
           </div>
           
           <div class="bg-card border border-border rounded-xl p-4 shadow-xs flex flex-col justify-between">
@@ -476,10 +470,7 @@ const stats = computed(() => {
               </div>
               <span class="text-2xl font-bold text-foreground">{{ stats.avgRating }}</span>
             </div>
-            <span class="text-xs text-muted-foreground font-medium mb-3">Average Rating</span>
-            <div class="text-[10px] text-emerald-600 font-semibold flex items-center gap-1">
-              <TrendingUp class="size-3" /> 0.3 vs last month
-            </div>
+            <span class="text-xs text-muted-foreground font-medium">Average Rating</span>
           </div>
           
           <div class="bg-card border border-border rounded-xl p-4 shadow-xs flex flex-col justify-between">
@@ -489,10 +480,7 @@ const stats = computed(() => {
               </div>
               <span class="text-2xl font-bold text-foreground">{{ stats.awaiting }}</span>
             </div>
-            <span class="text-xs text-muted-foreground font-medium mb-3">Awaiting Approval</span>
-            <div class="text-[10px] text-rose-600 dark:text-rose-400 font-semibold flex items-center gap-1">
-              <TrendingDown class="size-3" /> 8% vs last month
-            </div>
+            <span class="text-xs text-muted-foreground font-medium">Awaiting Approval</span>
           </div>
           
           <div class="bg-card border border-border rounded-xl p-4 shadow-xs flex flex-col justify-between">
@@ -502,10 +490,7 @@ const stats = computed(() => {
               </div>
               <span class="text-2xl font-bold text-foreground">—</span>
             </div>
-            <span class="text-xs text-muted-foreground font-medium mb-3">Relay AI Highlights</span>
-            <div class="text-[10px] text-emerald-600 font-semibold flex items-center gap-1">
-              <TrendingUp class="size-3" /> 24% vs last month
-            </div>
+            <span class="text-xs text-muted-foreground font-medium">Relay AI Highlights</span>
           </div>
         </div>
       </div>

@@ -87,75 +87,6 @@ const gradientFor = key => {
   return GRADIENTS[Math.abs(h) % GRADIENTS.length];
 };
 
-const mockListings = [
-  {
-    id: 1,
-    title: 'Jaipur HQ',
-    badge: 'Primary',
-    address: 'Gopalpura Bypass, Jaipur, Rajasthan 302018',
-    image: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=600&auto=format&fit=crop',
-    optimizationScore: 94,
-    rating: 4.8,
-    reviewsCount: 582,
-    lastSync: '2 mins ago',
-    phone: '+91 141 123 4567',
-    website: 'www.example.com',
-    email: '',
-    category: 'Digital Marketing Agency',
-    platforms: [
-      { name: 'Google', status: 'Connected' },
-      { name: 'Facebook', status: 'Connected' },
-      { name: 'Trustpilot', status: 'Connected' },
-      { name: 'Yelp', status: 'Not Connected' },
-      { name: 'Bing', status: 'Error' },
-    ],
-  },
-  {
-    id: 2,
-    title: 'Delhi Branch',
-    badge: '',
-    address: 'Connaught Place, New Delhi, Delhi 110001',
-    image: 'https://images.unsplash.com/photo-1497366216548-37526070297c?q=80&w=600&auto=format&fit=crop',
-    optimizationScore: 89,
-    rating: 4.6,
-    reviewsCount: 412,
-    lastSync: '15 mins ago',
-    phone: '+91 11 9876 5432',
-    website: 'www.example-delhi.com',
-    email: '',
-    category: 'Digital Marketing Agency',
-    platforms: [
-      { name: 'Google', status: 'Connected' },
-      { name: 'Facebook', status: 'Connected' },
-      { name: 'Trustpilot', status: 'Connected' },
-      { name: 'Yelp', status: 'Not Connected' },
-      { name: 'Bing', status: 'Connected' },
-    ],
-  },
-  {
-    id: 3,
-    title: 'Mumbai Office',
-    badge: '',
-    address: 'Andheri East, Mumbai, Maharashtra 400069',
-    image: 'https://images.unsplash.com/photo-1430285561322-7808604715df?q=80&w=600&auto=format&fit=crop',
-    optimizationScore: 76,
-    rating: 4.3,
-    reviewsCount: 298,
-    lastSync: '1 hour ago',
-    phone: '+91 22 2345 6789',
-    website: 'www.example-mumbai.com',
-    email: '',
-    category: 'Marketing Consultant',
-    platforms: [
-      { name: 'Google', status: 'Connected' },
-      { name: 'Facebook', status: 'Connected' },
-      { name: 'Trustpilot', status: 'Connected' },
-      { name: 'Yelp', status: 'Not Connected' },
-      { name: 'Bing', status: 'Connected' },
-    ],
-  },
-];
-
 function mapListing(row) {
   return {
     id: row.id,
@@ -176,10 +107,10 @@ function mapListing(row) {
     amenities: row.amenities || {},
     socialLinks: row.social_links || {},
     photoUrls: row.photo_urls || [],
-    optimizationScore: row.optimized ?? row.optimizationScore ?? 90,
-    rating: row.rating || 4.5,
+    optimizationScore: row.optimized ?? row.optimizationScore ?? null,
+    rating: row.rating ?? null,
     reviewsCount: row.reviews ?? row.reviewsCount ?? 0,
-    lastSync: row.lastSync || (row.synced_at ? new Date(row.synced_at).toLocaleString() : 'Just now'),
+    lastSync: row.lastSync || (row.synced_at ? new Date(row.synced_at).toLocaleString() : '—'),
     syncedAt: row.synced_at || null,
     createdAt: row.created_at || row.createdAt || null,
     updatedAt: row.updated_at || row.updatedAt || null,
@@ -398,9 +329,7 @@ async function loadListing() {
     const { data } = await axios.get(`${baseUrl()}/listings/${id}`);
     listing.value = mapListing(data);
   } catch {
-    usingMock.value = true;
-    const mock = mockListings.find(l => String(l.id) === String(id)) || mockListings[0];
-    listing.value = mapListing(mock);
+    listing.value = null;
   } finally {
     loading.value = false;
   }
@@ -1435,6 +1364,10 @@ watch(() => route.params.listingId, async () => {
         </div>
       </div>
     </template>
+    <div v-else class="flex-1 flex flex-col items-center justify-center gap-3 text-sm text-muted-foreground">
+      <p>Listing not found.</p>
+      <button type="button" class="text-primary font-medium hover:text-primary/80" @click="goBack">Back to Listings</button>
+    </div>
   </div>
 
   <div v-if="editOpen" :class="RELAY_DIALOG_OVERLAY_CLASS" class="flex items-center justify-center p-4" @click.self="editOpen = false">

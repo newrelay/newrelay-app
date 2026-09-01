@@ -100,6 +100,7 @@ const defaultFormState = {
 const axios = window.axios;
 const accountId = window.__STORE__?.getters['auth/getCurrentAccount']?.id ||
   window.location.pathname.match(/accounts\/(\d+)/)?.[1];
+const businessName = window.__STORE__?.getters['auth/getCurrentAccount']?.name || 'Your business';
 
 const currentStep = ref(1);
 const form = ref({ ...defaultFormState });
@@ -153,7 +154,7 @@ const currentActiveTemplateName = computed(() => {
 
 const fillVars = text => (text || '')
   .replaceAll('{{FirstName}}', 'Sarah')
-  .replaceAll('{{BusinessName}}', 'New Relay')
+  .replaceAll('{{BusinessName}}', businessName)
   .replaceAll('{{ReviewLink}}', 'newrelay.com/r/abc123')
   .replaceAll('{{EmployeeName}}', 'Alex');
 const formattedEmailSubject = computed(() => fillVars(emailSubject.value));

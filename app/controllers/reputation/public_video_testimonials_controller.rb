@@ -18,7 +18,7 @@ class Reputation::PublicVideoTestimonialsController < ApplicationController
 
   def create
     return render_uploaded if @review_request.video_testimonial
-    return head :not_found unless @review_request.live_for_public_submit?
+    return render_expired_link unless @review_request.live_for_public_submit?
 
     @testimonial = build_testimonial
     if @testimonial.save
@@ -37,13 +37,17 @@ class Reputation::PublicVideoTestimonialsController < ApplicationController
 
   def require_review_request
     @review_request = Reputation::ReviewRequest.find_by(token: params[:token])
-    return head :not_found unless @review_request
+    return render_expired_link unless @review_request
 
     @account = @review_request.account
   end
 
   def require_live_review_request
-    head :not_found unless @review_request.live_for_public_submit?
+    render_expired_link unless @review_request.live_for_public_submit?
+  end
+
+  def render_expired_link
+    render 'reputation/expired', status: :not_found, layout: false
   end
 
   def render_uploaded

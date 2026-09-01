@@ -1,18 +1,6 @@
 import { frontendURL } from '../../../helper/URLHelper';
 import { FEATURE_FLAGS } from 'dashboard/featureFlags';
 import ReputationLayout from './pages/ReputationLayout.vue';
-import OverviewPage from './pages/OverviewPage.vue';
-import ReviewsPage from './pages/ReviewsPage.vue';
-import RequestsPage from './pages/RequestsPage.vue';
-import WidgetsPage from './pages/WidgetsPage.vue';
-import SettingsPage from './pages/SettingsPage.vue';
-import AutomationPage from './pages/AutomationPage.vue';
-import VideoTestimonialsPage from './pages/VideoTestimonialsPage.vue';
-import ListingsPage from './pages/ListingsPage.vue';
-import ListingDetailPage from './pages/ListingDetailPage.vue';
-import FeedbackPage from './pages/FeedbackPage.vue';
-import IntegrationsPage from './pages/IntegrationsPage.vue';
-import ConfigurationPage from './pages/ConfigurationPage.vue';
 
 const meta = { permissions: ['administrator', 'reputation_manage'] };
 
@@ -28,73 +16,73 @@ export const routes = [
       {
         path: 'overview',
         name: 'reputation_overview',
-        component: OverviewPage,
+        component: () => import('./pages/OverviewPage.vue'),
         meta,
       },
       {
         path: 'reviews',
         name: 'reputation_reviews',
-        component: ReviewsPage,
+        component: () => import('./pages/ReviewsPage.vue'),
         meta,
       },
       {
         path: 'requests',
         name: 'reputation_requests',
-        component: RequestsPage,
+        component: () => import('./pages/RequestsPage.vue'),
         meta,
       },
       {
         path: 'widgets',
         name: 'reputation_widgets',
-        component: WidgetsPage,
+        component: () => import('./pages/WidgetsPage.vue'),
         meta,
       },
       {
         path: 'video_testimonials',
         name: 'reputation_video_testimonials',
-        component: VideoTestimonialsPage,
+        component: () => import('./pages/VideoTestimonialsPage.vue'),
         meta,
       },
       {
         path: 'configuration',
         name: 'reputation_configuration',
-        component: ConfigurationPage,
+        component: () => import('./pages/ConfigurationPage.vue'),
         meta,
       },
       {
         path: 'integrations',
         name: 'reputation_integrations',
-        component: IntegrationsPage,
+        component: () => import('./pages/IntegrationsPage.vue'),
         meta,
       },
       {
         path: 'listings',
         name: 'reputation_listings',
-        component: ListingsPage,
+        component: () => import('./pages/ListingsPage.vue'),
         meta: { ...meta, featureFlag: FEATURE_FLAGS.REPUTATION_DEMO_SURFACES },
       },
       {
         path: 'listings/:listingId',
         name: 'reputation_listing_detail',
-        component: ListingDetailPage,
+        component: () => import('./pages/ListingDetailPage.vue'),
         meta: { ...meta, featureFlag: FEATURE_FLAGS.REPUTATION_DEMO_SURFACES },
       },
       {
         path: 'feedback',
         name: 'reputation_feedback',
-        component: FeedbackPage,
+        component: () => import('./pages/FeedbackPage.vue'),
         meta: { ...meta, featureFlag: FEATURE_FLAGS.REPUTATION_DEMO_SURFACES },
       },
       {
         path: 'settings',
         name: 'reputation_settings',
-        component: SettingsPage,
+        component: () => import('./pages/SettingsPage.vue'),
         meta: { ...meta, permissions: ['administrator'] },
       },
       {
         path: 'automation',
         name: 'reputation_automation',
-        component: AutomationPage,
+        component: () => import('./pages/AutomationPage.vue'),
         meta: { ...meta, permissions: ['administrator'] },
       },
     ],

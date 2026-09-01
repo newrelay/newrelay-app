@@ -671,7 +671,7 @@ async function sendReply() {
                     v-if="review.status === 'Needs Reply' && review.aiDraft"
                     class="px-2.5 py-1 text-[10px] font-semibold bg-primary/10 border border-primary/20 text-primary dark:bg-primary/10 dark:border-primary/20 rounded-md inline-flex items-center gap-1"
                   >
-                    <Sparkles class="size-3" /> Relay AI Draft Ready
+                    <Sparkles class="size-3" /> AI Draft Ready
                   </span>
                   <span
                     v-else-if="review.status === 'Needs Reply'"
@@ -777,7 +777,7 @@ async function sendReply() {
                     class="h-8 px-3 text-xs font-semibold bg-primary/10 border border-primary/20 text-primary hover:bg-primary/20 rounded-lg inline-flex items-center gap-1.5 transition-colors cursor-pointer"
                     @click.stop="openReviewDetail(review)"
                   >
-                    <Sparkles class="size-3.5" /> Relay AI Draft Ready
+                    <Sparkles class="size-3.5" /> AI Draft Ready
                   </button>
 
                   <button 

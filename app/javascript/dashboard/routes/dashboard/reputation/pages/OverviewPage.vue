@@ -36,20 +36,11 @@ const integrations = ref([]);
 const summary = ref(null);
 const aiData = ref(null); // { sentiment, insights:[{title,text}] } from /ai_insights, or null
 
-// Demo-only fallback — used when /ai_insights returns nothing (no LLM / no reviews).
-const mock = {
-  insights: [
-    { color: 'bg-emerald-500', title: 'Support speed mentioned', text: '"Fast customer service" appeared in 24% of positive reviews this week.' },
-    { color: 'bg-amber-500', title: 'Action required', text: '3 recent negative reviews on Yelp have not been responded to.' },
-    { color: 'bg-primary', title: 'Platform growth', text: 'Google reviews are up 15% compared to the previous period.' },
-  ],
-};
-
 const insightColors = ['bg-emerald-500', 'bg-amber-500', 'bg-primary'];
 const aiIsMock = computed(() => !(aiData.value && aiData.value.insights && aiData.value.insights.length));
 const insightsList = computed(() =>
   aiIsMock.value
-    ? mock.insights
+    ? []
     : aiData.value.insights.map((it, i) => ({
         color: insightColors[i % insightColors.length],
         title: it.title,
@@ -134,7 +125,6 @@ const trendBars = computed(() => {
   return counts.map(c => ({
     month: c.month,
     val1: c.count === 0 ? 0 : Math.round((c.count / maxCount) * 80) + 10,
-    val2: c.count === 0 ? 0 : Math.round((c.count / maxCount) * 40) + 5,
   }));
 });
 
@@ -176,21 +166,27 @@ function formatRelativeDate(dateStr) {
 async function loadData() {
   loading.value = true;
   try {
-    const [reviewsRes, integrationsRes, summaryRes, aiRes] = await Promise.all([
+    const [reviewsRes, integrationsRes, summaryRes] = await Promise.all([
       axios.get(`${baseUrl()}/reviews`),
       axios.get(`${baseUrl()}/integrations`),
       axios.get(`${baseUrl()}/summary`).catch(() => ({ data: null })),
-      axios.get(`${baseUrl()}/ai_insights`).catch(() => ({ data: null })),
     ]);
     allReviews.value = reviewsRes.data || [];
     integrations.value = integrationsRes.data || [];
     summary.value = summaryRes.data || null;
-    aiData.value = aiRes.data && aiRes.data.insights ? aiRes.data : null;
   } catch (err) {
     console.error('Failed to load reputation data', err);
   } finally {
     loading.value = false;
   }
+  axios
+    .get(`${baseUrl()}/ai_insights`)
+    .then(({ data }) => {
+      aiData.value = data && data.insights ? data : null;
+    })
+    .catch(() => {
+      aiData.value = null;
+    });
 }
 
 onMounted(loadData);
@@ -264,7 +260,7 @@ async function generateReviewReplies() {
       <!-- Header matching AGENTS.md rule (h1 text-xl font-semibold text-foreground) -->
       <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
         <div>
-          <h1 class="text-xl font-semibold text-foreground">Reputation Overview</h1>
+          <h1 class="text-xl font-semibold text-foreground">Overview</h1>
           <p class="text-sm text-muted-foreground mt-1">Monitor and manage your brand's online presence across all platforms.</p>
         </div>
         <div class="flex items-center gap-3">
@@ -378,7 +374,7 @@ async function generateReviewReplies() {
       <!-- Section 2: Charts & Insights -->
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <!-- Review Trend (Left - 2/3 width) — real when reviews exist -->
-        <div class="bg-card rounded-2xl border border-border shadow-xs p-6 flex flex-col justify-between" :class="(!aiIsMock || showDemoSurfaces) ? 'lg:col-span-2' : 'lg:col-span-3'">
+        <div class="bg-card rounded-2xl border border-border shadow-xs p-6 flex flex-col justify-between lg:col-span-2">
           <div class="flex justify-between items-center mb-6">
             <div class="flex items-center gap-2">
               <div>
@@ -394,17 +390,15 @@ async function generateReviewReplies() {
 
           <div class="h-[220px] w-full flex items-end justify-between gap-3 pt-6 px-2">
             <div v-for="(bar, idx) in trendBars" :key="idx" class="flex-1 flex flex-col items-center gap-2 group cursor-pointer">
-              <div class="w-full flex items-end justify-center gap-1 h-[170px] relative">
-                <div class="w-1/2 bg-primary/30 group-hover:bg-primary/40 rounded-t-md transition-all" :style="{ height: `${bar.val2}%` }"></div>
-                <div class="w-1/2 bg-primary group-hover:bg-primary/90 rounded-t-md transition-all" :style="{ height: `${bar.val1}%` }"></div>
+              <div class="w-full h-[170px] relative flex items-end">
+                <div class="w-full bg-primary group-hover:bg-primary/90 rounded-t-md transition-all" :style="{ height: `${bar.val1}%` }"></div>
               </div>
               <span class="text-xs font-medium text-muted-foreground group-hover:text-foreground transition-colors">{{ bar.month }}</span>
             </div>
           </div>
         </div>
 
-        <!-- AI Insights (Right - 1/3 width) — real insights when available; badged Demo only for sample fallback in demo mode -->
-        <div v-if="!aiIsMock || showDemoSurfaces" class="bg-card rounded-2xl border border-border shadow-xs p-0 flex flex-col overflow-hidden relative">
+        <div class="bg-card rounded-2xl border border-border shadow-xs p-0 flex flex-col overflow-hidden relative">
           <div class="h-1 w-full bg-primary"></div>
 
           <div class="p-6 flex-1 flex flex-col">
@@ -413,10 +407,9 @@ async function generateReviewReplies() {
                 <Bot class="size-4" />
               </div>
               <h3 class="text-base font-semibold text-foreground">Relay AI Insights</h3>
-              <span v-if="aiIsMock" class="rounded bg-amber-500/15 px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wide text-amber-600 dark:text-amber-400" title="Demo — no reviews / LLM not configured">Demo</span>
             </div>
 
-            <div class="space-y-4 flex-1">
+            <div v-if="insightsList.length" class="space-y-4 flex-1">
               <div v-for="(insight, idx) in insightsList" :key="idx" class="flex gap-3 items-start p-2 rounded-lg hover:bg-muted/40 transition-colors">
                 <div class="mt-1 size-2 rounded-full shrink-0" :class="insight.color"></div>
                 <div>
@@ -425,6 +418,7 @@ async function generateReviewReplies() {
                 </div>
               </div>
             </div>
+            <p v-else class="flex-1 text-sm text-muted-foreground">Insights appear after reviews sync.</p>
 
             <button
               :disabled="generatingReplies"

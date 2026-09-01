@@ -33,7 +33,7 @@ class Reputation::PublicWidgetsController < ApplicationController
   # destination (a connected platform's write-review URL) or the testimonial funnel.
   def redirect
     review_request = Reputation::ReviewRequest.find_by(token: params[:token])
-    return head :not_found unless review_request&.live_for_public_submit?
+    return render_expired_link unless review_request&.live_for_public_submit?
 
     review_request.update!(status: :clicked, clicked_at: Time.current) if review_request.sent? || review_request.delivered?
 
@@ -44,6 +44,10 @@ class Reputation::PublicWidgetsController < ApplicationController
   end
 
   private
+
+  def render_expired_link
+    render 'reputation/expired', status: :not_found, layout: false
+  end
 
   def review_items
     Reputation::Review
@@ -62,9 +66,6 @@ class Reputation::PublicWidgetsController < ApplicationController
       .limit(12)
   end
 
-  # Build a real write-review URL for the primary destination if that platform is
-  # connected for the account. ponytail: only Google resolves to a real deep link
-  # today (via place id); other platforms fall back to the testimonial funnel.
   def destination_review_url(request)
     provider = request.destinations&.first.to_s.downcase.presence
     return if provider.nil?

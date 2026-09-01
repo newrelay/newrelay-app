@@ -25,6 +25,14 @@ const storeAccountId = useMapGetter('getCurrentAccountId');
 const accountId = computed(
   () => storeAccountId.value || window.location.pathname.match(/accounts\/(\d+)/)?.[1]
 );
+const accountName = computed(
+  () => window.__STORE__?.getters['auth/getCurrentAccount']?.name || 'Your business'
+);
+const accountInitials = computed(() => {
+  const parts = accountName.value.trim().split(/\s+/).filter(Boolean);
+  if (parts.length >= 2) return (parts[0][0] + parts[1][0]).toUpperCase();
+  return (parts[0] || 'B').slice(0, 2).toUpperCase();
+});
 const settingsUrl = () => `/api/v1/accounts/${accountId.value}/reputation/settings`;
 async function persist(patch) {
   try { await axios.patch(settingsUrl(), { config: patch }); } catch (e) { /* keep UI optimistic */ }
@@ -154,7 +162,7 @@ function insertTag(tag) {
 }
 const fillVars = t => (t || '')
   .replaceAll('{{FirstName}}', 'Sarah')
-  .replaceAll('{{BusinessName}}', 'New Relay')
+  .replaceAll('{{BusinessName}}', accountName.value)
   .replaceAll('{{ReviewLink}}', reviewLinkShort.value)
   .replaceAll('{{EmployeeName}}', 'Alex');
 const pvEmailSubject = computed(() => fillVars(emailSubject.value));
@@ -699,7 +707,7 @@ const autoFlagLabel = computed(() => autoFlagOptions.find(o => o.value === spamS
                   <div class="space-y-1 pb-2 border-b border-border/40">
                     <div class="text-[12px] font-bold text-foreground leading-tight">{{ pvEmailSubject }}</div>
                     <div class="flex items-center justify-between pt-1">
-                      <div class="flex items-center gap-2 min-w-0"><div class="size-6 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold text-[10px] shrink-0">NR</div><div class="min-w-0"><div class="text-[11px] font-semibold text-foreground truncate">New Relay</div><div class="text-[9px] text-muted-foreground truncate">to sarah.j@gmail.com</div></div></div>
+                      <div class="flex items-center gap-2 min-w-0"><div class="size-6 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold text-[10px] shrink-0">{{ accountInitials }}</div><div class="min-w-0"><div class="text-[11px] font-semibold text-foreground truncate">{{ accountName }}</div><div class="text-[9px] text-muted-foreground truncate">to sarah.j@gmail.com</div></div></div>
                       <span class="text-[9px] text-muted-foreground shrink-0">9:41 AM</span>
                     </div>
                   </div>
@@ -717,7 +725,7 @@ const autoFlagLabel = computed(() => autoFlagOptions.find(o => o.value === spamS
               <!-- WHATSAPP -->
               <div v-else-if="selectedChannel === 'whatsapp'" class="flex-1 flex flex-col overflow-hidden">
                 <div class="px-3 py-2 bg-emerald-600 dark:bg-emerald-700 text-white flex items-center justify-between shrink-0 shadow-xs">
-                  <div class="flex items-center gap-2 min-w-0"><ChevronLeft class="size-4 shrink-0" /><div class="size-7 rounded-full bg-white/20 text-white flex items-center justify-center font-bold text-[10.5px] shrink-0 border border-white/30">NR</div><div class="min-w-0"><div class="flex items-center gap-1"><span class="text-xs font-semibold truncate text-white">New Relay</span><CheckCircle2 class="size-3 text-emerald-200 shrink-0" /></div><span class="text-[9px] text-emerald-100 block truncate">Business Account</span></div></div>
+                  <div class="flex items-center gap-2 min-w-0"><ChevronLeft class="size-4 shrink-0" /><div class="size-7 rounded-full bg-white/20 text-white flex items-center justify-center font-bold text-[10.5px] shrink-0 border border-white/30">{{ accountInitials }}</div><div class="min-w-0"><div class="flex items-center gap-1"><span class="text-xs font-semibold truncate text-white">{{ accountName }}</span><CheckCircle2 class="size-3 text-emerald-200 shrink-0" /></div><span class="text-[9px] text-emerald-100 block truncate">Business Account</span></div></div>
                   <div class="flex items-center gap-2.5 text-white/90"><Phone class="size-3.5" /><MoreVertical class="size-3.5" /></div>
                 </div>
                 <div class="flex-1 overflow-y-auto p-3 space-y-2.5 bg-muted/40">
@@ -778,7 +786,7 @@ const autoFlagLabel = computed(() => autoFlagOptions.find(o => o.value === spamS
 
               <!-- SMS -->
               <div v-else class="flex-1 flex flex-col overflow-hidden">
-                <div class="px-3.5 py-2 flex items-center justify-between border-b border-border/40 shrink-0 bg-muted/20"><div class="flex items-center gap-1 text-primary"><ChevronLeft class="size-4 shrink-0" /><span class="text-[11px] font-medium">Messages</span></div><div class="flex flex-col items-center"><div class="size-6 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold text-[9px]">NR</div><span class="text-[9.5px] font-semibold text-foreground">New Relay</span></div><Info class="size-3.5 text-primary shrink-0" /></div>
+                <div class="px-3.5 py-2 flex items-center justify-between border-b border-border/40 shrink-0 bg-muted/20"><div class="flex items-center gap-1 text-primary"><ChevronLeft class="size-4 shrink-0" /><span class="text-[11px] font-medium">Messages</span></div><div class="flex flex-col items-center"><div class="size-6 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold text-[9px]">{{ accountInitials }}</div><span class="text-[9.5px] font-semibold text-foreground">{{ accountName }}</span></div><Info class="size-3.5 text-primary shrink-0" /></div>
                 <div class="flex-1 overflow-y-auto p-3 space-y-2.5 bg-muted/30">
                   <div class="text-[9.5px] text-center text-muted-foreground font-medium">Text Message · Today 9:41 AM</div>
                   <div class="bg-primary text-primary-foreground rounded-2xl rounded-tl-xs p-3 shadow-xs text-xs space-y-2 max-w-[94%]">

@@ -29,6 +29,7 @@ const axios = window.axios;
 
 const accountId = window.__STORE__?.getters['auth/getCurrentAccount']?.id || 
   window.location.pathname.match(/accounts\/(\d+)/)?.[1];
+const businessName = window.__STORE__?.getters['auth/getCurrentAccount']?.name || 'Your business';
 
 const requests = ref([]);
 const templates = ref([]);
@@ -316,7 +317,7 @@ const previewMessage = computed(() => {
   const name = selectedContact.value ? selectedContact.value.name.split(' ')[0] : 'Sarah';
   return form.value.message
     .replace(/\{\{\s*FirstName\s*\}\}/g, name)
-    .replace(/\{\{\s*BusinessName\s*\}\}/g, 'New Relay')
+    .replace(/\{\{\s*BusinessName\s*\}\}/g, businessName)
     .replace(/\{\{\s*ReviewLink\s*\}\}/g, 'newrelay.com/r/abc123')
     .replace(/\{\{\s*EmployeeName\s*\}\}/g, 'Alex');
 });

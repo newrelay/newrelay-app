@@ -13,13 +13,20 @@ class Reputation::PublicReviewsController < ApplicationController
 
   def create
     @account = Account.find(params[:account_id])
+    rating = params[:rating].to_i
+    reviewer_name = params[:reviewer_name].to_s.strip
+    unless (1..5).cover?(rating) && reviewer_name.present?
+      @error = 'Please add your name and a star rating.'
+      return render :new, status: :unprocessable_entity
+    end
+
     integration = google_integration
     integration.reputation_reviews.create!(
       account: @account,
       provider: 'google',
       external_id: "public-#{SecureRandom.hex(8)}",
-      reviewer_name: params[:reviewer_name].presence || 'Anonymous',
-      rating: params[:rating].to_i.clamp(1, 5),
+      reviewer_name: reviewer_name,
+      rating: rating,
       body: params[:body].to_s.strip,
       status: :pending,
       reviewed_at: Time.current

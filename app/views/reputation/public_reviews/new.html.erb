@@ -14,8 +14,6 @@
     .avatar { width: 48px; height: 48px; border-radius: 50%; background: #1a73e8; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 22px; font-weight: 500; flex-shrink: 0; }
     .head h1 { font-size: 18px; font-weight: 500; line-height: 1.3; }
     .head p { font-size: 13px; color: #5f6368; margin-top: 2px; }
-    .posting { display: flex; align-items: center; gap: 8px; font-size: 13px; color: #5f6368; margin-bottom: 16px; }
-    .posting .dot { width: 20px; height: 20px; border-radius: 50%; background: #e8eaed; display: inline-flex; align-items: center; justify-content: center; font-size: 12px; }
     .stars { display: flex; gap: 6px; margin-bottom: 22px; }
     .star { width: 40px; height: 40px; cursor: pointer; color: #dadce0; transition: color .1s, transform .1s; }
     .star:hover { transform: scale(1.08); }
@@ -27,7 +25,9 @@
     textarea:focus, input[type=text]:focus { border-color: #1a73e8; box-shadow: 0 0 0 1px #1a73e8; }
     .actions { display: flex; justify-content: flex-end; }
     button { background: #1a73e8; color: #fff; border: none; border-radius: 20px; padding: 10px 24px; font-size: 14px; font-weight: 500; cursor: pointer; }
-    button:hover { background: #1765cc; }
+    button:disabled { opacity: .5; cursor: not-allowed; }
+    .error { color: #d93025; font-size: 13px; margin-bottom: 12px; }
+    button:hover:not(:disabled) { background: #1765cc; }
     .done { text-align: center; padding: 40px 24px; }
     .done .check { width: 64px; height: 64px; border-radius: 50%; background: #e6f4ea; color: #34A853; display: flex; align-items: center; justify-content: center; margin: 0 auto 18px; font-size: 34px; }
     .done h2 { font-size: 20px; font-weight: 500; margin-bottom: 8px; }
@@ -55,27 +55,26 @@
           </div>
         </div>
 
-        <div class="posting">
-          <span class="dot">&#128100;</span>
-          <span>Posting publicly across Google</span>
-        </div>
-
         <form method="post" action="<%= reputation_reviews_path(account_id: @account.id) %>">
-          <input type="hidden" name="rating" id="rating" value="5" />
-          <div class="stars" id="stars">
+          <% if @error %>
+            <p class="error"><%= @error %></p>
+          <% end %>
+          <input type="hidden" name="rating" id="rating" value="<%= (1..5).cover?(params[:rating].to_i) ? params[:rating].to_i : '' %>" />
+          <div class="stars" id="stars" role="group" aria-label="Star rating">
+            <% selected = params[:rating].to_i %>
             <% (1..5).each do |i| %>
-              <svg class="star on" data-v="<%= i %>" viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.27l6.18 3.73-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+              <svg class="star<%= ' on' if (1..5).cover?(selected) && i <= selected %>" data-v="<%= i %>" role="button" tabindex="0" aria-label="Rate <%= i %> star<%= i == 1 ? '' : 's' %>" viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.27l6.18 3.73-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
             <% end %>
           </div>
 
           <label for="body">Share details of your own experience</label>
-          <textarea id="body" name="body" placeholder="What did you like or dislike?"></textarea>
+          <textarea id="body" name="body" placeholder="What did you like or dislike?"><%= params[:body] %></textarea>
 
           <label for="reviewer_name">Your name</label>
-          <input type="text" id="reviewer_name" name="reviewer_name" placeholder="e.g. Sarah J." />
+          <input type="text" id="reviewer_name" name="reviewer_name" required placeholder="e.g. Sarah J." value="<%= params[:reviewer_name] %>" />
 
           <div class="actions">
-            <button type="submit">Post</button>
+            <button type="submit" id="post">Post</button>
           </div>
         </form>
       </div>
@@ -86,13 +85,24 @@
     (function () {
       var stars = Array.prototype.slice.call(document.querySelectorAll('#stars .star'));
       var input = document.getElementById('rating');
+      var name = document.getElementById('reviewer_name');
+      var btn = document.getElementById('post');
       function paint(n) { stars.forEach(function (s) { s.classList.toggle('on', Number(s.dataset.v) <= n); }); }
+      function syncPost() {
+        if (btn) btn.disabled = !(Number(input.value) >= 1 && name && name.value.trim());
+      }
       stars.forEach(function (s) {
-        s.addEventListener('click', function () { input.value = s.dataset.v; paint(Number(s.dataset.v)); });
+        function pick() { input.value = s.dataset.v; paint(Number(s.dataset.v)); syncPost(); }
+        s.addEventListener('click', pick);
+        s.addEventListener('keydown', function (e) {
+          if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); pick(); }
+        });
         s.addEventListener('mouseenter', function () { paint(Number(s.dataset.v)); });
       });
       var wrap = document.getElementById('stars');
-      if (wrap) wrap.addEventListener('mouseleave', function () { paint(Number(input.value)); });
+      if (wrap) wrap.addEventListener('mouseleave', function () { paint(Number(input.value) || 0); });
+      if (name) name.addEventListener('input', syncPost);
+      syncPost();
     })();
   </script>
 </body>

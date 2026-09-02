@@ -39,6 +39,6 @@ class Api::V1::Accounts::CommentAutomation::CampaignsController < Api::V1::Accou
   def trigger_params
     return {} unless params[:trigger]
 
-    params.require(:trigger).permit(:keyword, :match_type, :dm_text_body, public_replies: [])
+    params.require(:trigger).permit(:keyword, :match_type, :dm_text_body, :template_id, public_replies: [])
   end
 end

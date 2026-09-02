@@ -1,37 +1,45 @@
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
+import { useStore, useMapGetter } from 'dashboard/composables/store';
+import { dynamicTime } from 'shared/helpers/timeHelper';
 import {
   RelayButton,
   RelayInput,
   RelayBadge,
-  RelayDropdownMenu,
-  RelayDropdownMenuTrigger,
-  RelayDropdownMenuContent,
-  RelayDropdownMenuItem,
 } from 'dashboard/components-next/relay';
 import { useAlert } from 'dashboard/composables';
-import { CHANNEL_NAMES, CHANNEL_LOGO_URLS } from '../constants/channels';
 import TemplatePreviewPanel from '../components/TemplatePreviewPanel.vue';
 import CreateTemplateWizard from '../components/CreateTemplateWizard.vue';
+import CreateAutomationModal from '../components/CreateAutomationModal.vue';
 
 const { t } = useI18n();
+const store = useStore();
+
 const searchQuery = ref('');
 const activeTab = ref('All');
-const channelFilter = ref('All Channels');
 const isPreviewOpen = ref(false);
-const isCreateWizardOpen = ref(false);
+const isWizardOpen = ref(false);
 const previewTemplate = ref(null);
+const editingTemplate = ref(null);
+const isCreateAutomationOpen = ref(false);
+const automationTemplate = ref(null);
+
+onMounted(() => {
+  store.dispatch('commentAutomationTemplates/get');
+});
+
+const templates = useMapGetter('commentAutomationTemplates/getTemplates');
 
 const tabs = computed(() => [
   { id: 'All', icon: '', label: t('AUTORESPONDER.TEMPLATES.TAB_ALL') },
   {
-    id: 'Message',
+    id: 'message',
     icon: 'i-lucide-message-square',
     label: t('AUTORESPONDER.TEMPLATES.TAB_MESSAGE'),
   },
   {
-    id: 'Comment',
+    id: 'comment',
     icon: 'i-lucide-message-circle',
     label: t('AUTORESPONDER.TEMPLATES.TAB_COMMENT'),
   },
@@ -42,98 +50,12 @@ const tabs = computed(() => [
   },
 ]);
 
-const templates = ref([
-  {
-    id: 1,
-    name: 'Welcome Message',
-    description: 'Warm welcome for new followers or new contacts.',
-    type: 'Message',
-    channels: ['Instagram', 'WhatsApp'],
-    usage: 156,
-    updated: '2h ago',
-    favorite: true,
-  },
-  {
-    id: 2,
-    name: 'Pricing Information',
-    description: 'Share pricing details when users ask about price.',
-    type: 'Message',
-    channels: ['Instagram'],
-    usage: 98,
-    updated: '5h ago',
-    favorite: false,
-  },
-  {
-    id: 3,
-    name: 'Business Hours Reply',
-    description: 'Reply with your business hours.',
-    type: 'Message',
-    channels: ['Instagram', 'WhatsApp'],
-    usage: 72,
-    updated: '1d ago',
-    favorite: false,
-  },
-  {
-    id: 4,
-    name: 'Thank You Comment',
-    description: 'Thank users for positive comments.',
-    type: 'Comment',
-    channels: ['Instagram', 'Facebook'],
-    usage: 64,
-    updated: '2d ago',
-    favorite: true,
-  },
-  {
-    id: 5,
-    name: 'FAQ - General',
-    description: 'Answer common general questions.',
-    type: 'Message',
-    channels: ['WhatsApp'],
-    usage: 53,
-    updated: '3d ago',
-    favorite: false,
-  },
-  {
-    id: 6,
-    name: 'Out of Office',
-    description: "Inform users when you're not available.",
-    type: 'Message',
-    channels: ['Instagram', 'WhatsApp'],
-    usage: 41,
-    updated: '4d ago',
-    favorite: false,
-  },
-  {
-    id: 7,
-    name: 'Product Inquiry Reply',
-    description: 'Reply to product related questions.',
-    type: 'Message',
-    channels: ['Instagram'],
-    usage: 36,
-    updated: '5d ago',
-    favorite: false,
-  },
-  {
-    id: 8,
-    name: 'Great Feedback Reply',
-    description: 'Reply to positive feedback or reviews.',
-    type: 'Comment',
-    channels: ['Facebook'],
-    usage: 28,
-    updated: '6d ago',
-    favorite: true,
-  },
-]);
-
 const filteredTemplates = computed(() => {
   let list = templates.value;
   if (activeTab.value === 'Favorite') {
     list = list.filter(item => item.favorite);
   } else if (activeTab.value !== 'All') {
-    list = list.filter(item => item.type === activeTab.value);
-  }
-  if (channelFilter.value !== 'All Channels') {
-    list = list.filter(item => item.channels.includes(channelFilter.value));
+    list = list.filter(item => item.template_type === activeTab.value);
   }
   if (searchQuery.value.trim()) {
     const q = searchQuery.value.toLowerCase();
@@ -143,7 +65,10 @@ const filteredTemplates = computed(() => {
 });
 
 function toggleFavorite(item) {
-  item.favorite = !item.favorite;
+  store.dispatch('commentAutomationTemplates/update', {
+    id: item.id,
+    template: { favorite: !item.favorite },
+  });
 }
 
 function openPreview(item) {
@@ -151,13 +76,39 @@ function openPreview(item) {
   isPreviewOpen.value = true;
 }
 
-function duplicateTemplate() {
+function openCreateWizard() {
+  editingTemplate.value = null;
+  isWizardOpen.value = true;
+}
+
+function openEditWizard(item) {
+  editingTemplate.value = item;
+  isWizardOpen.value = true;
+}
+
+function duplicateTemplate(item) {
+  store.dispatch('commentAutomationTemplates/create', {
+    template: {
+      name: t('AUTORESPONDER.TEMPLATES.COPY_NAME', { name: item.name }),
+      template_type: item.template_type,
+      public_replies: item.public_replies,
+      dm_text_body: item.dm_text_body,
+      favorite: false,
+    },
+  });
   useAlert(t('AUTORESPONDER.TEMPLATES.DUPLICATED_TOAST'));
 }
 
 function deleteTemplate(item) {
-  templates.value = templates.value.filter(tpl => tpl.id !== item.id);
+  // eslint-disable-next-line no-alert
+  if (!window.confirm(t('AUTORESPONDER.TEMPLATES.DELETE_CONFIRM'))) return;
+  store.dispatch('commentAutomationTemplates/delete', item.id);
   useAlert(t('AUTORESPONDER.TEMPLATES.DELETED_TOAST'));
+}
+
+function useInAutomation(template) {
+  automationTemplate.value = template;
+  isCreateAutomationOpen.value = true;
 }
 </script>
 
@@ -176,10 +127,7 @@ function deleteTemplate(item) {
               {{ t('AUTORESPONDER.TEMPLATES.SUBTITLE') }}
             </p>
           </div>
-          <RelayButton
-            class="gap-2 font-medium"
-            @click="isCreateWizardOpen = true"
-          >
+          <RelayButton class="gap-2 font-medium" @click="openCreateWizard">
             <span class="i-lucide-plus size-4" />
             {{ t('AUTORESPONDER.TEMPLATES.NEW_TEMPLATE') }}
           </RelayButton>
@@ -196,44 +144,6 @@ function deleteTemplate(item) {
               class-name="pl-9 bg-background text-[13.5px]"
             />
           </div>
-
-          <RelayDropdownMenu>
-            <RelayDropdownMenuTrigger as-child>
-              <RelayButton
-                variant="outline"
-                class="gap-2 text-[13.5px] font-normal h-9"
-              >
-                {{ channelFilter }}
-                <span
-                  class="i-lucide-chevron-down size-4 text-muted-foreground"
-                />
-              </RelayButton>
-            </RelayDropdownMenuTrigger>
-            <RelayDropdownMenuContent align="start" class="w-40">
-              <RelayDropdownMenuItem @click="channelFilter = 'All Channels'">
-                {{ t('AUTORESPONDER.COMMON.ALL_CHANNELS') }}
-              </RelayDropdownMenuItem>
-              <RelayDropdownMenuItem
-                v-for="c in CHANNEL_NAMES"
-                :key="c"
-                @click="channelFilter = c"
-              >
-                {{ c }}
-              </RelayDropdownMenuItem>
-            </RelayDropdownMenuContent>
-          </RelayDropdownMenu>
-
-          <RelayButton
-            variant="outline"
-            class="gap-2 text-[13.5px] font-normal h-9 text-muted-foreground"
-          >
-            <span
-              class="font-mono text-[11px] font-bold bg-muted px-1 py-0.5 rounded mr-1"
-            >
-              {{ '{}' }}
-            </span>
-            {{ t('AUTORESPONDER.TEMPLATES.VARIABLES') }}
-          </RelayButton>
         </div>
 
         <div class="relative border-b border-border w-full mb-6">
@@ -267,7 +177,7 @@ function deleteTemplate(item) {
             class="bg-card border border-border rounded-xl shadow-sm overflow-hidden flex flex-col flex-1 min-w-0 transition-all duration-300"
           >
             <div class="overflow-x-auto">
-              <table class="w-full text-left border-collapse min-w-[900px]">
+              <table class="w-full text-left border-collapse min-w-[760px]">
                 <thead>
                   <tr class="border-b border-border bg-muted/20">
                     <th
@@ -279,11 +189,6 @@ function deleteTemplate(item) {
                       class="px-5 py-3.5 text-sm font-medium text-muted-foreground w-28"
                     >
                       {{ t('AUTORESPONDER.TEMPLATES.TABLE_TYPE') }}
-                    </th>
-                    <th
-                      class="px-5 py-3.5 text-sm font-medium text-muted-foreground w-32"
-                    >
-                      {{ t('AUTORESPONDER.TEMPLATES.TABLE_CHANNEL') }}
                     </th>
                     <th
                       class="px-5 py-3.5 text-sm font-medium text-muted-foreground w-28"
@@ -332,7 +237,7 @@ function deleteTemplate(item) {
                         <span
                           class="text-[13px] text-muted-foreground line-clamp-1"
                         >
-                          {{ item.description }}
+                          {{ item.dm_text_body }}
                         </span>
                       </div>
                     </td>
@@ -342,35 +247,24 @@ function deleteTemplate(item) {
                         class="bg-primary/10 text-primary border-none font-medium px-2 py-0.5 rounded-md"
                       >
                         {{
-                          item.type === 'Message'
+                          item.template_type === 'message'
                             ? t('AUTORESPONDER.COMMON.TYPE_MESSAGE')
                             : t('AUTORESPONDER.COMMON.TYPE_COMMENT')
                         }}
                       </RelayBadge>
                     </td>
                     <td class="px-4 py-4">
-                      <div class="flex items-center gap-1.5">
-                        <img
-                          v-for="ch in item.channels"
-                          :key="ch"
-                          :src="CHANNEL_LOGO_URLS[ch]"
-                          class="size-5 rounded"
-                          :title="ch"
-                        />
-                      </div>
-                    </td>
-                    <td class="px-4 py-4">
                       <span class="text-[13.5px] font-medium text-foreground">
                         {{
                           t('AUTORESPONDER.TEMPLATES.USAGE_TIMES', {
-                            count: item.usage,
+                            count: item.usage_count,
                           })
                         }}
                       </span>
                     </td>
                     <td class="px-4 py-4">
                       <span class="text-[13.5px] text-muted-foreground">{{
-                        item.updated
+                        dynamicTime(item.updated_at)
                       }}</span>
                     </td>
                     <td class="px-4 py-4 text-center" @click.stop>
@@ -381,7 +275,7 @@ function deleteTemplate(item) {
                           type="button"
                           class="p-1.5 rounded-md hover:bg-muted hover:text-foreground transition-colors"
                           :title="t('AUTORESPONDER.COMMON.COPY')"
-                          @click="duplicateTemplate"
+                          @click="duplicateTemplate(item)"
                         >
                           <span class="i-lucide-copy size-4" />
                         </button>
@@ -389,40 +283,24 @@ function deleteTemplate(item) {
                           type="button"
                           class="p-1.5 rounded-md hover:bg-muted hover:text-foreground transition-colors"
                           :title="t('AUTORESPONDER.COMMON.EDIT')"
-                          @click="openPreview(item)"
+                          @click="openEditWizard(item)"
                         >
                           <span class="i-lucide-pencil size-4" />
                         </button>
-                        <RelayDropdownMenu>
-                          <RelayDropdownMenuTrigger as-child>
-                            <button
-                              type="button"
-                              class="p-1.5 rounded-md hover:bg-muted hover:text-foreground transition-colors"
-                            >
-                              <span class="i-lucide-more-vertical size-4" />
-                            </button>
-                          </RelayDropdownMenuTrigger>
-                          <RelayDropdownMenuContent align="end" class="w-40">
-                            <RelayDropdownMenuItem @click="openPreview(item)">
-                              {{ t('AUTORESPONDER.TEMPLATES.PREVIEW') }}
-                            </RelayDropdownMenuItem>
-                            <RelayDropdownMenuItem @click="duplicateTemplate">
-                              {{ t('AUTORESPONDER.COMMON.DUPLICATE') }}
-                            </RelayDropdownMenuItem>
-                            <RelayDropdownMenuItem
-                              destructive
-                              @click="deleteTemplate(item)"
-                            >
-                              {{ t('AUTORESPONDER.COMMON.DELETE') }}
-                            </RelayDropdownMenuItem>
-                          </RelayDropdownMenuContent>
-                        </RelayDropdownMenu>
+                        <button
+                          type="button"
+                          class="p-1.5 rounded-md hover:bg-muted hover:text-destructive transition-colors"
+                          :title="t('AUTORESPONDER.COMMON.DELETE')"
+                          @click="deleteTemplate(item)"
+                        >
+                          <span class="i-lucide-trash-2 size-4" />
+                        </button>
                       </div>
                     </td>
                   </tr>
                   <tr v-if="filteredTemplates.length === 0">
                     <td
-                      colspan="6"
+                      colspan="5"
                       class="px-4 py-16 text-center text-sm text-muted-foreground"
                     >
                       {{ t('AUTORESPONDER.TEMPLATES.EMPTY_STATE') }}
@@ -449,11 +327,19 @@ function deleteTemplate(item) {
           <TemplatePreviewPanel
             v-model:open="isPreviewOpen"
             :template="previewTemplate"
+            @use-in-automation="useInAutomation"
           />
         </div>
       </div>
 
-      <CreateTemplateWizard v-model:open="isCreateWizardOpen" />
+      <CreateTemplateWizard
+        v-model:open="isWizardOpen"
+        :template="editingTemplate"
+      />
+      <CreateAutomationModal
+        v-model:open="isCreateAutomationOpen"
+        :template="automationTemplate"
+      />
     </div>
   </div>
 </template>

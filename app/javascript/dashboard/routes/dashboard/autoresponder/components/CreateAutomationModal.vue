@@ -14,8 +14,9 @@ import {
   RelayDropdownMenuItem,
 } from 'dashboard/components-next/relay';
 
-defineProps({
+const props = defineProps({
   open: { type: Boolean, default: false },
+  template: { type: Object, default: null },
 });
 
 const emit = defineEmits(['update:open']);
@@ -61,6 +62,18 @@ const matchType = ref('contains');
 // Step 3: Response
 const publicRepliesText = ref('');
 const dmTextBody = ref('');
+const templateId = ref(null);
+
+watch(
+  () => props.open,
+  isOpen => {
+    if (isOpen && props.template) {
+      publicRepliesText.value = props.template.public_replies.join('\n');
+      dmTextBody.value = props.template.dm_text_body || '';
+      templateId.value = props.template.id;
+    }
+  }
+);
 
 // Step 4: Review
 const isEnabled = ref(true);
@@ -96,6 +109,7 @@ const resetForm = () => {
   matchType.value = 'contains';
   publicRepliesText.value = '';
   dmTextBody.value = '';
+  templateId.value = null;
   isEnabled.value = true;
 };
 
@@ -127,6 +141,7 @@ const save = async () => {
         match_type: matchType.value,
         public_replies: publicReplies.value,
         dm_text_body: dmTextBody.value,
+        template_id: templateId.value,
       },
     });
     closeModal();

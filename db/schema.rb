@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2026_09_02_000000) do
+ActiveRecord::Schema[7.1].define(version: 2026_09_02_100000) do
   # These extensions should be enabled to support this database
   enable_extension "pg_stat_statements"
   enable_extension "pg_trgm"
@@ -703,6 +703,18 @@ ActiveRecord::Schema[7.1].define(version: 2026_09_02_000000) do
     t.index ["trigger_id"], name: "index_comment_automation_message_logs_on_trigger_id"
   end
 
+  create_table "comment_automation_templates", force: :cascade do |t|
+    t.bigint "account_id", null: false
+    t.string "name", null: false
+    t.integer "template_type", default: 0, null: false
+    t.text "public_replies", default: [], null: false, array: true
+    t.text "dm_text_body"
+    t.boolean "favorite", default: false, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["account_id"], name: "index_comment_automation_templates_on_account_id"
+  end
+
   create_table "comment_automation_triggers", force: :cascade do |t|
     t.bigint "campaign_id", null: false
     t.bigint "account_id", null: false
@@ -712,8 +724,10 @@ ActiveRecord::Schema[7.1].define(version: 2026_09_02_000000) do
     t.text "dm_text_body", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "template_id"
     t.index ["account_id"], name: "index_comment_automation_triggers_on_account_id"
     t.index ["campaign_id"], name: "index_comment_automation_triggers_on_campaign_id"
+    t.index ["template_id"], name: "index_comment_automation_triggers_on_template_id"
   end
 
   create_table "commission_rules", force: :cascade do |t|
@@ -1868,8 +1882,10 @@ ActiveRecord::Schema[7.1].define(version: 2026_09_02_000000) do
   add_foreign_key "comment_automation_message_logs", "comment_automation_triggers", column: "trigger_id"
   add_foreign_key "comment_automation_message_logs", "contacts"
   add_foreign_key "comment_automation_message_logs", "inboxes"
+  add_foreign_key "comment_automation_templates", "accounts"
   add_foreign_key "comment_automation_triggers", "accounts"
   add_foreign_key "comment_automation_triggers", "comment_automation_campaigns", column: "campaign_id"
+  add_foreign_key "comment_automation_triggers", "comment_automation_templates", column: "template_id"
   add_foreign_key "commission_rules", "accounts"
   add_foreign_key "commission_rules", "users", column: "created_by_user_id"
   add_foreign_key "connected_accounts", "accounts"

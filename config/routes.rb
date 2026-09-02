@@ -117,6 +117,9 @@ Rails.application.routes.draw do
           resources :automation_rules, only: [:index, :create, :show, :update, :destroy] do
             post :clone
           end
+          namespace :comment_automation do
+            resources :campaigns, only: [:index, :create, :update, :destroy]
+          end
           resources :macros, only: [:index, :create, :show, :update, :destroy] do
             post :execute, on: :member
           end

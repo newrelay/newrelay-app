@@ -4,23 +4,14 @@ import { useI18n } from 'vue-i18n';
 import { useStore, useMapGetter } from 'dashboard/composables/store';
 import { useAccount } from 'dashboard/composables/useAccount';
 import { RelayButton } from 'dashboard/components-next/relay';
-import { INBOX_TYPES, getInboxIconByType } from 'dashboard/helper/inbox';
+import { getInboxIconByType } from 'dashboard/helper/inbox';
+import { AUTORESPONDER_CHANNELS } from '../../constants/channels';
 import SettingsCard from './SettingsCard.vue';
 import SettingsSidebarCard from './SettingsSidebarCard.vue';
 
 const { t } = useI18n();
 const store = useStore();
 const { accountScopedRoute } = useAccount();
-
-const AUTORESPONDER_CHANNELS = [
-  { type: INBOX_TYPES.INSTAGRAM, name: 'Instagram', descKey: 'INSTAGRAM_DESC' },
-  { type: INBOX_TYPES.FB, name: 'Facebook', descKey: 'FACEBOOK_DESC' },
-  {
-    type: INBOX_TYPES.WHATSAPP,
-    name: 'WhatsApp Business',
-    descKey: 'WHATSAPP_DESC',
-  },
-];
 
 onMounted(() => {
   store.dispatch('inboxes/get');

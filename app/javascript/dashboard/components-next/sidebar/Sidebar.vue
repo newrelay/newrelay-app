@@ -527,6 +527,12 @@ const primaryMenuItems = computed(() => {
           activeOn: ['reputation_reviews'],
         },
         {
+          name: 'Reputation Requests',
+          label: t('SIDEBAR.REPUTATION_REQUESTS'),
+          to: accountScopedRoute('reputation_requests'),
+          activeOn: ['reputation_requests'],
+        },
+        {
           name: 'Reputation Configuration',
           label: t('SIDEBAR.REPUTATION_CONFIGURATION'),
           to: accountScopedRoute('reputation_configuration'),

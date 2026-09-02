@@ -4,11 +4,11 @@ class Api::V1::Accounts::Reputation::ReviewRequestsController < Api::V1::Account
     requests = scoped_review_requests
                .joins(:reputation_template)
                .where(reputation_templates: { template_type: [nil, 'standard'] })
-                              .includes(:reputation_template, :contact)
-                              .order(created_at: :desc)
-                              .limit(50)
+               .includes(:reputation_template, :contact)
+               .order(created_at: :desc)
+               .limit(50)
     render json: requests.as_json(
-      only: %i[id channel status created_at clicked_at completed_at],
+      only: %i[id channel status created_at clicked_at completed_at message destinations token scheduled_at],
       include: {
         reputation_template: { only: %i[id name channel] },
         contact: { only: %i[id name phone_number email] }

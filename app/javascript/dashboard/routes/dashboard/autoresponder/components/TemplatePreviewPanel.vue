@@ -1,18 +1,21 @@
 <script setup>
 import { useI18n } from 'vue-i18n';
+import { dynamicTime } from 'shared/helpers/timeHelper';
 import { RelayButton, RelayBadge } from 'dashboard/components-next/relay';
-import { CHANNEL_LOGO_URLS } from '../constants/channels';
 
-defineProps({
+const props = defineProps({
   open: { type: Boolean, default: false },
   template: { type: Object, default: null },
 });
 
-const emit = defineEmits(['update:open']);
+const emit = defineEmits(['update:open', 'useInAutomation']);
 const { t } = useI18n();
 
 const closePanel = () => emit('update:open', false);
-const previewVariables = ['{{first_name}}', '{{business_name}}'];
+const useInAutomation = () => {
+  emit('useInAutomation', props.template);
+  closePanel();
+};
 </script>
 
 <template>
@@ -50,7 +53,7 @@ const previewVariables = ['{{first_name}}', '{{business_name}}'];
                 class="bg-primary/10 text-primary border-none font-medium px-2 rounded-md"
               >
                 {{
-                  template.type === 'Message'
+                  template.template_type === 'message'
                     ? t('AUTORESPONDER.COMMON.TYPE_MESSAGE')
                     : t('AUTORESPONDER.COMMON.TYPE_COMMENT')
                 }}
@@ -60,22 +63,6 @@ const previewVariables = ['{{first_name}}', '{{business_name}}'];
                 class="i-lucide-star size-4 text-amber-400 fill-amber-400 ml-1"
               />
             </div>
-            <p class="text-[13px] text-muted-foreground leading-relaxed">
-              {{ template.description }}
-            </p>
-          </div>
-
-          <div class="flex items-center gap-4">
-            <div
-              v-for="ch in template.channels"
-              :key="ch"
-              class="flex items-center gap-1.5"
-            >
-              <img :src="CHANNEL_LOGO_URLS[ch]" class="size-4 rounded-sm" />
-              <span class="text-[13px] font-medium text-foreground">{{
-                ch
-              }}</span>
-            </div>
           </div>
 
           <div class="flex flex-col gap-2.5">
@@ -84,7 +71,7 @@ const previewVariables = ['{{first_name}}', '{{business_name}}'];
               <span class="text-muted-foreground">
                 {{
                   t('AUTORESPONDER.TEMPLATE_PREVIEW.USED_TIMES', {
-                    count: template.usage,
+                    count: template.usage_count,
                   })
                 }}
               </span>
@@ -94,92 +81,46 @@ const previewVariables = ['{{first_name}}', '{{business_name}}'];
               <span class="text-muted-foreground">
                 {{
                   t('AUTORESPONDER.TEMPLATE_PREVIEW.LAST_UPDATED', {
-                    date: template.updated,
+                    date: dynamicTime(template.updated_at),
                   })
                 }}
               </span>
             </div>
           </div>
 
-          <div
-            class="mt-2 border border-border rounded-lg p-4 bg-background shadow-sm relative"
-          >
-            <p
-              class="text-[13.5px] leading-relaxed text-foreground whitespace-pre-wrap"
-            >
-              {{ template.description }}
-            </p>
-          </div>
-
-          <div class="flex flex-col gap-2.5 mt-1">
+          <div class="flex flex-col gap-2">
             <span class="text-[12.5px] font-medium text-foreground">
-              {{ t('AUTORESPONDER.TEMPLATE_PREVIEW.VARIABLES_USED') }}
+              {{ t('AUTORESPONDER.TEMPLATE_PREVIEW.PUBLIC_REPLIES') }}
             </span>
-            <div class="flex items-center gap-2 flex-wrap">
-              <span
-                v-for="variable in previewVariables"
-                :key="variable"
-                class="text-xs font-medium text-primary bg-primary/10 px-2 py-1 rounded-md"
-                >{{ variable }}</span
-              >
-            </div>
-          </div>
-        </div>
-
-        <div
-          class="border border-border/80 rounded-xl p-5 flex flex-col gap-4 bg-card shadow-sm"
-        >
-          <h3 class="text-sm font-semibold text-foreground mb-1">
-            {{ t('AUTORESPONDER.TEMPLATE_PREVIEW.DETAILS_TITLE') }}
-          </h3>
-
-          <div class="flex items-center justify-between text-[13px]">
-            <span class="text-muted-foreground">{{
-              t('AUTORESPONDER.TEMPLATE_PREVIEW.TYPE')
-            }}</span>
-            <RelayBadge
-              variant="secondary"
-              class="bg-primary/10 text-primary border-none font-medium px-2 rounded-md"
+            <div
+              v-for="(reply, idx) in template.public_replies"
+              :key="idx"
+              class="border border-border rounded-lg p-3 bg-background shadow-sm text-[13px] text-foreground whitespace-pre-wrap"
             >
-              {{
-                template.type === 'Message'
-                  ? t('AUTORESPONDER.COMMON.TYPE_MESSAGE')
-                  : t('AUTORESPONDER.COMMON.TYPE_COMMENT')
-              }}
-            </RelayBadge>
-          </div>
-
-          <div class="flex items-center justify-between text-[13px]">
-            <span class="text-muted-foreground">{{
-              t('AUTORESPONDER.TEMPLATE_PREVIEW.CREATED_ON')
-            }}</span>
-            <span class="font-semibold text-foreground">{{
-              template.updated
-            }}</span>
-          </div>
-
-          <div class="flex items-center justify-between text-[13px]">
-            <span class="text-muted-foreground">{{
-              t('AUTORESPONDER.TEMPLATE_PREVIEW.CHANNELS')
-            }}</span>
-            <div class="flex items-center gap-1.5">
-              <img
-                v-for="ch in template.channels"
-                :key="ch"
-                :src="CHANNEL_LOGO_URLS[ch]"
-                class="size-4 rounded-sm"
-              />
+              {{ reply }}
             </div>
           </div>
 
-          <RelayButton
-            variant="outline"
-            class="w-full mt-2 gap-2 text-primary border-primary/20 bg-primary/5 hover:bg-primary/10 shadow-sm"
-          >
-            <span class="i-lucide-zap size-4" />
-            {{ t('AUTORESPONDER.TEMPLATE_PREVIEW.USE_IN_AUTOMATION') }}
-          </RelayButton>
+          <div class="flex flex-col gap-2">
+            <span class="text-[12.5px] font-medium text-foreground">
+              {{ t('AUTORESPONDER.TEMPLATE_PREVIEW.DM_MESSAGE') }}
+            </span>
+            <div
+              class="border border-border rounded-lg p-3 bg-background shadow-sm text-[13px] text-foreground whitespace-pre-wrap"
+            >
+              {{ template.dm_text_body }}
+            </div>
+          </div>
         </div>
+
+        <RelayButton
+          variant="outline"
+          class="w-full gap-2 text-primary border-primary/20 bg-primary/5 hover:bg-primary/10 shadow-sm"
+          @click="useInAutomation"
+        >
+          <span class="i-lucide-zap size-4" />
+          {{ t('AUTORESPONDER.TEMPLATE_PREVIEW.USE_IN_AUTOMATION') }}
+        </RelayButton>
       </div>
     </div>
   </div>

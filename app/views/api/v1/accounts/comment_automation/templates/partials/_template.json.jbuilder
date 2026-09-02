@@ -1,0 +1,9 @@
+json.id template.id
+json.name template.name
+json.template_type template.template_type
+json.public_replies template.public_replies
+json.dm_text_body template.dm_text_body
+json.favorite template.favorite
+json.usage_count template.triggers.count
+json.created_at template.created_at.to_i
+json.updated_at template.updated_at.to_i

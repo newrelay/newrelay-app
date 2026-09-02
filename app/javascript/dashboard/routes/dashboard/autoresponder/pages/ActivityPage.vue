@@ -1,8 +1,10 @@
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
+import { useStore, useMapGetter } from 'dashboard/composables/store';
+import { dynamicTime } from 'shared/helpers/timeHelper';
+import { getInboxIconByType } from 'dashboard/helper/inbox';
 import {
-  RelayButton,
   RelayInput,
   RelayBadge,
   RelayDropdownMenu,
@@ -10,172 +12,75 @@ import {
   RelayDropdownMenuContent,
   RelayDropdownMenuItem,
 } from 'dashboard/components-next/relay';
-import { CHANNEL_LOGO_URLS, CHANNEL_NAMES } from '../constants/channels';
+import {
+  AUTORESPONDER_CHANNELS,
+  CHANNEL_NAME_BY_TYPE,
+} from '../constants/channels';
 import ActivityDetailsPanel from '../components/ActivityDetailsPanel.vue';
 
 const { t } = useI18n();
+const store = useStore();
+
 const searchQuery = ref('');
 const activeTab = ref('All');
 const channelFilter = ref('All Channels');
 const isPreviewOpen = ref(false);
 const selectedActivity = ref(null);
 
-const tabs = computed(() => [
-  { id: 'All', count: '1,284', label: t('AUTORESPONDER.ACTIVITY.TAB_ALL') },
-  {
-    id: 'Successful',
-    count: '1,266',
-    label: t('AUTORESPONDER.ACTIVITY.TAB_SUCCESSFUL'),
-  },
-  { id: 'Failed', count: '12', label: t('AUTORESPONDER.ACTIVITY.TAB_FAILED') },
-  { id: 'Skipped', count: '6', label: t('AUTORESPONDER.ACTIVITY.TAB_SKIPPED') },
-]);
+onMounted(() => {
+  store.dispatch('commentAutomationMessageLogs/get');
+});
 
-const activities = ref([
+const logs = useMapGetter('commentAutomationMessageLogs/getMessageLogs');
+
+const STATUS_BADGE_CLASS = {
+  pending: 'bg-muted text-muted-foreground',
+  public_replied: 'bg-blue-500/10 text-blue-600 dark:text-blue-400',
+  dm_sent: 'bg-primary/10 text-primary',
+  dm_failed: 'bg-destructive/10 text-destructive',
+  engaged: 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400',
+};
+
+const statusLabel = status =>
+  t(`AUTORESPONDER.ACTIVITY.STATUS_${status.toUpperCase()}`);
+
+const tabs = computed(() => [
   {
-    id: 'ACT-2024-05-26-103012',
-    time: 'May 26, 2024\n10:30 AM',
-    channel: 'Instagram',
-    channelType: 'Comment',
-    contact: {
-      name: 'John Smith',
-      handle: '@john.smith',
-      avatar: 'https://i.pravatar.cc/150?u=1',
-    },
-    automation: 'Pricing Response',
-    automationType: 'Comment Reply',
-    action: 'Replied to comment',
-    actionSnippet: '"How much does this cost?"',
-    status: 'Successful',
+    id: 'All',
+    count: logs.value.length,
+    label: t('AUTORESPONDER.ACTIVITY.TAB_ALL'),
   },
   {
-    id: 'ACT-2024-05-26-102812',
-    time: 'May 26, 2024\n10:28 AM',
-    channel: 'Instagram',
-    channelType: 'DM',
-    contact: {
-      name: 'Sarah Johnson',
-      handle: '@sarah.j',
-      avatar: 'https://i.pravatar.cc/150?u=2',
-    },
-    automation: 'Welcome Message',
-    automationType: 'Auto Responder',
-    action: 'Sent message',
-    actionSnippet: 'Welcome! How can we...',
-    status: 'Successful',
+    id: 'Engaged',
+    count: logs.value.filter(l => l.status === 'engaged').length,
+    label: t('AUTORESPONDER.ACTIVITY.TAB_ENGAGED'),
   },
   {
-    id: 'ACT-2024-05-26-102212',
-    time: 'May 26, 2024\n10:22 AM',
-    channel: 'WhatsApp',
-    channelType: 'Message',
-    contact: {
-      name: 'Michael Brown',
-      handle: '+1 (555) 123-4567',
-      avatar: 'https://i.pravatar.cc/150?u=3',
-    },
-    automation: 'WhatsApp Quick Reply',
-    automationType: 'Auto Responder',
-    action: 'Sent message',
-    actionSnippet: 'Thanks for reaching out...',
-    status: 'Successful',
-  },
-  {
-    id: 'ACT-2024-05-26-101812',
-    time: 'May 26, 2024\n10:18 AM',
-    channel: 'Facebook',
-    channelType: 'Comment',
-    contact: {
-      name: 'Emily Davis',
-      handle: '@emily.d',
-      avatar: 'https://i.pravatar.cc/150?u=4',
-    },
-    automation: 'Thank You Comment',
-    automationType: 'Comment Reply',
-    action: 'Replied to comment',
-    actionSnippet: 'Great service!',
-    status: 'Successful',
-  },
-  {
-    id: 'ACT-2024-05-26-101212',
-    time: 'May 26, 2024\n10:12 AM',
-    channel: 'Instagram',
-    channelType: 'Comment',
-    contact: {
-      name: 'David Wilson',
-      handle: '@david.w',
-      avatar: 'https://i.pravatar.cc/150?u=5',
-    },
-    automation: 'Out of Hours Reply',
-    automationType: 'Comment Reply',
-    action: 'Replied to comment',
-    actionSnippet: 'Are you open now?',
-    status: 'Skipped',
-  },
-  {
-    id: 'ACT-2024-05-26-100812',
-    time: 'May 26, 2024\n10:08 AM',
-    channel: 'Instagram',
-    channelType: 'DM',
-    contact: {
-      name: 'Jessica Lee',
-      handle: '@jessica.lee',
-      avatar: 'https://i.pravatar.cc/150?u=6',
-    },
-    automation: 'Product Inquiry',
-    automationType: 'Auto Responder',
-    action: 'Failed to send message',
-    actionSnippet: 'Network error',
-    status: 'Failed',
-  },
-  {
-    id: 'ACT-2024-05-26-100112',
-    time: 'May 26, 2024\n10:01 AM',
-    channel: 'WhatsApp',
-    channelType: 'Message',
-    contact: {
-      name: 'Chris Taylor',
-      handle: '+1 (555) 987-6543',
-      avatar: 'https://i.pravatar.cc/150?u=7',
-    },
-    automation: 'Business Hours Reply',
-    automationType: 'Auto Responder',
-    action: 'Sent message',
-    actionSnippet: 'We are available from...',
-    status: 'Successful',
-  },
-  {
-    id: 'ACT-2024-05-26-095812',
-    time: 'May 26, 2024\n09:58 AM',
-    channel: 'Facebook',
-    channelType: 'Comment',
-    contact: {
-      name: 'Amanda White',
-      handle: '@amanda.w',
-      avatar: 'https://i.pravatar.cc/150?u=8',
-    },
-    automation: 'FAQ - General',
-    automationType: 'Comment Reply',
-    action: 'Replied to comment',
-    actionSnippet: 'Do you offer delivery?',
-    status: 'Successful',
+    id: 'Failed',
+    count: logs.value.filter(l => l.status === 'dm_failed').length,
+    label: t('AUTORESPONDER.ACTIVITY.TAB_FAILED'),
   },
 ]);
 
 const filteredActivities = computed(() => {
-  let result = activities.value;
-  if (activeTab.value !== 'All') {
-    result = result.filter(item => item.status === activeTab.value);
+  let result = logs.value;
+  if (activeTab.value === 'Engaged') {
+    result = result.filter(l => l.status === 'engaged');
+  } else if (activeTab.value === 'Failed') {
+    result = result.filter(l => l.status === 'dm_failed');
   }
   if (channelFilter.value !== 'All Channels') {
-    result = result.filter(item => item.channel === channelFilter.value);
+    result = result.filter(
+      l => CHANNEL_NAME_BY_TYPE[l.inbox.channel_type] === channelFilter.value
+    );
   }
   if (searchQuery.value.trim()) {
     const query = searchQuery.value.toLowerCase();
     result = result.filter(
-      item =>
-        item.contact.name.toLowerCase().includes(query) ||
-        item.automation.toLowerCase().includes(query)
+      l =>
+        l.campaign.name.toLowerCase().includes(query) ||
+        l.comment_id.toLowerCase().includes(query) ||
+        (l.contact?.name || '').toLowerCase().includes(query)
     );
   }
   return result;
@@ -192,21 +97,13 @@ function openPreview(item) {
     class="h-[calc(100vh-80px)] overflow-y-auto bg-muted/20 p-6 md:p-8 hide-scrollbar flex flex-col"
   >
     <div class="max-w-[1600px] w-full mx-auto flex-1 flex flex-col min-h-0">
-      <div
-        class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6"
-      >
-        <div>
-          <h1 class="text-xl font-semibold tracking-tight text-foreground">
-            {{ t('AUTORESPONDER.ACTIVITY.TITLE') }}
-          </h1>
-          <p class="text-sm text-muted-foreground mt-1">
-            {{ t('AUTORESPONDER.ACTIVITY.SUBTITLE') }}
-          </p>
-        </div>
-        <RelayButton variant="outline" class="gap-2">
-          <span class="i-lucide-download size-4" />
-          {{ t('AUTORESPONDER.ACTIVITY.EXPORT') }}
-        </RelayButton>
+      <div class="mb-6">
+        <h1 class="text-xl font-semibold tracking-tight text-foreground">
+          {{ t('AUTORESPONDER.ACTIVITY.TITLE') }}
+        </h1>
+        <p class="text-sm text-muted-foreground mt-1">
+          {{ t('AUTORESPONDER.ACTIVITY.SUBTITLE') }}
+        </p>
       </div>
 
       <div class="flex flex-wrap items-center gap-3 mb-6">
@@ -223,26 +120,26 @@ function openPreview(item) {
 
         <RelayDropdownMenu>
           <RelayDropdownMenuTrigger as-child>
-            <RelayButton
-              variant="outline"
-              class="gap-2 text-[13.5px] font-normal h-9 bg-background"
+            <button
+              type="button"
+              class="h-9 px-3 flex items-center gap-2 text-[13.5px] font-normal rounded-md border border-border bg-background"
             >
               {{ channelFilter }}
               <span
                 class="i-lucide-chevron-down size-4 text-muted-foreground"
               />
-            </RelayButton>
+            </button>
           </RelayDropdownMenuTrigger>
           <RelayDropdownMenuContent align="start" class="w-40">
             <RelayDropdownMenuItem @click="channelFilter = 'All Channels'">
               {{ t('AUTORESPONDER.COMMON.ALL_CHANNELS') }}
             </RelayDropdownMenuItem>
             <RelayDropdownMenuItem
-              v-for="c in CHANNEL_NAMES"
-              :key="c"
-              @click="channelFilter = c"
+              v-for="c in AUTORESPONDER_CHANNELS"
+              :key="c.type"
+              @click="channelFilter = c.name"
             >
-              {{ c }}
+              {{ c.name }}
             </RelayDropdownMenuItem>
           </RelayDropdownMenuContent>
         </RelayDropdownMenu>
@@ -312,12 +209,12 @@ function openPreview(item) {
                     {{ t('AUTORESPONDER.ACTIVITY.TABLE_AUTOMATION') }}
                   </th>
                   <th
-                    class="px-4 py-3.5 text-sm font-medium text-muted-foreground min-w-[200px]"
+                    class="px-4 py-3.5 text-sm font-medium text-muted-foreground min-w-[160px]"
                   >
-                    {{ t('AUTORESPONDER.ACTIVITY.TABLE_ACTION') }}
+                    {{ t('AUTORESPONDER.ACTIVITY.TABLE_COMMENT') }}
                   </th>
                   <th
-                    class="px-4 py-3.5 text-sm font-medium text-muted-foreground w-24"
+                    class="px-4 py-3.5 text-sm font-medium text-muted-foreground w-32"
                   >
                     {{ t('AUTORESPONDER.ACTIVITY.TABLE_STATUS') }}
                   </th>
@@ -342,37 +239,44 @@ function openPreview(item) {
                 >
                   <td class="px-6 py-4 whitespace-nowrap">
                     <div class="text-[13px] text-foreground font-medium">
-                      {{ item.time.replace('\n', ' ') }}
+                      {{ dynamicTime(item.sent_at || item.created_at) }}
                     </div>
                   </td>
                   <td class="px-4 py-4">
                     <div class="flex items-center gap-2">
-                      <img
-                        :src="CHANNEL_LOGO_URLS[item.channel]"
-                        class="size-4 rounded-sm"
+                      <span
+                        :class="getInboxIconByType(item.inbox.channel_type)"
+                        class="size-4 text-foreground"
                       />
-                      <div class="flex flex-col">
-                        <span class="text-[13px] text-foreground font-medium">{{
-                          item.channel
-                        }}</span>
-                        <span class="text-xs text-muted-foreground">{{
-                          item.channelType
-                        }}</span>
-                      </div>
+                      <span class="text-[13px] text-foreground font-medium">{{
+                        CHANNEL_NAME_BY_TYPE[item.inbox.channel_type]
+                      }}</span>
                     </div>
                   </td>
                   <td class="px-4 py-4">
-                    <div class="flex items-center gap-2.5">
+                    <div v-if="item.contact" class="flex items-center gap-2.5">
                       <img
-                        :src="item.contact.avatar"
-                        class="size-7 rounded-full object-cover"
+                        :src="item.contact.avatar_url"
+                        class="size-7 rounded-full object-cover bg-muted"
                       />
+                      <span class="text-[13px] font-medium text-foreground">{{
+                        item.contact.name
+                      }}</span>
+                    </div>
+                    <div v-else class="flex items-center gap-2.5">
+                      <div
+                        class="size-7 rounded-full bg-muted flex items-center justify-center shrink-0"
+                      >
+                        <span
+                          class="i-lucide-user size-3.5 text-muted-foreground"
+                        />
+                      </div>
                       <div class="flex flex-col">
                         <span class="text-[13px] font-medium text-foreground">{{
-                          item.contact.name
+                          t('AUTORESPONDER.ACTIVITY.UNKNOWN_CONTACT')
                         }}</span>
-                        <span class="text-xs text-primary">{{
-                          item.contact.handle
+                        <span class="text-xs text-muted-foreground">{{
+                          item.commenter_id
                         }}</span>
                       </div>
                     </div>
@@ -380,40 +284,37 @@ function openPreview(item) {
                   <td class="px-4 py-4">
                     <div class="flex flex-col gap-0.5">
                       <span class="text-[13px] font-medium text-foreground">{{
-                        item.automation
+                        item.campaign.name
                       }}</span>
                       <span class="text-xs text-muted-foreground">{{
-                        item.automationType
+                        t('AUTORESPONDER.ACTIVITY.KEYWORD_LABEL', {
+                          keyword: item.trigger.keyword,
+                        })
                       }}</span>
                     </div>
                   </td>
                   <td class="px-4 py-4">
-                    <div class="flex flex-col gap-0.5">
-                      <span class="text-[13px] font-medium text-foreground">{{
-                        item.action
-                      }}</span>
-                      <span class="text-xs text-muted-foreground line-clamp-1">
-                        {{ item.actionSnippet }}
-                      </span>
-                    </div>
+                    <span class="text-[13px] text-muted-foreground break-all">{{
+                      item.comment_id
+                    }}</span>
                   </td>
                   <td class="px-4 py-4">
                     <RelayBadge
                       variant="secondary"
-                      class="bg-primary/10 text-primary border-none font-medium px-2.5 py-0.5 rounded-md"
+                      class="border-none font-medium px-2.5 py-0.5 rounded-md"
+                      :class="STATUS_BADGE_CLASS[item.status]"
                     >
-                      {{ item.status }}
+                      {{ statusLabel(item.status) }}
                     </RelayBadge>
                   </td>
                   <td class="px-6 py-4 text-center">
-                    <RelayButton
-                      variant="outline"
-                      size="sm"
-                      class="h-7 text-xs px-3 font-medium"
+                    <button
+                      type="button"
+                      class="h-7 text-xs px-3 font-medium rounded-md border border-border hover:bg-muted transition-colors"
                       @click.stop="openPreview(item)"
                     >
                       {{ t('AUTORESPONDER.ACTIVITY.VIEW') }}
-                    </RelayButton>
+                    </button>
                   </td>
                 </tr>
                 <tr v-if="filteredActivities.length === 0">
@@ -435,7 +336,7 @@ function openPreview(item) {
               {{
                 t('AUTORESPONDER.ACTIVITY.SHOWING_COUNT', {
                   count: filteredActivities.length,
-                  total: activities.length,
+                  total: logs.length,
                 })
               }}
             </div>

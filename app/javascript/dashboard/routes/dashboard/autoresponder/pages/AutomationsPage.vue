@@ -1,6 +1,9 @@
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
+import { useStore, useMapGetter } from 'dashboard/composables/store';
+import { dynamicTime } from 'shared/helpers/timeHelper';
+import { getInboxIconByType } from 'dashboard/helper/inbox';
 import {
   RelayButton,
   RelayInput,
@@ -9,141 +12,55 @@ import {
   RelayDropdownMenuContent,
   RelayDropdownMenuItem,
 } from 'dashboard/components-next/relay';
-import { CHANNEL_LOGO_URLS, CHANNEL_NAMES } from '../constants/channels';
+import { AUTORESPONDER_CHANNELS } from '../constants/channels';
 import CreateAutomationModal from '../components/CreateAutomationModal.vue';
 
 const { t } = useI18n();
+const store = useStore();
+
 const isCreateModalOpen = ref(false);
 const searchQuery = ref('');
 const activeTab = ref('All');
 const channelFilter = ref('All Channels');
-const typeFilter = ref('All Types');
 const statusFilter = ref('All Status');
 
-const tabs = computed(() => [
-  { id: 'All', count: 12 },
-  { id: 'Active', count: 8 },
-  { id: 'Paused', count: 2 },
-  { id: 'Draft', count: 1 },
-  { id: 'Disabled', count: 1 },
-]);
+onMounted(() => {
+  store.dispatch('commentAutomationCampaigns/get');
+});
 
-const automations = ref([
+const campaigns = useMapGetter('commentAutomationCampaigns/getCampaigns');
+
+const channelName = channelType =>
+  AUTORESPONDER_CHANNELS.find(c => c.type === channelType)?.name || channelType;
+
+const tabs = computed(() => [
+  { id: 'All', count: campaigns.value.length },
   {
-    id: 1,
-    name: 'Instagram Comment Reply',
-    type: 'Comment',
-    description: 'Reply to comments containing pricing keywords',
-    triggerName: 'When someone comments',
-    triggerDesc: 'Contains "price"',
-    channel: 'Instagram',
-    status: 'Active',
-    responses: 342,
-    updated: '2h ago',
+    id: 'Active',
+    count: campaigns.value.filter(c => c.is_active).length,
   },
   {
-    id: 2,
-    name: 'Welcome Message',
-    type: 'Message',
-    description: 'Send welcome message to new followers',
-    triggerName: 'When someone sends a message',
-    triggerDesc: 'Any message',
-    channel: 'Instagram',
-    status: 'Active',
-    responses: 287,
-    updated: '5h ago',
-  },
-  {
-    id: 3,
-    name: 'WhatsApp Quick Reply',
-    type: 'Message',
-    description: 'Auto-reply to common questions',
-    triggerName: 'When someone sends a message',
-    triggerDesc: 'Contains keywords',
-    channel: 'WhatsApp',
-    status: 'Active',
-    responses: 198,
-    updated: '1d ago',
-  },
-  {
-    id: 4,
-    name: 'Facebook Page Comment',
-    type: 'Comment',
-    description: 'Reply to comments on Facebook page',
-    triggerName: 'When someone comments',
-    triggerDesc: 'Any comment',
-    channel: 'Facebook',
-    status: 'Active',
-    responses: 142,
-    updated: '1d ago',
-  },
-  {
-    id: 5,
-    name: 'Story Mention Reply',
-    type: 'Message',
-    description: 'Reply when mentioned in story',
-    triggerName: 'When someone mentions your story',
-    triggerDesc: 'Any mention',
-    channel: 'Instagram',
-    status: 'Paused',
-    responses: 64,
-    updated: '2d ago',
-  },
-  {
-    id: 6,
-    name: 'Out of Hours Reply',
-    type: 'Message',
-    description: 'Auto-reply outside business hours',
-    triggerName: 'When someone sends a message',
-    triggerDesc: 'Outside business hours',
-    channel: 'Instagram',
-    status: 'Paused',
-    responses: 38,
-    updated: '3d ago',
-  },
-  {
-    id: 7,
-    name: 'Support Fallback',
-    type: 'Message',
-    description: 'Fallback reply when no match found',
-    triggerName: 'When no other rule matches',
-    triggerDesc: 'Any message',
-    channel: 'WhatsApp',
-    status: 'Draft',
-    responses: 0,
-    updated: '3d ago',
-  },
-  {
-    id: 8,
-    name: 'Promotions Comment',
-    type: 'Comment',
-    description: 'Reply to promo related comments',
-    triggerName: 'When someone comments',
-    triggerDesc: 'Contains "offer"',
-    channel: 'Instagram',
-    status: 'Disabled',
-    responses: 0,
-    updated: '5d ago',
+    id: 'Paused',
+    count: campaigns.value.filter(c => !c.is_active).length,
   },
 ]);
 
 const filteredAutomations = computed(() => {
-  let list = automations.value;
-  if (activeTab.value !== 'All') {
-    list = list.filter(item => item.status === activeTab.value);
-  }
+  let list = campaigns.value;
+  if (activeTab.value === 'Active') list = list.filter(c => c.is_active);
+  if (activeTab.value === 'Paused') list = list.filter(c => !c.is_active);
   if (channelFilter.value !== 'All Channels') {
-    list = list.filter(item => item.channel === channelFilter.value);
-  }
-  if (typeFilter.value !== 'All Types') {
-    list = list.filter(item => item.type === typeFilter.value);
+    list = list.filter(
+      c => channelName(c.inbox.channel_type) === channelFilter.value
+    );
   }
   if (statusFilter.value !== 'All Status') {
-    list = list.filter(item => item.status === statusFilter.value);
+    const wantActive = statusFilter.value === 'Active';
+    list = list.filter(c => c.is_active === wantActive);
   }
   if (searchQuery.value.trim()) {
     const q = searchQuery.value.toLowerCase();
-    list = list.filter(item => item.name.toLowerCase().includes(q));
+    list = list.filter(c => c.name.toLowerCase().includes(q));
   }
   return list;
 });
@@ -152,8 +69,20 @@ function clearFilters() {
   searchQuery.value = '';
   activeTab.value = 'All';
   channelFilter.value = 'All Channels';
-  typeFilter.value = 'All Types';
   statusFilter.value = 'All Status';
+}
+
+function toggleActive(campaign) {
+  store.dispatch('commentAutomationCampaigns/update', {
+    id: campaign.id,
+    campaign: { is_active: !campaign.is_active },
+  });
+}
+
+function deleteCampaign(campaign) {
+  // eslint-disable-next-line no-alert
+  if (!window.confirm(t('AUTORESPONDER.AUTOMATIONS.DELETE_CONFIRM'))) return;
+  store.dispatch('commentAutomationCampaigns/delete', campaign.id);
 }
 </script>
 
@@ -206,36 +135,11 @@ function clearFilters() {
               {{ t('AUTORESPONDER.COMMON.ALL_CHANNELS') }}
             </RelayDropdownMenuItem>
             <RelayDropdownMenuItem
-              v-for="c in CHANNEL_NAMES"
-              :key="c"
-              @click="channelFilter = c"
+              v-for="c in AUTORESPONDER_CHANNELS"
+              :key="c.type"
+              @click="channelFilter = c.name"
             >
-              {{ c }}
-            </RelayDropdownMenuItem>
-          </RelayDropdownMenuContent>
-        </RelayDropdownMenu>
-
-        <RelayDropdownMenu>
-          <RelayDropdownMenuTrigger as-child>
-            <RelayButton
-              variant="outline"
-              class="gap-2 text-[13.5px] font-normal"
-            >
-              {{ typeFilter }}
-              <span
-                class="i-lucide-chevron-down size-4 text-muted-foreground"
-              />
-            </RelayButton>
-          </RelayDropdownMenuTrigger>
-          <RelayDropdownMenuContent align="start" class="w-40">
-            <RelayDropdownMenuItem @click="typeFilter = 'All Types'">
-              {{ t('AUTORESPONDER.COMMON.ALL_TYPES') }}
-            </RelayDropdownMenuItem>
-            <RelayDropdownMenuItem @click="typeFilter = 'Comment'">
-              {{ t('AUTORESPONDER.COMMON.TYPE_COMMENT') }}
-            </RelayDropdownMenuItem>
-            <RelayDropdownMenuItem @click="typeFilter = 'Message'">
-              {{ t('AUTORESPONDER.COMMON.TYPE_MESSAGE') }}
+              {{ c.name }}
             </RelayDropdownMenuItem>
           </RelayDropdownMenuContent>
         </RelayDropdownMenu>
@@ -257,7 +161,7 @@ function clearFilters() {
               {{ t('AUTORESPONDER.COMMON.ALL_STATUS') }}
             </RelayDropdownMenuItem>
             <RelayDropdownMenuItem
-              v-for="s in ['Active', 'Paused', 'Draft', 'Disabled']"
+              v-for="s in ['Active', 'Paused']"
               :key="s"
               @click="statusFilter = s"
             >
@@ -357,78 +261,88 @@ function clearFilters() {
                     <div
                       class="size-8 rounded-lg border border-border bg-card shadow-xs flex items-center justify-center shrink-0 mt-0.5"
                     >
-                      <img
-                        :src="CHANNEL_LOGO_URLS[item.channel]"
-                        class="size-4 opacity-90"
+                      <span
+                        :class="getInboxIconByType(item.inbox.channel_type)"
+                        class="size-4 text-foreground"
                       />
                     </div>
                     <div>
-                      <div class="flex items-center gap-2">
-                        <span class="text-sm font-medium text-foreground">{{
-                          item.name
-                        }}</span>
-                        <span
-                          class="px-1.5 py-0.5 rounded text-[10px] font-medium bg-primary/10 text-primary"
-                        >
-                          {{ item.type }}
-                        </span>
-                      </div>
+                      <span class="text-sm font-medium text-foreground">{{
+                        item.name
+                      }}</span>
                       <p class="text-[13px] text-muted-foreground mt-0.5">
-                        {{ item.description }}
+                        {{ item.inbox.name }} &bull;
+                        {{ t('AUTORESPONDER.AUTOMATIONS.POST_ID_LABEL') }}
+                        {{ item.post_id }}
                       </p>
                     </div>
                   </div>
                 </td>
                 <td class="px-4 py-4 align-top pt-4">
-                  <div class="text-[13.5px] font-medium text-foreground">
-                    {{ item.triggerName }}
-                  </div>
-                  <div class="text-[13px] text-muted-foreground mt-0.5">
-                    {{ item.triggerDesc }}
-                  </div>
+                  <template v-if="item.trigger">
+                    <div class="text-[13.5px] font-medium text-foreground">
+                      {{ t('AUTORESPONDER.AUTOMATIONS.WHEN_COMMENT') }}
+                    </div>
+                    <div class="text-[13px] text-muted-foreground mt-0.5">
+                      {{
+                        t(
+                          item.trigger.match_type === 'exact'
+                            ? 'AUTORESPONDER.AUTOMATIONS.KEYWORD_EXACT'
+                            : 'AUTORESPONDER.AUTOMATIONS.KEYWORD_CONTAINS',
+                          { keyword: item.trigger.keyword }
+                        )
+                      }}
+                    </div>
+                  </template>
                 </td>
                 <td class="px-4 py-4 align-top pt-4">
                   <div class="flex items-center gap-1.5">
-                    <img
-                      :src="CHANNEL_LOGO_URLS[item.channel]"
-                      class="size-3.5 opacity-90"
+                    <span
+                      :class="getInboxIconByType(item.inbox.channel_type)"
+                      class="size-3.5 text-muted-foreground"
                     />
                     <span class="text-[13.5px] font-medium text-foreground">{{
-                      item.channel
+                      channelName(item.inbox.channel_type)
                     }}</span>
                   </div>
                 </td>
                 <td class="px-4 py-4 align-top pt-4">
-                  <div class="flex items-center gap-1.5">
+                  <button
+                    type="button"
+                    class="flex items-center gap-1.5"
+                    @click="toggleActive(item)"
+                  >
                     <div
                       class="size-1.5 rounded-full"
                       :class="
-                        item.status === 'Active'
-                          ? 'bg-primary'
-                          : 'bg-muted-foreground'
+                        item.is_active ? 'bg-primary' : 'bg-muted-foreground'
                       "
                     />
                     <span
                       class="text-[13px] font-medium"
                       :class="
-                        item.status === 'Active'
+                        item.is_active
                           ? 'text-primary'
                           : 'text-muted-foreground'
                       "
                     >
-                      {{ item.status }}
+                      {{
+                        item.is_active
+                          ? t('AUTORESPONDER.AUTOMATIONS.STATUS_ACTIVE')
+                          : t('AUTORESPONDER.AUTOMATIONS.STATUS_PAUSED')
+                      }}
                     </span>
-                  </div>
+                  </button>
                 </td>
                 <td class="px-4 py-4 align-top pt-4">
                   <span class="text-[13.5px] font-semibold text-foreground">{{
-                    item.responses
+                    item.responses_count
                   }}</span>
                 </td>
                 <td
                   class="px-4 py-4 align-top pt-4 text-[13px] text-muted-foreground"
                 >
-                  {{ item.updated }}
+                  {{ dynamicTime(item.updated_at) }}
                 </td>
                 <td class="px-4 py-4 align-top pt-4 text-center">
                   <RelayDropdownMenu>
@@ -441,16 +355,10 @@ function clearFilters() {
                       </button>
                     </RelayDropdownMenuTrigger>
                     <RelayDropdownMenuContent align="end" class="w-40">
-                      <RelayDropdownMenuItem>
-                        {{ t('AUTORESPONDER.COMMON.EDIT_AUTOMATION') }}
-                      </RelayDropdownMenuItem>
-                      <RelayDropdownMenuItem>
-                        {{ t('AUTORESPONDER.COMMON.DUPLICATE') }}
-                      </RelayDropdownMenuItem>
-                      <RelayDropdownMenuItem>
-                        {{ t('AUTORESPONDER.AUTOMATIONS.VIEW_ACTIVITY') }}
-                      </RelayDropdownMenuItem>
-                      <RelayDropdownMenuItem destructive>
+                      <RelayDropdownMenuItem
+                        destructive
+                        @click="deleteCampaign(item)"
+                      >
                         {{ t('AUTORESPONDER.COMMON.DELETE') }}
                       </RelayDropdownMenuItem>
                     </RelayDropdownMenuContent>
@@ -476,7 +384,7 @@ function clearFilters() {
             {{
               t('AUTORESPONDER.AUTOMATIONS.SHOWING_COUNT', {
                 count: filteredAutomations.length,
-                total: automations.length,
+                total: campaigns.length,
               })
             }}
           </div>

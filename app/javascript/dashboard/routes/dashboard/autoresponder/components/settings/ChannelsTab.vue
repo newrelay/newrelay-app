@@ -1,63 +1,51 @@
 <script setup>
-import { ref, computed } from 'vue';
+import { computed, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
+import { useStore, useMapGetter } from 'dashboard/composables/store';
+import { useAccount } from 'dashboard/composables/useAccount';
 import { RelayButton } from 'dashboard/components-next/relay';
+import { getInboxIconByType } from 'dashboard/helper/inbox';
+import { AUTORESPONDER_CHANNELS } from '../../constants/channels';
 import SettingsCard from './SettingsCard.vue';
 import SettingsSidebarCard from './SettingsSidebarCard.vue';
-import { CHANNEL_LOGO_URLS } from '../../constants/channels';
 
 const { t } = useI18n();
+const store = useStore();
+const { accountScopedRoute } = useAccount();
 
-const connectedChannels = ref([
-  {
-    id: 'ig',
-    name: 'Instagram',
-    sub: 'Direct Messages & Comments',
-    account: 'newrelay.official',
-    status: 'Connected',
-    sync: '2 min ago',
-    logo: CHANNEL_LOGO_URLS.Instagram,
-  },
-  {
-    id: 'fb',
-    name: 'Facebook',
-    sub: 'Messages & Comments',
-    account: 'New Relay',
-    status: 'Connected',
-    sync: '5 min ago',
-    logo: CHANNEL_LOGO_URLS.Facebook,
-  },
-  {
-    id: 'wa',
-    name: 'WhatsApp Business',
-    sub: 'Messages',
-    account: '+91 98765 43210',
-    status: 'Connected',
-    sync: '1 min ago',
-    logo: CHANNEL_LOGO_URLS.WhatsApp,
-  },
-]);
+onMounted(() => {
+  store.dispatch('inboxes/get');
+});
 
-const availableChannels = computed(() => [
-  {
-    id: 'tg',
-    name: 'Telegram',
-    desc: t('AUTORESPONDER.SETTINGS.CHANNELS.TELEGRAM_DESC'),
-    icon: 'i-lucide-send',
-  },
-  {
-    id: 'sms',
-    name: 'SMS',
-    desc: t('AUTORESPONDER.SETTINGS.CHANNELS.SMS_DESC'),
-    icon: 'i-lucide-smartphone',
-  },
-  {
-    id: 'slack',
-    name: 'Slack',
-    desc: t('AUTORESPONDER.SETTINGS.CHANNELS.SLACK_DESC'),
-    icon: 'i-lucide-hash',
-  },
-]);
+const allInboxes = useMapGetter('inboxes/getInboxes');
+
+const connectedChannels = computed(() =>
+  AUTORESPONDER_CHANNELS.flatMap(({ type, name, descKey }) =>
+    allInboxes.value
+      .filter(inbox => inbox.channel_type === type)
+      .map(inbox => ({
+        id: inbox.id,
+        type,
+        name,
+        sub: t(`AUTORESPONDER.SETTINGS.CHANNELS.${descKey}`),
+        account: inbox.name,
+        needsReconnect: !!inbox.reauthorization_required,
+        icon: getInboxIconByType(type),
+      }))
+  )
+);
+
+const availableChannels = computed(() => {
+  const connectedTypes = new Set(connectedChannels.value.map(ch => ch.type));
+  return AUTORESPONDER_CHANNELS.filter(
+    ({ type }) => !connectedTypes.has(type)
+  ).map(({ type, name, descKey }) => ({
+    type,
+    name,
+    desc: t(`AUTORESPONDER.SETTINGS.CHANNELS.${descKey}`),
+    icon: getInboxIconByType(type),
+  }));
+});
 </script>
 
 <template>
@@ -66,7 +54,13 @@ const availableChannels = computed(() => [
       <SettingsCard
         :title="t('AUTORESPONDER.SETTINGS.CHANNELS.CONNECTED_CHANNELS')"
       >
-        <div class="flex flex-col divide-y divide-border/40 -mt-2">
+        <div
+          v-if="!connectedChannels.length"
+          class="text-xs text-muted-foreground py-3"
+        >
+          {{ t('AUTORESPONDER.SETTINGS.CHANNELS.NO_CHANNELS_CONNECTED') }}
+        </div>
+        <div v-else class="flex flex-col divide-y divide-border/40 -mt-2">
           <div
             v-for="ch in connectedChannels"
             :key="ch.id"
@@ -76,7 +70,7 @@ const availableChannels = computed(() => [
               <div
                 class="size-10 rounded-lg border border-border bg-card shadow-xs flex items-center justify-center shrink-0"
               >
-                <img :src="ch.logo" class="size-5 opacity-90" />
+                <span :class="ch.icon" class="size-5 text-foreground" />
               </div>
               <div class="min-w-0">
                 <div class="text-[13.5px] font-semibold text-foreground">
@@ -88,21 +82,29 @@ const availableChannels = computed(() => [
               </div>
             </div>
             <div class="flex items-center gap-4 shrink-0">
-              <div class="text-right hidden sm:block">
-                <span
-                  class="text-[11px] font-medium px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400"
-                >
-                  {{ t('AUTORESPONDER.SETTINGS.CHANNELS.CONNECTED') }}
-                </span>
-                <div class="text-[11px] text-muted-foreground mt-1">
-                  {{
-                    t('AUTORESPONDER.SETTINGS.CHANNELS.LAST_SYNCED', {
-                      time: ch.sync,
-                    })
-                  }}
-                </div>
-              </div>
-              <RelayButton variant="outline" size="sm" class="h-8 text-xs">
+              <span
+                class="text-[11px] font-medium px-2 py-0.5 rounded-full hidden sm:inline-block"
+                :class="
+                  ch.needsReconnect
+                    ? 'bg-amber-500/10 text-amber-600 dark:text-amber-400'
+                    : 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400'
+                "
+              >
+                {{
+                  ch.needsReconnect
+                    ? t('AUTORESPONDER.SETTINGS.CHANNELS.NEEDS_RECONNECT')
+                    : t('AUTORESPONDER.SETTINGS.CHANNELS.CONNECTED')
+                }}
+              </span>
+              <RelayButton
+                as="router-link"
+                :to="
+                  accountScopedRoute('settings_inbox_show', { inboxId: ch.id })
+                "
+                variant="outline"
+                size="sm"
+                class="h-8 text-xs"
+              >
                 {{ t('AUTORESPONDER.SETTINGS.CHANNELS.MANAGE') }}
               </RelayButton>
             </div>
@@ -111,12 +113,13 @@ const availableChannels = computed(() => [
       </SettingsCard>
 
       <SettingsCard
+        v-if="availableChannels.length"
         :title="t('AUTORESPONDER.SETTINGS.CHANNELS.AVAILABLE_CHANNELS')"
       >
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div
             v-for="ch in availableChannels"
-            :key="ch.id"
+            :key="ch.type"
             class="border border-border rounded-xl p-4 flex items-start gap-3 hover:border-primary/40 transition-colors"
           >
             <div
@@ -133,6 +136,8 @@ const availableChannels = computed(() => [
               </div>
             </div>
             <RelayButton
+              as="router-link"
+              :to="accountScopedRoute('settings_inbox_new')"
               variant="outline"
               size="sm"
               class="h-7 text-xs shrink-0"
@@ -155,6 +160,7 @@ const availableChannels = computed(() => [
       </SettingsSidebarCard>
 
       <SettingsSidebarCard
+        v-if="connectedChannels.length"
         :title="t('AUTORESPONDER.SETTINGS.CHANNELS.CHANNEL_USAGE')"
         icon="i-lucide-bar-chart"
       >

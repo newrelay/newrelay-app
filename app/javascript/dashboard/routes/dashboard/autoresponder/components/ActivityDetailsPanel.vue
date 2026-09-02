@@ -1,9 +1,12 @@
 <script setup>
+import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { RelayButton, RelayBadge } from 'dashboard/components-next/relay';
-import { CHANNEL_LOGO_URLS } from '../constants/channels';
+import { dynamicTime } from 'shared/helpers/timeHelper';
+import { getInboxIconByType } from 'dashboard/helper/inbox';
+import { RelayBadge } from 'dashboard/components-next/relay';
+import { CHANNEL_NAME_BY_TYPE } from '../constants/channels';
 
-defineProps({
+const props = defineProps({
   open: { type: Boolean, default: false },
   activity: { type: Object, default: null },
 });
@@ -12,6 +15,36 @@ const emit = defineEmits(['update:open']);
 const { t } = useI18n();
 
 const closePanel = () => emit('update:open', false);
+
+const STATUS_BADGE_CLASS = {
+  pending: 'bg-muted text-muted-foreground',
+  public_replied: 'bg-blue-500/10 text-blue-600 dark:text-blue-400',
+  dm_sent: 'bg-primary/10 text-primary',
+  dm_failed: 'bg-destructive/10 text-destructive',
+  engaged: 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400',
+};
+
+const STATUS_RANK = {
+  pending: 0,
+  public_replied: 1,
+  dm_sent: 2,
+  dm_failed: 2,
+  engaged: 3,
+};
+
+const statusLabel = status =>
+  t(`AUTORESPONDER.ACTIVITY.STATUS_${status.toUpperCase()}`);
+
+const reached = computed(() => {
+  const rank = props.activity ? STATUS_RANK[props.activity.status] : -1;
+  return {
+    matched: rank >= 0,
+    replied: rank >= 1,
+    dm: rank >= 2,
+    dmFailed: props.activity?.status === 'dm_failed',
+    engaged: rank >= 3,
+  };
+});
 </script>
 
 <template>
@@ -39,23 +72,24 @@ const closePanel = () => emit('update:open', false);
         <div class="flex flex-col gap-3">
           <div class="flex items-center justify-between">
             <div class="flex items-center gap-2">
-              <img
-                :src="CHANNEL_LOGO_URLS[activity.channel]"
-                class="size-5 rounded-sm"
+              <span
+                :class="getInboxIconByType(activity.inbox.channel_type)"
+                class="size-5 text-foreground"
               />
               <span class="text-sm font-medium text-foreground">
-                {{ activity.channel }} {{ activity.channelType }}
+                {{ CHANNEL_NAME_BY_TYPE[activity.inbox.channel_type] }}
               </span>
             </div>
             <RelayBadge
               variant="secondary"
-              class="bg-primary/10 text-primary border-none font-medium px-2.5 py-0.5 rounded-md"
+              class="border-none font-medium px-2.5 py-0.5 rounded-md"
+              :class="STATUS_BADGE_CLASS[activity.status]"
             >
-              {{ activity.status }}
+              {{ statusLabel(activity.status) }}
             </RelayBadge>
           </div>
           <div class="text-[13px] text-muted-foreground">
-            {{ activity.time.replace('\n', ' at ') }}
+            {{ dynamicTime(activity.sent_at || activity.created_at) }}
           </div>
         </div>
       </div>
@@ -65,29 +99,29 @@ const closePanel = () => emit('update:open', false);
           <span class="text-[13px] font-medium text-foreground">{{
             t('AUTORESPONDER.ACTIVITY_DETAILS.CONTACT')
           }}</span>
-          <div class="flex items-center justify-between mt-1">
-            <div class="flex items-center gap-3">
-              <img
-                :src="activity.contact.avatar"
-                class="size-9 rounded-full object-cover"
-              />
-              <div class="flex flex-col">
-                <span class="text-[13.5px] font-medium text-foreground">{{
-                  activity.contact.name
-                }}</span>
-                <span class="text-[12.5px] text-primary">{{
-                  activity.contact.handle
-                }}</span>
-              </div>
-            </div>
-            <RelayButton
-              variant="outline"
-              size="sm"
-              class="h-8 text-xs font-medium gap-1.5 text-primary border-primary/20 hover:bg-primary/10"
+          <div v-if="activity.contact" class="flex items-center gap-3 mt-1">
+            <img
+              :src="activity.contact.avatar_url"
+              class="size-9 rounded-full object-cover bg-muted"
+            />
+            <span class="text-[13.5px] font-medium text-foreground">{{
+              activity.contact.name
+            }}</span>
+          </div>
+          <div v-else class="flex items-center gap-3 mt-1">
+            <div
+              class="size-9 rounded-full bg-muted flex items-center justify-center shrink-0"
             >
-              {{ t('AUTORESPONDER.ACTIVITY_DETAILS.VIEW_PROFILE') }}
-              <span class="i-lucide-external-link size-3" />
-            </RelayButton>
+              <span class="i-lucide-user size-4 text-muted-foreground" />
+            </div>
+            <div class="flex flex-col">
+              <span class="text-[13.5px] font-medium text-foreground">{{
+                t('AUTORESPONDER.ACTIVITY.UNKNOWN_CONTACT')
+              }}</span>
+              <span class="text-[12.5px] text-muted-foreground">{{
+                activity.commenter_id
+              }}</span>
+            </div>
           </div>
         </div>
 
@@ -97,15 +131,12 @@ const closePanel = () => emit('update:open', false);
           <span class="text-[13px] font-medium text-foreground">{{
             t('AUTORESPONDER.ACTIVITY_DETAILS.TRIGGER')
           }}</span>
-          <div class="flex items-start justify-between mt-1 gap-4">
-            <div class="flex flex-col gap-1">
-              <span class="text-[13.5px] font-medium text-foreground">{{
-                t('AUTORESPONDER.ACTIVITY_DETAILS.COMMENT_ON_POST')
-              }}</span>
-              <span class="text-[13px] text-muted-foreground">{{
-                `"${activity.actionSnippet}"`
-              }}</span>
-            </div>
+          <div class="mt-1">
+            <span class="text-[13.5px] text-muted-foreground">{{
+              t('AUTORESPONDER.ACTIVITY.KEYWORD_LABEL', {
+                keyword: activity.trigger.keyword,
+              })
+            }}</span>
           </div>
         </div>
 
@@ -115,93 +146,10 @@ const closePanel = () => emit('update:open', false);
           <span class="text-[13px] font-medium text-foreground">{{
             t('AUTORESPONDER.ACTIVITY_DETAILS.AUTOMATION')
           }}</span>
-          <div class="flex items-center justify-between mt-1">
-            <div class="flex items-center gap-2">
-              <span class="text-[13.5px] font-medium text-foreground">{{
-                activity.automation
-              }}</span>
-              <RelayBadge
-                variant="secondary"
-                class="bg-primary/10 text-primary border-none font-medium px-2 py-0.5 rounded text-[11px]"
-              >
-                {{ activity.automationType }}
-              </RelayBadge>
-            </div>
-            <RelayButton
-              variant="outline"
-              size="sm"
-              class="h-8 text-xs font-medium gap-1.5 text-primary border-primary/20 hover:bg-primary/10"
-            >
-              {{ t('AUTORESPONDER.ACTIVITY_DETAILS.VIEW_AUTOMATION') }}
-              <span class="i-lucide-external-link size-3" />
-            </RelayButton>
-          </div>
-        </div>
-
-        <hr class="border-border" />
-
-        <div class="flex flex-col gap-2">
-          <span class="text-[13px] font-medium text-foreground">{{
-            t('AUTORESPONDER.ACTIVITY_DETAILS.ACTION_PERFORMED')
-          }}</span>
-          <div class="mt-1 flex flex-col gap-1.5">
+          <div class="mt-1">
             <span class="text-[13.5px] font-medium text-foreground">{{
-              activity.action
+              activity.campaign.name
             }}</span>
-            <p class="text-[13px] text-muted-foreground leading-relaxed">
-              {{ activity.actionSnippet }}
-            </p>
-          </div>
-        </div>
-
-        <hr class="border-border" />
-
-        <div class="flex flex-col gap-2">
-          <span class="text-[13px] font-medium text-foreground">{{
-            t('AUTORESPONDER.ACTIVITY_DETAILS.CHANNEL')
-          }}</span>
-          <div class="flex items-center gap-2 mt-1 cursor-pointer group w-fit">
-            <img
-              :src="CHANNEL_LOGO_URLS[activity.channel]"
-              class="size-4 rounded-sm"
-            />
-            <span
-              class="text-[13.5px] font-medium text-foreground group-hover:underline"
-            >
-              {{ activity.channel }}
-            </span>
-            <span
-              class="i-lucide-external-link size-3 text-muted-foreground group-hover:text-foreground transition-colors"
-            />
-          </div>
-        </div>
-
-        <hr class="border-border" />
-
-        <div class="flex flex-col gap-2">
-          <span class="text-[13px] font-medium text-foreground">{{
-            t('AUTORESPONDER.ACTIVITY_DETAILS.STATUS')
-          }}</span>
-          <div class="flex items-center gap-2 mt-1">
-            <div
-              class="size-5 rounded-full bg-primary/10 flex items-center justify-center"
-            >
-              <span
-                class="size-3.5 text-primary"
-                :class="
-                  activity.status === 'Successful'
-                    ? 'i-lucide-check-circle-2'
-                    : 'i-lucide-alert-circle'
-                "
-              />
-            </div>
-            <span class="text-[13.5px] text-muted-foreground">
-              {{
-                activity.status === 'Successful'
-                  ? t('AUTORESPONDER.ACTIVITY_DETAILS.DELIVERED_SUCCESS')
-                  : t('AUTORESPONDER.ACTIVITY_DETAILS.DELIVERY_FAILED')
-              }}
-            </span>
           </div>
         </div>
 
@@ -222,18 +170,10 @@ const closePanel = () => emit('update:open', false);
             </div>
             <div class="flex items-start">
               <span class="text-[13px] text-muted-foreground w-32 shrink-0">{{
-                t('AUTORESPONDER.ACTIVITY_DETAILS.RESPONSE_TIME')
+                t('AUTORESPONDER.ACTIVITY.COMMENT_ID_LABEL')
               }}</span>
-              <span class="text-[13px] font-medium text-foreground">{{
-                t('AUTORESPONDER.ACTIVITY_DETAILS.RESPONSE_TIME_VALUE')
-              }}</span>
-            </div>
-            <div class="flex items-start">
-              <span class="text-[13px] text-muted-foreground w-32 shrink-0">{{
-                t('AUTORESPONDER.ACTIVITY_DETAILS.DEVICE')
-              }}</span>
-              <span class="text-[13px] font-medium text-foreground">{{
-                t('AUTORESPONDER.ACTIVITY_DETAILS.DEVICE_VALUE')
+              <span class="text-[13px] font-medium text-foreground break-all">{{
+                activity.comment_id
               }}</span>
             </div>
           </div>
@@ -253,7 +193,12 @@ const closePanel = () => emit('update:open', false);
               <div
                 class="absolute -left-6 size-[22px] rounded-full bg-background border border-border flex items-center justify-center shadow-sm z-10"
               >
-                <div class="size-2 rounded-full bg-primary/40" />
+                <div
+                  class="size-2 rounded-full"
+                  :class="
+                    reached.matched ? 'bg-primary' : 'bg-muted-foreground/30'
+                  "
+                />
               </div>
               <span class="text-[13px] text-foreground font-medium">{{
                 t('AUTORESPONDER.ACTIVITY_DETAILS.TIMELINE_TRIGGER')
@@ -264,7 +209,12 @@ const closePanel = () => emit('update:open', false);
               <div
                 class="absolute -left-6 size-[22px] rounded-full bg-background border border-border flex items-center justify-center shadow-sm z-10"
               >
-                <div class="size-2 rounded-full bg-primary/40" />
+                <div
+                  class="size-2 rounded-full"
+                  :class="
+                    reached.replied ? 'bg-primary' : 'bg-muted-foreground/30'
+                  "
+                />
               </div>
               <span class="text-[13px] text-foreground font-medium">{{
                 t('AUTORESPONDER.ACTIVITY_DETAILS.TIMELINE_MATCHED')
@@ -275,10 +225,20 @@ const closePanel = () => emit('update:open', false);
               <div
                 class="absolute -left-6 size-[22px] rounded-full bg-background border border-border flex items-center justify-center shadow-sm z-10"
               >
-                <div class="size-2 rounded-full bg-primary/40" />
+                <span
+                  v-if="reached.dmFailed"
+                  class="i-lucide-alert-circle size-3 text-destructive"
+                />
+                <div
+                  v-else
+                  class="size-2 rounded-full"
+                  :class="reached.dm ? 'bg-primary' : 'bg-muted-foreground/30'"
+                />
               </div>
               <span class="text-[13px] text-foreground font-medium">{{
-                t('AUTORESPONDER.ACTIVITY_DETAILS.TIMELINE_SENT')
+                reached.dmFailed
+                  ? t('AUTORESPONDER.ACTIVITY_DETAILS.DELIVERY_FAILED')
+                  : t('AUTORESPONDER.ACTIVITY_DETAILS.TIMELINE_SENT')
               }}</span>
             </div>
 
@@ -289,9 +249,9 @@ const closePanel = () => emit('update:open', false);
                 <span
                   class="size-3 text-primary"
                   :class="
-                    activity.status === 'Successful'
+                    reached.engaged
                       ? 'i-lucide-check-circle-2'
-                      : 'i-lucide-alert-circle'
+                      : 'i-lucide-circle'
                   "
                 />
               </div>

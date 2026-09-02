@@ -20,6 +20,7 @@ class Instagram::BaseMessageText < Instagram::WebhooksBaseService
     return unsend_message if message_is_deleted?
 
     ensure_contact(contact_id) if contacts_first_message?(contact_id)
+    attribute_comment_automation(contact_id)
 
     create_message
   end

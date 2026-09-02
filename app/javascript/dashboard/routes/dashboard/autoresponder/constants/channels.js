@@ -1,3 +1,5 @@
+import { INBOX_TYPES } from 'dashboard/helper/inbox';
+
 // Mock/demo channel branding used across the (pre-backend) Autoresponder UI port.
 // Delete once real inbox/channel data is wired in.
 export const CHANNEL_LOGO_URLS = {
@@ -9,3 +11,23 @@ export const CHANNEL_LOGO_URLS = {
 };
 
 export const CHANNEL_NAMES = Object.keys(CHANNEL_LOGO_URLS);
+
+// Real channel_type -> display name/description, used once wired to actual inbox data.
+export const AUTORESPONDER_CHANNELS = [
+  {
+    type: INBOX_TYPES.INSTAGRAM,
+    name: 'Instagram',
+    descKey: 'INSTAGRAM_DESC',
+  },
+  { type: INBOX_TYPES.FB, name: 'Facebook', descKey: 'FACEBOOK_DESC' },
+  {
+    type: INBOX_TYPES.WHATSAPP,
+    name: 'WhatsApp Business',
+    descKey: 'WHATSAPP_DESC',
+  },
+];
+
+export const CHANNEL_NAME_BY_TYPE = AUTORESPONDER_CHANNELS.reduce(
+  (acc, { type, name }) => ({ ...acc, [type]: name }),
+  {}
+);

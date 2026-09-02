@@ -1,7 +1,10 @@
 <script setup>
-import { ref } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRouter } from 'vue-router';
+import { subDays, startOfDay, isSameDay, format } from 'date-fns';
+import { useStore, useMapGetter } from 'dashboard/composables/store';
+import { getInboxIconByType } from 'dashboard/helper/inbox';
 import {
   RelayButton,
   RelaySwitch,
@@ -10,125 +13,139 @@ import {
   RelayDropdownMenuContent,
   RelayDropdownMenuItem,
 } from 'dashboard/components-next/relay';
-import { CHANNEL_LOGO_URLS } from '../constants/channels';
+import { CHANNEL_NAME_BY_TYPE } from '../constants/channels';
 import CreateAutomationModal from '../components/CreateAutomationModal.vue';
 
 const { t } = useI18n();
 const router = useRouter();
+const store = useStore();
+
 const isCreateModalOpen = ref(false);
-const dateRange = ref(t('AUTORESPONDER.OVERVIEW.DATE_RANGE_7_DAYS'));
+const dateRangeKey = ref('7d');
 
-// Demo/mock data — this whole module is a UI-only pre-backend port.
-const metrics = [
-  {
-    key: 'total',
-    icon: 'i-lucide-zap',
-    label: t('AUTORESPONDER.OVERVIEW.METRIC_TOTAL'),
-    value: '12',
-    helper: t('AUTORESPONDER.OVERVIEW.METRIC_TOTAL_HELPER'),
-    bars: [40, 55, 45, 65, 50, 75, 90],
-  },
-  {
-    key: 'active',
-    icon: 'i-lucide-play',
-    label: t('AUTORESPONDER.OVERVIEW.METRIC_ACTIVE'),
-    value: '8',
-    helper: t('AUTORESPONDER.OVERVIEW.METRIC_ACTIVE_HELPER'),
-    bars: [35, 50, 45, 60, 70, 65, 85],
-  },
-  {
-    key: 'responses',
-    icon: 'i-lucide-message-square',
-    label: t('AUTORESPONDER.OVERVIEW.METRIC_RESPONSES'),
-    value: '1,284',
-    helper: t('AUTORESPONDER.OVERVIEW.METRIC_RESPONSES_HELPER'),
-    bars: [45, 60, 55, 70, 65, 80, 95],
-  },
-  {
-    key: 'contacts',
-    icon: 'i-lucide-users',
-    label: t('AUTORESPONDER.OVERVIEW.METRIC_CONTACTS'),
-    value: '892',
-    helper: t('AUTORESPONDER.OVERVIEW.METRIC_CONTACTS_HELPER'),
-    bars: [40, 45, 42, 50, 48, 55, 65],
-  },
-];
+onMounted(() => {
+  store.dispatch('commentAutomationCampaigns/get');
+  store.dispatch('commentAutomationMessageLogs/get');
+});
 
-const topAutomations = ref([
-  {
-    id: 1,
-    name: 'Instagram Comment Reply',
-    description: 'Reply to comments containing pricing keywords',
-    channel: 'Instagram',
-    tags: ['Instagram', 'Comment Reply'],
-    status: 'Active',
-    responses: 342,
-    active: true,
-  },
-  {
-    id: 2,
-    name: 'Welcome Message',
-    description: 'Send welcome message to new followers',
-    channel: 'Instagram',
-    tags: ['Instagram', 'Auto Message'],
-    status: 'Active',
-    responses: 287,
-    active: true,
-  },
-  {
-    id: 3,
-    name: 'WhatsApp Quick Reply',
-    description: 'Auto-reply to common questions',
-    channel: 'WhatsApp',
-    tags: ['WhatsApp', 'Auto Message'],
-    status: 'Active',
-    responses: 198,
-    active: true,
-  },
-  {
-    id: 4,
-    name: 'Facebook Page Comment',
-    description: 'Reply to comments on Facebook page',
-    channel: 'Facebook',
-    tags: ['Facebook', 'Comment Reply'],
-    status: 'Active',
-    responses: 142,
-    active: true,
-  },
-]);
+const campaigns = useMapGetter('commentAutomationCampaigns/getCampaigns');
+const logs = useMapGetter('commentAutomationMessageLogs/getMessageLogs');
 
-const responseChartBars = [
-  { label: 'May 20', value: 45 },
-  { label: 'May 21', value: 60 },
-  { label: 'May 22', value: 68 },
-  { label: 'May 23', value: 90 },
-  { label: 'May 24', value: 72 },
-  { label: 'May 25', value: 58 },
-  { label: 'May 26', value: 74 },
-];
+const metrics = computed(() => {
+  const respondedLogs = logs.value.filter(l => l.status !== 'pending');
+  const uniqueContacts = new Set(
+    logs.value.filter(l => l.contact).map(l => l.contact.id)
+  );
+  return [
+    {
+      key: 'total',
+      icon: 'i-lucide-zap',
+      label: t('AUTORESPONDER.OVERVIEW.METRIC_TOTAL'),
+      value: campaigns.value.length,
+      helper: t('AUTORESPONDER.OVERVIEW.METRIC_TOTAL_HELPER'),
+    },
+    {
+      key: 'active',
+      icon: 'i-lucide-play',
+      label: t('AUTORESPONDER.OVERVIEW.METRIC_ACTIVE'),
+      value: campaigns.value.filter(c => c.is_active).length,
+      helper: t('AUTORESPONDER.OVERVIEW.METRIC_ACTIVE_HELPER'),
+    },
+    {
+      key: 'responses',
+      icon: 'i-lucide-message-square',
+      label: t('AUTORESPONDER.OVERVIEW.METRIC_RESPONSES'),
+      value: respondedLogs.length,
+      helper: t('AUTORESPONDER.OVERVIEW.METRIC_RESPONSES_HELPER'),
+    },
+    {
+      key: 'contacts',
+      icon: 'i-lucide-users',
+      label: t('AUTORESPONDER.OVERVIEW.METRIC_CONTACTS'),
+      value: uniqueContacts.size,
+      helper: t('AUTORESPONDER.OVERVIEW.METRIC_CONTACTS_HELPER'),
+    },
+  ];
+});
 
-const channelDistribution = [
-  {
-    name: 'Instagram',
-    logo: CHANNEL_LOGO_URLS.Instagram,
-    count: 812,
-    pct: 63.2,
-  },
-  { name: 'WhatsApp', logo: CHANNEL_LOGO_URLS.WhatsApp, count: 298, pct: 23.2 },
-  { name: 'Facebook', logo: CHANNEL_LOGO_URLS.Facebook, count: 134, pct: 10.4 },
-];
-
-const totalResponses = '1,284';
-const responsesGrowthPct = '18.6%';
+const topAutomations = computed(() =>
+  [...campaigns.value]
+    .sort((a, b) => b.responses_count - a.responses_count)
+    .slice(0, 4)
+);
 
 const dateRangeOptions = [
-  { key: 'today', label: t('AUTORESPONDER.OVERVIEW.DATE_RANGE_TODAY') },
-  { key: '7d', label: t('AUTORESPONDER.OVERVIEW.DATE_RANGE_7_DAYS') },
-  { key: '30d', label: t('AUTORESPONDER.OVERVIEW.DATE_RANGE_30_DAYS') },
+  {
+    key: 'today',
+    days: 1,
+    label: t('AUTORESPONDER.OVERVIEW.DATE_RANGE_TODAY'),
+  },
+  { key: '7d', days: 7, label: t('AUTORESPONDER.OVERVIEW.DATE_RANGE_7_DAYS') },
+  {
+    key: '30d',
+    days: 30,
+    label: t('AUTORESPONDER.OVERVIEW.DATE_RANGE_30_DAYS'),
+  },
 ];
+const dateRange = computed(
+  () => dateRangeOptions.find(o => o.key === dateRangeKey.value).label
+);
+const dateRangeDays = computed(
+  () => dateRangeOptions.find(o => o.key === dateRangeKey.value).days
+);
+
+const logTime = log => new Date((log.sent_at || log.created_at) * 1000);
+
+const responseChartBars = computed(() => {
+  const days = [];
+  for (let i = dateRangeDays.value - 1; i >= 0; i -= 1) {
+    const day = startOfDay(subDays(new Date(), i));
+    const count = logs.value.filter(l => isSameDay(logTime(l), day)).length;
+    days.push({ label: format(day, 'MMM d'), value: count });
+  }
+  return days;
+});
+
+const totalResponsesInRange = computed(() =>
+  responseChartBars.value.reduce((sum, bar) => sum + bar.value, 0)
+);
+
+const maxBarValue = computed(() =>
+  Math.max(...responseChartBars.value.map(bar => bar.value), 1)
+);
+
+const channelDistribution = computed(() => {
+  const total = logs.value.length;
+  const counts = logs.value.reduce((acc, log) => {
+    const type = log.inbox.channel_type;
+    acc[type] = (acc[type] || 0) + 1;
+    return acc;
+  }, {});
+  return Object.entries(counts)
+    .map(([type, count]) => ({
+      type,
+      name: CHANNEL_NAME_BY_TYPE[type] || type,
+      count,
+      pct: total ? Math.round((count / total) * 1000) / 10 : 0,
+    }))
+    .sort((a, b) => b.count - a.count);
+});
 
 function goToAutomations() {
   router.push({ name: 'autoresponder_automations' });
+}
+
+function toggleActive(campaign) {
+  store.dispatch('commentAutomationCampaigns/update', {
+    id: campaign.id,
+    campaign: { is_active: !campaign.is_active },
+  });
+}
+
+function deleteCampaign(campaign) {
+  // eslint-disable-next-line no-alert
+  if (!window.confirm(t('AUTORESPONDER.AUTOMATIONS.DELETE_CONFIRM'))) return;
+  store.dispatch('commentAutomationCampaigns/delete', campaign.id);
 }
 </script>
 
@@ -168,24 +185,12 @@ function goToAutomations() {
               metric.label
             }}</span>
           </div>
-          <div class="mt-4 flex items-end justify-between">
-            <div>
-              <div
-                class="text-3xl font-semibold tracking-tight text-foreground"
-              >
-                {{ metric.value }}
-              </div>
-              <div class="text-xs text-muted-foreground mt-1">
-                {{ metric.helper }}
-              </div>
+          <div class="mt-4">
+            <div class="text-3xl font-semibold tracking-tight text-foreground">
+              {{ metric.value }}
             </div>
-            <div class="flex items-end gap-0.5 h-10 w-[70px]">
-              <div
-                v-for="(bar, idx) in metric.bars"
-                :key="idx"
-                class="flex-1 bg-primary/30 rounded-sm"
-                :style="{ height: `${bar}%` }"
-              />
+            <div class="text-xs text-muted-foreground mt-1">
+              {{ metric.helper }}
             </div>
           </div>
         </div>
@@ -214,7 +219,13 @@ function goToAutomations() {
             </RelayButton>
           </div>
 
-          <div class="p-5 flex flex-col gap-3">
+          <div
+            v-if="!topAutomations.length"
+            class="p-5 text-sm text-muted-foreground"
+          >
+            {{ t('AUTORESPONDER.AUTOMATIONS.EMPTY_STATE') }}
+          </div>
+          <div v-else class="p-5 flex flex-col gap-3">
             <div
               v-for="item in topAutomations"
               :key="item.id"
@@ -226,9 +237,9 @@ function goToAutomations() {
                 <div
                   class="size-10 rounded-lg border border-border bg-card shadow-xs flex items-center justify-center shrink-0"
                 >
-                  <img
-                    :src="CHANNEL_LOGO_URLS[item.channel]"
-                    class="size-5 opacity-90 dark:opacity-80"
+                  <span
+                    :class="getInboxIconByType(item.inbox.channel_type)"
+                    class="size-5 text-foreground"
                   />
                 </div>
                 <div class="flex-1 min-w-0">
@@ -238,16 +249,11 @@ function goToAutomations() {
                   <div
                     class="text-[13px] text-muted-foreground truncate mt-0.5"
                   >
-                    {{ item.description }}
-                  </div>
-                  <div class="flex items-center gap-2 mt-2">
-                    <span
-                      v-for="tag in item.tags"
-                      :key="tag"
-                      class="px-2 py-0.5 rounded-md bg-primary/10 text-primary text-[11px] font-medium"
-                    >
-                      {{ tag }}
-                    </span>
+                    {{
+                      t('AUTORESPONDER.ACTIVITY.KEYWORD_LABEL', {
+                        keyword: item.trigger?.keyword,
+                      })
+                    }}
                   </div>
                 </div>
               </div>
@@ -257,20 +263,30 @@ function goToAutomations() {
               >
                 <div class="flex flex-col items-start sm:items-end">
                   <div class="flex items-center gap-1.5">
-                    <div class="size-1.5 rounded-full bg-primary" />
+                    <div
+                      class="size-1.5 rounded-full"
+                      :class="
+                        item.is_active ? 'bg-primary' : 'bg-muted-foreground'
+                      "
+                    />
                     <span class="text-xs font-medium text-foreground">{{
-                      item.status
+                      item.is_active
+                        ? t('AUTORESPONDER.AUTOMATIONS.STATUS_ACTIVE')
+                        : t('AUTORESPONDER.AUTOMATIONS.STATUS_PAUSED')
                     }}</span>
                   </div>
                   <div class="text-sm font-semibold text-foreground mt-0.5">
-                    {{ item.responses }}
+                    {{ item.responses_count }}
                   </div>
                   <div class="text-[11px] text-muted-foreground">
                     {{ t('AUTORESPONDER.OVERVIEW.RESPONSES_LABEL') }}
                   </div>
                 </div>
                 <div class="flex items-center gap-3">
-                  <RelaySwitch v-model="item.active" />
+                  <RelaySwitch
+                    :model-value="item.is_active"
+                    @update:model-value="toggleActive(item)"
+                  />
                   <RelayDropdownMenu>
                     <RelayDropdownMenuTrigger as-child>
                       <button
@@ -284,10 +300,10 @@ function goToAutomations() {
                       <RelayDropdownMenuItem @click="goToAutomations">
                         {{ t('AUTORESPONDER.COMMON.EDIT_AUTOMATION') }}
                       </RelayDropdownMenuItem>
-                      <RelayDropdownMenuItem>
-                        {{ t('AUTORESPONDER.COMMON.DUPLICATE') }}
-                      </RelayDropdownMenuItem>
-                      <RelayDropdownMenuItem destructive>
+                      <RelayDropdownMenuItem
+                        destructive
+                        @click="deleteCampaign(item)"
+                      >
                         {{ t('AUTORESPONDER.COMMON.DELETE') }}
                       </RelayDropdownMenuItem>
                     </RelayDropdownMenuContent>
@@ -331,7 +347,7 @@ function goToAutomations() {
                 <RelayDropdownMenuItem
                   v-for="opt in dateRangeOptions"
                   :key="opt.key"
-                  @click="dateRange = opt.label"
+                  @click="dateRangeKey = opt.key"
                 >
                   {{ opt.label }}
                 </RelayDropdownMenuItem>
@@ -343,16 +359,10 @@ function goToAutomations() {
             <div class="flex items-baseline gap-3">
               <span
                 class="text-3xl font-semibold tracking-tight text-foreground"
-                >{{ totalResponses }}</span
+                >{{ totalResponsesInRange }}</span
               >
-              <div
-                class="flex items-center text-[13px] font-medium text-primary bg-primary/10 px-2 py-0.5 rounded-md gap-0.5"
-              >
-                <span class="i-lucide-arrow-up size-3" />
-                {{ responsesGrowthPct }}
-              </div>
               <span class="text-[13px] text-muted-foreground">
-                {{ t('AUTORESPONDER.OVERVIEW.VS_PREVIOUS_7_DAYS') }}
+                {{ dateRange }}
               </span>
             </div>
           </div>
@@ -368,7 +378,7 @@ function goToAutomations() {
               <div class="w-full h-[190px] relative flex items-end">
                 <div
                   class="w-full bg-primary group-hover:bg-primary/90 rounded-t-md transition-all"
-                  :style="{ height: `${bar.value}%` }"
+                  :style="{ height: `${(bar.value / maxBarValue) * 100}%` }"
                 />
               </div>
               <span
@@ -395,20 +405,27 @@ function goToAutomations() {
           </div>
 
           <div
+            v-if="!channelDistribution.length"
+            class="flex-1 text-sm text-muted-foreground"
+          >
+            {{ t('AUTORESPONDER.ACTIVITY.EMPTY_STATE') }}
+          </div>
+          <div
+            v-else
             class="flex-1 grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4"
           >
             <div
               v-for="channel in channelDistribution"
-              :key="channel.name"
+              :key="channel.type"
               class="flex flex-col gap-2 p-4 rounded-lg border border-border bg-background"
             >
               <div class="flex items-center gap-2">
                 <div
                   class="size-8 rounded-md border border-border bg-card shadow-xs flex items-center justify-center"
                 >
-                  <img
-                    :src="channel.logo"
-                    class="size-4 opacity-90 dark:opacity-80"
+                  <span
+                    :class="getInboxIconByType(channel.type)"
+                    class="size-4 text-foreground"
                   />
                 </div>
                 <span class="text-[13.5px] font-medium text-foreground">{{

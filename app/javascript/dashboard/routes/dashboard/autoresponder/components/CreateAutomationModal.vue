@@ -1,99 +1,121 @@
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
+import { useStore, useMapGetter } from 'dashboard/composables/store';
+import { useAccount } from 'dashboard/composables/useAccount';
+import { INBOX_TYPES } from 'dashboard/helper/inbox';
 import {
   RelayButton,
   RelayInput,
   RelaySwitch,
-  RelayCheckbox,
-  RelayDatePicker,
-  RelayTimePicker,
   RelayDropdownMenu,
   RelayDropdownMenuTrigger,
   RelayDropdownMenuContent,
   RelayDropdownMenuItem,
 } from 'dashboard/components-next/relay';
-import { CHANNEL_LOGO_URLS, CHANNEL_NAMES } from '../constants/channels';
 
-defineProps({
+const props = defineProps({
   open: { type: Boolean, default: false },
+  template: { type: Object, default: null },
 });
 
 const emit = defineEmits(['update:open']);
 
 const { t } = useI18n();
+const store = useStore();
+const { accountScopedRoute } = useAccount();
+
+onMounted(() => {
+  store.dispatch('inboxes/get');
+});
+
+const allInboxes = useMapGetter('inboxes/getInboxes');
+const instagramInboxes = computed(() =>
+  allInboxes.value.filter(inbox => inbox.channel_type === INBOX_TYPES.INSTAGRAM)
+);
 
 const steps = computed(() => [
   t('AUTORESPONDER.CREATE_AUTOMATION_MODAL.STEP_TRIGGER'),
   t('AUTORESPONDER.CREATE_AUTOMATION_MODAL.STEP_CONDITION'),
-  t('AUTORESPONDER.CREATE_AUTOMATION_MODAL.STEP_ACTION'),
   t('AUTORESPONDER.CREATE_AUTOMATION_MODAL.STEP_RESPONSE'),
   t('AUTORESPONDER.CREATE_AUTOMATION_MODAL.STEP_REVIEW'),
 ]);
 const currentStep = ref(0);
 
-// Step 1: Trigger
+// Step 1: Basics
 const automationName = ref('');
-const automateType = ref('auto_responder');
-const platform = ref('Instagram');
-const triggerOptions = computed(() => [
-  t('AUTORESPONDER.CREATE_AUTOMATION_MODAL.TRIGGER_ON_MESSAGE'),
-  t('AUTORESPONDER.CREATE_AUTOMATION_MODAL.TRIGGER_ON_COMMENT'),
-  t('AUTORESPONDER.CREATE_AUTOMATION_MODAL.TRIGGER_ON_MENTION'),
-  t('AUTORESPONDER.CREATE_AUTOMATION_MODAL.TRIGGER_ON_KEYWORD'),
-]);
-const triggerType = ref('');
-triggerType.value = triggerOptions.value[0];
+const inboxId = ref(null);
+const postId = ref('');
+
+watch(
+  instagramInboxes,
+  list => {
+    if (!inboxId.value && list.length) inboxId.value = list[0].id;
+  },
+  { immediate: true }
+);
 
 // Step 2: Condition
-const conditions = ref({
-  containsKeyword: true,
-  doesNotContainKeyword: false,
-  specificPost: false,
-  businessHours: false,
-  firstInteraction: false,
-});
-const keywords = ref('');
+const keyword = ref('');
+const matchType = ref('contains');
 
-// Step 3: Action
-const actions = ref({
-  sendReply: true,
-  sendDm: false,
-  addTag: false,
-  assignRoute: false,
-  stopAutomation: false,
-});
+// Step 3: Response
+const publicRepliesText = ref('');
+const dmTextBody = ref('');
+const templateId = ref(null);
 
-// Step 4: Response
-const responseMessage = ref('');
-const delayOptions = computed(() => [
-  t('AUTORESPONDER.CREATE_AUTOMATION_MODAL.DELAY_IMMEDIATELY'),
-  t('AUTORESPONDER.CREATE_AUTOMATION_MODAL.DELAY_1_MIN'),
-  t('AUTORESPONDER.CREATE_AUTOMATION_MODAL.DELAY_5_MIN'),
-  t('AUTORESPONDER.CREATE_AUTOMATION_MODAL.DELAY_CUSTOM'),
-]);
-const delay = ref('');
-delay.value = delayOptions.value[0];
-const customDate = ref(null);
-const customTime = ref('');
+watch(
+  () => props.open,
+  isOpen => {
+    if (isOpen && props.template) {
+      publicRepliesText.value = props.template.public_replies.join('\n');
+      dmTextBody.value = props.template.dm_text_body || '';
+      templateId.value = props.template.id;
+    }
+  }
+);
 
-// Step 5: Review
+// Step 4: Review
 const isEnabled = ref(true);
-const showSafetyNotice = ref(true);
+const isSaving = ref(false);
+
+const selectedInbox = computed(() =>
+  instagramInboxes.value.find(inbox => inbox.id === inboxId.value)
+);
+
+const publicReplies = computed(() =>
+  publicRepliesText.value
+    .split('\n')
+    .map(line => line.trim())
+    .filter(Boolean)
+);
+
+const canSave = computed(
+  () =>
+    automationName.value.trim() &&
+    inboxId.value &&
+    postId.value.trim() &&
+    keyword.value.trim() &&
+    publicReplies.value.length &&
+    dmTextBody.value.trim()
+);
+
+const resetForm = () => {
+  currentStep.value = 0;
+  automationName.value = '';
+  inboxId.value = instagramInboxes.value[0]?.id || null;
+  postId.value = '';
+  keyword.value = '';
+  matchType.value = 'contains';
+  publicRepliesText.value = '';
+  dmTextBody.value = '';
+  templateId.value = null;
+  isEnabled.value = true;
+};
 
 const closeModal = () => {
   emit('update:open', false);
-  setTimeout(() => {
-    currentStep.value = 0;
-  }, 200);
-};
-
-const nextStep = () => {
-  if (currentStep.value < steps.value.length - 1) {
-    currentStep.value += 1;
-  } else {
-    closeModal();
-  }
+  setTimeout(resetForm, 200);
 };
 
 const prevStep = () => {
@@ -101,6 +123,38 @@ const prevStep = () => {
     currentStep.value -= 1;
   } else {
     closeModal();
+  }
+};
+
+const save = async () => {
+  isSaving.value = true;
+  try {
+    await store.dispatch('commentAutomationCampaigns/create', {
+      campaign: {
+        name: automationName.value,
+        inbox_id: inboxId.value,
+        post_id: postId.value,
+        is_active: isEnabled.value,
+      },
+      trigger: {
+        keyword: keyword.value,
+        match_type: matchType.value,
+        public_replies: publicReplies.value,
+        dm_text_body: dmTextBody.value,
+        template_id: templateId.value,
+      },
+    });
+    closeModal();
+  } finally {
+    isSaving.value = false;
+  }
+};
+
+const nextStep = () => {
+  if (currentStep.value < steps.value.length - 1) {
+    currentStep.value += 1;
+  } else {
+    save();
   }
 };
 </script>
@@ -184,112 +238,22 @@ const prevStep = () => {
                 />
               </div>
 
-              <div class="flex flex-col gap-3">
-                <label class="text-[13.5px] font-medium text-foreground">
-                  {{
-                    t(
-                      'AUTORESPONDER.CREATE_AUTOMATION_MODAL.AUTOMATE_TYPE_LABEL'
-                    )
-                  }}
-                </label>
-                <div class="grid grid-cols-2 gap-4">
-                  <div
-                    class="relative border rounded-xl p-4 cursor-pointer transition-colors"
-                    :class="
-                      automateType === 'auto_responder'
-                        ? 'border-primary bg-primary/5 ring-1 ring-primary'
-                        : 'border-border hover:border-foreground/20'
-                    "
-                    @click="automateType = 'auto_responder'"
-                  >
-                    <div
-                      v-if="automateType === 'auto_responder'"
-                      class="absolute top-3 right-3 size-4 rounded-full bg-primary flex items-center justify-center text-primary-foreground"
-                    >
-                      <span class="i-lucide-check size-3" />
-                    </div>
-                    <div
-                      class="size-8 rounded-lg bg-primary/10 text-primary flex items-center justify-center mb-3"
-                    >
-                      <span class="i-lucide-message-square size-4" />
-                    </div>
-                    <div class="text-sm font-semibold text-foreground">
-                      {{
-                        t(
-                          'AUTORESPONDER.CREATE_AUTOMATION_MODAL.AUTO_RESPONDER'
-                        )
-                      }}
-                    </div>
-                    <div
-                      class="text-xs text-muted-foreground mt-1 leading-relaxed"
-                    >
-                      {{
-                        t(
-                          'AUTORESPONDER.CREATE_AUTOMATION_MODAL.AUTO_RESPONDER_DESC'
-                        )
-                      }}
-                    </div>
-                  </div>
-
-                  <div
-                    class="relative border rounded-xl p-4 cursor-pointer transition-colors"
-                    :class="
-                      automateType === 'auto_commenter'
-                        ? 'border-primary bg-primary/5 ring-1 ring-primary'
-                        : 'border-border hover:border-foreground/20'
-                    "
-                    @click="automateType = 'auto_commenter'"
-                  >
-                    <div
-                      v-if="automateType === 'auto_commenter'"
-                      class="absolute top-3 right-3 size-4 rounded-full bg-primary flex items-center justify-center text-primary-foreground"
-                    >
-                      <span class="i-lucide-check size-3" />
-                    </div>
-                    <div
-                      class="size-8 rounded-lg bg-primary/10 text-primary flex items-center justify-center mb-3"
-                    >
-                      <span class="i-lucide-message-circle size-4" />
-                    </div>
-                    <div class="text-sm font-semibold text-foreground">
-                      {{
-                        t(
-                          'AUTORESPONDER.CREATE_AUTOMATION_MODAL.AUTO_COMMENTER'
-                        )
-                      }}
-                    </div>
-                    <div
-                      class="text-xs text-muted-foreground mt-1 leading-relaxed"
-                    >
-                      {{
-                        t(
-                          'AUTORESPONDER.CREATE_AUTOMATION_MODAL.AUTO_COMMENTER_DESC'
-                        )
-                      }}
-                    </div>
-                  </div>
-                </div>
-              </div>
-
               <div class="flex flex-col gap-1.5">
                 <label class="text-[13.5px] font-medium text-foreground">
                   {{
                     t('AUTORESPONDER.CREATE_AUTOMATION_MODAL.PLATFORM_LABEL')
                   }}
                 </label>
-                <RelayDropdownMenu>
+                <RelayDropdownMenu v-if="instagramInboxes.length">
                   <RelayDropdownMenuTrigger as-child>
                     <button
                       type="button"
                       class="w-full h-10 px-3 flex items-center justify-between text-sm shadow-sm rounded-md border border-border/80 bg-background cursor-pointer outline-none focus-visible:ring-1 focus-visible:ring-primary/30"
                     >
-                      <div class="flex items-center gap-2">
-                        <img
-                          :src="CHANNEL_LOGO_URLS[platform]"
-                          class="size-4 opacity-90"
-                        />
-                        <span class="text-foreground">{{ platform }}</span>
-                      </div>
+                      <span class="text-foreground">{{
+                        selectedInbox?.name ||
+                        t('AUTORESPONDER.CREATE_AUTOMATION_MODAL.SELECT_INBOX')
+                      }}</span>
                       <span
                         class="i-lucide-chevron-down size-4 text-muted-foreground"
                       />
@@ -300,66 +264,54 @@ const prevStep = () => {
                     class="w-[--reka-dropdown-menu-trigger-width]"
                   >
                     <RelayDropdownMenuItem
-                      v-for="opt in CHANNEL_NAMES"
-                      :key="opt"
+                      v-for="inbox in instagramInboxes"
+                      :key="inbox.id"
                       class="flex items-center justify-between cursor-pointer"
-                      @click="platform = opt"
+                      @click="inboxId = inbox.id"
                     >
-                      <div class="flex items-center gap-2">
-                        <img
-                          :src="CHANNEL_LOGO_URLS[opt]"
-                          class="size-4 opacity-90"
-                        />
-                        <span>{{ opt }}</span>
-                      </div>
+                      <span>{{ inbox.name }}</span>
                       <span
-                        v-if="platform === opt"
+                        v-if="inboxId === inbox.id"
                         class="i-lucide-check size-4"
                       />
                     </RelayDropdownMenuItem>
                   </RelayDropdownMenuContent>
                 </RelayDropdownMenu>
+                <div
+                  v-else
+                  class="text-xs text-muted-foreground bg-muted/40 border border-border rounded-md p-3"
+                >
+                  {{
+                    t(
+                      'AUTORESPONDER.CREATE_AUTOMATION_MODAL.NO_INSTAGRAM_INBOX'
+                    )
+                  }}
+                  <router-link
+                    :to="accountScopedRoute('settings_inbox_new')"
+                    class="text-primary hover:underline"
+                  >
+                    {{
+                      t('AUTORESPONDER.CREATE_AUTOMATION_MODAL.CONNECT_LINK')
+                    }}
+                  </router-link>
+                </div>
               </div>
 
               <div class="flex flex-col gap-1.5">
                 <label class="text-[13.5px] font-medium text-foreground">
-                  {{ t('AUTORESPONDER.CREATE_AUTOMATION_MODAL.TRIGGER_LABEL') }}
+                  {{ t('AUTORESPONDER.CREATE_AUTOMATION_MODAL.POST_ID_LABEL') }}
                 </label>
-                <RelayDropdownMenu>
-                  <RelayDropdownMenuTrigger as-child>
-                    <button
-                      type="button"
-                      class="w-full h-10 px-3 flex items-center justify-between text-sm shadow-sm rounded-md border border-border/80 bg-background cursor-pointer outline-none focus-visible:ring-1 focus-visible:ring-primary/30"
-                    >
-                      <span class="truncate text-foreground">{{
-                        triggerType
-                      }}</span>
-                      <span
-                        class="i-lucide-chevron-down size-4 text-muted-foreground shrink-0"
-                      />
-                    </button>
-                  </RelayDropdownMenuTrigger>
-                  <RelayDropdownMenuContent
-                    align="start"
-                    class="w-[--reka-dropdown-menu-trigger-width]"
-                  >
-                    <RelayDropdownMenuItem
-                      v-for="opt in triggerOptions"
-                      :key="opt"
-                      class="flex items-center justify-between cursor-pointer"
-                      @click="triggerType = opt"
-                    >
-                      <span>{{ opt }}</span>
-                      <span
-                        v-if="triggerType === opt"
-                        class="i-lucide-check size-4"
-                      />
-                    </RelayDropdownMenuItem>
-                  </RelayDropdownMenuContent>
-                </RelayDropdownMenu>
+                <RelayInput
+                  v-model="postId"
+                  :placeholder="
+                    t(
+                      'AUTORESPONDER.CREATE_AUTOMATION_MODAL.POST_ID_PLACEHOLDER'
+                    )
+                  "
+                />
                 <p class="text-xs text-muted-foreground mt-1">
                   {{
-                    t('AUTORESPONDER.CREATE_AUTOMATION_MODAL.TRIGGER_HELPER')
+                    t('AUTORESPONDER.CREATE_AUTOMATION_MODAL.POST_ID_HELPER')
                   }}
                 </p>
               </div>
@@ -368,156 +320,120 @@ const prevStep = () => {
 
           <template v-else-if="currentStep === 1">
             <div class="flex flex-col gap-5">
+              <div class="flex flex-col gap-1.5">
+                <label class="text-[13.5px] font-medium text-foreground">
+                  {{
+                    t('AUTORESPONDER.CREATE_AUTOMATION_MODAL.KEYWORDS_LABEL')
+                  }}
+                </label>
+                <RelayInput
+                  v-model="keyword"
+                  :placeholder="
+                    t(
+                      'AUTORESPONDER.CREATE_AUTOMATION_MODAL.KEYWORDS_PLACEHOLDER'
+                    )
+                  "
+                />
+                <p class="text-xs text-muted-foreground mt-1">
+                  {{
+                    t('AUTORESPONDER.CREATE_AUTOMATION_MODAL.KEYWORDS_HELPER')
+                  }}
+                </p>
+              </div>
+
               <div class="flex flex-col gap-3">
                 <label class="text-[13.5px] font-medium text-foreground">
                   {{
-                    t('AUTORESPONDER.CREATE_AUTOMATION_MODAL.CONDITIONS_LABEL')
+                    t('AUTORESPONDER.CREATE_AUTOMATION_MODAL.MATCH_TYPE_LABEL')
                   }}
                 </label>
-
-                <label class="flex items-center gap-3 cursor-pointer">
-                  <RelayCheckbox v-model="conditions.containsKeyword" />
-                  <span class="text-[13.5px] font-medium text-foreground">
-                    {{
-                      t(
-                        'AUTORESPONDER.CREATE_AUTOMATION_MODAL.CONDITION_CONTAINS_KEYWORD'
-                      )
-                    }}
-                  </span>
-                </label>
-
-                <div v-if="conditions.containsKeyword" class="pl-7 pr-1 pb-2">
-                  <RelayInput
-                    v-model="keywords"
-                    :placeholder="
-                      t(
-                        'AUTORESPONDER.CREATE_AUTOMATION_MODAL.KEYWORDS_PLACEHOLDER'
-                      )
+                <div class="grid grid-cols-2 gap-4">
+                  <div
+                    class="relative border rounded-xl p-4 cursor-pointer transition-colors"
+                    :class="
+                      matchType === 'contains'
+                        ? 'border-primary bg-primary/5 ring-1 ring-primary'
+                        : 'border-border hover:border-foreground/20'
                     "
-                  />
-                  <p class="text-xs text-muted-foreground mt-1">
-                    {{
-                      t('AUTORESPONDER.CREATE_AUTOMATION_MODAL.KEYWORDS_HELPER')
-                    }}
-                  </p>
+                    @click="matchType = 'contains'"
+                  >
+                    <div class="text-sm font-semibold text-foreground">
+                      {{
+                        t(
+                          'AUTORESPONDER.CREATE_AUTOMATION_MODAL.MATCH_CONTAINS'
+                        )
+                      }}
+                    </div>
+                    <div class="text-xs text-muted-foreground mt-1">
+                      {{
+                        t(
+                          'AUTORESPONDER.CREATE_AUTOMATION_MODAL.MATCH_CONTAINS_DESC'
+                        )
+                      }}
+                    </div>
+                  </div>
+                  <div
+                    class="relative border rounded-xl p-4 cursor-pointer transition-colors"
+                    :class="
+                      matchType === 'exact'
+                        ? 'border-primary bg-primary/5 ring-1 ring-primary'
+                        : 'border-border hover:border-foreground/20'
+                    "
+                    @click="matchType = 'exact'"
+                  >
+                    <div class="text-sm font-semibold text-foreground">
+                      {{
+                        t('AUTORESPONDER.CREATE_AUTOMATION_MODAL.MATCH_EXACT')
+                      }}
+                    </div>
+                    <div class="text-xs text-muted-foreground mt-1">
+                      {{
+                        t(
+                          'AUTORESPONDER.CREATE_AUTOMATION_MODAL.MATCH_EXACT_DESC'
+                        )
+                      }}
+                    </div>
+                  </div>
                 </div>
-
-                <label class="flex items-center gap-3 cursor-pointer">
-                  <RelayCheckbox v-model="conditions.doesNotContainKeyword" />
-                  <span class="text-[13.5px] font-medium text-foreground">
-                    {{
-                      t(
-                        'AUTORESPONDER.CREATE_AUTOMATION_MODAL.CONDITION_NOT_CONTAINS_KEYWORD'
-                      )
-                    }}
-                  </span>
-                </label>
-
-                <label class="flex items-center gap-3 cursor-pointer">
-                  <RelayCheckbox v-model="conditions.specificPost" />
-                  <span class="text-[13.5px] font-medium text-foreground">
-                    {{
-                      t(
-                        'AUTORESPONDER.CREATE_AUTOMATION_MODAL.CONDITION_SPECIFIC_POST'
-                      )
-                    }}
-                  </span>
-                </label>
-
-                <label class="flex items-center gap-3 cursor-pointer">
-                  <RelayCheckbox v-model="conditions.businessHours" />
-                  <span class="text-[13.5px] font-medium text-foreground">
-                    {{
-                      t(
-                        'AUTORESPONDER.CREATE_AUTOMATION_MODAL.CONDITION_BUSINESS_HOURS'
-                      )
-                    }}
-                  </span>
-                </label>
-
-                <label class="flex items-center gap-3 cursor-pointer">
-                  <RelayCheckbox v-model="conditions.firstInteraction" />
-                  <span class="text-[13.5px] font-medium text-foreground">
-                    {{
-                      t(
-                        'AUTORESPONDER.CREATE_AUTOMATION_MODAL.CONDITION_FIRST_INTERACTION'
-                      )
-                    }}
-                  </span>
-                </label>
               </div>
             </div>
           </template>
 
           <template v-else-if="currentStep === 2">
             <div class="flex flex-col gap-5">
-              <div class="flex flex-col gap-3">
+              <div class="flex flex-col gap-1.5">
                 <label class="text-[13.5px] font-medium text-foreground">
-                  {{ t('AUTORESPONDER.CREATE_AUTOMATION_MODAL.ACTIONS_LABEL') }}
+                  {{
+                    t(
+                      'AUTORESPONDER.CREATE_AUTOMATION_MODAL.PUBLIC_REPLIES_LABEL'
+                    )
+                  }}
                 </label>
-
-                <label class="flex items-center gap-3 cursor-pointer">
-                  <RelayCheckbox v-model="actions.sendReply" />
-                  <span class="text-[13.5px] font-medium text-foreground">
-                    {{
-                      t(
-                        'AUTORESPONDER.CREATE_AUTOMATION_MODAL.ACTION_SEND_REPLY'
-                      )
-                    }}
-                  </span>
-                </label>
-
-                <label class="flex items-center gap-3 cursor-pointer">
-                  <RelayCheckbox v-model="actions.sendDm" />
-                  <span class="text-[13.5px] font-medium text-foreground">
-                    {{
-                      t('AUTORESPONDER.CREATE_AUTOMATION_MODAL.ACTION_SEND_DM')
-                    }}
-                  </span>
-                </label>
-
-                <label class="flex items-center gap-3 cursor-pointer">
-                  <RelayCheckbox v-model="actions.addTag" />
-                  <span class="text-[13.5px] font-medium text-foreground">
-                    {{
-                      t('AUTORESPONDER.CREATE_AUTOMATION_MODAL.ACTION_ADD_TAG')
-                    }}
-                  </span>
-                </label>
-
-                <label class="flex items-center gap-3 cursor-pointer">
-                  <RelayCheckbox v-model="actions.assignRoute" />
-                  <span class="text-[13.5px] font-medium text-foreground">
-                    {{
-                      t(
-                        'AUTORESPONDER.CREATE_AUTOMATION_MODAL.ACTION_ASSIGN_ROUTE'
-                      )
-                    }}
-                  </span>
-                </label>
-
-                <label class="flex items-center gap-3 cursor-pointer">
-                  <RelayCheckbox v-model="actions.stopAutomation" />
-                  <span class="text-[13.5px] font-medium text-destructive">
-                    {{
-                      t(
-                        'AUTORESPONDER.CREATE_AUTOMATION_MODAL.ACTION_STOP_OTHERS'
-                      )
-                    }}
-                  </span>
-                </label>
+                <textarea
+                  v-model="publicRepliesText"
+                  rows="3"
+                  :placeholder="
+                    t(
+                      'AUTORESPONDER.CREATE_AUTOMATION_MODAL.PUBLIC_REPLIES_PLACEHOLDER'
+                    )
+                  "
+                  class="w-full p-3 resize-none text-sm shadow-sm rounded-md border border-border/80 bg-background focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary/30"
+                />
+                <p class="text-xs text-muted-foreground mt-1">
+                  {{
+                    t(
+                      'AUTORESPONDER.CREATE_AUTOMATION_MODAL.PUBLIC_REPLIES_HELPER'
+                    )
+                  }}
+                </p>
               </div>
-            </div>
-          </template>
 
-          <template v-else-if="currentStep === 3">
-            <div class="flex flex-col gap-5">
               <div class="flex flex-col gap-1.5">
                 <label class="text-[13.5px] font-medium text-foreground">
                   {{ t('AUTORESPONDER.CREATE_AUTOMATION_MODAL.MESSAGE_LABEL') }}
                 </label>
                 <textarea
-                  v-model="responseMessage"
+                  v-model="dmTextBody"
                   rows="4"
                   :placeholder="
                     t(
@@ -526,93 +442,11 @@ const prevStep = () => {
                   "
                   class="w-full p-3 resize-none text-sm shadow-sm rounded-md border border-border/80 bg-background focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary/30"
                 />
-                <div class="flex items-center justify-between mt-1">
-                  <div class="flex items-center gap-2">
-                    <button
-                      type="button"
-                      class="p-1 text-muted-foreground hover:bg-muted hover:text-foreground rounded flex items-center gap-1.5 transition-colors text-xs font-medium"
-                    >
-                      <span class="i-lucide-sparkles size-3.5" />
-                      {{ t('AUTORESPONDER.CREATE_AUTOMATION_MODAL.VARIABLES') }}
-                    </button>
-                    <button
-                      type="button"
-                      class="p-1 text-muted-foreground hover:bg-muted hover:text-foreground rounded flex items-center gap-1.5 transition-colors text-xs font-medium"
-                    >
-                      <span class="i-lucide-image size-3.5" />
-                      {{ t('AUTORESPONDER.CREATE_AUTOMATION_MODAL.MEDIA') }}
-                    </button>
-                  </div>
-                  <button
-                    type="button"
-                    class="text-primary text-xs font-medium hover:underline"
-                  >
-                    {{ t('AUTORESPONDER.CREATE_AUTOMATION_MODAL.PREVIEW') }}
-                  </button>
-                </div>
-              </div>
-
-              <div class="flex flex-col gap-1.5">
-                <label class="text-[13.5px] font-medium text-foreground">
-                  {{ t('AUTORESPONDER.CREATE_AUTOMATION_MODAL.DELAY_LABEL') }}
-                </label>
-                <RelayDropdownMenu>
-                  <RelayDropdownMenuTrigger as-child>
-                    <button
-                      type="button"
-                      class="w-full h-10 px-3 flex items-center justify-between text-sm shadow-sm rounded-md border border-border/80 bg-background cursor-pointer outline-none focus-visible:ring-1 focus-visible:ring-primary/30"
-                    >
-                      <span class="text-foreground">{{ delay }}</span>
-                      <span
-                        class="i-lucide-chevron-down size-4 text-muted-foreground shrink-0"
-                      />
-                    </button>
-                  </RelayDropdownMenuTrigger>
-                  <RelayDropdownMenuContent
-                    align="start"
-                    class="w-[--reka-dropdown-menu-trigger-width]"
-                  >
-                    <RelayDropdownMenuItem
-                      v-for="opt in delayOptions"
-                      :key="opt"
-                      class="flex items-center justify-between cursor-pointer"
-                      @click="delay = opt"
-                    >
-                      <span>{{ opt }}</span>
-                      <span
-                        v-if="delay === opt"
-                        class="i-lucide-check size-4"
-                      />
-                    </RelayDropdownMenuItem>
-                  </RelayDropdownMenuContent>
-                </RelayDropdownMenu>
-
-                <div
-                  v-if="delay === delayOptions[3]"
-                  class="grid grid-cols-2 gap-3 mt-2"
-                >
-                  <div class="flex flex-col gap-1.5">
-                    <label class="text-xs font-medium text-foreground">
-                      {{
-                        t('AUTORESPONDER.CREATE_AUTOMATION_MODAL.CUSTOM_DATE')
-                      }}
-                    </label>
-                    <RelayDatePicker v-model="customDate" />
-                  </div>
-                  <div class="flex flex-col gap-1.5">
-                    <label class="text-xs font-medium text-foreground">
-                      {{
-                        t('AUTORESPONDER.CREATE_AUTOMATION_MODAL.CUSTOM_TIME')
-                      }}
-                    </label>
-                    <RelayTimePicker v-model="customTime" />
-                  </div>
-                </div>
               </div>
             </div>
           </template>
 
-          <template v-else-if="currentStep === 4">
+          <template v-else-if="currentStep === 3">
             <div class="flex flex-col gap-5">
               <div
                 class="bg-muted/30 rounded-xl border border-border p-4 flex flex-col gap-4"
@@ -629,12 +463,12 @@ const prevStep = () => {
                   </div>
                   <div>
                     <div class="text-[13px] font-medium text-foreground">
-                      {{
-                        t('AUTORESPONDER.CREATE_AUTOMATION_MODAL.STEP_TRIGGER')
-                      }}
+                      {{ automationName }}
                     </div>
                     <div class="text-[13px] text-muted-foreground mt-0.5">
-                      {{ triggerType }} — {{ platform }}
+                      {{ selectedInbox?.name }} &bull;
+                      {{ t('AUTORESPONDER.AUTOMATIONS.POST_ID_LABEL') }}
+                      {{ postId }}
                     </div>
                   </div>
                 </div>
@@ -655,20 +489,12 @@ const prevStep = () => {
                     </div>
                     <div class="text-[13px] text-muted-foreground mt-0.5">
                       {{
-                        conditions.containsKeyword
-                          ? t(
-                              'AUTORESPONDER.CREATE_AUTOMATION_MODAL.SUMMARY_KEYWORDS',
-                              {
-                                keywords:
-                                  keywords ||
-                                  t(
-                                    'AUTORESPONDER.CREATE_AUTOMATION_MODAL.SUMMARY_NONE'
-                                  ),
-                              }
-                            )
-                          : t(
-                              'AUTORESPONDER.CREATE_AUTOMATION_MODAL.SUMMARY_NO_CONDITIONS'
-                            )
+                        t(
+                          matchType === 'exact'
+                            ? 'AUTORESPONDER.AUTOMATIONS.KEYWORD_EXACT'
+                            : 'AUTORESPONDER.AUTOMATIONS.KEYWORD_CONTAINS',
+                          { keyword }
+                        )
                       }}
                     </div>
                   </div>
@@ -683,16 +509,14 @@ const prevStep = () => {
                   <div>
                     <div class="text-[13px] font-medium text-foreground">
                       {{
-                        t(
-                          'AUTORESPONDER.CREATE_AUTOMATION_MODAL.SUMMARY_ACTION_TITLE'
-                        )
+                        t('AUTORESPONDER.CREATE_AUTOMATION_MODAL.STEP_RESPONSE')
                       }}
                     </div>
                     <div class="text-[13px] text-muted-foreground mt-0.5">
                       {{
                         t(
-                          'AUTORESPONDER.CREATE_AUTOMATION_MODAL.SUMMARY_ACTION',
-                          { delay }
+                          'AUTORESPONDER.CREATE_AUTOMATION_MODAL.SUMMARY_RESPONSE',
+                          { count: publicReplies.length }
                         )
                       }}
                     </div>
@@ -719,37 +543,12 @@ const prevStep = () => {
               </div>
             </div>
           </template>
-
-          <div
-            v-if="currentStep === 0 && showSafetyNotice"
-            class="mt-4 bg-primary/5 rounded-xl border border-primary/20 p-4 flex gap-3"
-          >
-            <span class="i-lucide-shield size-5 text-primary shrink-0" />
-            <div>
-              <div
-                class="text-[13.5px] font-semibold text-foreground flex items-center justify-between"
-              >
-                {{ t('AUTORESPONDER.CREATE_AUTOMATION_MODAL.SAFETY_TITLE') }}
-                <button type="button" @click="showSafetyNotice = false">
-                  <span
-                    class="i-lucide-x size-3.5 text-muted-foreground cursor-pointer hover:text-foreground"
-                  />
-                </button>
-              </div>
-              <p class="text-xs text-muted-foreground mt-1 leading-relaxed">
-                {{ t('AUTORESPONDER.CREATE_AUTOMATION_MODAL.SAFETY_DESC') }}
-              </p>
-            </div>
-          </div>
         </div>
 
         <div
           class="p-4 border-t border-border flex items-center justify-between bg-muted/10"
         >
-          <RelayButton
-            variant="outline"
-            @click="currentStep === 0 ? closeModal() : prevStep()"
-          >
+          <RelayButton variant="outline" @click="prevStep">
             {{
               currentStep === 0
                 ? t('AUTORESPONDER.COMMON.CANCEL')
@@ -757,7 +556,13 @@ const prevStep = () => {
             }}
           </RelayButton>
 
-          <RelayButton class="min-w-[100px]" @click="nextStep">
+          <RelayButton
+            class="min-w-[100px]"
+            :disabled="
+              currentStep === steps.length - 1 && (!canSave || isSaving)
+            "
+            @click="nextStep"
+          >
             {{
               currentStep === steps.length - 1
                 ? t('AUTORESPONDER.CREATE_AUTOMATION_MODAL.SAVE_RULE')

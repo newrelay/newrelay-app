@@ -1,4 +1,4 @@
-class CreateCommentAutomationTables < ActiveRecord::Migration[7.0]
+class CreateCommentAutomationTables < ActiveRecord::Migration[7.1]
   def change
     create_table :comment_automation_campaigns do |t|
       t.references :account, null: false, foreign_key: true

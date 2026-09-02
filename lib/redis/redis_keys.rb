@@ -76,6 +76,11 @@ module Redis::RedisKeys
   # At-most-one AssignmentJob per inbox in-flight (queued or running); further enqueues are skipped
   AUTO_ASSIGNMENT_IN_FLIGHT_KEY = 'AUTO_ASSIGNMENT_IN_FLIGHT::%<inbox_id>d'.freeze
 
+  ## Comment Automation Keys
+  # Track outbound sends for per-inbox rate limiting
+  COMMENT_AUTOMATION_SEND_KEY = 'COMMENT_AUTOMATION::SEND::%<inbox_id>d::%<token>s'.freeze
+  COMMENT_AUTOMATION_SEND_KEY_PATTERN = 'COMMENT_AUTOMATION::SEND::%<inbox_id>d::*'.freeze
+
   ## Account Onboarding
   ACCOUNT_ONBOARDING_ENRICHMENT = 'ONBOARDING_ENRICHMENT::%<account_id>d'.freeze
   HELP_CENTER_GENERATION = 'HELP_CENTER_GENERATION::%<id>s'.freeze

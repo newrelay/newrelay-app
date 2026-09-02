@@ -15,6 +15,7 @@ import campaigns from './modules/campaigns';
 import cannedResponse from './modules/cannedResponse';
 import categories from './modules/helpCenterCategories';
 import commentAutomationCampaigns from './modules/commentAutomationCampaigns';
+import commentAutomationMessageLogs from './modules/commentAutomationMessageLogs';
 import contactConversations from './modules/contactConversations';
 import contactLabels from './modules/contactLabels';
 import contactNotes from './modules/contactNotes';
@@ -80,6 +81,7 @@ export default createStore({
     cannedResponse,
     categories,
     commentAutomationCampaigns,
+    commentAutomationMessageLogs,
     contactConversations,
     contactLabels,
     contactNotes,

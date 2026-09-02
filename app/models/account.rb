@@ -102,6 +102,7 @@ class Account < ApplicationRecord
   has_many :assignment_policies, dependent: :destroy_async
   has_many :automation_rules, dependent: :destroy_async
   has_many :comment_automation_campaigns, dependent: :destroy_async, class_name: 'CommentAutomation::Campaign'
+  has_many :comment_automation_message_logs, dependent: :destroy_async, class_name: 'CommentAutomation::MessageLog'
   has_many :macros, dependent: :destroy_async
   has_many :campaigns, dependent: :destroy_async
   has_many :canned_responses, dependent: :destroy_async

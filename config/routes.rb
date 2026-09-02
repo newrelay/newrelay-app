@@ -119,6 +119,7 @@ Rails.application.routes.draw do
           end
           namespace :comment_automation do
             resources :campaigns, only: [:index, :create, :update, :destroy]
+            resources :message_logs, only: [:index]
           end
           resources :macros, only: [:index, :create, :show, :update, :destroy] do
             post :execute, on: :member

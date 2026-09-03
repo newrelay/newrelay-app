@@ -14,4 +14,8 @@ class CommentAutomation::CampaignPolicy < ApplicationPolicy
   def destroy?
     @account_user.administrator?
   end
+
+  def sync?
+    update?
+  end
 end

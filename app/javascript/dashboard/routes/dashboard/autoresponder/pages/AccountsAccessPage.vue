@@ -14,7 +14,14 @@ import AccountSwitcher from '../components/AccountSwitcher.vue';
 import { useAutoresponderAccount } from '../composables/useAutoresponderAccount';
 
 const { t } = useI18n();
-const { accounts, updateAccount } = useAutoresponderAccount();
+const {
+  accounts,
+  teamMembers,
+  teams,
+  updateAccount,
+  connectAccount,
+  syncAccounts,
+} = useAutoresponderAccount();
 
 const instagramAccounts = computed(() =>
   accounts.value.filter(a => a.platform === 'Instagram')
@@ -22,53 +29,6 @@ const instagramAccounts = computed(() =>
 const facebookAccounts = computed(() =>
   accounts.value.filter(a => a.platform === 'Facebook')
 );
-
-const teamOptions = [
-  'Sales Team',
-  'Support Team',
-  'Marketing Team',
-  'E-commerce Team',
-  'Customer Care',
-];
-
-const allTeamMembers = [
-  {
-    id: 'u-1',
-    name: 'John Smith',
-    email: 'john@example.com',
-    avatar: 'https://i.pravatar.cc/150?u=john',
-  },
-  {
-    id: 'u-2',
-    name: 'Sarah Miller',
-    email: 'sarah@example.com',
-    avatar: 'https://i.pravatar.cc/150?u=sarah',
-  },
-  {
-    id: 'u-3',
-    name: 'Elena Rostova',
-    email: 'elena@example.com',
-    avatar: 'https://i.pravatar.cc/150?u=elena',
-  },
-  {
-    id: 'u-4',
-    name: 'David Vance',
-    email: 'david@example.com',
-    avatar: 'https://i.pravatar.cc/150?u=david',
-  },
-  {
-    id: 'u-5',
-    name: 'Michael Chang',
-    email: 'michael@example.com',
-    avatar: 'https://i.pravatar.cc/150?u=michael',
-  },
-  {
-    id: 'u-6',
-    name: 'Aisha Robinson',
-    email: 'aisha@example.com',
-    avatar: 'https://i.pravatar.cc/150?u=aisha',
-  },
-];
 
 const isDrawerOpen = ref(false);
 const selectedAccount = ref(null);
@@ -127,16 +87,19 @@ function saveDrawerChanges() {
   isDrawerOpen.value = false;
 }
 
-function handleSyncNow() {
+async function handleSyncNow() {
   if (isSyncing.value) return;
   isSyncing.value = true;
-  setTimeout(() => {
-    isSyncing.value = false;
+  try {
+    await syncAccounts();
     useAlert(t('AUTORESPONDER.ACCOUNTS_ACCESS.SYNCED'));
-  }, 1200);
+  } finally {
+    isSyncing.value = false;
+  }
 }
 
-function handleConnect(platform) {
+async function handleConnect(platform) {
+  await connectAccount(platform === 'INSTAGRAM' ? 'Instagram' : 'Facebook');
   useAlert(t(`AUTORESPONDER.ACCOUNTS_ACCESS.CONNECT_${platform}`));
 }
 </script>
@@ -483,7 +446,7 @@ function handleConnect(platform) {
               </RelayDropdownMenuTrigger>
               <RelayDropdownMenuContent align="start" class="w-80 z-[150]">
                 <RelayDropdownMenuItem
-                  v-for="team in teamOptions"
+                  v-for="team in teams"
                   :key="team"
                   class="text-[13px]"
                   @click="drawerForm.assignedTeam = team"
@@ -523,7 +486,7 @@ function handleConnect(platform) {
               </div>
               <div class="max-h-36 overflow-y-auto space-y-1">
                 <div
-                  v-for="cand in allTeamMembers"
+                  v-for="cand in teamMembers"
                   :key="cand.id"
                   class="flex items-center justify-between p-2 rounded-md hover:bg-card border border-transparent hover:border-border cursor-pointer transition-colors"
                   @click="addMemberToAccount(cand)"

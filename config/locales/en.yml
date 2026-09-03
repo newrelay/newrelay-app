@@ -42,6 +42,7 @@ en:
       comment_blank: Enter a comment.
       not_connected: Connect a mock Instagram channel first.
       no_campaign: No active automation for this mock inbox.
+      not_found: Record not found.
   inbox:
     reauthorization:
       success: 'Channel reauthorized successfully'

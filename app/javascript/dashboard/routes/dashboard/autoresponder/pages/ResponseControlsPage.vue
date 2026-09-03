@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 import {
   RelayButton,
@@ -12,6 +12,7 @@ import {
 } from 'dashboard/components-next/relay';
 import { useAlert } from 'dashboard/composables';
 import { useAccount } from 'dashboard/composables/useAccount';
+import CommentAutomationResponseControlsAPI from 'dashboard/api/commentAutomationResponseControls';
 import AccountSwitcher from '../components/AccountSwitcher.vue';
 import { useAutoresponderAccount } from '../composables/useAutoresponderAccount';
 
@@ -20,6 +21,9 @@ const { accountScopedRoute } = useAccount();
 const { activeAccount } = useAutoresponderAccount();
 
 const defaultSettings = ref({ comments: true, dms: true });
+const items = ref([]);
+const dmControls = ref([]);
+const automationOptions = ref([]);
 
 const searchQuery = ref('');
 const activeFilter = ref('All');
@@ -34,159 +38,19 @@ const filterTabs = computed(() => [
   },
 ]);
 
-const items = ref([
-  {
-    id: 1,
-    title: 'Summer Sale 2026 - Up to 40% Off',
-    type: 'Post',
-    publishedAt: 'Aug 28, 2026',
-    thumbnail:
-      'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=300&auto=format&fit=crop&q=80',
-    comments: {
-      enabled: true,
-      overridden: false,
-      automation: 'Summer Sale Comment Auto-DM',
-    },
-    dms: {
-      enabled: true,
-      overridden: false,
-      automation: 'Lead Qualification Bot',
-    },
-    stats: { commentsSent: 342, dmsSent: 289 },
-    selected: false,
-  },
-  {
-    id: 2,
-    title: 'Product Launch: NextGen Smartwatch Pro',
-    type: 'Reel',
-    publishedAt: 'Aug 25, 2026',
-    thumbnail:
-      'https://images.unsplash.com/photo-1508057198894-247b23fe5ade?w=300&auto=format&fit=crop&q=80',
-    comments: {
-      enabled: false,
-      overridden: true,
-      automation: 'General Comment Acknowledgement',
-    },
-    dms: {
-      enabled: true,
-      overridden: false,
-      automation: 'Product Inquiries Autoresponder',
-    },
-    stats: { commentsSent: 0, dmsSent: 412 },
-    selected: false,
-  },
-  {
-    id: 3,
-    title: 'Giveaway: Win AirPods Max & Store Credit',
-    type: 'Carousel',
-    publishedAt: 'Aug 20, 2026',
-    thumbnail:
-      'https://images.unsplash.com/photo-1546868871-7041f2a55e12?w=300&auto=format&fit=crop&q=80',
-    comments: {
-      enabled: true,
-      overridden: true,
-      automation: 'Giveaway Entry Validator',
-    },
-    dms: {
-      enabled: false,
-      overridden: true,
-      automation: 'Standard Welcome Flow',
-    },
-    stats: { commentsSent: 1240, dmsSent: 0 },
-    selected: false,
-  },
-  {
-    id: 4,
-    title: 'Behind The Scenes: How We Design Our Interfaces',
-    type: 'Story',
-    publishedAt: 'Aug 18, 2026',
-    thumbnail:
-      'https://images.unsplash.com/photo-1581291518857-4e27b48ff24e?w=300&auto=format&fit=crop&q=80',
-    comments: {
-      enabled: true,
-      overridden: false,
-      automation: 'Story Reply Capture',
-    },
-    dms: {
-      enabled: true,
-      overridden: false,
-      automation: 'Story Mentions Auto-Reply',
-    },
-    stats: { commentsSent: 88, dmsSent: 120 },
-    selected: false,
-  },
-  {
-    id: 5,
-    title: 'Customer Spotlight: How BrandX Scaled 500%',
-    type: 'Post',
-    publishedAt: 'Aug 12, 2026',
-    thumbnail:
-      'https://images.unsplash.com/photo-1557804506-669a67965ba0?w=300&auto=format&fit=crop&q=80',
-    comments: {
-      enabled: true,
-      overridden: false,
-      automation: 'Case Study Request Reply',
-    },
-    dms: {
-      enabled: true,
-      overridden: false,
-      automation: 'Enterprise Lead Route',
-    },
-    stats: { commentsSent: 215, dmsSent: 198 },
-    selected: false,
-  },
-]);
-
-const dmControls = ref([
-  {
-    id: 'general_dm',
-    name: 'General Inbound DMs',
-    description: 'Auto-reply to incoming customer questions in Direct Messages',
-    enabled: true,
-    overridden: false,
-    automation: 'Relay AI Smart Concierge',
-    stats: '1,420 replies sent this month',
-  },
-  {
-    id: 'new_followers',
-    name: 'New Follower Welcome DM',
-    description:
-      'Send automated welcome message when a new user follows your profile',
-    enabled: true,
-    overridden: true,
-    automation: 'New Follower Onboarding',
-    stats: '680 DMs dispatched',
-  },
-  {
-    id: 'story_mentions',
-    name: 'Story Mentions & Tags',
-    description:
-      'Instantly respond in DM when someone mentions your account in their Story',
-    enabled: true,
-    overridden: false,
-    automation: 'Story Mention Acknowledgement',
-    stats: '312 DMs dispatched',
-  },
-  {
-    id: 'message_requests',
-    name: 'Hidden / Message Requests Filter',
-    description:
-      'Auto-screen and respond to pending message requests from non-followers',
-    enabled: false,
-    overridden: true,
-    automation: 'Spam Prevention & Filter',
-    stats: '0 replies (Paused)',
-  },
-]);
-
-const automationOptions = [
-  'Summer Sale Comment Auto-DM',
-  'Lead Qualification Bot',
-  'Giveaway Entry Validator',
-  'Product Inquiries Autoresponder',
-  'Relay AI Smart Concierge',
-  'Story Mention Acknowledgement',
-];
+onMounted(async () => {
+  try {
+    const { data } = await CommentAutomationResponseControlsAPI.get();
+    const payload = data.payload || {};
+    items.value = payload.posts || [];
+    dmControls.value = payload.dms || [];
+    defaultSettings.value = payload.defaults || { comments: true, dms: true };
+    automationOptions.value = payload.automations || [];
+  } catch {
+    items.value = [];
+    dmControls.value = [];
+  }
+});
 
 const isDrawerOpen = ref(false);
 const selectedItem = ref(null);
@@ -212,6 +76,27 @@ function openManageDrawer(item) {
   isDrawerOpen.value = true;
 }
 
+function persistControl(id, payload) {
+  return CommentAutomationResponseControlsAPI.update(id, payload);
+}
+
+function persistDefaults() {
+  persistControl('defaults', defaultSettings.value);
+}
+
+function persistItem(item) {
+  persistControl(item.id, { comments: item.comments, dms: item.dms });
+}
+
+function persistDm(dm) {
+  dm.overridden = true;
+  persistControl(dm.id, {
+    enabled: dm.enabled,
+    overridden: dm.overridden,
+    automation: dm.automation,
+  });
+}
+
 function saveDrawerChanges() {
   if (selectedItem.value) {
     selectedItem.value.comments.enabled = drawerForm.value.commentsEnabled;
@@ -222,6 +107,7 @@ function saveDrawerChanges() {
     selectedItem.value.dms.enabled = drawerForm.value.dmsEnabled;
     selectedItem.value.dms.overridden = drawerForm.value.dmsOverridden;
     selectedItem.value.dms.automation = drawerForm.value.dmsAutomation;
+    persistItem(selectedItem.value);
   }
   isDrawerOpen.value = false;
   useAlert(t('AUTORESPONDER.RESPONSE_CONTROLS.SAVED_TOAST'));
@@ -240,11 +126,13 @@ function resetDmsToInherited() {
 function toggleItemComments(item) {
   item.comments.enabled = !item.comments.enabled;
   item.comments.overridden = true;
+  persistItem(item);
 }
 
 function toggleItemDms(item) {
   item.dms.enabled = !item.dms.enabled;
   item.dms.overridden = true;
+  persistItem(item);
 }
 
 const filteredItems = computed(() => {
@@ -356,14 +244,20 @@ const filteredItems = computed(() => {
           <span class="text-muted-foreground">{{
             t('AUTORESPONDER.RESPONSE_CONTROLS.DEFAULT_COMMENTS')
           }}</span>
-          <RelaySwitch v-model="defaultSettings.comments" />
+          <RelaySwitch
+            v-model="defaultSettings.comments"
+            @update:model-value="persistDefaults"
+          />
         </div>
         <div class="h-4 w-px bg-border" />
         <div class="flex items-center gap-2 text-[13px]">
           <span class="text-muted-foreground">{{
             t('AUTORESPONDER.RESPONSE_CONTROLS.DEFAULT_DMS')
           }}</span>
-          <RelaySwitch v-model="defaultSettings.dms" />
+          <RelaySwitch
+            v-model="defaultSettings.dms"
+            @update:model-value="persistDefaults"
+          />
         </div>
       </div>
     </div>
@@ -668,7 +562,7 @@ const filteredItems = computed(() => {
               </div>
               <RelaySwitch
                 v-model="dm.enabled"
-                @update:model-value="dm.overridden = true"
+                @update:model-value="persistDm(dm)"
               />
             </div>
           </div>

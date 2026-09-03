@@ -121,6 +121,10 @@ Rails.application.routes.draw do
             resources :campaigns, only: [:index, :create, :update, :destroy]
             resources :message_logs, only: [:index]
             resources :templates, only: [:index, :create, :update, :destroy]
+            resources :social_accounts, only: [:index, :create, :update] do
+              collection { post :sync }
+            end
+            resources :response_controls, only: [:index, :update]
             resource :mock_connection, only: [:create]
             resource :mock_comment, only: [:create]
           end

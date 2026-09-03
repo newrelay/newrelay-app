@@ -10,6 +10,7 @@ RSpec.describe CommentAutomation::MockAutoresponderStore do
       store = described_class.new(account)
       expect(store.social_accounts).to eq([])
       expect(store.posts).to eq([])
+      expect(store.settings).to eq({})
     end
   end
 
@@ -18,33 +19,46 @@ RSpec.describe CommentAutomation::MockAutoresponderStore do
       with_modified_env(COMMENT_AUTOMATION_PROVIDER: 'mock') { example.run }
     end
 
-    it 'returns seeded social accounts and response controls' do
+    it 'returns no social accounts until an Instagram inbox exists' do
       store = described_class.new(account)
 
-      expect(store.social_accounts.length).to eq 4
-      expect(store.social_accounts.first[:handle]).to eq '@newrelay'
-      expect(store.posts.length).to eq 5
-      expect(store.dms.length).to eq 4
-      expect(store.team_members.length).to eq 6
+      expect(store.social_accounts).to eq([])
+      expect(store.posts).to eq([])
+      expect(store.dms).to eq([])
     end
 
-    it 'updates a social account and persists for later reads' do
-      store = described_class.new(account)
-      updated = store.update_social_account('acc-1', assignedTeam: 'Support Team')
+    it 'serializes connected Instagram inboxes' do
+      create(:channel_instagram, account: account)
+      accounts = described_class.new(account).social_accounts
 
-      expect(updated[:assignedTeam]).to eq 'Support Team'
-      expect(described_class.new(account).social_accounts.first[:assignedTeam]).to eq 'Support Team'
+      expect(accounts.length).to eq 1
+      expect(accounts.first[:platform]).to eq 'Instagram'
+      expect(accounts.first[:handle]).to start_with('@')
+    end
+
+    it 'updates a social account overlay and persists for later reads' do
+      channel = create(:channel_instagram, account: account)
+      store = described_class.new(account)
+      updated = store.update_social_account(channel.inbox.id, assignedTeam: 'Support')
+
+      expect(updated[:assignedTeam]).to eq 'Support'
+      expect(described_class.new(account).social_accounts.first[:assignedTeam]).to eq 'Support'
     end
 
     it 'returns nil when updating a missing record' do
       expect(described_class.new(account).update_social_account('missing', assignedTeam: 'X')).to be_nil
     end
 
-    it 'connects a new Instagram account' do
+    it 'connects a mock Instagram inbox' do
       store = described_class.new(account)
 
-      expect { store.connect('Instagram') }.to change { store.social_accounts.length }.by(1)
-      expect(store.social_accounts.last[:platform]).to eq 'Instagram'
+      expect { store.connect('Instagram') }.to change { store.social_accounts.length }.from(0).to(1)
+      expect(store.social_accounts.first[:platform]).to eq 'Instagram'
+      expect(store.social_accounts.first[:name]).to eq 'Instagram Shop'
+    end
+
+    it 'raises when connecting Facebook' do
+      expect { described_class.new(account).connect('Facebook') }.to raise_error(described_class::Error)
     end
 
     it 'raises when connecting while mock mode is off' do
@@ -52,6 +66,23 @@ RSpec.describe CommentAutomation::MockAutoresponderStore do
       with_modified_env(COMMENT_AUTOMATION_PROVIDER: '') do
         expect { store.connect('Instagram') }.to raise_error(described_class::Error)
       end
+    end
+
+    it 'returns default settings and merges updates' do
+      store = described_class.new(account)
+
+      expect(store.settings[:general][:globalAutomation]).to be true
+      store.update_settings(general: { globalAutomation: false })
+      expect(described_class.new(account).settings[:general][:globalAutomation]).to be false
+    end
+
+    it 'serializes campaigns as response-control posts' do
+      inbox = create(:channel_instagram, account: account).inbox
+      create(:comment_automation_campaign, account: account, inbox: inbox, name: 'Summer Sale')
+
+      posts = described_class.new(account).posts
+      expect(posts.length).to eq 1
+      expect(posts.first[:title]).to eq 'Summer Sale'
     end
   end
 end

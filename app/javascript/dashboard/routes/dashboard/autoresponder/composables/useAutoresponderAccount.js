@@ -65,8 +65,11 @@ export function useAutoresponderAccount() {
     const response = await CommentAutomationSocialAccountsAPI.create({
       platform,
     });
-    accounts.value = [...accounts.value, response.data];
-    return response.data;
+    const next = response.data;
+    const idx = accounts.value.findIndex(account => account.id === next.id);
+    if (idx === -1) accounts.value = [...accounts.value, next];
+    else accounts.value[idx] = next;
+    return next;
   }
 
   async function syncAccounts() {

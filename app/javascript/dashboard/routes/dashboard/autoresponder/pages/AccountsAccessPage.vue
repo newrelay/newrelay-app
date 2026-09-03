@@ -2,6 +2,7 @@
 import { computed, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useAlert } from 'dashboard/composables';
+import { extractResponseMessage } from 'shared/helpers/CustomErrors';
 import {
   RelayBadge,
   RelayButton,
@@ -99,8 +100,16 @@ async function handleSyncNow() {
 }
 
 async function handleConnect(platform) {
-  await connectAccount(platform === 'INSTAGRAM' ? 'Instagram' : 'Facebook');
-  useAlert(t(`AUTORESPONDER.ACCOUNTS_ACCESS.CONNECT_${platform}`));
+  try {
+    await connectAccount(platform === 'INSTAGRAM' ? 'Instagram' : 'Facebook');
+    if (platform === 'INSTAGRAM') {
+      useAlert(t('AUTORESPONDER.ACCOUNTS_ACCESS.CONNECT_INSTAGRAM'));
+    } else {
+      useAlert(t('AUTORESPONDER.ACCOUNTS_ACCESS.CONNECT_FACEBOOK'));
+    }
+  } catch (error) {
+    useAlert(extractResponseMessage(error) || error.message);
+  }
 }
 </script>
 

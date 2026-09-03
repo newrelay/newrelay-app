@@ -1,3 +1,4 @@
+# rubocop:disable Metrics/ClassLength
 class CommentAutomation::MockAutoresponderStore
   class Error < StandardError; end
 
@@ -102,6 +103,8 @@ class CommentAutomation::MockAutoresponderStore
   end
 
   def automations
+    return [] unless mock?
+
     campaigns.map(&:name)
   end
 
@@ -211,10 +214,11 @@ class CommentAutomation::MockAutoresponderStore
     logs = campaign.triggers.flat_map(&:message_logs)
     {
       id: campaign.id, title: campaign.name, type: 'Post',
-      publishedAt: campaign.created_at.strftime('%b %d, %Y'), thumbnail: campaign.inbox.avatar_url.to_s,
+      publishedAt: campaign.created_at.strftime('%b %d, %Y'), thumbnail: campaign.inbox&.avatar_url.to_s,
       comments: { enabled: campaign.is_active, overridden: false, automation: campaign.name },
       dms: { enabled: campaign.is_active, overridden: false, automation: campaign.name },
       stats: { commentsSent: logs.size, dmsSent: logs.count { |log| log.dm_sent? || log.engaged? } }
     }
   end
 end
+# rubocop:enable Metrics/ClassLength

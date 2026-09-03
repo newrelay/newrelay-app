@@ -798,305 +798,243 @@ let mockCommentAutomationTemplates = [
   },
 ];
 
-let mockSocialAccounts = [
-  {
-    id: 'acc-1',
-    name: 'Main',
-    handle: '@newrelay',
-    platform: 'Instagram',
-    avatar:
-      'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80',
-    status: 'Connected',
-    automationsCount: 4,
-    followersCount: '12,482 Followers',
-    assignedTeam: 'Sales Team',
-    accessLevel: 'Manager',
-    lastSync: 'Just now',
-    assignedMembers: [
-      {
-        id: 'u-1',
-        name: 'John Smith',
-        email: 'john@example.com',
-        avatar: 'https://i.pravatar.cc/150?u=john',
-        role: 'Manager',
-      },
-      {
-        id: 'u-2',
-        name: 'Sarah Miller',
-        email: 'sarah@example.com',
-        avatar: 'https://i.pravatar.cc/150?u=sarah',
-        role: 'Operator',
-      },
-    ],
-  },
-  {
-    id: 'acc-2',
-    name: 'Support',
-    handle: '@newrelay.support',
-    platform: 'Instagram',
-    avatar:
-      'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80',
-    status: 'Connected',
-    automationsCount: 7,
-    followersCount: '5,821 Followers',
-    assignedTeam: 'Support Team',
-    accessLevel: 'Manager',
-    lastSync: '5 mins ago',
-    assignedMembers: [
-      {
-        id: 'u-3',
-        name: 'Elena Rostova',
-        email: 'elena@example.com',
-        avatar: 'https://i.pravatar.cc/150?u=elena',
-        role: 'Manager',
-      },
-    ],
-  },
-  {
-    id: 'acc-3',
-    name: 'Store',
-    handle: '@newrelay.store',
-    platform: 'Instagram',
-    avatar:
-      'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=150&auto=format&fit=crop&q=80',
-    status: 'Connected',
-    automationsCount: 3,
-    followersCount: '8,150 Followers',
-    assignedTeam: 'E-commerce Team',
-    accessLevel: 'Operator',
-    lastSync: '12 mins ago',
-    assignedMembers: [
-      {
-        id: 'u-5',
-        name: 'Michael Chang',
-        email: 'michael@example.com',
-        avatar: 'https://i.pravatar.cc/150?u=michael',
-        role: 'Operator',
-      },
-    ],
-  },
-  {
-    id: 'acc-4',
-    name: 'Official Page',
-    handle: 'fb.com/newrelay-official',
-    platform: 'Facebook',
-    avatar:
-      'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=150&auto=format&fit=crop&q=80',
-    status: 'Connected',
-    automationsCount: 5,
-    followersCount: '24,300 Likes',
-    assignedTeam: 'Marketing Team',
-    accessLevel: 'Manager',
-    lastSync: '1 hour ago',
-    assignedMembers: [
-      {
-        id: 'u-1',
-        name: 'John Smith',
-        email: 'john@example.com',
-        avatar: 'https://i.pravatar.cc/150?u=john',
-        role: 'Manager',
-      },
-    ],
-  },
-];
-
-const mockAutoresponderTeamMembers = [
-  {
-    id: 'u-1',
-    name: 'John Smith',
-    email: 'john@example.com',
-    avatar: 'https://i.pravatar.cc/150?u=john',
-  },
-  {
-    id: 'u-2',
-    name: 'Sarah Miller',
-    email: 'sarah@example.com',
-    avatar: 'https://i.pravatar.cc/150?u=sarah',
-  },
-  {
-    id: 'u-3',
-    name: 'Elena Rostova',
-    email: 'elena@example.com',
-    avatar: 'https://i.pravatar.cc/150?u=elena',
-  },
-  {
-    id: 'u-4',
-    name: 'David Vance',
-    email: 'david@example.com',
-    avatar: 'https://i.pravatar.cc/150?u=david',
-  },
-  {
-    id: 'u-5',
-    name: 'Michael Chang',
-    email: 'michael@example.com',
-    avatar: 'https://i.pravatar.cc/150?u=michael',
-  },
-  {
-    id: 'u-6',
-    name: 'Aisha Robinson',
-    email: 'aisha@example.com',
-    avatar: 'https://i.pravatar.cc/150?u=aisha',
-  },
-];
-
-const mockAutoresponderTeams = [
-  'Sales Team',
-  'Support Team',
-  'Marketing Team',
-  'E-commerce Team',
-  'Customer Care',
-];
-
-let mockResponseControlPosts = [
-  {
-    id: 1,
-    title: 'Summer Sale 2026 - Up to 40% Off',
-    type: 'Post',
-    publishedAt: 'Aug 28, 2026',
-    thumbnail:
-      'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=300&auto=format&fit=crop&q=80',
-    comments: {
-      enabled: true,
-      overridden: false,
-      automation: 'Summer Sale Comment Auto-DM',
-    },
-    dms: {
-      enabled: true,
-      overridden: false,
-      automation: 'Lead Qualification Bot',
-    },
-    stats: { commentsSent: 342, dmsSent: 289 },
-  },
-  {
-    id: 2,
-    title: 'Product Launch: NextGen Smartwatch Pro',
-    type: 'Reel',
-    publishedAt: 'Aug 25, 2026',
-    thumbnail:
-      'https://images.unsplash.com/photo-1508057198894-247b23fe5ade?w=300&auto=format&fit=crop&q=80',
-    comments: {
-      enabled: false,
-      overridden: true,
-      automation: 'General Comment Acknowledgement',
-    },
-    dms: {
-      enabled: true,
-      overridden: false,
-      automation: 'Product Inquiries Autoresponder',
-    },
-    stats: { commentsSent: 0, dmsSent: 412 },
-  },
-  {
-    id: 3,
-    title: 'Giveaway: Win AirPods Max & Store Credit',
-    type: 'Carousel',
-    publishedAt: 'Aug 20, 2026',
-    thumbnail:
-      'https://images.unsplash.com/photo-1546868871-7041f2a55e12?w=300&auto=format&fit=crop&q=80',
-    comments: {
-      enabled: true,
-      overridden: true,
-      automation: 'Giveaway Entry Validator',
-    },
-    dms: {
-      enabled: false,
-      overridden: true,
-      automation: 'Standard Welcome Flow',
-    },
-    stats: { commentsSent: 1240, dmsSent: 0 },
-  },
-  {
-    id: 4,
-    title: 'Behind The Scenes: How We Design Our Interfaces',
-    type: 'Story',
-    publishedAt: 'Aug 18, 2026',
-    thumbnail:
-      'https://images.unsplash.com/photo-1581291518857-4e27b48ff24e?w=300&auto=format&fit=crop&q=80',
-    comments: {
-      enabled: true,
-      overridden: false,
-      automation: 'Story Reply Capture',
-    },
-    dms: {
-      enabled: true,
-      overridden: false,
-      automation: 'Story Mentions Auto-Reply',
-    },
-    stats: { commentsSent: 88, dmsSent: 120 },
-  },
-  {
-    id: 5,
-    title: 'Customer Spotlight: How BrandX Scaled 500%',
-    type: 'Post',
-    publishedAt: 'Aug 12, 2026',
-    thumbnail:
-      'https://images.unsplash.com/photo-1557804506-669a67965ba0?w=300&auto=format&fit=crop&q=80',
-    comments: {
-      enabled: true,
-      overridden: false,
-      automation: 'Case Study Request Reply',
-    },
-    dms: {
-      enabled: true,
-      overridden: false,
-      automation: 'Enterprise Lead Route',
-    },
-    stats: { commentsSent: 215, dmsSent: 198 },
-  },
-];
-
-let mockResponseControlDms = [
-  {
-    id: 'general_dm',
-    name: 'General Inbound DMs',
-    description: 'Auto-reply to incoming customer questions in Direct Messages',
-    enabled: true,
-    overridden: false,
-    automation: 'Relay AI Smart Concierge',
-    stats: '1,420 replies sent this month',
-  },
-  {
-    id: 'new_followers',
-    name: 'New Follower Welcome DM',
-    description:
-      'Send automated welcome message when a new user follows your profile',
-    enabled: true,
-    overridden: true,
-    automation: 'New Follower Onboarding',
-    stats: '680 DMs dispatched',
-  },
-  {
-    id: 'story_mentions',
-    name: 'Story Mentions & Tags',
-    description:
-      'Instantly respond in DM when someone mentions your account in their Story',
-    enabled: true,
-    overridden: false,
-    automation: 'Story Mention Acknowledgement',
-    stats: '312 DMs dispatched',
-  },
-  {
-    id: 'message_requests',
-    name: 'Hidden / Message Requests Filter',
-    description:
-      'Auto-screen and respond to pending message requests from non-followers',
-    enabled: false,
-    overridden: true,
-    automation: 'Spam Prevention & Filter',
-    stats: '0 replies (Paused)',
-  },
-];
-
+const SOCIAL_INBOX_TYPES = ['Channel::Instagram', 'Channel::FacebookPage'];
+const socialAccountOverlays = {};
+const responseControlOverlays = {};
 let mockResponseControlDefaults = { comments: true, dms: true };
 
-const mockResponseControlAutomations = [
-  'Summer Sale Comment Auto-DM',
-  'Lead Qualification Bot',
-  'Giveaway Entry Validator',
-  'Product Inquiries Autoresponder',
-  'Relay AI Smart Concierge',
-  'Story Mention Acknowledgement',
-];
+let mockAutoresponderSettings = {
+  general: {
+    globalAutomation: true,
+    defaultResponseType: 'Reply in thread',
+    defaultResponseTime: 'No delay',
+    lookbackWindow: '24 hours',
+    assignTo: 'Unassigned',
+    autoApplyTag: 'No tag selected',
+    defaultLanguage: 'English (US)',
+    preventDuplicate: true,
+    ignoreBots: true,
+  },
+  behavior: {
+    replyType: 'Reply in thread',
+    responseDelay: 'No delay',
+    typingIndicator: true,
+    randomDelay: true,
+    randomDelayMin: '2',
+    randomDelayMax: '6',
+    readInboundMessage: true,
+    splitLongMessages: true,
+    brandingSignature: 'No signature',
+    useRichPreviews: true,
+  },
+  safety: {
+    safeMode: true,
+    maxResponses: '1 per person',
+    cooldownPeriod: '24 hours',
+    dailyLimit: '0',
+    respectLimits: true,
+    preventDuplicatesSafe: true,
+    checkSimilar: false,
+    allowAllChannels: false,
+    keywordFiltering: true,
+    autoFlag: true,
+    blockUnknown: false,
+    rateLimits: [
+      { platform: 'Instagram', limit: '200 requests / hour' },
+      { platform: 'Facebook', limit: '200 requests / hour' },
+      { platform: 'WhatsApp', limit: '1000 messages / day' },
+    ],
+  },
+  hours: {
+    enableBusinessHours: true,
+    timeZone: '(GMT+05:30) Asia/Kolkata',
+    outsideAction: 'away_message',
+    weeklySchedule: [
+      {
+        id: 'mon',
+        label: 'Monday',
+        active: true,
+        start: '09:00 AM',
+        end: '06:00 PM',
+      },
+      {
+        id: 'tue',
+        label: 'Tuesday',
+        active: true,
+        start: '09:00 AM',
+        end: '06:00 PM',
+      },
+      {
+        id: 'wed',
+        label: 'Wednesday',
+        active: true,
+        start: '09:00 AM',
+        end: '06:00 PM',
+      },
+      {
+        id: 'thu',
+        label: 'Thursday',
+        active: true,
+        start: '09:00 AM',
+        end: '06:00 PM',
+      },
+      {
+        id: 'fri',
+        label: 'Friday',
+        active: true,
+        start: '09:00 AM',
+        end: '06:00 PM',
+      },
+      {
+        id: 'sat',
+        label: 'Saturday',
+        active: false,
+        start: '09:00 AM',
+        end: '06:00 PM',
+      },
+      {
+        id: 'sun',
+        label: 'Sunday',
+        active: false,
+        start: '09:00 AM',
+        end: '06:00 PM',
+      },
+    ],
+  },
+  notifications: {
+    enableQuietHours: true,
+    quietFrom: '10:00 PM',
+    quietTo: '07:00 AM',
+    enableDailyDigest: true,
+    digestTime: '09:00 AM',
+    preferences: [
+      {
+        id: 'nt1',
+        name: 'Automation Triggered',
+        desc: 'When an automation is triggered.',
+        email: true,
+        inapp: true,
+      },
+      {
+        id: 'nt2',
+        name: 'New Incoming Message',
+        desc: 'When a new message is received.',
+        email: true,
+        inapp: true,
+      },
+      {
+        id: 'nt3',
+        name: 'Automation Completed',
+        desc: 'When an automation finishes running.',
+        email: false,
+        inapp: true,
+      },
+      {
+        id: 'nt4',
+        name: 'Automation Failed',
+        desc: 'When an automation fails.',
+        email: true,
+        inapp: true,
+      },
+      {
+        id: 'nt5',
+        name: 'Daily Limit Reached',
+        desc: 'When daily message limit is reached.',
+        email: true,
+        inapp: true,
+      },
+    ],
+  },
+  advanced: {
+    processingMode: 'Real-time (Recommended)',
+    concurrentAutomations: '5',
+    retryFailedActions: true,
+    maxRetries: '3',
+    retryInterval: '5 minutes',
+    dataRetention: '12 months',
+    storeMessageHistory: true,
+    apiAccess: true,
+    maintenanceMode: false,
+    systemHealth: [
+      { label: 'Queue health', status: 'Healthy' },
+      { label: 'API latency', status: '120ms' },
+      { label: 'Uptime', status: '99.98%' },
+    ],
+  },
+};
+
+const inboxHandle = name =>
+  `@${String(name)
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-|-$/g, '')}`;
+
+const formatPublishedAt = unix =>
+  new Date((unix || unixNow()) * 1000).toLocaleDateString('en-US', {
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric',
+  });
+
+const derivedSocialAccounts = () =>
+  mockInboxes
+    .filter(inbox => SOCIAL_INBOX_TYPES.includes(inbox.channel_type))
+    .map(inbox => ({
+      id: String(inbox.id),
+      name: inbox.name,
+      handle: inboxHandle(inbox.name),
+      platform:
+        inbox.channel_type === 'Channel::Instagram' ? 'Instagram' : 'Facebook',
+      avatar: inbox.avatar_url || '',
+      status: 'Connected',
+      automationsCount: mockCommentAutomationCampaigns.filter(
+        campaign => campaign.inbox?.id === inbox.id
+      ).length,
+      followersCount: '',
+      assignedTeam: mockTeams[0]?.name || '',
+      assignedMembers: [],
+      accessLevel: 'Manager',
+      lastSync: new Date().toISOString(),
+      ...socialAccountOverlays[inbox.id],
+      ...socialAccountOverlays[String(inbox.id)],
+    }));
+
+const derivedTeamMembers = () =>
+  mockAgents.map(agent => ({
+    id: String(agent.id),
+    name: agent.name,
+    email: agent.email,
+    avatar: agent.thumbnail || '',
+  }));
+
+const derivedTeams = () => mockTeams.map(team => team.name);
+
+const derivedPosts = () =>
+  mockCommentAutomationCampaigns.map(campaign => ({
+    id: campaign.id,
+    title: campaign.name,
+    type: 'Post',
+    publishedAt: formatPublishedAt(campaign.created_at),
+    thumbnail: '',
+    comments: {
+      enabled: campaign.is_active,
+      overridden: false,
+      automation: campaign.name,
+    },
+    dms: {
+      enabled: campaign.is_active,
+      overridden: false,
+      automation: campaign.name,
+    },
+    stats: {
+      commentsSent: campaign.responses_count || 0,
+      dmsSent: 0,
+    },
+    ...(responseControlOverlays[campaign.id] || {}),
+  }));
+
+const derivedAutomations = () =>
+  mockCommentAutomationCampaigns.map(campaign => campaign.name);
 
 const mockCommentAutomationLogs = [
   {
@@ -1409,19 +1347,29 @@ const commentAutomationResourceId = (path, resource) => {
 
 const handleCommentAutomationSocialAccounts = (path, method, body) => {
   if (path.includes('/social_accounts/sync') && method === 'POST') {
-    mockSocialAccounts = mockSocialAccounts.map(account => ({
-      ...account,
-      lastSync: 'Just now',
-    }));
-    return { status: 200, data: { payload: mockSocialAccounts } };
+    derivedSocialAccounts().forEach(account => {
+      socialAccountOverlays[account.id] = {
+        ...(socialAccountOverlays[account.id] || {}),
+        lastSync: new Date().toISOString(),
+      };
+    });
+    return { status: 200, data: { payload: derivedSocialAccounts() } };
   }
 
   const id = commentAutomationResourceId(path, 'social_accounts');
   if (id && (method === 'PATCH' || method === 'PUT')) {
-    const account = mockSocialAccounts.find(item => String(item.id) === id);
+    const account = derivedSocialAccounts().find(
+      item => String(item.id) === id
+    );
     if (!account) return { status: 404, data: { error: 'Not found' } };
-    Object.assign(account, body || {});
-    return { status: 200, data: account };
+    socialAccountOverlays[id] = {
+      ...(socialAccountOverlays[id] || {}),
+      ...body,
+    };
+    return {
+      status: 200,
+      data: derivedSocialAccounts().find(item => String(item.id) === id),
+    };
   }
 
   if (
@@ -1429,33 +1377,40 @@ const handleCommentAutomationSocialAccounts = (path, method, body) => {
     method === 'POST'
   ) {
     const platform = body?.platform === 'Facebook' ? 'Facebook' : 'Instagram';
-    const nextId = `acc-${mockSocialAccounts.length + 1}`;
-    const account = {
-      id: nextId,
-      name: `New ${platform}`,
-      handle:
-        platform === 'Facebook' ? `fb.com/new-${nextId}` : `@new-${nextId}`,
-      platform,
-      avatar: `https://i.pravatar.cc/150?u=${nextId}`,
-      status: 'Connected',
-      automationsCount: 0,
-      followersCount: platform === 'Facebook' ? '0 Likes' : '0 Followers',
-      assignedTeam: 'Sales Team',
-      accessLevel: 'Manager',
-      lastSync: 'Just now',
-      assignedMembers: [],
+    if (platform === 'Facebook') {
+      return {
+        status: 422,
+        data: {
+          error: 'Mock Facebook connect is not available. Use Instagram.',
+        },
+      };
+    }
+
+    let inbox = mockInboxes.find(
+      item => item.channel_type === 'Channel::Instagram'
+    );
+    if (!inbox) {
+      inbox = {
+        id: mockInboxes.length + 1,
+        name: 'Instagram Shop',
+        channel_type: 'Channel::Instagram',
+        avatar_url: '',
+      };
+      mockInboxes.push(inbox);
+    }
+    return {
+      status: 201,
+      data: derivedSocialAccounts().find(item => item.id === String(inbox.id)),
     };
-    mockSocialAccounts.push(account);
-    return { status: 201, data: account };
   }
 
   return {
     status: 200,
     data: {
-      payload: mockSocialAccounts,
+      payload: derivedSocialAccounts(),
       meta: {
-        teamMembers: mockAutoresponderTeamMembers,
-        teams: mockAutoresponderTeams,
+        teamMembers: derivedTeamMembers(),
+        teams: derivedTeams(),
       },
     },
   };
@@ -1470,47 +1425,67 @@ const handleCommentAutomationResponseControls = (path, method, body) => {
       return { status: 200, data: mockResponseControlDefaults };
     }
 
-    const post = mockResponseControlPosts.find(item => String(item.id) === id);
+    const post = derivedPosts().find(item => String(item.id) === id);
     if (post) {
-      if (body?.comments) Object.assign(post.comments, body.comments);
-      if (body?.dms) Object.assign(post.dms, body.dms);
-      return { status: 200, data: post };
-    }
-
-    const dm = mockResponseControlDms.find(item => String(item.id) === id);
-    if (dm) {
-      Object.assign(dm, body || {});
-      return { status: 200, data: dm };
+      const overlay = { ...(responseControlOverlays[post.id] || {}) };
+      if (body?.comments) {
+        overlay.comments = { ...post.comments, ...body.comments };
+      }
+      if (body?.dms) {
+        overlay.dms = { ...post.dms, ...body.dms };
+      }
+      responseControlOverlays[post.id] = overlay;
+      return {
+        status: 200,
+        data: derivedPosts().find(item => String(item.id) === id),
+      };
     }
 
     return { status: 404, data: { error: 'Not found' } };
-  }
-
-  if (isCommentAutomationCollection(path, 'response_controls')) {
-    return {
-      status: 200,
-      data: {
-        payload: {
-          posts: mockResponseControlPosts,
-          dms: mockResponseControlDms,
-          defaults: mockResponseControlDefaults,
-          automations: mockResponseControlAutomations,
-        },
-      },
-    };
   }
 
   return {
     status: 200,
     data: {
       payload: {
-        posts: mockResponseControlPosts,
-        dms: mockResponseControlDms,
+        posts: derivedPosts(),
+        dms: [],
         defaults: mockResponseControlDefaults,
-        automations: mockResponseControlAutomations,
+        automations: derivedAutomations(),
       },
     },
   };
+};
+
+const handleCommentAutomationSettings = (_path, method, body) => {
+  const patch = body?.settings || body?.setting || body || {};
+  if (method === 'PATCH' || method === 'PUT') {
+    mockAutoresponderSettings = {
+      ...mockAutoresponderSettings,
+      general: {
+        ...mockAutoresponderSettings.general,
+        ...(patch.general || {}),
+      },
+      behavior: {
+        ...mockAutoresponderSettings.behavior,
+        ...(patch.behavior || {}),
+      },
+      safety: {
+        ...mockAutoresponderSettings.safety,
+        ...(patch.safety || {}),
+      },
+      hours: { ...mockAutoresponderSettings.hours, ...(patch.hours || {}) },
+      notifications: {
+        ...mockAutoresponderSettings.notifications,
+        ...(patch.notifications || {}),
+      },
+      advanced: {
+        ...mockAutoresponderSettings.advanced,
+        ...(patch.advanced || {}),
+      },
+    };
+  }
+  return { status: 200, data: mockAutoresponderSettings };
 };
 
 export const handleMockRequest = (reqUrl, method, body = null) => {
@@ -1519,6 +1494,12 @@ export const handleMockRequest = (reqUrl, method, body = null) => {
 
   // Autoresponder mock resources — check the raw URL too. Vite sometimes
   // passes req.url with a query string that pathname handling can miss.
+  if (
+    path.includes('/comment_automation/settings') ||
+    String(reqUrl).includes('/comment_automation/settings')
+  ) {
+    return handleCommentAutomationSettings(path, method, body);
+  }
   if (
     path.includes('/comment_automation/social_accounts') ||
     String(reqUrl).includes('/comment_automation/social_accounts')

@@ -1,4 +1,4 @@
-import { ref, watch } from 'vue';
+import { nextTick, ref, watch } from 'vue';
 import CommentAutomationSettingsAPI from 'dashboard/api/commentAutomationSettings';
 
 const settings = ref({
@@ -30,10 +30,11 @@ export function useAutoresponderSettings() {
   if (!loaded.value && !loadPromise) {
     loadPromise = fetchSettings()
       .catch(() => {})
-      .finally(() => {
+      .finally(async () => {
         loaded.value = true;
-        persistEnabled = true;
         loadPromise = null;
+        await nextTick();
+        persistEnabled = true;
       });
   }
 

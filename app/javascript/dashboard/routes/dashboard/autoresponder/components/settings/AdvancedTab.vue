@@ -138,7 +138,7 @@ const retentionOptions = ['3 months', '6 months', '12 months', 'Forever'];
       >
         <div class="flex flex-col gap-2.5">
           <div
-            v-for="item in systemHealth"
+            v-for="item in settings.advanced.systemHealth"
             :key="item.label"
             class="flex items-center justify-between text-xs"
           >

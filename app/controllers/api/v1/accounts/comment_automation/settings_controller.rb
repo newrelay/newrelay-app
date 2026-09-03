@@ -21,6 +21,8 @@ class Api::V1::Accounts::CommentAutomation::SettingsController < Api::V1::Accoun
 
   def settings_params
     source = params[:setting].presence || params[:settings].presence || params
-    source.permit!
+    source.permit!.to_h.deep_symbolize_keys.slice(
+      :general, :behavior, :safety, :hours, :notifications, :advanced
+    )
   end
 end

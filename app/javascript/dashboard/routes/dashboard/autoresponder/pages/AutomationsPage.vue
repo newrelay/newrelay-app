@@ -36,20 +36,11 @@ const campaigns = useMapGetter('commentAutomationCampaigns/getCampaigns');
 const channelName = channelType =>
   AUTORESPONDER_CHANNELS.find(c => c.type === channelType)?.name || channelType;
 
-const tabs = computed(() => {
-  const scoped = campaigns.value.filter(c => matchesActiveInbox(c.inbox));
-  return [
-    { id: 'All', count: scoped.length },
-    {
-      id: 'Active',
-      count: scoped.filter(c => c.is_active).length,
-    },
-    {
-      id: 'Paused',
-      count: scoped.filter(c => !c.is_active).length,
-    },
-  ];
-});
+const tabs = computed(() => [
+  { id: 'All', label: t('AUTORESPONDER.AUTOMATIONS.TAB_ALL') },
+  { id: 'Active', label: t('AUTORESPONDER.AUTOMATIONS.TAB_ACTIVE') },
+  { id: 'Paused', label: t('AUTORESPONDER.AUTOMATIONS.TAB_PAUSED') },
+]);
 
 const filteredAutomations = computed(() => {
   let list = campaigns.value.filter(c => matchesActiveInbox(c.inbox));
@@ -189,32 +180,28 @@ function deleteCampaign(campaign) {
       </div>
 
       <div
-        class="flex items-center gap-6 mb-6 border-b border-border w-full overflow-x-auto hide-scrollbar"
+        class="relative border-b border-border w-full flex items-center justify-between mb-6"
       >
-        <button
-          v-for="tab in tabs"
-          :key="tab.id"
-          type="button"
-          class="flex items-center gap-2 pb-3 text-[13.5px] transition-colors whitespace-nowrap border-b-2 -mb-[1px] font-medium"
-          :class="
-            activeTab === tab.id
-              ? 'border-primary text-primary'
-              : 'border-transparent text-muted-foreground hover:text-foreground hover:border-muted-foreground/30'
-          "
-          @click="activeTab = tab.id"
-        >
-          {{ tab.id }}
-          <span
-            class="text-[11px] px-1.5 py-0.5 rounded-sm"
+        <div class="flex items-center gap-8 overflow-x-auto hide-scrollbar">
+          <button
+            v-for="tab in tabs"
+            :key="tab.id"
+            type="button"
+            class="relative pb-3 text-sm font-medium transition-colors whitespace-nowrap"
             :class="
               activeTab === tab.id
-                ? 'bg-primary/10 text-primary'
-                : 'bg-muted text-muted-foreground'
+                ? 'text-primary'
+                : 'text-muted-foreground hover:text-foreground'
             "
+            @click="activeTab = tab.id"
           >
-            {{ tab.count }}
-          </span>
-        </button>
+            {{ tab.label }}
+            <div
+              v-if="activeTab === tab.id"
+              class="absolute bottom-0 left-0 right-0 h-0.5 bg-primary rounded-full"
+            />
+          </button>
+        </div>
       </div>
 
       <div

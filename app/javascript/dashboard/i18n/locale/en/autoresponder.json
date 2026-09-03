@@ -62,7 +62,10 @@
       "KEYWORD_CONTAINS": "Contains \"{keyword}\"",
       "KEYWORD_EXACT": "Is exactly \"{keyword}\"",
       "STATUS_ACTIVE": "Active",
-      "STATUS_PAUSED": "Paused"
+      "STATUS_PAUSED": "Paused",
+      "TAB_ALL": "All",
+      "TAB_ACTIVE": "Active",
+      "TAB_PAUSED": "Paused"
     },
     "RESPONSE_CONTROLS": {
       "TITLE": "Response Controls",

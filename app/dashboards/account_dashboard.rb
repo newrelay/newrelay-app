@@ -37,7 +37,7 @@ class AccountDashboard < Administrate::BaseDashboard
     subscription: Field::HasOne,
     enterprise_contract: Field::HasOne,
     marketplace_plan_prices: Field::HasMany,
-    custom_attributes: Field::String
+    custom_attributes: SerializedField
   }.merge(enterprise_attribute_types).freeze
 
   # COLLECTION_ATTRIBUTES

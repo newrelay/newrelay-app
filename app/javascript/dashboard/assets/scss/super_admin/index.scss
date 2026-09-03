@@ -2785,17 +2785,107 @@ select.form-input {
   color: var(--foreground);
 }
 
-.serialized-json,
-.serialized-block,
 /* Administrate wraps every string/text show value in this class. Keep it plain
-   read-only text (matches .show-value) — not a boxed monospace input. Serialized
-   / JSON blocks use their own .serialized-* classes for the code-block look. */
+   read-only text (matches .show-value) — not a boxed monospace input. */
 .preserve-whitespace {
   white-space: pre-wrap;
   word-break: break-word;
   color: inherit;
   font-size: inherit;
   line-height: 1.55;
+}
+
+/* Serialized / JSON values (SerializedField: custom_attributes, config values)
+   render as a self-contained code block instead of a full-width wall of text. */
+.serialized-json,
+.serialized-block {
+  margin: 0;
+  max-width: 100%;
+  max-height: 320px;
+  overflow: auto;
+  padding: 12px 14px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background-color: var(--muted);
+  color: var(--foreground);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, "Cascadia Code", monospace;
+  font-size: 12.5px;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  word-break: break-word;
+  tab-size: 2;
+}
+.serialized-block + .serialized-block {
+  margin-top: 8px;
+}
+
+/* HasOne nested associations on show pages (Subscription, Enterprise Contract)
+   render as a <fieldset.attribute--nested> with a legend link + dt/dd rows.
+   Style it as a self-contained details card instead of a plain stacked list. */
+fieldset.attribute--nested {
+  margin: 0;
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background-color: var(--card);
+  overflow: hidden;
+}
+.attribute--nested > legend {
+  display: block;
+  width: 100%;
+  margin: 0;
+  padding: 10px 16px;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--foreground);
+  background-color: var(--muted);
+  border-bottom: 1px solid var(--border);
+}
+.attribute--nested > legend a {
+  color: var(--primary);
+  text-decoration: none;
+}
+.attribute--nested > legend a:hover {
+  text-decoration: underline;
+}
+.attribute--nested fieldset {
+  display: grid;
+  grid-template-columns: 220px minmax(0, 1fr);
+  column-gap: 16px;
+  row-gap: 0;
+  margin: 0;
+  padding: 4px 16px 10px;
+  border: 0;
+}
+.attribute--nested fieldset > legend {
+  grid-column: 1 / -1;
+  margin: 10px 0 2px;
+  padding: 0;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--muted-foreground);
+  background: none;
+  border: 0;
+}
+.attribute--nested dt.attribute-label {
+  padding: 8px 0;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--muted-foreground);
+  border-top: 1px solid color-mix(in srgb, var(--border) 55%, transparent);
+}
+.attribute--nested dd.attribute-data {
+  padding: 8px 0;
+  font-size: 13.5px;
+  color: var(--foreground);
+  border-top: 1px solid color-mix(in srgb, var(--border) 55%, transparent);
+  overflow-wrap: anywhere;
+}
+.attribute--nested dt.attribute-label:first-of-type,
+.attribute--nested dd.attribute-data:first-of-type {
+  border-top: 0;
 }
 
 /* Avatar image cells (avatar_field _show / _index) — constrain + round, so the

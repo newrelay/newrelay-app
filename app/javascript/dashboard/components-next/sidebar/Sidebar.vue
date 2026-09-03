@@ -597,6 +597,16 @@ const primaryMenuItems = computed(() => {
           to: accountScopedRoute('autoresponder_activity'),
           activeOn: ['autoresponder_activity'],
         },
+        ...(window.newrelayConfig?.commentAutomationMock
+          ? [
+              {
+                name: 'Autoresponder Mock Instagram',
+                label: t('SIDEBAR.AUTORESPONDER_MOCK_INSTAGRAM'),
+                to: accountScopedRoute('autoresponder_mock_instagram'),
+                activeOn: ['autoresponder_mock_instagram'],
+              },
+            ]
+          : []),
         {
           name: 'Autoresponder Settings',
           label: t('SIDEBAR.AUTORESPONDER_SETTINGS'),

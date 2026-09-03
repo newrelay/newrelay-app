@@ -39,6 +39,9 @@ en:
       disabled: Mock Instagram connect is off. Set COMMENT_AUTOMATION_PROVIDER=mock in .env.
       url_blank: Enter an Instagram post URL.
       name_blank: Enter a page name.
+      comment_blank: Enter a comment.
+      not_connected: Connect a mock Instagram channel first.
+      no_campaign: No active automation for this mock inbox.
   inbox:
     reauthorization:
       success: 'Channel reauthorized successfully'

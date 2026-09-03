@@ -43,6 +43,12 @@ export const routes = [
         meta,
       },
       {
+        path: 'mock-instagram',
+        name: 'autoresponder_mock_instagram',
+        component: () => import('./pages/MockInstagramPage.vue'),
+        meta,
+      },
+      {
         path: 'settings',
         name: 'autoresponder_settings',
         component: () => import('./pages/SettingsPage.vue'),

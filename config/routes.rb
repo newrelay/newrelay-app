@@ -122,6 +122,7 @@ Rails.application.routes.draw do
             resources :message_logs, only: [:index]
             resources :templates, only: [:index, :create, :update, :destroy]
             resource :mock_connection, only: [:create]
+            resource :mock_comment, only: [:create]
           end
           resources :macros, only: [:index, :create, :show, :update, :destroy] do
             post :execute, on: :member

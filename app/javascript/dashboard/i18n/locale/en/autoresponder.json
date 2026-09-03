@@ -165,6 +165,21 @@
       "STATUS_DM_FAILED": "DM failed",
       "STATUS_ENGAGED": "Engaged"
     },
+    "MOCK_POST": {
+      "TITLE": "Mock Instagram post",
+      "SUBTITLE": "Type a comment. Include PRICE to get a public reply and a DM — same path as a real Instagram comment.",
+      "HINT": "Try: What is the PRICE on this?",
+      "PLACEHOLDER": "Add a comment…",
+      "NAME_LABEL": "Your name",
+      "NAME_PLACEHOLDER": "You",
+      "SEND": "Post",
+      "SENDING": "Posting…",
+      "PUBLIC_REPLY": "Public reply",
+      "DM": "Direct message",
+      "NO_MATCH": "No automation matched. Include the keyword PRICE.",
+      "NOT_CONNECTED": "Connect mock Instagram first (Autoresponder → Settings → Channels).",
+      "CONNECT": "Connect Instagram"
+    },
     "ACTIVITY_DETAILS": {
       "TITLE": "Activity Details",
       "CONTACT": "Contact",
@@ -376,7 +391,7 @@
         "MOCK_CONNECT_NAME_PLACEHOLDER": "Instagram Shop",
         "MOCK_CONNECT_SUBMIT": "Connect",
         "MOCK_CONNECT_CANCEL": "Cancel",
-        "MOCK_CONNECT_SUCCESS": "Instagram connected. Mock comments are in Activity.",
+        "MOCK_CONNECT_SUCCESS": "Instagram connected. Open Mock Instagram to comment, or see Activity.",
         "MOCK_CONNECTING": "Connecting..."
       },
       "NOTIFICATIONS": {

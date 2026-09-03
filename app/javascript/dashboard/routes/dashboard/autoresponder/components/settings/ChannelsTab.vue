@@ -1,23 +1,43 @@
 <script setup>
-import { computed, onMounted } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
+import { useRouter } from 'vue-router';
 import { useStore, useMapGetter } from 'dashboard/composables/store';
 import { useAccount } from 'dashboard/composables/useAccount';
-import { RelayButton } from 'dashboard/components-next/relay';
-import { getInboxIconByType } from 'dashboard/helper/inbox';
+import { useAlert } from 'dashboard/composables';
+import {
+  RelayButton,
+  RelayInput,
+  RelayLabel,
+} from 'dashboard/components-next/relay';
+import { RELAY_DIALOG_OVERLAY_CLASS } from 'dashboard/components-next/relay/modal/constants';
+import { getInboxIconByType, INBOX_TYPES } from 'dashboard/helper/inbox';
 import { AUTORESPONDER_CHANNELS } from '../../constants/channels';
 import SettingsCard from './SettingsCard.vue';
 import SettingsSidebarCard from './SettingsSidebarCard.vue';
 
 const { t } = useI18n();
 const store = useStore();
-const { accountScopedRoute } = useAccount();
+const router = useRouter();
+const { accountId, accountScopedRoute } = useAccount();
 
 onMounted(() => {
   store.dispatch('inboxes/get');
 });
 
 const allInboxes = useMapGetter('inboxes/getInboxes');
+const isMock = computed(() => !!window.newrelayConfig?.commentAutomationMock);
+
+const isConnectOpen = ref(false);
+const connectUrl = ref('https://www.instagram.com/p/mock-summer-sale/');
+const connectName = ref('Instagram Shop');
+const connectSaving = ref(false);
+const connectError = ref('');
+
+const canConnect = computed(
+  () =>
+    connectUrl.value.trim() && connectName.value.trim() && !connectSaving.value
+);
 
 const connectedChannels = computed(() =>
   AUTORESPONDER_CHANNELS.flatMap(({ type, name, descKey }) =>
@@ -46,6 +66,41 @@ const availableChannels = computed(() => {
     icon: getInboxIconByType(type),
   }));
 });
+
+function connectChannel(channel) {
+  if (isMock.value && channel.type === INBOX_TYPES.INSTAGRAM) {
+    connectError.value = '';
+    isConnectOpen.value = true;
+    return;
+  }
+  router.push(accountScopedRoute('settings_inbox_new'));
+}
+
+async function submitMockConnect() {
+  if (!canConnect.value) return;
+  connectSaving.value = true;
+  connectError.value = '';
+  try {
+    await window.axios.post(
+      `/api/v1/accounts/${accountId.value}/comment_automation/mock_connection`,
+      { url: connectUrl.value.trim(), name: connectName.value.trim() }
+    );
+    isConnectOpen.value = false;
+    await Promise.all([
+      store.dispatch('inboxes/get'),
+      store.dispatch('commentAutomationCampaigns/get'),
+      store.dispatch('commentAutomationMessageLogs/get'),
+      store.dispatch('commentAutomationTemplates/get'),
+    ]);
+    useAlert(t('AUTORESPONDER.SETTINGS.CHANNELS.MOCK_CONNECT_SUCCESS'));
+  } catch (error) {
+    connectError.value =
+      error.response?.data?.error ||
+      t('AUTORESPONDER.SETTINGS.CHANNELS.MOCK_CONNECT_TITLE');
+  } finally {
+    connectSaving.value = false;
+  }
+}
 </script>
 
 <template>
@@ -136,11 +191,10 @@ const availableChannels = computed(() => {
               </div>
             </div>
             <RelayButton
-              as="router-link"
-              :to="accountScopedRoute('settings_inbox_new')"
               variant="outline"
               size="sm"
               class="h-7 text-xs shrink-0"
+              @click="connectChannel(ch)"
             >
               {{ t('AUTORESPONDER.SETTINGS.CHANNELS.CONNECT') }}
             </RelayButton>
@@ -179,4 +233,84 @@ const availableChannels = computed(() => {
       </SettingsSidebarCard>
     </div>
   </div>
+
+  <Teleport to="body">
+    <div
+      v-if="isConnectOpen"
+      :class="RELAY_DIALOG_OVERLAY_CLASS"
+      class="flex items-center justify-center p-4"
+      @click.self="isConnectOpen = false"
+    >
+      <div
+        class="bg-background w-full max-w-[480px] rounded-2xl shadow-xl border border-border/50 overflow-hidden"
+      >
+        <div
+          class="flex items-start justify-between p-6 border-b border-border/80"
+        >
+          <div>
+            <h2 class="text-[18px] font-[600] text-foreground">
+              {{ t('AUTORESPONDER.SETTINGS.CHANNELS.MOCK_CONNECT_TITLE') }}
+            </h2>
+            <p class="text-[14px] font-normal text-muted-foreground mt-1">
+              {{ t('AUTORESPONDER.SETTINGS.CHANNELS.MOCK_CONNECT_DESC') }}
+            </p>
+          </div>
+          <button
+            type="button"
+            class="p-1 text-muted-foreground hover:bg-muted rounded-full"
+            @click="isConnectOpen = false"
+          >
+            <span class="i-lucide-x size-4" />
+          </button>
+        </div>
+        <div class="p-6 flex flex-col gap-4">
+          <div class="flex flex-col gap-1.5">
+            <RelayLabel>
+              {{ t('AUTORESPONDER.SETTINGS.CHANNELS.MOCK_CONNECT_URL') }}
+            </RelayLabel>
+            <RelayInput
+              v-model="connectUrl"
+              :placeholder="
+                t(
+                  'AUTORESPONDER.SETTINGS.CHANNELS.MOCK_CONNECT_URL_PLACEHOLDER'
+                )
+              "
+            />
+          </div>
+          <div class="flex flex-col gap-1.5">
+            <RelayLabel>
+              {{ t('AUTORESPONDER.SETTINGS.CHANNELS.MOCK_CONNECT_NAME') }}
+            </RelayLabel>
+            <RelayInput
+              v-model="connectName"
+              :placeholder="
+                t(
+                  'AUTORESPONDER.SETTINGS.CHANNELS.MOCK_CONNECT_NAME_PLACEHOLDER'
+                )
+              "
+            />
+          </div>
+          <p v-if="connectError" class="text-[13px] text-destructive">
+            {{ connectError }}
+          </p>
+          <div class="flex justify-end gap-2 pt-2">
+            <RelayButton
+              variant="outline"
+              class="border border-border hover:border-transparent"
+              @click="isConnectOpen = false"
+            >
+              {{ t('AUTORESPONDER.SETTINGS.CHANNELS.MOCK_CONNECT_CANCEL') }}
+            </RelayButton>
+            <RelayButton :disabled="!canConnect" @click="submitMockConnect">
+              {{
+                connectSaving
+                  ? t('AUTORESPONDER.SETTINGS.CHANNELS.MOCK_CONNECTING')
+                  : t('AUTORESPONDER.SETTINGS.CHANNELS.MOCK_CONNECT_SUBMIT')
+              }}
+            </RelayButton>
+          </div>
+        </div>
+      </div>
+    </div>
+  </Teleport>
 </template>

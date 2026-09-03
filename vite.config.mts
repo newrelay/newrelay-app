@@ -153,8 +153,26 @@ function mockApiPlugin() {
     },
     configureServer(server: any) {
       server.middlewares.use((req: any, res: any, next: any) => {
-        if (process.env.MOCK_API === 'true' && req.url && (req.url.startsWith('/api') || req.url.startsWith('/auth'))) {
-          const mockResponse = handleMockRequest(req.url, req.method || 'GET');
+        if (process.env.MOCK_API !== 'true' || !req.url || !(req.url.startsWith('/api') || req.url.startsWith('/auth'))) {
+          next();
+          return;
+        }
+
+        const chunks: Buffer[] = [];
+        req.on('data', (chunk: Buffer) => {
+          chunks.push(chunk);
+        });
+        req.on('end', () => {
+          let body = null;
+          if (chunks.length) {
+            try {
+              body = JSON.parse(Buffer.concat(chunks).toString());
+            } catch {
+              body = {};
+            }
+          }
+
+          const mockResponse = handleMockRequest(req.url, req.method || 'GET', body);
           if (mockResponse) {
             res.statusCode = mockResponse.status;
             res.setHeader('Content-Type', 'application/json');
@@ -166,8 +184,9 @@ function mockApiPlugin() {
             res.end(JSON.stringify(mockResponse.data));
             return;
           }
-        }
-        next();
+
+          next();
+        });
       });
     },
   };

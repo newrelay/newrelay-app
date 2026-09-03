@@ -1,15 +1,40 @@
 <script setup>
-import { ref, onMounted } from 'vue';
+import { computed, ref, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
+import { useRouter } from 'vue-router';
+import { useStore } from 'dashboard/composables/store';
+import { useAccount } from 'dashboard/composables/useAccount';
+import { useAlert } from 'dashboard/composables';
+import { extractResponseMessage } from 'shared/helpers/CustomErrors';
 import instagramClient from 'dashboard/api/channel/instagramClient';
 import Button from 'dashboard/components-next/button/Button.vue';
+import {
+  RelayButton,
+  RelayInput,
+  RelayLabel,
+} from 'dashboard/components-next/relay';
 
 const { t } = useI18n();
+const router = useRouter();
+const store = useStore();
+const { accountId } = useAccount();
+
+const isMock = computed(() => !!window.newrelayConfig?.commentAutomationMock);
 
 const hasError = ref(false);
 const errorStateMessage = ref('');
 const errorStateDescription = ref('');
 const isRequestingAuthorization = ref(false);
+
+const connectUrl = ref('https://www.instagram.com/p/mock-summer-sale/');
+const connectName = ref('Instagram Shop');
+const connectSaving = ref(false);
+const connectError = ref('');
+
+const canConnect = computed(
+  () =>
+    connectUrl.value.trim() && connectName.value.trim() && !connectSaving.value
+);
 
 onMounted(() => {
   const urlParams = new URLSearchParams(window.location.search);
@@ -42,6 +67,34 @@ const requestAuthorization = async () => {
 
   window.location.href = url;
 };
+
+const submitMockConnect = async () => {
+  if (!canConnect.value) return;
+  connectSaving.value = true;
+  connectError.value = '';
+  try {
+    const { data } = await window.axios.post(
+      `/api/v1/accounts/${accountId.value}/comment_automation/mock_connection`,
+      { url: connectUrl.value.trim(), name: connectName.value.trim() }
+    );
+    await store.dispatch('inboxes/get');
+    useAlert(t('AUTORESPONDER.SETTINGS.CHANNELS.MOCK_CONNECT_SUCCESS'));
+    router.replace({
+      name: 'settings_inboxes_add_agents',
+      params: {
+        page: 'new',
+        inbox_id: data.id,
+        accountId: accountId.value,
+      },
+    });
+  } catch (error) {
+    connectError.value =
+      extractResponseMessage(error) ||
+      t('AUTORESPONDER.SETTINGS.CHANNELS.MOCK_CONNECT_TITLE');
+  } finally {
+    connectSaving.value = false;
+  }
+};
 </script>
 
 <template>
@@ -56,6 +109,59 @@ const requestAuthorization = async () => {
           v-dompurify-html="errorStateDescription"
           class="mt-2 text-[13px] text-muted-foreground"
         />
+      </div>
+      <div
+        v-else-if="isMock"
+        class="flex w-full flex-col items-stretch rounded-xl border border-border bg-card px-8 py-10 text-left shadow-sm"
+      >
+        <h6 class="text-lg font-semibold text-foreground text-center">
+          {{ t('AUTORESPONDER.SETTINGS.CHANNELS.MOCK_CONNECT_TITLE') }}
+        </h6>
+        <p
+          class="py-6 text-[13px] leading-relaxed text-muted-foreground text-center"
+        >
+          {{ t('AUTORESPONDER.SETTINGS.CHANNELS.MOCK_CONNECT_DESC') }}
+        </p>
+        <div class="flex flex-col gap-4">
+          <div class="flex flex-col gap-1.5">
+            <RelayLabel>
+              {{ t('AUTORESPONDER.SETTINGS.CHANNELS.MOCK_CONNECT_URL') }}
+            </RelayLabel>
+            <RelayInput
+              v-model="connectUrl"
+              :placeholder="
+                t(
+                  'AUTORESPONDER.SETTINGS.CHANNELS.MOCK_CONNECT_URL_PLACEHOLDER'
+                )
+              "
+            />
+          </div>
+          <div class="flex flex-col gap-1.5">
+            <RelayLabel>
+              {{ t('AUTORESPONDER.SETTINGS.CHANNELS.MOCK_CONNECT_NAME') }}
+            </RelayLabel>
+            <RelayInput
+              v-model="connectName"
+              :placeholder="
+                t(
+                  'AUTORESPONDER.SETTINGS.CHANNELS.MOCK_CONNECT_NAME_PLACEHOLDER'
+                )
+              "
+            />
+          </div>
+          <p v-if="connectError" class="text-[13px] text-destructive">
+            {{ connectError }}
+          </p>
+          <div class="flex justify-end pt-2">
+            <RelayButton :disabled="!canConnect" @click="submitMockConnect">
+              {{
+                connectSaving
+                  ? t('AUTORESPONDER.SETTINGS.CHANNELS.MOCK_CONNECTING')
+                  : t('AUTORESPONDER.SETTINGS.CHANNELS.MOCK_CONNECT_SUBMIT')
+              }}
+            </RelayButton>
+          </div>
+        </div>
       </div>
       <div
         v-else

@@ -8,6 +8,11 @@ class CommentAutomation::PublicReplyJob < ApplicationJob
     log = CommentAutomation::MessageLog.find_by(id: message_log_id)
     return if log.blank? || !log.pending?
 
+    if CommentAutomation.mock_channel?(log.inbox.channel)
+      mark_replied(log)
+      return
+    end
+
     response = post_reply(log, rotate_reply(log.trigger))
 
     if success_response?(response)
@@ -31,7 +36,11 @@ class CommentAutomation::PublicReplyJob < ApplicationJob
       "[comment_automation] event=public_replied campaign_id=#{log.trigger.campaign_id} " \
       "trigger_id=#{log.trigger_id} comment_id=#{log.comment_id}"
     )
-    CommentAutomation::DmDispatchJob.set(wait: rand(3..12).seconds).perform_later(log.id)
+    if CommentAutomation.mock_channel?(log.inbox.channel)
+      CommentAutomation::DmDispatchJob.perform_now(log.id)
+    else
+      CommentAutomation::DmDispatchJob.set(wait: rand(3..12).seconds).perform_later(log.id)
+    end
   end
 
   def rotate_reply(trigger)

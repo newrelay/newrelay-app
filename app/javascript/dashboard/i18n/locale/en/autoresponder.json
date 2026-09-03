@@ -367,7 +367,17 @@
         "ABOUT": "About Channels",
         "ABOUT_DESC": "Connect the channels you want autoresponder automations to run on.",
         "CHANNEL_USAGE": "Channel Usage",
-        "ACTIVE": "Active"
+        "ACTIVE": "Active",
+        "MOCK_CONNECT_TITLE": "Connect Instagram (mock)",
+        "MOCK_CONNECT_DESC": "Paste an Instagram post URL. We'll create a mock inbox and seed comments so Autoresponder works without Meta.",
+        "MOCK_CONNECT_URL": "Instagram post URL",
+        "MOCK_CONNECT_URL_PLACEHOLDER": "https://www.instagram.com/p/shortcode/",
+        "MOCK_CONNECT_NAME": "Page name",
+        "MOCK_CONNECT_NAME_PLACEHOLDER": "Instagram Shop",
+        "MOCK_CONNECT_SUBMIT": "Connect",
+        "MOCK_CONNECT_CANCEL": "Cancel",
+        "MOCK_CONNECT_SUCCESS": "Instagram connected. Mock comments are in Activity.",
+        "MOCK_CONNECTING": "Connecting..."
       },
       "NOTIFICATIONS": {
         "PREFERENCES": "Notification Preferences",

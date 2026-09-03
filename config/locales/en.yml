@@ -34,6 +34,11 @@ en:
     actions:
       new_resource: "New %{name}"
   hello: 'Hello world'
+  comment_automation:
+    mock:
+      disabled: Mock Instagram connect is off. Set COMMENT_AUTOMATION_PROVIDER=mock in .env.
+      url_blank: Enter an Instagram post URL.
+      name_blank: Enter a page name.
   inbox:
     reauthorization:
       success: 'Channel reauthorized successfully'

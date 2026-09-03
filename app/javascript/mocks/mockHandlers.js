@@ -159,6 +159,19 @@ export const mockInboxes = [
     avatar_url: '',
     email: 'support@newrelay.example.com',
   },
+  {
+    id: 4,
+    name: 'Instagram Shop',
+    channel_type: 'Channel::Instagram',
+    avatar_url: '',
+  },
+  {
+    id: 5,
+    name: 'Facebook Page',
+    channel_type: 'Channel::FacebookPage',
+    avatar_url: '',
+    page_id: '123456789',
+  },
 ];
 
 export const mockAgents = [
@@ -643,7 +656,451 @@ const mockCacheKeys = {
   conversation: 1,
 };
 
-export const handleMockRequest = (reqUrl, method) => {
+const unixNow = () => Math.floor(Date.now() / 1000);
+const hoursAgo = hours => unixNow() - hours * 3600;
+
+const inboxSnapshot = inbox => ({
+  id: inbox.id,
+  name: inbox.name,
+  channel_type: inbox.channel_type,
+});
+
+const mockInstagramInbox = inboxSnapshot(mockInboxes[3]);
+const mockFacebookInbox = inboxSnapshot(mockInboxes[4]);
+const mockWhatsappInbox = inboxSnapshot(mockInboxes[1]);
+
+let nextCommentAutomationCampaignId = 5;
+let nextCommentAutomationTriggerId = 50;
+let nextCommentAutomationTemplateId = 5;
+
+let mockCommentAutomationCampaigns = [
+  {
+    id: 1,
+    name: 'Summer Sale Comment Auto-DM',
+    post_id: 'ig-post-summer-sale',
+    is_active: true,
+    created_at: hoursAgo(24 * 12),
+    updated_at: hoursAgo(6),
+    inbox: mockInstagramInbox,
+    trigger: {
+      id: 11,
+      keyword: 'PRICE',
+      match_type: 'contains',
+      public_replies: [
+        'Thanks for asking — check your DMs for the offer!',
+        'Sale details are in your inbox 🙌',
+      ],
+      dm_text_body: 'Here is 40% off this week: https://shop.example.com/sale',
+    },
+    responses_count: 48,
+  },
+  {
+    id: 2,
+    name: 'Product Launch Inquiries',
+    post_id: 'ig-post-smartwatch',
+    is_active: true,
+    created_at: hoursAgo(24 * 8),
+    updated_at: hoursAgo(20),
+    inbox: mockInstagramInbox,
+    trigger: {
+      id: 12,
+      keyword: 'INFO',
+      match_type: 'exact',
+      public_replies: ['Sent you the spec sheet via DM!'],
+      dm_text_body:
+        'Smartwatch Pro ships next week. Reply here with your size.',
+    },
+    responses_count: 31,
+  },
+  {
+    id: 3,
+    name: 'Giveaway Auto-Reply',
+    post_id: 'fb-post-giveaway',
+    is_active: false,
+    created_at: hoursAgo(24 * 14),
+    updated_at: hoursAgo(24 * 2),
+    inbox: mockFacebookInbox,
+    trigger: {
+      id: 13,
+      keyword: 'GIVEAWAY',
+      match_type: 'contains',
+      public_replies: ['You are entered — watch your messages!'],
+      dm_text_body: 'Thanks for entering. Winner announced Friday.',
+    },
+    responses_count: 12,
+  },
+  {
+    id: 4,
+    name: 'WhatsApp Welcome Keyword',
+    post_id: 'wa-post-welcome',
+    is_active: true,
+    created_at: hoursAgo(24 * 4),
+    updated_at: hoursAgo(2),
+    inbox: mockWhatsappInbox,
+    trigger: {
+      id: 14,
+      keyword: 'HELLO',
+      match_type: 'contains',
+      public_replies: ['Welcome! We just sent you a DM.'],
+      dm_text_body: 'Hi! How can we help you today?',
+    },
+    responses_count: 8,
+  },
+];
+
+let mockCommentAutomationTemplates = [
+  {
+    id: 1,
+    name: 'Lead Qualification DM',
+    template_type: 'message',
+    public_replies: ['Thanks — I sent details to your DMs!'],
+    dm_text_body: 'Want the price list or a demo? Reply PRICE or DEMO.',
+    favorite: true,
+    usage_count: 2,
+    created_at: hoursAgo(24 * 20),
+    updated_at: hoursAgo(24 * 3),
+  },
+  {
+    id: 2,
+    name: 'Comment Acknowledgement',
+    template_type: 'comment',
+    public_replies: [
+      'Thanks for the comment, sending you more info now.',
+      'Appreciate you reaching out — check your DMs!',
+    ],
+    dm_text_body: 'Here is the info you asked for.',
+    favorite: true,
+    usage_count: 1,
+    created_at: hoursAgo(24 * 10),
+    updated_at: hoursAgo(24 * 1),
+  },
+  {
+    id: 3,
+    name: 'Product Info Reply',
+    template_type: 'message',
+    public_replies: ['Specs are in your inbox.'],
+    dm_text_body: 'Battery life is 36 hours. Ships in 3–5 days.',
+    favorite: false,
+    usage_count: 0,
+    created_at: hoursAgo(24 * 6),
+    updated_at: hoursAgo(24 * 6),
+  },
+  {
+    id: 4,
+    name: 'Out of Stock',
+    template_type: 'comment',
+    public_replies: ['This drop sold out — DM for restock alerts.'],
+    dm_text_body: 'Want a restock ping? Reply YES and we will notify you.',
+    favorite: false,
+    usage_count: 0,
+    created_at: hoursAgo(24 * 2),
+    updated_at: hoursAgo(24 * 2),
+  },
+];
+
+const mockCommentAutomationLogs = [
+  {
+    id: 1,
+    comment_id: 'ig-comment-9011',
+    commenter_id: 'ig-user-alice',
+    status: 'engaged',
+    sent_at: hoursAgo(2),
+    created_at: hoursAgo(3),
+    inbox: mockInstagramInbox,
+    campaign: { id: 1, name: 'Summer Sale Comment Auto-DM' },
+    trigger: { id: 11, keyword: 'PRICE' },
+    contact: {
+      id: 101,
+      name: 'Alice Johnson',
+      avatar_url: 'https://i.pravatar.cc/150?u=alice',
+    },
+  },
+  {
+    id: 2,
+    comment_id: 'ig-comment-9012',
+    commenter_id: 'ig-user-bob',
+    status: 'dm_sent',
+    sent_at: hoursAgo(8),
+    created_at: hoursAgo(9),
+    inbox: mockInstagramInbox,
+    campaign: { id: 2, name: 'Product Launch Inquiries' },
+    trigger: { id: 12, keyword: 'INFO' },
+    contact: {
+      id: 102,
+      name: 'Bob Williams',
+      avatar_url: 'https://i.pravatar.cc/150?u=bob',
+    },
+  },
+  {
+    id: 3,
+    comment_id: 'ig-comment-9013',
+    commenter_id: 'ig-user-carla',
+    status: 'public_replied',
+    sent_at: null,
+    created_at: hoursAgo(14),
+    inbox: mockInstagramInbox,
+    campaign: { id: 1, name: 'Summer Sale Comment Auto-DM' },
+    trigger: { id: 11, keyword: 'PRICE' },
+    contact: {
+      id: 103,
+      name: 'Carla Mendes',
+      avatar_url: 'https://i.pravatar.cc/150?u=carla',
+    },
+  },
+  {
+    id: 4,
+    comment_id: 'fb-comment-4401',
+    commenter_id: 'fb-user-david',
+    status: 'dm_failed',
+    sent_at: hoursAgo(26),
+    created_at: hoursAgo(27),
+    inbox: mockFacebookInbox,
+    campaign: { id: 3, name: 'Giveaway Auto-Reply' },
+    trigger: { id: 13, keyword: 'GIVEAWAY' },
+    contact: {
+      id: 104,
+      name: 'David Kim',
+      avatar_url: 'https://i.pravatar.cc/150?u=david',
+    },
+  },
+  {
+    id: 5,
+    comment_id: 'wa-comment-1102',
+    commenter_id: 'wa-user-unknown',
+    status: 'pending',
+    sent_at: null,
+    created_at: hoursAgo(5),
+    inbox: mockWhatsappInbox,
+    campaign: { id: 4, name: 'WhatsApp Welcome Keyword' },
+    trigger: { id: 14, keyword: 'HELLO' },
+    contact: null,
+  },
+  {
+    id: 6,
+    comment_id: 'ig-comment-9014',
+    commenter_id: 'ig-user-alice',
+    status: 'engaged',
+    sent_at: hoursAgo(30),
+    created_at: hoursAgo(31),
+    inbox: mockInstagramInbox,
+    campaign: { id: 2, name: 'Product Launch Inquiries' },
+    trigger: { id: 12, keyword: 'INFO' },
+    contact: {
+      id: 101,
+      name: 'Alice Johnson',
+      avatar_url: 'https://i.pravatar.cc/150?u=alice',
+    },
+  },
+  {
+    id: 7,
+    comment_id: 'ig-comment-9015',
+    commenter_id: 'ig-user-priya',
+    status: 'dm_sent',
+    sent_at: hoursAgo(48),
+    created_at: hoursAgo(49),
+    inbox: mockInstagramInbox,
+    campaign: { id: 1, name: 'Summer Sale Comment Auto-DM' },
+    trigger: { id: 11, keyword: 'PRICE' },
+    contact: {
+      id: 105,
+      name: 'Priya Nair',
+      avatar_url: 'https://i.pravatar.cc/150?u=priya',
+    },
+  },
+  {
+    id: 8,
+    comment_id: 'fb-comment-4402',
+    commenter_id: 'fb-user-miguel',
+    status: 'engaged',
+    sent_at: hoursAgo(72),
+    created_at: hoursAgo(73),
+    inbox: mockFacebookInbox,
+    campaign: { id: 3, name: 'Giveaway Auto-Reply' },
+    trigger: { id: 13, keyword: 'GIVEAWAY' },
+    contact: {
+      id: 3,
+      name: 'Miguel Torres',
+      avatar_url: 'https://i.pravatar.cc/150?u=miguel',
+    },
+  },
+  {
+    id: 9,
+    comment_id: 'wa-comment-1103',
+    commenter_id: 'wa-user-sarah',
+    status: 'dm_sent',
+    sent_at: hoursAgo(96),
+    created_at: hoursAgo(97),
+    inbox: mockWhatsappInbox,
+    campaign: { id: 4, name: 'WhatsApp Welcome Keyword' },
+    trigger: { id: 14, keyword: 'HELLO' },
+    contact: {
+      id: 2,
+      name: 'Sarah Smith',
+      avatar_url: 'https://i.pravatar.cc/150?u=sarah',
+    },
+  },
+  {
+    id: 10,
+    comment_id: 'ig-comment-9016',
+    commenter_id: 'ig-user-nina',
+    status: 'public_replied',
+    sent_at: null,
+    created_at: hoursAgo(120),
+    inbox: mockInstagramInbox,
+    campaign: { id: 1, name: 'Summer Sale Comment Auto-DM' },
+    trigger: { id: 11, keyword: 'PRICE' },
+    contact: {
+      id: 106,
+      name: 'Nina Patel',
+      avatar_url: 'https://i.pravatar.cc/150?u=nina',
+    },
+  },
+  {
+    id: 11,
+    comment_id: 'ig-comment-9017',
+    commenter_id: 'ig-user-liam',
+    status: 'dm_failed',
+    sent_at: hoursAgo(140),
+    created_at: hoursAgo(141),
+    inbox: mockInstagramInbox,
+    campaign: { id: 2, name: 'Product Launch Inquiries' },
+    trigger: { id: 12, keyword: 'INFO' },
+    contact: null,
+  },
+  {
+    id: 12,
+    comment_id: 'ig-comment-9018',
+    commenter_id: 'ig-user-tom',
+    status: 'engaged',
+    sent_at: hoursAgo(4),
+    created_at: hoursAgo(5),
+    inbox: mockInstagramInbox,
+    campaign: { id: 1, name: 'Summer Sale Comment Auto-DM' },
+    trigger: { id: 11, keyword: 'PRICE' },
+    contact: {
+      id: 107,
+      name: 'Tom Becker',
+      avatar_url: 'https://i.pravatar.cc/150?u=tom',
+    },
+  },
+];
+
+const commentAutomationItemId = (path, resource) => {
+  const match = path.match(
+    new RegExp(`/comment_automation/${resource}/(\\d+)`)
+  );
+  return match ? Number(match[1]) : null;
+};
+
+const isCommentAutomationCollection = (path, resource) =>
+  new RegExp(`/comment_automation/${resource}/?$`).test(path);
+
+const findMockInbox = id =>
+  mockInboxes.find(inbox => inbox.id === Number(id)) || mockInboxes[3];
+
+const handleCommentAutomationCampaigns = (path, method, body) => {
+  const id = commentAutomationItemId(path, 'campaigns');
+
+  if (id && (method === 'PATCH' || method === 'PUT')) {
+    const campaign = mockCommentAutomationCampaigns.find(
+      item => item.id === id
+    );
+    if (!campaign) return { status: 404, data: { error: 'Not found' } };
+    Object.assign(campaign, body?.campaign || {});
+    if (body?.trigger && campaign.trigger) {
+      Object.assign(campaign.trigger, body.trigger);
+    }
+    campaign.updated_at = unixNow();
+    return { status: 200, data: campaign };
+  }
+
+  if (id && method === 'DELETE') {
+    mockCommentAutomationCampaigns = mockCommentAutomationCampaigns.filter(
+      item => item.id !== id
+    );
+    return { status: 200, data: {} };
+  }
+
+  if (isCommentAutomationCollection(path, 'campaigns') && method === 'POST') {
+    const attrs = body?.campaign || {};
+    const triggerAttrs = body?.trigger || {};
+    const inbox = inboxSnapshot(findMockInbox(attrs.inbox_id));
+    const campaign = {
+      id: nextCommentAutomationCampaignId,
+      name: attrs.name || 'New automation',
+      post_id: attrs.post_id || `mock-post-${nextCommentAutomationCampaignId}`,
+      is_active: attrs.is_active !== false,
+      created_at: unixNow(),
+      updated_at: unixNow(),
+      inbox,
+      trigger: {
+        id: nextCommentAutomationTriggerId,
+        keyword: triggerAttrs.keyword || '',
+        match_type: triggerAttrs.match_type || 'contains',
+        public_replies: triggerAttrs.public_replies || [],
+        dm_text_body: triggerAttrs.dm_text_body || '',
+      },
+      responses_count: 0,
+    };
+    nextCommentAutomationCampaignId += 1;
+    nextCommentAutomationTriggerId += 1;
+    mockCommentAutomationCampaigns.unshift(campaign);
+    return { status: 200, data: campaign };
+  }
+
+  if (isCommentAutomationCollection(path, 'campaigns')) {
+    return { status: 200, data: { payload: mockCommentAutomationCampaigns } };
+  }
+
+  return null;
+};
+
+const handleCommentAutomationTemplates = (path, method, body) => {
+  const id = commentAutomationItemId(path, 'templates');
+
+  if (id && (method === 'PATCH' || method === 'PUT')) {
+    const template = mockCommentAutomationTemplates.find(
+      item => item.id === id
+    );
+    if (!template) return { status: 404, data: { error: 'Not found' } };
+    Object.assign(template, body?.template || {});
+    template.updated_at = unixNow();
+    return { status: 200, data: template };
+  }
+
+  if (id && method === 'DELETE') {
+    mockCommentAutomationTemplates = mockCommentAutomationTemplates.filter(
+      item => item.id !== id
+    );
+    return { status: 200, data: {} };
+  }
+
+  if (isCommentAutomationCollection(path, 'templates') && method === 'POST') {
+    const attrs = body?.template || {};
+    const template = {
+      id: nextCommentAutomationTemplateId,
+      name: attrs.name || 'New template',
+      template_type: attrs.template_type || 'message',
+      public_replies: attrs.public_replies || [],
+      dm_text_body: attrs.dm_text_body || '',
+      favorite: !!attrs.favorite,
+      usage_count: 0,
+      created_at: unixNow(),
+      updated_at: unixNow(),
+    };
+    nextCommentAutomationTemplateId += 1;
+    mockCommentAutomationTemplates.unshift(template);
+    return { status: 200, data: template };
+  }
+
+  if (isCommentAutomationCollection(path, 'templates')) {
+    return { status: 200, data: { payload: mockCommentAutomationTemplates } };
+  }
+
+  return null;
+};
+
+export const handleMockRequest = (reqUrl, method, body = null) => {
   const url = new URL(reqUrl, 'http://localhost');
   const path = url.pathname;
 
@@ -760,7 +1217,20 @@ export const handleMockRequest = (reqUrl, method) => {
     return { status: 200, data: { payload: mockAutomationRules } };
   }
 
-  // Campaigns — store commits the raw array (`response.data`)
+  // Comment automation (Autoresponder) — must precede `/campaigns`
+  if (path.includes('/comment_automation/campaigns')) {
+    const response = handleCommentAutomationCampaigns(path, method, body);
+    if (response) return response;
+  }
+  if (path.includes('/comment_automation/templates')) {
+    const response = handleCommentAutomationTemplates(path, method, body);
+    if (response) return response;
+  }
+  if (path.includes('/comment_automation/message_logs')) {
+    return { status: 200, data: { payload: mockCommentAutomationLogs } };
+  }
+
+  // Marketing campaigns — store commits the raw array (`response.data`)
   if (path.includes('/campaigns')) {
     return { status: 200, data: mockCampaigns };
   }

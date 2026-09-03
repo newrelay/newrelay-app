@@ -43,6 +43,8 @@ class Channel::Instagram < ApplicationRecord
   end
 
   def subscribe
+    return true if mock_credentials?
+
     # ref https://developers.facebook.com/docs/instagram-platform/webhooks#enable-subscriptions
     HTTParty.post(
       "https://graph.instagram.com/v22.0/#{instagram_id}/subscribed_apps",
@@ -57,6 +59,8 @@ class Channel::Instagram < ApplicationRecord
   end
 
   def unsubscribe
+    return true if mock_credentials?
+
     HTTParty.delete(
       "https://graph.instagram.com/v22.0/#{instagram_id}/subscribed_apps",
       query: {
@@ -71,5 +75,9 @@ class Channel::Instagram < ApplicationRecord
 
   def access_token
     Instagram::RefreshOauthTokenService.new(channel: self).access_token
+  end
+
+  def mock_credentials?
+    self[:access_token].to_s.start_with?('mock-')
   end
 end

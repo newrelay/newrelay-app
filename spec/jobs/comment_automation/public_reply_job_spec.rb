@@ -53,4 +53,12 @@ RSpec.describe CommentAutomation::PublicReplyJob do
 
     expect { described_class.perform_now(log.id) }.not_to have_enqueued_job(CommentAutomation::DmDispatchJob)
   end
+
+  it 'skips Instagram HTTP for a mock channel and still marks the log public_replied' do
+    channel.update!(access_token: "mock-#{SecureRandom.hex(8)}", expires_at: 10.years.from_now)
+    inbox.association(:channel).reset
+
+    described_class.perform_now(log.id)
+    expect(log.reload.status).to eq 'dm_sent'
+  end
 end

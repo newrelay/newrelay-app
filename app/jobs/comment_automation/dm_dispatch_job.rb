@@ -10,6 +10,7 @@ class CommentAutomation::DmDispatchJob < ApplicationJob
   def perform(message_log_id, rate_limit_attempt = 0)
     log = CommentAutomation::MessageLog.find_by(id: message_log_id)
     return if log.blank? || !log.public_replied?
+    return mark_sent(log) if CommentAutomation.mock_channel?(log.inbox.channel)
 
     rate_limiter = CommentAutomation::RateLimiter.new(inbox: log.inbox)
     unless rate_limiter.within_limit?

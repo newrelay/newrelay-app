@@ -32,7 +32,15 @@ class CommentAutomation::InboundCommentJob < ApplicationJob
     return if log.blank?
 
     Rails.logger.info("[comment_automation] event=matched campaign_id=#{campaign.id} trigger_id=#{trigger.id} comment_id=#{comment[:id]}")
-    CommentAutomation::PublicReplyJob.perform_later(log.id)
+    enqueue_reply(log, inbox)
+  end
+
+  def enqueue_reply(log, inbox)
+    if CommentAutomation.mock_channel?(inbox.channel)
+      CommentAutomation::PublicReplyJob.perform_now(log.id)
+    else
+      CommentAutomation::PublicReplyJob.perform_later(log.id)
+    end
   end
 
   def create_log(trigger, inbox, comment)

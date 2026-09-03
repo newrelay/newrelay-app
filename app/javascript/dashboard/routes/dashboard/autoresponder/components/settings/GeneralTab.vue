@@ -1,22 +1,14 @@
 <script setup>
-import { ref, computed } from 'vue';
+import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { RelaySwitch, RelayInput } from 'dashboard/components-next/relay';
 import SettingsCard from './SettingsCard.vue';
 import SettingsSelect from './SettingsSelect.vue';
 import SettingsSidebarCard from './SettingsSidebarCard.vue';
+import { useAutoresponderSettings } from '../../composables/useAutoresponderSettings';
 
 const { t } = useI18n();
-
-const globalAutomation = ref(true);
-const defaultResponseType = ref('Reply in thread');
-const defaultResponseTime = ref('No delay');
-const lookbackWindow = ref('24 hours');
-const assignTo = ref('Unassigned');
-const autoApplyTag = ref('No tag selected');
-const defaultLanguage = ref('English (US)');
-const preventDuplicate = ref(true);
-const ignoreBots = ref(true);
+const { settings } = useAutoresponderSettings();
 
 const responseTypeOptions = ['Reply in thread', 'Send as DM', 'Reply + DM'];
 const responseTimeOptions = ['No delay', '1 minute', '5 minutes', '15 minutes'];
@@ -40,15 +32,17 @@ const quickTips = computed(() => [
       >
         <template #header-action>
           <div class="flex flex-col items-end gap-2">
-            <RelaySwitch v-model="globalAutomation" />
+            <RelaySwitch v-model="settings.general.globalAutomation" />
             <span
               class="text-xs font-medium"
               :class="
-                globalAutomation ? 'text-primary' : 'text-muted-foreground'
+                settings.general.globalAutomation
+                  ? 'text-primary'
+                  : 'text-muted-foreground'
               "
             >
               {{
-                globalAutomation
+                settings.general.globalAutomation
                   ? t('AUTORESPONDER.SETTINGS.GENERAL.AUTOMATIONS_ACTIVE')
                   : t('AUTORESPONDER.SETTINGS.GENERAL.AUTOMATIONS_PAUSED')
               }}
@@ -72,7 +66,7 @@ const quickTips = computed(() => [
               t('AUTORESPONDER.SETTINGS.GENERAL.RESPONSE_TYPE')
             }}</span>
             <SettingsSelect
-              v-model="defaultResponseType"
+              v-model="settings.general.defaultResponseType"
               :options="responseTypeOptions"
             />
           </div>
@@ -81,7 +75,7 @@ const quickTips = computed(() => [
               t('AUTORESPONDER.SETTINGS.GENERAL.RESPONSE_TIME')
             }}</span>
             <SettingsSelect
-              v-model="defaultResponseTime"
+              v-model="settings.general.defaultResponseTime"
               :options="responseTimeOptions"
             />
           </div>
@@ -90,7 +84,7 @@ const quickTips = computed(() => [
               t('AUTORESPONDER.SETTINGS.GENERAL.LOOKBACK_WINDOW')
             }}</span>
             <SettingsSelect
-              v-model="lookbackWindow"
+              v-model="settings.general.lookbackWindow"
               :options="lookbackOptions"
             />
           </div>
@@ -99,7 +93,7 @@ const quickTips = computed(() => [
               t('AUTORESPONDER.SETTINGS.GENERAL.DEFAULT_LANGUAGE')
             }}</span>
             <SettingsSelect
-              v-model="defaultLanguage"
+              v-model="settings.general.defaultLanguage"
               :options="languageOptions"
             />
           </div>
@@ -114,7 +108,7 @@ const quickTips = computed(() => [
       >
         <div class="flex flex-col gap-4">
           <label class="flex items-center gap-3 cursor-pointer">
-            <RelaySwitch v-model="preventDuplicate" />
+            <RelaySwitch v-model="settings.general.preventDuplicate" />
             <span class="text-[13.5px] font-medium text-foreground">
               {{
                 t('AUTORESPONDER.SETTINGS.GENERAL.PREVENT_DUPLICATE_REPLIES')
@@ -122,7 +116,7 @@ const quickTips = computed(() => [
             </span>
           </label>
           <label class="flex items-center gap-3 cursor-pointer">
-            <RelaySwitch v-model="ignoreBots" />
+            <RelaySwitch v-model="settings.general.ignoreBots" />
             <span class="text-[13.5px] font-medium text-foreground">
               {{ t('AUTORESPONDER.SETTINGS.GENERAL.IGNORE_BOT_ACCOUNTS') }}
             </span>
@@ -139,7 +133,10 @@ const quickTips = computed(() => [
             <span class="text-[13.5px] font-medium text-foreground">{{
               t('AUTORESPONDER.SETTINGS.GENERAL.ASSIGN_TO')
             }}</span>
-            <SettingsSelect v-model="assignTo" :options="assignToOptions" />
+            <SettingsSelect
+              v-model="settings.general.assignTo"
+              :options="assignToOptions"
+            />
           </div>
         </div>
       </SettingsCard>
@@ -153,7 +150,10 @@ const quickTips = computed(() => [
             <span class="text-[13.5px] font-medium text-foreground">{{
               t('AUTORESPONDER.SETTINGS.GENERAL.AUTO_APPLY_TAG')
             }}</span>
-            <SettingsSelect v-model="autoApplyTag" :options="tagOptions" />
+            <SettingsSelect
+              v-model="settings.general.autoApplyTag"
+              :options="tagOptions"
+            />
           </div>
           <div class="flex flex-col gap-2">
             <span class="text-[13.5px] font-medium text-foreground">{{

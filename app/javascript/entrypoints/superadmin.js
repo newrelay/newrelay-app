@@ -1,6 +1,7 @@
 import '../dashboard/assets/scss/super_admin/index.scss';
 import '../superadmin/navigation_and_theme';
 import '../superadmin/custom_select';
+import '../superadmin/custom_datepicker';
 import '../superadmin/delete_confirm';
 import '../superadmin/toast';
 import '../superadmin/command_palette';

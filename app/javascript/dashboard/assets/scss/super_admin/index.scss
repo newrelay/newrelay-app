@@ -204,7 +204,7 @@ textarea:focus-visible,
 .nr-select:focus,
 .nr-select:focus-visible {
   border-color: var(--ring) !important;
-  box-shadow: 0 0 0 2px rgba(202, 199, 247, 0.35) !important;
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--primary) 30%, transparent) !important;
   outline: none !important;
 }
 
@@ -2102,7 +2102,7 @@ main[role="main"] textarea::placeholder {
 }
 .form-select {
   width: 100%;
-  height: 38px;
+  height: 36px;
   padding: 0 32px 0 12px;
   border-radius: var(--radius-md, 8px);
   border: 1px solid var(--border);
@@ -2151,9 +2151,10 @@ select.nr-select-native {
 .field-unit--belongs-to-search .selectize-input {
   display: flex;
   align-items: center;
-  min-height: 38px;
-  height: 38px;
-  padding: 0 12px;
+  position: relative;
+  min-height: 36px;
+  height: 36px;
+  padding: 0 34px 0 12px;
   border-radius: 8px;
   border: 1px solid var(--border);
   background-color: var(--background);
@@ -2199,9 +2200,36 @@ select.nr-select-native {
   border-radius: 6px;
 }
 .field-unit--belongs-to-search .selectize-dropdown .option.active,
-.field-unit--belongs-to-search .selectize-dropdown .option:hover {
+.field-unit--belongs-to-search .selectize-dropdown .option:hover,
+.field-unit--belongs-to-search .selectize-dropdown .active {
   background-color: var(--accent);
   color: var(--accent-foreground);
+}
+/* Selected value + search text render as plain text (no chip). */
+.field-unit--belongs-to-search .selectize-input .item {
+  color: var(--foreground);
+}
+.field-unit--belongs-to-search .selectize-input input::placeholder {
+  color: var(--muted-foreground);
+}
+/* Replace selectize's default triangle caret with the same chevron as .nr-select. */
+.field-unit--belongs-to-search .selectize-control.single .selectize-input:after {
+  content: "";
+  width: 14px;
+  height: 14px;
+  margin: 0;
+  top: 50%;
+  right: 12px;
+  border: none !important;
+  transform: translateY(-50%);
+  background-color: var(--muted-foreground);
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") center / 14px no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") center / 14px no-repeat;
+  transition: transform 0.15s ease;
+}
+.field-unit--belongs-to-search .selectize-control.single .selectize-input.dropdown-active:after {
+  border: none !important;
+  transform: translateY(-50%) rotate(180deg);
 }
 
 button.nr-select-trigger {
@@ -2210,7 +2238,7 @@ button.nr-select-trigger {
   justify-content: space-between;
   gap: 8px;
   width: 100%;
-  height: 38px;
+  height: 36px;
   padding: 0 12px;
   border-radius: var(--radius-md, 8px);
   border: 1px solid var(--border);
@@ -2459,7 +2487,7 @@ button.nr-select-trigger {
 
 .form-input {
   width: 100%;
-  height: 38px;
+  height: 36px;
   padding: 0 12px;
   border-radius: var(--radius-md, 8px);
   border: 1px solid var(--border);
@@ -2759,17 +2787,29 @@ select.form-input {
 
 .serialized-json,
 .serialized-block,
+/* Administrate wraps every string/text show value in this class. Keep it plain
+   read-only text (matches .show-value) — not a boxed monospace input. Serialized
+   / JSON blocks use their own .serialized-* classes for the code-block look. */
 .preserve-whitespace {
   white-space: pre-wrap;
   word-break: break-word;
-  font-family: var(--font-mono);
-  font-size: 12.5px;
+  color: inherit;
+  font-size: inherit;
   line-height: 1.55;
-  color: var(--muted-foreground);
-  background-color: var(--muted);
+}
+
+/* Avatar image cells (avatar_field _show / _index) — constrain + round, so the
+   raw image_tag can't render at natural size and overlap rows. */
+.sa-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 9999px;
+  object-fit: cover;
   border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 12px 14px;
+}
+.sa-avatar.sa-avatar--lg {
+  width: 64px;
+  height: 64px;
 }
 
 /* ═══════════════════════════════════════════════════════════════
@@ -2876,6 +2916,38 @@ select.form-input {
 .show-sub-subtitle {
   font-size: 12px;
   color: var(--muted-foreground);
+}
+
+/* Inline "Add user" / "Add account" form inside show sub-cards: labels above
+   inputs in a responsive 2-up grid (not the wide left-label form grid). */
+.sa-inline-form {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px 20px;
+  align-items: start;
+}
+.sa-inline-form > *:not(.field-unit) {
+  grid-column: 1 / -1;
+}
+.sa-inline-form .field-unit {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  grid-template-columns: none;
+  gap: 6px;
+  margin-bottom: 0;
+}
+.sa-inline-form .field-unit__label,
+.sa-inline-form .field-unit__label label {
+  margin: 0;
+}
+.sa-inline-form .form-actions-bar {
+  margin-top: 8px;
+}
+@media (max-width: 640px) {
+  .sa-inline-form {
+    grid-template-columns: 1fr;
+  }
 }
 
 .status-badge-pill {
@@ -3245,6 +3317,8 @@ button.file-upload-trigger,
 
 .single-datepicker-popover {
   position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
   z-index: 600;
   background-color: var(--card);
   border: 1px solid var(--border);
@@ -3256,6 +3330,39 @@ button.file-upload-trigger,
 }
 .single-datepicker-popover.active {
   display: block;
+}
+.datepicker-panels {
+  display: flex;
+}
+
+/* Native date/time field enhanced by custom_datepicker.js — the real input
+   stays in the DOM (still submits) but is hidden; the trigger is the UI. */
+.nr-date-native {
+  display: none !important;
+}
+.nr-date-trigger {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: 36px;
+  padding: 0 42px 0 12px;
+  border-radius: 8px;
+  border: 1px solid var(--input);
+  background-color: var(--background);
+  color: var(--foreground);
+  font-size: 14px;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+.nr-date-trigger.is-placeholder {
+  color: var(--muted-foreground);
+}
+.nr-date-trigger:focus,
+.date-input-wrap.open .nr-date-trigger {
+  border-color: var(--ring);
+  box-shadow: 0 0 0 1px var(--ring);
+  outline: none;
 }
 .datepicker-cal-col {
   padding: 16px;
@@ -3304,6 +3411,31 @@ button.file-upload-trigger,
   background-color: var(--primary);
   color: var(--primary-foreground);
   border-color: var(--primary);
+}
+.dp-time-cols {
+  display: flex;
+  gap: 6px;
+  flex: 1;
+  min-height: 0;
+  margin-bottom: 8px;
+}
+.dp-time-scroll {
+  flex: 1;
+  overflow-y: auto;
+  max-height: 208px;
+}
+.dp-time-scroll-label {
+  font-size: 10.5px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--muted-foreground);
+  text-align: center;
+  margin-bottom: 6px;
+}
+.dp-ampm-row {
+  display: flex;
+  gap: 6px;
 }
 
 .hover-action-row .row-actions {
@@ -3891,7 +4023,7 @@ button.modal-close-btn {
 }
 .gateway-search-input:focus {
   border-color: var(--ring);
-  box-shadow: 0 0 0 2px rgba(202, 199, 247, 0.35);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--primary) 30%, transparent);
 }
 .gateway-fallback-hint {
   font-size: 12px;
@@ -4327,7 +4459,7 @@ button.modal-close-btn {
 }
 .limit-number-input:focus {
   border-color: var(--ring);
-  box-shadow: 0 0 0 2px rgba(202, 199, 247, 0.35);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--primary) 30%, transparent);
 }
 /* ═══════════════════════════════════════════════════════════════
    APP CONFIGS SETTINGS FORMS (Exact Match to Rails app_configs)
@@ -4394,7 +4526,7 @@ button.modal-close-btn {
 .config-input-col select:focus,
 .config-input-col textarea:focus {
   border-color: var(--ring);
-  box-shadow: 0 0 0 2px rgba(202, 199, 247, 0.35);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--primary) 30%, transparent);
 }
 .config-field-desc {
   font-size: 12px;

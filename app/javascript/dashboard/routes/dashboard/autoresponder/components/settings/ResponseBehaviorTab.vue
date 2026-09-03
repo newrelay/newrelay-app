@@ -1,24 +1,15 @@
 <script setup>
-import { ref, computed } from 'vue';
+import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { RelayInput } from 'dashboard/components-next/relay';
 import SettingsCard from './SettingsCard.vue';
 import SettingsSelect from './SettingsSelect.vue';
 import SettingsToggleRow from './SettingsToggleRow.vue';
 import SettingsSidebarCard from './SettingsSidebarCard.vue';
+import { useAutoresponderSettings } from '../../composables/useAutoresponderSettings';
 
 const { t } = useI18n();
-
-const replyType = ref('Reply in thread');
-const responseDelay = ref('No delay');
-const typingIndicator = ref(true);
-const randomDelay = ref(true);
-const randomDelayMin = ref('2');
-const randomDelayMax = ref('6');
-const readInboundMessage = ref(true);
-const splitLongMessages = ref(true);
-const brandingSignature = ref('No signature');
-const useRichPreviews = ref(true);
+const { settings } = useAutoresponderSettings();
 
 const replyTypeOptions = ['Reply in thread', 'Send as DM', 'Reply + DM'];
 const delayOptions = ['No delay', '1 minute', '5 minutes', '15 minutes'];
@@ -50,18 +41,24 @@ const bestPractices = computed(() => [
             <span class="text-[13.5px] font-medium text-foreground">{{
               t('AUTORESPONDER.SETTINGS.RESPONSE_BEHAVIOR.REPLY_TYPE')
             }}</span>
-            <SettingsSelect v-model="replyType" :options="replyTypeOptions" />
+            <SettingsSelect
+              v-model="settings.behavior.replyType"
+              :options="replyTypeOptions"
+            />
           </div>
           <div class="flex flex-col gap-2">
             <span class="text-[13.5px] font-medium text-foreground">{{
               t('AUTORESPONDER.SETTINGS.RESPONSE_BEHAVIOR.RESPONSE_DELAY')
             }}</span>
-            <SettingsSelect v-model="responseDelay" :options="delayOptions" />
+            <SettingsSelect
+              v-model="settings.behavior.responseDelay"
+              :options="delayOptions"
+            />
           </div>
         </div>
 
         <SettingsToggleRow
-          v-model="typingIndicator"
+          v-model="settings.behavior.typingIndicator"
           :title="
             t('AUTORESPONDER.SETTINGS.RESPONSE_BEHAVIOR.TYPING_INDICATOR')
           "
@@ -72,19 +69,22 @@ const bestPractices = computed(() => [
 
         <div class="flex flex-col gap-3">
           <SettingsToggleRow
-            v-model="randomDelay"
+            v-model="settings.behavior.randomDelay"
             :title="t('AUTORESPONDER.SETTINGS.RESPONSE_BEHAVIOR.RANDOM_DELAY')"
             :description="
               t('AUTORESPONDER.SETTINGS.RESPONSE_BEHAVIOR.RANDOM_DELAY_DESC')
             "
           />
-          <div v-if="randomDelay" class="grid grid-cols-2 gap-3 pl-1">
+          <div
+            v-if="settings.behavior.randomDelay"
+            class="grid grid-cols-2 gap-3 pl-1"
+          >
             <div class="flex flex-col gap-1.5">
               <label class="text-xs font-medium text-foreground">{{
                 t('AUTORESPONDER.SETTINGS.RESPONSE_BEHAVIOR.MIN_SECONDS')
               }}</label>
               <RelayInput
-                v-model="randomDelayMin"
+                v-model="settings.behavior.randomDelayMin"
                 type="number"
                 class-name="h-9"
               />
@@ -94,7 +94,7 @@ const bestPractices = computed(() => [
                 t('AUTORESPONDER.SETTINGS.RESPONSE_BEHAVIOR.MAX_SECONDS')
               }}</label>
               <RelayInput
-                v-model="randomDelayMax"
+                v-model="settings.behavior.randomDelayMax"
                 type="number"
                 class-name="h-9"
               />
@@ -103,7 +103,7 @@ const bestPractices = computed(() => [
         </div>
 
         <SettingsToggleRow
-          v-model="readInboundMessage"
+          v-model="settings.behavior.readInboundMessage"
           :title="t('AUTORESPONDER.SETTINGS.RESPONSE_BEHAVIOR.READ_INBOUND')"
           :description="
             t('AUTORESPONDER.SETTINGS.RESPONSE_BEHAVIOR.READ_INBOUND_DESC')
@@ -115,7 +115,7 @@ const bestPractices = computed(() => [
         :title="t('AUTORESPONDER.SETTINGS.RESPONSE_BEHAVIOR.MESSAGE_BEHAVIOR')"
       >
         <SettingsToggleRow
-          v-model="splitLongMessages"
+          v-model="settings.behavior.splitLongMessages"
           :title="
             t('AUTORESPONDER.SETTINGS.RESPONSE_BEHAVIOR.SPLIT_LONG_MESSAGES')
           "
@@ -131,13 +131,13 @@ const bestPractices = computed(() => [
             t('AUTORESPONDER.SETTINGS.RESPONSE_BEHAVIOR.BRANDING_SIGNATURE')
           }}</span>
           <SettingsSelect
-            v-model="brandingSignature"
+            v-model="settings.behavior.brandingSignature"
             :options="signatureOptions"
           />
         </div>
 
         <SettingsToggleRow
-          v-model="useRichPreviews"
+          v-model="settings.behavior.useRichPreviews"
           :title="t('AUTORESPONDER.SETTINGS.RESPONSE_BEHAVIOR.RICH_PREVIEWS')"
           :description="
             t('AUTORESPONDER.SETTINGS.RESPONSE_BEHAVIOR.RICH_PREVIEWS_DESC')

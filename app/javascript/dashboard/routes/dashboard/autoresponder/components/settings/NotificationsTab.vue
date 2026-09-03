@@ -1,57 +1,15 @@
 <script setup>
-import { ref, computed } from 'vue';
+import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { RelayCheckbox } from 'dashboard/components-next/relay';
 import SettingsCard from './SettingsCard.vue';
 import SettingsSelect from './SettingsSelect.vue';
 import SettingsToggleRow from './SettingsToggleRow.vue';
 import SettingsSidebarCard from './SettingsSidebarCard.vue';
+import { useAutoresponderSettings } from '../../composables/useAutoresponderSettings';
 
 const { t } = useI18n();
-
-const notificationPreferences = ref([
-  {
-    id: 'nt1',
-    name: 'Automation Triggered',
-    desc: 'When an automation is triggered.',
-    email: true,
-    inapp: true,
-  },
-  {
-    id: 'nt2',
-    name: 'New Incoming Message',
-    desc: 'When a new message is received.',
-    email: true,
-    inapp: true,
-  },
-  {
-    id: 'nt3',
-    name: 'Automation Completed',
-    desc: 'When an automation finishes running.',
-    email: false,
-    inapp: true,
-  },
-  {
-    id: 'nt4',
-    name: 'Automation Failed',
-    desc: 'When an automation fails.',
-    email: true,
-    inapp: true,
-  },
-  {
-    id: 'nt5',
-    name: 'Daily Limit Reached',
-    desc: 'When daily message limit is reached.',
-    email: true,
-    inapp: true,
-  },
-]);
-
-const enableQuietHours = ref(true);
-const quietFrom = ref('10:00 PM');
-const quietTo = ref('07:00 AM');
-const enableDailyDigest = ref(true);
-const digestTime = ref('09:00 AM');
+const { settings } = useAutoresponderSettings();
 
 const timeOptions = [
   '06:00 AM',
@@ -107,7 +65,10 @@ const notificationChannels = computed(() => [
               </tr>
             </thead>
             <tbody class="divide-y divide-border/40">
-              <tr v-for="pref in notificationPreferences" :key="pref.id">
+              <tr
+                v-for="pref in settings.notifications.preferences"
+                :key="pref.id"
+              >
                 <td class="py-3 pr-3">
                   <div class="text-[13.5px] font-medium text-foreground">
                     {{ pref.name }}
@@ -132,24 +93,33 @@ const notificationChannels = computed(() => [
         :title="t('AUTORESPONDER.SETTINGS.NOTIFICATIONS.QUIET_HOURS')"
       >
         <SettingsToggleRow
-          v-model="enableQuietHours"
+          v-model="settings.notifications.enableQuietHours"
           :title="t('AUTORESPONDER.SETTINGS.NOTIFICATIONS.ENABLE_QUIET_HOURS')"
           :description="
             t('AUTORESPONDER.SETTINGS.NOTIFICATIONS.ENABLE_QUIET_HOURS_DESC')
           "
         />
-        <div v-if="enableQuietHours" class="grid grid-cols-2 gap-3">
+        <div
+          v-if="settings.notifications.enableQuietHours"
+          class="grid grid-cols-2 gap-3"
+        >
           <div class="flex flex-col gap-1.5">
             <label class="text-xs font-medium text-foreground">{{
               t('AUTORESPONDER.SETTINGS.NOTIFICATIONS.FROM')
             }}</label>
-            <SettingsSelect v-model="quietFrom" :options="timeOptions" />
+            <SettingsSelect
+              v-model="settings.notifications.quietFrom"
+              :options="timeOptions"
+            />
           </div>
           <div class="flex flex-col gap-1.5">
             <label class="text-xs font-medium text-foreground">{{
               t('AUTORESPONDER.SETTINGS.NOTIFICATIONS.TO')
             }}</label>
-            <SettingsSelect v-model="quietTo" :options="timeOptions" />
+            <SettingsSelect
+              v-model="settings.notifications.quietTo"
+              :options="timeOptions"
+            />
           </div>
         </div>
       </SettingsCard>
@@ -158,20 +128,23 @@ const notificationChannels = computed(() => [
         :title="t('AUTORESPONDER.SETTINGS.NOTIFICATIONS.EMAIL_DIGEST')"
       >
         <SettingsToggleRow
-          v-model="enableDailyDigest"
+          v-model="settings.notifications.enableDailyDigest"
           :title="t('AUTORESPONDER.SETTINGS.NOTIFICATIONS.DAILY_DIGEST')"
           :description="
             t('AUTORESPONDER.SETTINGS.NOTIFICATIONS.DAILY_DIGEST_DESC')
           "
         />
         <div
-          v-if="enableDailyDigest"
+          v-if="settings.notifications.enableDailyDigest"
           class="flex flex-col gap-1.5 max-w-[200px]"
         >
           <label class="text-xs font-medium text-foreground">{{
             t('AUTORESPONDER.SETTINGS.NOTIFICATIONS.DIGEST_TIME')
           }}</label>
-          <SettingsSelect v-model="digestTime" :options="timeOptions" />
+          <SettingsSelect
+            v-model="settings.notifications.digestTime"
+            :options="timeOptions"
+          />
         </div>
       </SettingsCard>
     </div>

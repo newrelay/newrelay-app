@@ -43,6 +43,7 @@ en:
       not_connected: Connect a mock Instagram channel first.
       no_campaign: No active automation for this mock inbox.
       not_found: Record not found.
+      facebook_unsupported: Mock Facebook connect is not available. Use Instagram.
   inbox:
     reauthorization:
       success: 'Channel reauthorized successfully'

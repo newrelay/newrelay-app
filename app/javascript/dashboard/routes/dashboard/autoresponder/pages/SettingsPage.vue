@@ -9,8 +9,10 @@ import BusinessHoursTab from '../components/settings/BusinessHoursTab.vue';
 import ChannelsTab from '../components/settings/ChannelsTab.vue';
 import NotificationsTab from '../components/settings/NotificationsTab.vue';
 import AdvancedTab from '../components/settings/AdvancedTab.vue';
+import { useAutoresponderSettings } from '../composables/useAutoresponderSettings';
 
 const { t } = useI18n();
+const { loaded } = useAutoresponderSettings();
 const activeTab = ref('General');
 
 const tabs = computed(() => [
@@ -105,6 +107,6 @@ const activeComponent = computed(() => tabComponents[activeTab.value]);
       </div>
     </div>
 
-    <component :is="activeComponent" />
+    <component :is="activeComponent" v-if="loaded" />
   </div>
 </template>

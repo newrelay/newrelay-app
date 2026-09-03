@@ -1,16 +1,14 @@
 <script setup>
-import { ref, computed } from 'vue';
+import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { RelaySwitch } from 'dashboard/components-next/relay';
 import SettingsCard from './SettingsCard.vue';
 import SettingsSelect from './SettingsSelect.vue';
 import SettingsSidebarCard from './SettingsSidebarCard.vue';
+import { useAutoresponderSettings } from '../../composables/useAutoresponderSettings';
 
 const { t } = useI18n();
-
-const enableBusinessHours = ref(true);
-const timeZone = ref('(GMT+05:30) Asia/Kolkata');
-const outsideAction = ref('away_message');
+const { settings } = useAutoresponderSettings();
 
 const timeZoneOptions = [
   '(GMT+05:30) Asia/Kolkata',
@@ -18,58 +16,6 @@ const timeZoneOptions = [
   '(GMT-05:00) US Eastern',
   '(GMT-08:00) US Pacific',
 ];
-
-const weeklySchedule = ref([
-  {
-    id: 'mon',
-    label: 'Monday',
-    active: true,
-    start: '09:00 AM',
-    end: '06:00 PM',
-  },
-  {
-    id: 'tue',
-    label: 'Tuesday',
-    active: true,
-    start: '09:00 AM',
-    end: '06:00 PM',
-  },
-  {
-    id: 'wed',
-    label: 'Wednesday',
-    active: true,
-    start: '09:00 AM',
-    end: '06:00 PM',
-  },
-  {
-    id: 'thu',
-    label: 'Thursday',
-    active: true,
-    start: '09:00 AM',
-    end: '06:00 PM',
-  },
-  {
-    id: 'fri',
-    label: 'Friday',
-    active: true,
-    start: '09:00 AM',
-    end: '06:00 PM',
-  },
-  {
-    id: 'sat',
-    label: 'Saturday',
-    active: false,
-    start: '09:00 AM',
-    end: '06:00 PM',
-  },
-  {
-    id: 'sun',
-    label: 'Sunday',
-    active: false,
-    start: '09:00 AM',
-    end: '06:00 PM',
-  },
-]);
 
 const outsideOptions = computed(() => [
   {
@@ -93,7 +39,7 @@ const outsideOptions = computed(() => [
 ]);
 
 const activeDaysCount = computed(
-  () => weeklySchedule.value.filter(d => d.active).length
+  () => (settings.value.hours.weeklySchedule || []).filter(d => d.active).length
 );
 </script>
 
@@ -104,7 +50,7 @@ const activeDaysCount = computed(
         :title="t('AUTORESPONDER.SETTINGS.BUSINESS_HOURS.BUSINESS_HOURS')"
       >
         <template #header-action>
-          <RelaySwitch v-model="enableBusinessHours" />
+          <RelaySwitch v-model="settings.hours.enableBusinessHours" />
         </template>
         <p class="text-xs text-muted-foreground -mt-4 max-w-[420px]">
           {{ t('AUTORESPONDER.SETTINGS.BUSINESS_HOURS.BUSINESS_HOURS_DESC') }}
@@ -115,7 +61,10 @@ const activeDaysCount = computed(
         :title="t('AUTORESPONDER.SETTINGS.BUSINESS_HOURS.TIME_ZONE')"
       >
         <div class="flex flex-col gap-2 max-w-sm">
-          <SettingsSelect v-model="timeZone" :options="timeZoneOptions" />
+          <SettingsSelect
+            v-model="settings.hours.timeZone"
+            :options="timeZoneOptions"
+          />
         </div>
       </SettingsCard>
 
@@ -124,7 +73,7 @@ const activeDaysCount = computed(
       >
         <div class="flex flex-col gap-2">
           <div
-            v-for="day in weeklySchedule"
+            v-for="day in settings.hours.weeklySchedule"
             :key="day.id"
             class="flex items-center justify-between gap-4 py-2 border-b border-border/40 last:border-0"
           >
@@ -158,11 +107,11 @@ const activeDaysCount = computed(
             :key="opt.value"
             class="border rounded-xl p-4 cursor-pointer transition-colors flex items-start gap-3"
             :class="
-              outsideAction === opt.value
+              settings.hours.outsideAction === opt.value
                 ? 'border-primary bg-primary/5 ring-1 ring-primary'
                 : 'border-border hover:border-foreground/20'
             "
-            @click="outsideAction = opt.value"
+            @click="settings.hours.outsideAction = opt.value"
           >
             <div
               class="size-8 rounded-lg bg-primary/10 text-primary flex items-center justify-center shrink-0"
@@ -178,7 +127,7 @@ const activeDaysCount = computed(
               </div>
             </div>
             <span
-              v-if="outsideAction === opt.value"
+              v-if="settings.hours.outsideAction === opt.value"
               class="i-lucide-check-circle-2 size-4 text-primary shrink-0 mt-1"
             />
           </div>
@@ -219,7 +168,7 @@ const activeDaysCount = computed(
               t('AUTORESPONDER.SETTINGS.BUSINESS_HOURS.BUSINESS_HOURS')
             }}</span>
             <span class="font-medium text-foreground">{{
-              enableBusinessHours ? 'ON' : 'OFF'
+              settings.hours.enableBusinessHours ? 'ON' : 'OFF'
             }}</span>
           </div>
           <div class="flex items-center justify-between">
@@ -227,7 +176,7 @@ const activeDaysCount = computed(
               t('AUTORESPONDER.SETTINGS.BUSINESS_HOURS.TIME_ZONE')
             }}</span>
             <span class="font-medium text-foreground truncate max-w-[180px]">{{
-              timeZone
+              settings.hours.timeZone
             }}</span>
           </div>
         </div>

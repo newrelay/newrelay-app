@@ -11,6 +11,10 @@ class CommentAutomation::CampaignPolicy < ApplicationPolicy
     @account_user.administrator?
   end
 
+  def show?
+    index?
+  end
+
   def destroy?
     @account_user.administrator?
   end

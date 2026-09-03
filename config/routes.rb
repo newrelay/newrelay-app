@@ -125,6 +125,7 @@ Rails.application.routes.draw do
               collection { post :sync }
             end
             resources :response_controls, only: [:index, :update]
+            resource :settings, only: [:show, :update]
             resource :mock_connection, only: [:create]
             resource :mock_comment, only: [:create]
           end

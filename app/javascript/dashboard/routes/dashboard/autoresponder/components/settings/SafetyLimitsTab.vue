@@ -1,34 +1,18 @@
 <script setup>
-import { ref, computed } from 'vue';
+import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import SettingsCard from './SettingsCard.vue';
 import SettingsSelect from './SettingsSelect.vue';
 import SettingsToggleRow from './SettingsToggleRow.vue';
 import SettingsSidebarCard from './SettingsSidebarCard.vue';
+import { useAutoresponderSettings } from '../../composables/useAutoresponderSettings';
 
 const { t } = useI18n();
-
-const safeMode = ref(true);
-const maxResponses = ref('1 per person');
-const cooldownPeriod = ref('24 hours');
-const dailyLimit = ref('0');
-const respectLimits = ref(true);
-const preventDuplicatesSafe = ref(true);
-const checkSimilar = ref(false);
-const allowAllChannels = ref(false);
-const keywordFiltering = ref(true);
-const autoFlag = ref(true);
-const blockUnknown = ref(false);
+const { settings } = useAutoresponderSettings();
 
 const maxResponsesOptions = ['1 per person', '3 per person', 'Unlimited'];
 const cooldownOptions = ['1 hour', '24 hours', '7 days'];
 const dailyLimitOptions = ['0', '100', '500', '1000'];
-
-const rateLimits = [
-  { platform: 'Instagram', limit: '200 requests / hour' },
-  { platform: 'Facebook', limit: '200 requests / hour' },
-  { platform: 'WhatsApp', limit: '1000 messages / day' },
-];
 
 const whySafetyMatters = computed(() =>
   t('AUTORESPONDER.SETTINGS.SAFETY_LIMITS.WHY_MATTERS_DESC')
@@ -42,7 +26,7 @@ const whySafetyMatters = computed(() =>
         :title="t('AUTORESPONDER.SETTINGS.SAFETY_LIMITS.AUTOMATION_SAFETY')"
       >
         <SettingsToggleRow
-          v-model="safeMode"
+          v-model="settings.safety.safeMode"
           :title="t('AUTORESPONDER.SETTINGS.SAFETY_LIMITS.SAFE_MODE')"
           :description="
             t('AUTORESPONDER.SETTINGS.SAFETY_LIMITS.SAFE_MODE_DESC')
@@ -59,7 +43,7 @@ const whySafetyMatters = computed(() =>
               t('AUTORESPONDER.SETTINGS.SAFETY_LIMITS.MAX_RESPONSES')
             }}</span>
             <SettingsSelect
-              v-model="maxResponses"
+              v-model="settings.safety.maxResponses"
               :options="maxResponsesOptions"
             />
           </div>
@@ -68,7 +52,7 @@ const whySafetyMatters = computed(() =>
               t('AUTORESPONDER.SETTINGS.SAFETY_LIMITS.COOLDOWN_PERIOD')
             }}</span>
             <SettingsSelect
-              v-model="cooldownPeriod"
+              v-model="settings.safety.cooldownPeriod"
               :options="cooldownOptions"
             />
           </div>
@@ -76,11 +60,14 @@ const whySafetyMatters = computed(() =>
             <span class="text-[13.5px] font-medium text-foreground">{{
               t('AUTORESPONDER.SETTINGS.SAFETY_LIMITS.DAILY_LIMIT')
             }}</span>
-            <SettingsSelect v-model="dailyLimit" :options="dailyLimitOptions" />
+            <SettingsSelect
+              v-model="settings.safety.dailyLimit"
+              :options="dailyLimitOptions"
+            />
           </div>
         </div>
         <SettingsToggleRow
-          v-model="respectLimits"
+          v-model="settings.safety.respectLimits"
           :title="t('AUTORESPONDER.SETTINGS.SAFETY_LIMITS.RESPECT_LIMITS')"
           :description="
             t('AUTORESPONDER.SETTINGS.SAFETY_LIMITS.RESPECT_LIMITS_DESC')
@@ -92,14 +79,14 @@ const whySafetyMatters = computed(() =>
         :title="t('AUTORESPONDER.SETTINGS.SAFETY_LIMITS.DUPLICATE_PREVENTION')"
       >
         <SettingsToggleRow
-          v-model="preventDuplicatesSafe"
+          v-model="settings.safety.preventDuplicatesSafe"
           :title="t('AUTORESPONDER.SETTINGS.SAFETY_LIMITS.PREVENT_DUPLICATES')"
           :description="
             t('AUTORESPONDER.SETTINGS.SAFETY_LIMITS.PREVENT_DUPLICATES_DESC')
           "
         />
         <SettingsToggleRow
-          v-model="checkSimilar"
+          v-model="settings.safety.checkSimilar"
           :title="t('AUTORESPONDER.SETTINGS.SAFETY_LIMITS.CHECK_SIMILAR')"
           :description="
             t('AUTORESPONDER.SETTINGS.SAFETY_LIMITS.CHECK_SIMILAR_DESC')
@@ -111,7 +98,7 @@ const whySafetyMatters = computed(() =>
         :title="t('AUTORESPONDER.SETTINGS.SAFETY_LIMITS.PLATFORM_RESTRICTIONS')"
       >
         <SettingsToggleRow
-          v-model="allowAllChannels"
+          v-model="settings.safety.allowAllChannels"
           :title="t('AUTORESPONDER.SETTINGS.SAFETY_LIMITS.ALLOW_ALL_CHANNELS')"
           :description="
             t('AUTORESPONDER.SETTINGS.SAFETY_LIMITS.ALLOW_ALL_CHANNELS_DESC')
@@ -123,21 +110,21 @@ const whySafetyMatters = computed(() =>
         :title="t('AUTORESPONDER.SETTINGS.SAFETY_LIMITS.SPAM_PROTECTION')"
       >
         <SettingsToggleRow
-          v-model="keywordFiltering"
+          v-model="settings.safety.keywordFiltering"
           :title="t('AUTORESPONDER.SETTINGS.SAFETY_LIMITS.KEYWORD_FILTERING')"
           :description="
             t('AUTORESPONDER.SETTINGS.SAFETY_LIMITS.KEYWORD_FILTERING_DESC')
           "
         />
         <SettingsToggleRow
-          v-model="autoFlag"
+          v-model="settings.safety.autoFlag"
           :title="t('AUTORESPONDER.SETTINGS.SAFETY_LIMITS.AUTO_FLAG')"
           :description="
             t('AUTORESPONDER.SETTINGS.SAFETY_LIMITS.AUTO_FLAG_DESC')
           "
         />
         <SettingsToggleRow
-          v-model="blockUnknown"
+          v-model="settings.safety.blockUnknown"
           :title="t('AUTORESPONDER.SETTINGS.SAFETY_LIMITS.BLOCK_UNKNOWN')"
           :description="
             t('AUTORESPONDER.SETTINGS.SAFETY_LIMITS.BLOCK_UNKNOWN_DESC')
@@ -162,7 +149,7 @@ const whySafetyMatters = computed(() =>
       >
         <div class="flex flex-col gap-2.5">
           <div
-            v-for="rl in rateLimits"
+            v-for="rl in settings.safety.rateLimits"
             :key="rl.platform"
             class="flex items-center justify-between text-xs"
           >

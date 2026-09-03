@@ -14,6 +14,7 @@ import {
 } from 'dashboard/components-next/relay';
 import { AUTORESPONDER_CHANNELS } from '../constants/channels';
 import CreateAutomationModal from '../components/CreateAutomationModal.vue';
+import AccountSwitcher from '../components/AccountSwitcher.vue';
 
 const { t } = useI18n();
 const store = useStore();
@@ -93,17 +94,20 @@ function deleteCampaign(campaign) {
         class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6"
       >
         <div>
-          <h1 class="text-xl font-semibold tracking-tight text-foreground">
+          <h1 class="text-[16px] font-medium tracking-tight text-foreground">
             {{ t('AUTORESPONDER.AUTOMATIONS.TITLE') }}
           </h1>
-          <p class="text-sm text-muted-foreground mt-1">
+          <p class="text-[13.5px] text-muted-foreground mt-1">
             {{ t('AUTORESPONDER.AUTOMATIONS.SUBTITLE') }}
           </p>
         </div>
-        <RelayButton class="gap-2" @click="isCreateModalOpen = true">
-          <span class="i-lucide-plus size-4" />
-          {{ t('AUTORESPONDER.AUTOMATIONS.CREATE_AUTOMATION') }}
-        </RelayButton>
+        <div class="flex items-center gap-3">
+          <AccountSwitcher />
+          <RelayButton class="gap-2" @click="isCreateModalOpen = true">
+            <span class="i-lucide-plus size-4" />
+            {{ t('AUTORESPONDER.AUTOMATIONS.CREATE_AUTOMATION') }}
+          </RelayButton>
+        </div>
       </div>
 
       <div class="flex flex-wrap items-center gap-3 mb-6">

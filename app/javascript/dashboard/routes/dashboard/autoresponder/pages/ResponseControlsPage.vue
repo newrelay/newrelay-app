@@ -5,19 +5,21 @@ import {
   RelayButton,
   RelayInput,
   RelaySwitch,
-  RelayCheckbox,
   RelayDropdownMenu,
   RelayDropdownMenuTrigger,
   RelayDropdownMenuContent,
   RelayDropdownMenuItem,
 } from 'dashboard/components-next/relay';
 import { useAlert } from 'dashboard/composables';
+import { useAccount } from 'dashboard/composables/useAccount';
+import AccountSwitcher from '../components/AccountSwitcher.vue';
+import { useAutoresponderAccount } from '../composables/useAutoresponderAccount';
 
 const { t } = useI18n();
+const { accountScopedRoute } = useAccount();
+const { activeAccount } = useAutoresponderAccount();
 
 const defaultSettings = ref({ comments: true, dms: true });
-const selectedChannel = ref('Instagram');
-const channels = ['Instagram', 'Facebook', 'TikTok', 'WhatsApp Business'];
 
 const searchQuery = ref('');
 const activeFilter = ref('All');
@@ -245,56 +247,6 @@ function toggleItemDms(item) {
   item.dms.overridden = true;
 }
 
-const selectedItems = computed(() => items.value.filter(i => i.selected));
-const isAllSelected = computed(
-  () => items.value.length > 0 && items.value.every(i => i.selected)
-);
-
-function toggleSelectAll() {
-  const target = !isAllSelected.value;
-  items.value.forEach(i => {
-    i.selected = target;
-  });
-}
-
-function bulkEnableComments() {
-  selectedItems.value.forEach(i => {
-    i.comments.enabled = true;
-    i.comments.overridden = true;
-  });
-}
-function bulkDisableComments() {
-  selectedItems.value.forEach(i => {
-    i.comments.enabled = false;
-    i.comments.overridden = true;
-  });
-}
-function bulkEnableDms() {
-  selectedItems.value.forEach(i => {
-    i.dms.enabled = true;
-    i.dms.overridden = true;
-  });
-}
-function bulkDisableDms() {
-  selectedItems.value.forEach(i => {
-    i.dms.enabled = false;
-    i.dms.overridden = true;
-  });
-}
-function bulkResetInherited() {
-  selectedItems.value.forEach(i => {
-    i.comments.enabled = defaultSettings.value.comments;
-    i.comments.overridden = false;
-    i.dms.enabled = defaultSettings.value.dms;
-    i.dms.overridden = false;
-  });
-}
-function clearSelection() {
-  items.value.forEach(i => {
-    i.selected = false;
-  });
-}
-
 const filteredItems = computed(() => {
   let list = items.value;
   if (searchQuery.value.trim()) {
@@ -318,7 +270,9 @@ const filteredItems = computed(() => {
 </script>
 
 <template>
-  <div class="flex-1 p-4 sm:p-8 max-w-7xl mx-auto space-y-6 relative">
+  <div
+    class="flex-1 overflow-y-auto w-full bg-background p-4 sm:p-6 lg:p-8 space-y-6 relative"
+  >
     <div
       class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-2 border-b border-border/40"
     >
@@ -332,32 +286,7 @@ const filteredItems = computed(() => {
       </div>
 
       <div class="flex items-center gap-3 shrink-0">
-        <RelayDropdownMenu>
-          <RelayDropdownMenuTrigger as-child>
-            <RelayButton
-              variant="outline"
-              class="h-9 gap-2 rounded-lg text-[13.5px] font-medium bg-card border border-border shadow-xs px-3 hover:border-transparent"
-            >
-              <span class="i-lucide-instagram size-4 text-rose-500" />
-              <span>{{ selectedChannel }}</span>
-              <span class="i-lucide-chevron-down size-3.5 opacity-50 ml-1" />
-            </RelayButton>
-          </RelayDropdownMenuTrigger>
-          <RelayDropdownMenuContent align="end" class="w-48">
-            <RelayDropdownMenuItem
-              v-for="c in channels"
-              :key="c"
-              class="gap-2"
-              @click="selectedChannel = c"
-            >
-              <span>{{ c }}</span>
-              <span
-                v-if="selectedChannel === c"
-                class="i-lucide-check size-3.5 text-primary ml-auto"
-              />
-            </RelayDropdownMenuItem>
-          </RelayDropdownMenuContent>
-        </RelayDropdownMenu>
+        <AccountSwitcher />
 
         <div class="relative w-56 sm:w-64">
           <span
@@ -389,11 +318,20 @@ const filteredItems = computed(() => {
           >
             {{ t('AUTORESPONDER.RESPONSE_CONTROLS.DEFAULT_BEHAVIOR') }}
             <span class="text-primary font-semibold">{{
-              selectedChannel
+              activeAccount.handle
+            }}</span>
+            <span class="text-[11.5px] text-muted-foreground font-normal">{{
+              t('AUTORESPONDER.RESPONSE_CONTROLS.ACCOUNT_PLATFORM', {
+                platform: activeAccount.platform,
+              })
             }}</span>
           </div>
           <p class="text-[13px] text-muted-foreground mt-0.5">
-            {{ t('AUTORESPONDER.RESPONSE_CONTROLS.DEFAULT_BEHAVIOR_DESC') }}
+            {{
+              t('AUTORESPONDER.RESPONSE_CONTROLS.DEFAULT_BEHAVIOR_DESC', {
+                handle: activeAccount.handle,
+              })
+            }}
             <span class="text-foreground font-medium">
               {{
                 t('AUTORESPONDER.RESPONSE_CONTROLS.COMMENTS_STATE', {
@@ -453,20 +391,6 @@ const filteredItems = computed(() => {
           />
         </button>
       </div>
-
-      <div
-        v-if="activeFilter !== 'Direct Messages' && filteredItems.length > 0"
-        class="flex items-center gap-2 pb-3 text-[13px] text-muted-foreground"
-      >
-        <RelayCheckbox
-          id="select-all"
-          v-model="isAllSelected"
-          @click="toggleSelectAll"
-        />
-        <label for="select-all" class="cursor-pointer font-medium select-none">
-          {{ t('AUTORESPONDER.RESPONSE_CONTROLS.SELECT_ALL') }}
-        </label>
-      </div>
     </div>
 
     <div v-if="activeFilter !== 'Direct Messages'" class="space-y-4">
@@ -475,13 +399,8 @@ const filteredItems = computed(() => {
           v-for="item in filteredItems"
           :key="item.id"
           class="p-4 sm:p-5 rounded-xl bg-card border border-border/60 shadow-xs hover:border-primary/30 transition-all flex flex-col md:flex-row md:items-center justify-between gap-5"
-          :class="{ 'border-primary/40': item.selected }"
         >
           <div class="flex items-start gap-4 min-w-0 flex-1">
-            <div class="pt-2 shrink-0">
-              <RelayCheckbox v-model="item.selected" />
-            </div>
-
             <div
               class="relative size-16 sm:size-20 rounded-lg overflow-hidden bg-muted border border-border shrink-0 shadow-2xs"
             >
@@ -682,13 +601,9 @@ const filteredItems = computed(() => {
             </p>
           </div>
           <span
-            class="text-xs font-medium px-2.5 py-1 rounded-md bg-primary/10 text-primary self-start sm:self-auto"
+            class="text-[12px] font-medium px-2.5 py-1 rounded-md bg-primary/10 text-primary self-start sm:self-auto font-mono"
           >
-            {{
-              t('AUTORESPONDER.RESPONSE_CONTROLS.CHANNEL_LABEL', {
-                channel: selectedChannel,
-              })
-            }}
+            {{ activeAccount.handle }}
           </span>
         </div>
 
@@ -759,70 +674,6 @@ const filteredItems = computed(() => {
           </div>
         </div>
       </div>
-    </div>
-
-    <div
-      v-if="selectedItems.length > 0"
-      class="fixed bottom-8 left-1/2 -translate-x-1/2 z-50 flex items-center gap-3 px-4 py-2.5 bg-card/95 text-foreground backdrop-blur-md border border-border/80 rounded-xl shadow-2xl"
-    >
-      <div class="text-[13px] font-medium px-2 border-r border-border/80">
-        {{
-          t('AUTORESPONDER.RESPONSE_CONTROLS.SELECTED_COUNT', {
-            count: selectedItems.length,
-          })
-        }}
-      </div>
-
-      <div class="flex items-center gap-2">
-        <RelayButton
-          size="sm"
-          variant="ghost"
-          class="h-8 px-2.5 text-[12.5px]"
-          @click="bulkEnableComments"
-        >
-          {{ t('AUTORESPONDER.RESPONSE_CONTROLS.BULK_ENABLE_COMMENTS') }}
-        </RelayButton>
-        <RelayButton
-          size="sm"
-          variant="ghost"
-          class="h-8 px-2.5 text-[12.5px]"
-          @click="bulkDisableComments"
-        >
-          {{ t('AUTORESPONDER.RESPONSE_CONTROLS.BULK_DISABLE_COMMENTS') }}
-        </RelayButton>
-        <RelayButton
-          size="sm"
-          variant="ghost"
-          class="h-8 px-2.5 text-[12.5px]"
-          @click="bulkEnableDms"
-        >
-          {{ t('AUTORESPONDER.RESPONSE_CONTROLS.BULK_ENABLE_DMS') }}
-        </RelayButton>
-        <RelayButton
-          size="sm"
-          variant="ghost"
-          class="h-8 px-2.5 text-[12.5px]"
-          @click="bulkDisableDms"
-        >
-          {{ t('AUTORESPONDER.RESPONSE_CONTROLS.BULK_DISABLE_DMS') }}
-        </RelayButton>
-        <RelayButton
-          size="sm"
-          variant="ghost"
-          class="h-8 px-2.5 text-[12.5px]"
-          @click="bulkResetInherited"
-        >
-          {{ t('AUTORESPONDER.RESPONSE_CONTROLS.BULK_RESET') }}
-        </RelayButton>
-      </div>
-
-      <button
-        type="button"
-        class="size-7 rounded-lg hover:bg-muted flex items-center justify-center text-muted-foreground hover:text-foreground ml-1"
-        @click="clearSelection"
-      >
-        <span class="i-lucide-x size-4" />
-      </button>
     </div>
 
     <div
@@ -981,10 +832,7 @@ const filteredItems = computed(() => {
           </div>
 
           <div class="space-y-3 pt-3 border-t border-border/40">
-            <h3
-              class="text-[13.5px] font-semibold text-foreground flex items-center gap-2"
-            >
-              <span class="i-lucide-message-square size-4 text-primary" />
+            <h3 class="text-[13.5px] font-semibold text-foreground">
               {{ t('AUTORESPONDER.RESPONSE_CONTROLS.COMMENT_FLOW') }}
             </h3>
             <div class="flex flex-col gap-1.5">
@@ -1022,13 +870,17 @@ const filteredItems = computed(() => {
                 </RelayDropdownMenuContent>
               </RelayDropdownMenu>
             </div>
+            <router-link
+              :to="accountScopedRoute('autoresponder_automations')"
+              class="text-[12.5px] text-primary hover:underline flex items-center gap-1 font-medium"
+            >
+              {{ t('AUTORESPONDER.RESPONSE_CONTROLS.MANAGE_IN_BUILDER') }}
+              <span class="i-lucide-external-link size-3" />
+            </router-link>
           </div>
 
           <div class="space-y-3 pt-3 border-t border-border/40">
-            <h3
-              class="text-[13.5px] font-semibold text-foreground flex items-center gap-2"
-            >
-              <span class="i-lucide-send size-4 text-primary" />
+            <h3 class="text-[13.5px] font-semibold text-foreground">
               {{ t('AUTORESPONDER.RESPONSE_CONTROLS.DM_FLOW') }}
             </h3>
             <div class="flex flex-col gap-1.5">
@@ -1066,6 +918,13 @@ const filteredItems = computed(() => {
                 </RelayDropdownMenuContent>
               </RelayDropdownMenu>
             </div>
+            <router-link
+              :to="accountScopedRoute('autoresponder_automations')"
+              class="text-[12.5px] text-primary hover:underline flex items-center gap-1 font-medium"
+            >
+              {{ t('AUTORESPONDER.RESPONSE_CONTROLS.MANAGE_IN_BUILDER') }}
+              <span class="i-lucide-external-link size-3" />
+            </router-link>
           </div>
         </div>
 

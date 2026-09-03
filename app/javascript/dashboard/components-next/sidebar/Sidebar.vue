@@ -586,6 +586,12 @@ const primaryMenuItems = computed(() => {
           activeOn: ['autoresponder_response_controls'],
         },
         {
+          name: 'Autoresponder Accounts Access',
+          label: t('SIDEBAR.AUTORESPONDER_ACCOUNTS_ACCESS'),
+          to: accountScopedRoute('autoresponder_accounts_access'),
+          activeOn: ['autoresponder_accounts_access'],
+        },
+        {
           name: 'Autoresponder Templates',
           label: t('SIDEBAR.AUTORESPONDER_TEMPLATES'),
           to: accountScopedRoute('autoresponder_templates'),

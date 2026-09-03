@@ -31,6 +31,12 @@ export const routes = [
         meta,
       },
       {
+        path: 'accounts-access',
+        name: 'autoresponder_accounts_access',
+        component: () => import('./pages/AccountsAccessPage.vue'),
+        meta,
+      },
+      {
         path: 'templates',
         name: 'autoresponder_templates',
         component: () => import('./pages/TemplatesPage.vue'),

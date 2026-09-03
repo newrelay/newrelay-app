@@ -17,6 +17,7 @@ import {
   CHANNEL_NAME_BY_TYPE,
 } from '../constants/channels';
 import ActivityDetailsPanel from '../components/ActivityDetailsPanel.vue';
+import AccountSwitcher from '../components/AccountSwitcher.vue';
 
 const { t } = useI18n();
 const store = useStore();
@@ -97,13 +98,20 @@ function openPreview(item) {
     class="h-[calc(100vh-80px)] overflow-y-auto bg-muted/20 p-6 md:p-8 hide-scrollbar flex flex-col"
   >
     <div class="max-w-[1600px] w-full mx-auto flex-1 flex flex-col min-h-0">
-      <div class="mb-6">
-        <h1 class="text-xl font-semibold tracking-tight text-foreground">
-          {{ t('AUTORESPONDER.ACTIVITY.TITLE') }}
-        </h1>
-        <p class="text-sm text-muted-foreground mt-1">
-          {{ t('AUTORESPONDER.ACTIVITY.SUBTITLE') }}
-        </p>
+      <div
+        class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6"
+      >
+        <div>
+          <h1 class="text-[16px] font-medium tracking-tight text-foreground">
+            {{ t('AUTORESPONDER.ACTIVITY.TITLE') }}
+          </h1>
+          <p class="text-[13.5px] text-muted-foreground mt-1">
+            {{ t('AUTORESPONDER.ACTIVITY.SUBTITLE') }}
+          </p>
+        </div>
+        <div class="flex items-center gap-3">
+          <AccountSwitcher />
+        </div>
       </div>
 
       <div class="flex flex-wrap items-center gap-3 mb-6">

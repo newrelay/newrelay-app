@@ -12,6 +12,7 @@ import { useAlert } from 'dashboard/composables';
 import TemplatePreviewPanel from '../components/TemplatePreviewPanel.vue';
 import CreateTemplateWizard from '../components/CreateTemplateWizard.vue';
 import CreateAutomationModal from '../components/CreateAutomationModal.vue';
+import AccountSwitcher from '../components/AccountSwitcher.vue';
 
 const { t } = useI18n();
 const store = useStore();
@@ -120,17 +121,20 @@ function useInAutomation(template) {
           class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8"
         >
           <div>
-            <h1 class="text-xl font-semibold tracking-tight text-foreground">
+            <h1 class="text-[16px] font-medium tracking-tight text-foreground">
               {{ t('AUTORESPONDER.TEMPLATES.TITLE') }}
             </h1>
-            <p class="text-sm text-muted-foreground mt-1">
+            <p class="text-[13.5px] text-muted-foreground mt-1">
               {{ t('AUTORESPONDER.TEMPLATES.SUBTITLE') }}
             </p>
           </div>
-          <RelayButton class="gap-2 font-medium" @click="openCreateWizard">
-            <span class="i-lucide-plus size-4" />
-            {{ t('AUTORESPONDER.TEMPLATES.NEW_TEMPLATE') }}
-          </RelayButton>
+          <div class="flex items-center gap-3">
+            <AccountSwitcher />
+            <RelayButton class="gap-2 font-medium" @click="openCreateWizard">
+              <span class="i-lucide-plus size-4" />
+              {{ t('AUTORESPONDER.TEMPLATES.NEW_TEMPLATE') }}
+            </RelayButton>
+          </div>
         </div>
 
         <div class="flex flex-wrap items-center gap-3 mb-6">

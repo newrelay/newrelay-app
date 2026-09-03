@@ -27,13 +27,20 @@ async function fetchAccounts() {
   accounts.value = response.data.payload || [];
   teamMembers.value = response.data.meta?.teamMembers || [];
   teams.value = response.data.meta?.teams || [];
-  if (!accounts.value.some(account => account.id === activeAccountId.value)) {
-    activeAccountId.value = accounts.value[0]?.id || '';
+  if (
+    !accounts.value.some(
+      account => String(account.id) === String(activeAccountId.value)
+    )
+  ) {
+    activeAccountId.value = accounts.value[0]?.id
+      ? String(accounts.value[0].id)
+      : '';
   }
 }
 
 export function useAutoresponderAccount() {
-  if (!loaded.value && !loadPromise) {
+  function refreshAccounts() {
+    if (loadPromise) return loadPromise;
     loadPromise = fetchAccounts()
       .catch(() => {
         accounts.value = [];
@@ -42,17 +49,30 @@ export function useAutoresponderAccount() {
         loaded.value = true;
         loadPromise = null;
       });
+    return loadPromise;
   }
+
+  if (!loaded.value) refreshAccounts();
 
   const activeAccount = computed(
     () =>
-      accounts.value.find(account => account.id === activeAccountId.value) ||
+      accounts.value.find(
+        account => String(account.id) === String(activeAccountId.value)
+      ) ||
       accounts.value[0] ||
       FALLBACK_ACCOUNT
   );
 
   function selectAccount(id) {
-    activeAccountId.value = id;
+    activeAccountId.value = String(id);
+  }
+
+  function matchesActiveInbox(inboxOrId) {
+    const activeId = activeAccount.value?.id;
+    if (!activeId) return true;
+    const inboxId =
+      inboxOrId && typeof inboxOrId === 'object' ? inboxOrId.id : inboxOrId;
+    return String(inboxId) === String(activeId);
   }
 
   async function updateAccount(updated) {
@@ -69,6 +89,7 @@ export function useAutoresponderAccount() {
     const idx = accounts.value.findIndex(account => account.id === next.id);
     if (idx === -1) accounts.value = [...accounts.value, next];
     else accounts.value[idx] = next;
+    activeAccountId.value = next.id;
     return next;
   }
 
@@ -85,6 +106,8 @@ export function useAutoresponderAccount() {
     activeAccount,
     loaded,
     selectAccount,
+    matchesActiveInbox,
+    refreshAccounts,
     updateAccount,
     connectAccount,
     syncAccounts,

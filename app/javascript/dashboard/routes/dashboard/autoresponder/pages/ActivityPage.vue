@@ -18,9 +18,11 @@ import {
 } from '../constants/channels';
 import ActivityDetailsPanel from '../components/ActivityDetailsPanel.vue';
 import AccountSwitcher from '../components/AccountSwitcher.vue';
+import { useAutoresponderAccount } from '../composables/useAutoresponderAccount';
 
 const { t } = useI18n();
 const store = useStore();
+const { matchesActiveInbox } = useAutoresponderAccount();
 
 const searchQuery = ref('');
 const activeTab = ref('All');
@@ -45,26 +47,30 @@ const STATUS_BADGE_CLASS = {
 const statusLabel = status =>
   t(`AUTORESPONDER.ACTIVITY.STATUS_${status.toUpperCase()}`);
 
+const scopedLogs = computed(() =>
+  logs.value.filter(l => matchesActiveInbox(l.inbox))
+);
+
 const tabs = computed(() => [
   {
     id: 'All',
-    count: logs.value.length,
+    count: scopedLogs.value.length,
     label: t('AUTORESPONDER.ACTIVITY.TAB_ALL'),
   },
   {
     id: 'Engaged',
-    count: logs.value.filter(l => l.status === 'engaged').length,
+    count: scopedLogs.value.filter(l => l.status === 'engaged').length,
     label: t('AUTORESPONDER.ACTIVITY.TAB_ENGAGED'),
   },
   {
     id: 'Failed',
-    count: logs.value.filter(l => l.status === 'dm_failed').length,
+    count: scopedLogs.value.filter(l => l.status === 'dm_failed').length,
     label: t('AUTORESPONDER.ACTIVITY.TAB_FAILED'),
   },
 ]);
 
 const filteredActivities = computed(() => {
-  let result = logs.value;
+  let result = scopedLogs.value;
   if (activeTab.value === 'Engaged') {
     result = result.filter(l => l.status === 'engaged');
   } else if (activeTab.value === 'Failed') {

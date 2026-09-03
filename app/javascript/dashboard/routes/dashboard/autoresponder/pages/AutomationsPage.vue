@@ -15,9 +15,11 @@ import {
 import { AUTORESPONDER_CHANNELS } from '../constants/channels';
 import CreateAutomationModal from '../components/CreateAutomationModal.vue';
 import AccountSwitcher from '../components/AccountSwitcher.vue';
+import { useAutoresponderAccount } from '../composables/useAutoresponderAccount';
 
 const { t } = useI18n();
 const store = useStore();
+const { matchesActiveInbox } = useAutoresponderAccount();
 
 const isCreateModalOpen = ref(false);
 const searchQuery = ref('');
@@ -34,20 +36,23 @@ const campaigns = useMapGetter('commentAutomationCampaigns/getCampaigns');
 const channelName = channelType =>
   AUTORESPONDER_CHANNELS.find(c => c.type === channelType)?.name || channelType;
 
-const tabs = computed(() => [
-  { id: 'All', count: campaigns.value.length },
-  {
-    id: 'Active',
-    count: campaigns.value.filter(c => c.is_active).length,
-  },
-  {
-    id: 'Paused',
-    count: campaigns.value.filter(c => !c.is_active).length,
-  },
-]);
+const tabs = computed(() => {
+  const scoped = campaigns.value.filter(c => matchesActiveInbox(c.inbox));
+  return [
+    { id: 'All', count: scoped.length },
+    {
+      id: 'Active',
+      count: scoped.filter(c => c.is_active).length,
+    },
+    {
+      id: 'Paused',
+      count: scoped.filter(c => !c.is_active).length,
+    },
+  ];
+});
 
 const filteredAutomations = computed(() => {
-  let list = campaigns.value;
+  let list = campaigns.value.filter(c => matchesActiveInbox(c.inbox));
   if (activeTab.value === 'Active') list = list.filter(c => c.is_active);
   if (activeTab.value === 'Paused') list = list.filter(c => !c.is_active);
   if (channelFilter.value !== 'All Channels') {

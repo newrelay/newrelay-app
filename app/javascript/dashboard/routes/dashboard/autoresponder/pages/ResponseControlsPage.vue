@@ -18,7 +18,7 @@ import { useAutoresponderAccount } from '../composables/useAutoresponderAccount'
 
 const { t } = useI18n();
 const { accountScopedRoute } = useAccount();
-const { activeAccount } = useAutoresponderAccount();
+const { activeAccount, matchesActiveInbox } = useAutoresponderAccount();
 
 const defaultSettings = ref({ comments: true, dms: true });
 const items = ref([]);
@@ -136,7 +136,7 @@ function toggleItemDms(item) {
 }
 
 const filteredItems = computed(() => {
-  let list = items.value;
+  let list = items.value.filter(i => matchesActiveInbox(i.inboxId));
   if (searchQuery.value.trim()) {
     const q = searchQuery.value.toLowerCase();
     list = list.filter(

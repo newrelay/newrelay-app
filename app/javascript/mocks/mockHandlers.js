@@ -1014,6 +1014,7 @@ const derivedPosts = () =>
     id: campaign.id,
     title: campaign.name,
     type: 'Post',
+    inboxId: campaign.inbox?.id ? String(campaign.inbox.id) : '',
     publishedAt: formatPublishedAt(campaign.created_at),
     thumbnail: '',
     comments: {

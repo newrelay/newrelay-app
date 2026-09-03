@@ -1,4 +1,5 @@
 <script setup>
+import { onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRouter } from 'vue-router';
 import { useAccount } from 'dashboard/composables/useAccount';
@@ -18,7 +19,12 @@ import {
 const { t } = useI18n();
 const router = useRouter();
 const { accountScopedRoute } = useAccount();
-const { accounts, activeAccount, selectAccount } = useAutoresponderAccount();
+const { accounts, activeAccount, selectAccount, refreshAccounts } =
+  useAutoresponderAccount();
+
+onMounted(() => {
+  refreshAccounts();
+});
 
 function goToAccountsAccess() {
   router.push(accountScopedRoute('autoresponder_accounts_access'));
@@ -54,6 +60,7 @@ function goToAccountsAccess() {
         :key="acc.id"
         class="flex items-center gap-2.5 py-2 cursor-pointer"
         @click="selectAccount(acc.id)"
+        @select="selectAccount(acc.id)"
       >
         <span
           :class="platformIconClass(acc.platform)"
@@ -68,7 +75,7 @@ function goToAccountsAccess() {
           </div>
         </div>
         <span
-          v-if="activeAccount.id === acc.id"
+          v-if="String(activeAccount.id) === String(acc.id)"
           class="i-lucide-check size-4 text-primary shrink-0"
         />
       </RelayDropdownMenuItem>

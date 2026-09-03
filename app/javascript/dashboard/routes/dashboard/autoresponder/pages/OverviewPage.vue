@@ -15,10 +15,13 @@ import {
 } from 'dashboard/components-next/relay';
 import { CHANNEL_NAME_BY_TYPE } from '../constants/channels';
 import CreateAutomationModal from '../components/CreateAutomationModal.vue';
+import AccountSwitcher from '../components/AccountSwitcher.vue';
+import { useAutoresponderAccount } from '../composables/useAutoresponderAccount';
 
 const { t } = useI18n();
 const router = useRouter();
 const store = useStore();
+const { matchesActiveInbox } = useAutoresponderAccount();
 
 const isCreateModalOpen = ref(false);
 const dateRangeKey = ref('7d');
@@ -30,25 +33,31 @@ onMounted(() => {
 
 const campaigns = useMapGetter('commentAutomationCampaigns/getCampaigns');
 const logs = useMapGetter('commentAutomationMessageLogs/getMessageLogs');
+const scopedCampaigns = computed(() =>
+  campaigns.value.filter(c => matchesActiveInbox(c.inbox))
+);
+const scopedLogs = computed(() =>
+  logs.value.filter(l => matchesActiveInbox(l.inbox))
+);
 
 const metrics = computed(() => {
-  const respondedLogs = logs.value.filter(l => l.status !== 'pending');
+  const respondedLogs = scopedLogs.value.filter(l => l.status !== 'pending');
   const uniqueContacts = new Set(
-    logs.value.filter(l => l.contact).map(l => l.contact.id)
+    scopedLogs.value.filter(l => l.contact).map(l => l.contact.id)
   );
   return [
     {
       key: 'total',
       icon: 'i-lucide-zap',
       label: t('AUTORESPONDER.OVERVIEW.METRIC_TOTAL'),
-      value: campaigns.value.length,
+      value: scopedCampaigns.value.length,
       helper: t('AUTORESPONDER.OVERVIEW.METRIC_TOTAL_HELPER'),
     },
     {
       key: 'active',
       icon: 'i-lucide-play',
       label: t('AUTORESPONDER.OVERVIEW.METRIC_ACTIVE'),
-      value: campaigns.value.filter(c => c.is_active).length,
+      value: scopedCampaigns.value.filter(c => c.is_active).length,
       helper: t('AUTORESPONDER.OVERVIEW.METRIC_ACTIVE_HELPER'),
     },
     {
@@ -69,7 +78,7 @@ const metrics = computed(() => {
 });
 
 const topAutomations = computed(() =>
-  [...campaigns.value]
+  [...scopedCampaigns.value]
     .sort((a, b) => b.responses_count - a.responses_count)
     .slice(0, 4)
 );
@@ -100,7 +109,9 @@ const responseChartBars = computed(() => {
   const days = [];
   for (let i = dateRangeDays.value - 1; i >= 0; i -= 1) {
     const day = startOfDay(subDays(new Date(), i));
-    const count = logs.value.filter(l => isSameDay(logTime(l), day)).length;
+    const count = scopedLogs.value.filter(l =>
+      isSameDay(logTime(l), day)
+    ).length;
     days.push({ label: format(day, 'MMM d'), value: count });
   }
   return days;
@@ -115,8 +126,8 @@ const maxBarValue = computed(() =>
 );
 
 const channelDistribution = computed(() => {
-  const total = logs.value.length;
-  const counts = logs.value.reduce((acc, log) => {
+  const total = scopedLogs.value.length;
+  const counts = scopedLogs.value.reduce((acc, log) => {
     const type = log.inbox.channel_type;
     acc[type] = (acc[type] || 0) + 1;
     return acc;
@@ -163,10 +174,13 @@ function deleteCampaign(campaign) {
             {{ t('AUTORESPONDER.OVERVIEW.SUBTITLE') }}
           </p>
         </div>
-        <RelayButton class="gap-2" @click="isCreateModalOpen = true">
-          <span class="i-lucide-plus size-4" />
-          {{ t('AUTORESPONDER.OVERVIEW.CREATE_AUTOMATION') }}
-        </RelayButton>
+        <div class="flex items-center gap-3">
+          <AccountSwitcher />
+          <RelayButton class="gap-2" @click="isCreateModalOpen = true">
+            <span class="i-lucide-plus size-4" />
+            {{ t('AUTORESPONDER.OVERVIEW.CREATE_AUTOMATION') }}
+          </RelayButton>
+        </div>
       </div>
 
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">

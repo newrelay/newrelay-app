@@ -3,6 +3,7 @@ class CommentAutomation::MockAutoresponderStore
   class Error < StandardError; end
 
   SOCIAL_INBOX_TYPES = ['Channel::Instagram', 'Channel::FacebookPage'].freeze
+  SETTINGS_KEY = 'comment_automation_settings'.freeze
 
   SETTINGS_DEFAULT = {
     general: {
@@ -75,36 +76,26 @@ class CommentAutomation::MockAutoresponderStore
   end
 
   def social_accounts
-    return [] unless mock?
-
     social_inboxes.map { |inbox| serialize_inbox(inbox).merge(overlay("inbox-#{inbox.id}")) }
   end
 
   def team_members
-    return [] unless mock?
-
     @account.users.map { |user| { id: user.id.to_s, name: user.name, email: user.email, avatar: user.avatar_url.to_s } }
   end
 
   def teams
-    return [] unless mock?
-
     @account.teams.pluck(:name)
   end
 
   def posts
-    return [] unless mock?
-
     campaigns.map { |campaign| serialize_campaign(campaign).deep_merge(overlay("post-#{campaign.id}")) }
   end
 
   def dms
-    mock? ? (state[:dms] || []) : []
+    state[:dms] || []
   end
 
   def automations
-    return [] unless mock?
-
     campaigns.map(&:name)
   end
 
@@ -113,9 +104,8 @@ class CommentAutomation::MockAutoresponderStore
   end
 
   def settings
-    return {} unless mock?
-
-    state[:settings]
+    stored = (@account.custom_attributes || {})[SETTINGS_KEY]
+    SETTINGS_DEFAULT.deep_dup.deep_merge(normalize_settings(stored))
   end
 
   def update_social_account(id, attrs)
@@ -152,8 +142,11 @@ class CommentAutomation::MockAutoresponderStore
   end
 
   def update_settings(attrs)
-    state[:settings] = state[:settings].deep_merge(attrs.deep_symbolize_keys)
-    state[:settings]
+    merged = settings.deep_merge(normalize_settings(attrs))
+    @account.update!(
+      custom_attributes: (@account.custom_attributes || {}).merge(SETTINGS_KEY => merged.deep_stringify_keys)
+    )
+    settings
   end
 
   def sync
@@ -167,18 +160,21 @@ class CommentAutomation::MockAutoresponderStore
   end
 
   def state
-    return empty_state unless mock?
-
     self.class.cache[@account.id] ||= empty_state.merge(
       defaults: { comments: true, dms: true },
       dms: [],
-      overlays: {},
-      settings: SETTINGS_DEFAULT.deep_dup
+      overlays: {}
     )
   end
 
   def empty_state
-    { defaults: { comments: true, dms: true }, dms: [], overlays: {}, settings: {} }
+    { defaults: { comments: true, dms: true }, dms: [], overlays: {} }
+  end
+
+  def normalize_settings(raw)
+    return {} if raw.blank?
+
+    raw.to_h.deep_symbolize_keys
   end
 
   def overlay(key)
@@ -213,7 +209,7 @@ class CommentAutomation::MockAutoresponderStore
   def serialize_campaign(campaign)
     logs = campaign.triggers.flat_map(&:message_logs)
     {
-      id: campaign.id, title: campaign.name, type: 'Post',
+      id: campaign.id, inboxId: campaign.inbox_id.to_s, title: campaign.name, type: 'Post',
       publishedAt: campaign.created_at.strftime('%b %d, %Y'), thumbnail: campaign.inbox&.avatar_url.to_s,
       comments: { enabled: campaign.is_active, overridden: false, automation: campaign.name },
       dms: { enabled: campaign.is_active, overridden: false, automation: campaign.name },

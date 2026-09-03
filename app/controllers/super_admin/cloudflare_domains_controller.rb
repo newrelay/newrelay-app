@@ -2,7 +2,7 @@ class SuperAdmin::CloudflareDomainsController < SuperAdmin::ApplicationControlle
   def show
     result = Cloudflare::ListCustomHostnamesService.new(page: params[:page]).perform
     @hostnames = result[:data] || []
-    @error = result[:errors]&.join(', ')
+    @error = format_cloudflare_errors(result[:errors])
   end
 
   def destroy
@@ -10,7 +10,7 @@ class SuperAdmin::CloudflareDomainsController < SuperAdmin::ApplicationControlle
     result = Cloudflare::DeleteCustomHostnameService.new(domain: domain).perform
 
     if result[:errors].present?
-      redirect_to super_admin_cloudflare_domains_path, alert: result[:errors].join(', ')
+      redirect_to super_admin_cloudflare_domains_path, alert: format_cloudflare_errors(result[:errors])
     else
       clear_local_domain(domain)
       # rubocop:disable Rails/I18nLocaleTexts
@@ -20,6 +20,18 @@ class SuperAdmin::CloudflareDomainsController < SuperAdmin::ApplicationControlle
   end
 
   private
+
+  # Cloudflare returns errors as an array of hashes, e.g.
+  #   [{ "code" => 10000, "message" => "Authentication error" }]
+  # (our own guards return plain strings). Extract the human-readable message so
+  # the admin banner/flash shows "Authentication error" instead of the raw hash.
+  def format_cloudflare_errors(errors)
+    return if errors.blank?
+
+    Array(errors).filter_map do |error|
+      error.is_a?(Hash) ? error['message'].presence || error.to_json : error.to_s
+    end.join(', ')
+  end
 
   # Keep the DB in sync so the freed hostname can be reused and is not re-verified later.
   def clear_local_domain(domain)

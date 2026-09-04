@@ -351,6 +351,8 @@
         "AUTO_ASSIGNMENT": "Auto Assignment",
         "AUTO_ASSIGNMENT_DESC": "Automatically assign conversations touched by automations.",
         "ASSIGN_TO": "Assign to",
+        "ASSIGN_TO_UNASSIGNED": "Unassigned",
+        "ASSIGN_TO_SEARCH": "Search team members...",
         "TAGS_LABELS": "Tags & Labels",
         "TAGS_LABELS_DESC": "Automatically tag conversations handled by automations.",
         "AUTO_APPLY_TAG": "Auto-apply tag",

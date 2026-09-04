@@ -6,16 +6,49 @@ import SettingsCard from './SettingsCard.vue';
 import SettingsSelect from './SettingsSelect.vue';
 import SettingsSidebarCard from './SettingsSidebarCard.vue';
 import { useAutoresponderSettings } from '../../composables/useAutoresponderSettings';
+import { useAutoresponderAccount } from '../../composables/useAutoresponderAccount';
+
+const UNASSIGNED = 'Unassigned';
+const LEGACY_ASSIGN_TO = new Set(['Round robin', 'Least busy agent']);
 
 const { t } = useI18n();
 const { settings } = useAutoresponderSettings();
+const { teamMembers } = useAutoresponderAccount();
 
 const responseTypeOptions = ['Reply in thread', 'Send as DM', 'Reply + DM'];
 const responseTimeOptions = ['No delay', '1 minute', '5 minutes', '15 minutes'];
 const lookbackOptions = ['1 hour', '24 hours', '7 days'];
-const assignToOptions = ['Unassigned', 'Round robin', 'Least busy agent'];
 const tagOptions = ['No tag selected', 'automated', 'needs-review', 'vip'];
 const languageOptions = ['English (US)', 'Spanish', 'French'];
+
+const assignToOptions = computed(() => [
+  {
+    value: UNASSIGNED,
+    label: t('AUTORESPONDER.SETTINGS.GENERAL.ASSIGN_TO_UNASSIGNED'),
+  },
+  ...[...teamMembers.value]
+    .sort((a, b) => a.name.localeCompare(b.name))
+    .map(member => ({
+      value: `agent:${member.id}`,
+      label: member.name,
+      searchText: member.email || '',
+    })),
+]);
+
+const assignTo = computed({
+  get() {
+    const value = settings.value.general.assignTo;
+    if (!value || LEGACY_ASSIGN_TO.has(value)) return UNASSIGNED;
+    if (assignToOptions.value.some(option => option.value === value)) {
+      return value;
+    }
+    const member = teamMembers.value.find(item => item.name === value);
+    return member ? `agent:${member.id}` : UNASSIGNED;
+  },
+  set(value) {
+    settings.value.general.assignTo = value;
+  },
+});
 
 const quickTips = computed(() => [
   t('AUTORESPONDER.SETTINGS.GENERAL.TIP_1'),
@@ -134,8 +167,12 @@ const quickTips = computed(() => [
               t('AUTORESPONDER.SETTINGS.GENERAL.ASSIGN_TO')
             }}</span>
             <SettingsSelect
-              v-model="settings.general.assignTo"
+              v-model="assignTo"
               :options="assignToOptions"
+              searchable
+              :search-placeholder="
+                t('AUTORESPONDER.SETTINGS.GENERAL.ASSIGN_TO_SEARCH')
+              "
             />
           </div>
         </div>

@@ -418,7 +418,6 @@ const stats = computed(() => {
       class="flex flex-col h-full overflow-y-auto transition-all duration-300 hide-scrollbar"
       :class="selectedVideo ? 'w-full lg:w-[65%] xl:w-[70%]' : 'w-full'"
     >
-      <!-- Page Header matching AGENTS.md Directive (h1 text-xl font-semibold) -->
       <div class="px-8 py-6 border-b border-border bg-card shrink-0">
         <div class="flex items-center text-sm text-muted-foreground mb-2">
           <span>Reputation</span>
@@ -427,7 +426,7 @@ const stats = computed(() => {
         </div>
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <h1 class="text-xl font-semibold text-foreground">Video Reviews</h1>
+            <h1 class="text-base font-medium text-foreground">Video Reviews</h1>
             <p class="text-sm text-muted-foreground mt-1">Collect, manage and share authentic video testimonials from your customers.</p>
           </div>
           <div class="flex items-center gap-3">

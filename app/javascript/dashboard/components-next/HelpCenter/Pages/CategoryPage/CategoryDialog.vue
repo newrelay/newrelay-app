@@ -133,7 +133,7 @@ onMounted(() => {
           class="flex items-center justify-between border-b border-border/40 bg-muted/20 p-5"
         >
           <h2
-            class="capitalize text-lg font-semibold tracking-tight text-foreground"
+            class="capitalize text-base font-semibold tracking-tight text-foreground"
           >
             {{
               t(

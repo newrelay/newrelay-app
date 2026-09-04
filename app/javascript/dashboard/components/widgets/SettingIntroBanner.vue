@@ -16,10 +16,13 @@ export default {
 <template>
   <div class="border-b border-solid border-border/60">
     <div class="max-w-7xl w-full mx-auto pt-4 pb-0 px-6">
-      <h2 class="capitalize text-2xl text-foreground mb-1 font-medium">
+      <h2 class="capitalize text-base font-medium text-foreground mb-1">
         {{ headerTitle }}
       </h2>
-      <p v-if="headerContent" class="w-full text-muted-foreground text-sm mb-2">
+      <p
+        v-if="headerContent"
+        class="w-full text-[14px] text-muted-foreground mb-2"
+      >
         {{ headerContent }}
       </p>
       <slot />

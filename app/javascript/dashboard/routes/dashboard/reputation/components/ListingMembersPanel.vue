@@ -76,7 +76,7 @@ onMounted(load);
 <template>
   <div class="flex flex-col gap-6 pb-12">
     <div>
-      <h2 class="text-xl font-bold text-foreground flex items-center gap-2">
+      <h2 class="text-base font-semibold text-foreground flex items-center gap-2">
         <Users class="size-5 text-primary" />
         Team
       </h2>

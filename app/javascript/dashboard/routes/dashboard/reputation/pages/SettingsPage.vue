@@ -456,8 +456,8 @@ onMounted(async () => {
     <!-- Header -->
     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
       <div>
-        <h1 class="text-xl font-semibold text-foreground">Reputation Settings</h1>
-        <p class="text-xs text-muted-foreground mt-0.5">Manage connected listings, review triggers, and outbound channel request templates.</p>
+        <h1 class="text-base font-medium tracking-tight text-foreground">Reputation Settings</h1>
+        <p class="text-[13.5px] text-muted-foreground mt-0.5">Manage connected listings, review triggers, and outbound channel request templates.</p>
       </div>
     </div>
 

@@ -114,7 +114,7 @@ const submitMockConnect = async () => {
         v-else-if="isMock"
         class="flex w-full flex-col items-stretch rounded-xl border border-border bg-card px-8 py-10 text-left shadow-sm"
       >
-        <h6 class="text-lg font-semibold text-foreground text-center">
+        <h6 class="text-base font-semibold text-foreground text-center">
           {{ t('AUTORESPONDER.SETTINGS.CHANNELS.MOCK_CONNECT_TITLE') }}
         </h6>
         <p
@@ -167,7 +167,7 @@ const submitMockConnect = async () => {
         v-else
         class="flex w-full flex-col items-center justify-center rounded-xl border border-border bg-card px-8 py-10 text-center shadow-sm"
       >
-        <h6 class="text-lg font-semibold text-foreground">
+        <h6 class="text-base font-semibold text-foreground">
           {{ $t('INBOX_MGMT.ADD.INSTAGRAM.CONNECT_YOUR_INSTAGRAM_PROFILE') }}
         </h6>
         <p class="py-6 text-[13px] leading-relaxed text-muted-foreground">

@@ -9,12 +9,12 @@ export default {
 
 <template>
   <div class="mb-8 w-full border-b border-border/40 pb-4">
-    <h3 class="capitalize mb-1 text-lg font-semibold text-foreground">
+    <h3 class="capitalize mb-1 text-base font-medium text-foreground">
       {{ headerTitle }}
     </h3>
     <p
       v-dompurify-html="headerContent"
-      class="text-[13px] leading-relaxed text-muted-foreground"
+      class="text-[14px] leading-relaxed text-muted-foreground"
     />
   </div>
 </template>

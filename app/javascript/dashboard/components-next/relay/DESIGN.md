@@ -26,7 +26,7 @@ When building or migrating a Vue page/component under the Relay shell (`[data-re
 | Sans | Geist (`--font-sans`) |
 | Mono | Geist Mono (`--font-mono`) |
 | App header title | `text-base font-medium` |
-| Page section title (in-page h1 next to switcher) | `text-xl font-medium text-muted-foreground` or `text-xl font-semibold text-foreground` (settings) |
+| Page H1 (in-page title) | `text-base font-medium tracking-tight text-foreground` (`text-[16px] font-medium`) |
 | Card / block title | `text-base font-semibold text-foreground` |
 | Body / help | `text-[13.5px]` or `text-sm` + `text-muted-foreground` |
 | Empty-state title | `text-[20px] font-[600] text-foreground` — **sharp**, no `drop-shadow`, blur, or hover tooltip on the title unless product explicitly asks |

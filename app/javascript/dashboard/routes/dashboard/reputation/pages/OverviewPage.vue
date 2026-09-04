@@ -257,10 +257,9 @@ async function generateReviewReplies() {
     <FeedbackBreakdownModal v-model:open="isFeedbackModalOpen" :reviews="allReviews" :show-demo="showDemoSurfaces" />
     
     <div class="max-w-7xl mx-auto">
-      <!-- Header matching AGENTS.md rule (h1 text-xl font-semibold text-foreground) -->
       <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
         <div>
-          <h1 class="text-xl font-semibold text-foreground">Overview</h1>
+          <h1 class="text-base font-medium tracking-tight text-foreground">Overview</h1>
           <p class="text-sm text-muted-foreground mt-1">Monitor and manage your brand's online presence across all platforms.</p>
         </div>
         <div class="flex items-center gap-3">

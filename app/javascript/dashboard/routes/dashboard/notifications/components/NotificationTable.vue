@@ -54,7 +54,7 @@ export default {
     class="flex-grow flex-shrink h-full px-4 py-8 overflow-hidden bg-background"
   >
     <div class="flex w-full items-center justify-between gap-2 mb-4">
-      <h6 class="text-xl font-medium text-foreground">
+      <h6 class="text-base font-medium tracking-tight text-foreground">
         {{ $t('NOTIFICATIONS_PAGE.HEADER') }}
       </h6>
       <NextButton

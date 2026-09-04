@@ -162,7 +162,7 @@ onMounted(() => {
       class="flex items-center justify-between px-6 py-6 border-b border-muted bg-muted"
     >
       <div class="flex items-center gap-3">
-        <span class="text-xl font-medium text-foreground">
+        <span class="text-base font-medium tracking-tight text-foreground">
           {{ t('CONTACTS_LAYOUT.COMPANIES_VIEW.TITLE') }}
         </span>
         <span

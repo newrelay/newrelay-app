@@ -513,7 +513,7 @@ function tagStyles(variant) {
     <!-- Empty state -->
     <div v-else class="max-w-md mx-auto flex flex-col items-center justify-center text-center py-24">
       <div class="size-14 rounded-2xl bg-primary/10 text-primary flex items-center justify-center mb-4"><Building2 class="size-7" /></div>
-      <h2 class="text-lg font-semibold text-foreground mb-1">No integrations connected</h2>
+      <h2 class="text-[20px] font-[600] text-foreground mb-1">No integrations connected</h2>
       <p class="text-sm text-muted-foreground mb-6">Connect your first review platform to start monitoring ratings and automating responses.</p>
       <button class="h-9 px-4 rounded-lg bg-primary text-primary-foreground text-sm font-semibold inline-flex items-center gap-2 cursor-pointer" @click="isDemoLoaded = true">
         <Plus class="size-4" /> Browse platforms

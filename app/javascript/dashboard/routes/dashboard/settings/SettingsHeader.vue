@@ -54,7 +54,7 @@ export default {
       />
 
       <slot />
-      <span class="text-xl font-medium text-foreground">
+      <span>
         {{ headerTitle }}
       </span>
     </h1>

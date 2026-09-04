@@ -26,13 +26,13 @@ defineProps({
       <div class="flex flex-col gap-2">
         <div class="flex flex-col gap-2 items-start">
           <h2
-            class="capitalize text-xl font-medium text-foreground tracking-tight"
+            class="capitalize text-base font-medium text-foreground tracking-tight"
           >
             {{ headerTitle }}
           </h2>
           <p
             v-if="headerDescription"
-            class="text-[13.5px] text-muted-foreground max-w-[800px] leading-relaxed mb-0"
+            class="text-[14px] text-muted-foreground max-w-[800px] leading-relaxed mb-0"
           >
             {{ headerDescription }}
           </p>

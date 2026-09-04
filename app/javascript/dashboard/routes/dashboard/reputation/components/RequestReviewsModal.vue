@@ -500,7 +500,7 @@ function close() {
       <!-- Header -->
       <div v-if="currentStep < 5" class="px-6 py-4 border-b border-border flex items-center justify-between bg-muted/30">
         <div>
-          <h2 class="text-xl font-semibold text-foreground">Request Customer Reviews</h2>
+          <h2 class="text-base font-semibold text-foreground">Request Customer Reviews</h2>
           <div class="flex items-center gap-2 mt-1.5 text-sm">
             <span :class="currentStep >= 1 ? 'text-primary font-medium' : 'text-muted-foreground'">1. Channel</span>
             <ChevronRight class="size-3.5 text-muted-foreground/50" />

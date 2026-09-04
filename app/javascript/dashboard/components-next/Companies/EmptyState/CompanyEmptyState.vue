@@ -40,7 +40,7 @@ const { t } = useI18n();
         />
         <div class="relative z-10">
           <div class="mb-8 flex items-center justify-between">
-            <h3 class="capitalize text-lg font-semibold text-foreground">
+            <h3 class="capitalize text-base font-semibold text-foreground">
               {{ t('COMPANIES.EMPTY_STATE.GETTING_STARTED') }}
             </h3>
             <RelayBadge
@@ -121,7 +121,7 @@ const { t } = useI18n();
         <div
           class="flex flex-col gap-4 rounded-3xl border border-border/50 bg-card p-8 shadow-sm"
         >
-          <h3 class="capitalize mb-2 text-lg font-semibold text-foreground">
+          <h3 class="capitalize mb-2 text-base font-semibold text-foreground">
             {{ t('COMPANIES.EMPTY_STATE.ADD_ACCOUNTS') }}
           </h3>
           <RelayButton

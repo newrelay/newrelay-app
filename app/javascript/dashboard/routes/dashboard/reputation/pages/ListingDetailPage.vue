@@ -1205,7 +1205,7 @@ watch(() => route.params.listingId, async () => {
 
         <div v-else-if="activeTab === 'Insights'" class="flex flex-col gap-6 pb-12">
           <div>
-            <h2 class="text-xl font-bold text-foreground flex items-center gap-2"><Sparkles class="size-5 text-primary" /> Insights</h2>
+            <h2 class="text-base font-semibold text-foreground flex items-center gap-2"><Sparkles class="size-5 text-primary" /> Insights</h2>
             <p class="text-[13px] text-muted-foreground mt-1">AI analysis of this listing's reviews.</p>
           </div>
 
@@ -1325,7 +1325,7 @@ watch(() => route.params.listingId, async () => {
         />
 
         <div v-else-if="activeTab === 'Activity'" class="flex flex-col gap-2 pb-12">
-          <h2 class="text-xl font-bold text-foreground">Activity Timeline</h2>
+          <h2 class="text-base font-semibold text-foreground">Activity Timeline</h2>
           <p class="text-[13px] text-muted-foreground mb-4">Everything recorded for this listing, chronologically.</p>
 
           <div v-if="!activityEvents.length" class="bg-card border border-dashed border-border rounded-xl p-10 text-center">

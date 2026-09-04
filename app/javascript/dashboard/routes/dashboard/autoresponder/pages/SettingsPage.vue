@@ -70,10 +70,10 @@ const activeComponent = computed(() => tabComponents[activeTab.value]);
   <div class="p-6 md:p-8 min-h-screen bg-background">
     <div class="flex items-center justify-between mb-8 mt-2">
       <div>
-        <h1 class="text-xl font-semibold tracking-tight text-foreground">
+        <h1 class="text-[16px] font-medium tracking-tight text-foreground">
           {{ t('AUTORESPONDER.SETTINGS.TITLE') }}
         </h1>
-        <p class="text-sm text-muted-foreground mt-1">
+        <p class="text-[13.5px] text-muted-foreground mt-1">
           {{ t('AUTORESPONDER.SETTINGS.SUBTITLE') }}
         </p>
       </div>

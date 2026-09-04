@@ -285,10 +285,10 @@ function deleteCampaign(campaign) {
         class="flex flex-col sm:flex-row sm:items-center justify-between gap-4"
       >
         <div>
-          <h1 class="text-xl font-semibold tracking-tight text-foreground">
+          <h1 class="text-[16px] font-medium tracking-tight text-foreground">
             {{ t('AUTORESPONDER.OVERVIEW.TITLE') }}
           </h1>
-          <p class="text-sm text-muted-foreground mt-1">
+          <p class="text-[13.5px] text-muted-foreground mt-1">
             {{ t('AUTORESPONDER.OVERVIEW.SUBTITLE') }}
           </p>
         </div>

@@ -171,8 +171,8 @@ Copy these; they are the NewRelay canonical markup.
 ### Page shell (report/settings-style page)
 ```html
 <div class="px-8 pt-6">
-  <h1 class="text-xl font-semibold tracking-tight text-foreground mb-1">Title</h1>
-  <p class="text-sm text-muted-foreground mb-4">Subtitle.</p>
+  <h1 class="text-base font-medium tracking-tight text-foreground mb-1">Title</h1>
+  <p class="text-[14px] text-muted-foreground mb-4">Subtitle.</p>
   <!-- tab bar -->
   <div class="flex items-center gap-6 text-[14px] border-b border-border/60 overflow-x-auto">
     <a class="pb-3 font-medium whitespace-nowrap border-b-2 -mb-px border-primary text-primary">Active</a>

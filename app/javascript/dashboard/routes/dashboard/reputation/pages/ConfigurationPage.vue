@@ -608,7 +608,7 @@ const autoFlagLabel = computed(() => autoFlagOptions.find(o => o.value === spamS
       <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <div class="flex items-center gap-2">
-            <h1 class="text-lg font-semibold text-foreground">Configuration</h1>
+            <h1 class="text-base font-medium tracking-tight text-foreground">Configuration</h1>
           </div>
           <p class="text-sm text-muted-foreground mt-1">Collect verified 5-star customer reviews across Google, Yelp, and Facebook via automated multi-channel sequences.</p>
         </div>

@@ -25,7 +25,6 @@ const FloatingCallWidget = defineAsyncComponent(
 
 import CopilotContainer from 'dashboard/components/copilot/CopilotContainer.vue';
 
-import MobileSidebarLauncher from 'dashboard/components-next/sidebar/MobileSidebarLauncher.vue';
 import { useCallsStore } from 'dashboard/stores/calls';
 
 export default {
@@ -38,7 +37,6 @@ export default {
     UpgradePage,
     CopilotContainer,
     FloatingCallWidget,
-    MobileSidebarLauncher,
   },
   setup() {
     const upgradePageRef = ref(null);
@@ -47,6 +45,7 @@ export default {
     const { width: windowWidth } = useWindowSize();
     const callsStore = useCallsStore();
     const getAccount = useMapGetter('accounts/getAccount');
+    const globalConfig = useMapGetter('globalConfig/get');
     const { t } = useI18n();
 
     // Dev testing helpers to preview the call UI on screen without a real call.
@@ -336,19 +335,10 @@ export default {
           v-show="showUpgradePage"
           ref="upgradePageRef"
           :bypass-upgrade-page="bypassUpgradePage"
-        >
-          <MobileSidebarLauncher
-            :is-mobile-sidebar-open="isMobileSidebarOpen"
-            @toggle="toggleMobileSidebar"
-          />
-        </UpgradePage>
+        />
         <template v-if="!showUpgradePage">
           <router-view />
           <CommandBar />
-          <MobileSidebarLauncher
-            :is-mobile-sidebar-open="isMobileSidebarOpen"
-            @toggle="toggleMobileSidebar"
-          />
           <CopilotContainer />
           <FloatingCallWidget v-if="hasActiveCall || hasIncomingCall" />
         </template>

@@ -42,7 +42,7 @@ const toggleTheme = () => {
     <div class="flex min-w-0 flex-none items-center gap-3">
       <button
         type="button"
-        class="inline-flex size-8 shrink-0 items-center justify-center rounded-md text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring md:hidden"
+        class="inline-flex size-11 shrink-0 items-center justify-center rounded-md text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring md:hidden"
         @click="$emit('toggleSidebar')"
       >
         <span class="i-lucide-panel-left size-4 shrink-0" />

@@ -290,6 +290,13 @@
     "CREATE_TEMPLATE_WIZARD": {
       "TITLE": "New Template",
       "EDIT_TITLE": "Edit Template",
+      "CREATE": "Create Template",
+      "STEP_BASICS": "Basic Info",
+      "STEP_CONTENT": "Content",
+      "BASICS_TITLE": "Let's start with the basics",
+      "BASICS_SUBTITLE": "Give your template a name and choose its type.",
+      "CONTENT_TITLE": "Write your replies",
+      "CONTENT_SUBTITLE": "Public comment replies and the DM that follows.",
       "TEMPLATE_TYPE": "Template Type",
       "MESSAGE_TEMPLATE": "Message Template",
       "MESSAGE_TEMPLATE_DESC": "Use this template to reply to incoming messages or DMs.",
@@ -297,7 +304,15 @@
       "COMMENT_TEMPLATE_DESC": "Use this template to reply to comments on your posts.",
       "NAME_LABEL": "Template Name",
       "NAME_PLACEHOLDER": "e.g., Welcome Message",
-      "FAVORITE_LABEL": "Mark as favorite"
+      "NAME_HELPER": "Give your template a clear and recognizable name.",
+      "FAVORITE_LABEL": "Mark as favorite",
+      "PREVIEW_TITLE": "Template Preview",
+      "PREVIEW_SUBTITLE": "This is how your template will appear.",
+      "PREVIEW_PUBLIC": "Public reply",
+      "PREVIEW_DM": "Direct message",
+      "PREVIEW_EMPTY": "Your message will show here as you type.",
+      "SAVE_TIME_TITLE": "Save time with templates",
+      "SAVE_TIME_BODY": "Use templates in your automations to maintain consistency and save time."
     },
     "TEMPLATE_PREVIEW": {
       "TITLE": "Template Preview",

@@ -13,6 +13,7 @@ import {
   RelayDropdownMenuContent,
   RelayDropdownMenuItem,
 } from 'dashboard/components-next/relay';
+import LineChart from 'shared/components/charts/LineChart.vue';
 import { CHANNEL_NAME_BY_TYPE } from '../constants/channels';
 import CreateAutomationModal from '../components/CreateAutomationModal.vue';
 import AccountSwitcher from '../components/AccountSwitcher.vue';
@@ -40,11 +41,85 @@ const scopedLogs = computed(() =>
   logs.value.filter(l => matchesActiveInbox(l.inbox))
 );
 
+const SPARKLINE_DAYS = 7;
+const sparklineOptions = {
+  layout: { padding: 0 },
+  plugins: { legend: { display: false }, tooltip: { enabled: false } },
+  scales: {
+    x: { display: false, grid: { display: false }, border: { display: false } },
+    y: {
+      display: false,
+      beginAtZero: true,
+      grid: { display: false },
+      border: { display: false },
+    },
+  },
+};
+
+const logTime = log => new Date((log.sent_at || log.created_at) * 1000);
+const campaignTime = campaign => new Date((campaign.created_at || 0) * 1000);
+
+function daysInRange(count) {
+  const days = [];
+  for (let i = count - 1; i >= 0; i -= 1) {
+    days.push(startOfDay(subDays(new Date(), i)));
+  }
+  return days;
+}
+
+function sparklineCollection(data) {
+  return {
+    labels: data.map((_, index) => String(index)),
+    datasets: [
+      {
+        data,
+        fill: false,
+        tension: 0.4,
+        borderWidth: 2,
+        pointRadius: 0,
+        pointHoverRadius: 0,
+      },
+    ],
+  };
+}
+
+const sparklineSeries = computed(() => {
+  const days = daysInRange(SPARKLINE_DAYS);
+  return {
+    total: days.map(
+      day =>
+        scopedCampaigns.value.filter(c => startOfDay(campaignTime(c)) <= day)
+          .length
+    ),
+    active: days.map(
+      day =>
+        scopedCampaigns.value.filter(
+          c => c.is_active && startOfDay(campaignTime(c)) <= day
+        ).length
+    ),
+    responses: days.map(
+      day =>
+        scopedLogs.value.filter(
+          l => l.status !== 'pending' && isSameDay(logTime(l), day)
+        ).length
+    ),
+    contacts: days.map(day => {
+      const ids = new Set(
+        scopedLogs.value
+          .filter(l => l.contact && isSameDay(logTime(l), day))
+          .map(l => l.contact.id)
+      );
+      return ids.size;
+    }),
+  };
+});
+
 const metrics = computed(() => {
   const respondedLogs = scopedLogs.value.filter(l => l.status !== 'pending');
   const uniqueContacts = new Set(
     scopedLogs.value.filter(l => l.contact).map(l => l.contact.id)
   );
+  const series = sparklineSeries.value;
   return [
     {
       key: 'total',
@@ -52,6 +127,7 @@ const metrics = computed(() => {
       label: t('AUTORESPONDER.OVERVIEW.METRIC_TOTAL'),
       value: scopedCampaigns.value.length,
       helper: t('AUTORESPONDER.OVERVIEW.METRIC_TOTAL_HELPER'),
+      sparkline: sparklineCollection(series.total),
     },
     {
       key: 'active',
@@ -59,6 +135,7 @@ const metrics = computed(() => {
       label: t('AUTORESPONDER.OVERVIEW.METRIC_ACTIVE'),
       value: scopedCampaigns.value.filter(c => c.is_active).length,
       helper: t('AUTORESPONDER.OVERVIEW.METRIC_ACTIVE_HELPER'),
+      sparkline: sparklineCollection(series.active),
     },
     {
       key: 'responses',
@@ -66,6 +143,7 @@ const metrics = computed(() => {
       label: t('AUTORESPONDER.OVERVIEW.METRIC_RESPONSES'),
       value: respondedLogs.length,
       helper: t('AUTORESPONDER.OVERVIEW.METRIC_RESPONSES_HELPER'),
+      sparkline: sparklineCollection(series.responses),
     },
     {
       key: 'contacts',
@@ -73,6 +151,7 @@ const metrics = computed(() => {
       label: t('AUTORESPONDER.OVERVIEW.METRIC_CONTACTS'),
       value: uniqueContacts.size,
       helper: t('AUTORESPONDER.OVERVIEW.METRIC_CONTACTS_HELPER'),
+      sparkline: sparklineCollection(series.contacts),
     },
   ];
 });
@@ -103,27 +182,66 @@ const dateRangeDays = computed(
   () => dateRangeOptions.find(o => o.key === dateRangeKey.value).days
 );
 
-const logTime = log => new Date((log.sent_at || log.created_at) * 1000);
-
-const responseChartBars = computed(() => {
-  const days = [];
-  for (let i = dateRangeDays.value - 1; i >= 0; i -= 1) {
-    const day = startOfDay(subDays(new Date(), i));
-    const count = scopedLogs.value.filter(l =>
-      isSameDay(logTime(l), day)
-    ).length;
-    days.push({ label: format(day, 'MMM d'), value: count });
-  }
-  return days;
-});
+const responseChartBars = computed(() =>
+  daysInRange(dateRangeDays.value).map(day => ({
+    label: format(day, 'MMM d'),
+    value: scopedLogs.value.filter(l => isSameDay(logTime(l), day)).length,
+  }))
+);
 
 const totalResponsesInRange = computed(() =>
   responseChartBars.value.reduce((sum, bar) => sum + bar.value, 0)
 );
 
-const maxBarValue = computed(() =>
-  Math.max(...responseChartBars.value.map(bar => bar.value), 1)
-);
+const previousResponsesInRange = computed(() => {
+  const days = dateRangeDays.value;
+  const currentStart = startOfDay(subDays(new Date(), days - 1));
+  const previousStart = startOfDay(subDays(new Date(), days * 2 - 1));
+  return scopedLogs.value.filter(l => {
+    const day = startOfDay(logTime(l));
+    return day >= previousStart && day < currentStart;
+  }).length;
+});
+
+const responsesDeltaPct = computed(() => {
+  const previous = previousResponsesInRange.value;
+  if (!previous) return null;
+  return Math.round(
+    ((totalResponsesInRange.value - previous) / previous) * 100
+  );
+});
+
+const responseChartCollection = computed(() => ({
+  labels: responseChartBars.value.map(bar => bar.label),
+  datasets: [
+    {
+      label: t('AUTORESPONDER.OVERVIEW.RESPONSES_OVER_TIME'),
+      data: responseChartBars.value.map(bar => bar.value),
+      fill: true,
+      tension: 0.4,
+      borderWidth: 2.2,
+      pointRadius: 0,
+      pointHoverRadius: 5,
+      backgroundColor: ctx => {
+        const { chartArea } = ctx.chart;
+        const primary =
+          getComputedStyle(document.documentElement)
+            .getPropertyValue('--primary')
+            .trim() || '#4f46e5';
+        if (!chartArea) return `${primary}26`;
+        const gradient = ctx.chart.ctx.createLinearGradient(
+          0,
+          chartArea.top,
+          0,
+          chartArea.bottom
+        );
+        gradient.addColorStop(0, `${primary}40`);
+        gradient.addColorStop(1, `${primary}00`);
+        return gradient;
+      },
+    },
+  ],
+}));
 
 const channelDistribution = computed(() => {
   const total = scopedLogs.value.length;
@@ -199,12 +317,22 @@ function deleteCampaign(campaign) {
               metric.label
             }}</span>
           </div>
-          <div class="mt-4">
-            <div class="text-3xl font-semibold tracking-tight text-foreground">
-              {{ metric.value }}
+          <div class="mt-4 flex items-end justify-between gap-3">
+            <div>
+              <div
+                class="text-3xl font-semibold tracking-tight text-foreground"
+              >
+                {{ metric.value }}
+              </div>
+              <div class="text-xs text-muted-foreground mt-1">
+                {{ metric.helper }}
+              </div>
             </div>
-            <div class="text-xs text-muted-foreground mt-1">
-              {{ metric.helper }}
+            <div class="h-10 w-20 shrink-0">
+              <LineChart
+                :collection="metric.sparkline"
+                :chart-options="sparklineOptions"
+              />
             </div>
           </div>
         </div>
@@ -370,37 +498,37 @@ function deleteCampaign(campaign) {
           </div>
 
           <div class="mb-6">
-            <div class="flex items-baseline gap-3">
+            <div class="flex items-baseline gap-3 flex-wrap">
               <span
                 class="text-3xl font-semibold tracking-tight text-foreground"
                 >{{ totalResponsesInRange }}</span
               >
+              <span
+                v-if="responsesDeltaPct !== null"
+                class="inline-flex items-center text-[13px] font-medium text-primary bg-primary/10 px-2 py-0.5 rounded-md gap-0.5"
+              >
+                <span
+                  :class="
+                    responsesDeltaPct >= 0
+                      ? 'i-lucide-arrow-up'
+                      : 'i-lucide-arrow-down'
+                  "
+                  class="size-3"
+                />
+                {{
+                  t('AUTORESPONDER.OVERVIEW.DELTA_PCT', {
+                    pct: Math.abs(responsesDeltaPct),
+                  })
+                }}
+              </span>
               <span class="text-[13px] text-muted-foreground">
-                {{ dateRange }}
+                {{ t('AUTORESPONDER.OVERVIEW.VS_PREVIOUS') }}
               </span>
             </div>
           </div>
 
-          <div
-            class="flex-1 min-h-[240px] flex items-end justify-between gap-3 pt-2"
-          >
-            <div
-              v-for="bar in responseChartBars"
-              :key="bar.label"
-              class="flex-1 flex flex-col items-center gap-2 group cursor-pointer"
-            >
-              <div class="w-full h-[190px] relative flex items-end">
-                <div
-                  class="w-full bg-primary group-hover:bg-primary/90 rounded-t-md transition-all"
-                  :style="{ height: `${(bar.value / maxBarValue) * 100}%` }"
-                />
-              </div>
-              <span
-                class="text-xs font-medium text-muted-foreground group-hover:text-foreground transition-colors"
-              >
-                {{ bar.label }}
-              </span>
-            </div>
+          <div class="flex-1 min-h-[240px] h-60">
+            <LineChart :collection="responseChartCollection" />
           </div>
         </div>
       </div>

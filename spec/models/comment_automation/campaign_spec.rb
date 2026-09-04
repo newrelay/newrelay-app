@@ -19,4 +19,12 @@ RSpec.describe CommentAutomation::Campaign do
     campaign = described_class.create!(account: account, inbox: inbox, name: 'Launch Post', post_id: '17895695668004550')
     expect(campaign.is_active).to be true
   end
+
+  it 'normalizes an Instagram permalink to the short media id' do
+    campaign = described_class.create!(
+      account: account, inbox: inbox, name: 'Launch Post',
+      post_id: 'https://www.instagram.com/p/mock-summer-sale/?igsh=abc'
+    )
+    expect(campaign.post_id).to eq 'mock-summer-sale'
+  end
 end

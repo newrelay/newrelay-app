@@ -16,12 +16,6 @@ const activeAccountId = ref('');
 const loaded = ref(false);
 let loadPromise = null;
 
-export function platformIconClass(platform) {
-  if (platform === 'Instagram') return 'i-lucide-instagram';
-  if (platform === 'Facebook') return 'i-lucide-facebook';
-  return 'i-lucide-globe';
-}
-
 async function fetchAccounts() {
   const response = await CommentAutomationSocialAccountsAPI.get();
   accounts.value = response.data.payload || [];

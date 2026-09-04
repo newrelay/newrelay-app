@@ -3,6 +3,8 @@ import { ref, computed, onMounted, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useStore, useMapGetter } from 'dashboard/composables/store';
 import { useAccount } from 'dashboard/composables/useAccount';
+import { useAlert } from 'dashboard/composables';
+import { extractResponseMessage } from 'shared/helpers/CustomErrors';
 import { INBOX_TYPES } from 'dashboard/helper/inbox';
 import {
   RelayButton,
@@ -24,6 +26,13 @@ const emit = defineEmits(['update:open']);
 const { t } = useI18n();
 const store = useStore();
 const { accountScopedRoute } = useAccount();
+const isMock = computed(() => !!window.newrelayConfig?.commentAutomationMock);
+
+function normalizePostId(value) {
+  const raw = String(value || '').trim();
+  const match = raw.match(/instagram\.com\/(?:p|reel|tv)\/([^/?#]+)/i);
+  return match ? match[1] : raw;
+}
 
 onMounted(() => {
   store.dispatch('inboxes/get');
@@ -67,7 +76,9 @@ const templateId = ref(null);
 watch(
   () => props.open,
   isOpen => {
-    if (isOpen && props.template) {
+    if (!isOpen) return;
+    if (isMock.value && !postId.value) postId.value = 'mock-summer-sale';
+    if (props.template) {
       publicRepliesText.value = props.template.public_replies.join('\n');
       dmTextBody.value = props.template.dm_text_body || '';
       templateId.value = props.template.id;
@@ -133,7 +144,7 @@ const save = async () => {
       campaign: {
         name: automationName.value,
         inbox_id: inboxId.value,
-        post_id: postId.value,
+        post_id: normalizePostId(postId.value),
         is_active: isEnabled.value,
       },
       trigger: {
@@ -145,6 +156,8 @@ const save = async () => {
       },
     });
     closeModal();
+  } catch (error) {
+    useAlert(extractResponseMessage(error) || error.message);
   } finally {
     isSaving.value = false;
   }
@@ -305,13 +318,19 @@ const nextStep = () => {
                   v-model="postId"
                   :placeholder="
                     t(
-                      'AUTORESPONDER.CREATE_AUTOMATION_MODAL.POST_ID_PLACEHOLDER'
+                      isMock
+                        ? 'AUTORESPONDER.CREATE_AUTOMATION_MODAL.POST_ID_PLACEHOLDER_MOCK'
+                        : 'AUTORESPONDER.CREATE_AUTOMATION_MODAL.POST_ID_PLACEHOLDER'
                     )
                   "
                 />
                 <p class="text-xs text-muted-foreground mt-1">
                   {{
-                    t('AUTORESPONDER.CREATE_AUTOMATION_MODAL.POST_ID_HELPER')
+                    t(
+                      isMock
+                        ? 'AUTORESPONDER.CREATE_AUTOMATION_MODAL.POST_ID_HELPER_MOCK'
+                        : 'AUTORESPONDER.CREATE_AUTOMATION_MODAL.POST_ID_HELPER'
+                    )
                   }}
                 </p>
               </div>

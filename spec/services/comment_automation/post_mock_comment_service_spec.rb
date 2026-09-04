@@ -47,6 +47,20 @@ RSpec.describe CommentAutomation::PostMockCommentService do
         expect(result[:matched]).to be false
         expect(result[:public_reply]).to be_nil
       end
+
+      it 'matches a newer automation on the same mock-summer-sale post' do
+        inbox = Channel::Instagram.find_by!(instagram_id: "mock-ig-#{account.id}").inbox
+        newer = create(:comment_automation_campaign, account: account, inbox: inbox, post_id: 'mock-summer-sale',
+                                                     name: 'New sale rule')
+        create(:comment_automation_trigger, campaign: newer, account: account, keyword: 'DEMO', match_type: :contains,
+                                            public_replies: ['Demo sent!'], dm_text_body: 'Here is the demo.')
+
+        result = perform(text: 'Send me a DEMO')
+
+        expect(result[:matched]).to be true
+        expect(result[:public_reply]).to eq 'Demo sent!'
+        expect(result[:dm]).to eq 'Here is the demo.'
+      end
     end
   end
 end

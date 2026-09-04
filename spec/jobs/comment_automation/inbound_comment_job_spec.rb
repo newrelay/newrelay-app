@@ -39,6 +39,26 @@ RSpec.describe CommentAutomation::InboundCommentJob do
     expect { described_class.perform_now([comment_entry(media_id: 'some-other-post')]) }.not_to change(CommentAutomation::MessageLog, :count)
   end
 
+  it 'uses the newest matching campaign when two automations watch the same post' do
+    create(:comment_automation_trigger, campaign: campaign, account: account, keyword: 'price', match_type: :contains)
+    newer = create(:comment_automation_campaign, account: account, inbox: inbox, post_id: 'media-1',
+                                                 name: 'New mock-summer-sale rule')
+    new_trigger = create(:comment_automation_trigger, campaign: newer, account: account, keyword: 'price',
+                                                      match_type: :contains)
+
+    described_class.perform_now([comment_entry(text: 'how much is the price?')])
+
+    expect(CommentAutomation::MessageLog.last.trigger).to eq new_trigger
+  end
+
+  it 'matches a comment when the stored post_id is a permalink for the same media' do
+    campaign.update_column(:post_id, 'https://www.instagram.com/p/mock-summer-sale/') # rubocop:disable Rails/SkipsModelValidations
+
+    expect {
+      described_class.perform_now([comment_entry(media_id: 'mock-summer-sale', text: 'how much is the price?')])
+    }.to change(CommentAutomation::MessageLog, :count).by(1)
+  end
+
   it 'ignores a campaign on a different inbox that happens to share the post_id' do
     other_inbox = create(:channel_instagram, account: account, instagram_id: 'ig-account-2').inbox
     other_campaign = create(:comment_automation_campaign, account: account, inbox: other_inbox, post_id: 'media-2')

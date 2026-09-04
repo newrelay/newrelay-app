@@ -11,6 +11,7 @@ import {
   RelayLabel,
 } from 'dashboard/components-next/relay';
 import { RELAY_DIALOG_OVERLAY_CLASS } from 'dashboard/components-next/relay/modal/constants';
+import Avatar from 'next/avatar/Avatar.vue';
 import { getInboxIconByType, INBOX_TYPES } from 'dashboard/helper/inbox';
 import { AUTORESPONDER_CHANNELS } from '../../constants/channels';
 import SettingsCard from './SettingsCard.vue';
@@ -49,6 +50,7 @@ const connectedChannels = computed(() =>
         name,
         sub: t(`AUTORESPONDER.SETTINGS.CHANNELS.${descKey}`),
         account: inbox.name,
+        avatar: inbox.avatar_url,
         needsReconnect: !!inbox.reauthorization_required,
         icon: getInboxIconByType(type),
       }))
@@ -123,9 +125,15 @@ async function submitMockConnect() {
           >
             <div class="flex items-center gap-3 min-w-0">
               <div
-                class="size-10 rounded-lg border border-border bg-card shadow-xs flex items-center justify-center shrink-0"
+                class="size-10 rounded-lg border border-border bg-card shadow-xs flex items-center justify-center shrink-0 overflow-hidden"
               >
-                <span :class="ch.icon" class="size-5 text-foreground" />
+                <Avatar
+                  v-if="ch.avatar"
+                  :src="ch.avatar"
+                  :name="ch.account"
+                  :size="40"
+                />
+                <span v-else :class="ch.icon" class="size-5 text-foreground" />
               </div>
               <div class="min-w-0">
                 <div class="text-[13.5px] font-semibold text-foreground">

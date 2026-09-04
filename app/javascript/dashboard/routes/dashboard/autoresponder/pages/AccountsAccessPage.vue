@@ -11,6 +11,7 @@ import {
   RelayDropdownMenuContent,
   RelayDropdownMenuItem,
 } from 'dashboard/components-next/relay';
+import Avatar from 'next/avatar/Avatar.vue';
 import AccountSwitcher from '../components/AccountSwitcher.vue';
 import { useAutoresponderAccount } from '../composables/useAutoresponderAccount';
 
@@ -186,15 +187,12 @@ async function handleConnect(platform) {
         >
           <div class="flex items-start justify-between gap-3">
             <div class="flex items-center gap-3 min-w-0">
-              <div
-                class="relative size-10 rounded-full overflow-hidden bg-muted border border-border shrink-0"
-              >
-                <img
-                  :src="acc.avatar"
-                  :alt="acc.name"
-                  class="size-full object-cover"
-                />
-              </div>
+              <Avatar
+                :src="acc.avatar"
+                :name="acc.name || acc.handle"
+                :size="40"
+                rounded-full
+              />
               <div class="min-w-0">
                 <div class="text-[14px] font-semibold text-foreground truncate">
                   {{ acc.handle }}
@@ -304,15 +302,12 @@ async function handleConnect(platform) {
         >
           <div class="flex items-start justify-between gap-3">
             <div class="flex items-center gap-3 min-w-0">
-              <div
-                class="relative size-10 rounded-full overflow-hidden bg-muted border border-border shrink-0"
-              >
-                <img
-                  :src="acc.avatar"
-                  :alt="acc.name"
-                  class="size-full object-cover"
-                />
-              </div>
+              <Avatar
+                :src="acc.avatar"
+                :name="acc.name || acc.handle"
+                :size="40"
+                rounded-full
+              />
               <div class="min-w-0">
                 <div class="text-[14px] font-semibold text-foreground truncate">
                   {{ acc.handle }}
@@ -399,15 +394,12 @@ async function handleConnect(platform) {
           class="p-5 border-b border-border flex items-start justify-between gap-4"
         >
           <div class="flex items-center gap-3.5 min-w-0">
-            <div
-              class="relative size-12 rounded-full overflow-hidden bg-muted border border-border shrink-0"
-            >
-              <img
-                :src="selectedAccount.avatar"
-                :alt="selectedAccount.name"
-                class="size-full object-cover"
-              />
-            </div>
+            <Avatar
+              :src="selectedAccount.avatar"
+              :name="selectedAccount.name || selectedAccount.handle"
+              :size="48"
+              rounded-full
+            />
             <div class="min-w-0">
               <div class="text-[12px] text-muted-foreground font-medium">
                 {{
@@ -501,7 +493,12 @@ async function handleConnect(platform) {
                   @click="addMemberToAccount(cand)"
                 >
                   <div class="flex items-center gap-2">
-                    <img :src="cand.avatar" class="size-6 rounded-full" />
+                    <Avatar
+                      :src="cand.avatar"
+                      :name="cand.name"
+                      :size="24"
+                      rounded-full
+                    />
                     <div>
                       <div class="text-[12.5px] font-medium text-foreground">
                         {{ cand.name }}
@@ -523,9 +520,11 @@ async function handleConnect(platform) {
                 class="flex items-center justify-between p-2.5 rounded-lg bg-muted/30 border border-border/60"
               >
                 <div class="flex items-center gap-2.5 min-w-0">
-                  <img
+                  <Avatar
                     :src="m.avatar"
-                    class="size-7 rounded-full object-cover shrink-0"
+                    :name="m.name"
+                    :size="28"
+                    rounded-full
                   />
                   <div class="min-w-0">
                     <div

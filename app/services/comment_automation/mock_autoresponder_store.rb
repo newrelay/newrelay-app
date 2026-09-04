@@ -76,7 +76,10 @@ class CommentAutomation::MockAutoresponderStore
   end
 
   def social_accounts
-    social_inboxes.map { |inbox| serialize_inbox(inbox).merge(overlay("inbox-#{inbox.id}")) }
+    social_inboxes.map do |inbox|
+      enqueue_avatar_sync(inbox)
+      serialize_inbox(inbox).merge(overlay("inbox-#{inbox.id}"))
+    end
   end
 
   def team_members
@@ -150,6 +153,7 @@ class CommentAutomation::MockAutoresponderStore
   end
 
   def sync
+    social_inboxes.each { |inbox| Inboxes::SyncSocialAvatarService.new(inbox: inbox).perform }
     social_accounts
   end
 
@@ -179,6 +183,14 @@ class CommentAutomation::MockAutoresponderStore
 
   def overlay(key)
     state[:overlays][key] ||= {}
+  end
+
+  def enqueue_avatar_sync(inbox)
+    return if inbox.avatar.attached?
+    return if CommentAutomation.mock_channel?(inbox.channel)
+    return unless Rails.cache.write("inbox/#{inbox.id}/social_avatar_sync", true, expires_in: 6.hours, unless_exist: true)
+
+    Inboxes::SyncSocialAvatarJob.perform_later(inbox.id)
   end
 
   def social_inboxes

@@ -11,10 +11,8 @@ import {
   RelayDropdownMenuItem,
   RelayDropdownMenuSeparator,
 } from 'dashboard/components-next/relay';
-import {
-  platformIconClass,
-  useAutoresponderAccount,
-} from '../composables/useAutoresponderAccount';
+import Avatar from 'next/avatar/Avatar.vue';
+import { useAutoresponderAccount } from '../composables/useAutoresponderAccount';
 
 const { t } = useI18n();
 const router = useRouter();
@@ -38,9 +36,11 @@ function goToAccountsAccess() {
         variant="outline"
         class="h-9 gap-2 rounded-lg text-[13.5px] font-medium bg-card border border-border shadow-xs px-3 hover:border-transparent cursor-pointer"
       >
-        <span
-          :class="platformIconClass(activeAccount.platform)"
-          class="size-4 text-muted-foreground shrink-0"
+        <Avatar
+          :src="activeAccount.avatar"
+          :name="activeAccount.name || activeAccount.handle"
+          :size="20"
+          rounded-full
         />
         <span class="font-medium text-foreground">{{
           activeAccount.handle
@@ -62,9 +62,11 @@ function goToAccountsAccess() {
         @click="selectAccount(acc.id)"
         @select="selectAccount(acc.id)"
       >
-        <span
-          :class="platformIconClass(acc.platform)"
-          class="size-4 text-muted-foreground shrink-0"
+        <Avatar
+          :src="acc.avatar"
+          :name="acc.name || acc.handle"
+          :size="28"
+          rounded-full
         />
         <div class="flex-1 min-w-0">
           <div class="text-[13.5px] font-medium text-foreground truncate">

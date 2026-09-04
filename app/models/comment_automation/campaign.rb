@@ -29,4 +29,28 @@ class CommentAutomation::Campaign < ApplicationRecord
 
   validates :name, presence: true
   validates :post_id, presence: true
+
+  before_validation :normalize_post_id
+
+  def self.normalize_post_id(value)
+    raw = value.to_s.strip
+    match = raw.match(%r{instagram\.com/(?:p|reel|tv)/([^/?#]+)}i)
+    (match && match[1]) || raw
+  end
+
+  def self.active_for_post(inbox:, post_id:)
+    media_id = normalize_post_id(post_id)
+    return none if inbox.blank? || media_id.blank?
+
+    where(account_id: inbox.account_id, inbox_id: inbox.id, is_active: true)
+      .includes(:triggers)
+      .order(created_at: :desc)
+      .select { |campaign| normalize_post_id(campaign.post_id) == media_id }
+  end
+
+  private
+
+  def normalize_post_id
+    self.post_id = self.class.normalize_post_id(post_id)
+  end
 end

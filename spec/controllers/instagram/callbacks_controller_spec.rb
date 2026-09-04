@@ -53,6 +53,14 @@ RSpec.describe Instagram::CallbacksController do
         expect(response).to redirect_to(app_instagram_inbox_agents_url(account_id: account.id, inbox_id: Inbox.last.id))
       end
 
+      it 'enqueues an inbox avatar download when Instagram returns a profile picture' do
+        allow(controller).to receive(:fetch_instagram_user_details).and_return(
+          user_details.merge('profile_picture_url' => 'https://example.com/ig.jpg')
+        )
+
+        expect { get :show, params: valid_params }.to have_enqueued_job(Avatar::AvatarFromUrlJob)
+      end
+
       it 'updates existing channel with new token' do
         # Create an existing channel
         existing_channel = create(:channel_instagram, account: account, instagram_id: '12345', access_token: 'old_token')

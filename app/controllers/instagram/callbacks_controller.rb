@@ -103,8 +103,15 @@ class Instagram::CallbacksController < ApplicationController
     # reauthorize channel, this code path only triggers when instagram auth is successful
     # reauthorized will also update cache keys for the associated inbox
     channel_instagram.reauthorized!
+    set_avatar(channel_instagram.inbox, user_details['profile_picture_url'])
 
     [channel_instagram.inbox, channel_exists]
+  end
+
+  def set_avatar(inbox, avatar_url)
+    return if inbox.blank? || avatar_url.blank?
+
+    Avatar::AvatarFromUrlJob.perform_later(inbox, avatar_url)
   end
 
   def find_channel_by_instagram_id(instagram_id)

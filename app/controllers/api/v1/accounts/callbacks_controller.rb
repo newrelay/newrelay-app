@@ -13,7 +13,7 @@ class Api::V1::Accounts::CallbacksController < Api::V1::Accounts::BaseController
       )
       @facebook_inbox = Current.account.inboxes.create!(name: inbox_name, channel: facebook_channel)
       set_instagram_id(page_access_token, facebook_channel)
-      set_avatar(@facebook_inbox, page_id)
+      set_avatar(@facebook_inbox, page_id, page_access_token)
     end
   rescue StandardError => e
     ChatwootExceptionTracker.new(e).capture_exception
@@ -109,8 +109,10 @@ class Api::V1::Accounts::CallbacksController < Api::V1::Accounts::BaseController
     end
   end
 
-  def set_avatar(facebook_inbox, page_id)
-    avatar_url = "https://graph.facebook.com/#{page_id}/picture?type=large"
+  def set_avatar(facebook_inbox, page_id, access_token = nil)
+    params = { type: 'large' }
+    params[:access_token] = access_token if access_token.present?
+    avatar_url = "https://graph.facebook.com/#{page_id}/picture?#{params.to_query}"
     Avatar::AvatarFromUrlJob.perform_later(facebook_inbox, avatar_url)
   end
 end

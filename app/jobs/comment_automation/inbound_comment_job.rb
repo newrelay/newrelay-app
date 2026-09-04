@@ -21,18 +21,19 @@ class CommentAutomation::InboundCommentJob < ApplicationJob
   def process_comment(inbox, comment)
     return if comment[:id].blank? || comment.dig(:from, :id).blank?
 
-    campaign = CommentAutomation::Campaign.find_by(account_id: inbox.account_id, inbox_id: inbox.id,
-                                                   post_id: comment.dig(:media, :id), is_active: true)
-    return if campaign.blank?
+    campaigns = CommentAutomation::Campaign.active_for_post(inbox: inbox, post_id: comment.dig(:media, :id))
 
-    trigger = CommentAutomation::MatchEngine.new(campaign: campaign, comment: comment).match
-    return if trigger.blank?
+    campaigns.each do |campaign|
+      trigger = CommentAutomation::MatchEngine.new(campaign: campaign, comment: comment).match
+      next if trigger.blank?
 
-    log = create_log(trigger, inbox, comment)
-    return if log.blank?
+      log = create_log(trigger, inbox, comment)
+      next if log.blank?
 
-    Rails.logger.info("[comment_automation] event=matched campaign_id=#{campaign.id} trigger_id=#{trigger.id} comment_id=#{comment[:id]}")
-    enqueue_reply(log, inbox)
+      Rails.logger.info("[comment_automation] event=matched campaign_id=#{campaign.id} trigger_id=#{trigger.id} comment_id=#{comment[:id]}")
+      enqueue_reply(log, inbox)
+      return
+    end
   end
 
   def enqueue_reply(log, inbox)

@@ -20,7 +20,7 @@ class CommentAutomation::PostMockCommentService
   end
 
   def campaign
-    @campaign ||= account.comment_automation_campaigns.find_by(inbox: inbox, is_active: true)
+    @campaign ||= account.comment_automation_campaigns.where(inbox: inbox, is_active: true).order(created_at: :asc).first
   end
 
   def comment_id
@@ -44,7 +44,7 @@ class CommentAutomation::PostMockCommentService
           id: comment_id,
           text: text.to_s.strip,
           from: { id: commenter_id, username: display_name },
-          media: { id: campaign.post_id }
+          media: { id: CommentAutomation::Campaign.normalize_post_id(campaign.post_id) }
         }
       }]
     }

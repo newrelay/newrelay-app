@@ -23,6 +23,20 @@ RSpec.describe CommentAutomation::MockAutoresponderStore do
     end
   end
 
+  it 'enqueues avatar sync for Instagram inboxes without a photo' do
+    create(:channel_instagram, account: account)
+
+    expect { described_class.new(account).social_accounts }
+      .to have_enqueued_job(Inboxes::SyncSocialAvatarJob)
+  end
+
+  it 'does not enqueue avatar sync for mock Instagram credentials' do
+    create(:channel_instagram, account: account, access_token: 'mock-abc')
+
+    expect { described_class.new(account).social_accounts }
+      .not_to have_enqueued_job(Inboxes::SyncSocialAvatarJob)
+  end
+
   it 'returns default settings and persists updates on the account' do
     store = described_class.new(account)
 

@@ -115,7 +115,6 @@ class CommentAutomation::ConnectMockChannelService
   end
 
   def post_id
-    match = url.to_s.match(%r{instagram\.com/(?:p|reel|tv)/([^/?#]+)}i)
-    (match && match[1]) || url.to_s.strip
+    CommentAutomation::Campaign.normalize_post_id(url)
   end
 end

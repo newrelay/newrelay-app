@@ -153,13 +153,3 @@ onMounted(() => {
     </form>
   </div>
 </template>
-
-<style scoped lang="scss">
-.message-editor {
-  @apply px-3;
-
-  :deep(.ProseMirror-menubar) {
-    @apply rounded-tl-[4px];
-  }
-}
-</style>

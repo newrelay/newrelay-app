@@ -23,6 +23,7 @@ import {
   RelayTooltip,
 } from 'dashboard/components-next/relay';
 import Icon from 'dashboard/components-next/icon/Icon.vue';
+import Settings from './Settings.vue';
 
 const getters = useStoreGetters();
 const store = useStore();
@@ -33,6 +34,8 @@ const { isAdmin } = useAdmin();
 const showDeletePopup = ref(false);
 const selectedInbox = ref({});
 const searchQuery = ref('');
+const isEditingInbox = ref(false);
+const editingInboxId = ref(null);
 
 const inboxes = useMapGetter('inboxes/getInboxes');
 
@@ -90,6 +93,16 @@ const openDelete = inbox => {
 
 const openAddInbox = () => {
   router.push({ name: 'settings_inbox_new' });
+};
+
+const openInboxSettings = inbox => {
+  editingInboxId.value = inbox.id;
+  isEditingInbox.value = true;
+};
+
+const closeInboxSettings = () => {
+  isEditingInbox.value = false;
+  editingInboxId.value = null;
 };
 </script>
 
@@ -212,26 +225,20 @@ const openAddInbox = () => {
             class="mt-0.5 text-xs text-muted-foreground"
           />
           <template #actions>
-            <router-link
-              :to="{
-                name: 'settings_inbox_show',
-                params: { inboxId: inbox.id },
-              }"
+            <RelayTooltip
+              v-if="isAdmin"
+              :content="$t('INBOX_MGMT.SETTINGS')"
+              side="top"
             >
-              <RelayTooltip
-                v-if="isAdmin"
-                :content="$t('INBOX_MGMT.SETTINGS')"
-                side="top"
+              <RelayButton
+                variant="ghost"
+                size="icon"
+                class="size-8 border border-transparent text-muted-foreground shadow-xs hover:border-border hover:bg-background hover:text-foreground border border-border hover:border-transparent"
+                @click="openInboxSettings(inbox)"
               >
-                <RelayButton
-                  variant="ghost"
-                  size="icon"
-                  class="size-8 border border-transparent text-muted-foreground shadow-xs hover:border-border hover:bg-background hover:text-foreground border border-border hover:border-transparent"
-                >
-                  <Icon icon="i-lucide-sliders-horizontal" class="size-3.5" />
-                </RelayButton>
-              </RelayTooltip>
-            </router-link>
+                <Icon icon="i-lucide-sliders-horizontal" class="size-3.5" />
+              </RelayButton>
+            </RelayTooltip>
             <RelayTooltip
               v-if="isAdmin"
               :content="$t('INBOX_MGMT.DELETE.BUTTON_TEXT')"
@@ -261,6 +268,12 @@ const openAddInbox = () => {
       :confirm-placeholder="confirmPlaceHolderText"
       @confirm="confirmDeletion"
       @close="closeDelete"
+    />
+
+    <Settings
+      v-if="isEditingInbox && editingInboxId"
+      :inbox-id="editingInboxId"
+      @back="closeInboxSettings"
     />
   </SettingsLayout>
 </template>

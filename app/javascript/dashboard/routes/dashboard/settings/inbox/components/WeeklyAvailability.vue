@@ -152,7 +152,12 @@ export default {
               $t('INBOX_MGMT.BUSINESS_HOURS.UNAVAILABLE_MESSAGE_LABEL')
             "
           />
-          <textarea v-else v-model="unavailableMessage" type="text" />
+          <textarea
+            v-else
+            v-model="unavailableMessage"
+            type="text"
+            class="mt-1.5 min-h-16"
+          />
         </div>
       </template>
     </SettingsToggleSection>
@@ -225,13 +230,3 @@ export default {
     </form>
   </div>
 </template>
-
-<style lang="scss" scoped>
-:deep(.message-editor) {
-  @apply border-0;
-}
-
-textarea {
-  @apply min-h-[4rem] mt-1.5;
-}
-</style>

@@ -23,47 +23,24 @@ export default {
 
 <template>
   <div>
-    <label class="radio-group-label text-[13.5px] font-[500] text-foreground">{{
+    <label class="mb-1 block text-[13.5px] font-[500] text-foreground">{{
       label
     }}</label>
-    <div class="radio-group">
-      <div v-for="item in items" :key="item.id" class="radio-group-item">
-        <label
-          class="radio-group-item-label text-[13.5px] font-[500] text-foreground"
-        >
-          <input
-            class="radio-input text-[14px] border-border/80 bg-background focus-visible:ring-1 focus-visible:ring-primary/30 shadow-sm rounded-md"
-            :name="`${name} -radio-input`"
-            type="radio"
-            :checked="item.checked"
-            @change="action({ ...item, checked: true })"
-          />
-          <span>{{ item.title }}</span>
-        </label>
-      </div>
+    <div class="mb-2 flex flex-wrap gap-x-3 gap-y-1">
+      <label
+        v-for="item in items"
+        :key="item.id"
+        class="flex cursor-pointer items-center text-[13.5px] font-[500] text-foreground"
+      >
+        <input
+          class="mr-2.5 text-[14px] border-border/80 bg-background focus-visible:ring-1 focus-visible:ring-primary/30 shadow-sm rounded-md"
+          :name="`${name} -radio-input`"
+          type="radio"
+          :checked="item.checked"
+          @change="action({ ...item, checked: true })"
+        />
+        <span>{{ item.title }}</span>
+      </label>
     </div>
   </div>
 </template>
-
-<style lang="scss" scoped>
-.radio-group-label {
-  margin-bottom: 0.25rem;
-}
-.radio-group {
-  display: inline-block;
-  margin-bottom: 0.5rem;
-}
-.radio-group-item {
-  float: left;
-  margin-right: 0.625rem;
-  .radio-group-item-label {
-    display: flex;
-    align-items: center;
-    cursor: pointer;
-
-    .radio-input {
-      margin: 0 0.625rem 0 0;
-    }
-  }
-}
-</style>

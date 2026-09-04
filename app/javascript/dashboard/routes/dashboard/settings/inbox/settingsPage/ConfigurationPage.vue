@@ -405,9 +405,7 @@ export default {
             $t('INBOX_MGMT.SETTINGS_POPUP.WHATSAPP_SECTION_UPDATE_SUBHEADER')
           "
         >
-          <div
-            class="flex flex-1 justify-between items-center whatsapp-settings--content"
-          >
+          <div class="flex flex-1 items-center justify-between">
             <RelayInput
               v-model="whatsAppInboxAPIKey"
               type="text"
@@ -448,11 +446,3 @@ export default {
     />
   </div>
 </template>
-
-<style lang="scss" scoped>
-.whatsapp-settings--content {
-  :deep(input) {
-    margin-bottom: 0;
-  }
-}
-</style>

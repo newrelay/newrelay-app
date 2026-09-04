@@ -101,12 +101,3 @@ export default {
 <template>
   <InboxReconnectionRequired class="mx-6" @reauthorize="startLogin" />
 </template>
-
-<style lang="scss" scoped>
-.fb--login {
-  img {
-    max-width: 240px;
-    padding: 1rem 0;
-  }
-}
-</style>

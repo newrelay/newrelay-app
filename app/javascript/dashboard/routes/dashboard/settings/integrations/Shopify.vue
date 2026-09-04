@@ -11,9 +11,9 @@ import integrationAPI from 'dashboard/api/integrations';
 
 import Input from 'dashboard/components-next/input/Input.vue';
 import Dialog from 'dashboard/components-next/dialog/Dialog.vue';
-import Button from 'dashboard/components-next/button/Button.vue';
 import SettingsLayout from '../SettingsLayout.vue';
 import BaseSettingsHeader from '../components/BaseSettingsHeader.vue';
+import { RelayButton } from 'dashboard/components-next/relay';
 
 defineProps({
   error: {
@@ -115,18 +115,19 @@ onMounted(() => {
           }"
         >
           <template #action>
-            <Button
-              teal
-              :label="t('INTEGRATION_SETTINGS.CONNECT.BUTTON_TEXT')"
+            <RelayButton
+              class="h-9 px-4 text-[13px]"
               @click="openStoreUrlDialog"
-            />
+            >
+              {{ t('INTEGRATION_SETTINGS.CONNECT.BUTTON_TEXT') }}
+            </RelayButton>
           </template>
         </Integration>
         <div
           v-if="error"
-          class="flex items-center justify-center flex-1 outline outline-card outline-1 bg-accent rounded-md shadow p-6"
+          class="flex flex-1 items-center justify-center rounded-xl border border-border/60 bg-card p-6 shadow-xs"
         >
-          <p class="text-destructive">
+          <p class="text-sm text-destructive">
             {{ t('INTEGRATION_SETTINGS.SHOPIFY.ERROR') }}
           </p>
         </div>

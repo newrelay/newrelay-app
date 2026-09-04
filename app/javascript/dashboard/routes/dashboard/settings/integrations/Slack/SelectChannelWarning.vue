@@ -5,7 +5,8 @@ import { useI18n } from 'vue-i18n';
 import { useAlert } from 'dashboard/composables';
 import { useBranding } from 'shared/composables/useBranding';
 import { useMessageFormatter } from 'shared/composables/useMessageFormatter';
-import Button from 'dashboard/components-next/button/Button.vue';
+import { RelayButton } from 'dashboard/components-next/relay';
+import Icon from 'dashboard/components-next/icon/Icon.vue';
 
 const props = defineProps({
   hasConnectedAChannel: {
@@ -60,36 +61,44 @@ const updateIntegration = async () => {
 </script>
 
 <template>
-  <div class="px-6 py-4 mb-4 outline outline-card outline-1 bg-card rounded-xl">
+  <div
+    class="mb-4 rounded-xl border border-warning/30 bg-warning/5 px-6 py-4 shadow-xs"
+  >
     <div class="flex">
-      <div class="flex-shrink-0">
-        <div class="i-lucide-bell text-xl text-warning mt-1" />
+      <div class="shrink-0">
+        <Icon icon="i-lucide-bell" class="mt-1 size-5 text-warning" />
       </div>
       <div class="ml-3">
-        <p class="mb-1 text-heading-2 text-foreground">
+        <p class="mb-1 text-sm font-medium text-foreground">
           {{
             $t('INTEGRATION_SETTINGS.SLACK.SELECT_CHANNEL.ATTENTION_REQUIRED')
           }}
         </p>
-        <div class="mt-2 text-body-main text-muted-foreground mb-3">
+        <div class="mb-3 mt-2 text-[13.5px] text-muted-foreground">
           <p v-dompurify-html="formattedErrorMessage" />
         </div>
       </div>
     </div>
-    <div v-if="!hasConnectedAChannel" class="mb-2 mt-1 ml-8">
-      <Button
+    <div v-if="!hasConnectedAChannel" class="ml-8 mt-1">
+      <RelayButton
         v-if="!availableChannels.length"
-        amber
-        sm
-        :is-loading="uiFlags.isFetchingSlackChannels"
+        variant="outline"
+        size="sm"
+        class="h-8 border-warning/40 text-[13px]"
+        :disabled="uiFlags.isFetchingSlackChannels"
         @click="fetchChannels"
       >
+        <Icon
+          v-if="uiFlags.isFetchingSlackChannels"
+          icon="i-lucide-loader-2"
+          class="size-3.5 animate-spin"
+        />
         {{ $t('INTEGRATION_SETTINGS.SLACK.SELECT_CHANNEL.BUTTON_TEXT') }}
-      </Button>
-      <div v-else class="inline-flex">
+      </RelayButton>
+      <div v-else class="inline-flex items-center gap-3">
         <select
           v-model="selectedChannelId"
-          class="h-8 py-1 mr-4 text-xs leading-4 border border-warning"
+          class="h-8 rounded-md border border-warning/40 bg-background px-2 text-xs leading-4 text-foreground shadow-xs"
         >
           <option value="">
             {{ $t('INTEGRATION_SETTINGS.SLACK.SELECT_CHANNEL.OPTION_LABEL') }}
@@ -102,14 +111,19 @@ const updateIntegration = async () => {
             #{{ channel.name }}
           </option>
         </select>
-        <Button
-          teal
-          sm
-          :is-loading="uiFlags.isUpdatingSlack"
+        <RelayButton
+          size="sm"
+          class="h-8 text-[13px]"
+          :disabled="uiFlags.isUpdatingSlack"
           @click="updateIntegration"
         >
+          <Icon
+            v-if="uiFlags.isUpdatingSlack"
+            icon="i-lucide-loader-2"
+            class="size-3.5 animate-spin"
+          />
           {{ $t('INTEGRATION_SETTINGS.SLACK.SELECT_CHANNEL.UPDATE') }}
-        </Button>
+        </RelayButton>
       </div>
     </div>
   </div>

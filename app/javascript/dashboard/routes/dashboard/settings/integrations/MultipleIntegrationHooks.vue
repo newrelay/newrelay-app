@@ -9,8 +9,8 @@ import {
 } from 'dashboard/components-next/table';
 import { useI18n } from 'vue-i18n';
 import BaseSettingsHeader from 'dashboard/routes/dashboard/settings/components/BaseSettingsHeader.vue';
-import NextButton from 'dashboard/components-next/button/Button.vue';
-import { RelayTooltip } from 'dashboard/components-next/relay';
+import Icon from 'dashboard/components-next/icon/Icon.vue';
+import { RelayButton, RelayTooltip } from 'dashboard/components-next/relay';
 
 const props = defineProps({
   integrationId: {
@@ -92,12 +92,14 @@ const inboxName = hook => (hook.inbox ? hook.inbox.name : '');
         </span>
       </template>
       <template #actions>
-        <NextButton
+        <RelayButton
           v-if="showAddButton"
-          :label="$t('INTEGRATION_APPS.ADD_BUTTON')"
           size="sm"
+          class="h-9 px-4 text-[13px]"
           @click="$emit('add')"
-        />
+        >
+          {{ $t('INTEGRATION_APPS.ADD_BUTTON') }}
+        </RelayButton>
       </template>
     </BaseSettingsHeader>
     <div class="w-full">
@@ -126,18 +128,19 @@ const inboxName = hook => (hook.inbox ? hook.inbox.name : '');
               </BaseTableCell>
 
               <BaseTableCell align="end" class="w-12">
-                <div class="flex justify-end gap-3 flex-shrink-0">
+                <div class="flex shrink-0 justify-end gap-3">
                   <RelayTooltip
                     :content="$t('INTEGRATION_APPS.LIST.DELETE.BUTTON_TEXT')"
                     side="top"
                   >
-                    <NextButton
-                      icon="i-woot-bin"
-                      slate
-                      sm
-                      class="hover:enabled:text-destructive hover:enabled:bg-destructive/10"
+                    <RelayButton
+                      variant="ghost"
+                      size="icon"
+                      class="size-8 text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
                       @click="$emit('delete', hook)"
-                    />
+                    >
+                      <Icon icon="i-lucide-trash-2" class="size-3.5" />
+                    </RelayButton>
                   </RelayTooltip>
                 </div>
               </BaseTableCell>

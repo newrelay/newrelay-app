@@ -7,12 +7,12 @@ import {
 } from 'dashboard/composables/store';
 import { useI18n } from 'vue-i18n';
 
-import ButtonNext from 'next/button/Button.vue';
 import notionClient from 'dashboard/api/notion_auth.js';
 
 import Integration from './Integration.vue';
 import SettingsLayout from '../SettingsLayout.vue';
 import BaseSettingsHeader from '../components/BaseSettingsHeader.vue';
+import { RelayButton } from 'dashboard/components-next/relay';
 
 const { t } = useI18n();
 const store = useStore();
@@ -73,12 +73,9 @@ onMounted(() => {
         }"
       >
         <template #action>
-          <ButtonNext
-            faded
-            blue
-            :label="t('INTEGRATION_SETTINGS.CONNECT.BUTTON_TEXT')"
-            @click="authorize"
-          />
+          <RelayButton class="h-9 px-4 text-[13px]" @click="authorize">
+            {{ t('INTEGRATION_SETTINGS.CONNECT.BUTTON_TEXT') }}
+          </RelayButton>
         </template>
       </Integration>
     </template>

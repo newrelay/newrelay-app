@@ -1,7 +1,7 @@
 <script setup>
 import { useIntegrationHook } from 'dashboard/composables/useIntegrationHook';
 import { useBranding } from 'shared/composables/useBranding';
-import Button from 'dashboard/components-next/button/Button.vue';
+import { RelayButton } from 'dashboard/components-next/relay';
 
 const props = defineProps({
   integrationId: {
@@ -21,45 +21,39 @@ const { replaceInstallationName } = useBranding();
 
 <template>
   <div
-    class="outline outline-card outline-1 bg-card rounded-xl flex-grow overflow-auto p-4"
+    class="flex-grow overflow-auto rounded-xl border border-border/60 bg-card p-4 shadow-xs"
   >
     <div class="flex items-center justify-center">
       <div class="flex h-16 w-16 items-center justify-center">
         <img
           :src="`/dashboard/images/integrations/${integrationId}.png`"
-          class="max-w-full rounded-md border border-border shadow-sm block dark:hidden bg-accent dark:bg-accent"
+          class="block max-w-full rounded-md border border-border bg-accent shadow-sm dark:hidden dark:bg-accent"
         />
         <img
           :src="`/dashboard/images/integrations/${integrationId}-dark.png`"
-          class="max-w-full rounded-md border border-border shadow-sm hidden dark:block bg-accent dark:bg-accent"
+          class="hidden max-w-full rounded-md border border-border bg-accent shadow-sm dark:block dark:bg-accent"
         />
       </div>
-      <div class="flex flex-col justify-center m-0 mx-4 flex-1">
-        <h3 class="capitalize mb-1 text-heading-1 text-foreground">
+      <div class="m-0 mx-4 flex flex-1 flex-col justify-center">
+        <h3 class="mb-1 capitalize text-base font-semibold text-foreground">
           {{ integration.name }}
         </h3>
-        <p class="text-muted-foreground text-body-main">
+        <p class="text-[13px] leading-relaxed text-muted-foreground">
           {{ replaceInstallationName(integration.description) }}
         </p>
       </div>
-      <div class="flex justify-center items-center mb-0 w-[15%]">
-        <div v-if="hasConnectedHooks">
-          <div @click="$emit('delete', integration.hooks[0])">
-            <Button
-              ruby
-              faded
-              :label="$t('INTEGRATION_APPS.DISCONNECT.BUTTON_TEXT')"
-            />
-          </div>
-        </div>
-        <div v-else>
-          <Button
-            blue
-            faded
-            :label="$t('INTEGRATION_APPS.CONNECT.BUTTON_TEXT')"
-            @click="$emit('add')"
-          />
-        </div>
+      <div class="mb-0 flex w-[15%] items-center justify-center">
+        <RelayButton
+          v-if="hasConnectedHooks"
+          variant="ghost"
+          class="h-9 px-4 text-[13px] font-semibold text-destructive hover:bg-destructive/10 hover:text-destructive"
+          @click="$emit('delete', integration.hooks[0])"
+        >
+          {{ $t('INTEGRATION_APPS.DISCONNECT.BUTTON_TEXT') }}
+        </RelayButton>
+        <RelayButton v-else class="h-9 px-4 text-[13px]" @click="$emit('add')">
+          {{ $t('INTEGRATION_APPS.CONNECT.BUTTON_TEXT') }}
+        </RelayButton>
       </div>
     </div>
   </div>

@@ -103,7 +103,7 @@ const onRemove = () => {
         <RelayButton
           variant="ghost"
           size="sm"
-          class="h-8 px-4 text-xs font-semibold text-destructive hover:bg-rose-50 hover:text-destructive dark:hover:bg-destructive/10 border border-border hover:border-transparent"
+          class="h-8 px-4 text-xs font-semibold text-destructive hover:bg-destructive/10 hover:text-destructive border border-border hover:border-transparent"
           :disabled="!enabled"
           @click="onRemove"
         >

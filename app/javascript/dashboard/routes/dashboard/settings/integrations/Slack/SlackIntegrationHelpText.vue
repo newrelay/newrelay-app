@@ -25,15 +25,15 @@ const formattedHelpText = computed(() => {
 
 <template>
   <div
-    class="flex-1 w-full px-6 py-5 outline outline-card outline-1 bg-card rounded-xl"
+    class="w-full flex-1 rounded-xl border border-border/60 bg-card px-6 py-5 shadow-xs"
   >
     <div class="prose-lg max-w-5xl">
-      <h5 class="text-foreground text-heading-1 tracking-tight">
+      <h5 class="text-base font-semibold tracking-tight text-foreground">
         {{ t('INTEGRATION_SETTINGS.SLACK.HELP_TEXT.TITLE') }}
       </h5>
       <div
         v-dompurify-html="formattedHelpText"
-        class="text-muted-foreground text-body-main"
+        class="text-[13.5px] text-muted-foreground"
       />
     </div>
   </div>

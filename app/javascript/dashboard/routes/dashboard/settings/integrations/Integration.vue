@@ -8,7 +8,7 @@ import { useAlert } from 'dashboard/composables';
 import { useBranding } from 'shared/composables/useBranding';
 
 import Dialog from 'dashboard/components-next/dialog/Dialog.vue';
-import Button from 'dashboard/components-next/button/Button.vue';
+import { RelayButton } from 'dashboard/components-next/relay';
 
 const props = defineProps({
   integrationId: {
@@ -62,31 +62,31 @@ const confirmDeletion = () => {
 
 <template>
   <div
-    class="flex flex-col items-start justify-between lg:flex-row lg:items-center p-6 outline outline-card outline-1 bg-card rounded-xl gap-6"
+    class="flex flex-col items-start justify-between gap-6 rounded-xl border border-border/60 bg-card p-6 lg:flex-row lg:items-center"
   >
     <div
-      class="flex items-start lg:items-center justify-start flex-1 m-0 gap-6 flex-col lg:flex-row"
+      class="m-0 flex flex-1 flex-col items-start justify-start gap-6 lg:flex-row lg:items-center"
     >
-      <div class="flex h-16 w-16 items-center justify-center flex-shrink-0">
+      <div class="flex h-16 w-16 shrink-0 items-center justify-center">
         <img
           :src="`/dashboard/images/integrations/${integrationId}.png`"
-          class="max-w-full rounded-md border border-border shadow-sm block dark:hidden bg-accent dark:bg-accent"
+          class="block max-w-full rounded-md border border-border bg-accent shadow-sm dark:hidden dark:bg-accent"
         />
         <img
           :src="`/dashboard/images/integrations/${integrationId}-dark.png`"
-          class="max-w-full rounded-md border border-border shadow-sm hidden dark:block bg-accent dark:bg-accent"
+          class="hidden max-w-full rounded-md border border-border bg-accent shadow-sm dark:block dark:bg-accent"
         />
       </div>
       <div>
-        <h3 class="capitalize mb-1 text-heading-1 text-foreground">
+        <h3 class="mb-1 capitalize text-base font-semibold text-foreground">
           {{ integrationName }}
         </h3>
-        <p class="text-muted-foreground text-body-main">
+        <p class="text-[13px] leading-relaxed text-muted-foreground">
           {{ replaceInstallationName(integrationDescription) }}
         </p>
       </div>
     </div>
-    <div class="flex justify-center items-center mb-0">
+    <div class="mb-0 flex items-center justify-center">
       <router-link
         :to="
           frontendURL(
@@ -95,34 +95,28 @@ const confirmDeletion = () => {
         "
       >
         <div v-if="integrationEnabled">
-          <div v-if="integrationAction === 'disconnect'">
-            <Button
-              :label="
-                actionButtonText ||
-                $t('INTEGRATION_SETTINGS.WEBHOOK.DELETE.BUTTON_TEXT')
-              "
-              faded
-              ruby
-              @click="openDeletePopup"
-            />
-          </div>
-          <div v-else>
-            <Button
-              faded
-              blue
-              :label="t('INTEGRATION_SETTINGS.WEBHOOK.CONFIGURE')"
-            />
-          </div>
+          <RelayButton
+            v-if="integrationAction === 'disconnect'"
+            variant="ghost"
+            class="h-9 px-4 text-[13px] font-semibold text-destructive hover:bg-destructive/10 hover:text-destructive"
+            @click="openDeletePopup"
+          >
+            {{
+              actionButtonText ||
+              $t('INTEGRATION_SETTINGS.WEBHOOK.DELETE.BUTTON_TEXT')
+            }}
+          </RelayButton>
+          <RelayButton v-else variant="outline" class="h-9 px-4 text-[13px]">
+            {{ t('INTEGRATION_SETTINGS.WEBHOOK.CONFIGURE') }}
+          </RelayButton>
         </div>
       </router-link>
       <div v-if="!integrationEnabled">
         <slot name="action">
           <a :href="integrationAction">
-            <Button
-              faded
-              blue
-              :label="t('INTEGRATION_SETTINGS.CONNECT.BUTTON_TEXT')"
-            />
+            <RelayButton class="h-9 px-4 text-[13px]">
+              {{ t('INTEGRATION_SETTINGS.CONNECT.BUTTON_TEXT') }}
+            </RelayButton>
           </a>
         </slot>
       </div>

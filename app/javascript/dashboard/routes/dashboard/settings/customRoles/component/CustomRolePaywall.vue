@@ -81,7 +81,7 @@ const tableHeaders = computed(() => {
             <th
               v-for="thHeader in tableHeaders"
               :key="thHeader"
-              class="py-4 ltr:pr-4 rtl:pl-4 text-start text-heading-3 text-foreground"
+              class="py-4 ltr:pr-4 rtl:pl-4 text-start text-[12px] font-medium text-foreground"
             >
               <span class="mb-0">
                 {{ thHeader }}
@@ -95,7 +95,7 @@ const tableHeaders = computed(() => {
       </table>
     </div>
     <div
-      class="absolute inset-0 flex flex-col items-center justify-center w-full h-full bg-gradient-to-t from-white dark:from-slate-900 to-transparent"
+      class="absolute inset-0 flex flex-col items-center justify-center w-full h-full bg-gradient-to-t from-background to-transparent"
     >
       <BasePaywallModal
         feature-prefix="CUSTOM_ROLE"

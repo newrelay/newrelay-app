@@ -4,9 +4,9 @@ import { useI18n } from 'vue-i18n';
 import QRCode from 'qrcode';
 import { copyTextToClipboard } from 'shared/helpers/clipboard';
 import { useAlert } from 'dashboard/composables';
-import Button from 'dashboard/components-next/button/Button.vue';
 import Input from 'dashboard/components-next/input/Input.vue';
 import Icon from 'dashboard/components-next/icon/Icon.vue';
+import { RelayButton } from 'dashboard/components-next/relay';
 
 const props = defineProps({
   showSetup: {
@@ -197,13 +197,9 @@ defineExpose({
             </label>
             <div class="flex items-center gap-2">
               <Input :model-value="secretKey" readonly class="flex-1" />
-              <Button
-                variant="outline"
-                color="slate"
-                size="sm"
-                :label="$t('MFA_SETTINGS.SETUP.COPY')"
-                @click="copySecret"
-              />
+              <RelayButton variant="outline" size="sm" @click="copySecret">
+                {{ $t('MFA_SETTINGS.SETUP.COPY') }}
+              </RelayButton>
             </div>
           </div>
         </details>
@@ -223,19 +219,16 @@ defineExpose({
           />
 
           <div class="flex gap-3 mt-1 w-full justify-between">
-            <Button
-              faded
-              color="slate"
-              class="flex-1"
-              :label="$t('MFA_SETTINGS.SETUP.CANCEL')"
-              @click="cancelSetup"
-            />
-            <Button
-              class="flex-1"
+            <RelayButton variant="outline" class="flex-1" @click="cancelSetup">
+              {{ $t('MFA_SETTINGS.SETUP.CANCEL') }}
+            </RelayButton>
+            <RelayButton
+              class="flex-1 shadow-sm"
               :disabled="verificationCode.length !== 6"
-              :label="$t('MFA_SETTINGS.SETUP.VERIFY_BUTTON')"
               @click="verifyCode"
-            />
+            >
+              {{ $t('MFA_SETTINGS.SETUP.VERIFY_BUTTON') }}
+            </RelayButton>
           </div>
         </div>
       </div>
@@ -281,22 +274,14 @@ defineExpose({
         </div>
 
         <div class="flex items-center justify-center gap-3">
-          <Button
-            outline
-            slate
-            sm
-            icon="i-lucide-download"
-            :label="$t('MFA_SETTINGS.BACKUP.DOWNLOAD')"
-            @click="downloadBackupCodes"
-          />
-          <Button
-            outline
-            slate
-            sm
-            icon="i-lucide-clipboard"
-            :label="$t('MFA_SETTINGS.BACKUP.COPY_ALL')"
-            @click="copyBackupCodes"
-          />
+          <RelayButton variant="outline" size="sm" @click="downloadBackupCodes">
+            <Icon icon="i-lucide-download" class="size-4" />
+            {{ $t('MFA_SETTINGS.BACKUP.DOWNLOAD') }}
+          </RelayButton>
+          <RelayButton variant="outline" size="sm" @click="copyBackupCodes">
+            <Icon icon="i-lucide-clipboard" class="size-4" />
+            {{ $t('MFA_SETTINGS.BACKUP.COPY_ALL') }}
+          </RelayButton>
         </div>
       </div>
 
@@ -315,11 +300,13 @@ defineExpose({
           </span>
         </label>
 
-        <Button
+        <RelayButton
+          class="shadow-sm"
           :disabled="!backupCodesConfirmed"
-          :label="$t('MFA_SETTINGS.BACKUP.COMPLETE_SETUP')"
           @click="completeMfaSetup"
-        />
+        >
+          {{ $t('MFA_SETTINGS.BACKUP.COMPLETE_SETUP') }}
+        </RelayButton>
       </div>
     </div>
   </div>

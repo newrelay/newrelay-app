@@ -197,7 +197,8 @@
       "RECONNECT_SUCCESS": "Back online"
     },
     "BUTTON": {
-      "REFRESH": "Retry"
+      "REFRESH": "Retry",
+      "DISMISS": "Dismiss"
     }
   },
   "COMMAND_BAR": {

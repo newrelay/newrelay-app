@@ -42,35 +42,49 @@ const waitForOnline = () =>
       return;
     }
 
-    const timeout = setTimeout(() => {
-      window.removeEventListener('online', onOnline);
-      resolve(false);
-    }, ONLINE_WAIT_TIMEOUT);
-
+    let timeout;
     const onOnline = () => {
       clearTimeout(timeout);
       window.removeEventListener('online', onOnline);
       resolve(true);
     };
 
+    timeout = setTimeout(() => {
+      window.removeEventListener('online', onOnline);
+      resolve(false);
+    }, ONLINE_WAIT_TIMEOUT);
+
     window.addEventListener('online', onOnline);
   });
 
 const waitForReconnectCompleted = () =>
   new Promise(resolve => {
-    const timeout = setTimeout(() => {
-      emitter.off(BUS_EVENTS.WEBSOCKET_RECONNECT_COMPLETED, onCompleted);
-      resolve(false);
-    }, RECONNECT_WAIT_TIMEOUT);
-
+    let timeout;
     const onCompleted = () => {
       clearTimeout(timeout);
       emitter.off(BUS_EVENTS.WEBSOCKET_RECONNECT_COMPLETED, onCompleted);
       resolve(true);
     };
 
+    timeout = setTimeout(() => {
+      emitter.off(BUS_EVENTS.WEBSOCKET_RECONNECT_COMPLETED, onCompleted);
+      resolve(false);
+    }, RECONNECT_WAIT_TIMEOUT);
+
     emitter.on(BUS_EVENTS.WEBSOCKET_RECONNECT_COMPLETED, onCompleted);
   });
+
+const handleReconnectionCompleted = () => {
+  isDisconnected.value = false;
+  isReconnecting.value = false;
+  isReconnected.value = true;
+  showNotification.value = true;
+
+  reconnectTimeout = setTimeout(() => {
+    showNotification.value = false;
+    isReconnected.value = false;
+  }, RECONNECTED_BANNER_TIMEOUT);
+};
 
 const retryConnection = async () => {
   isReconnecting.value = true;
@@ -114,14 +128,6 @@ const isInAnyOfTheRoutes = routeName => {
 const updateWebsocketStatus = () => {
   isDisconnected.value = true;
   showNotification.value = true;
-};
-
-const handleReconnectionCompleted = () => {
-  isDisconnected.value = false;
-  isReconnecting.value = false;
-  isReconnected.value = true;
-  showNotification.value = true;
-  reconnectTimeout = setTimeout(closeNotification, RECONNECTED_BANNER_TIMEOUT);
 };
 
 const handleReconnecting = () => {
@@ -178,8 +184,7 @@ onBeforeUnmount(() => {
           'bg-destructive/10 text-destructive border-destructive/30':
             !isReconnecting && !isReconnected,
           'bg-muted/80 text-foreground border-border/50': isReconnecting,
-          'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/30':
-            isReconnected,
+          'bg-success/10 text-success border-success/30': isReconnected,
         }"
       >
         <div class="flex items-center gap-2.5">
@@ -214,6 +219,7 @@ onBeforeUnmount(() => {
           <button
             type="button"
             class="flex size-7 shrink-0 items-center justify-center rounded-full transition-colors hover:bg-foreground/10"
+            :title="$t('NETWORK.BUTTON.DISMISS')"
             @click="closeNotification"
           >
             <span class="i-lucide-x size-4" />

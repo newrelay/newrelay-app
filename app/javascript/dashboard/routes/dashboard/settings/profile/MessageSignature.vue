@@ -4,7 +4,7 @@ import { useI18n } from 'vue-i18n';
 import { useAlert } from 'dashboard/composables';
 import { stripInlineBase64Images } from 'dashboard/helper/editorHelper';
 import Editor from 'dashboard/components-next/Editor/Editor.vue';
-import NextButton from 'dashboard/components-next/button/Button.vue';
+import { RelayButton } from 'dashboard/components-next/relay';
 
 const props = defineProps({
   messageSignature: {
@@ -50,10 +50,9 @@ const updateSignature = () => {
       :placeholder="$t('PROFILE_SETTINGS.FORM.MESSAGE_SIGNATURE.PLACEHOLDER')"
     />
     <div>
-      <NextButton
-        type="submit"
-        :label="$t('PROFILE_SETTINGS.FORM.MESSAGE_SIGNATURE_SECTION.BTN_TEXT')"
-      />
+      <RelayButton type="submit" class="shadow-sm">
+        {{ $t('PROFILE_SETTINGS.FORM.MESSAGE_SIGNATURE_SECTION.BTN_TEXT') }}
+      </RelayButton>
     </div>
   </form>
 </template>

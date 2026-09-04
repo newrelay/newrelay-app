@@ -1,9 +1,8 @@
 <script setup>
 import { ref, computed } from 'vue';
-import NextButton from 'dashboard/components-next/button/Button.vue';
 import ConfirmButton from 'dashboard/components-next/button/ConfirmButton.vue';
 import Icon from 'dashboard/components-next/icon/Icon.vue';
-import { RelayInput } from 'dashboard/components-next/relay';
+import { RelayButton, RelayInput } from 'dashboard/components-next/relay';
 
 const props = defineProps({
   value: { type: String, default: '' },
@@ -50,15 +49,15 @@ const onReset = () => {
       </button>
     </div>
     <div class="flex flex-row gap-2">
-      <NextButton
-        :label="$t('PROFILE_SETTINGS.FORM.ACCESS_TOKEN.COPY')"
-        slate
-        outline
+      <RelayButton
         type="button"
-        icon="i-lucide-copy"
+        variant="outline"
         class="rounded-xl"
         @click="onClick"
-      />
+      >
+        <Icon icon="i-lucide-copy" class="size-4" />
+        {{ $t('PROFILE_SETTINGS.FORM.ACCESS_TOKEN.COPY') }}
+      </RelayButton>
       <ConfirmButton
         v-if="showResetButton"
         :label="$t('PROFILE_SETTINGS.FORM.ACCESS_TOKEN.RESET')"

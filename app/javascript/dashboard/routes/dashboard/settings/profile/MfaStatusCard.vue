@@ -1,6 +1,6 @@
 <script setup>
-import Button from 'dashboard/components-next/button/Button.vue';
 import Icon from 'dashboard/components-next/icon/Icon.vue';
+import { RelayButton } from 'dashboard/components-next/relay';
 
 defineProps({
   mfaEnabled: {
@@ -35,11 +35,10 @@ const startSetup = () => {
       <p class="text-sm text-muted-foreground mb-6 max-w-md mx-auto">
         {{ $t('MFA_SETTINGS.ENHANCE_SECURITY_DESC') }}
       </p>
-      <Button
-        icon="i-lucide-settings"
-        :label="$t('MFA_SETTINGS.ENABLE_BUTTON')"
-        @click="startSetup"
-      />
+      <RelayButton class="shadow-sm" @click="startSetup">
+        <Icon icon="i-lucide-settings" class="size-4" />
+        {{ $t('MFA_SETTINGS.ENABLE_BUTTON') }}
+      </RelayButton>
     </div>
   </div>
   <div v-else-if="mfaEnabled && !showSetup">

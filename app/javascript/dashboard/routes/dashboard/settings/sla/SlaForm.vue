@@ -3,18 +3,21 @@ import { mapGetters } from 'vuex';
 import { convertSecondsToTimeUnit } from '@chatwoot/utils';
 import validations from './validations';
 import SlaTimeInput from './SlaTimeInput.vue';
-import NextButton from 'dashboard/components-next/button/Button.vue';
 import { useVuelidate } from '@vuelidate/core';
-import ToggleSwitch from 'dashboard/components-next/switch/Switch.vue';
-import { RelayInput, RelayLabel } from 'dashboard/components-next/relay';
+import {
+  RelayInput,
+  RelayLabel,
+  RelaySwitch,
+  RelayButton,
+} from 'dashboard/components-next/relay';
 
 export default {
   components: {
     SlaTimeInput,
-    NextButton,
-    ToggleSwitch,
     RelayInput,
     RelayLabel,
+    RelaySwitch,
+    RelayButton,
   },
   props: {
     selectedResponse: {
@@ -169,11 +172,14 @@ export default {
     <div class="flex-1 overflow-y-auto space-y-5 pr-1 custom-scrollbar">
       <!-- SLA Name -->
       <div class="flex flex-col gap-1.5">
-        <label class="text-[13.5px] font-medium text-foreground">SLA Name</label>
-        <input
+        <RelayLabel html-for="sla_name">
+          {{ $t('SLA.FORM.NAME.LABEL') }}
+        </RelayLabel>
+        <RelayInput
+          id="sla_name"
           v-model="name"
-          class="placeholder:text-muted-foreground flex w-full border px-4 py-2 transition-colors focus-visible:outline-hidden disabled:cursor-not-allowed disabled:opacity-50 h-11 text-[14px] shadow-xs rounded-xl border-border/60 bg-muted/20 focus-visible:ring-1 focus-visible:ring-primary/30 text-foreground"
-          placeholder="SLA Name"
+          class-name="h-11 text-[14px] shadow-xs rounded-xl border-border/60 bg-muted/20 focus-visible:ring-1 focus-visible:ring-primary/30"
+          :placeholder="$t('SLA.FORM.NAME.PLACEHOLDER')"
           @update:model-value="v$.name.$touch"
           @blur="v$.name.$touch"
         />
@@ -184,78 +190,36 @@ export default {
 
       <!-- Description -->
       <div class="flex flex-col gap-1.5">
-        <label class="text-[13.5px] font-medium text-foreground">Description</label>
-        <input
+        <RelayLabel html-for="sla_description">
+          {{ $t('SLA.FORM.DESCRIPTION.LABEL') }}
+        </RelayLabel>
+        <RelayInput
+          id="sla_description"
           v-model="description"
-          class="placeholder:text-muted-foreground flex w-full border px-4 py-2 transition-colors focus-visible:outline-hidden disabled:cursor-not-allowed disabled:opacity-50 h-11 text-[14px] shadow-xs rounded-xl border-border/60 bg-muted/20 focus-visible:ring-1 focus-visible:ring-primary/30 text-foreground"
-          placeholder="SLA for premium customers"
+          class-name="h-11 text-[14px] shadow-xs rounded-xl border-border/60 bg-muted/20 focus-visible:ring-1 focus-visible:ring-primary/30"
+          :placeholder="$t('SLA.FORM.DESCRIPTION.PLACEHOLDER')"
         />
       </div>
 
-      <!-- First Response Time -->
-      <div class="flex flex-col gap-1.5">
-        <label class="text-[13.5px] font-medium text-foreground">First Response Time</label>
-        <div class="flex items-center">
-          <input
-            v-model="slaTimeInputs[0].threshold"
-            type="number"
-            class="placeholder:text-muted-foreground flex w-full rounded-l-xl border border-r-0 border-border/60 px-4 py-2 transition-colors focus-visible:outline-hidden disabled:cursor-not-allowed disabled:opacity-50 h-11 text-[14px] shadow-xs bg-muted/20 focus-visible:ring-1 focus-visible:ring-primary/30 text-foreground"
-          />
-          <select
-            v-model="slaTimeInputs[0].unit"
-            class="h-11 px-3 text-[13.5px] shadow-xs rounded-r-xl border border-l border-border/60 bg-muted/20 text-foreground outline-none focus:ring-1 focus:ring-primary/30 min-w-[100px] cursor-pointer"
-          >
-            <option value="Minutes">minutes</option>
-            <option value="Hours">hours</option>
-            <option value="Days">days</option>
-          </select>
-        </div>
-      </div>
-
-      <!-- Next Response Time -->
-      <div class="flex flex-col gap-1.5">
-        <label class="text-[13.5px] font-medium text-foreground">Next Response Time</label>
-        <div class="flex items-center">
-          <input
-            v-model="slaTimeInputs[1].threshold"
-            type="number"
-            class="placeholder:text-muted-foreground flex w-full rounded-l-xl border border-r-0 border-border/60 px-4 py-2 transition-colors focus-visible:outline-hidden disabled:cursor-not-allowed disabled:opacity-50 h-11 text-[14px] shadow-xs bg-muted/20 focus-visible:ring-1 focus-visible:ring-primary/30 text-foreground"
-          />
-          <select
-            v-model="slaTimeInputs[1].unit"
-            class="h-11 px-3 text-[13.5px] shadow-xs rounded-r-xl border border-l border-border/60 bg-muted/20 text-foreground outline-none focus:ring-1 focus:ring-primary/30 min-w-[100px] cursor-pointer"
-          >
-            <option value="Minutes">minutes</option>
-            <option value="Hours">hours</option>
-            <option value="Days">days</option>
-          </select>
-        </div>
-      </div>
-
-      <!-- Resolution Time -->
-      <div class="flex flex-col gap-1.5">
-        <label class="text-[13.5px] font-medium text-foreground">Resolution Time</label>
-        <div class="flex items-center">
-          <input
-            v-model="slaTimeInputs[2].threshold"
-            type="number"
-            class="placeholder:text-muted-foreground flex w-full rounded-l-xl border border-r-0 border-border/60 px-4 py-2 transition-colors focus-visible:outline-hidden disabled:cursor-not-allowed disabled:opacity-50 h-11 text-[14px] shadow-xs bg-muted/20 focus-visible:ring-1 focus-visible:ring-primary/30 text-foreground"
-          />
-          <select
-            v-model="slaTimeInputs[2].unit"
-            class="h-11 px-3 text-[13.5px] shadow-xs rounded-r-xl border border-l border-border/60 bg-muted/20 text-foreground outline-none focus:ring-1 focus:ring-primary/30 min-w-[100px] cursor-pointer"
-          >
-            <option value="Minutes">minutes</option>
-            <option value="Hours">hours</option>
-            <option value="Days">days</option>
-          </select>
-        </div>
-      </div>
+      <!-- Time thresholds: First Response, Next Response, Resolution -->
+      <SlaTimeInput
+        v-for="(input, index) in slaTimeInputs"
+        :key="input.label"
+        :threshold="input.threshold"
+        :threshold-unit="input.unit"
+        :label="$t(input.label)"
+        :placeholder="$t(input.placeholder)"
+        @update-threshold="updateThreshold(index, $event)"
+        @unit="updateUnit(index, $event)"
+        @is-in-valid="handleIsInvalid(index, $event)"
+      />
 
       <!-- Only during business hours -->
       <div class="flex items-center justify-between pt-2 pb-1">
-        <span class="text-[13.5px] font-medium text-foreground">Only during business hours</span>
-        <ToggleSwitch id="sla_bh" v-model="onlyDuringBusinessHours" />
+        <span class="text-[13.5px] font-medium text-foreground">
+          {{ $t('SLA.FORM.BUSINESS_HOURS.PLACEHOLDER') }}
+        </span>
+        <RelaySwitch id="sla_bh" v-model="onlyDuringBusinessHours" />
       </div>
     </div>
 
@@ -263,20 +227,21 @@ export default {
     <div
       class="shrink-0 py-4 border-t border-border/40 bg-background flex items-center justify-end gap-3 mt-4"
     >
-      <button
+      <RelayButton
         type="button"
-        class="text-muted-foreground hover:text-foreground font-medium text-[13.5px] px-4 py-2 rounded-lg transition-colors"
+        variant="ghost"
+        class="h-10 rounded-lg px-4 text-[13.5px] font-medium text-muted-foreground hover:text-foreground"
         @click="onClose"
       >
-        Cancel
-      </button>
-      <button
+        {{ $t('SLA.FORM.CANCEL') }}
+      </RelayButton>
+      <RelayButton
         type="submit"
-        class="inline-flex items-center justify-center gap-2 whitespace-nowrap transition-colors focus-visible:outline-hidden focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 py-2.5 rounded-xl h-10 px-6 text-[13.5px] font-medium bg-primary text-primary-foreground hover:bg-primary/90 shadow-sm disabled:opacity-50"
+        class="h-10 rounded-xl px-6 text-[13.5px] font-medium shadow-sm"
         :disabled="isSubmitDisabled"
       >
         {{ submitLabel }}
-      </button>
+      </RelayButton>
     </div>
   </form>
 </template>

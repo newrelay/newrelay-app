@@ -1,9 +1,9 @@
 <script setup>
-import { RelayTooltip } from 'dashboard/components-next/relay';
+import { RelayTooltip, RelayButton } from 'dashboard/components-next/relay';
 import { useI18n } from 'vue-i18n';
 import { getI18nKey } from 'dashboard/routes/dashboard/settings/helper/settingsHelper';
 
-import Button from 'dashboard/components-next/button/Button.vue';
+import Icon from 'dashboard/components-next/icon/Icon.vue';
 import { BaseTableRow, BaseTableCell } from 'dashboard/components-next/table';
 
 defineProps({
@@ -59,25 +59,28 @@ const getFormattedPermissions = role => {
             :content="$t('CUSTOM_ROLE.EDIT.BUTTON_TEXT')"
             side="top"
           >
-            <Button
-              icon="i-woot-edit-pen"
-              slate
-              sm
+            <RelayButton
+              variant="ghost"
+              size="icon"
+              class="size-8 text-muted-foreground hover:border-border hover:bg-background hover:text-foreground"
               @click="emit('edit', customRole)"
-            />
+            >
+              <Icon icon="i-lucide-pencil" class="size-3.5" />
+            </RelayButton>
           </RelayTooltip>
           <RelayTooltip
             :content="$t('CUSTOM_ROLE.DELETE.BUTTON_TEXT')"
             side="top"
           >
-            <Button
-              icon="i-woot-bin"
-              slate
-              sm
-              class="hover:enabled:text-destructive hover:enabled:bg-destructive/10"
-              :is-loading="loading[customRole.id]"
+            <RelayButton
+              variant="ghost"
+              size="icon"
+              class="size-8 text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
+              :disabled="loading[customRole.id]"
               @click="emit('delete', customRole)"
-            />
+            >
+              <Icon icon="i-lucide-trash-2" class="size-3.5" />
+            </RelayButton>
           </RelayTooltip>
         </div>
       </BaseTableCell>

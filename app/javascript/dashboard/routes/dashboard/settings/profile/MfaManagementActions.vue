@@ -3,10 +3,10 @@ import { ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { copyTextToClipboard } from 'shared/helpers/clipboard';
 import { useAlert } from 'dashboard/composables';
-import Button from 'dashboard/components-next/button/Button.vue';
 import Input from 'dashboard/components-next/input/Input.vue';
 import Icon from 'dashboard/components-next/icon/Icon.vue';
 import Dialog from 'dashboard/components-next/dialog/Dialog.vue';
+import { RelayButton } from 'dashboard/components-next/relay';
 
 const props = defineProps({
   mfaEnabled: {
@@ -117,12 +117,9 @@ defineExpose({
           <p class="text-sm text-muted-foreground">
             {{ $t('MFA_SETTINGS.MANAGEMENT.BACKUP_CODES_DESC') }}
           </p>
-          <Button
-            faded
-            slate
-            :label="$t('MFA_SETTINGS.MANAGEMENT.REGENERATE')"
-            @click="regenerateDialogRef?.open()"
-          />
+          <RelayButton variant="outline" @click="regenerateDialogRef?.open()">
+            {{ $t('MFA_SETTINGS.MANAGEMENT.REGENERATE') }}
+          </RelayButton>
         </div>
       </div>
 
@@ -141,12 +138,9 @@ defineExpose({
           <p class="text-sm text-muted-foreground">
             {{ $t('MFA_SETTINGS.MANAGEMENT.DISABLE_MFA_DESC') }}
           </p>
-          <Button
-            faded
-            ruby
-            :label="$t('MFA_SETTINGS.MANAGEMENT.DISABLE_BUTTON')"
-            @click="disableDialogRef?.open()"
-          />
+          <RelayButton variant="destructive" @click="disableDialogRef?.open()">
+            {{ $t('MFA_SETTINGS.MANAGEMENT.DISABLE_BUTTON') }}
+          </RelayButton>
         </div>
       </div>
     </div>
@@ -183,17 +177,18 @@ defineExpose({
           :label="$t('MFA_SETTINGS.DISABLE.BACKUP_CODE')"
           :placeholder="$t('MFA_SETTINGS.DISABLE.BACKUP_CODE_PLACEHOLDER')"
         />
-        <Button
-          link
-          sm
+        <RelayButton
+          variant="link"
+          size="sm"
           type="button"
-          :label="
+          @click="toggleDisableMethod"
+        >
+          {{
             useBackupCodeToDisable
               ? $t('MFA_SETTINGS.DISABLE.USE_OTP_CODE')
               : $t('MFA_SETTINGS.DISABLE.USE_BACKUP_CODE')
-          "
-          @click="toggleDisableMethod"
-        />
+          }}
+        </RelayButton>
       </div>
     </Dialog>
 
@@ -255,22 +250,14 @@ defineExpose({
         </div>
 
         <div class="flex items-center justify-center gap-3">
-          <Button
-            outline
-            slate
-            sm
-            icon="i-lucide-download"
-            :label="$t('MFA_SETTINGS.BACKUP.DOWNLOAD')"
-            @click="downloadBackupCodes"
-          />
-          <Button
-            outline
-            slate
-            sm
-            icon="i-lucide-clipboard"
-            :label="$t('MFA_SETTINGS.BACKUP.COPY_ALL')"
-            @click="copyBackupCodes"
-          />
+          <RelayButton variant="outline" size="sm" @click="downloadBackupCodes">
+            <Icon icon="i-lucide-download" class="size-4" />
+            {{ $t('MFA_SETTINGS.BACKUP.DOWNLOAD') }}
+          </RelayButton>
+          <RelayButton variant="outline" size="sm" @click="copyBackupCodes">
+            <Icon icon="i-lucide-clipboard" class="size-4" />
+            {{ $t('MFA_SETTINGS.BACKUP.COPY_ALL') }}
+          </RelayButton>
         </div>
       </div>
     </Dialog>

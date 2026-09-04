@@ -3,12 +3,15 @@ import { useVuelidate } from '@vuelidate/core';
 import { required, minLength } from '@vuelidate/validators';
 import { useAlert } from 'dashboard/composables';
 import { parseAPIErrorResponse } from 'dashboard/store/utils/api';
-import NextButton from 'dashboard/components-next/button/Button.vue';
-import { RelayInput, RelayLabel } from 'dashboard/components-next/relay';
+import {
+  RelayButton,
+  RelayInput,
+  RelayLabel,
+} from 'dashboard/components-next/relay';
 
 export default {
   components: {
-    NextButton,
+    RelayButton,
     RelayInput,
     RelayLabel,
   },
@@ -141,11 +144,13 @@ export default {
       </div>
 
       <div>
-        <NextButton
+        <RelayButton
           type="submit"
-          :label="$t('PROFILE_SETTINGS.FORM.PASSWORD_SECTION.BTN_TEXT')"
+          class="shadow-sm"
           :disabled="isButtonDisabled"
-        />
+        >
+          {{ $t('PROFILE_SETTINGS.FORM.PASSWORD_SECTION.BTN_TEXT') }}
+        </RelayButton>
       </div>
     </div>
   </form>

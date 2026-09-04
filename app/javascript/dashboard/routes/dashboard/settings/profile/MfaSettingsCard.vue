@@ -1,8 +1,8 @@
 <script setup>
 import { useRouter, useRoute } from 'vue-router';
 
-import Button from 'dashboard/components-next/button/Button.vue';
 import Icon from 'dashboard/components-next/icon/Icon.vue';
+import { RelayButton } from 'dashboard/components-next/relay';
 
 const router = useRouter();
 const route = useRoute();
@@ -34,14 +34,15 @@ const navigateToMfa = () => {
           {{ $t('MFA_SETTINGS.DESCRIPTION') }}
         </p>
       </div>
-      <Button
+      <RelayButton
         type="button"
-        faded
-        :label="$t('PROFILE_SETTINGS.FORM.SECURITY_SECTION.MFA_BUTTON')"
-        icon="i-lucide-settings"
+        variant="outline"
         class="flex-shrink-0"
         @click="navigateToMfa"
-      />
+      >
+        <Icon icon="i-lucide-settings" class="size-4" />
+        {{ $t('PROFILE_SETTINGS.FORM.SECURITY_SECTION.MFA_BUTTON') }}
+      </RelayButton>
     </div>
   </div>
 </template>

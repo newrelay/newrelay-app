@@ -1,12 +1,15 @@
 <script>
 import { useAlert } from 'dashboard/composables';
-import NextButton from 'dashboard/components-next/button/Button.vue';
-import { RelayInput, RelayLabel } from 'dashboard/components-next/relay';
+import {
+  RelayButton,
+  RelayInput,
+  RelayLabel,
+} from 'dashboard/components-next/relay';
 import { useVuelidate } from '@vuelidate/core';
 import { required, minLength, email } from '@vuelidate/validators';
 export default {
   components: {
-    NextButton,
+    RelayButton,
     RelayInput,
     RelayLabel,
   },
@@ -138,7 +141,9 @@ export default {
       </p>
     </div>
     <div>
-      <NextButton type="submit" :label="$t('PROFILE_SETTINGS.BTN_TEXT')" />
+      <RelayButton type="submit" class="shadow-sm">
+        {{ $t('PROFILE_SETTINGS.BTN_TEXT') }}
+      </RelayButton>
     </div>
   </form>
 </template>

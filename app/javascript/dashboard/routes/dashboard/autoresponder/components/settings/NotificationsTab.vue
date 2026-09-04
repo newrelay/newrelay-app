@@ -49,16 +49,18 @@ const notificationChannels = computed(() => [
           <table class="w-full text-left border-collapse min-w-[480px]">
             <thead>
               <tr class="border-b border-border">
-                <th class="py-2 pr-3 text-xs font-medium text-muted-foreground">
+                <th
+                  class="py-2 pr-3 text-[12px] font-medium text-muted-foreground"
+                >
                   {{ t('AUTORESPONDER.SETTINGS.NOTIFICATIONS.TYPE') }}
                 </th>
                 <th
-                  class="py-2 px-3 text-xs font-medium text-muted-foreground text-center"
+                  class="py-2 px-3 text-center text-[12px] font-medium text-muted-foreground"
                 >
                   {{ t('AUTORESPONDER.SETTINGS.NOTIFICATIONS.EMAIL') }}
                 </th>
                 <th
-                  class="py-2 px-3 text-xs font-medium text-muted-foreground text-center"
+                  class="py-2 px-3 text-center text-[12px] font-medium text-muted-foreground"
                 >
                   {{ t('AUTORESPONDER.SETTINGS.NOTIFICATIONS.IN_APP') }}
                 </th>

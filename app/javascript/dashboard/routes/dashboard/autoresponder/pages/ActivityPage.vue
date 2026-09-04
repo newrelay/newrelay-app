@@ -203,37 +203,37 @@ function openPreview(item) {
               <thead>
                 <tr class="border-b border-border bg-muted/20">
                   <th
-                    class="px-6 py-3.5 text-sm font-medium text-muted-foreground w-32"
+                    class="px-6 py-3.5 text-[14px] font-medium text-muted-foreground w-32"
                   >
                     {{ t('AUTORESPONDER.ACTIVITY.TABLE_TIME') }}
                   </th>
                   <th
-                    class="px-4 py-3.5 text-sm font-medium text-muted-foreground w-28"
+                    class="px-4 py-3.5 text-[14px] font-medium text-muted-foreground w-28"
                   >
                     {{ t('AUTORESPONDER.ACTIVITY.TABLE_CHANNEL') }}
                   </th>
                   <th
-                    class="px-4 py-3.5 text-sm font-medium text-muted-foreground min-w-[140px]"
+                    class="px-4 py-3.5 text-[14px] font-medium text-muted-foreground min-w-[140px]"
                   >
                     {{ t('AUTORESPONDER.ACTIVITY.TABLE_CONTACT') }}
                   </th>
                   <th
-                    class="px-4 py-3.5 text-sm font-medium text-muted-foreground min-w-[160px]"
+                    class="px-4 py-3.5 text-[14px] font-medium text-muted-foreground min-w-[160px]"
                   >
                     {{ t('AUTORESPONDER.ACTIVITY.TABLE_AUTOMATION') }}
                   </th>
                   <th
-                    class="px-4 py-3.5 text-sm font-medium text-muted-foreground min-w-[160px]"
+                    class="px-4 py-3.5 text-[14px] font-medium text-muted-foreground min-w-[160px]"
                   >
                     {{ t('AUTORESPONDER.ACTIVITY.TABLE_COMMENT') }}
                   </th>
                   <th
-                    class="px-4 py-3.5 text-sm font-medium text-muted-foreground w-32"
+                    class="px-4 py-3.5 text-[14px] font-medium text-muted-foreground w-32"
                   >
                     {{ t('AUTORESPONDER.ACTIVITY.TABLE_STATUS') }}
                   </th>
                   <th
-                    class="px-6 py-3.5 text-sm font-medium text-muted-foreground w-20 text-center"
+                    class="px-6 py-3.5 text-center text-[14px] font-medium text-muted-foreground w-20"
                   >
                     {{ t('AUTORESPONDER.ACTIVITY.TABLE_DETAILS') }}
                   </th>

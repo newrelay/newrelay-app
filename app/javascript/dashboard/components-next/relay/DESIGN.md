@@ -29,6 +29,9 @@ When building or migrating a Vue page/component under the Relay shell (`[data-re
 | Page H1 (in-page title) | `text-base font-medium tracking-tight text-foreground` (`text-[16px] font-medium`) |
 | Card / block title | `text-base font-semibold text-foreground` |
 | Body / help | `text-[13.5px]` or `text-sm` + `text-muted-foreground` |
+| Form label | `text-[13.5px] font-medium` (`RELAY_FORM_LABEL_CLASS`) |
+| Table header (settings lists) | `text-[14px] font-medium text-muted-foreground` — not uppercase |
+| Table header (autoresponder automations / AR notifications) | `text-[12px] font-medium text-muted-foreground` |
 | Empty-state title | `text-[20px] font-[600] text-foreground` — **sharp**, no `drop-shadow`, blur, or hover tooltip on the title unless product explicitly asks |
 
 Antialiasing is applied on `[data-relay]` via `_relay-theme.scss`.

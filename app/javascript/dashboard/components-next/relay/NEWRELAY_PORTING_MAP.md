@@ -208,6 +208,8 @@ inside the card toolbar; rows use **`SettingsListRow`**.
 </div>
 ```
 
+Column headers: `text-[14px] font-medium text-muted-foreground` (sentence case, not uppercase). Autoresponder automations / AR notification tables use `text-[12px] font-medium text-muted-foreground`. Form labels: `RELAY_FORM_LABEL_CLASS` (`text-[13.5px] font-medium`).
+
 For pages that already use **`BaseSettingsHeader`** with search in the header (macros, canned,
 automation), keep that component and still wrap the list body in `SettingsListCard`.
 
@@ -327,7 +329,7 @@ Table rows: add `group` class on `<tr>`, actions div `opacity-0 group-hover:opac
   <div class="p-6 pb-4 flex items-center gap-3"><h3 class="text-base font-medium text-foreground tracking-tight">Title</h3><!--Live--></div>
   <div class="w-full overflow-x-auto">
     <table class="w-full text-left text-[14px]">
-      <thead class="text-muted-foreground font-medium bg-muted/20">
+      <thead class="text-[14px] font-medium text-muted-foreground bg-muted/20">
         <tr><th class="px-6 py-4 font-medium">Agent</th><th class="px-6 py-4 font-medium">Open</th></tr>
       </thead>
       <tbody class="divide-y divide-border">

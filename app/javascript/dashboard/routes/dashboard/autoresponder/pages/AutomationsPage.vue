@@ -187,7 +187,7 @@ function deleteCampaign(campaign) {
             v-for="tab in tabs"
             :key="tab.id"
             type="button"
-            class="relative pb-3 text-sm font-medium transition-colors whitespace-nowrap"
+            class="relative pb-3 text-[13.5px] font-medium transition-colors whitespace-nowrap"
             :class="
               activeTab === tab.id
                 ? 'text-primary'
@@ -211,36 +211,38 @@ function deleteCampaign(campaign) {
           <table class="w-full text-left border-collapse min-w-[800px]">
             <thead>
               <tr class="border-b border-border bg-muted/20">
-                <th class="px-4 py-3 text-xs font-medium text-muted-foreground">
+                <th
+                  class="px-4 py-3 text-[12px] font-medium text-muted-foreground"
+                >
                   {{ t('AUTORESPONDER.AUTOMATIONS.TABLE_AUTOMATION') }}
                 </th>
                 <th
-                  class="px-4 py-3 text-xs font-medium text-muted-foreground w-1/4"
+                  class="px-4 py-3 text-[12px] font-medium text-muted-foreground w-1/4"
                 >
                   {{ t('AUTORESPONDER.AUTOMATIONS.TABLE_TRIGGER') }}
                 </th>
                 <th
-                  class="px-4 py-3 text-xs font-medium text-muted-foreground w-32"
+                  class="px-4 py-3 text-[12px] font-medium text-muted-foreground w-32"
                 >
                   {{ t('AUTORESPONDER.AUTOMATIONS.TABLE_CHANNEL') }}
                 </th>
                 <th
-                  class="px-4 py-3 text-xs font-medium text-muted-foreground w-32"
+                  class="px-4 py-3 text-[12px] font-medium text-muted-foreground w-32"
                 >
                   {{ t('AUTORESPONDER.AUTOMATIONS.TABLE_STATUS') }}
                 </th>
                 <th
-                  class="px-4 py-3 text-xs font-medium text-muted-foreground w-24"
+                  class="px-4 py-3 text-[12px] font-medium text-muted-foreground w-24"
                 >
                   {{ t('AUTORESPONDER.AUTOMATIONS.TABLE_RESPONSES') }}
                 </th>
                 <th
-                  class="px-4 py-3 text-xs font-medium text-muted-foreground w-28"
+                  class="px-4 py-3 text-[12px] font-medium text-muted-foreground w-28"
                 >
                   {{ t('AUTORESPONDER.AUTOMATIONS.TABLE_UPDATED') }}
                 </th>
                 <th
-                  class="px-4 py-3 text-xs font-medium text-muted-foreground w-16 text-center"
+                  class="px-4 py-3 text-[12px] font-medium text-muted-foreground w-16 text-center"
                 >
                   {{ t('AUTORESPONDER.AUTOMATIONS.TABLE_ACTIONS') }}
                 </th>

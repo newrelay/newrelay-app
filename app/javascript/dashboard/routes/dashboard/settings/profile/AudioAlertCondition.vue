@@ -1,5 +1,6 @@
 <script setup>
 import { RelayCheckbox } from 'dashboard/components-next/relay';
+import { RELAY_FORM_LABEL_CLASS } from 'dashboard/components-next/relay/form/constants';
 
 defineProps({
   label: {
@@ -20,7 +21,7 @@ const onChange = (id, value) => {
 
 <template>
   <div>
-    <label class="block pb-1 text-sm font-medium text-foreground">
+    <label class="block pb-1" :class="[RELAY_FORM_LABEL_CLASS]">
       {{ label }}
     </label>
     <div class="mt-2.5 flex flex-col gap-3">

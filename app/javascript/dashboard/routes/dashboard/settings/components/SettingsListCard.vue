@@ -28,15 +28,13 @@ defineProps({
 
     <div
       v-if="showColumnHeaders && (detailsLabel || actionsLabel)"
-      class="grid grid-cols-[1fr_auto] gap-4 border-b border-border/40 bg-muted/20 p-4"
+      class="grid grid-cols-[1fr_auto] gap-4 border-b border-border/50 bg-muted/20 px-6 py-3.5"
     >
-      <div
-        class="pl-2 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground"
-      >
+      <div class="text-[14px] font-medium text-muted-foreground">
         {{ detailsLabel }}
       </div>
       <div
-        class="pr-2 text-right text-[11px] font-semibold uppercase tracking-wider text-muted-foreground"
+        class="pr-2 text-right text-[14px] font-medium text-muted-foreground"
       >
         {{ actionsLabel }}
       </div>

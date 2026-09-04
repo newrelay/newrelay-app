@@ -1,6 +1,7 @@
 <script setup>
 import { computed } from 'vue';
 import { RelayCheckbox } from 'dashboard/components-next/relay';
+import { RELAY_FORM_LABEL_CLASS } from 'dashboard/components-next/relay/form/constants';
 import { ALERT_EVENTS, EVENT_TYPES } from './constants';
 
 const props = defineProps({
@@ -70,7 +71,7 @@ const alertDescription = computed(() => {
 
 <template>
   <div>
-    <label class="pb-1 text-sm font-medium text-foreground">
+    <label class="pb-1" :class="[RELAY_FORM_LABEL_CLASS]">
       {{ label }}
     </label>
     <div class="mt-2.5 flex flex-col gap-3">

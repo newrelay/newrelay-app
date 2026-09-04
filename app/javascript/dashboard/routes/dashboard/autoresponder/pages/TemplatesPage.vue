@@ -183,27 +183,27 @@ function useInAutomation(template) {
                 <thead>
                   <tr class="border-b border-border bg-muted/20">
                     <th
-                      class="px-5 py-3.5 text-sm font-medium text-muted-foreground"
+                      class="px-5 py-3.5 text-[14px] font-medium text-muted-foreground"
                     >
                       {{ t('AUTORESPONDER.TEMPLATES.TABLE_TEMPLATE') }}
                     </th>
                     <th
-                      class="px-5 py-3.5 text-sm font-medium text-muted-foreground w-28"
+                      class="px-5 py-3.5 text-[14px] font-medium text-muted-foreground w-28"
                     >
                       {{ t('AUTORESPONDER.TEMPLATES.TABLE_TYPE') }}
                     </th>
                     <th
-                      class="px-5 py-3.5 text-sm font-medium text-muted-foreground w-28"
+                      class="px-5 py-3.5 text-[14px] font-medium text-muted-foreground w-28"
                     >
                       {{ t('AUTORESPONDER.TEMPLATES.TABLE_USAGE') }}
                     </th>
                     <th
-                      class="px-5 py-3.5 text-sm font-medium text-muted-foreground w-32"
+                      class="px-5 py-3.5 text-[14px] font-medium text-muted-foreground w-32"
                     >
                       {{ t('AUTORESPONDER.TEMPLATES.TABLE_UPDATED') }}
                     </th>
                     <th
-                      class="px-5 py-3.5 text-sm font-medium text-muted-foreground w-28 text-center"
+                      class="px-5 py-3.5 text-[14px] font-medium text-muted-foreground w-28 text-center"
                     >
                       {{ t('AUTORESPONDER.TEMPLATES.TABLE_ACTIONS') }}
                     </th>

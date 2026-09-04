@@ -31,7 +31,7 @@
 
 ## 7. Modal Header Layout
 **Rule:** Every modal / dialog / drawer must use this header pattern before the form body:
-- **Title:** `text-[18px] font-[600] text-foreground` (`RELAY_MODAL_TITLE_CLASS`).
+- **Title:** `text-base font-medium tracking-tight text-foreground` (`RELAY_MODAL_TITLE_CLASS`).
 - **Description:** `text-[14px] font-normal text-muted-foreground` directly under the title (`RELAY_MODAL_DESCRIPTION_CLASS`).
 - **Divider:** Header wrapper ends with `border-b border-border/80` (`RELAY_MODAL_HEADER_CLASS`). Form fields start in the content area **below** this divider — never inside the header block.
 

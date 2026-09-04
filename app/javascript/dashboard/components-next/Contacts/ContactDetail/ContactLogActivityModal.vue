@@ -105,7 +105,7 @@ const submit = () => {
       <RelayModalHeader @close="emit('close')">
         <template #title>
           <h2
-            class="flex items-center gap-2 capitalize text-[18px] font-[600] tracking-tight text-foreground"
+            class="flex items-center gap-2 capitalize text-base font-medium tracking-tight text-foreground"
           >
             <span class="i-lucide-phone size-5 text-primary" />
             {{ t('CONVERSATION.REPLYBOX.LOG_CALL.TITLE') }}

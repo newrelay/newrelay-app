@@ -381,7 +381,7 @@ onMounted(() => {
         <RelayModalHeader @close="closeDrawer">
           <template #title>
             <h2
-              class="flex items-center gap-2 text-[18px] font-[600] capitalize tracking-tight text-foreground"
+              class="flex items-center gap-2 text-base font-medium capitalize tracking-tight text-foreground"
             >
               <span class="i-lucide-plus-circle size-5 text-primary" />
               {{

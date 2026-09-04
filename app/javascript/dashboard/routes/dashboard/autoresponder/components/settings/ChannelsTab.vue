@@ -256,7 +256,7 @@ async function submitMockConnect() {
           class="flex items-start justify-between p-6 border-b border-border/80"
         >
           <div>
-            <h2 class="text-[18px] font-[600] text-foreground">
+            <h2 class="text-base font-medium tracking-tight text-foreground">
               {{ t('AUTORESPONDER.SETTINGS.CHANNELS.MOCK_CONNECT_TITLE') }}
             </h2>
             <p class="text-[14px] font-normal text-muted-foreground mt-1">

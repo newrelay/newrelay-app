@@ -12,7 +12,6 @@ import { useAlert } from 'dashboard/composables';
 import TemplatePreviewPanel from '../components/TemplatePreviewPanel.vue';
 import CreateTemplateWizard from '../components/CreateTemplateWizard.vue';
 import CreateAutomationModal from '../components/CreateAutomationModal.vue';
-import AccountSwitcher from '../components/AccountSwitcher.vue';
 
 const { t } = useI18n();
 const store = useStore();
@@ -129,7 +128,6 @@ function useInAutomation(template) {
             </p>
           </div>
           <div class="flex items-center gap-3">
-            <AccountSwitcher />
             <RelayButton class="gap-2 font-medium" @click="openCreateWizard">
               <span class="i-lucide-plus size-4" />
               {{ t('AUTORESPONDER.TEMPLATES.NEW_TEMPLATE') }}

@@ -12,7 +12,6 @@ import {
   RelayDropdownMenuItem,
 } from 'dashboard/components-next/relay';
 import Avatar from 'next/avatar/Avatar.vue';
-import AccountSwitcher from '../components/AccountSwitcher.vue';
 import { useAutoresponderAccount } from '../composables/useAutoresponderAccount';
 
 const { t } = useI18n();
@@ -147,7 +146,6 @@ async function handleConnect(platform) {
               : t('AUTORESPONDER.ACCOUNTS_ACCESS.SYNC')
           }}</span>
         </RelayButton>
-        <AccountSwitcher />
       </div>
     </div>
 

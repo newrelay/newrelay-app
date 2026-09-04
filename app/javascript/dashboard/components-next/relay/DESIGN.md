@@ -196,7 +196,7 @@ Dev-only “show working state” toggles are fine in prototypes; do not ship th
 ### Modals / header
 
 - Header wrapper: `RELAY_MODAL_HEADER_CLASS` — `flex shrink-0 items-center justify-between border-b border-border/80 p-6`.
-- Title: `text-[18px] font-[600] text-foreground` (`RELAY_MODAL_TITLE_CLASS`).
+- Title: `text-base font-medium tracking-tight text-foreground` (`RELAY_MODAL_TITLE_CLASS`).
 - Description under title: `text-[14px] font-normal leading-normal text-muted-foreground` (`RELAY_MODAL_DESCRIPTION_CLASS`).
 - Form body starts **below** the header divider (separate scroll/content block with `p-6`).
 

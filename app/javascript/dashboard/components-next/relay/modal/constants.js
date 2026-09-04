@@ -13,7 +13,7 @@ export const RELAY_MODAL_HEADER_CLASS =
   'flex shrink-0 items-center justify-between border-b border-border/80 p-6';
 
 export const RELAY_MODAL_TITLE_CLASS =
-  'text-[18px] font-[600] tracking-tight text-foreground';
+  'text-base font-medium tracking-tight text-foreground';
 
 export const RELAY_MODAL_DESCRIPTION_CLASS =
   'mb-0 mt-1 text-[14px] font-normal leading-normal text-muted-foreground';

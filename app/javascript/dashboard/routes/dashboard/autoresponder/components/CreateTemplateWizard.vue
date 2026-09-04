@@ -100,7 +100,7 @@ const save = async () => {
         <div
           class="flex items-center justify-between p-6 pb-4 border-b border-border"
         >
-          <h2 class="text-xl font-semibold tracking-tight text-foreground">
+          <h2 class="text-base font-medium tracking-tight text-foreground">
             {{
               isEditMode
                 ? t('AUTORESPONDER.CREATE_TEMPLATE_WIZARD.EDIT_TITLE')

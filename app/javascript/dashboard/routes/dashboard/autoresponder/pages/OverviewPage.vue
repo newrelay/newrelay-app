@@ -222,23 +222,6 @@ const responseChartCollection = computed(() => ({
       borderWidth: 2.2,
       pointRadius: 0,
       pointHoverRadius: 5,
-      backgroundColor: ctx => {
-        const { chartArea } = ctx.chart;
-        const primary =
-          getComputedStyle(document.documentElement)
-            .getPropertyValue('--primary')
-            .trim() || '#4f46e5';
-        if (!chartArea) return `${primary}26`;
-        const gradient = ctx.chart.ctx.createLinearGradient(
-          0,
-          chartArea.top,
-          0,
-          chartArea.bottom
-        );
-        gradient.addColorStop(0, `${primary}40`);
-        gradient.addColorStop(1, `${primary}00`);
-        return gradient;
-      },
     },
   ],
 }));

@@ -114,7 +114,7 @@ onMounted(() => {
             <span
               class="size-1.5 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]"
             />
-            Live
+            {{ $t('OVERVIEW_REPORTS.LIVE') }}
           </div>
         </div>
         <div
@@ -192,7 +192,7 @@ onMounted(() => {
           <span
             class="size-1.5 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]"
           />
-          Live
+          {{ $t('OVERVIEW_REPORTS.LIVE') }}
         </div>
       </div>
       <div

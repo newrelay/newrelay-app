@@ -4,7 +4,7 @@ import { useRoute, useRouter } from 'vue-router';
 import { getUnixStartOfDay, getUnixEndOfDay } from 'helpers/DateHelper';
 import subDays from 'date-fns/subDays';
 import DatePicker from 'dashboard/components/ui/DatePicker/DatePicker.vue';
-import ToggleSwitch from 'dashboard/components-next/switch/Switch.vue';
+import { RelaySwitch } from 'dashboard/components-next/relay';
 import {
   generateReportURLParams,
   parseReportURLParams,
@@ -102,9 +102,9 @@ onMounted(() => {
         {{ $t('REPORT.BUSINESS_HOURS') }}
       </span>
       <span>
-        <ToggleSwitch
+        <RelaySwitch
           v-model="businessHoursSelected"
-          @change="onBusinessHoursToggle"
+          @update:model-value="onBusinessHoursToggle"
         />
       </span>
     </div>

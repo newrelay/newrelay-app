@@ -41,7 +41,6 @@ const shouldShowSaml = computed(() => {
 const showPaywall = computed(() => shouldShowPaywall('saml'));
 
 const records = computed(() => getters['auditlogs/getAuditLogs'].value || []);
-const uiFlags = computed(() => getters['auditlogs/getUIFlags'].value || {});
 const agentList = computed(() => getters['agents/getAgents'].value || []);
 
 const generateLogText = auditLogItem => {
@@ -86,10 +85,11 @@ onMounted(() => {
         <!-- Audit Logs Section -->
         <div class="pt-6 border-t border-border/40 space-y-4">
           <div>
-            <h3 class="text-base font-semibold text-foreground">Audit Logs</h3>
+            <h3 class="text-base font-semibold text-foreground">
+              {{ t('AUDIT_LOGS.HEADER') }}
+            </h3>
             <p class="text-sm text-muted-foreground mt-1">
-              Audit Logs maintain a record of activities in your account,
-              allowing you to track and audit your account, team, or services.
+              {{ t('AUDIT_LOGS.DESCRIPTION') }}
             </p>
           </div>
 

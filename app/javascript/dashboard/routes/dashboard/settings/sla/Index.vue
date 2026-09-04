@@ -7,6 +7,7 @@ import Icon from 'dashboard/components-next/icon/Icon.vue';
 import {
   RelayButton,
   RelayBadge,
+  RelayInput,
   RelayModal,
   RelayConfirmModal,
 } from 'dashboard/components-next/relay';
@@ -25,6 +26,7 @@ export default {
     Icon,
     RelayButton,
     RelayBadge,
+    RelayInput,
     RelayModal,
     RelayConfirmModal,
   },
@@ -162,14 +164,10 @@ export default {
                 <!-- Header -->
                 <div class="p-4 sm:p-6 border-b border-border/40">
                   <h3 class="text-base font-semibold text-foreground">
-                    Service Level Agreements
+                    {{ $t('SLA.HEADER') }}
                   </h3>
                   <p class="text-sm text-muted-foreground mt-1 max-w-4xl">
-                    Service Level Agreements (SLAs) are contracts that define
-                    clear expectations between your team and customers. They
-                    establish standards for response and resolution times,
-                    creating a framework for accountability and ensures a
-                    consistent, high-quality experience.
+                    {{ $t('SLA.DESCRIPTION') }}
                   </p>
                 </div>
 
@@ -178,35 +176,23 @@ export default {
                     class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mt-8"
                   >
                     <div class="relative w-full max-w-md">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="24"
-                        height="24"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="2"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        class="lucide size-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground lucide-search-icon lucide-search size-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
-                        aria-hidden="true"
-                      >
-                        <path d="m21 21-4.34-4.34" />
-                        <circle cx="11" cy="11" r="8" />
-                      </svg>
-                      <input
+                      <Icon
+                        icon="i-lucide-search"
+                        class="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground"
+                      />
+                      <RelayInput
                         v-model="searchQuery"
-                        class="placeholder:text-muted-foreground flex w-full rounded-md border px-3 py-1 transition-colors focus-visible:outline-hidden disabled:cursor-not-allowed disabled:opacity-50 pl-9 h-10 text-[14px] bg-muted/20 border-border/60 shadow-none focus-visible:ring-1 focus-visible:ring-primary/20 text-foreground"
-                        placeholder="Search SLA..."
+                        type="search"
+                        :placeholder="$t('SLA.SEARCH_PLACEHOLDER')"
+                        class-name="pl-9 h-10 text-[14px] bg-muted/20 border-border/60 shadow-none focus-visible:ring-1 focus-visible:ring-primary/20"
                       />
                     </div>
-                    <button
-                      type="button"
-                      class="inline-flex items-center justify-center gap-2 text-sm transition-colors focus-visible:outline-hidden focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 py-2 h-10 px-5 font-medium shadow-sm bg-primary hover:bg-primary/90 text-primary-foreground rounded-lg whitespace-nowrap"
+                    <RelayButton
+                      class="h-10 px-5 text-[13px] font-medium shadow-sm rounded-lg whitespace-nowrap"
                       @click="openAddPopup"
                     >
-                      Add SLA
-                    </button>
+                      {{ $t('SLA.ADD_ACTION') }}
+                    </RelayButton>
                   </div>
 
                   <!-- Content Area -->
@@ -228,17 +214,17 @@ export default {
                         class="grid grid-cols-[1.5fr_1fr_0.7fr_0.7fr_0.7fr_100px] items-center border-b border-border/40 px-4 py-3 bg-muted/20"
                       >
                         <div
-                          class="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider"
+                          class="text-[14px] font-medium text-muted-foreground"
                         >
                           {{ $t('SLA.LIST.TABLE_HEADER.SLA') }}
                         </div>
                         <div
-                          class="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider"
+                          class="text-[14px] font-medium text-muted-foreground"
                         >
                           {{ $t('SLA.LIST.TABLE_HEADER.BUSINESS_HOURS') }}
                         </div>
                         <div
-                          class="flex items-center gap-1 text-[11px] font-semibold text-muted-foreground uppercase tracking-wider"
+                          class="flex items-center gap-1 text-[14px] font-medium text-muted-foreground"
                         >
                           {{ $t('SLA.LIST.RESPONSE_TYPES.SHORT_HAND.FRT') }}
                           <RelayTooltip
@@ -252,7 +238,7 @@ export default {
                           </RelayTooltip>
                         </div>
                         <div
-                          class="flex items-center gap-1 text-[11px] font-semibold text-muted-foreground uppercase tracking-wider"
+                          class="flex items-center gap-1 text-[14px] font-medium text-muted-foreground"
                         >
                           {{ $t('SLA.LIST.RESPONSE_TYPES.SHORT_HAND.NRT') }}
                           <RelayTooltip
@@ -266,7 +252,7 @@ export default {
                           </RelayTooltip>
                         </div>
                         <div
-                          class="flex items-center gap-1 text-[11px] font-semibold text-muted-foreground uppercase tracking-wider"
+                          class="flex items-center gap-1 text-[14px] font-medium text-muted-foreground"
                         >
                           {{ $t('SLA.LIST.RESPONSE_TYPES.SHORT_HAND.RT') }}
                           <RelayTooltip
@@ -280,7 +266,7 @@ export default {
                           </RelayTooltip>
                         </div>
                         <div
-                          class="text-right text-[11px] font-semibold text-muted-foreground uppercase tracking-wider"
+                          class="text-right text-[14px] font-medium text-muted-foreground"
                         >
                           {{ $t('INTEGRATION_APPS.LIST.ACTIONS') }}
                         </div>

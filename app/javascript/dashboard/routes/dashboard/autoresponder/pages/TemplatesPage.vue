@@ -114,8 +114,8 @@ function useInAutomation(template) {
 
 <template>
   <div class="h-full bg-background flex flex-col min-h-0">
-    <div class="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8">
-      <div class="w-full h-full">
+    <div class="min-w-0 flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8">
+      <div class="h-full min-w-0 w-full">
         <div
           class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8"
         >

@@ -30,8 +30,10 @@ const emit = defineEmits([
     <!-- Two-section layout for search views (main contacts, label views) -->
     <template v-if="showSearch">
       <!-- Top: Title + subtitle + action buttons -->
-      <div class="flex items-start justify-between px-6 pb-4 pt-5">
-        <div>
+      <div
+        class="flex flex-col gap-3 px-4 pb-4 pt-5 sm:flex-row sm:items-start sm:justify-between sm:px-6"
+      >
+        <div class="min-w-0">
           <h1
             class="capitalize text-[16px] font-[500] tracking-tight text-foreground"
           >
@@ -41,7 +43,7 @@ const emit = defineEmits([
             {{ $t('CONTACTS_LAYOUT.HEADER.DESCRIPTION') }}
           </p>
         </div>
-        <div class="flex shrink-0 items-center gap-2">
+        <div class="flex min-w-0 flex-wrap items-center gap-2">
           <RelayButton
             v-if="
               hasActiveFilters &&
@@ -87,8 +89,10 @@ const emit = defineEmits([
       </div>
 
       <!-- Bottom: Search + Columns + Filters toolbar -->
-      <div class="flex items-center justify-between gap-3 px-6 py-3">
-        <div class="relative w-full max-w-sm">
+      <div
+        class="flex flex-col gap-3 px-4 py-3 sm:flex-row sm:items-center sm:justify-between sm:px-6"
+      >
+        <div class="relative min-w-0 w-full sm:max-w-sm">
           <span
             class="i-lucide-search pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground"
           />

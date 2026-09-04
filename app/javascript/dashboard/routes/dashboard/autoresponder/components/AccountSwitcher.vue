@@ -34,7 +34,7 @@ function goToAccountsAccess() {
     <RelayDropdownMenuTrigger as-child>
       <RelayButton
         variant="outline"
-        class="h-9 gap-2 rounded-lg text-[13.5px] font-medium bg-card border border-border shadow-xs px-3 hover:border-transparent cursor-pointer"
+        class="h-9 max-w-full min-w-0 gap-2 rounded-lg text-[13.5px] font-medium bg-card border border-border shadow-xs px-3 hover:border-transparent cursor-pointer"
       >
         <Avatar
           :src="activeAccount.avatar"
@@ -42,9 +42,11 @@ function goToAccountsAccess() {
           :size="20"
           rounded-full
         />
-        <span class="font-medium text-foreground">{{
-          activeAccount.handle
-        }}</span>
+        <span
+          class="max-w-[9rem] truncate font-medium text-foreground sm:max-w-[14rem]"
+        >
+          {{ activeAccount.handle }}
+        </span>
         <span class="text-[11.5px] text-muted-foreground hidden sm:inline"
           >({{ activeAccount.platform }})</span
         >

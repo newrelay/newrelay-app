@@ -67,9 +67,11 @@ const activeComponent = computed(() => tabComponents[activeTab.value]);
 </script>
 
 <template>
-  <div class="p-6 md:p-8 min-h-screen bg-background">
-    <div class="flex items-center justify-between mb-8 mt-2">
-      <div>
+  <div class="min-h-screen min-w-0 bg-background p-4 md:p-8">
+    <div
+      class="mb-8 mt-2 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between"
+    >
+      <div class="min-w-0">
         <h1 class="text-[16px] font-medium tracking-tight text-foreground">
           {{ t('AUTORESPONDER.SETTINGS.TITLE') }}
         </h1>
@@ -77,7 +79,10 @@ const activeComponent = computed(() => tabComponents[activeTab.value]);
           {{ t('AUTORESPONDER.SETTINGS.SUBTITLE') }}
         </p>
       </div>
-      <RelayButton variant="outline" class="gap-2 font-medium h-9 text-[13px]">
+      <RelayButton
+        variant="outline"
+        class="h-9 w-fit shrink-0 gap-2 text-[13px] font-medium"
+      >
         <span class="i-lucide-help-circle size-4" />
         {{ t('AUTORESPONDER.SETTINGS.HOW_IT_WORKS') }}
       </RelayButton>

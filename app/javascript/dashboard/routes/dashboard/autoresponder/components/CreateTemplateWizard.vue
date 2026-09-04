@@ -137,7 +137,7 @@ const nextStep = () => {
       <div
         class="h-[88px] border-b border-border flex items-center justify-center relative shrink-0"
       >
-        <div class="flex items-center gap-12">
+        <div class="flex items-center gap-8 sm:gap-12">
           <template v-for="(step, index) in steps" :key="step">
             <div class="flex flex-col items-center gap-2 relative">
               <div
@@ -185,7 +185,9 @@ const nextStep = () => {
 
       <div class="flex-1 flex overflow-hidden">
         <div class="flex-1 flex flex-col min-h-0">
-          <div class="flex-1 overflow-y-auto px-12 lg:px-20 py-10">
+          <div
+            class="flex-1 overflow-y-auto px-4 py-8 sm:px-8 sm:py-10 lg:px-20"
+          >
             <div class="w-full">
               <template v-if="currentStep === 0">
                 <div class="mb-8">
@@ -411,7 +413,7 @@ const nextStep = () => {
           </div>
 
           <div
-            class="bg-background border-t border-border px-12 py-5 flex items-center justify-between shrink-0"
+            class="bg-background border-t border-border px-4 py-4 sm:px-8 sm:py-5 lg:px-12 flex items-center justify-between shrink-0 gap-3"
           >
             <RelayButton
               variant="outline"

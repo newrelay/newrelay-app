@@ -84,8 +84,12 @@ function deleteCampaign(campaign) {
 </script>
 
 <template>
-  <div class="flex-1 overflow-y-auto w-full bg-background p-6 lg:p-8">
-    <div class="max-w-7xl mx-auto flex flex-col min-h-[calc(100vh-8rem)]">
+  <div
+    class="min-w-0 flex-1 overflow-y-auto w-full bg-background p-4 sm:p-6 lg:p-8"
+  >
+    <div
+      class="mx-auto flex min-h-[calc(100vh-8rem)] min-w-0 max-w-7xl flex-col"
+    >
       <div
         class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6"
       >
@@ -97,9 +101,12 @@ function deleteCampaign(campaign) {
             {{ t('AUTORESPONDER.AUTOMATIONS.SUBTITLE') }}
           </p>
         </div>
-        <div class="flex items-center gap-3">
+        <div class="flex min-w-0 flex-wrap items-center gap-3">
           <AccountSwitcher />
-          <RelayButton class="gap-2" @click="isCreateModalOpen = true">
+          <RelayButton
+            class="w-full gap-2 sm:w-auto"
+            @click="isCreateModalOpen = true"
+          >
             <span class="i-lucide-plus size-4" />
             {{ t('AUTORESPONDER.AUTOMATIONS.CREATE_AUTOMATION') }}
           </RelayButton>
@@ -205,7 +212,7 @@ function deleteCampaign(campaign) {
       </div>
 
       <div
-        class="bg-card border border-border rounded-xl shadow-sm overflow-hidden flex flex-col flex-1"
+        class="bg-card border border-border rounded-xl shadow-sm overflow-hidden flex flex-col flex-1 min-w-0"
       >
         <div class="overflow-x-auto">
           <table class="w-full text-left border-collapse min-w-[800px]">

@@ -87,7 +87,7 @@ const closeDrawer = () => {
 };
 
 const handleDeleteCompany = async id => {
-  if (window.confirm('Are you sure you want to delete this company?')) {
+  if (window.confirm(t('CONTACTS_LAYOUT.COMPANIES_VIEW.DELETE_CONFIRM'))) {
     try {
       await CompanyAPI.delete(id);
       companies.value = companies.value.filter(c => c.id !== id);
@@ -166,7 +166,7 @@ onMounted(() => {
           {{ t('CONTACTS_LAYOUT.COMPANIES_VIEW.TITLE') }}
         </span>
         <span
-          class="px-2 py-0.5 text-xs font-semibold rounded-full bg-primary text-white"
+          class="px-2 py-0.5 text-xs font-semibold rounded-full bg-primary text-primary-foreground"
         >
           {{
             t('CONTACTS_LAYOUT.COMPANIES_VIEW.COMPANIES_COUNT', {
@@ -213,7 +213,7 @@ onMounted(() => {
     >
       <div class="flex items-center gap-3">
         <Button
-          label="Advanced filters"
+          :label="t('CONTACTS_LAYOUT.COMPANIES_VIEW.ADVANCED_FILTERS')"
           icon="i-lucide-list-filter"
           variant="ghost"
           color="slate"
@@ -221,7 +221,7 @@ onMounted(() => {
           class="border border-border hover:border-transparent"
         />
         <Button
-          label="Sort"
+          :label="t('CONTACTS_LAYOUT.COMPANIES_VIEW.SORT')"
           icon="i-lucide-arrow-up-down"
           variant="ghost"
           color="slate"
@@ -235,7 +235,9 @@ onMounted(() => {
           <Input
             v-model="searchQuery"
             type="search"
-            placeholder="Search companies..."
+            :placeholder="
+              t('CONTACTS_LAYOUT.COMPANIES_VIEW.SEARCH_PLACEHOLDER')
+            "
             custom-input-class="h-8 [&:not(.focus)]:!border-transparent bg-accent dark:bg-card ltr:!pl-8 !py-1 rtl:!pr-8 w-full"
           >
             <template #prefix>
@@ -404,7 +406,9 @@ onMounted(() => {
             </label>
             <Input
               v-model="companyForm.name"
-              placeholder="Please input company name"
+              :placeholder="
+                t('CONTACTS_LAYOUT.COMPANIES_VIEW.FORM_NAME_PLACEHOLDER')
+              "
               class="w-full"
             />
           </div>
@@ -416,7 +420,9 @@ onMounted(() => {
             </label>
             <PhoneNumberInput
               v-model="companyForm.phone"
-              placeholder="90123 45678"
+              :placeholder="
+                t('CONTACTS_LAYOUT.COMPANIES_VIEW.FORM_PHONE_PLACEHOLDER')
+              "
               class="w-full"
             />
           </div>
@@ -428,7 +434,9 @@ onMounted(() => {
             </label>
             <Input
               v-model="companyForm.email"
-              placeholder="Please input"
+              :placeholder="
+                t('CONTACTS_LAYOUT.COMPANIES_VIEW.FORM_GENERIC_PLACEHOLDER')
+              "
               class="w-full"
             >
               <template #prefix>
@@ -444,7 +452,9 @@ onMounted(() => {
             </label>
             <Input
               v-model="companyForm.website"
-              placeholder="Please input"
+              :placeholder="
+                t('CONTACTS_LAYOUT.COMPANIES_VIEW.FORM_GENERIC_PLACEHOLDER')
+              "
               class="w-full"
             />
           </div>
@@ -456,7 +466,9 @@ onMounted(() => {
             </label>
             <Input
               v-model="companyForm.address"
-              placeholder="Please input"
+              :placeholder="
+                t('CONTACTS_LAYOUT.COMPANIES_VIEW.FORM_GENERIC_PLACEHOLDER')
+              "
               class="w-full"
             />
           </div>
@@ -468,7 +480,9 @@ onMounted(() => {
             </label>
             <Input
               v-model="companyForm.state"
-              placeholder="Please input"
+              :placeholder="
+                t('CONTACTS_LAYOUT.COMPANIES_VIEW.FORM_GENERIC_PLACEHOLDER')
+              "
               class="w-full"
             />
           </div>
@@ -480,7 +494,9 @@ onMounted(() => {
             </label>
             <Input
               v-model="companyForm.city"
-              placeholder="Please input"
+              :placeholder="
+                t('CONTACTS_LAYOUT.COMPANIES_VIEW.FORM_GENERIC_PLACEHOLDER')
+              "
               class="w-full"
             />
           </div>
@@ -492,7 +508,9 @@ onMounted(() => {
             </label>
             <textarea
               v-model="companyForm.description"
-              placeholder="Please input"
+              :placeholder="
+                t('CONTACTS_LAYOUT.COMPANIES_VIEW.FORM_GENERIC_PLACEHOLDER')
+              "
               class="w-full min-h-[80px] p-2 border border-muted bg-transparent text-foreground outline-none focus:border-primary text-[14px] border-border/80 bg-background focus-visible:ring-1 focus-visible:ring-primary/30 shadow-sm rounded-md"
             />
           </div>

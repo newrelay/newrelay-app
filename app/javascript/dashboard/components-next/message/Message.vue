@@ -144,6 +144,15 @@ const showContextMenu = ref(false);
 const route = useRoute();
 const currentUser = useMapGetter('getCurrentUser');
 
+const isStandaloneFileMessage = computed(() => {
+  return (
+    Array.isArray(props.attachments) &&
+    props.attachments.length === 1 &&
+    props.attachments[0].fileType === ATTACHMENT_TYPES.FILE &&
+    !props.content
+  );
+});
+
 /**
  * Computes the message variant based on props
  * @type {import('vue').ComputedRef<'user'|'agent'|'activity'|'private'|'bot'|'template'>}
@@ -171,6 +180,10 @@ const variant = computed(() => {
   }
 
   if (props.contentType === CONTENT_TYPES.VOICE_CALL) {
+    return MESSAGE_VARIANTS.USER;
+  }
+
+  if (isStandaloneFileMessage.value) {
     return MESSAGE_VARIANTS.USER;
   }
 
@@ -506,7 +519,7 @@ provideMessageContext({
       :class="
         isInboxView
           ? ['flex max-w-[80%] gap-3', inboxRowClass]
-          : contentType === CONTENT_TYPES.VOICE_CALL
+          : contentType === CONTENT_TYPES.VOICE_CALL || isStandaloneFileMessage
             ? 'flex w-full min-w-0 max-w-[80%] flex-col'
             : 'flex w-full flex-col'
       "

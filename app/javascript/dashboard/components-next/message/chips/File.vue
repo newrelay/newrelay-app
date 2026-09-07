@@ -1,11 +1,7 @@
 <script setup>
-import { RelayTooltip } from 'dashboard/components-next/relay';
 import { computed } from 'vue';
-import { useI18n } from 'vue-i18n';
 import { getFileInfo } from '@chatwoot/utils';
-
-import FileIcon from 'next/icon/FileIcon.vue';
-import Icon from 'next/icon/Icon.vue';
+import { formatBytes } from 'shared/helpers/FileHelper';
 
 const { attachment } = defineProps({
   attachment: {
@@ -14,69 +10,59 @@ const { attachment } = defineProps({
   },
 });
 
-const { t } = useI18n();
-
 const fileDetails = computed(() => {
   return getFileInfo(attachment?.dataUrl || '');
 });
 
-const displayFileName = computed(() => {
-  const { base, type } = fileDetails.value;
-  const truncatedName = (str, maxLength, hasExt) =>
-    str.length > maxLength
-      ? `${str.substring(0, maxLength).trimEnd()}${hasExt ? '..' : '...'}`
-      : str;
+const fileExt = computed(() =>
+  (attachment.extension || fileDetails.value.type || 'FILE').toUpperCase()
+);
 
-  return type
-    ? `${truncatedName(base, 12, true)}.${type}`
-    : truncatedName(base, 14, false);
+const isPdf = computed(() => fileExt.value === 'PDF');
+
+const fileSizeLabel = computed(() => {
+  const size = attachment.fileSize ?? attachment.file_size;
+  if (size == null || size === '') return '';
+  return formatBytes(size);
 });
 
-const textColorClass = computed(() => {
-  const colorMap = {
-    '7z': 'dark:text-[#EDEEF0] text-[#2F265F]',
-    csv: 'text-warning',
-    doc: 'dark:text-[#D6E1FF] text-[#1F2D5C]', // indigo-12
-    docx: 'dark:text-[#D6E1FF] text-[#1F2D5C]', // indigo-12
-    json: 'text-foreground',
-    odt: 'dark:text-[#D6E1FF] text-[#1F2D5C]', // indigo-12
-    pdf: 'text-foreground',
-    ppt: 'dark:text-[#FFE0C2] text-[#582D1D]',
-    pptx: 'dark:text-[#FFE0C2] text-[#582D1D]',
-    rar: 'dark:text-[#EDEEF0] text-[#2F265F]',
-    rtf: 'dark:text-[#D6E1FF] text-[#1F2D5C]', // indigo-12
-    tar: 'dark:text-[#EDEEF0] text-[#2F265F]',
-    txt: 'text-foreground',
-    xls: 'text-success',
-    xlsx: 'text-success',
-    zip: 'dark:text-[#EDEEF0] text-[#2F265F]',
-  };
-
-  return colorMap[fileDetails.value.type] || 'text-foreground';
+const subtext = computed(() => {
+  if (fileSizeLabel.value && fileExt.value && fileExt.value !== 'FILE') {
+    return `${fileSizeLabel.value} • ${fileExt.value}`;
+  }
+  return fileSizeLabel.value || '';
 });
 </script>
 
 <template>
-  <div
-    class="h-9 bg-white/10 gap-2 overflow-hidden items-center flex px-2 rounded-lg border border-card"
+  <a
+    :href="attachment.dataUrl"
+    rel="noreferrer noopener nofollow"
+    target="_blank"
+    class="flex min-w-[280px] max-w-full items-center gap-4 rounded-xl border border-border bg-card p-3 text-inherit no-underline shadow-xs transition-colors hover:bg-muted/50"
   >
-    <FileIcon class="flex-shrink-0" :file-type="fileDetails.type" />
-    <span
-      class="flex-1 min-w-0 text-sm max-w-36"
-      :title="fileDetails.name"
-      :class="textColorClass"
+    <div
+      class="flex size-10 shrink-0 items-center justify-center rounded-lg"
+      :class="
+        isPdf
+          ? 'bg-destructive/10 text-destructive'
+          : 'bg-primary/10 text-primary'
+      "
     >
-      {{ displayFileName }}
-    </span>
-    <RelayTooltip :content="t('CONVERSATION.DOWNLOAD')">
-      <a
-        class="flex-shrink-0 size-9 grid place-content-center cursor-pointer text-muted-foreground hover:text-foreground transition-colors"
-        :href="attachment.dataUrl"
-        rel="noreferrer noopener nofollow"
-        target="_blank"
+      <span class="text-[10px] font-bold">
+        {{ fileExt }}
+      </span>
+    </div>
+    <div class="flex min-w-0 flex-1 flex-col">
+      <span
+        class="truncate text-sm font-semibold text-foreground"
+        :title="fileDetails.name"
       >
-        <Icon icon="i-lucide-download" />
-      </a>
-    </RelayTooltip>
-  </div>
+        {{ fileDetails.name }}
+      </span>
+      <span v-if="subtext" class="mt-0.5 text-[13px] text-muted-foreground">
+        {{ subtext }}
+      </span>
+    </div>
+  </a>
 </template>

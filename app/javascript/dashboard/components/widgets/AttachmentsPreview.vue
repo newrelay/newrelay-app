@@ -1,8 +1,5 @@
 <script setup>
 import { computed } from 'vue';
-import { formatBytes } from 'shared/helpers/FileHelper';
-
-import Button from 'dashboard/components-next/button/Button.vue';
 
 const props = defineProps({
   attachments: {
@@ -30,11 +27,6 @@ const onRemoveAttachment = itemIndex => {
   );
 };
 
-const formatFileSize = file => {
-  const size = file.byte_size || file.size;
-  return formatBytes(size, 0);
-};
-
 const isTypeImage = file => {
   const type = file.content_type || file.type;
   return type.includes('image');
@@ -46,43 +38,31 @@ const fileName = file => {
 </script>
 
 <template>
-  <div class="flex flex-wrap gap-y-1 gap-x-2 overflow-auto max-h-[12.5rem]">
+  <div class="flex max-h-[12.5rem] flex-wrap gap-2 overflow-auto">
     <div
       v-for="(attachment, index) in nonRecordedAudioAttachments"
       :key="attachment.id"
-      class="flex items-center p-1 bg-muted gap-1 rounded-md w-[15rem]"
+      class="flex items-center gap-1.5 rounded-md border border-border bg-muted px-2 py-1 text-[13px] font-medium"
     >
-      <div class="max-w-[4rem] flex-shrink-0 w-6 flex items-center">
-        <img
-          v-if="isTypeImage(attachment.resource)"
-          class="object-cover w-6 h-6 rounded-sm"
-          :src="attachment.thumb"
-        />
-        <span v-else class="relative w-6 h-6 text-lg text-left -top-px">
-          📄
-        </span>
-      </div>
-      <div class="max-w-3/5 min-w-[50%] overflow-hidden text-ellipsis">
-        <span
-          class="h-4 overflow-hidden text-sm font-medium text-ellipsis whitespace-nowrap"
-        >
-          {{ fileName(attachment.resource) }}
-        </span>
-      </div>
-      <div class="w-[30%] justify-center">
-        <span class="overflow-hidden text-xs text-ellipsis whitespace-nowrap">
-          {{ formatFileSize(attachment.resource) }}
-        </span>
-      </div>
-      <div class="flex items-center justify-center">
-        <Button
-          ghost
-          slate
-          xs
-          icon="i-lucide-x"
-          @click="onRemoveAttachment(index)"
-        />
-      </div>
+      <img
+        v-if="isTypeImage(attachment.resource)"
+        class="size-3.5 shrink-0 rounded-sm object-cover"
+        :src="attachment.thumb"
+      />
+      <span
+        v-else
+        class="i-lucide-paperclip size-3 shrink-0 text-muted-foreground"
+      />
+      <span class="max-w-[12rem] truncate">
+        {{ fileName(attachment.resource) }}
+      </span>
+      <button
+        type="button"
+        class="reset-base ml-1 flex size-5 shrink-0 items-center justify-center rounded border-0 bg-transparent p-0 text-muted-foreground transition-colors hover:text-destructive"
+        @click="onRemoveAttachment(index)"
+      >
+        <span class="i-lucide-x size-3" />
+      </button>
     </div>
   </div>
 </template>

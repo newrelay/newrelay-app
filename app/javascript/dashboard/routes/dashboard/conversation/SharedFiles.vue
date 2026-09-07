@@ -78,8 +78,13 @@ const downloadingId = ref(null);
 
 const fileNameFromUrl = url => {
   if (!url) return '';
-  const name = url.split('/').pop();
-  return name ? decodeURIComponent(name) : '';
+  const name = url.split('/').pop()?.split('?')[0];
+  if (!name) return '';
+  try {
+    return decodeURIComponent(name);
+  } catch {
+    return name;
+  }
 };
 
 const onDownloadFile = async attachment => {
@@ -229,7 +234,7 @@ const isPdfFile = attachment => attachment.extension?.toLowerCase() === 'pdf';
             "
           >
             <span v-if="isPdfFile(attachment)" class="text-[9px] font-bold">
-              {{ t('CONVERSATION.SHARED_FILES.PDF_LABEL') }}
+              {{ t('CONVERSATION_SIDEBAR.SHARED_FILES.PDF_LABEL') }}
             </span>
             <FileIcon
               v-else
@@ -458,36 +463,50 @@ const isPdfFile = attachment => attachment.extension?.toLowerCase() === 'pdf';
             @click="showAllFiles = !showAllFiles"
           />
         </header>
-        <ul class="flex flex-col gap-0.5">
+        <ul class="flex list-none flex-col gap-2">
           <li
             v-for="attachment in visibleFiles"
             :key="attachment.id"
-            class="flex items-center gap-3 px-2 py-2 transition-colors rounded-lg hover:bg-muted group"
+            class="group flex items-center gap-3 rounded-lg border border-border/50 bg-muted/30 p-2 transition-colors hover:bg-muted/50"
           >
             <div
-              class="flex items-center justify-center rounded-lg size-9 shrink-0 bg-gradient-to-br from-muted to-muted ring-1 ring-inset ring-muted/40"
+              class="flex size-8 shrink-0 items-center justify-center rounded-lg"
+              :class="
+                isPdfFile(attachment)
+                  ? 'bg-destructive/10 text-destructive'
+                  : 'bg-primary/10 text-primary'
+              "
             >
+              <span v-if="isPdfFile(attachment)" class="text-[9px] font-bold">
+                {{ t('CONVERSATION_SIDEBAR.SHARED_FILES.PDF_LABEL') }}
+              </span>
               <FileIcon
+                v-else
                 :file-type="attachment.extension?.toLowerCase() || ''"
-                class="size-4 text-muted-foreground"
+                class="size-4"
               />
             </div>
             <a
               :href="attachment.data_url"
               target="_blank"
               rel="noopener noreferrer"
-              class="flex-1 min-w-0"
+              class="min-w-0 flex-1 no-underline"
               :title="displayName(attachment)"
             >
-              <p class="text-sm font-medium truncate text-foreground mb-1">
+              <span
+                class="block truncate text-[13px] font-medium text-foreground"
+              >
                 {{ displayName(attachment) }}
-              </p>
-              <p class="text-xs text-muted-foreground">
-                {{ displaySize(attachment) }}
+              </span>
+              <span
+                class="mt-0.5 flex items-center gap-2 text-[10px] text-muted-foreground"
+              >
+                <span>{{ displaySize(attachment) }}</span>
                 <template v-if="displayTime(attachment)">
-                  · {{ displayTime(attachment) }}
+                  <span class="size-1 rounded-full bg-muted-foreground/30" />
+                  <span>{{ displayTime(attachment) }}</span>
                 </template>
-              </p>
+              </span>
             </a>
             <NextButton
               ghost

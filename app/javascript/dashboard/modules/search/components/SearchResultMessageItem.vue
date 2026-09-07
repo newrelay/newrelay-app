@@ -160,7 +160,6 @@ const audioAttachments = computed(() => {
           v-for="attachment in fileAttachments"
           :key="attachment.id"
           :attachment="attachment"
-          class="!h-8"
           @click.stop
         />
       </div>

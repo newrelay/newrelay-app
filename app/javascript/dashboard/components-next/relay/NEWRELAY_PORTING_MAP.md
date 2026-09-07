@@ -4,7 +4,7 @@ Single source of truth for applying the **NewRelay-UI** design to this codebase.
 Read this instead of re-reading every component. Pairs with [TOKENS.md](./TOKENS.md)
 (token table) and [DESIGN.md](./DESIGN.md) (layout rules).
 
-Reference project: `/Users/deependrasankhala/Documents/chandresh/NewRelay-UI`
+Reference project: `/Users/deependrasankhala/Downloads/NewRelay-UI-main`
 (dev server: `http://localhost:5174`). Its tokens live in `src/style.css`; ours are a
 **direct 1:1 port** in `app/javascript/dashboard/assets/scss/_relay-theme.scss`.
 
@@ -83,6 +83,11 @@ Legacy `woot-*` / `WootButton` / `WootModal` are being phased out — never add 
 
 Look at the NewRelay view file for the exact markup, then edit the matching Chatwoot file.
 
+> **Warning — Customer Engagement / Conversations list cards:** The **live** conversation
+> row component is `components/widgets/conversation/ConversationCard.vue`, **not**
+> `components-next/Conversation/ConversationCard/`. The `components-next` tree is a
+> parallel/unused copy for this screen — porting work must target the widgets path.
+
 NewRelay-UI grows fast — this table lists the stable, built-out mappings.
 For anything not listed, run `find …/NewRelay-UI/src/views -name '*.vue'` and open
 the matching view; the section recipes (§4) still apply.
@@ -90,7 +95,7 @@ the matching view; the section recipes (§4) still apply.
 | NewRelay `src/views/…` | Chatwoot location |
 | --- | --- |
 | `reports/ReportsView.vue` | `routes/dashboard/settings/reports/` — Overview=`LiveReports.vue`, wrapper=`components/ReportsWrapper.vue`, tables=`components/SummaryReports.vue`, cards=`components/overview/MetricCard.vue` + `components/overview/{Agent,Team}Table.vue`, heatmap=`components/heatmaps/BaseHeatmap.vue`, CSAT=`CsatResponses.vue`+`components/Csat*` |
-| `conversations/ConversationsView.vue` | `routes/dashboard/conversation/`; list header + Mine/Unassigned/All tabs = `components/ChatList.vue`; rows = `components-next/Conversation/ConversationCard/`; **voice-call overlay / incoming-call widget** (ringing/connected/incoming states, duration timer, mute/speaker/hangup/keypad) = `components-next/call/FloatingCallWidget.vue` + `components-next/call/CallCard.vue`, in-card status = `components-next/Conversation/ConversationCard/VoiceCallStatus.vue` |
+| `conversations/ConversationsView.vue` | `routes/dashboard/conversation/`; list header + Mine/Unassigned/All tabs = `components/ChatList.vue`; **rows = `components/widgets/conversation/ConversationCard.vue`** (see warning above — do not edit `components-next/Conversation/ConversationCard/`); **voice-call overlay / incoming-call widget** (ringing/connected/incoming states, duration timer, mute/speaker/hangup/keypad) = `components-next/call/FloatingCallWidget.vue` + `components-next/call/CallCard.vue`, in-card status = `components-next/Conversation/ConversationCard/VoiceCallStatus.vue` |
 | `inbox/InboxView.vue` | `routes/dashboard/inbox/`; inbox rows = `components-next/Inbox/InboxCard.vue`; thread reply composer = `components/widgets/conversation/InboxReplyComposer.vue` (used from conversation/inbox message views) |
 | `companies/CompaniesView.vue` / `contacts/ContactsView.vue` | `routes/dashboard/companies/` / `routes/dashboard/contacts/` |
 | `autoresponder/*View.vue` + `components/autoresponder/AccountSwitcher.vue` | `routes/dashboard/autoresponder/` — Overview/Automations/Response Controls/Accounts & Access/Templates/Activity/Settings. Account switcher + Accounts Access + Response Controls posts load from mock API (`comment_automation/social_accounts`, `response_controls`) when `COMMENT_AUTOMATION_PROVIDER=mock` or `MOCK_API=true`. |

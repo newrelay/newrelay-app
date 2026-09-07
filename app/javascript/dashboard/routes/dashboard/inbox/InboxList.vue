@@ -3,7 +3,7 @@ import { computed, ref, watch, onMounted, nextTick } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRoute, useRouter } from 'vue-router';
 import { useStore, useMapGetter } from 'dashboard/composables/store';
-import { useTrack } from 'dashboard/composables';
+import { useAlert, useTrack } from 'dashboard/composables';
 import { useUISettings } from 'dashboard/composables/useUISettings';
 import { useCamelCase } from 'dashboard/composables/useTransformKeys';
 import wootConstants from 'dashboard/constants/globals';
@@ -276,6 +276,41 @@ const onFilterChange = option => {
   }
 };
 
+const onOptionClick = async key => {
+  try {
+    if (key === 'mark_all_read') {
+      useTrack(INBOX_EVENTS.MARK_ALL_NOTIFICATIONS_AS_READ);
+      await store.dispatch('notifications/readAll');
+      const unread = items.value.filter(
+        item => !item.readAt && item.primaryActor?.id
+      );
+      await Promise.all(
+        unread.map(item =>
+          store.dispatch('markMessagesRead', { id: item.primaryActor.id })
+        )
+      );
+      items.value = items.value.map(item => ({
+        ...item,
+        readAt: item.readAt || new Date().toISOString(),
+      }));
+      useAlert(t('INBOX.ALERTS.MARK_ALL_READ'));
+      return;
+    }
+    if (key === 'delete_all') {
+      useTrack(INBOX_EVENTS.DELETE_ALL_NOTIFICATIONS);
+      await store.dispatch('notifications/deleteAll');
+      useAlert(t('INBOX.ALERTS.DELETE_ALL'));
+      return;
+    }
+    if (key === 'delete_all_read') {
+      await store.dispatch('notifications/deleteAllRead');
+      useAlert(t('INBOX.ALERTS.DELETE_ALL_READ'));
+    }
+  } catch {
+    // Notification store actions already flag UI errors; avoid a second toast.
+  }
+};
+
 const setSavedFilter = () => {
   const { inbox_filter_by: filterBy = {} } = uiSettings.value;
   const { sort_by: sortBy } = filterBy;
@@ -351,7 +386,11 @@ onMounted(() => {
       class="w-[260px] border-r border-border flex flex-col shrink-0 bg-card"
       :class="currentConversationId ? 'hidden xl:flex' : 'flex'"
     >
-      <InboxListHeader @filter="onFilterChange" @redirect="redirectToInbox" />
+      <InboxListHeader
+        @filter="onFilterChange"
+        @redirect="redirectToInbox"
+        @option-click="onOptionClick"
+      />
       <InboxSidebarNav
         :active-view="activeView"
         :view-counts="viewCounts"

@@ -1,5 +1,5 @@
 <script setup>
-import { computed, nextTick, onMounted, ref, watch } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import wootConstants from 'dashboard/constants/globals';
 import { useUISettings } from 'dashboard/composables/useUISettings';
@@ -17,8 +17,6 @@ const { t } = useI18n();
 const { uiSettings, updateUISettings } = useUISettings();
 
 const showSortMenu = ref(false);
-const sortTriggerRef = ref(null);
-const sortMenuStyle = ref({});
 
 const displayOptions = ref([
   {
@@ -95,35 +93,6 @@ const toggleSortMenu = () => {
   showSortMenu.value = !showSortMenu.value;
 };
 
-const updateSortMenuPosition = () => {
-  const trigger = sortTriggerRef.value;
-  if (!trigger || !showSortMenu.value) return;
-
-  const rect = trigger.getBoundingClientRect();
-  const isRtl = document.documentElement.dir === 'rtl';
-  const sideOffset = 4;
-
-  sortMenuStyle.value = isRtl
-    ? {
-        position: 'fixed',
-        top: `${rect.top}px`,
-        right: `${window.innerWidth - rect.left + sideOffset}px`,
-        zIndex: 60,
-      }
-    : {
-        position: 'fixed',
-        top: `${rect.top}px`,
-        left: `${rect.right + sideOffset}px`,
-        zIndex: 60,
-      };
-};
-
-watch(showSortMenu, async open => {
-  if (!open) return;
-  await nextTick();
-  updateSortMenuPosition();
-});
-
 const onSortOptionClick = option => {
   activeSort.value = option.key;
   showSortMenu.value = false;
@@ -149,7 +118,7 @@ onMounted(() => {
         <span class="i-lucide-arrow-down-up size-4 shrink-0" />
         {{ t('INBOX.DISPLAY_MENU.SORT') }}
       </div>
-      <div ref="sortTriggerRef" class="relative">
+      <div class="relative">
         <RelayButton
           variant="outline"
           size="sm"
@@ -162,30 +131,32 @@ onMounted(() => {
           {{ activeSortOption }}
           <span class="i-lucide-chevron-down size-3 shrink-0" />
         </RelayButton>
-        <Teleport to="body">
-          <div
-            v-if="showSortMenu"
-            :style="sortMenuStyle"
-            :class="DROPDOWN_MENU_CONTENT_CLASS"
-            data-state="open"
-            role="menu"
+        <div
+          v-if="showSortMenu"
+          :class="
+            cn(
+              DROPDOWN_MENU_CONTENT_CLASS,
+              'absolute top-0 z-[60] ltr:left-full rtl:right-full ltr:ml-1 rtl:mr-1'
+            )
+          "
+          data-state="open"
+          role="menu"
+        >
+          <button
+            v-for="option in sortOptions"
+            :key="option.key"
+            type="button"
+            role="menuitem"
+            :class="SORT_OPTION_CLASSES"
+            @click.stop="onSortOptionClick(option)"
           >
-            <button
-              v-for="option in sortOptions"
-              :key="option.key"
-              type="button"
-              role="menuitem"
-              :class="SORT_OPTION_CLASSES"
-              @click.stop="onSortOptionClick(option)"
-            >
-              {{ option.name }}
-              <span
-                v-if="activeSort === option.key"
-                class="i-lucide-check size-3 shrink-0"
-              />
-            </button>
-          </div>
-        </Teleport>
+            {{ option.name }}
+            <span
+              v-if="activeSort === option.key"
+              class="i-lucide-check size-3 shrink-0"
+            />
+          </button>
+        </div>
       </div>
     </div>
 

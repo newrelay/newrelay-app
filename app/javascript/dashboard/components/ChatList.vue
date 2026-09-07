@@ -911,7 +911,7 @@ watch(conversationFilters, (newVal, oldVal) => {
   >
     <slot />
     <div
-      class="flex h-16 shrink-0 items-center justify-between border-b border-border bg-card px-4"
+      class="flex h-14 shrink-0 items-center justify-between border-b border-border bg-card px-4"
     >
       <template v-if="!showSearchInput">
         <h1

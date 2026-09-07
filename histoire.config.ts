@@ -1,7 +1,10 @@
+import { createRequire } from 'node:module';
 import { defineConfig } from 'histoire';
 import { HstVue } from '@histoire/plugin-vue';
 // eslint-disable-next-line no-unused-vars
 import { aliases } from './vite.shared';
+
+const require = createRequire(import.meta.url);
 
 export default defineConfig({
   setupFile: './histoire.setup.ts',
@@ -15,7 +18,10 @@ export default defineConfig({
     resolve: {
       alias: {
         ...aliases,
-        '@sentry/vue': '@sentry/vue/build/esm/index.js',
+        // vite-node's SSR resolver mishandles @sentry/vue's "exports" map
+        // (ERR_UNSUPPORTED_DIR_IMPORT during story collection); aliasing to
+        // the resolved file sidesteps its subpath resolution entirely.
+        '@sentry/vue': require.resolve('@sentry/vue'),
       },
     },
   },

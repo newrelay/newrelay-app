@@ -277,35 +277,24 @@ const onFilterChange = option => {
 };
 
 const onOptionClick = async key => {
+  if (key !== 'mark_all_read') return;
+
   try {
-    if (key === 'mark_all_read') {
-      useTrack(INBOX_EVENTS.MARK_ALL_NOTIFICATIONS_AS_READ);
-      await store.dispatch('notifications/readAll');
-      const unread = items.value.filter(
-        item => !item.readAt && item.primaryActor?.id
-      );
-      await Promise.all(
-        unread.map(item =>
-          store.dispatch('markMessagesRead', { id: item.primaryActor.id })
-        )
-      );
-      items.value = items.value.map(item => ({
-        ...item,
-        readAt: item.readAt || new Date().toISOString(),
-      }));
-      useAlert(t('INBOX.ALERTS.MARK_ALL_READ'));
-      return;
-    }
-    if (key === 'delete_all') {
-      useTrack(INBOX_EVENTS.DELETE_ALL_NOTIFICATIONS);
-      await store.dispatch('notifications/deleteAll');
-      useAlert(t('INBOX.ALERTS.DELETE_ALL'));
-      return;
-    }
-    if (key === 'delete_all_read') {
-      await store.dispatch('notifications/deleteAllRead');
-      useAlert(t('INBOX.ALERTS.DELETE_ALL_READ'));
-    }
+    useTrack(INBOX_EVENTS.MARK_ALL_NOTIFICATIONS_AS_READ);
+    await store.dispatch('notifications/readAll');
+    const unread = items.value.filter(
+      item => !item.readAt && item.primaryActor?.id
+    );
+    await Promise.all(
+      unread.map(item =>
+        store.dispatch('markMessagesRead', { id: item.primaryActor.id })
+      )
+    );
+    items.value = items.value.map(item => ({
+      ...item,
+      readAt: item.readAt || new Date().toISOString(),
+    }));
+    useAlert(t('INBOX.ALERTS.MARK_ALL_READ'));
   } catch {
     // Notification store actions already flag UI errors; avoid a second toast.
   }

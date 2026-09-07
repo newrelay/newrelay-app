@@ -11,14 +11,6 @@ const menuItems = computed(() => [
     key: 'mark_all_read',
     label: t('INBOX.MENU_ITEM.MARK_ALL_READ'),
   },
-  {
-    key: 'delete_all',
-    label: t('INBOX.MENU_ITEM.DELETE_ALL'),
-  },
-  {
-    key: 'delete_all_read',
-    label: t('INBOX.MENU_ITEM.DELETE_ALL_READ'),
-  },
 ]);
 </script>
 

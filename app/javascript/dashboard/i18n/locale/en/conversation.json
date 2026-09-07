@@ -450,8 +450,7 @@
       "DESCRIPTION": "Stop switching between tabs. Connect your communication channels and reply to all your customers from one powerful, unified inbox.",
       "GETTING_STARTED": "Getting Started",
       "STEP_BADGE": "Step {current} of {total}",
-      "LEARN_HOW": "Learn how Conversations works",
-      "EXPLORE_DEMO": "Explore Demo Workspace"
+      "LEARN_HOW": "Learn how Conversations works"
     },
     "ALL_SET": {
       "TITLE": "You're all set!",

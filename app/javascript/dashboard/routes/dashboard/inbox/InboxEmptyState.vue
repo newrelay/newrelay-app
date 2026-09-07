@@ -22,7 +22,10 @@ const uiFlags = computed(() => store.getters['notifications/getUIFlags']);
 const inboxes = computed(() => store.getters['inboxes/getInboxes'] || []);
 const hasInboxes = computed(() => inboxes.value.length > 0);
 const isChannelView = computed(
-  () => hasInboxes.value && String(props.activeView).startsWith('inbox:')
+  () =>
+    hasInboxes.value &&
+    String(props.activeView).startsWith('inbox:') &&
+    Boolean(props.channelName)
 );
 
 const supportedChannels = computed(() => [

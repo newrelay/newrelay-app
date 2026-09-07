@@ -175,10 +175,6 @@ const connectChannel = channelKey => {
 const learnMore = () => {
   window.open('https://www.chatwoot.com/docs', '_blank', 'noopener,noreferrer');
 };
-
-const exploreDemo = () => {
-  window.open('https://www.chatwoot.com/docs', '_blank', 'noopener,noreferrer');
-};
 </script>
 
 <template>
@@ -331,24 +327,14 @@ const exploreDemo = () => {
             </div>
           </div>
 
-          <div class="flex flex-col sm:flex-row items-center gap-4 mt-12">
-            <button
-              type="button"
-              class="text-sm font-medium text-primary hover:underline flex items-center gap-1.5 transition-colors"
-              @click="learnMore"
-            >
-              <span class="i-lucide-lightbulb size-4" />
-              {{ t('ONBOARDING.CONNECT.LEARN_HOW') }}
-            </button>
-
-            <RelayButton
-              variant="ghost"
-              class="border border-border hover:border-transparent shadow-xs gap-2"
-              @click="exploreDemo"
-            >
-              {{ t('ONBOARDING.CONNECT.EXPLORE_DEMO') }}
-            </RelayButton>
-          </div>
+          <button
+            type="button"
+            class="text-sm font-medium text-primary hover:underline flex items-center gap-1.5 transition-colors mt-12"
+            @click="learnMore"
+          >
+            <span class="i-lucide-lightbulb size-4" />
+            {{ t('ONBOARDING.CONNECT.LEARN_HOW') }}
+          </button>
         </div>
       </div>
 

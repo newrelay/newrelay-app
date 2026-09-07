@@ -91,9 +91,7 @@
       "MARK_AS_UNREAD": "Mark as unread",
       "SNOOZE": "Snooze",
       "DELETE": "Delete",
-      "MARK_ALL_READ": "Mark all as read",
-      "DELETE_ALL": "Delete all",
-      "DELETE_ALL_READ": "Delete all read"
+      "MARK_ALL_READ": "Mark all as read"
     },
     "DISPLAY_MENU": {
       "SORT": "Sort",
@@ -115,9 +113,7 @@
       "MARK_AS_UNREAD": "Notification marked as unread",
       "SNOOZE": "Notification snoozed",
       "DELETE": "Notification deleted",
-      "MARK_ALL_READ": "All notifications marked as read",
-      "DELETE_ALL": "All notifications deleted",
-      "DELETE_ALL_READ": "All read notifications deleted"
+      "MARK_ALL_READ": "All notifications marked as read"
     },
     "REAUTHORIZE": {
       "TITLE": "Reauthorization Required",
@@ -141,7 +137,6 @@
       "TITLE": "Your Inbox is Ready",
       "DESCRIPTION": "Connect WhatsApp, Email, SMS, Facebook Messenger, Instagram, or Live Chat to start receiving conversations from all your communication channels in one place.",
       "CONNECT_CHANNEL": "Connect a Channel",
-      "LEARN_MORE": "Learn How Inboxes Work",
       "SUPPORTED_CHANNELS": "Supported Channels",
       "LEARN_HOW_WORKS": "Learn how Inbox works",
       "CHANNEL_TITLE": "No {channel} conversations yet",

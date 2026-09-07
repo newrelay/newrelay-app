@@ -977,7 +977,7 @@ watch(conversationFilters, (newVal, oldVal) => {
               v-for="tab in assigneeTabItems"
               :key="tab.key"
               :value="tab.key"
-              class="relative -mb-px px-0 py-2 text-sm font-medium rounded-none bg-transparent shadow-none text-muted-foreground hover:text-foreground aria-selected:text-foreground aria-selected:shadow-none"
+              class="relative -mb-px !rounded-none !bg-transparent !px-0 !py-2 text-sm font-medium shadow-none text-muted-foreground hover:text-foreground aria-selected:text-foreground aria-selected:!shadow-none"
             >
               {{ tab.name }}
               <span

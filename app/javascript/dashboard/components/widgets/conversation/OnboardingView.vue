@@ -26,6 +26,8 @@ const isFilteredView = computed(() => {
   if (!unfilteredRoutes.includes(route.name)) return true;
   const assigneeType = chatListFilters.value?.assigneeType;
   if (assigneeType && assigneeType !== 'all') return true;
+  const status = chatListFilters.value?.status;
+  if (status && status !== 'open') return true;
   return Boolean(appliedFilters.value?.length);
 });
 

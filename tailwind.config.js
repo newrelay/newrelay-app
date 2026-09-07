@@ -1,13 +1,12 @@
-const { slateDark } = require('@radix-ui/colors');
+import { slateDark } from '@radix-ui/colors';
+import defaultTheme from 'tailwindcss/defaultTheme';
+import tailwindColors from 'tailwindcss/colors';
+import { iconsPlugin, getIconCollections } from '@egoist/tailwindcss-icons';
+import tailwindPlugin from 'tailwindcss/plugin';
+import typographyPlugin from '@tailwindcss/typography';
 import { colors } from './theme/colors';
 import { icons } from './theme/icons';
-const defaultTheme = require('tailwindcss/defaultTheme');
-const tailwindColors = require('tailwindcss/colors');
-const {
-  iconsPlugin,
-  getIconCollections,
-} = require('@egoist/tailwindcss-icons');
-const tailwindPlugin = require('tailwindcss/plugin');
+
 
 const withAlpha = variable => `rgb(var(${variable}) / <alpha-value>)`;
 
@@ -375,8 +374,7 @@ const tailwindConfig = {
     },
   },
   plugins: [
-    // eslint-disable-next-line
-    require('@tailwindcss/typography'),
+    typographyPlugin,
     iconsPlugin({
       collections: {
         woot: { icons },

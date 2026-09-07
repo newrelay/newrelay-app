@@ -72,12 +72,15 @@ const toggleSidebar = () => {
 
 <template>
   <div
-    class="flex h-16 shrink-0 items-center justify-between border-b border-border bg-card px-6"
+    class="flex h-16 min-w-0 shrink-0 items-center justify-between overflow-hidden border-b border-border bg-card px-6"
   >
     <ConversationProfileSummary :chat="chat" class="min-w-0 flex-1" />
 
     <div class="flex shrink-0 items-center gap-1">
-      <div v-if="isMessageSearchOpen" class="relative mr-2 flex items-center">
+      <div
+        v-if="isMessageSearchOpen"
+        class="relative mr-2 w-[220px] max-w-[220px] shrink-0"
+      >
         <span
           class="i-lucide-search pointer-events-none absolute left-2.5 top-1/2 size-4 -translate-y-1/2 text-muted-foreground"
         />
@@ -86,12 +89,12 @@ const toggleSidebar = () => {
           v-model="messageSearchQuery"
           type="text"
           :placeholder="t('CONVERSATION.HEADER.SEARCH_PLACEHOLDER')"
-          class="h-9 w-[220px] rounded-md border border-border/80 bg-muted/30 pl-8 pr-8 text-[13px] transition-all duration-300 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary/30"
+          class="reset-base no-margin box-border h-9 w-full rounded-md border border-border/80 bg-muted/30 pl-8 pr-8 text-[13px] text-foreground placeholder:text-muted-foreground/70 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary/30"
           @keydown.esc="closeMessageSearch"
         />
         <button
           type="button"
-          class="absolute right-1 top-1/2 flex size-7 -translate-y-1/2 items-center justify-center rounded-sm text-muted-foreground transition-colors hover:bg-muted/50 hover:text-foreground"
+          class="reset-base absolute right-1 top-1/2 flex size-7 -translate-y-1/2 items-center justify-center rounded-sm border-0 bg-transparent p-0 text-muted-foreground transition-colors hover:bg-muted/50 hover:text-foreground"
           :aria-label="t('CONVERSATION.HEADER.CLOSE')"
           @click="closeMessageSearch"
         >
@@ -111,12 +114,16 @@ const toggleSidebar = () => {
       </RelayButton>
 
       <ConversationCallButton
+        v-if="!isMessageSearchOpen"
         :inbox="currentInbox"
         :chat="chat"
         :button-class="headerIconButtonClass"
       />
 
-      <RelayTooltip :content="t('CONVERSATION.HEADER.SIMULATE_INCOMING_CALL')">
+      <RelayTooltip
+        v-if="!isMessageSearchOpen"
+        :content="t('CONVERSATION.HEADER.SIMULATE_INCOMING_CALL')"
+      >
         <RelayButton
           variant="ghost"
           size="icon"

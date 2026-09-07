@@ -262,7 +262,15 @@
       "DARK_MODE": "Dark",
       "SYSTEM_MODE": "System",
       "SNOOZE_NOTIFICATION": "Snooze Notification"
-    }
+    },
+    "KEYS": {
+      "ESC": "ESC",
+      "NAVIGATE": "Navigate",
+      "SELECT": "Select",
+      "CLOSE": "Close"
+    },
+    "NO_MATCHING_COMMANDS": "No matching commands found",
+    "EMPTY_STATE_SUBTITLE": "Try searching for something else or press ESC to dismiss."
   },
   "DASHBOARD_APPS": {
     "LOADING_MESSAGE": "Loading Dashboard App..."

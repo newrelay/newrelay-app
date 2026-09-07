@@ -65,13 +65,13 @@ const toggleTheme = () => {
     <div class="hidden flex-1 justify-center px-4 md:flex">
       <button
         type="button"
-        class="flex h-10 w-full max-w-md items-center gap-3 rounded-full border border-input bg-background px-4 text-sm text-muted-foreground shadow-xs transition-colors hover:border-transparent hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+        class="flex h-9 w-full max-w-md items-center gap-3 rounded-lg border border-input bg-background px-3 text-sm text-muted-foreground shadow-xs transition-colors hover:bg-accent/60 hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring cursor-pointer"
         @click="$emit('openSearch')"
       >
-        <span class="i-lucide-search size-4 shrink-0" />
-        <span class="flex-1 text-left">{{ searchLabel }}</span>
+        <span class="i-lucide-search size-4 shrink-0 text-muted-foreground" />
+        <span class="flex-1 text-left truncate">{{ searchLabel }}</span>
         <kbd
-          class="pointer-events-none rounded border border-border bg-muted px-1.5 py-0.5 text-[10px] font-medium text-muted-foreground"
+          class="pointer-events-none shrink-0 rounded border border-border bg-muted px-1.5 py-0.5 text-[10px] font-medium text-muted-foreground"
         >
           {{ searchShortcut }}
         </kbd>

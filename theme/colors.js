@@ -1,4 +1,4 @@
-const {
+import {
   blue,
   blueDark,
   green,
@@ -11,7 +11,8 @@ const {
   redDark,
   violet,
   violetDark,
-} = require('@radix-ui/colors');
+} from '@radix-ui/colors';
+
 
 export const colors = {
   woot: {

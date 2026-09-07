@@ -1,13 +1,22 @@
 import { defineConfig } from 'histoire';
 import { HstVue } from '@histoire/plugin-vue';
+// eslint-disable-next-line no-unused-vars
+import { aliases } from './vite.shared';
 
 export default defineConfig({
   setupFile: './histoire.setup.ts',
   plugins: [HstVue()],
+  storyMatch: ['**/*.story.vue'],
   collectMaxThreads: 4,
   vite: {
     server: {
       port: 6179,
+    },
+    resolve: {
+      alias: {
+        ...aliases,
+        '@sentry/vue': '@sentry/vue/build/esm/index.js',
+      },
     },
   },
   viteIgnorePlugins: ['vite-plugin-ruby'],
@@ -29,16 +38,7 @@ export default defineConfig({
     },
   },
   tree: {
-    groups: [
-      {
-        id: 'top',
-        title: '',
-      },
-      {
-        id: 'components',
-        title: 'Components',
-        include: () => true,
-      },
-    ],
+    file: 'title',
+    order: 'asc',
   },
 });

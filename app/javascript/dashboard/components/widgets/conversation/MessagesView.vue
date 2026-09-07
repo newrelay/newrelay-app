@@ -546,7 +546,10 @@ export default {
           </ResizableEditorWrapper>
         </div>
       </div>
-      <div v-else class="p-4 bg-contact-panel shrink-0 border-t border-border">
+      <div
+        v-else
+        class="p-4 bg-muted/10 dark:bg-background shrink-0 border-t border-border"
+      >
         <ResizableEditorWrapper
           ref="resizableEditorWrapperRef"
           :container-height="Math.max(0, containerHeight - topBannerHeight)"

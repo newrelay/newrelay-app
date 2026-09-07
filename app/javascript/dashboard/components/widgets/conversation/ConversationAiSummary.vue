@@ -9,13 +9,8 @@ const props = defineProps({
     type: [Number, String],
     required: true,
   },
-  contact: {
-    type: Object,
-    default: () => ({}),
-  },
 });
 
-const emit = defineEmits(['update:hasSummary']);
 const { t } = useI18n();
 const { captainTasksEnabled, summarizeConversation } = useCaptain();
 const conversationIdRef = computed(() => props.conversationId);
@@ -34,14 +29,6 @@ const labelTakeaways = computed(() => {
   return labels.slice(0, 4).map(title => title);
 });
 
-const contactAttributeTakeaways = computed(() => {
-  const attrs = props.contact?.custom_attributes || {};
-  return Object.entries(attrs)
-    .filter(([, value]) => value != null && String(value).trim() !== '')
-    .slice(0, 4)
-    .map(([key, value]) => `${key}: ${value}`);
-});
-
 const summaryBullets = computed(() => {
   if (!summaryText.value) return [];
   return summaryText.value
@@ -50,21 +37,6 @@ const summaryBullets = computed(() => {
     .filter(Boolean)
     .slice(0, 6);
 });
-
-const hasSummary = computed(() => {
-  return (
-    captainTasksEnabled.value &&
-    (!!summaryText.value || summaryBullets.value.length > 0)
-  );
-});
-
-watch(
-  hasSummary,
-  val => {
-    emit('update:hasSummary', val);
-  },
-  { immediate: true }
-);
 
 const nextBestAction = computed(() => {
   const labels = labelTakeaways.value.map(l => l.toLowerCase());
@@ -120,85 +92,76 @@ watch(
 
 <template>
   <div class="flex flex-col gap-4">
-    <!-- Header -->
-    <div class="flex flex-col gap-1 px-6">
-      <p class="text-[11px] text-muted-foreground">
-        {{ lastUpdatedLabel }}
-      </p>
-    </div>
+    <p class="text-[11px] text-muted-foreground">
+      {{ lastUpdatedLabel }}
+    </p>
 
-    <!-- Bullets / Content -->
-    <div v-if="summaryBullets.length" class="px-6">
-      <ul class="flex flex-col gap-2.5">
-        <li
-          v-for="(bullet, index) in summaryBullets"
-          :key="index"
-          class="flex items-start gap-3 text-[13px] text-foreground/80 leading-snug"
-        >
-          <span
-            class="size-1.5 rounded-full bg-foreground/30 mt-1.5 shrink-0"
-          />
-          <span>{{ bullet }}</span>
-        </li>
-      </ul>
-    </div>
-    <div
+    <ul v-if="summaryBullets.length" class="flex flex-col gap-2.5">
+      <li
+        v-for="(bullet, index) in summaryBullets"
+        :key="index"
+        class="flex items-start gap-3 text-[13px] text-foreground/80 leading-snug"
+      >
+        <span class="size-1.5 rounded-full bg-foreground/30 mt-1.5 shrink-0" />
+        <span>{{ bullet }}</span>
+      </li>
+    </ul>
+    <p
       v-else-if="summaryText"
-      class="text-[13.5px] text-foreground/90 leading-relaxed px-6"
+      class="text-[13.5px] text-foreground/90 leading-relaxed"
     >
       {{ summaryText }}
-    </div>
-    <p v-else class="text-[13px] text-muted-foreground px-6">
+    </p>
+    <p v-else class="text-[13px] text-muted-foreground">
       {{ t('CONVERSATION.AI_SUMMARY.EMPTY') }}
     </p>
 
-    <p v-if="errorMessage" class="text-[12px] text-destructive px-6">
+    <p v-if="errorMessage" class="text-[12px] text-destructive">
       {{ errorMessage }}
     </p>
 
-    <!-- Next Best Action + Generate (nested) -->
-    <div class="px-6">
+    <div
+      class="flex flex-col gap-1.5 mt-1 border border-primary/20 bg-primary/5 rounded-xl overflow-hidden p-0.5"
+    >
       <div
-        class="flex flex-col gap-1.5 mt-1 border border-primary/20 bg-primary/5 rounded-xl overflow-hidden p-0.5"
+        v-if="summaryBullets.length || summaryText"
+        class="flex items-center gap-3 p-2.5 cursor-pointer hover:bg-primary/5 transition-colors rounded-lg"
       >
         <div
-          v-if="summaryBullets.length || summaryText"
-          class="flex items-center gap-3 p-2.5 cursor-pointer hover:bg-primary/5 transition-colors rounded-lg"
+          class="size-7 rounded-full bg-primary/10 flex items-center justify-center shrink-0"
         >
-          <div
-            class="size-7 rounded-full bg-primary/10 flex items-center justify-center shrink-0"
-          >
-            <span class="i-lucide-lightbulb size-4 text-primary" />
-          </div>
-          <div class="flex flex-col flex-1 min-w-0">
-            <span class="text-[13px] font-medium text-primary">
-              {{
-                t('CONVERSATION.AI_SUMMARY.ACTIONS.TITLE', 'Next Best Action')
-              }}
-            </span>
-            <span class="text-[13px] text-foreground truncate mt-0.5">
-              {{ nextBestAction }}
-            </span>
-          </div>
-          <span
-            class="i-lucide-chevron-right size-4 text-muted-foreground shrink-0"
-          />
+          <span class="i-lucide-lightbulb size-4 text-primary" />
         </div>
+        <div class="flex flex-col flex-1 min-w-0">
+          <span class="text-[13px] font-medium text-primary">
+            {{ t('CONVERSATION.AI_SUMMARY.NEXT_BEST_ACTION') }}
+          </span>
+          <span class="text-[13px] text-foreground truncate mt-0.5">
+            {{ nextBestAction }}
+          </span>
+        </div>
+        <span
+          class="i-lucide-chevron-right size-4 text-muted-foreground shrink-0"
+        />
+      </div>
 
-        <div class="px-2 py-2">
-          <button
-            type="button"
-            class="w-full flex items-center justify-center gap-2 border border-primary/20 bg-background rounded-lg py-1.5 text-[13px] font-medium text-primary hover:bg-primary/5 transition-colors disabled:opacity-60"
-            :disabled="isGenerating"
-            @click="generateSummary"
-          >
-            <span
-              class="i-lucide-refresh-cw size-3.5"
-              :class="isGenerating ? 'animate-spin' : ''"
-            />
-            {{ t('CONVERSATION.AI_SUMMARY.GENERATE_BUTTON') }}
-          </button>
-        </div>
+      <div class="px-2 py-2">
+        <button
+          type="button"
+          class="w-full flex items-center justify-center gap-2 border border-primary/20 bg-background rounded-lg py-1.5 text-[13px] font-medium text-primary hover:bg-primary/5 transition-colors disabled:opacity-60"
+          :disabled="isGenerating"
+          @click="generateSummary"
+        >
+          <span
+            class="i-lucide-refresh-cw size-3.5"
+            :class="isGenerating ? 'animate-spin' : ''"
+          />
+          {{
+            isGenerating
+              ? t('CONVERSATION.AI_SUMMARY.GENERATING')
+              : t('CONVERSATION.AI_SUMMARY.GENERATE')
+          }}
+        </button>
       </div>
     </div>
   </div>

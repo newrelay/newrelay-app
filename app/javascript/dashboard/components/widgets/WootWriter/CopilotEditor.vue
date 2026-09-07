@@ -203,7 +203,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="mb-2">
+  <div class="w-full">
     <div v-if="hasGeneratedContent" class="overflow-y-auto max-h-56 mb-2 px-1">
       <p
         v-dompurify-html="formatMessage(generatedContent, false)"

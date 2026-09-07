@@ -1,5 +1,6 @@
 <!-- eslint-disable vue/v-slot-style -->
 <script>
+import { RelayButton } from 'dashboard/components-next/relay';
 import { mapGetters } from 'vuex';
 import { useAlert } from 'dashboard/composables';
 import { useAgentsList } from 'dashboard/composables/useAgentsList';
@@ -8,13 +9,12 @@ import ConversationLabels from './labels/LabelBox.vue';
 import { CONVERSATION_PRIORITY } from '../../../../shared/constants/messages';
 import { CONVERSATION_EVENTS } from '../../../helper/AnalyticsHelper/events';
 import { useTrack } from 'dashboard/composables';
-import NextButton from 'dashboard/components-next/button/Button.vue';
 
 export default {
   components: {
     MultiselectDropdown,
     ConversationLabels,
-    NextButton,
+    RelayButton,
   },
   props: {
     conversationId: {
@@ -223,15 +223,15 @@ export default {
         >
           {{ $t('CONVERSATION_SIDEBAR.ASSIGNEE_LABEL') }}
         </label>
-        <NextButton
+        <RelayButton
           v-if="showSelfAssign"
-          link
-          xs
-          icon="i-lucide-arrow-right"
-          class="!gap-1"
-          :label="$t('CONVERSATION_SIDEBAR.SELF_ASSIGN')"
+          variant="link"
+          class="h-auto gap-1 p-0 text-[12px] font-medium"
           @click="onSelfAssign"
-        />
+        >
+          {{ $t('CONVERSATION_SIDEBAR.SELF_ASSIGN') }}
+          <span class="i-lucide-arrow-right size-3" />
+        </RelayButton>
       </div>
       <MultiselectDropdown
         :options="agentsList"

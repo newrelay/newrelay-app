@@ -1331,7 +1331,7 @@ export default {
   <ReplyBoxBanner :message="message" :is-on-private-note="isOnPrivateNote" />
   <div
     ref="replyEditor"
-    class="reply-box bg-contact-panel border border-border rounded-xl shadow-xs overflow-visible transition-shadow"
+    class="reply-box bg-card border border-border rounded-xl shadow-xs overflow-visible transition-shadow"
     :class="replyBoxClass"
   >
     <InboxReplyTopPanel
@@ -1352,9 +1352,9 @@ export default {
     <ReplyTopPanel
       v-else
       :mode="replyType"
-      :contact-name="currentContact?.name"
       :conversation-id="conversationId"
       :is-reply-restricted="isReplyRestricted"
+      :is-editor-expanded="isEditorExpanded"
       :disabled="
         (copilot.isActive.value && copilot.isGenerating.value) ||
         showAudioRecorderEditor
@@ -1440,6 +1440,7 @@ export default {
           :class="{
             'inbox-note-editor bg-amber-500/5 text-amber-900':
               isInboxVariant && isOnPrivateNote,
+            'bg-amber-500/10': !isInboxVariant && isOnPrivateNote,
           }"
         >
           <WootMessageEditor

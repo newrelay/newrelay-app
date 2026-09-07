@@ -7,6 +7,7 @@ import {
 } from 'dashboard/composables/store';
 import { useAccount } from 'dashboard/composables/useAccount';
 import { useUISettings } from 'dashboard/composables/useUISettings';
+import { useCaptain } from 'dashboard/composables/useCaptain';
 import { FEATURE_FLAGS } from 'dashboard/featureFlags';
 
 import AccordionItem from 'dashboard/components/Accordion/AccordionItem.vue';
@@ -44,7 +45,6 @@ const {
 } = useUISettings();
 
 const dragging = ref(false);
-const hasAiSummary = ref(false);
 const conversationSidebarItems = ref([]);
 
 const shopifyIntegration = useFunctionGetter(
@@ -76,6 +76,7 @@ const isLinearConnected = computed(
 );
 
 const store = useStore();
+const { captainTasksEnabled } = useCaptain();
 const currentChat = useMapGetter('getSelectedChat');
 const conversationId = computed(() => props.conversationId);
 const conversationMetadataGetter = useMapGetter(
@@ -138,17 +139,13 @@ onMounted(() => {
       @panel-close="closeContactPanel"
     />
     <AccordionItem
-      v-if="hasAiSummary"
+      v-if="captainTasksEnabled"
       :title="$t('CONVERSATION.AI_SUMMARY.TITLE')"
       icon="i-lucide-sparkles"
       :is-open="isContactSidebarItemOpen('is_ai_summary_open', true)"
       @toggle="value => toggleSidebarUIState('is_ai_summary_open', value)"
     >
-      <ConversationAiSummary
-        :conversation-id="conversationId"
-        :contact="contact"
-        @update:has-summary="val => (hasAiSummary = val)"
-      />
+      <ConversationAiSummary :conversation-id="conversationId" />
     </AccordionItem>
     <div class="list-group">
       <Draggable
@@ -292,10 +289,7 @@ onMounted(() => {
           <div v-else-if="element.name === 'contact_notes'">
             <AccordionItem
               :title="
-                $t(
-                  'CONVERSATION_SIDEBAR.ACCORDION.CONTACT_NOTES',
-                  'Notes & Attachments'
-                )
+                $t('CONVERSATION_SIDEBAR.ACCORDION.NOTES_AND_ATTACHMENTS')
               "
               :is-open="isContactSidebarItemOpen('is_contact_notes_open')"
               @toggle="

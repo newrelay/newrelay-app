@@ -317,6 +317,12 @@ export default {
       }
       return !this.enableWhatsAppTemplates && !this.enableContentTemplates;
     },
+    isAudioPlayback() {
+      return (
+        this.recordingAudioState === 'playing' ||
+        this.recordingAudioState === 'paused'
+      );
+    },
   },
   mounted() {
     ActiveStorage.start();
@@ -337,7 +343,7 @@ export default {
 
 <template>
   <div
-    class="px-3 py-2 flex items-center justify-between border-t border-border bg-transparent overflow-visible"
+    class="px-3 py-2 flex items-center justify-between border-t border-border bg-muted/20 overflow-visible"
   >
     <div class="flex items-center gap-1 flex-wrap">
       <!-- Attach -->
@@ -474,7 +480,7 @@ export default {
           :class="[
             toolbarIconButtonClass,
             isRecordingAudio
-              ? 'bg-red-500/10 text-red-500 hover:bg-red-500/20 hover:text-red-600'
+              ? 'bg-destructive/10 text-destructive hover:bg-destructive/20 hover:text-destructive'
               : '',
           ]"
           @click="toggleAudioRecorder"
@@ -490,10 +496,25 @@ export default {
       <RelayButton
         v-if="showAudioPlayStopButton"
         variant="ghost"
-        class="h-8 px-2 text-muted-foreground border border-border hover:border-transparent"
-        @click="toggleAudioRecorderPlayPause"
+        :class="
+          isAudioPlayback
+            ? 'h-8 px-2 text-muted-foreground border border-border hover:border-transparent'
+            : 'h-8 px-3 rounded-md bg-warning text-foreground font-medium text-[13px] flex items-center gap-2 border-none shadow-sm hover:bg-warning/90 hover:text-foreground'
+        "
+        @click="
+          isAudioPlayback
+            ? toggleAudioRecorderPlayPause()
+            : toggleAudioRecorder()
+        "
       >
-        <span :class="audioRecorderPlayStopIcon" class="size-4" />
+        <span
+          class="shrink-0"
+          :class="
+            isAudioPlayback
+              ? [audioRecorderPlayStopIcon, 'size-4']
+              : 'i-lucide-square size-3.5 fill-current'
+          "
+        />
         {{ recordingAudioDurationText }}
       </RelayButton>
 
@@ -559,7 +580,7 @@ export default {
           :class="[
             toolbarIconButtonClass,
             isOnPrivateNote
-              ? 'bg-amber-500/10 text-amber-600 hover:bg-amber-500/20 hover:text-amber-700'
+              ? 'bg-warning/10 text-warning hover:bg-warning/20 hover:text-warning'
               : '',
           ]"
           :aria-pressed="isOnPrivateNote"
@@ -588,7 +609,7 @@ export default {
         type="submit"
         variant="default"
         class="px-4 h-8 gap-2 font-semibold shadow-xs"
-        :class="isNote ? 'bg-amber-500 text-white hover:bg-amber-600' : ''"
+        :class="isNote ? 'bg-warning text-foreground hover:bg-warning/90' : ''"
         :disabled="isSendDisabled"
         @click="onSend"
       >

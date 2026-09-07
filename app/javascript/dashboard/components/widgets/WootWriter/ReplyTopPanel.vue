@@ -57,9 +57,9 @@ export default {
       type: Boolean,
       default: false,
     },
-    contactName: {
-      type: String,
-      default: '',
+    isEditorExpanded: {
+      type: Boolean,
+      default: false,
     },
   },
   emits: [
@@ -236,11 +236,21 @@ export default {
         />
       </div>
       <button
+        type="button"
         class="size-7 flex items-center justify-center rounded-md hover:bg-muted text-muted-foreground hover:text-foreground transition-colors"
-        title="Toggle editor size"
+        :title="
+          isEditorExpanded
+            ? $t('CONVERSATION.REPLYBOX.COLLAPSE_EDITOR')
+            : $t('CONVERSATION.REPLYBOX.EXPAND_EDITOR')
+        "
         @click="$emit('toggleEditorSize')"
       >
-        <span class="i-lucide-maximize-2 size-4" />
+        <span
+          class="size-4"
+          :class="
+            isEditorExpanded ? 'i-lucide-minimize-2' : 'i-lucide-maximize-2'
+          "
+        />
       </button>
     </div>
   </div>

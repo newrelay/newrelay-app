@@ -197,7 +197,7 @@ export default {
     },
     audioRecorderButtonClass() {
       return this.isRecordingAudio
-        ? 'size-8 flex items-center justify-center rounded-md bg-red-500/10 text-red-500 transition-colors hover:bg-red-500/20 hover:text-red-600 focus-visible:outline-none'
+        ? 'size-8 flex items-center justify-center rounded-md bg-destructive/10 text-destructive transition-colors hover:bg-destructive/20 hover:text-destructive focus-visible:outline-none'
         : this.toolbarButtonClass;
     },
     aiReplyButtonClass() {
@@ -219,7 +219,7 @@ export default {
 
 <template>
   <div
-    class="flex items-center justify-between overflow-visible rounded-b-xl border-t border-border bg-muted/5 px-3 py-2.5"
+    class="flex items-center justify-between overflow-visible rounded-b-xl border-t border-border bg-muted/20 px-3 py-2"
   >
     <div class="flex flex-wrap items-center gap-1">
       <!-- Emoji -->

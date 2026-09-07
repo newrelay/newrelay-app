@@ -45,9 +45,16 @@ const isDownloading = ref(false);
 const activeAttachment = ref({});
 const activeFileType = ref('');
 const activeImageIndex = ref(
-  props.allAttachments.findIndex(
-    attachment => attachment.message_id === props.attachment.message_id
-  ) || 0
+  (() => {
+    const byId = props.allAttachments.findIndex(
+      attachment => attachment.id === props.attachment.id
+    );
+    if (byId >= 0) return byId;
+    const byMessage = props.allAttachments.findIndex(
+      attachment => attachment.message_id === props.attachment.message_id
+    );
+    return byMessage >= 0 ? byMessage : 0;
+  })()
 );
 
 const imageRef = useTemplateRef('imageRef');
@@ -295,7 +302,7 @@ onMounted(() => {
             >
               <img
                 ref="imageRef"
-                :key="activeAttachment.message_id"
+                :key="activeAttachment.id || activeAttachment.data_url"
                 :src="activeAttachment.data_url"
                 :style="imageStyle"
                 class="max-h-full max-w-full object-contain duration-100 ease-in-out transform select-none"
@@ -309,7 +316,7 @@ onMounted(() => {
 
             <video
               v-if="isVideo"
-              :key="activeAttachment.message_id"
+              :key="activeAttachment.id || activeAttachment.data_url"
               :src="activeAttachment.data_url"
               controls
               playsInline
@@ -320,7 +327,7 @@ onMounted(() => {
 
             <audio
               v-if="isAudio"
-              :key="activeAttachment.message_id"
+              :key="activeAttachment.id || activeAttachment.data_url"
               controls
               :autoplay="autoPlay"
               class="w-full max-w-md"

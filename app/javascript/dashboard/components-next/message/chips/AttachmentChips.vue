@@ -5,6 +5,7 @@ import ImageChip from 'next/message/chips/Image.vue';
 import VideoChip from 'next/message/chips/Video.vue';
 import AudioChip from 'next/message/chips/Audio.vue';
 import FileChip from 'next/message/chips/File.vue';
+import MediaAlbum from 'next/message/chips/MediaAlbum.vue';
 import { useMessageContext } from '../provider.js';
 
 import { ATTACHMENT_TYPES } from '../constants';
@@ -51,7 +52,11 @@ const allAttachments = computed(() => {
 });
 
 const mediaAttachments = computed(() => {
-  const allowedTypes = [ATTACHMENT_TYPES.IMAGE, ATTACHMENT_TYPES.VIDEO];
+  const allowedTypes = [
+    ATTACHMENT_TYPES.IMAGE,
+    ATTACHMENT_TYPES.VIDEO,
+    ATTACHMENT_TYPES.IG_REEL,
+  ];
   const mediaTypes = allAttachments.value.filter(attachment =>
     allowedTypes.includes(attachment.fileType)
   );
@@ -76,14 +81,21 @@ const files = computed(() => {
 </script>
 
 <template>
-  <div v-if="mediaAttachments.length" :class="classToApply">
+  <MediaAlbum
+    v-if="mediaAttachments.length > 1"
+    :attachments="mediaAttachments"
+  />
+  <div v-else-if="mediaAttachments.length" :class="classToApply">
     <template v-for="attachment in mediaAttachments" :key="attachment.id">
       <ImageChip
         v-if="attachment.fileType === ATTACHMENT_TYPES.IMAGE"
         :attachment="attachment"
       />
       <VideoChip
-        v-else-if="attachment.fileType === ATTACHMENT_TYPES.VIDEO"
+        v-else-if="
+          attachment.fileType === ATTACHMENT_TYPES.VIDEO ||
+          attachment.fileType === ATTACHMENT_TYPES.IG_REEL
+        "
         :attachment="attachment"
       />
     </template>

@@ -38,6 +38,7 @@ import LocationBubble from './bubbles/Location.vue';
 import CSATBubble from './bubbles/CSAT.vue';
 import FormBubble from './bubbles/Form.vue';
 import VoiceCallBubble from './bubbles/VoiceCall.vue';
+import MediaAlbumBubble from './bubbles/MediaAlbum.vue';
 
 import MessageError from './MessageError.vue';
 import ContextMenu from 'dashboard/modules/conversations/components/MessageContextMenu.vue';
@@ -155,7 +156,22 @@ const STANDALONE_CARD_TYPES = [
   ATTACHMENT_TYPES.EMBED,
 ];
 
+const MEDIA_ALBUM_TYPES = [
+  ATTACHMENT_TYPES.IMAGE,
+  ATTACHMENT_TYPES.VIDEO,
+  ATTACHMENT_TYPES.IG_REEL,
+];
+
+const isMediaAlbumMessage = computed(() => {
+  const list = props.attachments;
+  if (!Array.isArray(list) || list.length < 2 || props.content) return false;
+  return list.every(attachment =>
+    MEDIA_ALBUM_TYPES.includes(attachment.fileType)
+  );
+});
+
 const isStandaloneCardMessage = computed(() => {
+  if (isMediaAlbumMessage.value) return true;
   return (
     Array.isArray(props.attachments) &&
     props.attachments.length === 1 &&
@@ -320,6 +336,10 @@ const componentToRender = computed(() => {
   ];
   if (instagramSharedTypes.includes(props.contentAttributes.imageType)) {
     return InstagramStoryBubble;
+  }
+
+  if (isMediaAlbumMessage.value) {
+    return MediaAlbumBubble;
   }
 
   if (Array.isArray(props.attachments) && props.attachments.length === 1) {

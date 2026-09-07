@@ -2,7 +2,7 @@
 import { computed, reactive } from 'vue';
 import Message from './Message.vue';
 import InboxMessageDateSeparator from './InboxMessageDateSeparator.vue';
-import { MESSAGE_TYPES } from './constants.js';
+import { MESSAGE_TYPES, ATTACHMENT_TYPES } from './constants.js';
 import { useCamelCase } from 'dashboard/composables/useTransformKeys';
 import { useMapGetter } from 'dashboard/composables/store.js';
 import MessageApi from 'dashboard/api/inbox/message.js';
@@ -51,6 +51,63 @@ const allMessages = computed(() => {
     deep: true,
     stopPaths: ['content_attributes.translations'],
   });
+});
+
+const ALBUM_MEDIA_TYPES = [
+  ATTACHMENT_TYPES.IMAGE,
+  ATTACHMENT_TYPES.VIDEO,
+  ATTACHMENT_TYPES.IG_REEL,
+];
+const ALBUM_MAX_GAP_SECONDS = 120;
+
+const isAlbumMediaMessage = message => {
+  if (message.private) return false;
+  if (message.status === 'failed') return false;
+  if (!Array.isArray(message.attachments) || message.attachments.length !== 1) {
+    return false;
+  }
+  return ALBUM_MEDIA_TYPES.includes(message.attachments[0].fileType);
+};
+
+const canJoinAlbum = (first, candidate) => {
+  if (!isAlbumMediaMessage(candidate) || candidate.content) return false;
+  const firstSender = first.senderId ?? first.sender?.id;
+  const candidateSender = candidate.senderId ?? candidate.sender?.id;
+  if (firstSender !== candidateSender) return false;
+  if (first.messageType !== candidate.messageType) return false;
+  return (
+    Math.abs((candidate.createdAt || 0) - (first.createdAt || 0)) <=
+    ALBUM_MAX_GAP_SECONDS
+  );
+};
+
+const albumByIndex = computed(() => {
+  const list = allMessages.value;
+  const result = list.map(() => ({ skip: false, attachments: null }));
+  let i = 0;
+  while (i < list.length) {
+    if (isAlbumMediaMessage(list[i])) {
+      const group = [i];
+      let j = i + 1;
+      while (j < list.length && canJoinAlbum(list[i], list[j])) {
+        group.push(j);
+        j += 1;
+      }
+      if (group.length >= 2) {
+        result[i] = {
+          skip: false,
+          attachments: group.flatMap(idx => list[idx].attachments),
+        };
+        group.slice(1).forEach(idx => {
+          result[idx] = { skip: true, attachments: null };
+        });
+      }
+      i = j;
+    } else {
+      i += 1;
+    }
+  }
+  return result;
 });
 
 const currentChat = useMapGetter('getSelectedChat');
@@ -183,18 +240,28 @@ const shouldShowDateSeparator = index => {
     <slot name="beforeAll" />
     <template v-for="(message, index) in allMessages" :key="message.id">
       <InboxMessageDateSeparator
-        v-if="shouldShowDateSeparator(index)"
+        v-if="!albumByIndex[index].skip && shouldShowDateSeparator(index)"
         :timestamp="message.createdAt"
       />
       <slot
-        v-if="firstUnreadId && message.id === firstUnreadId"
+        v-if="
+          !albumByIndex[index].skip &&
+          firstUnreadId &&
+          message.id === firstUnreadId
+        "
         name="unreadBadge"
       />
       <Message
+        v-if="!albumByIndex[index].skip"
         v-bind="message"
+        :attachments="albumByIndex[index].attachments || message.attachments"
         :is-email-inbox="isAnEmailChannel"
         :in-reply-to="getInReplyToMessage(message)"
-        :group-with-next="shouldGroupWithNext(index, allMessages)"
+        :group-with-next="
+          albumByIndex[index].attachments
+            ? false
+            : shouldGroupWithNext(index, allMessages)
+        "
         :inbox-supports-reply-to="inboxSupportsReplyTo"
         :current-user-id="currentUserId"
         is-inbox-view
@@ -208,14 +275,24 @@ const shouldShowDateSeparator = index => {
     <slot name="beforeAll" />
     <template v-for="(message, index) in allMessages" :key="message.id">
       <slot
-        v-if="firstUnreadId && message.id === firstUnreadId"
+        v-if="
+          !albumByIndex[index].skip &&
+          firstUnreadId &&
+          message.id === firstUnreadId
+        "
         name="unreadBadge"
       />
       <Message
+        v-if="!albumByIndex[index].skip"
         v-bind="message"
+        :attachments="albumByIndex[index].attachments || message.attachments"
         :is-email-inbox="isAnEmailChannel"
         :in-reply-to="getInReplyToMessage(message)"
-        :group-with-next="shouldGroupWithNext(index, allMessages)"
+        :group-with-next="
+          albumByIndex[index].attachments
+            ? false
+            : shouldGroupWithNext(index, allMessages)
+        "
         :inbox-supports-reply-to="inboxSupportsReplyTo"
         :current-user-id="currentUserId"
         data-clarity-mask="True"

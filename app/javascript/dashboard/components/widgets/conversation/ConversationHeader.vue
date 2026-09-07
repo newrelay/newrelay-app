@@ -18,7 +18,7 @@ const props = defineProps({
 
 const { t } = useI18n();
 const store = useStore();
-const { uiSettings, updateUISettings } = useUISettings();
+const { updateUISettings, isContactSidebarOpen } = useUISettings();
 const { simulateIncomingCall, hasActiveCall, incomingCalls } = useCallActions();
 
 const isSimulateCallDisabled = computed(
@@ -28,10 +28,6 @@ const isSimulateCallDisabled = computed(
 const isMessageSearchOpen = ref(false);
 const messageSearchQuery = ref('');
 const messageSearchInput = ref(null);
-
-const isContactSidebarOpen = computed(
-  () => uiSettings.value.is_contact_sidebar_open
-);
 
 const headerIconButtonClass =
   'size-8 shrink-0 border-transparent text-muted-foreground shadow-none hover:border-transparent hover:text-foreground focus-visible:ring-0';
@@ -69,7 +65,7 @@ const closeMessageSearch = () => {
 
 const toggleSidebar = () => {
   updateUISettings({
-    is_contact_sidebar_open: !uiSettings.value.is_contact_sidebar_open,
+    is_contact_sidebar_open: !isContactSidebarOpen.value,
   });
 };
 </script>

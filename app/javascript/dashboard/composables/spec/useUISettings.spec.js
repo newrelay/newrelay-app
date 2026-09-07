@@ -30,6 +30,19 @@ describe('useUISettings', () => {
     mockDispatch.mockClear();
   });
 
+  it('treats unset contact sidebar as open', () => {
+    const { isContactSidebarOpen } = useUISettings();
+    expect(isContactSidebarOpen.value).toBe(true);
+
+    getUISettingsMock.value.is_contact_sidebar_open = false;
+    expect(isContactSidebarOpen.value).toBe(false);
+
+    getUISettingsMock.value.is_contact_sidebar_open = true;
+    expect(isContactSidebarOpen.value).toBe(true);
+
+    delete getUISettingsMock.value.is_contact_sidebar_open;
+  });
+
   it('returns uiSettings', () => {
     const { uiSettings } = useUISettings();
     expect(uiSettings.value).toEqual({

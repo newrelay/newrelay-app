@@ -8,7 +8,7 @@ import { FEATURE_FLAGS } from 'dashboard/featureFlags';
 import { useMapGetter } from 'dashboard/composables/store';
 import { useKeyboardEvents } from 'dashboard/composables/useKeyboardEvents';
 
-const { updateUISettings } = useUISettings();
+const { updateUISettings, isContactSidebarOpen } = useUISettings();
 
 const currentAccountId = useMapGetter('getCurrentAccountId');
 const isFeatureEnabledonAccount = useMapGetter(
@@ -20,9 +20,6 @@ const showCopilotTab = computed(() =>
 );
 
 const { uiSettings } = useUISettings();
-const isContactSidebarOpen = computed(
-  () => uiSettings.value.is_contact_sidebar_open
-);
 const isCopilotPanelOpen = computed(
   () => uiSettings.value.is_copilot_panel_open
 );

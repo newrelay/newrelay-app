@@ -44,8 +44,8 @@ export default {
   },
   emits: ['next', 'prev'],
   setup() {
-    const { uiSettings, updateUISettings } = useUISettings();
-    return { uiSettings, updateUISettings };
+    const { updateUISettings, isContactSidebarOpen } = useUISettings();
+    return { updateUISettings, isContactSidebarOpen };
   },
   data() {
     return {
@@ -56,9 +56,6 @@ export default {
     ...mapGetters({ meta: 'notifications/getMeta' }),
     currentChat() {
       return this.$store.getters.getSelectedChat;
-    },
-    isContactSidebarOpen() {
-      return this.uiSettings.is_contact_sidebar_open;
     },
     moreActionsItems() {
       const items = [];

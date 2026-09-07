@@ -41,7 +41,7 @@ const props = defineProps({
 
 const route = useRoute();
 const store = useStore();
-const { uiSettings } = useUISettings();
+const { uiSettings, isContactSidebarOpen } = useUISettings();
 
 const chatList = useMapGetter('getAllConversations');
 const currentChat = useMapGetter('getSelectedChat');
@@ -75,8 +75,7 @@ const shouldShowSidebar = computed(() => {
   if (!currentChat.value?.id) {
     return false;
   }
-  const { is_contact_sidebar_open: isContactSidebarOpen } = uiSettings.value;
-  return isContactSidebarOpen;
+  return isContactSidebarOpen.value;
 });
 
 const findConversation = () => {

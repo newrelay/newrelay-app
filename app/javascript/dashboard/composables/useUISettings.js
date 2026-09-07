@@ -66,6 +66,15 @@ const useContactSidebarItemsOrder = uiSettings => {
 };
 
 /**
+ * Overview (contact) sidebar is open until the user closes it once.
+ * Unset is treated as open so first-time users see it; `false` stays closed.
+ * @param {Object} settings - UI settings hash.
+ * @returns {boolean}
+ */
+export const isContactSidebarOpenFromSettings = settings =>
+  settings?.is_contact_sidebar_open !== false;
+
+/**
  * Toggles the open state of a sidebar item.
  * @param {string} key - The key of the sidebar item to toggle.
  * @param {Object} uiSettings - Reactive UI settings object.
@@ -150,9 +159,14 @@ export function useUISettings() {
     });
   };
 
+  const isContactSidebarOpen = computed(() =>
+    isContactSidebarOpenFromSettings(uiSettings.value)
+  );
+
   return {
     uiSettings,
     updateUISettings,
+    isContactSidebarOpen,
     conversationSidebarItemsOrder: useConversationSidebarItemsOrder(uiSettings),
     contactSidebarItemsOrder: useContactSidebarItemsOrder(uiSettings),
     isContactSidebarItemOpen: key => !!uiSettings.value[key],

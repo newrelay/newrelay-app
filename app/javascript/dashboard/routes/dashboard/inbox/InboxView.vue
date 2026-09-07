@@ -17,7 +17,7 @@ import ConversationSidebar from 'dashboard/components/widgets/conversation/Conve
 const route = useRoute();
 const router = useRouter();
 const store = useStore();
-const { uiSettings } = useUISettings();
+const { uiSettings, isContactSidebarOpen } = useUISettings();
 
 const isConversationLoading = ref(false);
 
@@ -67,8 +67,7 @@ const activeNotificationIndex = computed(() => {
 
 const isContactPanelOpen = computed(() => {
   if (currentChat.value.id) {
-    const { is_contact_sidebar_open: isContactSidebarOpen } = uiSettings.value;
-    return isContactSidebarOpen;
+    return isContactSidebarOpen.value;
   }
   return false;
 });

@@ -13,13 +13,11 @@ defineProps({
   },
 });
 
-const { uiSettings, updateUISettings } = useUISettings();
+const { updateUISettings, isContactSidebarOpen } = useUISettings();
 const { width: windowWidth } = useWindowSize();
 
 const activeTab = computed(() => {
-  const { is_contact_sidebar_open: isContactSidebarOpen } = uiSettings.value;
-
-  if (isContactSidebarOpen) {
+  if (isContactSidebarOpen.value) {
     return 0;
   }
   return null;
@@ -30,7 +28,7 @@ const isSmallScreen = computed(
 );
 
 const closeContactPanel = () => {
-  if (isSmallScreen.value && uiSettings.value?.is_contact_sidebar_open) {
+  if (isSmallScreen.value && isContactSidebarOpen.value) {
     updateUISettings({
       is_contact_sidebar_open: false,
       is_copilot_panel_open: false,

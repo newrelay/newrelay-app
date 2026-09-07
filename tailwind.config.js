@@ -7,7 +7,6 @@ import typographyPlugin from '@tailwindcss/typography';
 import { colors } from './theme/colors';
 import { icons } from './theme/icons';
 
-
 const withAlpha = variable => `rgb(var(${variable}) / <alpha-value>)`;
 
 const defaultSansFonts = [
@@ -394,7 +393,18 @@ const tailwindConfig = {
     }),
     tailwindPlugin(({ addUtilities, theme }) => {
       const spacing = theme('spacing');
-      const iconSizes = ['2', '2.5', '3', '3.5', '4', '5', '6', '8', '10', '16'];
+      const iconSizes = [
+        '2',
+        '2.5',
+        '3',
+        '3.5',
+        '4',
+        '5',
+        '6',
+        '8',
+        '10',
+        '16',
+      ];
       const utilities = {};
       iconSizes.forEach(key => {
         const value = spacing[key];

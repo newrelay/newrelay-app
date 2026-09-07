@@ -95,8 +95,8 @@ export default {
   <div
     class="conversation-details-wrap relative flex min-w-0 w-full flex-col"
     :class="{
-      'bg-muted/10 dark:bg-background': !currentChat.id && !isInboxView,
-      'bg-background': currentChat.id || isInboxView,
+      'bg-muted/10 dark:bg-background': !isInboxView,
+      'bg-background': isInboxView,
     }"
   >
     <ConversationHeader

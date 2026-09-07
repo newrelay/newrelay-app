@@ -81,9 +81,9 @@ const channels = computed(() => [
     key: 'whatsapp',
     title: t('ONBOARDING.CHANNELS.WHATSAPP.TITLE'),
     description: t('ONBOARDING.CHANNELS.WHATSAPP.DESCRIPTION'),
-    icon: 'i-woot-whatsapp',
+    icon: 'i-logos-whatsapp-icon',
     iconWrap: 'bg-emerald-500/10',
-    iconClass: 'text-emerald-500',
+    iconClass: 'opacity-90',
     cardClass:
       'border-2 border-emerald-500/20 bg-emerald-50/30 dark:bg-emerald-500/5 hover:border-emerald-500/40',
     buttonVariant: 'default',
@@ -110,9 +110,9 @@ const channels = computed(() => [
     key: 'facebook',
     title: t('ONBOARDING.CHANNELS.MESSENGER.TITLE'),
     description: t('ONBOARDING.CHANNELS.MESSENGER.DESCRIPTION'),
-    icon: 'i-lucide-message-square',
+    icon: 'i-logos-messenger',
     iconWrap: 'bg-primary/10',
-    iconClass: 'text-primary',
+    iconClass: 'opacity-90',
     cardClass: 'border border-border/60 bg-card hover:border-border',
     buttonVariant: 'outline',
     buttonClass:

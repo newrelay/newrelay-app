@@ -57,7 +57,7 @@ const priorityBadge = computed(() => {
 });
 
 const priorityBadgeBaseClass =
-  'inline-flex h-5 shrink-0 items-center rounded-full border px-2 py-0.5 text-[10px] font-medium transition-colors focus:outline-hidden focus:ring-1 focus:ring-ring';
+  'inline-flex h-5 shrink-0 items-center rounded-sm border px-1.5 py-0 text-[10px] font-medium transition-colors focus:outline-hidden focus:ring-1 focus:ring-ring';
 
 const statusDotClass = computed(() => {
   const priority = props.chat.priority;

@@ -81,7 +81,7 @@ const statusBadge = computed(() => {
 });
 
 const badgeBaseClass =
-  'inline-flex h-5 shrink-0 items-center rounded-full border px-2 py-0.5 text-[10px] font-medium transition-colors focus:outline-hidden focus:ring-1 focus:ring-ring';
+  'inline-flex h-5 shrink-0 items-center rounded-sm border px-1.5 py-0 text-[10px] font-medium transition-colors focus:outline-hidden focus:ring-1 focus:ring-ring';
 
 const badgeClass = computed(() => {
   const variant = statusBadge.value?.variant;
@@ -98,15 +98,15 @@ const scoreValue = computed(() => props.chat.id);
 </script>
 
 <template>
-  <div class="flex min-w-0 items-center gap-2.5">
+  <div class="flex min-w-0 items-center gap-3">
     <Avatar
       :name="currentContact.name"
       :src="currentContact.thumbnail"
-      :size="36"
+      :size="40"
       :status="currentContact.availability_status"
       hide-offline-status
       rounded-full
-      class="size-9 shrink-0 rounded-full border border-border/50 object-cover"
+      class="size-10 shrink-0 rounded-full border border-border/50 object-cover"
     />
     <div class="flex min-w-0 flex-col gap-0.5">
       <div class="flex min-w-0 items-center gap-2">
@@ -128,9 +128,9 @@ const scoreValue = computed(() => props.chat.id);
         </span>
         <span
           v-if="scoreValue"
-          class="flex shrink-0 items-center gap-1 text-[11px] font-medium text-conversation-score"
+          class="flex shrink-0 items-center gap-1 text-[11px] font-medium text-success"
         >
-          <span class="size-1.5 rounded-full bg-conversation-score" />
+          <span class="size-1.5 rounded-full bg-success" />
           {{ scoreValue }}
         </span>
       </div>

@@ -4,6 +4,10 @@ import { useStore } from 'vuex';
 import { useI18n } from 'vue-i18n';
 import { useRouter } from 'vue-router';
 import { useAccount } from 'dashboard/composables/useAccount';
+import {
+  useChannelBrandIcon,
+  useChannelIcon,
+} from 'dashboard/components-next/icon/provider';
 import wootConstants from 'dashboard/constants/globals';
 import Spinner from 'dashboard/components-next/spinner/Spinner.vue';
 import { RelayButton } from 'dashboard/components-next/relay';
@@ -28,10 +32,24 @@ const isChannelView = computed(
     Boolean(props.channelName)
 );
 
+const activeInbox = computed(() => {
+  if (!String(props.activeView).startsWith('inbox:')) return {};
+  const inboxId = Number(String(props.activeView).replace('inbox:', ''));
+  return inboxes.value.find(inbox => Number(inbox.id) === inboxId) || {};
+});
+
+const channelBrandIcon = useChannelBrandIcon(activeInbox);
+const channelMonoIcon = useChannelIcon(activeInbox);
+const channelHeroIcon = computed(
+  () => channelBrandIcon.value || channelMonoIcon.value || 'i-lucide-inbox'
+);
+const channelHeroIsBrand = computed(() => Boolean(channelBrandIcon.value));
+
 const supportedChannels = computed(() => [
   {
     key: 'whatsapp',
-    icon: 'i-woot-whatsapp',
+    icon: 'i-logos-whatsapp-icon',
+    brand: true,
     label: t('INBOX.EMPTY.WHATSAPP'),
   },
   { key: 'email', icon: 'i-lucide-mail', label: t('INBOX.EMPTY.EMAIL') },
@@ -42,12 +60,14 @@ const supportedChannels = computed(() => [
   },
   {
     key: 'messenger',
-    icon: 'i-woot-messenger',
+    icon: 'i-logos-messenger',
+    brand: true,
     label: t('INBOX.EMPTY.MESSENGER'),
   },
   {
     key: 'instagram',
-    icon: 'i-woot-instagram',
+    icon: 'i-woot-instagram-color',
+    brand: true,
     label: t('INBOX.EMPTY.INSTAGRAM'),
   },
   {
@@ -84,12 +104,18 @@ const learnMore = () => {
       class="flex flex-col items-center w-full max-w-lg text-center"
     >
       <div
-        class="size-20 rounded-full bg-primary/5 flex items-center justify-center mb-6 relative"
+        class="relative mb-6 flex size-24 items-center justify-center rounded-full bg-primary/5"
       >
         <div
-          class="absolute inset-2 rounded-full border border-primary/10 bg-background flex items-center justify-center"
+          class="absolute inset-2 flex items-center justify-center rounded-full border border-primary/10 bg-background"
         >
-          <span class="i-lucide-inbox size-8 text-primary" />
+          <span
+            class="size-10"
+            :class="[
+              channelHeroIcon,
+              channelHeroIsBrand ? 'opacity-90' : 'text-primary',
+            ]"
+          />
         </div>
       </div>
       <h2 class="text-[20px] font-[600] text-foreground mb-2 tracking-tight">
@@ -105,13 +131,11 @@ const learnMore = () => {
       v-else-if="hasInboxes"
       class="flex flex-col items-center w-full max-w-lg text-center"
     >
-      <div
-        class="size-20 rounded-full bg-primary/5 flex items-center justify-center mb-6 relative"
-      >
+      <div class="relative mb-8 flex items-center justify-center">
         <div
-          class="absolute inset-2 rounded-full border border-primary/10 bg-background flex items-center justify-center"
+          class="flex size-20 items-center justify-center rounded-2xl border border-primary/20 bg-gradient-to-br from-primary/10 via-primary/5 to-transparent shadow-sm"
         >
-          <span class="i-lucide-check-circle-2 size-8 text-primary" />
+          <span class="i-lucide-inbox size-10 text-primary" />
         </div>
       </div>
       <h2 class="text-[20px] font-[600] text-foreground mb-2 tracking-tight">
@@ -185,7 +209,10 @@ const learnMore = () => {
             <div
               class="flex size-12 items-center justify-center rounded-xl border border-border bg-card"
             >
-              <span class="size-6 text-primary" :class="channel.icon" />
+              <span
+                class="size-6 opacity-90 dark:opacity-80"
+                :class="[channel.icon, channel.brand ? '' : 'text-primary']"
+              />
             </div>
             <span class="text-sm font-normal text-muted-foreground">
               {{ channel.label }}

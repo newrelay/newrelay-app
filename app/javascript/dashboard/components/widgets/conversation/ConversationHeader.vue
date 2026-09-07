@@ -29,6 +29,10 @@ const isMessageSearchOpen = ref(false);
 const messageSearchQuery = ref('');
 const messageSearchInput = ref(null);
 
+const isContactSidebarOpen = computed(
+  () => uiSettings.value.is_contact_sidebar_open
+);
+
 const headerIconButtonClass =
   'size-8 shrink-0 border-transparent text-muted-foreground shadow-none hover:border-transparent hover:text-foreground focus-visible:ring-0';
 
@@ -117,7 +121,7 @@ const toggleSidebar = () => {
         v-if="!isMessageSearchOpen"
         :inbox="currentInbox"
         :chat="chat"
-        :button-class="headerIconButtonClass"
+        :button-class="[headerIconButtonClass, 'hover:text-success']"
       />
 
       <RelayTooltip
@@ -127,7 +131,8 @@ const toggleSidebar = () => {
         <RelayButton
           variant="ghost"
           size="icon"
-          :class="headerIconButtonClass"
+          class="hover:text-warning"
+          :class="[headerIconButtonClass]"
           :disabled="isSimulateCallDisabled"
           :aria-label="t('CONVERSATION.HEADER.SIMULATE_INCOMING_CALL')"
           @click="receiveCall"
@@ -142,7 +147,10 @@ const toggleSidebar = () => {
         variant="ghost"
         size="icon"
         class="ml-1"
-        :class="[headerIconButtonClass]"
+        :class="[
+          headerIconButtonClass,
+          !isContactSidebarOpen ? 'bg-accent text-accent-foreground' : '',
+        ]"
         :aria-label="t('CONVERSATION.SIDEBAR.CONTACT')"
         @click="toggleSidebar"
       >

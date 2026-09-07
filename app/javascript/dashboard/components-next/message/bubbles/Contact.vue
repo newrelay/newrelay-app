@@ -4,7 +4,8 @@ import { useAlert } from 'dashboard/composables';
 import { useStore } from 'dashboard/composables/store';
 import { useI18n } from 'vue-i18n';
 import { useMessageContext } from '../provider.js';
-import BaseAttachmentBubble from './BaseAttachment.vue';
+import BaseBubble from './Base.vue';
+import { RelayButton } from 'dashboard/components-next/relay';
 
 import {
   DuplicateContactException,
@@ -31,7 +32,7 @@ const contactName = computed(() => {
 });
 
 const formattedPhoneNumber = computed(() => {
-  return phoneNumber.value.replace(/\s|-|[A-Za-z]/g, '');
+  return (phoneNumber.value || '').replace(/\s|-|[A-Za-z]/g, '');
 });
 
 const rawPhoneNumber = computed(() => {
@@ -71,7 +72,7 @@ function openContactNewTab(contactId) {
 
 async function addContact() {
   try {
-    let contact = await filterContactByNumber(rawPhoneNumber);
+    let contact = await filterContactByNumber(rawPhoneNumber.value);
     if (!contact) {
       contact = await $store.dispatch('contacts/create', getContactObject());
       useAlert(t('CONTACT_FORM.SUCCESS_MESSAGE'));
@@ -89,20 +90,39 @@ async function addContact() {
     }
   }
 }
-
-const action = computed(() => ({
-  label: t('CONVERSATION.SAVE_CONTACT'),
-  onClick: addContact,
-}));
 </script>
 
 <template>
-  <BaseAttachmentBubble
-    icon="i-teenyicons-user-circle-solid"
-    icon-bg-color="bg-[#D6409F]"
-    sender-translation-key="CONVERSATION.SHARED_ATTACHMENT.CONTACT"
-    :title="contactName"
-    :content="phoneNumber"
-    :action="formattedPhoneNumber ? action : null"
-  />
+  <BaseBubble
+    class="min-w-[280px] overflow-hidden !rounded-xl !border !border-border !bg-card !p-3 !text-foreground shadow-xs"
+    data-bubble-name="contact"
+  >
+    <div class="flex min-w-0 items-center gap-4">
+      <div
+        class="flex size-10 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary"
+      >
+        <span class="i-lucide-user size-5" />
+      </div>
+      <div class="flex min-w-0 flex-1 flex-col">
+        <span class="truncate text-sm font-semibold text-foreground">
+          {{ contactName || phoneNumber }}
+        </span>
+        <span
+          v-if="contactName && phoneNumber"
+          class="mt-0.5 truncate text-[13px] text-muted-foreground"
+        >
+          {{ phoneNumber }}
+        </span>
+      </div>
+      <RelayButton
+        v-if="formattedPhoneNumber"
+        variant="outline"
+        size="sm"
+        class="shrink-0"
+        @click="addContact"
+      >
+        {{ t('CONVERSATION.SAVE_CONTACT') }}
+      </RelayButton>
+    </div>
+  </BaseBubble>
 </template>

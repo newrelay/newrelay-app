@@ -627,6 +627,7 @@
     "TRY_THESE_PROMPTS": "Try these prompts"
   },
   "GALLERY_VIEW": {
-    "ERROR_DOWNLOADING": "Unable to download attachment. Please try again"
+    "ERROR_DOWNLOADING": "Unable to download attachment. Please try again",
+    "EXPAND": "Open preview"
   }
 }

@@ -14,14 +14,14 @@ const attachment = computed(() => {
 
 <template>
   <BaseBubble
-    class="overflow-hidden p-3 !bg-transparent"
+    class="overflow-hidden !rounded-xl !border !border-border !bg-card !p-0 !text-foreground shadow-xs"
     data-bubble-name="embed"
   >
     <div
-      class="w-full max-w-[360px] sm:max-w-[420px] min-h-[520px] h-[70vh] max-h-[680px]"
+      class="h-[70vh] max-h-[680px] min-h-[520px] w-full max-w-[360px] sm:max-w-[420px]"
     >
       <iframe
-        class="w-full h-full border-0 rounded-lg"
+        class="size-full border-0"
         :title="t('CHAT_LIST.ATTACHMENTS.embed.CONTENT')"
         :src="attachment.dataUrl"
         loading="lazy"

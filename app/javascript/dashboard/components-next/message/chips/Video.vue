@@ -1,6 +1,5 @@
 <script setup>
 import { ref } from 'vue';
-import Icon from 'next/icon/Icon.vue';
 import { useSnakeCase } from 'dashboard/composables/useTransformKeys';
 import { useMessageContext } from '../provider.js';
 import GalleryView from 'dashboard/components/widgets/conversation/components/GalleryView.vue';
@@ -13,40 +12,53 @@ defineProps({
 });
 
 const showGallery = ref(false);
+const hasError = ref(false);
 
 const { filteredCurrentChatAttachments } = useMessageContext();
+
+const handleError = () => {
+  hasError.value = true;
+};
 </script>
 
 <template>
   <div
-    class="size-[72px] overflow-hidden contain-content rounded-xl cursor-pointer relative group"
+    class="relative h-[120px] w-[160px] cursor-pointer overflow-hidden rounded-xl border border-border shadow-xs"
     @click="showGallery = true"
   >
-    <video
-      :src="attachment.dataUrl"
-      class="w-full h-full object-cover"
-      muted
-      playsInline
-    />
     <div
-      class="absolute w-full h-full inset-0 p-1 flex items-center justify-center"
+      v-if="hasError"
+      class="flex size-full flex-col items-center justify-center gap-1 bg-muted text-center text-[11px] text-muted-foreground"
     >
-      <div
-        class="size-7 bg-background/60 backdrop-blur-sm rounded-full overflow-hidden shadow-[0_5px_15px_rgba(0,0,0,0.4)]"
-      >
-        <Icon
-          icon="i-teenyicons-play-small-solid"
-          class="size-7 text-foreground/80 backdrop-blur"
-        />
-      </div>
+      <span class="i-lucide-video-off size-4" />
+      {{ $t('COMPONENTS.MEDIA.LOADING_FAILED') }}
     </div>
+    <template v-else>
+      <video
+        :src="attachment.dataUrl"
+        class="size-full object-cover"
+        muted
+        playsinline
+        preload="metadata"
+        @error="handleError"
+      />
+      <div
+        class="pointer-events-none absolute inset-0 flex items-center justify-center bg-foreground/10"
+      >
+        <div
+          class="flex size-8 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-sm"
+        >
+          <span class="i-lucide-play ml-0.5 size-3.5" />
+        </div>
+      </div>
+    </template>
   </div>
   <GalleryView
     v-if="showGallery"
     v-model:show="showGallery"
     :attachment="useSnakeCase(attachment)"
     :all-attachments="filteredCurrentChatAttachments"
-    @error="onError"
+    @error="handleError"
     @close="() => (showGallery = false)"
   />
 </template>

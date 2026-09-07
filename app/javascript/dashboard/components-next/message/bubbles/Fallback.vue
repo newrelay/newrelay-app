@@ -20,7 +20,7 @@ const title = computed(
 
 <template>
   <BaseBubble
-    class="p-3 !bg-card !text-card-foreground border border-border shadow-xs"
+    class="min-w-[280px] overflow-hidden !rounded-xl !border !border-border !bg-card !p-3 !text-foreground shadow-xs"
     data-bubble-name="fallback"
   >
     <FormattedContent v-if="content" :content="content" class="mb-2" />
@@ -29,9 +29,16 @@ const title = computed(
       :href="url"
       target="_blank"
       rel="noopener noreferrer"
-      class="block max-w-[320px] truncate text-sm text-primary underline"
+      class="flex min-w-0 items-center gap-4 text-inherit no-underline"
     >
-      {{ title }}
+      <div
+        class="flex size-10 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary"
+      >
+        <span class="i-lucide-link size-5" />
+      </div>
+      <span class="truncate text-sm font-semibold text-foreground">
+        {{ title }}
+      </span>
     </a>
     <span v-else class="text-sm text-muted-foreground">
       {{ title }}

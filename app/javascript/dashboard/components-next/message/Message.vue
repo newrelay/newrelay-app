@@ -144,11 +144,22 @@ const showContextMenu = ref(false);
 const route = useRoute();
 const currentUser = useMapGetter('getCurrentUser');
 
-const isStandaloneFileMessage = computed(() => {
+const STANDALONE_CARD_TYPES = [
+  ATTACHMENT_TYPES.FILE,
+  ATTACHMENT_TYPES.IMAGE,
+  ATTACHMENT_TYPES.VIDEO,
+  ATTACHMENT_TYPES.AUDIO,
+  ATTACHMENT_TYPES.IG_REEL,
+  ATTACHMENT_TYPES.LOCATION,
+  ATTACHMENT_TYPES.CONTACT,
+  ATTACHMENT_TYPES.EMBED,
+];
+
+const isStandaloneCardMessage = computed(() => {
   return (
     Array.isArray(props.attachments) &&
     props.attachments.length === 1 &&
-    props.attachments[0].fileType === ATTACHMENT_TYPES.FILE &&
+    STANDALONE_CARD_TYPES.includes(props.attachments[0].fileType) &&
     !props.content
   );
 });
@@ -183,7 +194,7 @@ const variant = computed(() => {
     return MESSAGE_VARIANTS.USER;
   }
 
-  if (isStandaloneFileMessage.value) {
+  if (isStandaloneCardMessage.value) {
     return MESSAGE_VARIANTS.USER;
   }
 
@@ -519,7 +530,7 @@ provideMessageContext({
       :class="
         isInboxView
           ? ['flex max-w-[80%] gap-3', inboxRowClass]
-          : contentType === CONTENT_TYPES.VOICE_CALL || isStandaloneFileMessage
+          : contentType === CONTENT_TYPES.VOICE_CALL || isStandaloneCardMessage
             ? 'flex w-full min-w-0 max-w-[80%] flex-col'
             : 'flex w-full flex-col'
       "

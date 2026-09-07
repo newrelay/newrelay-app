@@ -1,6 +1,5 @@
 <script setup>
 import { ref } from 'vue';
-import Icon from 'next/icon/Icon.vue';
 import { useSnakeCase } from 'dashboard/composables/useTransformKeys';
 import { useMessageContext } from '../provider.js';
 
@@ -24,20 +23,21 @@ const handleError = () => {
 
 <template>
   <div
-    class="size-[72px] overflow-hidden contain-content rounded-xl cursor-pointer"
+    class="h-[120px] w-[160px] cursor-pointer overflow-hidden rounded-xl border border-border shadow-xs"
     @click="showGallery = true"
   >
     <div
       v-if="hasError"
-      class="flex flex-col items-center justify-center gap-1 text-xs text-center rounded-lg size-full bg-muted text-muted-foreground"
+      class="flex size-full flex-col items-center justify-center gap-1 bg-muted text-center text-[11px] text-muted-foreground"
     >
-      <Icon icon="i-lucide-circle-off" class="text-muted-foreground" />
+      <span class="i-lucide-image-off size-4" />
       {{ $t('COMPONENTS.MEDIA.LOADING_FAILED') }}
     </div>
     <img
       v-else
-      class="object-cover w-full h-full skip-context-menu"
+      class="skip-context-menu size-full object-cover"
       :src="attachment.dataUrl"
+      alt=""
       @error="handleError"
     />
   </div>

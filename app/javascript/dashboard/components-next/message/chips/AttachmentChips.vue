@@ -90,10 +90,7 @@ const files = computed(() => {
   </div>
   <div v-if="recordings.length" :class="classToApply">
     <div v-for="attachment in recordings" :key="attachment.id">
-      <AudioChip
-        class="bg-accent dark:bg-accent text-foreground"
-        :attachment="attachment"
-      />
+      <AudioChip :attachment="attachment" />
     </div>
   </div>
   <div v-if="files.length" :class="classToApply">

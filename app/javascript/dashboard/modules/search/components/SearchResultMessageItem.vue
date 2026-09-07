@@ -142,10 +142,9 @@ const audioAttachments = computed(() => {
           class="w-full"
         >
           <AudioChip
-            class="bg-accent dark:bg-accent text-foreground"
             :attachment="attachment"
             :show-transcribed-text="false"
-            @click.prevent
+            @click.stop
           />
           <div v-if="attachment.transcribedText" class="pt-2">
             <TranscribedText :text="attachment.transcribedText" />

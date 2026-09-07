@@ -259,10 +259,7 @@ const isPdfFile = attachment => attachment.extension?.toLowerCase() === 'pdf';
         </div>
       </div>
 
-      <div
-        v-if="!fileAttachments.length && mediaAttachments.length"
-        class="mt-1 flex flex-col gap-2"
-      >
+      <div v-if="mediaAttachments.length" class="mt-1 flex flex-col gap-2">
         <div
           v-for="(attachment, index) in visibleMedia"
           :key="attachment.id"
@@ -272,7 +269,14 @@ const isPdfFile = attachment => attachment.extension?.toLowerCase() === 'pdf';
           @click="onTileActivate(attachment, index)"
           @keydown.enter="onTileActivate(attachment, index)"
         >
+          <img
+            v-if="hasPreview(attachment)"
+            :src="imagePreviewSrc(attachment)"
+            class="size-8 shrink-0 rounded-lg object-cover"
+            alt=""
+          />
           <div
+            v-else
             class="flex size-8 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary"
           >
             <Icon :icon="fallbackIcon(attachment.file_type)" class="size-4" />

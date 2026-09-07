@@ -4,8 +4,6 @@ import { useI18n } from 'vue-i18n';
 import { useAlert } from 'dashboard/composables';
 import { useLoadWithRetry } from 'dashboard/composables/loadWithRetry';
 import BaseBubble from './Base.vue';
-import Button from 'next/button/Button.vue';
-import Icon from 'next/icon/Icon.vue';
 import { useSnakeCase } from 'dashboard/composables/useTransformKeys';
 import { useMessageContext } from '../provider.js';
 import { downloadFile } from '@chatwoot/utils';
@@ -36,7 +34,7 @@ const downloadAttachment = async () => {
   try {
     isDownloading.value = true;
     await downloadFile({ url: dataUrl, type: fileType, extension });
-  } catch (error) {
+  } catch {
     useAlert(t('GALLERY_VIEW.ERROR_DOWNLOADING'));
   } finally {
     isDownloading.value = false;
@@ -50,38 +48,47 @@ const handleImageError = () => {
 
 <template>
   <BaseBubble
-    class="overflow-hidden p-3 !bg-transparent"
+    class="cursor-pointer overflow-hidden !rounded-xl !border !border-border !bg-card !p-0 !text-foreground shadow-xs"
     data-bubble-name="image"
     @click="showGallery = true"
   >
-    <div v-if="hasError" class="flex items-center gap-1 text-center rounded-lg">
-      <Icon icon="i-lucide-circle-off" class="text-muted-foreground" />
-      <p class="mb-0 text-muted-foreground">
+    <div
+      v-if="hasError"
+      class="flex items-center gap-2 px-3 py-2.5 text-muted-foreground"
+    >
+      <span class="i-lucide-image-off size-4 shrink-0" />
+      <p class="mb-0 text-[13px]">
         {{ $t('COMPONENTS.MEDIA.IMAGE_UNAVAILABLE') }}
       </p>
     </div>
-    <div v-else-if="isLoaded" class="relative group rounded-lg overflow-hidden">
+    <div v-else-if="isLoaded" class="group relative overflow-hidden">
       <img
-        class="skip-context-menu"
+        class="skip-context-menu block max-h-[360px] w-auto max-w-[320px] object-contain"
         :src="attachment.dataUrl"
         :width="attachment.width"
         :height="attachment.height"
+        alt=""
       />
       <div
-        class="inset-0 p-2 pointer-events-none absolute bg-gradient-to-tl from-foreground/30 dark:from-background/50 via-transparent to-transparent hidden group-hover:flex"
+        class="pointer-events-none absolute inset-0 hidden bg-gradient-to-t from-foreground/30 via-transparent to-transparent group-hover:block"
       />
-      <div class="absolute right-2 bottom-2 hidden group-hover:flex gap-2">
-        <Button xs solid slate icon="i-lucide-expand" class="opacity-60" />
-        <Button
-          xs
-          solid
-          slate
-          icon="i-lucide-download"
-          class="opacity-60"
-          :is-loading="isDownloading"
+      <div class="absolute bottom-2 right-2 hidden gap-1.5 group-hover:flex">
+        <button
+          type="button"
+          class="reset-base pointer-events-none flex size-8 items-center justify-center rounded-full border border-border bg-background/90 p-0 text-foreground shadow-xs"
+          :aria-label="t('GALLERY_VIEW.EXPAND')"
+        >
+          <span class="i-lucide-expand size-3.5" />
+        </button>
+        <button
+          type="button"
+          class="reset-base flex size-8 items-center justify-center rounded-full border border-border bg-background/90 p-0 text-foreground shadow-xs hover:bg-background disabled:opacity-50"
+          :aria-label="t('CONVERSATION.DOWNLOAD')"
           :disabled="isDownloading"
           @click.stop="downloadAttachment"
-        />
+        >
+          <span class="i-lucide-download size-3.5" />
+        </button>
       </div>
     </div>
   </BaseBubble>

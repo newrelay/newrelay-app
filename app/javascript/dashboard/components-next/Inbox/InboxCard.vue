@@ -84,7 +84,7 @@ const attachments = computed(() => {
 const attachmentPillClass = name => {
   const lower = String(name).toLowerCase();
   if (lower.endsWith('.pdf'))
-    return 'bg-red-100 text-red-600 border-red-200/60';
+    return 'bg-destructive/10 text-destructive border-destructive/20';
   return 'bg-primary/10 text-primary border-primary/20';
 };
 </script>
@@ -112,11 +112,11 @@ const attachmentPillClass = name => {
       >
         <span
           v-if="isStarred"
-          class="size-4 cursor-pointer i-ri-star-fill text-[#b6872d] opacity-100"
+          class="size-4 cursor-pointer i-ri-star-fill text-warning opacity-100"
         />
         <span
           v-else
-          class="size-4 cursor-pointer i-lucide-star text-muted-foreground opacity-30 group-hover:opacity-100 transition-opacity hover:text-[#b6872d]"
+          class="size-4 cursor-pointer i-lucide-star text-muted-foreground opacity-30 group-hover:opacity-100 transition-opacity hover:text-warning"
         />
       </button>
       <div class="relative shrink-0 ml-1">

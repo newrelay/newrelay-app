@@ -92,9 +92,7 @@ const channelSubtext = computed(() => {
     type="button"
     class="conversation relative flex w-full gap-3 rounded-lg p-3 text-left transition-colors"
     :class="[
-      isActiveChat
-        ? 'active bg-conversation-list-highlight'
-        : 'hover:bg-conversation-list-highlight',
+      isActiveChat ? 'active bg-primary/5' : 'hover:bg-accent/50',
       compact ? 'mx-0' : '',
     ]"
     @click="$emit('click', $event)"

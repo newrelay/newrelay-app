@@ -22,7 +22,7 @@ import { useAlert } from 'dashboard/composables';
 import Icon from 'dashboard/components-next/icon/Icon.vue';
 import BaseBubble from 'next/message/bubbles/Base.vue';
 import VoiceCallRecordingPlayer from 'next/message/chips/VoiceCallRecordingPlayer.vue';
-import NextButton from 'dashboard/components-next/button/Button.vue';
+import { RelayButton } from 'dashboard/components-next/relay';
 
 const LABEL_MAP = {
   [VOICE_CALL_STATUS.IN_PROGRESS]: 'CONVERSATION.VOICE_CALL.CALL_IN_PROGRESS',
@@ -389,7 +389,7 @@ const handleCallBack = async () => {
 
 <template>
   <BaseBubble
-    class="relative w-[360px] max-w-full overflow-hidden !border !border-border !bg-card !p-3.5 !text-foreground shadow-xs"
+    class="relative !w-[360px] !max-w-full overflow-hidden !border !border-border !bg-card !p-3.5 !text-foreground shadow-xs"
     hide-meta
   >
     <div class="flex w-full flex-col gap-3">
@@ -446,29 +446,29 @@ const handleCallBack = async () => {
         </div>
       </div>
 
-      <!-- Call back button (missed inbound) -->
-      <NextButton
+      <RelayButton
         v-if="canCallBack"
         type="button"
-        :label="$t('CONVERSATION.VOICE_CALL.CALL_BACK')"
-        icon="i-ph-phone-bold"
-        teal
-        class="!rounded-full"
+        size="sm"
+        class="h-8 w-full rounded-full text-[13px]"
         :disabled="isInitiatingCall"
         @click="handleCallBack"
-      />
+      >
+        <span class="i-lucide-phone size-3.5" />
+        {{ $t('CONVERSATION.VOICE_CALL.CALL_BACK') }}
+      </RelayButton>
 
-      <!-- Join call button (ringing inbound) -->
-      <NextButton
+      <RelayButton
         v-if="canJoinCall"
         type="button"
-        :label="$t('CONVERSATION.VOICE_CALL.JOIN_CALL')"
-        icon="i-ph-phone-bold"
-        teal
-        class="!rounded-full"
+        size="sm"
+        class="h-8 w-full rounded-full text-[13px]"
         :disabled="isJoining"
         @click="handleJoinCall"
-      />
+      >
+        <span class="i-lucide-phone size-3.5" />
+        {{ $t('CONVERSATION.VOICE_CALL.JOIN_CALL') }}
+      </RelayButton>
     </div>
   </BaseBubble>
 </template>

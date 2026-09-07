@@ -368,6 +368,7 @@ const contextMenuEnabledOptions = computed(() => {
 const shouldRenderMessage = computed(() => {
   const hasAttachments = !!(props.attachments && props.attachments.length > 0);
   const isEmailContentType = props.contentType === CONTENT_TYPES.INCOMING_EMAIL;
+  const isVoiceCall = props.contentType === CONTENT_TYPES.VOICE_CALL;
   const isUnsupported = props.contentAttributes?.isUnsupported;
   const isAnIntegrationMessage =
     props.contentType === CONTENT_TYPES.INTEGRATIONS;
@@ -378,6 +379,7 @@ const shouldRenderMessage = computed(() => {
     hasAttachments ||
     props.content ||
     isEmailContentType ||
+    isVoiceCall ||
     isUnsupported ||
     isAnIntegrationMessage ||
     isFailedMessage ||
@@ -504,7 +506,9 @@ provideMessageContext({
       :class="
         isInboxView
           ? ['flex max-w-[80%] gap-3', inboxRowClass]
-          : 'flex w-full flex-col'
+          : contentType === CONTENT_TYPES.VOICE_CALL
+            ? 'flex w-full min-w-0 max-w-[80%] flex-col'
+            : 'flex w-full flex-col'
       "
       @contextmenu="openContextMenu($event)"
     >

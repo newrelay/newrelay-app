@@ -204,7 +204,7 @@ const shouldShowDateSeparator = index => {
     </template>
     <slot name="after" />
   </div>
-  <ul v-else class="bg-transparent px-4">
+  <ul v-else class="list-none bg-transparent px-4">
     <slot name="beforeAll" />
     <template v-for="(message, index) in allMessages" :key="message.id">
       <slot

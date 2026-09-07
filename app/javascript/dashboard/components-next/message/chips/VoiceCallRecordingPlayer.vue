@@ -163,7 +163,7 @@ const changePlaybackSpeed = () => {
     >
       <button
         type="button"
-        class="flex size-8 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-sm transition-colors hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-50"
+        class="reset-base flex size-8 shrink-0 items-center justify-center rounded-full border-0 bg-primary p-0 text-primary-foreground shadow-sm transition-colors hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-50"
         :disabled="!hasRecording"
         @click="playOrPause"
       >
@@ -195,7 +195,7 @@ const changePlaybackSpeed = () => {
       <div class="flex items-center gap-1.5 border-l border-border/50 pl-3">
         <button
           type="button"
-          class="w-9 rounded px-1.5 py-1 text-center text-[11px] font-semibold text-primary transition-colors hover:bg-primary/10 disabled:cursor-not-allowed disabled:opacity-50"
+          class="reset-base w-9 rounded border-0 bg-transparent px-1.5 py-1 text-center text-[11px] font-semibold text-primary transition-colors hover:bg-primary/10 disabled:cursor-not-allowed disabled:opacity-50"
           :disabled="!hasRecording"
           @click="changePlaybackSpeed"
         >
@@ -203,7 +203,7 @@ const changePlaybackSpeed = () => {
         </button>
         <button
           type="button"
-          class="flex size-7 items-center justify-center rounded text-muted-foreground transition-colors hover:bg-muted hover:text-foreground disabled:cursor-not-allowed disabled:opacity-50"
+          class="reset-base flex size-7 items-center justify-center rounded border-0 bg-transparent p-0 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground disabled:cursor-not-allowed disabled:opacity-50"
           :disabled="!hasRecording"
           @click="toggleMute"
         >

@@ -8,7 +8,7 @@
     "DASHBOARD_APP_TAB_MESSAGES": "Messages",
     "UNVERIFIED_SESSION": "The identity of this user is not verified",
     "NO_MESSAGE_1": "No messages found",
-    "NO_MESSAGE_1_DESCRIPTION": "Nothing to see here… yet.\nYour next great conversation is just one message away.",
+    "NO_MESSAGE_1_DESCRIPTION": "There are currently no messages in this view. Take a breather, you're all caught up for now!",
     "NO_MESSAGE_2": " to send a message to your page!",
     "NO_INBOX_1": "Hola! Looks like you haven't added any inboxes yet.",
     "NO_INBOX_2": " to get started",
@@ -452,6 +452,10 @@
       "STEP_BADGE": "Step {current} of {total}",
       "LEARN_HOW": "Learn how Conversations works",
       "EXPLORE_DEMO": "Explore Demo Workspace"
+    },
+    "ALL_SET": {
+      "TITLE": "You're all set!",
+      "DESCRIPTION": "Your channels are connected and actively listening. We'll show new conversations here as soon as customers message you."
     },
     "STEPS": {
       "CREATE_WORKSPACE": "Create Workspace",

@@ -40,10 +40,10 @@ export default {
     },
     emptyClassName() {
       if (
-        !this.inboxesList.length &&
         !this.uiFlags.isFetching &&
         !this.loadingChatList &&
-        this.isAdmin
+        !this.allConversations.length &&
+        (this.inboxesList.length || this.isAdmin)
       ) {
         return 'h-full overflow-auto w-full bg-background';
       }
@@ -59,13 +59,13 @@ export default {
       v-if="uiFlags.isFetching || loadingChatList"
       :message="loadingIndicatorMessage"
     />
-    <!-- No inboxes attached -->
+    <!-- No inboxes (admin) → stepper; has inboxes + empty list → all-set or filter empty -->
     <OnboardingView
       v-if="
-        !inboxesList.length &&
         !uiFlags.isFetching &&
         !loadingChatList &&
-        isAdmin
+        !allConversations.length &&
+        (inboxesList.length || isAdmin)
       "
     />
     <div
@@ -74,16 +74,6 @@ export default {
     >
       <EmptyStateMessage :message="$t('CONVERSATION.NO_INBOX_AGENT')" />
     </div>
-
-    <RelayMessagesEmptyState
-      v-else-if="
-        !uiFlags.isFetching && !loadingChatList && !allConversations.length
-      "
-      class="h-full w-full"
-      icon="i-lucide-rocket"
-      :title="$t('CONVERSATION.NO_MESSAGE_1')"
-      :description="$t('CONVERSATION.NO_MESSAGE_1_DESCRIPTION')"
-    />
     <RelayMessagesEmptyState
       v-else-if="
         !uiFlags.isFetching &&

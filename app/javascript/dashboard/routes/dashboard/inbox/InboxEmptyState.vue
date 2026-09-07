@@ -4,8 +4,14 @@ import { useStore } from 'vuex';
 import { useI18n } from 'vue-i18n';
 import { useRouter } from 'vue-router';
 import { useAccount } from 'dashboard/composables/useAccount';
+import wootConstants from 'dashboard/constants/globals';
 import Spinner from 'dashboard/components-next/spinner/Spinner.vue';
 import { RelayButton } from 'dashboard/components-next/relay';
+
+const props = defineProps({
+  activeView: { type: String, default: 'all' },
+  channelName: { type: String, default: '' },
+});
 
 const store = useStore();
 const { t } = useI18n();
@@ -15,6 +21,38 @@ const { accountScopedRoute } = useAccount();
 const uiFlags = computed(() => store.getters['notifications/getUIFlags']);
 const inboxes = computed(() => store.getters['inboxes/getInboxes'] || []);
 const hasInboxes = computed(() => inboxes.value.length > 0);
+const isChannelView = computed(
+  () => hasInboxes.value && String(props.activeView).startsWith('inbox:')
+);
+
+const supportedChannels = computed(() => [
+  {
+    key: 'whatsapp',
+    icon: 'i-woot-whatsapp',
+    label: t('INBOX.EMPTY.WHATSAPP'),
+  },
+  { key: 'email', icon: 'i-lucide-mail', label: t('INBOX.EMPTY.EMAIL') },
+  {
+    key: 'sms',
+    icon: 'i-lucide-message-square-more',
+    label: t('INBOX.EMPTY.SMS'),
+  },
+  {
+    key: 'messenger',
+    icon: 'i-woot-messenger',
+    label: t('INBOX.EMPTY.MESSENGER'),
+  },
+  {
+    key: 'instagram',
+    icon: 'i-woot-instagram',
+    label: t('INBOX.EMPTY.INSTAGRAM'),
+  },
+  {
+    key: 'live-chat',
+    icon: 'i-lucide-message-circle',
+    label: t('INBOX.EMPTY.LIVE_CHAT'),
+  },
+]);
 
 const connectChannel = () => {
   router.push(accountScopedRoute('settings_inbox_list'));
@@ -25,7 +63,7 @@ const goToConversations = () => {
 };
 
 const learnMore = () => {
-  window.open('https://chatwoot.com/docs', '_blank');
+  window.open(wootConstants.DOCS_URL, '_blank', 'noopener,noreferrer');
 };
 </script>
 
@@ -37,7 +75,29 @@ const learnMore = () => {
       <Spinner class="text-primary" />
     </div>
 
-    <!-- Case A: Inboxes are already configured (Show "Go to Conversations") -->
+    <!-- Channel view selected, list empty -->
+    <div
+      v-else-if="isChannelView"
+      class="flex flex-col items-center w-full max-w-lg text-center"
+    >
+      <div
+        class="size-20 rounded-full bg-primary/5 flex items-center justify-center mb-6 relative"
+      >
+        <div
+          class="absolute inset-2 rounded-full border border-primary/10 bg-background flex items-center justify-center"
+        >
+          <span class="i-lucide-inbox size-8 text-primary" />
+        </div>
+      </div>
+      <h2 class="text-[20px] font-[600] text-foreground mb-2 tracking-tight">
+        {{ t('INBOX.EMPTY.CHANNEL_TITLE', { channel: channelName }) }}
+      </h2>
+      <p class="text-sm text-muted-foreground leading-relaxed">
+        {{ t('INBOX.EMPTY.CHANNEL_DESCRIPTION', { channel: channelName }) }}
+      </p>
+    </div>
+
+    <!-- Has channels, empty list on All / other views -->
     <div
       v-else-if="hasInboxes"
       class="flex flex-col items-center w-full max-w-lg text-center"
@@ -67,18 +127,15 @@ const learnMore = () => {
       </RelayButton>
     </div>
 
-    <!-- Case B: No channels connected (Show Onboarding "Connect a Channel") -->
+    <!-- No channels connected -->
     <div v-else class="flex flex-col items-center w-full max-w-4xl">
-      <!-- Hero Section -->
       <div class="flex flex-col items-center text-center mb-10 max-w-lg">
         <div
           class="mb-6 flex size-16 items-center justify-center rounded-full bg-primary/10 ring-8 ring-primary/5"
         >
           <span class="i-lucide-inbox size-8 text-primary" />
         </div>
-        <h2
-          class="capitalize text-[20px] font-[600] text-foreground mb-2 tracking-tight"
-        >
+        <h2 class="text-[20px] font-[600] text-foreground mb-2 tracking-tight">
           {{ t('INBOX.EMPTY.TITLE') }}
         </h2>
         <p class="text-sm text-muted-foreground leading-relaxed">
@@ -86,9 +143,8 @@ const learnMore = () => {
         </p>
       </div>
 
-      <!-- Action Buttons -->
       <div
-        class="flex flex-col sm:flex-row items-center gap-4 mb-16 justify-center w-full"
+        class="flex flex-col sm:flex-row items-center gap-3 mb-16 justify-center w-full"
       >
         <RelayButton
           class="h-10 px-6 text-sm font-medium min-w-[160px]"
@@ -97,16 +153,15 @@ const learnMore = () => {
           {{ t('INBOX.EMPTY.CONNECT_CHANNEL') }}
         </RelayButton>
         <RelayButton
-          variant="outline"
-          class="h-10 px-6 text-sm font-medium min-w-[160px] gap-1"
+          variant="ghost"
+          class="h-10 px-6 text-sm font-medium min-w-[160px]"
           @click="learnMore"
         >
-          {{ t('INBOX.EMPTY.LEARN_MORE') }}
+          {{ t('INBOX.EMPTY.LEARN_HOW_WORKS') }}
           <span class="i-lucide-external-link size-3.5 opacity-70" />
         </RelayButton>
       </div>
 
-      <!-- Supported Channels -->
       <div class="w-full max-w-3xl flex flex-col items-center">
         <div class="w-full flex items-center mb-8 gap-4">
           <div class="h-px bg-border flex-1" />
@@ -118,95 +173,19 @@ const learnMore = () => {
           <div class="h-px bg-border flex-1" />
         </div>
 
-        <!-- Channel Icons -->
         <div class="flex flex-wrap items-center justify-center gap-6 sm:gap-10">
-          <!-- WhatsApp -->
-          <div class="flex cursor-default flex-col items-center gap-2">
+          <div
+            v-for="channel in supportedChannels"
+            :key="channel.key"
+            class="flex cursor-default flex-col items-center gap-2"
+          >
             <div
               class="flex size-12 items-center justify-center rounded-xl border border-border bg-card"
             >
-              <img
-                src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg"
-                :alt="t('INBOX.EMPTY.WHATSAPP')"
-                class="size-6 opacity-90 transition-opacity dark:opacity-80"
-              />
+              <span class="size-6 text-primary" :class="channel.icon" />
             </div>
             <span class="text-sm font-normal text-muted-foreground">
-              {{ t('INBOX.EMPTY.WHATSAPP') }}
-            </span>
-          </div>
-
-          <!-- Email -->
-          <div class="flex cursor-default flex-col items-center gap-2">
-            <div
-              class="flex size-12 items-center justify-center rounded-xl border border-border bg-card"
-            >
-              <span
-                class="i-lucide-mail size-6 text-[#007BFF] opacity-90 transition-opacity dark:opacity-80"
-              />
-            </div>
-            <span class="text-sm font-normal text-muted-foreground">
-              {{ t('INBOX.EMPTY.EMAIL') }}
-            </span>
-          </div>
-
-          <!-- SMS -->
-          <div class="flex cursor-default flex-col items-center gap-2">
-            <div
-              class="flex size-12 items-center justify-center rounded-xl border border-border bg-card"
-            >
-              <span
-                class="i-lucide-message-square-more size-6 text-[#25D366] opacity-90 transition-opacity dark:opacity-80"
-              />
-            </div>
-            <span class="text-sm font-normal text-muted-foreground">
-              {{ t('INBOX.EMPTY.SMS') }}
-            </span>
-          </div>
-
-          <!-- Messenger -->
-          <div class="flex cursor-default flex-col items-center gap-2">
-            <div
-              class="flex size-12 items-center justify-center rounded-xl border border-border bg-card"
-            >
-              <img
-                src="https://upload.wikimedia.org/wikipedia/commons/b/be/Facebook_Messenger_logo_2020.svg"
-                :alt="t('INBOX.EMPTY.MESSENGER')"
-                class="size-6 opacity-90 transition-opacity dark:opacity-80"
-              />
-            </div>
-            <span class="text-sm font-normal text-muted-foreground">
-              {{ t('INBOX.EMPTY.MESSENGER') }}
-            </span>
-          </div>
-
-          <!-- Instagram -->
-          <div class="flex cursor-default flex-col items-center gap-2">
-            <div
-              class="flex size-12 items-center justify-center rounded-xl border border-border bg-card"
-            >
-              <img
-                src="https://upload.wikimedia.org/wikipedia/commons/e/e7/Instagram_logo_2016.svg"
-                :alt="t('INBOX.EMPTY.INSTAGRAM')"
-                class="size-6 opacity-90 transition-opacity dark:opacity-80"
-              />
-            </div>
-            <span class="text-sm font-normal text-muted-foreground">
-              {{ t('INBOX.EMPTY.INSTAGRAM') }}
-            </span>
-          </div>
-
-          <!-- Live Chat -->
-          <div class="flex cursor-default flex-col items-center gap-2">
-            <div
-              class="flex size-12 items-center justify-center rounded-xl border border-border bg-card"
-            >
-              <span
-                class="i-lucide-message-circle size-6 text-[#6366F1] opacity-90 transition-opacity dark:opacity-80"
-              />
-            </div>
-            <span class="text-sm font-normal text-muted-foreground">
-              {{ t('INBOX.EMPTY.LIVE_CHAT') }}
+              {{ channel.label }}
             </span>
           </div>
         </div>

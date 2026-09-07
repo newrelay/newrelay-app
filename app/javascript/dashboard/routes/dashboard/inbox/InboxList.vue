@@ -210,6 +210,15 @@ const viewCounts = computed(() =>
   })
 );
 
+const activeChannelName = computed(() => {
+  if (!activeView.value.startsWith('inbox:')) return '';
+  const inboxId = Number(activeView.value.replace('inbox:', ''));
+  const inbox = channelsForNav.value.find(
+    channel => Number(channel.id) === inboxId
+  );
+  return inbox?.name || inbox?.phoneNumber || inbox?.email || '';
+});
+
 const filteredConversations = computed(() => {
   let list = items.value;
   const view = activeView.value;
@@ -562,9 +571,12 @@ onMounted(() => {
 
           <div
             v-if="!isFetching && !filteredConversations.length"
-            class="flex items-center justify-center py-16"
+            class="flex flex-1 min-h-0 items-stretch"
           >
-            <InboxEmptyState />
+            <InboxEmptyState
+              :active-view="activeView"
+              :channel-name="activeChannelName"
+            />
           </div>
 
           <div

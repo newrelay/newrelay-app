@@ -40,7 +40,7 @@ export default defineConfig({
     },
     server: {
       deps: {
-        inline: ['tinykeys', '@material/mwc-icon'],
+        inline: ['tinykeys', '@material/mwc-icon', 'prosemirror-state'],
       },
     },
     setupFiles: ['fake-indexeddb/auto', 'vitest.setup.js'],

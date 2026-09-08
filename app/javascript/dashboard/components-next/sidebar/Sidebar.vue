@@ -406,24 +406,6 @@ const primaryMenuItems = computed(() => {
           to: accountScopedRoute('companies_dashboard_index'),
           activeOn: ['companies_dashboard_index', 'companies_dashboard_show'],
         },
-        {
-          name: 'Deals',
-          label: t('SIDEBAR.DEALS'),
-          to: accountScopedRoute('deals_dashboard_index'),
-          activeOn: ['deals_dashboard_index'],
-        },
-        {
-          name: 'Pipelines',
-          label: t('SIDEBAR.PIPELINES'),
-          to: accountScopedRoute('pipelines_dashboard_index'),
-          activeOn: ['pipelines_dashboard_index'],
-        },
-        {
-          name: 'Opportunities',
-          label: t('SIDEBAR.OPPORTUNITIES'),
-          to: accountScopedRoute('opportunities_dashboard_index'),
-          activeOn: ['opportunities_dashboard_index'],
-        },
       ],
     },
     {

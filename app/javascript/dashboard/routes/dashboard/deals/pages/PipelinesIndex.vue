@@ -6,7 +6,6 @@ import { RelayButton } from 'dashboard/components-next/relay';
 import Spinner from 'shared/components/Spinner.vue';
 import DealFormDialog from 'dashboard/components-next/Deals/DealFormDialog.vue';
 import DealMetricsRow from 'dashboard/components-next/Deals/DealMetricsRow.vue';
-import CrmTableBoardToggle from 'dashboard/components-next/Deals/CrmTableBoardToggle.vue';
 import Icon from 'dashboard/components-next/icon/Icon.vue';
 import Avatar from 'dashboard/components-next/avatar/Avatar.vue';
 
@@ -86,7 +85,6 @@ onMounted(load);
         </p>
       </div>
       <div class="flex flex-wrap items-center gap-3">
-        <CrmTableBoardToggle />
         <RelayButton
           class="h-9 gap-2 px-4 text-[13px] font-medium"
           @click="openCreate"

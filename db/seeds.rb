@@ -33,6 +33,7 @@ unless Rails.env.production?
   user = User.new(name: 'John', email: 'john@acme.inc', password: 'Password1!', type: 'SuperAdmin')
   user.skip_confirmation!
   user.save!
+  Avatar::AvatarFromUrlJob.perform_now(user, 'https://randomuser.me/api/portraits/men/32.jpg')
 
   AccountUser.create!(
     account_id: account.id,
@@ -55,8 +56,9 @@ unless Rails.env.production?
     source_id: user.id,
     inbox: inbox,
     hmac_verified: true,
-    contact_attributes: { name: 'jane', email: 'jane@example.com', phone_number: '+2320000' }
+    contact_attributes: { name: 'Jane Doe', email: 'jane@example.com', phone_number: '+2320000' }
   ).perform
+  Avatar::AvatarFromUrlJob.perform_now(contact_inbox.contact, 'https://randomuser.me/api/portraits/women/44.jpg')
 
   conversation = Conversation.create!(
     account: account,

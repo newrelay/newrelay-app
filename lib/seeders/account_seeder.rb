@@ -74,7 +74,10 @@ class Seeders::AccountSeeder
     user_record = User.create_with(name: user['name'], password: 'Password1!.').find_or_create_by!(email: user['email'].to_s)
     user_record.skip_confirmation!
     user_record.save!
-    Avatar::AvatarFromUrlJob.perform_later(user_record, "https://xsgames.co/randomusers/avatar.php?g=#{user['gender']}")
+    gender = user['gender'].to_s.downcase == 'female' ? 'women' : 'men'
+    avatar_num = ((user_record.id || 1) % 95) + 1
+    avatar_url = user['avatar_url'].presence || "https://randomuser.me/api/portraits/#{gender}/#{avatar_num}.jpg"
+    Avatar::AvatarFromUrlJob.perform_now(user_record, avatar_url)
     user_record
   end
 
@@ -110,12 +113,24 @@ class Seeders::AccountSeeder
   end
 
   def seed_contacts
-    @account_data['contacts'].each do |contact_data|
+    @account_data['contacts'].each_with_index do |contact_data, idx|
       contact = @account.contacts.find_or_initialize_by(email: contact_data['email'])
       if contact.new_record?
         contact.update!(contact_data.slice('name', 'email'))
-        Avatar::AvatarFromUrlJob.perform_later(contact, "https://xsgames.co/randomusers/avatar.php?g=#{contact_data['gender']}")
       end
+
+      gender = contact_data['gender'].to_s.downcase == 'female' ? 'women' : 'men'
+      avatar_num = ((contact.id || idx + 1) % 95) + 1
+      avatar_url = contact_data['avatar_url'].presence || "https://randomuser.me/api/portraits/#{gender}/#{avatar_num}.jpg"
+
+      # Reset avatar rate limiting attributes so seeding always attaches avatar
+      attrs = contact.additional_attributes || {}
+      attrs.delete('last_avatar_sync_at')
+      attrs.delete('avatar_url_hash')
+      contact.update_columns(additional_attributes: attrs)
+
+      Avatar::AvatarFromUrlJob.perform_now(contact, avatar_url)
+
       contact_data['conversations'].each do |conversation_data|
         inbox = @account.inboxes.find_by(channel_type: conversation_data['channel'])
         contact_inbox = inbox.contact_inboxes.create_or_find_by!(contact: contact, source_id: (conversation_data['source_id'] || SecureRandom.hex))

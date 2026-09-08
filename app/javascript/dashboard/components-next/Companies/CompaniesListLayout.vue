@@ -34,7 +34,9 @@ const emit = defineEmits([
 </script>
 
 <template>
-  <section class="relative flex h-full w-full overflow-hidden bg-background/50">
+  <section
+    class="relative flex h-full w-full overflow-hidden bg-muted/10 dark:bg-background"
+  >
     <div
       class="flex-1 overflow-y-auto"
       :class="isEmptyState ? 'px-4 py-12 md:py-16' : 'p-8'"

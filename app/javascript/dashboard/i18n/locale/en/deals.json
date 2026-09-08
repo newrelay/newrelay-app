@@ -3,6 +3,8 @@
     "HEADER": "Deals",
     "DESCRIPTION": "Track and manage sales deals across your pipeline.",
     "NEW": "New Deal",
+    "VIEW_TABLE": "Table",
+    "VIEW_BOARD": "Board",
     "EMPTY": {
       "TITLE": "No deals yet",
       "DESCRIPTION": "Create your first deal to start tracking opportunities."
@@ -13,16 +15,17 @@
       "PIPELINE_VALUE": "Pipeline value",
       "WEIGHTED_VALUE": "Weighted value",
       "AVG_DEAL": "Avg. deal value",
-      "WIN_RATE": "Win rate"
+      "WIN_RATE": "Win rate",
+      "VALUE": "Value"
     },
     "TABLE": {
-      "NAME": "Deal",
+      "NAME": "Deal name",
       "STAGE": "Stage",
       "AMOUNT": "Amount",
       "CLOSE_ON": "Close date",
       "PRIORITY": "Priority",
       "PROBABILITY": "Probability",
-      "UPDATED": "Updated",
+      "UPDATED": "Last activity",
       "OWNER": "Owner",
       "COMPANY": "Company",
       "CONTACT": "Contact"
@@ -89,8 +92,9 @@
   },
   "PIPELINES": {
     "HEADER": "Pipelines",
-    "DESCRIPTION": "Visualize and manage your deals across every stage.",
-    "EMPTY_COLUMN": "No deals"
+    "DESCRIPTION": "Visualize and manage your deals across every stage of your sales process.",
+    "EMPTY_COLUMN": "No deals",
+    "WON": "Won"
   },
   "OPPORTUNITIES": {
     "HEADER": "Opportunities",
@@ -100,6 +104,7 @@
       "TITLE": "No opportunities yet",
       "DESCRIPTION": "Create a deal to start tracking opportunities."
     },
-    "NEW": "New Opportunity"
+    "NEW": "New Opportunity",
+    "ID": "OPP-{id}"
   }
 }

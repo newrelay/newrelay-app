@@ -8,8 +8,9 @@ import {
 } from 'dashboard/components-next/relay';
 import Spinner from 'shared/components/Spinner.vue';
 import DealFormDialog from 'dashboard/components-next/Deals/DealFormDialog.vue';
-import DealMetricsRow from 'dashboard/components-next/Deals/DealMetricsRow.vue';
+import CrmTableBoardToggle from 'dashboard/components-next/Deals/CrmTableBoardToggle.vue';
 import Icon from 'dashboard/components-next/icon/Icon.vue';
+import Avatar from 'dashboard/components-next/avatar/Avatar.vue';
 
 defineOptions({ name: 'DealsIndex' });
 
@@ -21,9 +22,13 @@ const {
   uiFlags,
   stages,
   filteredDeals,
-  metrics,
+  stageMetrics,
+  stageBadgeClass,
+  companyInitial,
+  ownerName,
   formatDealAmount,
   formatDate,
+  formatRelative,
   load,
   openCreate,
   openEdit,
@@ -36,29 +41,62 @@ onMounted(load);
 </script>
 
 <template>
-  <div class="flex h-full min-h-0 flex-col bg-background">
+  <div class="flex h-full min-h-0 flex-col bg-muted/10 dark:bg-background">
     <div
-      class="flex flex-wrap items-start justify-between gap-4 border-b border-border bg-card px-6 py-6"
+      class="flex flex-wrap items-center justify-between gap-4 border-b border-border bg-card px-6 py-4"
     >
-      <div>
-        <h1 class="text-base font-medium text-foreground">
-          {{ $t('DEALS.HEADER') }}
-        </h1>
-        <p class="mt-1 text-[13px] font-medium text-muted-foreground">
-          {{ $t('DEALS.DESCRIPTION') }}
-        </p>
+      <div class="flex flex-wrap items-center gap-4">
+        <div>
+          <h1 class="text-base font-medium tracking-tight text-foreground">
+            {{ $t('DEALS.HEADER') }}
+          </h1>
+          <p class="mt-1 text-[13px] font-medium text-muted-foreground">
+            {{ $t('DEALS.DESCRIPTION') }}
+          </p>
+        </div>
+        <CrmTableBoardToggle />
       </div>
-      <RelayButton class="h-9 px-4 text-[13px] font-medium" @click="openCreate">
+      <RelayButton
+        class="h-9 gap-2 px-4 text-[13px] font-medium"
+        @click="openCreate"
+      >
         <Icon icon="i-lucide-plus" class="size-4" />
         {{ $t('DEALS.NEW') }}
       </RelayButton>
     </div>
 
-    <DealMetricsRow :metrics="metrics" />
-
     <div
-      class="flex items-center gap-3 border-b border-border bg-card px-6 py-3"
+      v-if="stageMetrics.length"
+      class="grid grid-cols-2 gap-4 p-6 pb-0 md:grid-cols-3 lg:grid-cols-5"
     >
+      <div
+        v-for="metric in stageMetrics"
+        :key="metric.id"
+        class="relative flex flex-col overflow-hidden rounded-xl border border-border/60 bg-card p-4 shadow-sm transition-colors hover:border-border"
+      >
+        <div class="mb-4 flex items-center justify-between">
+          <div class="flex items-center gap-2">
+            <div class="size-2 rounded-full" :class="metric.dotClass" />
+            <span class="text-sm font-semibold text-foreground">
+              {{ metric.name }}
+            </span>
+          </div>
+          <span class="text-xs font-semibold text-muted-foreground">
+            {{ metric.count }}
+          </span>
+        </div>
+        <div class="mt-auto flex flex-col">
+          <span class="mb-0.5 text-xs text-muted-foreground">
+            {{ $t('DEALS.METRICS.VALUE') }}
+          </span>
+          <span class="text-lg font-semibold tracking-tight text-foreground">
+            {{ metric.value }}
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <div class="flex items-center gap-3 px-6 py-4">
       <div class="relative w-full max-w-xs">
         <Icon
           icon="i-lucide-search"
@@ -66,13 +104,13 @@ onMounted(load);
         />
         <RelayInput
           v-model="searchQuery"
-          class="pl-9 text-[13px]"
+          class="h-9 rounded-lg border-border/60 bg-background pl-9 text-[13px] shadow-sm"
           :placeholder="$t('DEALS.SEARCH_PLACEHOLDER')"
         />
       </div>
     </div>
 
-    <div class="min-h-0 flex-1 overflow-auto p-6">
+    <div class="min-h-0 flex-1 overflow-auto px-6 pb-6">
       <div
         v-if="uiFlags.fetchingList"
         class="flex items-center justify-center py-20"
@@ -97,111 +135,119 @@ onMounted(load);
 
       <div
         v-else
-        class="overflow-hidden rounded-xl border border-border/60 bg-card"
+        class="flex flex-col overflow-hidden rounded-xl border border-border/60 bg-card shadow-sm"
       >
-        <table class="min-w-full table-auto">
-          <thead>
-            <tr class="border-b border-border text-left">
-              <th
-                class="px-4 py-3 text-[12px] font-medium text-muted-foreground"
-              >
-                {{ $t('DEALS.TABLE.NAME') }}
-              </th>
-              <th
-                class="px-4 py-3 text-[12px] font-medium text-muted-foreground"
-              >
-                {{ $t('DEALS.TABLE.COMPANY') }}
-              </th>
-              <th
-                class="px-4 py-3 text-[12px] font-medium text-muted-foreground"
-              >
-                {{ $t('DEALS.TABLE.STAGE') }}
-              </th>
-              <th
-                class="px-4 py-3 text-[12px] font-medium text-muted-foreground"
-              >
-                {{ $t('DEALS.TABLE.AMOUNT') }}
-              </th>
-              <th
-                class="px-4 py-3 text-[12px] font-medium text-muted-foreground"
-              >
-                {{ $t('DEALS.TABLE.CLOSE_ON') }}
-              </th>
-              <th
-                class="px-4 py-3 text-[12px] font-medium text-muted-foreground"
-              >
-                {{ $t('DEALS.TABLE.PRIORITY') }}
-              </th>
-              <th
-                class="px-4 py-3 text-[12px] font-medium text-muted-foreground"
-              >
-                {{ $t('DEALS.TABLE.OWNER') }}
-              </th>
-              <th
-                class="px-4 py-3 text-[12px] font-medium text-muted-foreground"
-              >
-                {{ $t('DEALS.TABLE.UPDATED') }}
-              </th>
-              <th class="px-4 py-3" />
-            </tr>
-          </thead>
-          <tbody>
-            <tr
-              v-for="deal in filteredDeals"
-              :key="deal.id"
-              class="border-b border-border/60 last:border-0 hover:bg-muted/40"
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-sm">
+            <thead
+              class="border-b border-border/60 bg-muted/30 text-muted-foreground"
             >
-              <td class="px-4 py-3 text-[14px] font-medium text-foreground">
-                {{ deal.name }}
-              </td>
-              <td class="px-4 py-3 text-[13px] text-muted-foreground">
-                {{ deal.company?.name || '—' }}
-              </td>
-              <td class="px-4 py-3">
-                <span
-                  class="inline-flex rounded-md bg-primary/10 px-2 py-0.5 text-[12px] font-medium text-primary"
+              <tr>
+                <th class="px-5 py-3.5 font-medium">
+                  {{ $t('DEALS.TABLE.NAME') }}
+                </th>
+                <th class="px-5 py-3.5 font-medium">
+                  {{ $t('DEALS.TABLE.COMPANY') }}
+                </th>
+                <th class="px-5 py-3.5 font-medium">
+                  {{ $t('DEALS.TABLE.STAGE') }}
+                </th>
+                <th class="px-5 py-3.5 font-medium">
+                  {{ $t('DEALS.TABLE.AMOUNT') }}
+                </th>
+                <th class="px-5 py-3.5 font-medium">
+                  {{ $t('DEALS.TABLE.CLOSE_ON') }}
+                </th>
+                <th class="px-5 py-3.5 font-medium">
+                  {{ $t('DEALS.TABLE.OWNER') }}
+                </th>
+                <th class="px-5 py-3.5 font-medium">
+                  {{ $t('DEALS.TABLE.UPDATED') }}
+                </th>
+                <th class="px-5 py-3.5" />
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-border/40">
+              <tr
+                v-for="deal in filteredDeals"
+                :key="deal.id"
+                class="group cursor-pointer transition-colors hover:bg-muted/30"
+                @click="openEdit(deal)"
+              >
+                <td class="px-5 py-4 align-middle font-medium text-foreground">
+                  {{ deal.name }}
+                </td>
+                <td class="px-5 py-4 align-middle">
+                  <div class="flex items-center gap-2">
+                    <div
+                      class="flex size-6 shrink-0 items-center justify-center rounded-md bg-primary/10 text-[10px] font-bold text-primary"
+                    >
+                      {{ companyInitial(deal.company?.name) }}
+                    </div>
+                    <span
+                      class="text-muted-foreground transition-colors group-hover:text-foreground"
+                    >
+                      {{ deal.company?.name || '—' }}
+                    </span>
+                  </div>
+                </td>
+                <td class="px-5 py-4 align-middle">
+                  <span
+                    class="inline-flex rounded-md px-2.5 py-0.5 text-xs font-medium"
+                    :class="stageBadgeClass(deal.pipelineStage)"
+                  >
+                    {{ deal.pipelineStage?.name || '—' }}
+                  </span>
+                </td>
+                <td class="px-5 py-4 align-middle font-medium text-foreground">
+                  {{ formatDealAmount(deal) }}
+                </td>
+                <td class="px-5 py-4 align-middle text-muted-foreground">
+                  {{ formatDate(deal.closeOn) }}
+                </td>
+                <td class="px-5 py-4 align-middle">
+                  <Avatar
+                    v-if="ownerName(deal)"
+                    :src="deal.owner?.thumbnail"
+                    :name="ownerName(deal)"
+                    :size="28"
+                    rounded-full
+                  />
+                  <span v-else class="text-[13px] text-muted-foreground">
+                    —
+                  </span>
+                </td>
+                <td
+                  class="px-5 py-4 align-middle text-xs font-medium text-muted-foreground"
                 >
-                  {{ deal.pipelineStage?.name || '—' }}
-                </span>
-              </td>
-              <td class="px-4 py-3 text-[14px] text-foreground">
-                {{ formatDealAmount(deal) }}
-              </td>
-              <td class="px-4 py-3 text-[13px] text-muted-foreground">
-                {{ formatDate(deal.closeOn) }}
-              </td>
-              <td class="px-4 py-3 text-[13px] capitalize text-foreground">
-                {{ deal.priority }}
-              </td>
-              <td class="px-4 py-3 text-[13px] text-muted-foreground">
-                {{ deal.owner?.availableName || deal.owner?.name || '—' }}
-              </td>
-              <td class="px-4 py-3 text-[13px] text-muted-foreground">
-                {{ formatDate(deal.updatedAt) }}
-              </td>
-              <td class="px-4 py-3">
-                <div class="flex justify-end gap-1">
-                  <RelayButton
-                    variant="ghost"
-                    size="sm"
-                    class="h-8 border border-border px-2 hover:border-transparent"
-                    @click="openEdit(deal)"
+                  {{ formatRelative(deal.updatedAt) }}
+                </td>
+                <td class="px-5 py-4 align-middle" @click.stop>
+                  <div
+                    class="flex justify-end gap-1 opacity-0 group-hover:opacity-100"
                   >
-                    <Icon icon="i-lucide-pencil" class="size-3.5" />
-                  </RelayButton>
-                  <RelayButton
-                    variant="ghost"
-                    size="sm"
-                    class="h-8 border border-border px-2 text-destructive hover:border-transparent"
-                    @click="confirmDelete(deal)"
-                  >
-                    <Icon icon="i-lucide-trash-2" class="size-3.5" />
-                  </RelayButton>
-                </div>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+                    <RelayButton
+                      variant="ghost"
+                      size="sm"
+                      class="h-8 border border-border px-2 hover:border-transparent"
+                      @click="openEdit(deal)"
+                    >
+                      <Icon icon="i-lucide-pencil" class="size-3.5" />
+                    </RelayButton>
+                    <RelayButton
+                      variant="ghost"
+                      size="sm"
+                      class="h-8 border border-border px-2 text-destructive hover:border-transparent"
+                      @click="confirmDelete(deal)"
+                    >
+                      <Icon icon="i-lucide-trash-2" class="size-3.5" />
+                    </RelayButton>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
 

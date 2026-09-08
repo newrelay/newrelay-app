@@ -26,6 +26,7 @@ const props = defineProps({
   },
   activeSort: { type: String, default: 'last_activity_at' },
   activeOrdering: { type: String, default: '' },
+  isPreview: { type: Boolean, default: false },
 });
 
 const emit = defineEmits(['toggleContact', 'toggleAll', 'update:sort']);
@@ -105,6 +106,7 @@ const getRelativeTime = dateString => {
 };
 
 const onClickViewDetails = async id => {
+  if (props.isPreview) return;
   const routeTypes = {
     contacts_dashboard_segments_index: ['contacts_edit_segment', 'segmentId'],
     contacts_dashboard_labels_index: ['contacts_edit_label', 'label'],

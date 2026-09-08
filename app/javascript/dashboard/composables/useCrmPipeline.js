@@ -1,4 +1,5 @@
 import { computed, ref } from 'vue';
+import { formatDistanceToNow } from 'date-fns';
 import { useI18n } from 'vue-i18n';
 import { useAlert } from 'dashboard/composables';
 import { useDealsStore } from 'dashboard/stores/deals';
@@ -51,6 +52,33 @@ export const useCrmPipeline = () => {
     return new Date(value).toLocaleDateString();
   };
 
+  const formatRelative = value => {
+    if (!value) return '—';
+    const date =
+      typeof value === 'number' && value < 1e12
+        ? new Date(value * 1000)
+        : new Date(value);
+    if (Number.isNaN(date.getTime())) return '—';
+    return formatDistanceToNow(date, { addSuffix: true });
+  };
+
+  const probabilityBarClass = pct => {
+    const widths = [
+      'w-0',
+      'w-[10%]',
+      'w-[20%]',
+      'w-[30%]',
+      'w-[40%]',
+      'w-[50%]',
+      'w-[60%]',
+      'w-[70%]',
+      'w-[80%]',
+      'w-[90%]',
+      'w-full',
+    ];
+    return widths[Math.min(10, Math.round(Number(pct || 0) / 10))];
+  };
+
   const metrics = computed(() => {
     const list = deals.value || [];
     const currency = list[0]?.currency || 'USD';
@@ -96,6 +124,48 @@ export const useCrmPipeline = () => {
         value: `${winRate}%`,
       },
     ];
+  });
+
+  const stageDotClass = stage => {
+    if (stage?.isWon) return 'bg-success';
+    if (stage?.isLost) return 'bg-destructive';
+    return 'bg-primary';
+  };
+
+  const stageBadgeClass = stage => {
+    if (stage?.isWon) return 'bg-success/10 text-success';
+    if (stage?.isLost) return 'bg-destructive/10 text-destructive';
+    return 'bg-primary/10 text-primary';
+  };
+
+  const priorityBadgeClass = priority => {
+    if (priority === 'high') return 'bg-primary/10 text-primary';
+    if (priority === 'low') return 'bg-success/10 text-success';
+    return 'bg-warning/10 text-warning';
+  };
+
+  const companyInitial = name => (name || '?').slice(0, 1).toUpperCase();
+
+  const ownerName = deal =>
+    deal?.owner?.availableName || deal?.owner?.name || '';
+
+  const stageMetrics = computed(() => {
+    const list = deals.value || [];
+    return (stages.value || []).map(stage => {
+      const stageDeals = list.filter(deal => deal.pipelineStageId === stage.id);
+      const amount = stageDeals.reduce(
+        (sum, deal) => sum + Number(deal.amountCents || 0),
+        0
+      );
+      const currency = stageDeals[0]?.currency || 'USD';
+      return {
+        id: stage.id,
+        name: stage.name,
+        count: stageDeals.length,
+        value: formatAmount(amount, currency),
+        dotClass: stageDotClass(stage),
+      };
+    });
   });
 
   const load = async () => {
@@ -180,9 +250,17 @@ export const useCrmPipeline = () => {
     stages,
     filteredDeals,
     metrics,
+    stageMetrics,
+    stageDotClass,
+    stageBadgeClass,
+    priorityBadgeClass,
+    companyInitial,
+    ownerName,
     formatDealAmount,
     formatAmount,
     formatDate,
+    formatRelative,
+    probabilityBarClass,
     load,
     openCreate,
     openEdit,

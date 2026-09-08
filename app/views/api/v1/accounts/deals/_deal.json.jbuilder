@@ -27,6 +27,7 @@ json.owner do
     json.id deal.owner.id
     json.name deal.owner.name
     json.available_name deal.owner.available_name
+    json.thumbnail deal.owner.avatar_url
   end
 end
 json.contact do

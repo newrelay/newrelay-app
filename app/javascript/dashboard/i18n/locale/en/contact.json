@@ -718,7 +718,9 @@
       "SEARCH_EMPTY_STATE_TITLE": "No matches found",
       "SEARCH_EMPTY_STATE_SUBTITLE": "We couldn't find any contacts matching your search. Try clearing search or add a new contact.",
       "LIST_EMPTY_STATE_TITLE": "No contacts available in this view",
-      "ACTIVE_EMPTY_STATE_TITLE": "No contacts are active at the moment"
+      "ACTIVE_EMPTY_STATE_TITLE": "No contacts are active at the moment",
+      "DEV_LOAD_DUMMY": "Load dummy contacts",
+      "DEV_TOGGLE_EMPTY": "Toggle empty states"
     },
     "LOAD_MORE": "Load more",
     "ADD_CONTACT_DRAWER": {

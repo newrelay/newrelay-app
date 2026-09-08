@@ -75,7 +75,7 @@ const onClearFilters = () => {
       >
         <div class="flex min-w-0 flex-1 items-start gap-4 pr-4">
           <div class="min-w-0 flex-1 text-left">
-            <h3 class="capitalize mb-2 text-[15px] font-medium text-foreground">
+            <h3 class="mb-2 text-[15px] font-medium text-foreground">
               {{ faq.question }}
             </h3>
             <p class="mb-4 line-clamp-1 text-[14px] text-muted-foreground">

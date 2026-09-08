@@ -171,7 +171,7 @@ const handleCreateAssistant = () => {
                 />
                 <h1
                   v-if="headerTitle"
-                  class="capitalize hidden text-[16px] font-[500] text-muted-foreground sm:block"
+                  class="hidden text-xl font-medium text-muted-foreground sm:block"
                 >
                   {{ headerTitle }}
                 </h1>

@@ -58,7 +58,7 @@ const onLoadExample = () => {
       >
         <div class="mt-1 size-4 shrink-0 rounded border border-border/50" />
         <div class="min-w-0 flex-1 text-left">
-          <h3 class="capitalize mb-1 text-[15px] font-medium text-foreground">
+          <h3 class="mb-1 text-[15px] font-medium text-foreground">
             {{ scenario.title }}
           </h3>
           <p class="mb-3 text-[13.5px] text-muted-foreground">

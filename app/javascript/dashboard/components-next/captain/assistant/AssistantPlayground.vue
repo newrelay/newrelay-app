@@ -1,7 +1,7 @@
 <script setup>
 import { ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { RelayButton } from 'dashboard/components-next/relay';
+import { RelayButton, RelayInput } from 'dashboard/components-next/relay';
 import MessageList from './MessageList.vue';
 import CaptainAssistant from 'dashboard/api/captain/assistant';
 
@@ -95,9 +95,7 @@ const handleEnterKey = event => {
       class="flex shrink-0 items-start justify-between gap-4 border-b border-border/40 pb-4"
     >
       <div class="space-y-1">
-        <h2
-          class="capitalize text-base font-semibold tracking-tight text-foreground"
-        >
+        <h2 class="text-base font-semibold tracking-tight text-foreground">
           {{ t('CAPTAIN.PLAYGROUND.HEADER') }}
         </h2>
         <p class="text-[13.5px] leading-relaxed text-muted-foreground">
@@ -121,9 +119,9 @@ const handleEnterKey = event => {
       <div
         class="relative flex items-center rounded-xl border border-border/80 bg-background p-2 shadow-sm transition-all focus-within:ring-1 focus-within:ring-primary/30"
       >
-        <input
+        <RelayInput
           v-model="newMessage"
-          class="mb-0 h-10 flex-1 border-none bg-transparent px-3 text-[14px] text-foreground placeholder:text-muted-foreground/60 focus:outline-none shadow-sm rounded-md border-border/80 bg-background focus-visible:ring-1 focus-visible:ring-primary/30"
+          class-name="mb-0 h-10 flex-1 border-none bg-transparent px-3 text-[14px] shadow-none focus-visible:ring-0"
           :placeholder="t('CAPTAIN.PLAYGROUND.MESSAGE_PLACEHOLDER')"
           @keydown.enter.exact="handleEnterKey"
         />

@@ -11,6 +11,10 @@ import {
   RelayInput,
   RelayLabel,
 } from 'dashboard/components-next/relay';
+import {
+  RELAY_FORM_FIELD_CLASS,
+  RELAY_FORM_LABEL_CLASS,
+} from 'dashboard/components-next/relay/form/constants';
 
 const props = defineProps({
   mode: {
@@ -46,6 +50,7 @@ const validationRules = {
 const v$ = useVuelidate(validationRules, state);
 
 const isLoading = computed(() => formState.uiFlags.value.creatingItem);
+const isSubmitDisabled = computed(() => v$.value.$invalid);
 
 const getErrorMessage = (field, errorKey) => {
   return v$.value[field].$error
@@ -98,8 +103,11 @@ watch(
 
 <template>
   <form class="flex flex-col gap-4" @submit.prevent="handleSubmit">
-    <div class="flex flex-col gap-2">
-      <RelayLabel html-for="captain-faq-question">
+    <div :class="RELAY_FORM_FIELD_CLASS">
+      <RelayLabel
+        html-for="captain-faq-question"
+        :class="RELAY_FORM_LABEL_CLASS"
+      >
         {{ t('CAPTAIN.RESPONSES.FORM.QUESTION.LABEL') }}
       </RelayLabel>
       <RelayInput
@@ -107,7 +115,7 @@ watch(
         v-model="state.question"
         :placeholder="t('CAPTAIN.RESPONSES.FORM.QUESTION.PLACEHOLDER')"
       />
-      <p v-if="formErrors.question" class="text-xs text-destructive">
+      <p v-if="formErrors.question" class="text-[12px] text-destructive">
         {{ formErrors.question }}
       </p>
     </div>
@@ -122,13 +130,17 @@ watch(
     <div class="flex w-full items-center justify-between gap-3">
       <RelayButton
         type="button"
-        variant="secondary"
-        class="w-full"
+        variant="outline"
+        class="h-10 w-full"
         @click="handleCancel"
       >
         {{ t('CAPTAIN.FORM.CANCEL') }}
       </RelayButton>
-      <RelayButton type="submit" class="w-full" :disabled="isLoading">
+      <RelayButton
+        type="submit"
+        class="h-10 w-full"
+        :disabled="isLoading || isSubmitDisabled"
+      >
         <span
           v-if="isLoading"
           class="i-lucide-loader-circle size-4 animate-spin"

@@ -1,7 +1,7 @@
 <script setup>
 import { useAdmin } from 'dashboard/composables/useAdmin';
 import Icon from 'next/icon/Icon.vue';
-import ButtonV4 from 'next/button/Button.vue';
+import { RelayButton } from 'dashboard/components-next/relay';
 
 defineProps({
   featurePrefix: {
@@ -61,9 +61,9 @@ const { isAdmin } = useAdmin();
       </span>
     </p>
     <template v-if="isOnChatwootCloud && isAdmin">
-      <ButtonV4 blue solid md @click="emit('upgrade')">
+      <RelayButton class="mt-4 h-9 w-full" @click="emit('upgrade')">
         {{ $t(`${featurePrefix}.PAYWALL.UPGRADE_NOW`) }}
-      </ButtonV4>
+      </RelayButton>
       <span
         class="mt-2 text-xs tracking-tight text-center text-muted-foreground"
       >
@@ -72,9 +72,9 @@ const { isAdmin } = useAdmin();
     </template>
     <template v-else-if="!isOnChatwootCloud && isSuperAdmin">
       <a href="/super_admin" class="block w-full">
-        <ButtonV4 solid blue md class="w-full">
+        <RelayButton class="mt-4 h-9 w-full">
           {{ $t(`${featurePrefix}.PAYWALL.UPGRADE_NOW`) }}
-        </ButtonV4>
+        </RelayButton>
       </a>
     </template>
   </div>

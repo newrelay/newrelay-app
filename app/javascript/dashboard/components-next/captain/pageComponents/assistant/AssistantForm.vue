@@ -53,6 +53,7 @@ const validationRules = {
 const v$ = useVuelidate(validationRules, state);
 
 const isLoading = computed(() => formState.uiFlags.value.creatingItem);
+const isSubmitDisabled = computed(() => v$.value.$invalid);
 
 const getErrorMessage = (field, errorKey) => {
   return v$.value[field].$error
@@ -200,13 +201,17 @@ watch(
     <div class="flex w-full items-center justify-between gap-3">
       <RelayButton
         type="button"
-        variant="secondary"
-        class="w-full"
+        variant="outline"
+        class="h-10 w-full"
         @click="handleCancel"
       >
         {{ t('CAPTAIN.FORM.CANCEL') }}
       </RelayButton>
-      <RelayButton type="submit" class="w-full" :disabled="isLoading">
+      <RelayButton
+        type="submit"
+        class="h-10 w-full"
+        :disabled="isLoading || isSubmitDisabled"
+      >
         <span
           v-if="isLoading"
           class="i-lucide-loader-circle size-4 animate-spin"

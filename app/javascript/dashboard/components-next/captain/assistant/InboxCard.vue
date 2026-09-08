@@ -75,7 +75,7 @@ const handleAction = ({ action, value }) => {
       >
         <span class="size-4" :class="[icon]" />
       </div>
-      <h3 class="capitalize truncate text-[15px] font-medium text-foreground">
+      <h3 class="truncate text-[15px] font-medium text-foreground">
         {{ inboxName }}
       </h3>
     </div>

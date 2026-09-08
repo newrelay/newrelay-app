@@ -216,7 +216,7 @@
         "GRAMMAR": "Fix grammar & spelling",
         "SUGGESTION": "Suggest a reply",
         "SUMMARIZE": "Summarize the conversation",
-        "ASK_COPILOT": "Ask RelayAI"
+        "ASK_COPILOT": "Ask Relay AI"
       },
       "ASSISTANCE_MODAL": {
         "DRAFT_TITLE": "Draft content",
@@ -438,15 +438,15 @@
       "EMPTY_LIST": "No assistants found, please create one to get started"
     },
     "COPILOT": {
-      "TITLE": "RelayAI",
+      "TITLE": "Relay AI",
       "TRY_THESE_PROMPTS": "Try these prompts",
-      "PANEL_TITLE": "Get Started With RelayAI",
+      "PANEL_TITLE": "Get Started With Relay AI",
       "LAUNCHER": {
         "TITLE": "Relay AI here!",
         "DESCRIPTION": "Ready to crush some tasks? Just point me at a problem and watch me turn your to-do list into a 'ta-da!' list. ⚡️",
         "DRAG_TITLE": "Relay AI (Drag to move)"
       },
-      "KICK_OFF_MESSAGE": "Need a quick summary, want to check past conversations, or draft a better reply? RelayAI's here to speed things up.",
+      "KICK_OFF_MESSAGE": "Need a quick summary, want to check past conversations, or draft a better reply? Relay AI's here to speed things up.",
       "SEND_MESSAGE": "Send message...",
       "EMPTY_MESSAGE": "There was an error generating the response. Please try again.",
       "LOADER": "Relay AI is thinking",
@@ -489,13 +489,13 @@
     "PAYWALL": {
       "TITLE": "Upgrade to use Relay AI",
       "AVAILABLE_ON": "Relay AI is not available on the free plan.",
-      "UPGRADE_PROMPT": "Upgrade your plan to get access to our assistants, RelayAI and more.",
+      "UPGRADE_PROMPT": "Upgrade your plan to get access to our assistants, Relay AI and more.",
       "UPGRADE_NOW": "Upgrade now",
       "CANCEL_ANYTIME": "You can change or cancel your plan anytime"
     },
     "ENTERPRISE_PAYWALL": {
       "AVAILABLE_ON": "Relay AI is only available in the Enterprise plans.",
-      "UPGRADE_PROMPT": "Upgrade your plan to get access to our assistants, RelayAI and more.",
+      "UPGRADE_PROMPT": "Upgrade your plan to get access to our assistants, Relay AI and more.",
       "ASK_ADMIN": "Please reach out to your administrator for the upgrade."
     },
     "BANNER": {

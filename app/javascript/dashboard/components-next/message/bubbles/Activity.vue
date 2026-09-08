@@ -13,14 +13,13 @@ const readableTime = computed(() =>
 
 <template>
   <RelayTooltip :content="readableTime" side="top">
-    <div class="relative flex w-full items-center justify-center">
-      <div class="absolute inset-0 flex items-center">
-        <div class="w-full border-t border-border" />
-      </div>
+    <div
+      class="flex w-full justify-center px-4 py-0.5"
+      data-bubble-name="activity"
+    >
       <span
         v-dompurify-html="content"
-        :title="content"
-        class="relative max-w-[90%] bg-muted/10 px-4 text-center text-sm font-medium text-muted-foreground dark:bg-background"
+        class="max-w-full text-center text-[13px] font-normal leading-5 text-muted-foreground [&_a]:inline [&_a]:font-medium [&_a]:text-muted-foreground [&_b]:inline [&_b]:font-medium [&_p]:m-0 [&_p]:inline [&_strong]:inline [&_strong]:font-medium"
       />
     </div>
   </RelayTooltip>

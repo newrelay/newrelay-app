@@ -102,12 +102,7 @@ const onClearFilters = () => {
     </template>
     <template #actions>
       <div class="flex flex-col items-center gap-3">
-        <RelayButton
-          v-if="isApproved"
-          size="lg"
-          class="shadow-md transition-all hover:shadow-lg"
-          @click="onClick"
-        >
+        <RelayButton v-if="isApproved" class="shadow-xs" @click="onClick">
           <span class="i-lucide-plus mr-1.5 size-4" />
           {{ $t('CAPTAIN.RESPONSES.ADD_NEW') }}
         </RelayButton>

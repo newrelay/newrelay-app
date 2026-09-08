@@ -160,7 +160,7 @@ function ratingLabel(rating) {
       class="flex-1 overflow-y-auto flex flex-col transition-all duration-300"
       :class="selected ? 'mr-[380px]' : ''"
     >
-      <div class="px-8 py-6 border-b border-border bg-card shrink-0">
+      <div class="px-6 lg:px-10 py-6 bg-card shrink-0">
         <div class="flex items-center text-sm text-muted-foreground mb-2">
           <span>Reputation</span><span class="mx-2">/</span>
           <span class="text-foreground">Feedback</span>
@@ -169,7 +169,7 @@ function ratingLabel(rating) {
           Feedback
           <span
             v-if="usingMock"
-            class="rounded bg-amber-500/15 px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wide text-amber-600 dark:text-amber-400"
+            class="rounded bg-warning/10 px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wide text-warning"
             title="Demo — sample intercepts until real 1–3 star submissions arrive"
           >Demo</span>
         </h1>
@@ -178,7 +178,7 @@ function ratingLabel(rating) {
         </p>
       </div>
 
-      <div class="px-8 py-6 space-y-6">
+      <div class="px-6 lg:px-10 py-6 space-y-6">
         <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
           <div class="rounded-xl border border-border bg-card p-4">
             <div class="flex items-center gap-2 text-muted-foreground text-xs font-medium uppercase tracking-wide">
@@ -188,19 +188,19 @@ function ratingLabel(rating) {
             <p class="text-xs text-muted-foreground mt-1">Private intercepts</p>
           </div>
           <div class="rounded-xl border border-border bg-card p-4">
-            <div class="flex items-center gap-2 text-rose-600 text-xs font-medium uppercase tracking-wide">
+            <div class="flex items-center gap-2 text-destructive text-xs font-medium uppercase tracking-wide">
               <ShieldAlert class="size-3.5" /> 1 star
             </div>
             <p class="mt-2 text-2xl font-semibold text-foreground">{{ stats.one }}</p>
           </div>
           <div class="rounded-xl border border-border bg-card p-4">
-            <div class="flex items-center gap-2 text-amber-600 text-xs font-medium uppercase tracking-wide">
+            <div class="flex items-center gap-2 text-warning text-xs font-medium uppercase tracking-wide">
               <Star class="size-3.5" /> 2 stars
             </div>
             <p class="mt-2 text-2xl font-semibold text-foreground">{{ stats.two }}</p>
           </div>
           <div class="rounded-xl border border-border bg-card p-4">
-            <div class="flex items-center gap-2 text-amber-500 text-xs font-medium uppercase tracking-wide">
+            <div class="flex items-center gap-2 text-warning text-xs font-medium uppercase tracking-wide">
               <Star class="size-3.5" /> 3 stars
             </div>
             <p class="mt-2 text-2xl font-semibold text-foreground">{{ stats.three }}</p>
@@ -277,7 +277,7 @@ function ratingLabel(rating) {
                     v-for="n in 3"
                     :key="n"
                     class="size-3.5"
-                    :class="n <= item.rating ? 'fill-amber-400 text-amber-400' : 'text-muted-foreground/30'"
+                    :class="n <= item.rating ? 'fill-warning text-warning' : 'text-muted-foreground/30'"
                   />
                 </span>
                 <span class="text-[11px] uppercase tracking-wide text-muted-foreground">{{ item.channel }}</span>
@@ -317,7 +317,7 @@ function ratingLabel(rating) {
           <span v-if="selected.requestId">Request #{{ selected.requestId }}</span>
         </div>
         <p class="text-sm text-foreground leading-relaxed whitespace-pre-wrap">{{ selected.body || 'No comment left.' }}</p>
-        <div class="rounded-lg border border-amber-500/20 bg-amber-500/10 px-3 py-2 text-xs text-amber-700 dark:text-amber-400">
+        <div class="rounded-lg border border-warning/20 bg-warning/10 px-3 py-2 text-xs text-warning">
           This rating was intercepted privately. It was not posted to a public review site.
         </div>
       </div>

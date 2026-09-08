@@ -84,9 +84,7 @@ function deleteCampaign(campaign) {
 </script>
 
 <template>
-  <div
-    class="min-w-0 flex-1 overflow-y-auto w-full bg-background p-4 sm:p-6 lg:p-8"
-  >
+  <div class="min-w-0 flex-1 overflow-y-auto w-full bg-background p-6 lg:px-10">
     <div
       class="mx-auto flex min-h-[calc(100vh-8rem)] min-w-0 max-w-7xl flex-col"
     >

@@ -22,7 +22,7 @@ defineProps({
 
 <template>
   <div
-    class="rounded-xl border border-border bg-card shadow-sm flex sm:flex-row flex-col items-stretch sm:items-center p-6 gap-6"
+    class="rounded-xl border border-border bg-card shadow-xs flex sm:flex-row flex-col items-stretch sm:items-center p-6 gap-6"
   >
     <SLAMetricCard
       :label="$t('SLA_REPORTS.METRICS.HIT_RATE.LABEL')"

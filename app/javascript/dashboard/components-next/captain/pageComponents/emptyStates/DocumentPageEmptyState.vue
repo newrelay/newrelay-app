@@ -80,11 +80,7 @@ const onClick = () => {
       </div>
     </template>
     <template #actions>
-      <RelayButton
-        size="lg"
-        class="shadow-md transition-all hover:shadow-lg"
-        @click="onClick"
-      >
+      <RelayButton class="shadow-xs" @click="onClick">
         <span class="i-lucide-plus mr-1.5 size-4" />
         {{ $t('CAPTAIN.DOCUMENTS.ADD_NEW') }}
       </RelayButton>

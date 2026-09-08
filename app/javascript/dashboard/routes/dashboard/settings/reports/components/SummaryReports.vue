@@ -210,7 +210,7 @@ defineExpose({ downloadReports });
     @filter-change="onFilterChange"
   />
   <div
-    class="relative mt-5 rounded-xl border border-border/60 bg-card shadow-sm overflow-hidden"
+    class="relative mt-5 rounded-xl border border-border/60 bg-card shadow-xs overflow-hidden"
   >
     <Table :table="table" />
     <Transition

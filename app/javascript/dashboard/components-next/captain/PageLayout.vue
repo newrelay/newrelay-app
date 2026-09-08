@@ -140,7 +140,7 @@ const handleCreateAssistant = () => {
                 >
                   <RelayButton
                     variant="ghost"
-                    class="h-auto max-w-[14rem] gap-1.5 border border-border px-0 text-base font-medium text-foreground hover:border-transparent hover:bg-transparent hover:opacity-80"
+                    class="h-auto max-w-[14rem] gap-1.5 border border-input px-0 text-base font-medium text-foreground hover:border-transparent hover:bg-transparent hover:opacity-80"
                     :disabled="isFetchingAssistants"
                     @click="toggleAssistantSwitcher"
                   >
@@ -171,7 +171,7 @@ const handleCreateAssistant = () => {
                 />
                 <h1
                   v-if="headerTitle"
-                  class="hidden text-xl font-medium text-muted-foreground sm:block"
+                  class="hidden text-base font-medium tracking-tight text-foreground sm:block"
                 >
                   {{ headerTitle }}
                 </h1>

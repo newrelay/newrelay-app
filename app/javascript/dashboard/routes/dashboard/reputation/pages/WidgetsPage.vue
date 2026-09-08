@@ -208,7 +208,7 @@ const previewReviewsList = computed(() => {
 </script>
 
 <template>
-  <div class="p-6 max-w-7xl mx-auto space-y-6">
+  <div class="p-6 lg:px-10 max-w-7xl mx-auto space-y-6">
     <!-- eslint-disable -->
     <!-- Header (List Mode) -->
     <div v-if="!isEditing" class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -285,7 +285,7 @@ const previewReviewsList = computed(() => {
           </div>
           <span 
             class="px-2 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider"
-            :class="w.active ? 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400' : 'bg-muted text-muted-foreground'"
+            :class="w.active ? 'bg-success/10 text-success' : 'bg-muted text-muted-foreground'"
           >
             {{ w.active ? 'Active' : 'Inactive' }}
           </span>
@@ -293,7 +293,7 @@ const previewReviewsList = computed(() => {
 
         <div class="flex items-center gap-4 text-xs font-medium text-muted-foreground pt-2 border-t border-border">
           <div class="flex items-center gap-1.5">
-            <span class="text-amber-500 text-sm">★</span>
+            <span class="text-warning text-sm">★</span>
             <span>{{ w.min_rating }}+ Stars only</span>
           </div>
         </div>
@@ -455,14 +455,14 @@ const previewReviewsList = computed(() => {
             </div>
             <span
               v-if="previewIsMock"
-              class="px-2 py-0.5 rounded-lg text-[10px] uppercase font-bold bg-amber-500/15 text-amber-600 dark:text-amber-400"
+              class="px-2 py-0.5 rounded-lg text-[10px] uppercase font-bold bg-warning/10 text-warning"
               title="No reviews yet — showing sample data"
             >
               Sample Data
             </span>
             <span
               v-else
-              class="px-2 py-0.5 rounded-lg text-[10px] uppercase font-bold bg-emerald-500/15 text-emerald-600 dark:text-emerald-400"
+              class="px-2 py-0.5 rounded-lg text-[10px] uppercase font-bold bg-success/10 text-success"
             >
               Your Reviews
             </span>

@@ -141,7 +141,7 @@ onMounted(() => {
         <div
           v-for="card in conversationCards"
           :key="card.key"
-          class="group flex flex-col justify-between bg-card border border-border/60 rounded-xl shadow-sm p-5 transition-colors hover:border-primary/20"
+          class="group flex flex-col justify-between bg-card border border-border/60 rounded-xl shadow-xs p-5 transition-colors hover:border-primary/20"
         >
           <div>
             <div class="flex items-center gap-2 mb-4">
@@ -192,7 +192,7 @@ onMounted(() => {
         </div>
       </div>
       <div
-        class="w-full bg-card border border-border/60 rounded-xl shadow-sm p-1.5 flex flex-col"
+        class="w-full bg-card border border-border/60 rounded-xl shadow-xs p-1.5 flex flex-col"
       >
         <div
           v-for="row in agentStatusRows"

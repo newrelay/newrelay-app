@@ -371,7 +371,9 @@ onMounted(() => {
         v-if="showBusinessHours"
         class="flex items-center flex-shrink-0 ltr:ml-auto rtl:mr-auto"
       >
-        <span class="mx-2 text-sm whitespace-nowrap">
+        <span
+          class="mx-2 text-[14px] font-medium text-muted-foreground whitespace-nowrap"
+        >
           {{ $t('REPORT.BUSINESS_HOURS') }}
         </span>
         <span>

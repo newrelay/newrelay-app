@@ -84,7 +84,7 @@ const learnMore = () => {
 
 <template>
   <div
-    class="flex-1 flex flex-col items-center justify-center p-8 bg-background text-foreground animate-in fade-in duration-300 overflow-y-auto w-full h-full min-h-0"
+    class="flex-1 flex flex-col items-center justify-center p-6 lg:px-10 bg-background text-foreground animate-in fade-in duration-300 overflow-y-auto w-full h-full min-h-0"
   >
     <div v-if="uiFlags.isFetching" class="flex justify-center my-4">
       <Spinner class="text-primary" />
@@ -131,10 +131,7 @@ const learnMore = () => {
         {{ t('INBOX.LIST.404') }}
       </p>
 
-      <RelayButton
-        class="h-10 px-6 text-sm font-medium"
-        @click="goToConversations"
-      >
+      <RelayButton class="px-6 text-sm font-medium" @click="goToConversations">
         <span class="i-lucide-message-square size-4 mr-2" />
         {{ t('INBOX.LIST.CONVERSATIONS') }}
       </RelayButton>
@@ -160,14 +157,14 @@ const learnMore = () => {
         class="flex flex-col sm:flex-row items-center gap-3 mb-16 justify-center w-full"
       >
         <RelayButton
-          class="h-10 px-6 text-sm font-medium min-w-[160px]"
+          class="px-6 text-sm font-medium min-w-[160px]"
           @click="connectChannel"
         >
           {{ t('INBOX.EMPTY.CONNECT_CHANNEL') }}
         </RelayButton>
         <RelayButton
           variant="ghost"
-          class="h-10 px-6 text-sm font-medium min-w-[160px]"
+          class="border border-input hover:border-transparent px-6 text-sm font-medium min-w-[160px]"
           @click="learnMore"
         >
           {{ t('INBOX.EMPTY.LEARN_HOW_WORKS') }}

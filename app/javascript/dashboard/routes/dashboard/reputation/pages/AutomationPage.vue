@@ -57,16 +57,16 @@ const selectClass =
 </script>
 
 <template>
-  <div class="flex-1 overflow-y-auto w-full bg-background p-6 lg:p-8">
+  <div class="flex-1 overflow-y-auto w-full bg-background p-6 lg:px-10">
     <div class="max-w-5xl mx-auto space-y-6">
       <!-- Header -->
-      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-border/60">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2">
         <div>
           <h1 class="text-base font-medium tracking-tight text-foreground">Automation &amp; Policies</h1>
           <p class="text-[13.5px] text-muted-foreground mt-0.5">Manage review gating, Relay AI auto-responder policies, alerts, and website embed widgets.</p>
         </div>
         <RelayButton class="gap-2 shadow-xs text-[13.5px]" @click="handleSave">
-          <Check v-if="isSaved" class="size-4 text-emerald-500" />
+          <Check v-if="isSaved" class="size-4 text-success" />
           <Save v-else class="size-4" />
           {{ isSaved ? 'Saved!' : 'Save Changes' }}
         </RelayButton>
@@ -204,7 +204,7 @@ const selectClass =
               </div>
             </div>
             <RelayButton variant="outline" size="sm" class="gap-1.5 text-[12.5px]" @click="copyCode">
-              <Check v-if="copiedSnippet" class="size-3.5 text-emerald-500" />
+              <Check v-if="copiedSnippet" class="size-3.5 text-success" />
               <Copy v-else class="size-3.5" />
               {{ copiedSnippet ? 'Copied Snippet' : 'Copy Code' }}
             </RelayButton>

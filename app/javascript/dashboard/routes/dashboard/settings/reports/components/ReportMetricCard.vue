@@ -40,7 +40,7 @@ defineProps({
     </h3>
     <h4
       data-test-id="reportMetricValue"
-      class="mt-1 mb-0 text-2xl text-foreground"
+      class="mt-1 mb-0 text-[28px] leading-none font-medium tracking-tight text-foreground"
     >
       {{ value }}
     </h4>

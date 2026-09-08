@@ -270,7 +270,7 @@ const filteredItems = computed(() => {
           v-for="tItem in filterTabs"
           :key="tItem.id"
           type="button"
-          class="relative pb-3 text-[14px] font-medium transition-colors whitespace-nowrap"
+          class="relative pb-3 text-[13.5px] font-medium transition-colors whitespace-nowrap"
           :class="
             activeFilter === tItem.id
               ? 'text-primary'

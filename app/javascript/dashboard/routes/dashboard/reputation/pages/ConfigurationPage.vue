@@ -602,7 +602,7 @@ const autoFlagLabel = computed(() => autoFlagOptions.find(o => o.value === spamS
 </script>
 
 <template>
-  <div class="flex-1 overflow-y-auto w-full bg-background p-6 lg:p-8">
+  <div class="flex-1 overflow-y-auto w-full bg-background p-6 lg:px-10">
     <div class="max-w-7xl mx-auto space-y-7">
       <!-- Header -->
       <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -715,7 +715,7 @@ const autoFlagLabel = computed(() => autoFlagOptions.find(o => o.value === spamS
                     <div class="text-[11.5px] leading-relaxed whitespace-pre-wrap text-foreground">{{ pvEmailBody }}</div>
                     <div class="p-2.5 rounded-xl bg-primary/10 border border-primary/20 text-center space-y-2">
                       <div class="text-[11px] font-semibold text-primary">Rate on {{ destinationLabels[selectedDestination].split(' ')[0] }}</div>
-                      <div class="flex justify-center gap-1 text-amber-500"><Star v-for="s in 5" :key="s" class="size-3.5 fill-amber-500 text-amber-500" /></div>
+                      <div class="flex justify-center gap-1 text-warning"><Star v-for="s in 5" :key="s" class="size-3.5 fill-warning text-warning" /></div>
                       <div class="w-full py-1.5 rounded-lg bg-primary text-primary-foreground text-[10.5px] font-semibold flex items-center justify-center gap-1 shadow-xs"><span>Leave a Review</span><ExternalLink class="size-2.5" /></div>
                     </div>
                   </div>
@@ -812,7 +812,7 @@ const autoFlagLabel = computed(() => autoFlagOptions.find(o => o.value === spamS
             </div>
             <div class="flex items-center gap-2">
               <span class="text-[11px] font-medium px-2 py-0.5 rounded-md bg-muted text-muted-foreground">SSL Encrypted</span>
-              <span class="text-[11px] font-medium px-2 py-0.5 rounded-md bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">Active</span>
+              <span class="text-[11px] font-medium px-2 py-0.5 rounded-md bg-success/10 text-success">Active</span>
             </div>
           </div>
           <div class="grid grid-cols-1 md:grid-cols-12 gap-5 items-end">
@@ -821,7 +821,7 @@ const autoFlagLabel = computed(() => autoFlagOptions.find(o => o.value === spamS
               <div class="flex items-center">
                 <span class="h-10 flex-1 min-w-0 flex items-center px-3 text-[13px] font-mono border border-r-0 border-border rounded-l-md bg-background text-foreground truncate">{{ reviewLinkShort }}</span>
                 <button class="h-10 px-3.5 rounded-r-md border border-border bg-background hover:bg-muted text-[13px] inline-flex items-center gap-1.5 shrink-0 cursor-pointer" @click="copyReviewLink">
-                  <Check v-if="isLinkCopied" class="size-3.5 text-emerald-500" /><Copy v-else class="size-3.5 text-muted-foreground" /> {{ isLinkCopied ? 'Copied' : 'Copy' }}
+                  <Check v-if="isLinkCopied" class="size-3.5 text-success" /><Copy v-else class="size-3.5 text-muted-foreground" /> {{ isLinkCopied ? 'Copied' : 'Copy' }}
                 </button>
               </div>
             </div>
@@ -853,12 +853,12 @@ const autoFlagLabel = computed(() => autoFlagOptions.find(o => o.value === spamS
               <label class="text-[13.5px] font-medium text-foreground">Frame Style</label>
               <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 <button type="button" class="flex flex-col items-center justify-center p-3.5 rounded-xl border transition-all text-center cursor-pointer" :class="qrFrame === 'badge' ? 'border-primary bg-primary/5 ring-1 ring-primary/30' : 'border-border/80 bg-background hover:border-border hover:bg-muted/30'" @click="selectQrFrame('badge')">
-                  <div class="h-8 w-full flex items-center justify-center mb-1.5"><div class="px-2 py-0.5 rounded-full bg-muted/80 border border-border/80 flex items-center gap-1"><Star class="size-2.5 text-amber-500 fill-amber-500" /><span class="text-[9.5px] font-semibold text-foreground">Google 5.0</span></div></div>
+                  <div class="h-8 w-full flex items-center justify-center mb-1.5"><div class="px-2 py-0.5 rounded-full bg-muted/80 border border-border/80 flex items-center gap-1"><Star class="size-2.5 text-warning fill-warning" /><span class="text-[9.5px] font-semibold text-foreground">Google 5.0</span></div></div>
                   <span class="text-[13px] font-medium text-foreground">Google Badge</span>
                   <span class="text-[11px] text-muted-foreground mt-0.5">Verified review pill</span>
                 </button>
                 <button type="button" class="flex flex-col items-center justify-center p-3.5 rounded-xl border transition-all text-center cursor-pointer" :class="qrFrame === 'stars' ? 'border-primary bg-primary/5 ring-1 ring-primary/30' : 'border-border/80 bg-background hover:border-border hover:bg-muted/30'" @click="selectQrFrame('stars')">
-                  <div class="h-8 w-full flex items-center justify-center mb-1.5"><div class="flex items-center gap-0.5 text-amber-500"><Star v-for="s in 5" :key="s" class="size-3 fill-amber-500" /></div></div>
+                  <div class="h-8 w-full flex items-center justify-center mb-1.5"><div class="flex items-center gap-0.5 text-warning"><Star v-for="s in 5" :key="s" class="size-3 fill-warning" /></div></div>
                   <span class="text-[13px] font-medium text-foreground">5-Star Header</span>
                   <span class="text-[11px] text-muted-foreground mt-0.5">Classic gold stars</span>
                 </button>
@@ -888,17 +888,17 @@ const autoFlagLabel = computed(() => autoFlagOptions.find(o => o.value === spamS
             </div>
             <div class="w-full max-w-[240px] bg-white border border-border rounded-2xl p-5 shadow-md flex flex-col items-center text-center space-y-3.5 z-10">
               <div v-if="qrFrame === 'badge'" class="space-y-1.5 w-full flex flex-col items-center">
-                <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-muted/80 border border-border/80 text-[10.5px] font-semibold text-slate-900"><Star class="size-3 text-amber-500 fill-amber-500" /><span>Rated 5.0 on Google</span></div>
-                <div class="text-[13px] font-bold text-slate-900 leading-tight">{{ qrTitle }}</div>
+                <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-muted/80 border border-border/80 text-[10.5px] font-semibold text-foreground"><Star class="size-3 text-warning fill-warning" /><span>Rated 5.0 on Google</span></div>
+                <div class="text-[13px] font-bold text-foreground leading-tight">{{ qrTitle }}</div>
                 <div v-if="qrSubtitle" class="text-[11px] text-slate-600">{{ qrSubtitle }}</div>
               </div>
               <div v-else-if="qrFrame === 'stars'" class="space-y-1 w-full flex flex-col items-center">
-                <div class="flex items-center justify-center gap-1 text-amber-500"><Star v-for="s in 5" :key="s" class="size-3.5 fill-amber-500" /></div>
-                <div class="text-[13px] font-bold text-slate-900 leading-tight">{{ qrTitle }}</div>
+                <div class="flex items-center justify-center gap-1 text-warning"><Star v-for="s in 5" :key="s" class="size-3.5 fill-warning" /></div>
+                <div class="text-[13px] font-bold text-foreground leading-tight">{{ qrTitle }}</div>
                 <div v-if="qrSubtitle" class="text-[11px] text-slate-600">{{ qrSubtitle }}</div>
               </div>
               <div v-else class="space-y-0.5 w-full flex flex-col items-center pt-0.5">
-                <div class="text-[12.5px] font-semibold text-slate-900 leading-tight">{{ qrTitle }}</div>
+                <div class="text-[12.5px] font-semibold text-foreground leading-tight">{{ qrTitle }}</div>
                 <div v-if="qrSubtitle" class="text-[10.5px] text-slate-600">{{ qrSubtitle }}</div>
               </div>
               <div class="size-36 bg-white p-2.5 rounded-xl border border-border shadow-xs flex items-center justify-center relative">

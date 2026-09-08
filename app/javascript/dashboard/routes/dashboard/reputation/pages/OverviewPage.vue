@@ -147,7 +147,7 @@ function formatDelta(value, kind) {
 
 function deltaClass(value) {
   if (value == null || value === 0) return "text-muted-foreground";
-  return value > 0 ? "text-emerald-600" : "text-rose-600";
+  return value > 0 ? "text-success" : "text-destructive";
 }
 
 function formatRelativeDate(dateStr) {
@@ -251,7 +251,7 @@ async function generateReviewReplies() {
 </script>
 
 <template>
-  <div class="flex-1 overflow-y-auto w-full hide-scrollbar bg-background p-6 lg:p-8">
+  <div class="flex-1 overflow-y-auto w-full hide-scrollbar bg-background p-6 lg:px-10">
     <RequestReviewsModal v-model:open="isRequestModalOpen" />
     <ShareReportModal v-if="showDemoSurfaces" v-model:open="isShareModalOpen" />
     <FeedbackBreakdownModal v-model:open="isFeedbackModalOpen" :reviews="allReviews" :show-demo="showDemoSurfaces" />
@@ -283,7 +283,7 @@ async function generateReviewReplies() {
       <!-- Section 1: Top Summary Metrics -->
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <!-- Reputation Score (real — /summary) -->
-        <div class="bg-card rounded-2xl border border-border shadow-xs p-5 relative overflow-hidden group hover:border-primary/50 transition-colors">
+        <div class="bg-card rounded-xl border border-border shadow-xs p-5 relative overflow-hidden group hover:border-primary/50 transition-colors">
           <div class="flex justify-between items-start mb-4">
             <div>
               <div class="flex items-center gap-2 mb-1">
@@ -304,19 +304,19 @@ async function generateReviewReplies() {
         </div>
 
         <!-- Average Rating (Real) -->
-        <div class="bg-card rounded-2xl border border-border shadow-xs p-5 relative overflow-hidden group hover:border-orange-500/50 transition-colors">
+        <div class="bg-card rounded-xl border border-border shadow-xs p-5 relative overflow-hidden group hover:border-orange-500/50 transition-colors">
           <div class="flex justify-between items-start mb-4">
             <div>
               <p class="text-sm font-medium text-muted-foreground mb-1">Average Rating</p>
               <div class="flex items-baseline gap-2">
                 <h3 class="text-3xl font-bold text-foreground">{{ avgRating || '—' }}</h3>
-                <div v-if="avgRating" class="flex gap-0.5 text-amber-400">
-                  <Star v-for="i in Math.floor(avgRating)" :key="'full'+i" class="size-4 fill-amber-400 text-amber-400" />
-                  <StarHalf v-if="avgRating % 1 >= 0.3" class="size-4 fill-amber-400 text-amber-400" />
+                <div v-if="avgRating" class="flex gap-0.5 text-warning">
+                  <Star v-for="i in Math.floor(avgRating)" :key="'full'+i" class="size-4 fill-warning text-warning" />
+                  <StarHalf v-if="avgRating % 1 >= 0.3" class="size-4 fill-warning text-warning" />
                 </div>
               </div>
             </div>
-            <div class="p-2.5 bg-amber-50 text-amber-500 border border-amber-100 dark:bg-amber-900/30 dark:border-amber-800 dark:text-amber-400 rounded-xl">
+            <div class="p-2.5 bg-warning/10 text-warning border border-warning/20 rounded-xl">
               <Star class="size-5" />
             </div>
           </div>
@@ -329,7 +329,7 @@ async function generateReviewReplies() {
         </div>
 
         <!-- Total Reviews (Real) -->
-        <div class="bg-card rounded-2xl border border-border shadow-xs p-5 relative overflow-hidden group hover:border-primary/50 transition-colors">
+        <div class="bg-card rounded-xl border border-border shadow-xs p-5 relative overflow-hidden group hover:border-primary/50 transition-colors">
           <div class="flex justify-between items-start mb-4">
             <div>
               <p class="text-sm font-medium text-muted-foreground mb-1">Total Reviews</p>
@@ -348,13 +348,13 @@ async function generateReviewReplies() {
         </div>
 
         <!-- Overall Feedback (Real — positive share of reviews) -->
-        <div class="bg-card rounded-2xl border border-border shadow-xs p-5 relative overflow-hidden group hover:border-primary/50 transition-colors cursor-pointer" @click="isFeedbackModalOpen = true">
+        <div class="bg-card rounded-xl border border-border shadow-xs p-5 relative overflow-hidden group hover:border-primary/50 transition-colors cursor-pointer" @click="isFeedbackModalOpen = true">
           <div class="flex justify-between items-start mb-4">
             <div>
               <p class="text-sm font-medium text-muted-foreground mb-1">Overall Feedback</p>
               <div class="flex items-baseline gap-1.5">
                 <h3 class="text-3xl font-bold text-foreground">{{ totalReviews ? positiveValue + '%' : '—' }}</h3>
-                <span v-if="totalReviews" class="text-base text-emerald-600 dark:text-emerald-400 font-semibold">Positive</span>
+                <span v-if="totalReviews" class="text-base text-success font-semibold">Positive</span>
               </div>
             </div>
             <div class="p-2.5 bg-primary/10 rounded-xl text-primary">
@@ -373,14 +373,14 @@ async function generateReviewReplies() {
       <!-- Section 2: Charts & Insights -->
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <!-- Review Trend (Left - 2/3 width) — real when reviews exist -->
-        <div class="bg-card rounded-2xl border border-border shadow-xs p-6 flex flex-col justify-between lg:col-span-2">
+        <div class="bg-card rounded-xl border border-border shadow-xs p-6 flex flex-col justify-between lg:col-span-2">
           <div class="flex justify-between items-center mb-6">
             <div class="flex items-center gap-2">
               <div>
                 <h3 class="text-base font-semibold text-foreground">Review Trend</h3>
                 <p class="text-sm text-muted-foreground mt-0.5">Volume of new reviews over the last 7 months</p>
               </div>
-              <span v-if="showDemoSurfaces && trendIsMock" class="rounded bg-amber-500/15 px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wide text-amber-600 dark:text-amber-400" title="Demo — connect a review platform to see real data">Demo</span>
+              <span v-if="showDemoSurfaces && trendIsMock" class="rounded bg-warning/10 px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wide text-warning" title="Demo — connect a review platform to see real data">Demo</span>
             </div>
             <div class="inline-flex items-center gap-1.5 rounded-lg border border-border bg-card px-3 py-1.5 text-xs font-medium text-muted-foreground shrink-0">
               Last 7 Months
@@ -397,7 +397,7 @@ async function generateReviewReplies() {
           </div>
         </div>
 
-        <div class="bg-card rounded-2xl border border-border shadow-xs p-0 flex flex-col overflow-hidden relative">
+        <div class="bg-card rounded-xl border border-border shadow-xs p-0 flex flex-col overflow-hidden relative">
           <div class="h-1 w-full bg-primary"></div>
 
           <div class="p-6 flex-1 flex flex-col">
@@ -433,7 +433,7 @@ async function generateReviewReplies() {
       <!-- Section 3: Platform Ratings & Quick Actions -->
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <!-- Platform Breakdown (Real from reviews; trend from snapshots) -->
-        <div class="bg-card rounded-2xl border border-border shadow-xs p-6">
+        <div class="bg-card rounded-xl border border-border shadow-xs p-6">
           <div class="flex items-center gap-2 mb-6">
             <h3 class="text-base font-semibold text-foreground">Platform Breakdown</h3>
             <Info class="size-4 text-muted-foreground opacity-70" />
@@ -456,8 +456,8 @@ async function generateReviewReplies() {
 
                 <div class="col-span-3 flex items-center justify-center gap-1.5">
                   <span class="font-bold text-foreground">{{ platform.rating }}</span>
-                  <div class="flex gap-0.5 text-amber-400">
-                    <Star v-for="i in 5" :key="i" class="size-3.5" :class="i <= Math.round(platform.rating) ? 'fill-amber-400 text-amber-400' : 'text-muted-foreground/30'" />
+                  <div class="flex gap-0.5 text-warning">
+                    <Star v-for="i in 5" :key="i" class="size-3.5" :class="i <= Math.round(platform.rating) ? 'fill-warning text-warning' : 'text-muted-foreground/30'" />
                   </div>
                 </div>
 
@@ -483,7 +483,7 @@ async function generateReviewReplies() {
         </div>
 
         <!-- Quick Actions -->
-        <div class="bg-card rounded-2xl border border-border shadow-xs p-6">
+        <div class="bg-card rounded-xl border border-border shadow-xs p-6">
           <h3 class="text-base font-semibold text-foreground mb-1">Quick Actions</h3>
           <p class="text-sm text-muted-foreground mb-6">Manage your reputation workflow.</p>
           
@@ -555,8 +555,8 @@ async function generateReviewReplies() {
                 <div>
                   <h4 class="font-bold text-[14.5px] text-foreground">{{ review.author }}</h4>
                   <div class="flex items-center gap-2 mt-1">
-                    <div class="flex gap-0.5 text-amber-400">
-                      <Star v-for="i in 5" :key="i" class="size-3.5" :class="i <= review.rating ? 'fill-amber-400 text-amber-400' : 'text-muted-foreground/30'" />
+                    <div class="flex gap-0.5 text-warning">
+                      <Star v-for="i in 5" :key="i" class="size-3.5" :class="i <= review.rating ? 'fill-warning text-warning' : 'text-muted-foreground/30'" />
                     </div>
                     <span class="text-xs text-muted-foreground flex items-center gap-1">
                       on <span class="font-bold text-foreground">{{ review.platform }}</span> • {{ review.date }}
@@ -583,7 +583,7 @@ async function generateReviewReplies() {
     class="fixed bottom-6 right-6 z-50 bg-foreground text-background px-4 py-3 rounded-xl shadow-2xl font-medium text-xs transition-all duration-300 transform flex items-center gap-2"
     :class="toastState.visible ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0 pointer-events-none'"
   >
-    <CheckCircle class="size-4 text-emerald-400" />
+    <CheckCircle class="size-4 text-success" />
     {{ toastState.message }}
   </div>
 </template>

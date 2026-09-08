@@ -34,7 +34,7 @@ const localeCount = computed(() => props.locales?.length);
   <HelpCenterLayout :show-pagination-footer="false">
     <template #header-actions>
       <div class="flex items-center justify-between gap-4">
-        <span class="text-[13px] text-muted-foreground">
+        <span class="text-[13.5px] text-muted-foreground">
           {{ $t('HELP_CENTER.LOCALES_PAGE.LOCALES_COUNT', localeCount) }}
         </span>
         <RelayButton

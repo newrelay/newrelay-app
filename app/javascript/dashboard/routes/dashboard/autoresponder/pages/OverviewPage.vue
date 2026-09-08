@@ -327,7 +327,7 @@ function deleteCampaign(campaign) {
         >
           <div class="p-5 pb-0 flex items-center justify-between">
             <div>
-              <h3 class="text-base font-semibold text-foreground">
+              <h3 class="text-base font-medium text-foreground">
                 {{ t('AUTORESPONDER.OVERVIEW.ACTIVE_AUTOMATIONS_TITLE') }}
               </h3>
               <p class="text-sm text-muted-foreground mt-0.5">
@@ -454,7 +454,7 @@ function deleteCampaign(campaign) {
           class="bg-card text-card-foreground rounded-xl border border-border shadow-sm p-6 flex flex-col"
         >
           <div class="flex items-center justify-between mb-6">
-            <h3 class="text-base font-semibold text-foreground">
+            <h3 class="text-base font-medium text-foreground">
               {{ t('AUTORESPONDER.OVERVIEW.RESPONSES_OVER_TIME') }}
             </h3>
             <RelayDropdownMenu>
@@ -521,7 +521,7 @@ function deleteCampaign(campaign) {
       >
         <div class="flex flex-col lg:flex-row lg:items-center gap-6">
           <div class="lg:w-1/4 shrink-0">
-            <h3 class="text-base font-semibold text-foreground">
+            <h3 class="text-base font-medium text-foreground">
               {{ t('AUTORESPONDER.OVERVIEW.CHANNEL_DISTRIBUTION') }}
             </h3>
             <p class="text-sm text-muted-foreground mt-0.5">

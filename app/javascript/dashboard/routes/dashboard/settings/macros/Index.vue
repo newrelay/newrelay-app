@@ -290,7 +290,7 @@ const saveMacro = async macroData => {
                   class="size-6 text-muted-foreground"
                 />
               </div>
-              <h3 class="text-base font-medium text-foreground">
+              <h3 class="text-[20px] font-[600] text-foreground">
                 {{ $t('MACROS.LIST.404') }}
               </h3>
             </div>

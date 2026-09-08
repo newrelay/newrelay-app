@@ -130,9 +130,9 @@ onMounted(() => {
         @click.stop
       >
         <div
-          class="flex items-center justify-between border-b border-border/40 bg-muted/20 p-5"
+          class="flex items-center justify-between border-b border-border/40 bg-muted/20 p-6"
         >
-          <h2 class="text-base font-semibold tracking-tight text-foreground">
+          <h2 class="text-base font-medium tracking-tight text-foreground">
             {{
               t(
                 `HELP_CENTER.CATEGORY_PAGE.CATEGORY_DIALOG.HEADER.${mode.toUpperCase()}`
@@ -147,7 +147,7 @@ onMounted(() => {
           </button>
         </div>
 
-        <div class="flex-1 overflow-y-auto p-5">
+        <div class="flex-1 overflow-y-auto p-6">
           <p
             v-if="mode === 'edit'"
             class="mb-6 text-[13.5px] text-muted-foreground"
@@ -170,7 +170,7 @@ onMounted(() => {
         </div>
 
         <div
-          class="flex items-center justify-end gap-3 border-t border-border/40 bg-muted/20 p-5"
+          class="flex items-center justify-end gap-3 border-t border-border/40 bg-muted/20 p-6"
         >
           <RelayButton
             variant="outline"

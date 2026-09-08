@@ -9,6 +9,7 @@ import { INBOX_TYPES } from 'dashboard/helper/inbox';
 import {
   RelayButton,
   RelayInput,
+  RelayTextarea,
   RelaySwitch,
   RelayDropdownMenu,
   RelayDropdownMenuTrigger,
@@ -184,7 +185,7 @@ const nextStep = () => {
       >
         <div class="flex flex-col p-6 pb-8 border-b border-border">
           <div class="flex items-center justify-between">
-            <h2 class="text-xl font-semibold tracking-tight text-foreground">
+            <h2 class="text-base font-medium tracking-tight text-foreground">
               {{ t('AUTORESPONDER.CREATE_AUTOMATION_MODAL.TITLE') }}
             </h2>
             <button
@@ -428,15 +429,15 @@ const nextStep = () => {
                     )
                   }}
                 </label>
-                <textarea
+                <RelayTextarea
                   v-model="publicRepliesText"
-                  rows="3"
+                  :rows="3"
                   :placeholder="
                     t(
                       'AUTORESPONDER.CREATE_AUTOMATION_MODAL.PUBLIC_REPLIES_PLACEHOLDER'
                     )
                   "
-                  class="w-full p-3 resize-none text-sm shadow-sm rounded-md border border-border/80 bg-background focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary/30"
+                  class-name="text-[14px] resize-none"
                 />
                 <p class="text-xs text-muted-foreground mt-1">
                   {{
@@ -451,15 +452,15 @@ const nextStep = () => {
                 <label class="text-[13.5px] font-medium text-foreground">
                   {{ t('AUTORESPONDER.CREATE_AUTOMATION_MODAL.MESSAGE_LABEL') }}
                 </label>
-                <textarea
+                <RelayTextarea
                   v-model="dmTextBody"
-                  rows="4"
+                  :rows="4"
                   :placeholder="
                     t(
                       'AUTORESPONDER.CREATE_AUTOMATION_MODAL.MESSAGE_PLACEHOLDER'
                     )
                   "
-                  class="w-full p-3 resize-none text-sm shadow-sm rounded-md border border-border/80 bg-background focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary/30"
+                  class-name="text-[14px] resize-none"
                 />
               </div>
             </div>

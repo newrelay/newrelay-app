@@ -541,7 +541,7 @@ onMounted(() => {
         <div class="mb-6 flex items-center justify-between">
           <div class="flex items-center gap-3">
             <h2
-              class="capitalize text-base font-semibold tracking-tight text-foreground"
+              class="capitalize text-base font-medium tracking-tight text-foreground"
             >
               {{ t('CONTACTS_LAYOUT.TASKS_VIEW.TITLE') }}
             </h2>
@@ -859,9 +859,7 @@ onMounted(() => {
           class="flex w-full max-w-[480px] animate-in fade-in zoom-in-95 flex-col rounded-2xl border border-border bg-card shadow-xl duration-200"
         >
           <div class="border-b border-border px-6 py-5">
-            <h2
-              class="capitalize text-base font-semibold tracking-tight text-foreground"
-            >
+            <h2 class="text-base font-medium tracking-tight text-foreground">
               {{
                 editingTask
                   ? t('CONTACTS_LAYOUT.TASKS_VIEW.EDIT_TASK')

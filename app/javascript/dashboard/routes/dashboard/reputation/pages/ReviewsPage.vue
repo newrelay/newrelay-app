@@ -128,15 +128,15 @@ const showAssigneeDropdown = ref(false);
 const showStatusDropdown = ref(false);
 
 const getSentimentClass = (sentiment) => {
-  if (sentiment === 'Positive') return 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400';
-  if (sentiment === 'Needs Escalation' || sentiment === 'Negative') return 'bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-400';
+  if (sentiment === 'Positive') return 'bg-success/10 text-success';
+  if (sentiment === 'Needs Escalation' || sentiment === 'Negative') return 'bg-destructive/10 text-destructive';
   return 'bg-muted text-muted-foreground';
 };
 
 const getStatusClass = (status) => {
-  if (status === 'Replied' || status === 'Approved') return 'bg-emerald-50 text-emerald-600 border border-emerald-100 dark:bg-emerald-900/30 dark:border-emerald-800 dark:text-emerald-400';
-  if (status === 'Pending') return 'bg-amber-50 text-amber-600 border border-amber-100 dark:bg-amber-900/30 dark:border-amber-800 dark:text-amber-400';
-  if (status === 'Needs Reply') return 'bg-purple-500/15 text-purple-700 dark:text-purple-300 border border-purple-500/20';
+  if (status === 'Replied' || status === 'Approved') return 'bg-success/10 text-success border border-success/20';
+  if (status === 'Pending') return 'bg-warning/10 text-warning border border-warning/20';
+  if (status === 'Needs Reply') return 'bg-primary/10 text-primary border border-primary/20';
   return 'bg-muted text-muted-foreground border border-border';
 };
 
@@ -355,7 +355,7 @@ async function sendReply() {
     <div class="flex-1 overflow-y-auto w-full hide-scrollbar flex flex-col transition-all duration-300" :class="selectedReview ? 'mr-[400px]' : ''">
       
       <!-- Page Header -->
-      <div class="px-8 py-6 border-b border-border bg-card shrink-0 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div class="px-6 lg:px-10 py-6 bg-card shrink-0 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <div class="flex items-center gap-2.5">
             <h1 class="text-base font-medium tracking-tight text-foreground">Reviews</h1>
@@ -383,7 +383,7 @@ async function sendReply() {
       </div>
 
       <!-- Unified toolbar: select + search | sort / platform / filters / view / pagination -->
-      <div class="px-8 py-2.5 border-b border-border/80 bg-card/70 shrink-0 flex items-center justify-between gap-4 flex-wrap">
+      <div class="px-6 lg:px-10 py-2.5 border-b border-border/80 bg-card/70 shrink-0 flex items-center justify-between gap-4 flex-wrap">
         <!-- Left: select-all + search (bulk actions replace search when rows are selected) -->
         <div class="flex items-center gap-3 min-w-0 flex-1">
           <Checkbox
@@ -439,7 +439,7 @@ async function sendReply() {
             </button>
             <button
               type="button"
-              class="inline-flex items-center gap-1.5 rounded-md h-7 px-2 hover:bg-emerald-500/10 hover:text-emerald-600 text-[12.5px] font-medium text-foreground transition-colors cursor-pointer disabled:opacity-50 shrink-0"
+              class="inline-flex items-center gap-1.5 rounded-md h-7 px-2 hover:bg-success/10 hover:text-success text-[12.5px] font-medium text-foreground transition-colors cursor-pointer disabled:opacity-50 shrink-0"
               :disabled="bulkBusy"
               @click="markResolved()"
             >
@@ -455,7 +455,7 @@ async function sendReply() {
             </button>
             <button
               type="button"
-              class="inline-flex items-center justify-center rounded-md size-7 text-rose-500 hover:text-rose-600 hover:bg-rose-500/10 transition-colors cursor-pointer shrink-0"
+              class="inline-flex items-center justify-center rounded-md size-7 text-destructive hover:text-destructive hover:bg-destructive/10 transition-colors cursor-pointer shrink-0"
               @click="clearSelection"
             >
               <X class="size-3.5" />
@@ -541,7 +541,7 @@ async function sendReply() {
             </button>
             <div v-if="showFilterDropdown" class="absolute right-0 mt-2 w-64 rounded-xl border border-border bg-card p-2 shadow-xl z-30 space-y-1">
               <div class="max-h-[300px] overflow-y-auto space-y-1">
-                <div class="px-2 py-1 text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Status</div>
+                <div class="px-2 py-1 text-[12px] font-medium text-muted-foreground">Status</div>
                 <button
                   class="w-full text-left px-2 py-1.5 text-xs rounded-md hover:bg-muted font-medium cursor-pointer flex items-center justify-between"
                   :class="activeStatusFilter === 'Needs Reply' ? 'text-primary' : 'text-foreground'"
@@ -558,7 +558,7 @@ async function sendReply() {
                 </button>
 
                 <div class="my-1 border-t border-border/80"></div>
-                <div class="px-2 py-1 text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Rating</div>
+                <div class="px-2 py-1 text-[12px] font-medium text-muted-foreground">Rating</div>
                 <button
                   v-for="opt in RATING_OPTIONS"
                   :key="opt.value"
@@ -566,12 +566,12 @@ async function sendReply() {
                   :class="activeRatingFilter === opt.value ? 'text-primary' : 'text-foreground'"
                   @click="activeRatingFilter = activeRatingFilter === opt.value ? 0 : opt.value; showFilterDropdown = false"
                 >
-                  <span class="flex items-center gap-2"><Star class="size-4 text-amber-400" /> {{ opt.label }}</span>
+                  <span class="flex items-center gap-2"><Star class="size-4 text-warning" /> {{ opt.label }}</span>
                   <Check v-if="activeRatingFilter === opt.value" class="size-3.5 shrink-0" />
                 </button>
 
                 <div class="my-1 border-t border-border/80"></div>
-                <div class="px-2 py-1 text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Date Range</div>
+                <div class="px-2 py-1 text-[12px] font-medium text-muted-foreground">Date Range</div>
                 <button
                   v-for="opt in DATE_RANGE_OPTIONS"
                   :key="opt.value"
@@ -615,8 +615,8 @@ async function sendReply() {
           :class="[
             viewMode === 'list' ? 'flex flex-col gap-0 bg-card divide-y divide-border/50 border-y border-border/50' : '',
             viewMode === 'timeline' ? 'flex flex-col gap-6 ml-[130px] border-l-2 border-primary/10 pl-8 pt-8 pr-8' : '',
-            viewMode === 'grid' && selectedReview ? 'grid grid-cols-1 xl:grid-cols-2 gap-6 p-8' : '',
-            viewMode === 'grid' && !selectedReview ? 'grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6 p-8' : ''
+            viewMode === 'grid' && selectedReview ? 'grid grid-cols-1 xl:grid-cols-2 gap-6 p-6 lg:px-10' : '',
+            viewMode === 'grid' && !selectedReview ? 'grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6 p-6 lg:px-10' : ''
           ]"
         >
           <div 
@@ -639,7 +639,7 @@ async function sendReply() {
               class="transition-all duration-300 cursor-pointer relative"
               :class="[
                 activeReviewMenuId === review.id ? 'z-30 overflow-visible' : 'overflow-hidden',
-                viewMode === 'list' ? 'px-8 py-5 flex items-center gap-6 hover:bg-muted/30' : 'bg-card border rounded-xl hover:shadow-md p-6 flex flex-col h-full',
+                viewMode === 'list' ? 'px-6 lg:px-10 py-5 flex items-center gap-6 hover:bg-muted/30' : 'bg-card border rounded-xl hover:shadow-md p-6 flex flex-col h-full',
                 selectedReview?.id === review.id && viewMode === 'list' ? 'bg-primary/10/30 dark:bg-primary/10/10 border-l-[3px] border-l-primary' : viewMode === 'list' ? 'border-l-[3px] border-l-transparent' : '',
                 selectedReview?.id === review.id && viewMode !== 'list' ? 'border-primary ring-1 ring-primary shadow-md scale-[1.02]' : viewMode !== 'list' ? 'border-border shadow-sm scale-100' : ''
               ]"
@@ -657,8 +657,8 @@ async function sendReply() {
                       </div>
                     </div>
                   </div>
-                  <div class="flex text-amber-400">
-                    <Star v-for="i in 5" :key="i" class="size-3" :class="i <= review.rating ? 'fill-amber-400' : 'text-muted-foreground/30'" />
+                  <div class="flex text-warning">
+                    <Star v-for="i in 5" :key="i" class="size-3" :class="i <= review.rating ? 'fill-warning' : 'text-muted-foreground/30'" />
                   </div>
                 </div>
                 
@@ -675,7 +675,7 @@ async function sendReply() {
                   </span>
                   <span
                     v-else-if="review.status === 'Needs Reply'"
-                    class="px-2.5 py-1 text-[10px] font-semibold bg-purple-500/10 border border-purple-500/20 text-purple-600 dark:text-purple-400 rounded-md inline-flex items-center gap-1"
+                    class="px-2.5 py-1 text-[10px] font-semibold bg-primary/10 border border-primary/20 text-primary rounded-md inline-flex items-center gap-1"
                   >
                     Reply <ArrowRight class="size-3" />
                   </span>
@@ -726,7 +726,7 @@ async function sendReply() {
                         </div>
                         <div class="pt-2 mt-2 border-t border-border flex justify-between items-center">
                           <span class="font-medium text-muted-foreground">Lifetime Value</span>
-                          <span class="font-bold text-emerald-600 dark:text-emerald-400">{{ review.history?.ltv || '$0' }}</span>
+                          <span class="font-bold text-success">{{ review.history?.ltv || '$0' }}</span>
                         </div>
                       </div>
                     </div>
@@ -739,18 +739,18 @@ async function sendReply() {
                         <span class="text-[11px] text-muted-foreground whitespace-nowrap">{{ review.date }}</span>
                       </div>
                       <div class="flex items-center gap-2">
-                        <div class="flex gap-0.5 text-amber-400">
-                          <Star v-for="i in 5" :key="i" class="size-[13px]" :class="i <= review.rating ? 'fill-amber-400' : 'text-muted-foreground/30'" />
+                        <div class="flex gap-0.5 text-warning">
+                          <Star v-for="i in 5" :key="i" class="size-[13px]" :class="i <= review.rating ? 'fill-warning' : 'text-muted-foreground/30'" />
                         </div>
                         <div 
                           v-if="review.sentiment === 'Positive'" 
-                          class="flex items-center gap-1 text-[10px] font-medium px-1.5 py-0.5 rounded-md bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400"
+                          class="flex items-center gap-1 text-[10px] font-medium px-1.5 py-0.5 rounded-md bg-success/10 text-success"
                         >
                           <span>{{ review.sentiment }}</span>
                         </div>
                         <div 
                           v-else-if="review.sentiment" 
-                          class="flex items-center gap-1 text-[10px] font-medium px-1.5 py-0.5 rounded-md bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-400"
+                          class="flex items-center gap-1 text-[10px] font-medium px-1.5 py-0.5 rounded-md bg-destructive/10 text-destructive"
                         >
                           <span>{{ review.sentiment }}</span>
                         </div>
@@ -832,11 +832,11 @@ async function sendReply() {
                         @click="markResolved([review.id]); activeReviewMenuId = null" 
                         class="w-full text-left px-3 py-1.5 text-xs rounded-md hover:bg-muted font-medium text-foreground flex items-center gap-2 cursor-pointer"
                       >
-                        <CheckSquare class="size-4 text-emerald-600" /> Mark Resolved
+                        <CheckSquare class="size-4 text-success" /> Mark Resolved
                       </button>
                       <button 
                         @click="markResolved([review.id]); activeReviewMenuId = null" 
-                        class="w-full text-left px-3 py-1.5 text-xs rounded-md hover:bg-rose-500/10 text-rose-600 dark:text-rose-400 font-medium flex items-center gap-2 cursor-pointer"
+                        class="w-full text-left px-3 py-1.5 text-xs rounded-md hover:bg-destructive/10 text-destructive font-medium flex items-center gap-2 cursor-pointer"
                       >
                         <X class="size-4" /> Delete
                       </button>
@@ -888,8 +888,8 @@ async function sendReply() {
                   </div>
                 </div>
               </div>
-              <div class="flex gap-0.5 text-amber-400 pt-1">
-                <Star v-for="i in 5" :key="i" class="size-3.5" :class="i <= selectedReview.rating ? 'fill-amber-400' : 'text-muted-foreground/30'" />
+              <div class="flex gap-0.5 text-warning pt-1">
+                <Star v-for="i in 5" :key="i" class="size-3.5" :class="i <= selectedReview.rating ? 'fill-warning' : 'text-muted-foreground/30'" />
               </div>
             </div>
             <p class="text-sm text-foreground leading-relaxed bg-muted/30 p-4 rounded-xl border border-border/50 shadow-xs">
@@ -1007,14 +1007,14 @@ async function sendReply() {
 
           <!-- Internal Notes Section -->
           <div class="pt-4 border-t border-border border-dashed">
-            <h3 class="text-sm font-semibold text-foreground flex items-center gap-2 mb-3">
-              <FileText class="size-4 text-amber-500" /> Internal Notes
+              <h3 class="text-sm font-semibold text-foreground flex items-center gap-2 mb-3">
+              <FileText class="size-4 text-warning" /> Internal Notes
             </h3>
             
             <div class="space-y-3 mb-4">
-              <div v-for="(note, idx) in selectedReview.notes || []" :key="idx" class="bg-amber-500/10 border border-amber-500/20 p-3 rounded-lg text-sm">
+              <div v-for="(note, idx) in selectedReview.notes || []" :key="idx" class="bg-warning/10 border border-warning/20 p-3 rounded-lg text-sm">
                 <div class="flex justify-between items-center mb-1">
-                  <span class="font-medium text-xs text-amber-600 dark:text-amber-400">{{ note.author }}</span>
+                  <span class="font-medium text-xs text-warning">{{ note.author }}</span>
                   <span class="text-[10px] text-muted-foreground uppercase">Today</span>
                 </div>
                 <p class="text-foreground leading-relaxed">{{ note.text }}</p>
@@ -1032,7 +1032,7 @@ async function sendReply() {
                 class="w-full text-xs bg-background border border-border rounded-xl px-3.5 py-2.5 pr-10 focus:outline-none shadow-xs"
                 placeholder="Add a private note..."
               />
-              <button @click="addInternalNote" class="absolute right-2 top-2 p-1 text-amber-500 hover:text-amber-600 rounded cursor-pointer">
+              <button @click="addInternalNote" class="absolute right-2 top-2 p-1 text-warning hover:text-warning rounded cursor-pointer">
                 <Plus class="size-3.5" />
               </button>
             </div>

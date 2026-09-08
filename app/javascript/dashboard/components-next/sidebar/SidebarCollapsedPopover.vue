@@ -142,7 +142,7 @@ onMounted(async () => {
               <template v-if="child.collapsible">
                 <!-- NewRelay: Conversations as section label + nested links -->
                 <div
-                  class="px-2 pt-2 pb-0.5 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground"
+                  class="px-2 pt-2 pb-0.5 text-xs font-medium text-muted-foreground"
                 >
                   {{ child.label }}
                 </div>

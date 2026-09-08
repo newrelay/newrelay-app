@@ -27,7 +27,7 @@ defineProps({
 <template>
   <div class="flex-1 flex items-start gap-4">
     <div
-      class="size-11 rounded-full bg-primary/10 flex items-center justify-center shrink-0"
+      class="size-14 rounded-full bg-primary/10 flex items-center justify-center shrink-0"
     >
       <span :class="icon" class="size-5 text-primary" />
     </div>

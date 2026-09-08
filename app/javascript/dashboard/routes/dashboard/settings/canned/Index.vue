@@ -200,7 +200,7 @@ const confirmDeletion = () => {
                   class="size-6 text-muted-foreground"
                 />
               </div>
-              <h3 class="text-base font-medium text-foreground">
+              <h3 class="text-[20px] font-[600] text-foreground">
                 {{ $t('CANNED_MGMT.LIST.404') }}
               </h3>
               <p class="mt-1 text-[13.5px] text-muted-foreground">
@@ -266,7 +266,7 @@ const confirmDeletion = () => {
                       <RelayButton
                         variant="ghost"
                         size="icon"
-                        class="size-8 border border-transparent text-muted-foreground shadow-xs hover:border-border hover:bg-background hover:text-foreground border border-border hover:border-transparent"
+                        class="size-8 border border-border text-muted-foreground shadow-xs hover:bg-background hover:text-foreground hover:border-transparent"
                         :disabled="loading[cannedItem.id]"
                         @click="openEditPopup(cannedItem)"
                       >
@@ -280,7 +280,7 @@ const confirmDeletion = () => {
                       <RelayButton
                         variant="ghost"
                         size="icon"
-                        class="size-8 border border-transparent text-muted-foreground shadow-xs hover:border-destructive/20 hover:bg-destructive/10 hover:text-destructive border border-border hover:border-transparent"
+                        class="size-8 border border-border text-muted-foreground shadow-xs hover:bg-destructive/10 hover:text-destructive hover:border-transparent"
                         :disabled="loading[cannedItem.id]"
                         @click="openDeletePopup(cannedItem)"
                       >

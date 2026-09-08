@@ -16,8 +16,11 @@ import EnterpriseInquiryModal from './components/EnterpriseInquiryModal.vue';
 import DowngradePlanWarningModal from './components/DowngradePlanWarningModal.vue';
 import PlanCheckoutModal from './components/PlanCheckoutModal.vue';
 import SettingsLayout from '../SettingsLayout.vue';
-import { RelayButton } from 'dashboard/components-next/relay';
-import Input from 'dashboard/components-next/input/Input.vue';
+import {
+  RelayButton,
+  RelayInput,
+  RelayLabel,
+} from 'dashboard/components-next/relay';
 import { FEATURE_FLAGS } from 'dashboard/featureFlags';
 import EnterpriseAccountAPI from 'dashboard/api/enterprise/account';
 import { useBillingCheckoutReturn } from 'dashboard/composables/useBillingCheckoutReturn';
@@ -775,8 +778,8 @@ onMounted(() => {
                   class="text-sm font-medium"
                   :class="
                     marketplaceData.connected_account?.charges_enabled
-                      ? 'text-emerald-600'
-                      : 'text-amber-600'
+                      ? 'text-success'
+                      : 'text-warning'
                   "
                 >
                   {{
@@ -808,12 +811,16 @@ onMounted(() => {
                   {{ $t('BILLING_SETTINGS.RESELLER.SET_PRICE') }}
                 </h4>
                 <div class="grid gap-4 sm:grid-cols-3">
-                  <Input
-                    v-model="agencyPriceInput"
-                    type="number"
-                    min="1"
-                    :label="$t('BILLING_SETTINGS.RESELLER.AGENCY_PRICE')"
-                  />
+                  <div class="flex flex-col gap-1.5">
+                    <RelayLabel>
+                      {{ $t('BILLING_SETTINGS.RESELLER.AGENCY_PRICE') }}
+                    </RelayLabel>
+                    <RelayInput
+                      v-model="agencyPriceInput"
+                      type="number"
+                      min="1"
+                    />
+                  </div>
                   <DetailItem
                     :label="
                       $t('BILLING_SETTINGS.RESELLER.COMMISSION', {
@@ -1067,7 +1074,7 @@ onMounted(() => {
 
               <p
                 v-if="cancellationScheduledLabel"
-                class="mt-3 text-sm text-amber-600"
+                class="mt-3 text-sm text-warning"
               >
                 {{ cancellationScheduledLabel }}
               </p>
@@ -1243,27 +1250,27 @@ onMounted(() => {
                     class="border-b border-border/40 text-left text-muted-foreground"
                   >
                     <th
-                      class="py-2 pr-4 text-[11px] font-semibold uppercase tracking-wider"
+                      class="py-2 pr-4 text-[14px] font-medium text-muted-foreground"
                     >
                       {{ $t('BILLING_SETTINGS.TRANSACTIONS.DATE') }}
                     </th>
                     <th
-                      class="py-2 pr-4 text-[11px] font-semibold uppercase tracking-wider"
+                      class="py-2 pr-4 text-[14px] font-medium text-muted-foreground"
                     >
                       {{ $t('BILLING_SETTINGS.TRANSACTIONS.DESCRIPTION_COL') }}
                     </th>
                     <th
-                      class="py-2 pr-4 text-[11px] font-semibold uppercase tracking-wider"
+                      class="py-2 pr-4 text-[14px] font-medium text-muted-foreground"
                     >
                       {{ $t('BILLING_SETTINGS.TRANSACTIONS.AMOUNT') }}
                     </th>
                     <th
-                      class="py-2 pr-4 text-[11px] font-semibold uppercase tracking-wider"
+                      class="py-2 pr-4 text-[14px] font-medium text-muted-foreground"
                     >
                       {{ $t('BILLING_SETTINGS.TRANSACTIONS.STATUS') }}
                     </th>
                     <th
-                      class="py-2 text-[11px] font-semibold uppercase tracking-wider"
+                      class="py-2 text-[14px] font-medium text-muted-foreground"
                     >
                       {{ $t('BILLING_SETTINGS.TRANSACTIONS.RECEIPT') }}
                     </th>

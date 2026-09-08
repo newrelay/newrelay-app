@@ -62,7 +62,7 @@ const togglePortalSwitcher = () => {
     class="relative flex h-full w-full flex-col overflow-hidden bg-muted/10 animate-in fade-in duration-300"
   >
     <div
-      class="mx-auto flex h-full w-full max-w-7xl flex-col overflow-hidden p-4 pb-12 sm:p-8"
+      class="mx-auto flex h-full w-full max-w-7xl flex-col overflow-hidden p-6 lg:px-10"
     >
       <div v-if="showHeaderTitle" class="mb-6 flex w-full flex-col gap-4">
         <div v-if="activePortalName" class="relative shrink-0 self-start">

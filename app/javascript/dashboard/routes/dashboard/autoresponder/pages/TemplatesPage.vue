@@ -114,7 +114,7 @@ function useInAutomation(template) {
 
 <template>
   <div class="h-full bg-background flex flex-col min-h-0">
-    <div class="min-w-0 flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8">
+    <div class="min-w-0 flex-1 overflow-y-auto p-6 lg:px-10">
       <div class="h-full min-w-0 w-full">
         <div
           class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8"
@@ -183,27 +183,27 @@ function useInAutomation(template) {
                 <thead>
                   <tr class="border-b border-border bg-muted/20">
                     <th
-                      class="px-5 py-3.5 text-[14px] font-medium text-muted-foreground"
+                      class="px-5 py-3.5 text-[12px] font-medium text-muted-foreground"
                     >
                       {{ t('AUTORESPONDER.TEMPLATES.TABLE_TEMPLATE') }}
                     </th>
                     <th
-                      class="px-5 py-3.5 text-[14px] font-medium text-muted-foreground w-28"
+                      class="px-5 py-3.5 text-[12px] font-medium text-muted-foreground w-28"
                     >
                       {{ t('AUTORESPONDER.TEMPLATES.TABLE_TYPE') }}
                     </th>
                     <th
-                      class="px-5 py-3.5 text-[14px] font-medium text-muted-foreground w-28"
+                      class="px-5 py-3.5 text-[12px] font-medium text-muted-foreground w-28"
                     >
                       {{ t('AUTORESPONDER.TEMPLATES.TABLE_USAGE') }}
                     </th>
                     <th
-                      class="px-5 py-3.5 text-[14px] font-medium text-muted-foreground w-32"
+                      class="px-5 py-3.5 text-[12px] font-medium text-muted-foreground w-32"
                     >
                       {{ t('AUTORESPONDER.TEMPLATES.TABLE_UPDATED') }}
                     </th>
                     <th
-                      class="px-5 py-3.5 text-[14px] font-medium text-muted-foreground w-28 text-center"
+                      class="px-5 py-3.5 text-[12px] font-medium text-muted-foreground w-28 text-center"
                     >
                       {{ t('AUTORESPONDER.TEMPLATES.TABLE_ACTIONS') }}
                     </th>

@@ -328,7 +328,7 @@ const nextStep = () => {
                           'AUTORESPONDER.CREATE_TEMPLATE_WIZARD.NAME_PLACEHOLDER'
                         )
                       "
-                      class-name="h-10 text-[14px]"
+                      class-name="h-9 text-[14px]"
                     />
                     <span class="text-[12px] text-muted-foreground">
                       {{

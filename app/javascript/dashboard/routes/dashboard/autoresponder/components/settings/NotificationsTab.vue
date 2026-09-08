@@ -106,7 +106,7 @@ const notificationChannels = computed(() => [
           class="grid grid-cols-2 gap-3"
         >
           <div class="flex flex-col gap-1.5">
-            <label class="text-xs font-medium text-foreground">{{
+            <label class="text-[13.5px] font-medium text-foreground">{{
               t('AUTORESPONDER.SETTINGS.NOTIFICATIONS.FROM')
             }}</label>
             <SettingsSelect
@@ -115,7 +115,7 @@ const notificationChannels = computed(() => [
             />
           </div>
           <div class="flex flex-col gap-1.5">
-            <label class="text-xs font-medium text-foreground">{{
+            <label class="text-[13.5px] font-medium text-foreground">{{
               t('AUTORESPONDER.SETTINGS.NOTIFICATIONS.TO')
             }}</label>
             <SettingsSelect
@@ -140,7 +140,7 @@ const notificationChannels = computed(() => [
           v-if="settings.notifications.enableDailyDigest"
           class="flex flex-col gap-1.5 max-w-[200px]"
         >
-          <label class="text-xs font-medium text-foreground">{{
+          <label class="text-[13.5px] font-medium text-foreground">{{
             t('AUTORESPONDER.SETTINGS.NOTIFICATIONS.DIGEST_TIME')
           }}</label>
           <SettingsSelect

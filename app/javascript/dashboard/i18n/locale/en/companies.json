@@ -170,7 +170,14 @@
         "TITLE": "Recent Contacts",
         "VIEW_ALL": "View All",
         "OWNER": "Owner",
-        "EMPTY": "No contacts are linked to this company yet."
+        "EMPTY": "No contacts are linked to this company yet.",
+        "MODAL": {
+          "TITLE": "All Contacts",
+          "SUBTITLE": "{count} contacts at {company}",
+          "SEARCH_PLACEHOLDER": "Search contacts...",
+          "EMPTY_TITLE": "No contacts found",
+          "EMPTY_SUBTITLE": "Try adjusting your search query."
+        }
       },
       "ACTIVITY": {
         "TITLE": "Activity Timeline",

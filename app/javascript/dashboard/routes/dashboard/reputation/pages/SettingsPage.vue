@@ -79,8 +79,8 @@ const platforms = [
   { id: 'agoda', name: 'Agoda', logoColor: 'text-sky-500 bg-sky-50 dark:bg-sky-950/20', comingSoon: true },
   { id: 'airbnb', name: 'Airbnb', logoColor: 'text-destructive bg-destructive/10 ', comingSoon: true },
   { id: 'aliexpress', name: 'AliExpress', logoColor: 'text-orange-500 bg-orange-50 dark:bg-orange-950/20', comingSoon: true },
-  { id: 'amazon', name: 'Amazon', logoColor: 'text-amber-600 bg-amber-50 dark:bg-amber-950/20', comingSoon: true },
-  { id: 'angi', name: 'Angi', logoColor: 'text-emerald-600 bg-emerald-50 dark:bg-emerald-950/20', comingSoon: true },
+  { id: 'amazon', name: 'Amazon', logoColor: 'text-warning bg-warning/10', comingSoon: true },
+  { id: 'angi', name: 'Angi', logoColor: 'text-success bg-success/10', comingSoon: true },
   { id: 'apple_app_store', name: 'Apple App Store', logoColor: 'text-foreground bg-muted ', comingSoon: true },
   { id: 'avvo', name: 'Avvo', logoColor: 'text-primary bg-primary/10 ', comingSoon: true }
 ];
@@ -451,7 +451,7 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div class="p-6 max-w-7xl mx-auto space-y-8">
+  <div class="p-6 lg:px-10 max-w-7xl mx-auto space-y-8">
     <!-- eslint-disable -->
     <!-- Header -->
     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -547,7 +547,7 @@ onMounted(async () => {
                       <h4 class="font-semibold text-sm text-foreground">{{ platform.name }}</h4>
                       <span
                         class="text-[9px] uppercase tracking-wider font-extrabold"
-                        :class="getIntegrationForPlatform(platform.id).length > 0 ? 'text-emerald-500' : 'text-muted-foreground'"
+                        :class="getIntegrationForPlatform(platform.id).length > 0 ? 'text-success' : 'text-muted-foreground'"
                       >
                         {{ getIntegrationForPlatform(platform.id).length > 0 ? 'Connected' : 'Not connected' }}
                       </span>
@@ -629,7 +629,7 @@ onMounted(async () => {
                       <h4 class="font-semibold text-sm text-foreground truncate">
                         {{ customInt.location_name.split(' - ')[0] }}
                       </h4>
-                      <span class="text-[9px] uppercase tracking-wider font-extrabold text-emerald-500">Connected</span>
+                      <span class="text-[9px] uppercase tracking-wider font-extrabold text-success">Connected</span>
                     </div>
                   </div>
                   <button 

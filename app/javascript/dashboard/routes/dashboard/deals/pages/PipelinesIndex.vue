@@ -74,7 +74,7 @@ onMounted(load);
 <template>
   <div class="flex h-full min-h-0 flex-col bg-muted/10 dark:bg-background">
     <div
-      class="flex flex-col justify-between gap-4 border-b border-border bg-card px-6 py-6 md:flex-row md:items-start"
+      class="flex flex-col justify-between gap-4 bg-card px-6 py-6 md:flex-row md:items-start"
     >
       <div>
         <h1 class="mb-1.5 text-base font-medium tracking-tight text-foreground">
@@ -180,7 +180,7 @@ onMounted(load);
                   <div class="flex items-center gap-2">
                     <span
                       v-if="deal.pipelineStage?.isWon"
-                      class="rounded-[4px] bg-success/10 px-1.5 py-0 text-[10px] font-bold uppercase tracking-widest text-success"
+                      class="rounded-[4px] bg-success/10 px-1.5 py-0 text-[10px] font-bold text-success"
                     >
                       {{ $t('PIPELINES.WON') }}
                     </span>

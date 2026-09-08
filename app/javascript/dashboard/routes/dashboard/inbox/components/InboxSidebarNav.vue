@@ -111,7 +111,7 @@ const addChannel = () => {
 };
 
 const NAV_ITEM_BASE_CLASS =
-  'relative flex h-9 w-full items-center justify-between rounded-lg border-0 px-3 text-sm font-medium transition-colors outline-none';
+  'relative flex h-9 w-full items-center justify-between rounded-md border-0 px-3 text-sm font-medium transition-colors outline-none';
 
 const navItemClass = active =>
   active
@@ -120,7 +120,7 @@ const navItemClass = active =>
 
 const navBadgeClass = active =>
   [
-    'shrink-0 rounded-full px-2 py-0.5 text-[11px] font-semibold',
+    'shrink-0 h-5 min-w-[20px] px-1.5 rounded-full text-[11px] font-medium',
     active
       ? 'bg-transparent text-primary'
       : 'bg-muted/50 text-muted-foreground',
@@ -137,9 +137,7 @@ const navBadgeClass = active =>
           class="flex items-center gap-2 p-0 outline-none transition-opacity hover:opacity-80"
           @click="isViewsOpen = !isViewsOpen"
         >
-          <span
-            class="text-xs font-bold uppercase tracking-wider text-muted-foreground"
-          >
+          <span class="text-xs font-medium text-muted-foreground">
             {{ t('INBOX.VIEWS.TITLE') }}
           </span>
           <span
@@ -179,9 +177,7 @@ const navBadgeClass = active =>
           class="flex items-center gap-2 p-0 outline-none transition-opacity hover:opacity-80"
           @click="isChannelsOpen = !isChannelsOpen"
         >
-          <span
-            class="text-xs font-bold uppercase tracking-wider text-muted-foreground"
-          >
+          <span class="text-xs font-medium text-muted-foreground">
             {{ t('INBOX.CHANNELS.TITLE') }}
           </span>
           <span

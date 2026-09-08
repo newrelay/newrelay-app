@@ -114,7 +114,7 @@ onMounted(() => {
       <div class="space-y-4">
         <div
           v-if="showSoftLimitWarning"
-          class="flex items-center gap-2 rounded-lg bg-amber-500/10 px-4 py-3 text-sm text-amber-700 dark:text-amber-400"
+          class="flex items-center gap-2 rounded-lg bg-warning/10 px-4 py-3 text-sm text-warning"
         >
           <span class="i-lucide-triangle-alert size-4 shrink-0" />
           {{ $t('CAPTAIN.CUSTOM_TOOLS.SOFT_LIMIT_WARNING') }}

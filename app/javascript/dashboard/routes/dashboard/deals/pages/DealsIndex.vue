@@ -80,7 +80,7 @@ onMounted(load);
 <template>
   <div class="flex h-full min-h-0 flex-col bg-muted/10 dark:bg-background">
     <div
-      class="flex flex-wrap items-center justify-between gap-4 border-b border-border bg-card px-6 py-4"
+      class="flex flex-wrap items-center justify-between gap-4 bg-card px-6 py-4"
     >
       <div class="flex flex-wrap items-center gap-4">
         <div>

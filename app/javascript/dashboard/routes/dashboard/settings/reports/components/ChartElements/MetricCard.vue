@@ -140,7 +140,7 @@ const xAxisLabels = computed(() => {
 
 <template>
   <div
-    class="p-6 rounded-xl border border-border bg-card shadow-sm flex flex-col relative overflow-hidden group h-full"
+    class="p-6 rounded-xl border border-border bg-card shadow-xs flex flex-col relative overflow-hidden group h-full"
   >
     <!-- Highlight bar on top -->
     <div
@@ -180,7 +180,7 @@ const xAxisLabels = computed(() => {
           <div
             v-if="trendData"
             class="flex items-center gap-1 text-[14px] font-medium pb-1"
-            :class="trendData.good ? 'text-emerald-600' : 'text-destructive'"
+            :class="trendData.good ? 'text-success' : 'text-destructive'"
           >
             <span
               v-if="trendData.up === true"
@@ -229,14 +229,14 @@ const xAxisLabels = computed(() => {
 
         <!-- Tooltip -->
         <div
-          class="absolute -top-[60px] left-1/2 -translate-x-1/2 bg-slate-900 text-white px-3 py-2 rounded-md shadow-xl opacity-0 group-hover/bar:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-10 flex flex-col gap-1 min-w-max"
+          class="absolute -top-[60px] left-1/2 -translate-x-1/2 bg-popover text-popover-foreground px-3 py-2 rounded-md shadow-xl opacity-0 group-hover/bar:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-10 flex flex-col gap-1 min-w-max border border-border"
         >
           <span class="font-bold text-[11px] leading-none">{{
             item.date
           }}</span>
           <div class="flex items-center gap-1.5 mt-0.5">
             <div class="size-2 bg-primary rounded-sm" />
-            <span class="text-[11px] leading-none text-white/90"
+            <span class="text-[11px] leading-none text-popover-foreground/90"
               >{{ metric.NAME }}: {{ item.displayValue }}</span
             >
           </div>
@@ -244,14 +244,14 @@ const xAxisLabels = computed(() => {
             v-if="item.count > 0 && isAverageMetricType(metric.KEY)"
             class="flex items-center gap-1.5 mt-0.5"
           >
-            <div class="size-2 bg-white/20 rounded-sm" />
-            <span class="text-[11px] leading-none text-white/70"
+            <div class="size-2 bg-popover-foreground/20 rounded-sm" />
+            <span class="text-[11px] leading-none text-popover-foreground/60"
               >{{ $t('REPORT.CONVERSATION_COUNT') }}: {{ item.count }}</span
             >
           </div>
           <!-- Tooltip Arrow -->
           <div
-            class="absolute -bottom-1 left-1/2 -translate-x-1/2 size-2.5 bg-slate-900 rotate-45"
+            class="absolute -bottom-1 left-1/2 -translate-x-1/2 size-2.5 bg-popover rotate-45 border-r border-b border-border"
           />
         </div>
       </div>

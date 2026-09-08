@@ -73,18 +73,14 @@ const headerClasses = computed(() => {
       </span>
       <span
         v-if="dynamicCount && !expandable"
-        class="flex-shrink-0 rounded-md px-1 text-center text-xs font-medium leading-5 outline outline-1 capitalize"
-        :class="{
-          'text-sidebar-primary outline-sidebar-primary/30': isHighlighted,
-          'text-muted-foreground outline-sidebar-border': !isHighlighted,
-        }"
+        class="flex h-5 min-w-[20px] flex-shrink-0 items-center justify-center rounded-full bg-primary px-1.5 text-[11px] font-medium text-primary-foreground"
       >
         {{ count }}
       </span>
     </div>
     <span
       v-if="expandable"
-      class="i-lucide-chevron-right ml-auto size-3.5 shrink-0 transition-transform duration-200"
+      class="i-lucide-chevron-right ml-auto size-4 shrink-0 transition-transform duration-200"
       :class="[
         isHighlighted ? 'text-sidebar-primary' : 'text-muted-foreground',
         { 'rotate-90': isExpanded },

@@ -40,9 +40,7 @@ export default {
 </script>
 
 <template>
-  <div
-    class="flex justify-between items-center h-20 min-h-[3.5rem] px-6 py-2 bg-muted"
-  >
+  <div class="flex justify-between items-center min-h-[3.5rem] px-6 py-2">
     <h1 class="flex items-center mb-0 text-[16px] text-foreground font-[500]">
       <BackButton
         v-if="showBackButton"

@@ -12,6 +12,10 @@ import {
   RelayInput,
   RelayLabel,
 } from 'dashboard/components-next/relay';
+import {
+  RELAY_FORM_FIELD_CLASS,
+  RELAY_FORM_LABEL_CLASS,
+} from 'dashboard/components-next/relay/form/constants';
 import ComboBox from 'dashboard/components-next/combobox/ComboBox.vue';
 import ParamRow from './ParamRow.vue';
 import AuthConfig from './AuthConfig.vue';
@@ -185,8 +189,8 @@ const handleTest = async () => {
     class="flex flex-col px-4 -mx-4 gap-4 max-h-[calc(100vh-200px)] overflow-y-scroll"
     @submit.prevent="handleSubmit"
   >
-    <div class="flex flex-col gap-2">
-      <RelayLabel html-for="captain-tool-title">
+    <div :class="RELAY_FORM_FIELD_CLASS">
+      <RelayLabel html-for="captain-tool-title" :class="RELAY_FORM_LABEL_CLASS">
         {{ t('CAPTAIN.CUSTOM_TOOLS.FORM.TITLE.LABEL') }}
       </RelayLabel>
       <RelayInput
@@ -207,18 +211,21 @@ const handleTest = async () => {
     />
 
     <div class="flex gap-2">
-      <div class="flex w-28 flex-col gap-2">
-        <RelayLabel>
+      <div class="w-28" :class="[RELAY_FORM_FIELD_CLASS]">
+        <RelayLabel :class="RELAY_FORM_LABEL_CLASS">
           {{ t('CAPTAIN.CUSTOM_TOOLS.FORM.HTTP_METHOD.LABEL') }}
         </RelayLabel>
         <ComboBox
           v-model="state.http_method"
           :options="httpMethodOptions"
-          class="[&>div>button]:bg-black/10 [&_li]:font-mono [&_button]:font-mono [&>div>button]:outline-offset-[-1px]"
+          class="[&_li]:font-mono [&_button]:font-mono [&>div>button]:outline-offset-[-1px]"
         />
       </div>
-      <div class="flex flex-1 flex-col gap-2">
-        <RelayLabel html-for="captain-tool-endpoint-url">
+      <div class="flex-1" :class="[RELAY_FORM_FIELD_CLASS]">
+        <RelayLabel
+          html-for="captain-tool-endpoint-url"
+          :class="RELAY_FORM_LABEL_CLASS"
+        >
           {{ t('CAPTAIN.CUSTOM_TOOLS.FORM.ENDPOINT_URL.LABEL') }}
         </RelayLabel>
         <RelayInput
@@ -232,15 +239,11 @@ const handleTest = async () => {
       </div>
     </div>
 
-    <div class="flex flex-col gap-2">
-      <RelayLabel>
+    <div :class="RELAY_FORM_FIELD_CLASS">
+      <RelayLabel :class="RELAY_FORM_LABEL_CLASS">
         {{ t('CAPTAIN.CUSTOM_TOOLS.FORM.AUTH_TYPE.LABEL') }}
       </RelayLabel>
-      <ComboBox
-        v-model="state.auth_type"
-        :options="authTypeOptions"
-        class="[&>div>button]:bg-black/10"
-      />
+      <ComboBox v-model="state.auth_type" :options="authTypeOptions" />
     </div>
 
     <AuthConfig
@@ -248,10 +251,10 @@ const handleTest = async () => {
       :auth-type="state.auth_type"
     />
 
-    <div class="flex flex-col gap-2">
-      <label class="text-foreground text-[13.5px] font-[500]">
+    <div :class="RELAY_FORM_FIELD_CLASS">
+      <RelayLabel :class="RELAY_FORM_LABEL_CLASS">
         {{ t('CAPTAIN.CUSTOM_TOOLS.FORM.PARAMETERS.LABEL') }}
-      </label>
+      </RelayLabel>
       <p class="text-xs text-muted-foreground -mt-1">
         {{ t('CAPTAIN.CUSTOM_TOOLS.FORM.PARAMETERS.HELP_TEXT') }}
       </p>

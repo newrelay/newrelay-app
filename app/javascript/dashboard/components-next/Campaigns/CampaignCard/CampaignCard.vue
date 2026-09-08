@@ -132,7 +132,7 @@ const inboxIcon = computed(() => {
       <RelayButton
         v-if="isLiveChatType"
         variant="ghost"
-        class="size-8 p-0 bg-muted/50 text-muted-foreground hover:text-foreground border border-transparent hover:border-transparent"
+        class="size-8 p-0 bg-muted/50 text-muted-foreground hover:text-foreground border border-input hover:border-transparent"
         :title="t('CAMPAIGN.LIVE_CHAT.EDIT.TITLE')"
         @click="emit('edit')"
       >
@@ -140,7 +140,7 @@ const inboxIcon = computed(() => {
       </RelayButton>
       <RelayButton
         variant="ghost"
-        class="size-8 p-0 bg-destructive/10 text-destructive/70 hover:bg-destructive/20 hover:text-destructive border border-transparent hover:border-transparent"
+        class="size-8 p-0 bg-destructive/10 text-destructive/70 hover:bg-destructive/20 hover:text-destructive border border-input hover:border-transparent"
         :title="t('CAMPAIGN.CONFIRM_DELETE.CONFIRM')"
         @click="emit('delete')"
       >

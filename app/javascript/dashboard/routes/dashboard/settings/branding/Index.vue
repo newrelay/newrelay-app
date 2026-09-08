@@ -301,27 +301,27 @@ const handleMagicPaletteApplied = palette => {
         >
           <div class="space-y-8">
             <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
-              <div class="flex flex-col gap-2">
+              <div class="flex flex-col gap-1.5">
                 <RelayLabel html-for="company-name">
                   {{ $t('BRANDING_SETTINGS.COMPANY_NAME.LABEL') }}
                 </RelayLabel>
                 <RelayInput
                   id="company-name"
                   v-model="companyName"
-                  class-name="h-10 shadow-xs bg-background transition-colors hover:bg-accent/30 focus:bg-background"
+                  class-name="h-9 shadow-xs bg-background transition-colors hover:bg-accent/30 focus:bg-background"
                   :placeholder="
                     $t('BRANDING_SETTINGS.COMPANY_NAME.PLACEHOLDER')
                   "
                 />
               </div>
-              <div class="flex flex-col gap-2">
+              <div class="flex flex-col gap-1.5">
                 <RelayLabel html-for="brand-name">
                   {{ $t('BRANDING_SETTINGS.BRAND_NAME.LABEL') }}
                 </RelayLabel>
                 <RelayInput
                   id="brand-name"
                   v-model="brandName"
-                  class-name="h-10 shadow-xs bg-background transition-colors hover:bg-accent/30 focus:bg-background"
+                  class-name="h-9 shadow-xs bg-background transition-colors hover:bg-accent/30 focus:bg-background"
                   :placeholder="$t('BRANDING_SETTINGS.BRAND_NAME.PLACEHOLDER')"
                 />
               </div>
@@ -548,7 +548,7 @@ const handleMagicPaletteApplied = palette => {
             <div class="flex flex-wrap items-center gap-8">
               <div>
                 <span
-                  class="mb-3 block text-xs font-medium text-muted-foreground"
+                  class="mb-3 block text-[13.5px] font-medium text-muted-foreground"
                 >
                   {{ $t('BRANDING_SETTINGS.COLOR_SETTINGS.PRIMARY') }}
                 </span>
@@ -556,7 +556,7 @@ const handleMagicPaletteApplied = palette => {
               </div>
               <div>
                 <span
-                  class="mb-3 block text-xs font-medium text-muted-foreground"
+                  class="mb-3 block text-[13.5px] font-medium text-muted-foreground"
                 >
                   {{ $t('BRANDING_SETTINGS.COLOR_SETTINGS.SECONDARY') }}
                 </span>
@@ -564,7 +564,7 @@ const handleMagicPaletteApplied = palette => {
               </div>
               <div>
                 <span
-                  class="mb-3 block text-xs font-medium text-muted-foreground"
+                  class="mb-3 block text-[13.5px] font-medium text-muted-foreground"
                 >
                   {{ $t('BRANDING_SETTINGS.COLOR_SETTINGS.ACCENT') }}
                 </span>
@@ -572,7 +572,7 @@ const handleMagicPaletteApplied = palette => {
               </div>
               <div>
                 <span
-                  class="mb-3 block text-xs font-medium text-muted-foreground"
+                  class="mb-3 block text-[13.5px] font-medium text-muted-foreground"
                 >
                   {{ $t('BRANDING_SETTINGS.COLOR_SETTINGS.TEXT') }}
                 </span>

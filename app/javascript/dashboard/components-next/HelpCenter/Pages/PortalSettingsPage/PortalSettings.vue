@@ -163,7 +163,7 @@ const handleDeletePortal = () => {
           </div>
           <RelayButton
             variant="destructive"
-            class="h-10 shrink-0 px-5 shadow-sm"
+            class="h-9 shrink-0 px-5 shadow-sm"
             @click="openConfirmDeletePortalDialog"
           >
             {{

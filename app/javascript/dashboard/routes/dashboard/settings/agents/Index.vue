@@ -221,7 +221,7 @@ const confirmDeletion = () => {
                 class="size-6 text-muted-foreground/70"
               />
             </div>
-            <h3 class="mb-1.5 text-base font-semibold text-foreground">
+            <h3 class="mb-1.5 text-[20px] font-[600] text-foreground">
               {{ $t('AGENT_MGMT.LIST.EMPTY_TITLE') }}
             </h3>
             <p
@@ -306,7 +306,7 @@ const confirmDeletion = () => {
               <RelayButton
                 variant="ghost"
                 size="icon"
-                class="size-8 border border-transparent text-muted-foreground shadow-xs hover:border-border hover:bg-background hover:text-foreground border border-border hover:border-transparent"
+                class="size-8 border border-border text-muted-foreground shadow-xs hover:bg-background hover:text-foreground hover:border-transparent"
                 @click="openEditPopup(agent)"
               >
                 <Icon icon="i-lucide-pencil" class="size-3.5" />
@@ -320,7 +320,7 @@ const confirmDeletion = () => {
               <RelayButton
                 variant="ghost"
                 size="icon"
-                class="size-8 border border-transparent text-muted-foreground shadow-xs hover:border-destructive/20 hover:bg-destructive/10 hover:text-destructive border border-border hover:border-transparent"
+                class="size-8 border border-border text-muted-foreground shadow-xs hover:bg-destructive/10 hover:text-destructive hover:border-transparent"
                 :disabled="loading[agent.id]"
                 @click="openDeletePopup(agent, index)"
               >

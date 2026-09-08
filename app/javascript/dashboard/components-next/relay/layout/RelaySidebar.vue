@@ -87,7 +87,7 @@ const widthClass = computed(() => (props.collapsed ? 'w-16' : 'w-60'));
           <span class="truncate font-semibold text-sidebar-foreground">
             {{ brandName }}
           </span>
-          <span class="truncate text-xs font-normal text-muted-foreground">
+          <span class="truncate text-xs font-normal text-muted-foreground/60">
             {{ t('SIDEBAR.ENTERPRISE_EDITION') }}
           </span>
         </div>

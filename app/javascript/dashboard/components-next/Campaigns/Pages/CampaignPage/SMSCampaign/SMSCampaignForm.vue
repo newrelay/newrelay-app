@@ -137,7 +137,7 @@ defineExpose({
       <RelayInput
         v-model="state.title"
         :placeholder="t('CAMPAIGN.SMS.CREATE.FORM.TITLE.PLACEHOLDER')"
-        class-name="h-10 text-[14px] shadow-sm rounded-md border-border/80 bg-muted/30 focus-visible:bg-background focus-visible:ring-1 focus-visible:ring-primary/30 placeholder:text-muted-foreground/60"
+        class-name="h-9 text-[14px] shadow-sm rounded-md border-border/80 bg-muted/30 focus-visible:bg-background focus-visible:ring-1 focus-visible:ring-primary/30 placeholder:text-muted-foreground/60"
       />
       <p v-if="formErrors.title" class="text-[12px] text-destructive">
         {{ formErrors.title }}
@@ -201,7 +201,7 @@ defineExpose({
         type="datetime-local"
         :min="currentDateTime"
         :placeholder="t('CAMPAIGN.SMS.CREATE.FORM.SCHEDULED_AT.PLACEHOLDER')"
-        class-name="h-10 text-[14px] shadow-sm rounded-md border-border/80 bg-muted/30 focus-visible:bg-background focus-visible:ring-1 focus-visible:ring-primary/30"
+        class-name="h-9 text-[14px] shadow-sm rounded-md border-border/80 bg-muted/30 focus-visible:bg-background focus-visible:ring-1 focus-visible:ring-primary/30"
       />
       <p v-if="formErrors.scheduledAt" class="text-[12px] text-destructive">
         {{ formErrors.scheduledAt }}
@@ -216,14 +216,14 @@ defineExpose({
       <RelayButton
         type="button"
         variant="outline"
-        class="flex-1 h-10 bg-muted/30 text-foreground border-border/80 shadow-sm"
+        class="flex-1 h-9 bg-muted/30 text-foreground border-border/80 shadow-sm"
         @click="handleCancel"
       >
         {{ t('CAMPAIGN.SMS.CREATE.FORM.BUTTONS.CANCEL') }}
       </RelayButton>
       <RelayButton
         type="submit"
-        class="flex-1 h-10 shadow-sm"
+        class="flex-1 h-9 shadow-sm"
         :disabled="isCreating || isSubmitDisabled"
       >
         {{ t('CAMPAIGN.SMS.CREATE.FORM.BUTTONS.CREATE') }}

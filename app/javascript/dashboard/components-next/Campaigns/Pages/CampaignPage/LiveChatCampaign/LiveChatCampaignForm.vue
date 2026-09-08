@@ -225,7 +225,7 @@ defineExpose({
       <RelayInput
         v-model="state.title"
         :placeholder="t('CAMPAIGN.LIVE_CHAT.CREATE.FORM.TITLE.PLACEHOLDER')"
-        class-name="h-10 text-[14px] shadow-sm rounded-md border-border/80 bg-muted/30 focus-visible:bg-background focus-visible:ring-1 focus-visible:ring-primary/30 placeholder:text-muted-foreground/60"
+        class-name="h-9 text-[14px] shadow-sm rounded-md border-border/80 bg-muted/30 focus-visible:bg-background focus-visible:ring-1 focus-visible:ring-primary/30 placeholder:text-muted-foreground/60"
       />
       <p v-if="formErrors.title" class="text-[12px] text-destructive">
         {{ formErrors.title }}
@@ -287,7 +287,7 @@ defineExpose({
         v-model="state.endPoint"
         type="url"
         :placeholder="t('CAMPAIGN.LIVE_CHAT.CREATE.FORM.END_POINT.PLACEHOLDER')"
-        class-name="h-10 text-[14px] shadow-sm rounded-md border-border/80 bg-muted/30 focus-visible:bg-background focus-visible:ring-1 focus-visible:ring-primary/30 placeholder:text-muted-foreground/60"
+        class-name="h-9 text-[14px] shadow-sm rounded-md border-border/80 bg-muted/30 focus-visible:bg-background focus-visible:ring-1 focus-visible:ring-primary/30 placeholder:text-muted-foreground/60"
       />
       <p v-if="formErrors.endPoint" class="text-[12px] text-destructive">
         {{ formErrors.endPoint }}
@@ -305,7 +305,7 @@ defineExpose({
         :placeholder="
           t('CAMPAIGN.LIVE_CHAT.CREATE.FORM.TIME_ON_PAGE.PLACEHOLDER')
         "
-        class-name="h-10 text-[14px] shadow-sm rounded-md border-border/80 bg-muted/30 focus-visible:bg-background focus-visible:ring-1 focus-visible:ring-primary/30 placeholder:text-muted-foreground/60"
+        class-name="h-9 text-[14px] shadow-sm rounded-md border-border/80 bg-muted/30 focus-visible:bg-background focus-visible:ring-1 focus-visible:ring-primary/30 placeholder:text-muted-foreground/60"
       />
       <p v-if="formErrors.timeOnPage" class="text-[12px] text-destructive">
         {{ formErrors.timeOnPage }}
@@ -348,18 +348,21 @@ defineExpose({
     </div>
 
     <!-- Action buttons (inline fallback when not used in dialog) -->
-    <div v-if="showActionButtons" class="flex items-center gap-3 pt-2">
+    <div
+      v-if="showActionButtons"
+      class="flex items-center gap-3 pt-2 border-t border-border/60"
+    >
       <RelayButton
         type="button"
         variant="outline"
-        class="flex-1 h-10 bg-muted/30 text-foreground border-border/80 shadow-sm"
+        class="flex-1 h-9 bg-muted/30 text-foreground border-border/80 shadow-sm"
         @click="handleCancel"
       >
         {{ t('CAMPAIGN.LIVE_CHAT.CREATE.FORM.BUTTONS.CANCEL') }}
       </RelayButton>
       <RelayButton
         type="submit"
-        class="flex-1 h-10 shadow-sm"
+        class="flex-1 h-9 shadow-sm"
         :disabled="isCreating || isSubmitDisabled"
       >
         {{ t(`CAMPAIGN.LIVE_CHAT.CREATE.FORM.BUTTONS.${mode.toUpperCase()}`) }}

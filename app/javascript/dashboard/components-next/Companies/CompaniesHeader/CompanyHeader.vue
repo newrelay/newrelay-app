@@ -92,7 +92,7 @@ const propertyLabel = property => {
           />
           <RelayInput
             type="search"
-            class-name="h-10 w-full rounded-lg border-border/60 bg-card pl-9 text-sm shadow-sm"
+            class-name="h-9 w-full rounded-lg border-border/60 bg-card pl-9 text-sm shadow-sm"
             :model-value="searchValue"
             :placeholder="t('COMPANIES.SEARCH_PLACEHOLDER')"
             @update:model-value="emit('search', $event)"

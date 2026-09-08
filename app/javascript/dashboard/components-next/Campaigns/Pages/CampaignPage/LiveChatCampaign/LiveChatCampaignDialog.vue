@@ -61,13 +61,13 @@ const submitForm = () => formRef.value?.submit();
     >
       <RelayButton
         variant="outline"
-        class="flex-1 h-10 bg-muted/30 text-foreground border-border/80 shadow-sm"
+        class="flex-1 h-9 bg-muted/30 text-foreground border-border/80 shadow-sm"
         @click="handleClose"
       >
         {{ t('CAMPAIGN.LIVE_CHAT.CREATE.FORM.BUTTONS.CANCEL') }}
       </RelayButton>
       <RelayButton
-        class="flex-1 h-10 shadow-sm"
+        class="flex-1 h-9 shadow-sm"
         :disabled="formRef?.isSubmitDisabled !== false"
         @click="submitForm"
       >

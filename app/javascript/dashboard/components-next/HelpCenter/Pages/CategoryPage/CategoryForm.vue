@@ -15,9 +15,12 @@ import { useVuelidate } from '@vuelidate/core';
 import { required, minLength } from '@vuelidate/validators';
 import { convertToCategorySlug } from 'dashboard/helper/commons.js';
 
-import Input from 'dashboard/components-next/input/Input.vue';
-import TextArea from 'dashboard/components-next/textarea/TextArea.vue';
-import Button from 'dashboard/components-next/button/Button.vue';
+import {
+  RelayInput,
+  RelayTextarea,
+  RelayButton,
+  RelayLabel,
+} from 'dashboard/components-next/relay';
 
 const props = defineProps({
   mode: {
@@ -160,9 +163,7 @@ defineExpose({ state, isSubmitDisabled, handleSubmit });
       class="flex items-center justify-between p-3 rounded-lg border border-border/40 bg-card"
     >
       <div class="flex flex-col gap-1">
-        <span
-          class="text-[12px] font-medium text-muted-foreground uppercase tracking-wider"
-        >
+        <span class="text-[12px] font-medium text-muted-foreground">
           {{ t('HELP_CENTER.CATEGORY_PAGE.CATEGORY_DIALOG.HEADER.PORTAL') }}
         </span>
         <span class="text-[14px] text-foreground font-medium">
@@ -171,9 +172,7 @@ defineExpose({ state, isSubmitDisabled, handleSubmit });
       </div>
       <div class="h-8 w-px bg-border/40" />
       <div class="flex flex-col gap-1 text-right">
-        <span
-          class="text-[12px] font-medium text-muted-foreground uppercase tracking-wider"
-        >
+        <span class="text-[12px] font-medium text-muted-foreground">
           {{ t('HELP_CENTER.CATEGORY_PAGE.CATEGORY_DIALOG.HEADER.LOCALE') }}
         </span>
         <span
@@ -185,92 +184,97 @@ defineExpose({ state, isSubmitDisabled, handleSubmit });
       </div>
     </div>
     <div class="flex flex-col gap-4">
-      <div class="relative">
-        <Input
-          v-model="state.name"
-          :label="
-            t('HELP_CENTER.CATEGORY_PAGE.CATEGORY_DIALOG.FORM.NAME.LABEL')
-          "
-          :placeholder="
-            t('HELP_CENTER.CATEGORY_PAGE.CATEGORY_DIALOG.FORM.NAME.PLACEHOLDER')
-          "
-          :message="nameError"
-          :message-type="nameError ? 'error' : 'info'"
-          custom-input-class="!h-10 ltr:!pl-12 rtl:!pr-12"
-        >
-          <template #prefix>
-            <OnClickOutside @trigger="isEmojiPickerOpen = false">
-              <Button
-                :label="state.icon"
-                color="slate"
-                size="sm"
-                type="button"
-                :icon="!state.icon ? 'i-lucide-smile-plus' : ''"
-                class="!h-[2.38rem] !w-[2.375rem] absolute top-[2rem] !outline-none !rounded-[0.438rem] border-0 ltr:left-px rtl:right-px ltr:!rounded-r-none rtl:!rounded-l-none"
-                @click="isEmojiPickerOpen = !isEmojiPickerOpen"
-              />
-              <EmojiInput
-                v-if="isEmojiPickerOpen"
-                class="left-0 top-16"
-                show-remove-button
-                :on-click="onClickInsertEmoji"
-              />
-            </OnClickOutside>
-          </template>
-        </Input>
+      <div class="flex flex-col gap-1.5">
+        <RelayLabel>
+          {{ t('HELP_CENTER.CATEGORY_PAGE.CATEGORY_DIALOG.FORM.NAME.LABEL') }}
+        </RelayLabel>
+        <div class="relative">
+          <OnClickOutside @trigger="isEmojiPickerOpen = false">
+            <button
+              type="button"
+              class="absolute inset-y-[1px] ltr:left-[1px] rtl:right-[1px] z-10 w-9 flex items-center justify-center rounded-md ltr:rounded-r-none rtl:rounded-l-none border-0 bg-transparent text-muted-foreground hover:text-foreground hover:bg-accent focus:outline-none"
+              @click="isEmojiPickerOpen = !isEmojiPickerOpen"
+            >
+              <span v-if="!state.icon" class="i-lucide-smile-plus size-4" />
+              <span v-else class="text-base leading-none">{{
+                state.icon
+              }}</span>
+            </button>
+            <EmojiInput
+              v-if="isEmojiPickerOpen"
+              class="left-0 top-11"
+              show-remove-button
+              :on-click="onClickInsertEmoji"
+            />
+          </OnClickOutside>
+          <RelayInput
+            v-model="state.name"
+            :placeholder="
+              t(
+                'HELP_CENTER.CATEGORY_PAGE.CATEGORY_DIALOG.FORM.NAME.PLACEHOLDER'
+              )
+            "
+            class-name="ltr:pl-10 rtl:pr-10"
+          />
+        </div>
+        <p v-if="nameError" class="text-xs text-destructive">
+          {{ nameError }}
+        </p>
       </div>
-      <Input
-        v-model="state.slug"
-        :label="t('HELP_CENTER.CATEGORY_PAGE.CATEGORY_DIALOG.FORM.SLUG.LABEL')"
-        :placeholder="
-          t('HELP_CENTER.CATEGORY_PAGE.CATEGORY_DIALOG.FORM.SLUG.PLACEHOLDER')
-        "
-        :disabled="isEditMode"
-        :message="slugError ? slugError : slugHelpText"
-        :message-type="slugError ? 'error' : 'info'"
-        custom-input-class="!h-10"
-      />
-      <TextArea
-        v-model="state.description"
-        :label="
-          t('HELP_CENTER.CATEGORY_PAGE.CATEGORY_DIALOG.FORM.DESCRIPTION.LABEL')
-        "
-        :placeholder="
-          t(
-            'HELP_CENTER.CATEGORY_PAGE.CATEGORY_DIALOG.FORM.DESCRIPTION.PLACEHOLDER'
-          )
-        "
-        show-character-count
-      />
+      <div class="flex flex-col gap-1.5">
+        <RelayLabel>
+          {{ t('HELP_CENTER.CATEGORY_PAGE.CATEGORY_DIALOG.FORM.SLUG.LABEL') }}
+        </RelayLabel>
+        <RelayInput
+          v-model="state.slug"
+          :placeholder="
+            t('HELP_CENTER.CATEGORY_PAGE.CATEGORY_DIALOG.FORM.SLUG.PLACEHOLDER')
+          "
+          :disabled="isEditMode"
+        />
+        <p
+          class="text-xs"
+          :class="slugError ? 'text-destructive' : 'text-muted-foreground'"
+        >
+          {{ slugError || slugHelpText }}
+        </p>
+      </div>
+      <div class="flex flex-col gap-1.5">
+        <RelayLabel>
+          {{
+            t(
+              'HELP_CENTER.CATEGORY_PAGE.CATEGORY_DIALOG.FORM.DESCRIPTION.LABEL'
+            )
+          }}
+        </RelayLabel>
+        <RelayTextarea
+          v-model="state.description"
+          :placeholder="
+            t(
+              'HELP_CENTER.CATEGORY_PAGE.CATEGORY_DIALOG.FORM.DESCRIPTION.PLACEHOLDER'
+            )
+          "
+        />
+      </div>
       <div
         v-if="showActionButtons"
         class="flex items-center justify-between w-full gap-3"
       >
-        <Button
-          variant="faded"
-          color="slate"
-          :label="t('HELP_CENTER.CATEGORY_PAGE.CATEGORY_DIALOG.BUTTONS.CANCEL')"
-          class="w-full bg-accent text-primary hover:bg-accent"
-          @click="handleCancel"
-        />
-        <Button
-          :label="
+        <RelayButton variant="outline" class="w-full" @click="handleCancel">
+          {{ t('HELP_CENTER.CATEGORY_PAGE.CATEGORY_DIALOG.BUTTONS.CANCEL') }}
+        </RelayButton>
+        <RelayButton
+          class="w-full"
+          :disabled="isSubmitDisabled || isCreating || isUpdatingCategory"
+          @click="handleSubmit"
+        >
+          {{
             t(
               `HELP_CENTER.CATEGORY_PAGE.CATEGORY_DIALOG.BUTTONS.${mode.toUpperCase()}`
             )
-          "
-          class="w-full"
-          :disabled="isSubmitDisabled || isCreating || isUpdatingCategory"
-          :is-loading="isCreating || isUpdatingCategory"
-          @click="handleSubmit"
-        />
+          }}
+        </RelayButton>
       </div>
     </div>
   </div>
 </template>
-
-<style scoped lang="scss">
-.emoji-dialog::before {
-  @apply hidden;
-}
-</style>

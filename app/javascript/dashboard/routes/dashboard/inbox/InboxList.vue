@@ -421,7 +421,7 @@ onMounted(() => {
               class="relative h-14 px-1 text-sm font-medium transition-colors shrink-0"
               :class="
                 activeStatusTab === tab.value
-                  ? 'text-foreground font-semibold'
+                  ? 'text-foreground'
                   : 'text-muted-foreground hover:text-foreground'
               "
               @click="activeStatusTab = tab.value"
@@ -492,7 +492,7 @@ onMounted(() => {
               <RelayButton
                 variant="ghost"
                 size="icon"
-                class="h-8 w-8 text-muted-foreground"
+                class="size-8 border border-input hover:border-transparent text-muted-foreground"
                 :aria-label="t('INBOX.LIST.MORE_OPTIONS')"
                 @click="showTabMoreMenu = !showTabMoreMenu"
               >

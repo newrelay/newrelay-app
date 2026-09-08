@@ -19,7 +19,7 @@ defineProps({
 
 <template>
   <div
-    class="flex flex-col flex-grow rounded-xl border border-border bg-card shadow-sm"
+    class="flex flex-col flex-grow rounded-xl border border-border bg-card shadow-xs"
   >
     <div class="flex items-center justify-between gap-3 p-6 pb-4">
       <slot name="header">

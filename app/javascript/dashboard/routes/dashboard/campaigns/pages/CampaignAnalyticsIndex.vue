@@ -6,7 +6,11 @@ import { useAccount } from 'dashboard/composables/useAccount';
 import { useAlert } from 'dashboard/composables';
 import CampaignAnalyticsAPI from 'dashboard/api/campaignAnalytics';
 import camelcaseKeys from 'camelcase-keys';
-import { RelayButton, RelayInput } from 'dashboard/components-next/relay';
+import {
+  RelayButton,
+  RelayInput,
+  RelayBadge,
+} from 'dashboard/components-next/relay';
 import Spinner from 'shared/components/Spinner.vue';
 import DealMetricsRow from 'dashboard/components-next/Deals/DealMetricsRow.vue';
 import Icon from 'dashboard/components-next/icon/Icon.vue';
@@ -111,24 +115,24 @@ onMounted(load);
 
 <template>
   <div
-    class="flex h-full min-h-0 flex-col bg-background/50 animate-in fade-in duration-300"
+    class="flex h-full min-h-0 flex-col bg-background animate-in fade-in duration-300"
   >
-    <div class="px-8 py-8 flex flex-col gap-6">
+    <div class="p-6 lg:px-10 flex flex-col gap-6">
       <!-- Header -->
       <div
         class="flex flex-col sm:flex-row sm:items-center justify-between gap-4"
       >
         <div>
-          <h1 class="text-[20px] font-medium tracking-tight text-foreground">
+          <h1 class="text-base font-medium tracking-tight text-foreground">
             {{ $t('CAMPAIGN_ANALYTICS.HEADER') }}
           </h1>
-          <p class="mt-1 text-[13px] text-muted-foreground">
+          <p class="mt-1 text-[14px] text-muted-foreground">
             {{ $t('CAMPAIGN_ANALYTICS.DESCRIPTION') }}
           </p>
         </div>
         <RelayButton
           variant="outline"
-          class="h-10 border-border/80 px-4 text-[13.5px] font-medium hover:border-transparent"
+          class="h-9 border-input px-4 text-[13.5px] font-medium hover:border-transparent"
           @click="goToCampaigns"
         >
           {{ $t('CAMPAIGN_ANALYTICS.EMPTY.CTA') }}
@@ -145,13 +149,13 @@ onMounted(load);
         />
         <RelayInput
           v-model="searchQuery"
-          class="pl-9 text-[13px]"
+          class-name="h-9 pl-9 text-[14px]"
           :placeholder="$t('CAMPAIGN_ANALYTICS.SEARCH_PLACEHOLDER')"
         />
       </div>
     </div>
 
-    <div class="min-h-0 flex-1 overflow-auto px-8 pb-8">
+    <div class="min-h-0 flex-1 overflow-auto px-6 lg:px-10 pb-6">
       <div v-if="loading" class="flex items-center justify-center py-20">
         <Spinner />
       </div>
@@ -179,37 +183,37 @@ onMounted(load);
           <thead>
             <tr class="border-b border-border text-left">
               <th
-                class="px-4 py-3 text-[12px] font-medium text-muted-foreground"
+                class="px-4 py-3 text-[14px] font-medium text-muted-foreground"
               >
                 {{ $t('CAMPAIGN_ANALYTICS.TABLE.TITLE') }}
               </th>
               <th
-                class="px-4 py-3 text-[12px] font-medium text-muted-foreground"
+                class="px-4 py-3 text-[14px] font-medium text-muted-foreground"
               >
                 {{ $t('CAMPAIGN_ANALYTICS.TABLE.STATUS') }}
               </th>
               <th
-                class="px-4 py-3 text-[12px] font-medium text-muted-foreground"
+                class="px-4 py-3 text-[14px] font-medium text-muted-foreground"
               >
                 {{ $t('CAMPAIGN_ANALYTICS.TABLE.TYPE') }}
               </th>
               <th
-                class="px-4 py-3 text-[12px] font-medium text-muted-foreground"
+                class="px-4 py-3 text-[14px] font-medium text-muted-foreground"
               >
                 {{ $t('CAMPAIGN_ANALYTICS.TABLE.CHANNEL') }}
               </th>
               <th
-                class="px-4 py-3 text-[12px] font-medium text-muted-foreground"
+                class="px-4 py-3 text-[14px] font-medium text-muted-foreground"
               >
                 {{ $t('CAMPAIGN_ANALYTICS.TABLE.AUDIENCE') }}
               </th>
               <th
-                class="px-4 py-3 text-[12px] font-medium text-muted-foreground"
+                class="px-4 py-3 text-[14px] font-medium text-muted-foreground"
               >
                 {{ $t('CAMPAIGN_ANALYTICS.TABLE.CONVERSATIONS') }}
               </th>
               <th
-                class="px-4 py-3 text-[12px] font-medium text-muted-foreground"
+                class="px-4 py-3 text-[14px] font-medium text-muted-foreground"
               >
                 {{ $t('CAMPAIGN_ANALYTICS.TABLE.CREATED') }}
               </th>
@@ -233,11 +237,11 @@ onMounted(load);
                 </div>
               </td>
               <td class="px-4 py-3">
-                <span
-                  class="inline-flex rounded-md bg-primary/10 px-2 py-0.5 text-[12px] font-medium text-primary"
+                <RelayBadge
+                  class="bg-primary/10 text-primary border-transparent"
                 >
                   {{ statusLabel(campaign.campaignStatus) }}
-                </span>
+                </RelayBadge>
               </td>
               <td class="px-4 py-3 text-[13px] capitalize text-foreground">
                 {{ typeLabel(campaign.campaignType) }}

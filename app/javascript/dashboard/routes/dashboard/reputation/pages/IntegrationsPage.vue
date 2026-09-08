@@ -351,18 +351,18 @@ async function submitRequest() {
   }
 }
 function tagStyles(variant) {
-  if (variant === 'emerald') return 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400';
+  if (variant === 'emerald') return 'bg-success/10 text-success';
   if (variant === 'primary') return 'bg-primary/10 text-primary';
-  if (variant === 'amber') return 'bg-amber-500/10 text-amber-600 dark:text-amber-400';
+  if (variant === 'amber') return 'bg-warning/10 text-warning';
   return 'bg-muted text-muted-foreground';
 }
 </script>
 
 <template>
-  <div class="flex-1 overflow-y-auto w-full bg-background p-6 lg:p-8">
+  <div class="flex-1 overflow-y-auto w-full bg-background p-6 lg:px-10">
     <div v-if="isDemoLoaded" class="max-w-7xl mx-auto space-y-6">
       <!-- Header -->
-      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-border/60">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2">
         <div>
           <h1 class="text-base font-medium tracking-tight text-foreground">Integrations</h1>
           <p class="text-[13.5px] text-muted-foreground mt-0.5">Connect external review platforms to automatically monitor ratings, aggregate reviews, and route Relay AI responses.</p>
@@ -589,7 +589,7 @@ function tagStyles(variant) {
           </div>
         </template>
         <div v-else class="py-8 flex flex-col items-center text-center">
-          <div class="size-14 rounded-full bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 flex items-center justify-center mb-4"><CheckCircle2 class="size-7" /></div>
+          <div class="size-14 rounded-full bg-success/10 text-success flex items-center justify-center mb-4"><CheckCircle2 class="size-7" /></div>
           <h3 class="text-base font-semibold text-foreground mb-1">Request received</h3>
           <p class="text-sm text-muted-foreground">We'll notify you when {{ requestedPlatformName || 'this platform' }} is available.</p>
         </div>

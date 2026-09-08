@@ -42,7 +42,7 @@ const formatEventTime = ts => new Date(ts * 1000).toLocaleString('en-GB', { day:
 const TIMELINE_META = {
   submitted: { icon: Play, dot: 'bg-primary/10', ic: 'text-primary' },
   approved: { icon: ThumbsUp, dot: 'bg-primary/10', ic: 'text-primary' },
-  published: { icon: Check, dot: 'bg-emerald-100', ic: 'text-emerald-600' },
+  published: { icon: Check, dot: 'bg-success/10', ic: 'text-success' },
   rejected: { icon: X, dot: 'bg-destructive/15', ic: 'text-destructive' },
 };
 const iconFor = key => TIMELINE_META[key].icon;
@@ -418,7 +418,7 @@ const stats = computed(() => {
       class="flex flex-col h-full overflow-y-auto transition-all duration-300 hide-scrollbar"
       :class="selectedVideo ? 'w-full lg:w-[65%] xl:w-[70%]' : 'w-full'"
     >
-      <div class="px-8 py-6 border-b border-border bg-card shrink-0">
+      <div class="px-6 lg:px-10 py-6 bg-card shrink-0">
         <div class="flex items-center text-sm text-muted-foreground mb-2">
           <span>Reputation</span>
           <span class="mx-2">/</span>
@@ -463,7 +463,7 @@ const stats = computed(() => {
           
           <div class="bg-card border border-border rounded-xl p-4 shadow-xs flex flex-col justify-between">
             <div class="flex items-center gap-3 mb-2">
-              <div class="size-8 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center border border-emerald-100 dark:bg-emerald-900/30 dark:border-emerald-800 dark:text-emerald-400">
+              <div class="size-8 rounded-full bg-success/10 text-success flex items-center justify-center border border-success/20">
                 <CheckCircle class="size-4" />
               </div>
               <span class="text-2xl font-bold text-foreground">{{ stats.publishedPct }}%</span>
@@ -473,8 +473,8 @@ const stats = computed(() => {
           
           <div class="bg-card border border-border rounded-xl p-4 shadow-xs flex flex-col justify-between">
             <div class="flex items-center gap-3 mb-2">
-              <div class="size-8 rounded-full bg-amber-50 text-amber-500 flex items-center justify-center border border-amber-100 dark:bg-amber-900/30 dark:border-amber-800 dark:text-amber-400">
-                <Star class="size-4 fill-amber-500 text-amber-500" />
+              <div class="size-8 rounded-full bg-warning/10 text-warning flex items-center justify-center border border-warning/20">
+                <Star class="size-4 fill-warning text-warning" />
               </div>
               <span class="text-2xl font-bold text-foreground">{{ stats.avgRating }}</span>
             </div>
@@ -483,7 +483,7 @@ const stats = computed(() => {
           
           <div class="bg-card border border-border rounded-xl p-4 shadow-xs flex flex-col justify-between">
             <div class="flex items-center gap-3 mb-2">
-              <div class="size-8 rounded-full bg-rose-50 text-rose-500 flex items-center justify-center border border-rose-100 dark:bg-rose-900/30 dark:border-rose-800 dark:text-rose-400">
+              <div class="size-8 rounded-full bg-destructive/10 text-destructive flex items-center justify-center border border-destructive/20">
                 <Calendar class="size-4" />
               </div>
               <span class="text-2xl font-bold text-foreground">{{ stats.awaiting }}</span>
@@ -504,7 +504,7 @@ const stats = computed(() => {
       </div>
 
       <!-- Filters & Toolbar -->
-      <div class="px-8 py-5 border-b border-border bg-background shrink-0 sticky top-0 z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div class="px-6 lg:px-10 py-5 border-b border-border bg-background shrink-0 sticky top-0 z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div class="flex flex-wrap items-center gap-2">
           <div class="relative w-48 mr-2">
             <Search class="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -600,7 +600,7 @@ const stats = computed(() => {
         </div>
       </div>
       
-      <div class="px-8 py-4 flex items-center justify-between text-xs text-muted-foreground font-medium">
+      <div class="px-6 lg:px-10 py-4 flex items-center justify-between text-xs text-muted-foreground font-medium">
         Showing {{ filteredVideos.length }} of {{ stats.total }} videos
         <div class="flex bg-card border border-border rounded-lg p-0.5 shadow-xs">
           <button @click="viewMode = 'grid'" class="p-1.5 rounded-md transition-colors cursor-pointer" :class="viewMode === 'grid' ? 'bg-muted text-foreground' : 'text-muted-foreground hover:text-foreground hover:bg-muted'"><LayoutGrid class="size-4" /></button>
@@ -610,7 +610,7 @@ const stats = computed(() => {
       </div>
 
       <!-- Video Grid Area -->
-      <div class="px-8 pb-10">
+      <div class="px-6 lg:px-10 pb-10">
         <div 
           class="grid gap-6 transition-all"
           :class="[
@@ -668,12 +668,12 @@ const stats = computed(() => {
               <div v-if="viewMode === 'grid'" class="p-4 flex flex-col flex-1 min-w-0">
                 <div class="flex items-start justify-between mb-2 gap-2">
                   <h3 class="font-bold text-[13px] text-foreground truncate flex-1">{{ video.author }}</h3>
-                  <div class="flex text-amber-400 shrink-0 mt-0.5">
+                  <div class="flex text-warning shrink-0 mt-0.5">
                     <Star
                       v-for="i in 5"
                       :key="i"
                       class="size-3"
-                      :class="i <= Math.round(video.rating || 0) ? 'fill-amber-400 text-amber-400' : 'text-muted-foreground/30'"
+                      :class="i <= Math.round(video.rating || 0) ? 'fill-warning text-warning' : 'text-muted-foreground/30'"
                     />
                   </div>
                 </div>
@@ -689,9 +689,9 @@ const stats = computed(() => {
                     <Badge v-for="tag in video.aiTags.filter(t => t !== 'AI Summary')" :key="tag" 
                       class="inline-flex items-center transition-colors focus:outline-none focus:ring-1 focus:ring-ring shadow-none font-medium text-[10px] px-2 py-0.5 rounded-md border"
                       :class="
-                        tag === 'Approved' ? 'bg-emerald-50 text-emerald-600 border-emerald-100 dark:bg-emerald-900/30 dark:border-emerald-900/50' : 
+                        tag === 'Approved' ? 'bg-success/10 text-success border-success/20' : 
                         tag === 'Published' ? 'bg-primary/10 text-primary border-primary/20 dark:bg-primary/10 dark:border-primary/20' : 
-                        'bg-amber-50 text-amber-600 border-amber-100 dark:bg-amber-900/30 dark:border-amber-900/50'
+                        'bg-warning/10 text-warning border-warning/20'
                       "
                     >
                       {{ tag }}
@@ -710,20 +710,20 @@ const stats = computed(() => {
                 <div class="flex flex-col w-[200px] shrink-0">
                   <h3 class="font-bold text-[14.5px] text-foreground mb-2">{{ video.author }}</h3>
 
-                  <div class="flex text-amber-400 shrink-0 mb-3">
+                  <div class="flex text-warning shrink-0 mb-3">
                     <Star
                       v-for="i in 5"
                       :key="i"
                       class="size-3.5"
-                      :class="i <= Math.round(video.rating || 0) ? 'fill-amber-400 text-amber-400' : 'text-muted-foreground/30'"
+                      :class="i <= Math.round(video.rating || 0) ? 'fill-warning text-warning' : 'text-muted-foreground/30'"
                     />
                   </div>
                   <Badge
                     class="inline-flex items-center transition-colors focus:outline-none focus:ring-1 focus:ring-ring shadow-none font-medium text-[10.5px] px-2.5 py-0.5 rounded-full border w-max mb-1"
                     :class="
-                      video.status === 'Approved' ? 'bg-emerald-50 text-emerald-600 border-emerald-100 dark:bg-emerald-900/30 dark:border-emerald-900/50' : 
+                      video.status === 'Approved' ? 'bg-success/10 text-success border-success/20' : 
                       video.status === 'Published' ? 'bg-primary/10 text-primary border-primary/20 dark:bg-primary/10 dark:border-primary/20' : 
-                      'bg-amber-50 text-amber-600 border-amber-100 dark:bg-amber-900/30 dark:border-amber-900/50'
+                      'bg-warning/10 text-warning border-warning/20'
                     "
                   >
                     {{ video.status }}
@@ -832,12 +832,12 @@ const stats = computed(() => {
                     <span class="flex items-center gap-1.5"><Calendar class="size-3.5 opacity-70" /> {{ selectedVideo.date }}</span>
                     <span class="flex items-center gap-1.5"><Clock class="size-3.5 opacity-70" /> {{ selectedVideo.duration }}</span>
                   </div>
-                  <div class="flex text-amber-400">
+                  <div class="flex text-warning">
                     <Star
                       v-for="i in 5"
                       :key="i"
                       class="size-3"
-                      :class="i <= Math.round(selectedVideo.rating || 0) ? 'fill-amber-400 text-amber-400' : 'text-muted-foreground/30'"
+                      :class="i <= Math.round(selectedVideo.rating || 0) ? 'fill-warning text-warning' : 'text-muted-foreground/30'"
                     />
                   </div>
                 </div>
@@ -1023,7 +1023,7 @@ const stats = computed(() => {
               <button
                 type="button"
                 class="inline-flex h-9 w-full min-w-0 items-center justify-between gap-1.5 rounded-lg border px-3 text-xs font-semibold cursor-pointer"
-                :class="selectedVideo.status === 'Approved' || selectedVideo.status === 'Published' ? 'text-emerald-600 dark:text-emerald-400 border-emerald-500/20 bg-emerald-500/10' : 'text-amber-600 dark:text-amber-400 border-amber-500/20 bg-amber-500/10'"
+                :class="selectedVideo.status === 'Approved' || selectedVideo.status === 'Published' ? 'text-success border-success/20 bg-success/10' : 'text-warning border-warning/20 bg-warning/10'"
                 @click="showDetailStatusDropdown = !showDetailStatusDropdown"
               >
                 <span class="truncate">{{ selectedVideo.status }}</span>
@@ -1032,19 +1032,19 @@ const stats = computed(() => {
               <div v-if="showDetailStatusDropdown" class="absolute bottom-full mb-1.5 left-0 w-44 bg-popover text-popover-foreground border border-border rounded-md p-1 shadow-md z-50 space-y-0.5">
                 <button type="button" class="w-full text-left px-2 py-1.5 text-sm rounded-sm hover:bg-accent hover:text-accent-foreground cursor-pointer flex items-center justify-between" @click="handleStatusChange('Approved')">
                   <span>Approved</span>
-                  <Check v-if="selectedVideo.status === 'Approved'" class="size-3.5 text-emerald-600" />
+                  <Check v-if="selectedVideo.status === 'Approved'" class="size-3.5 text-success" />
                 </button>
                 <button type="button" class="w-full text-left px-2 py-1.5 text-sm rounded-sm hover:bg-accent hover:text-accent-foreground cursor-pointer flex items-center justify-between" @click="handleStatusChange('Published')">
                   <span>Published</span>
-                  <Check v-if="selectedVideo.status === 'Published'" class="size-3.5 text-emerald-600" />
+                  <Check v-if="selectedVideo.status === 'Published'" class="size-3.5 text-success" />
                 </button>
                 <button type="button" class="w-full text-left px-2 py-1.5 text-sm rounded-sm hover:bg-accent hover:text-accent-foreground cursor-pointer flex items-center justify-between" @click="handleStatusChange('Pending Approval')">
                   <span>Pending Approval</span>
-                  <Check v-if="selectedVideo.status === 'Pending Approval'" class="size-3.5 text-amber-600" />
+                  <Check v-if="selectedVideo.status === 'Pending Approval'" class="size-3.5 text-warning" />
                 </button>
                 <button type="button" class="w-full text-left px-2 py-1.5 text-sm rounded-sm hover:bg-accent hover:text-accent-foreground cursor-pointer flex items-center justify-between" @click="handleStatusChange('Rejected')">
                   <span>Rejected</span>
-                  <Check v-if="selectedVideo.status === 'Rejected'" class="size-3.5 text-rose-600" />
+                  <Check v-if="selectedVideo.status === 'Rejected'" class="size-3.5 text-destructive" />
                 </button>
               </div>
             </div>
@@ -1066,7 +1066,7 @@ const stats = computed(() => {
       class="fixed bottom-6 right-6 z-50 bg-foreground text-background px-4 py-3 rounded-xl shadow-2xl font-medium text-xs transition-all duration-300 transform flex items-center gap-2"
       :class="toastState.visible ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0 pointer-events-none'"
     >
-      <CheckCircle class="size-4 text-emerald-400" />
+      <CheckCircle class="size-4 text-success" />
       {{ toastState.message }}
     </div>
   </div>

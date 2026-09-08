@@ -131,14 +131,14 @@ watch(
       <RelayButton
         type="button"
         variant="outline"
-        class="h-10 w-full"
+        class="h-9 w-full"
         @click="handleCancel"
       >
         {{ t('CAPTAIN.FORM.CANCEL') }}
       </RelayButton>
       <RelayButton
         type="submit"
-        class="h-10 w-full"
+        class="h-9 w-full"
         :disabled="isLoading || isSubmitDisabled"
       >
         <span

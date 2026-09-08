@@ -68,17 +68,8 @@ const platformIcons = { Google: googleIcon, Facebook: facebookIcon, Yelp: yelpIc
 
 const getPlatformIcon = name => platformIcons[name] || googleIcon;
 
-// Deterministic gradient fallback when a listing has no fetched storefront photo.
-const GRADIENTS = [
-  'from-blue-500 to-indigo-600', 'from-emerald-500 to-teal-600', 'from-rose-500 to-pink-600',
-  'from-amber-500 to-orange-600', 'from-violet-500 to-purple-600', 'from-cyan-500 to-blue-600',
-];
-const gradientFor = key => {
-  const s = String(key || 'L');
-  let h = 0;
-  for (let i = 0; i < s.length; i += 1) h = s.charCodeAt(i) + ((h << 5) - h);
-  return GRADIENTS[Math.abs(h) % GRADIENTS.length];
-};
+// Semantic muted placeholder when a listing has no fetched storefront photo.
+const gradientFor = () => 'bg-muted text-muted-foreground';
 
 const listings = ref([]);
 const loading = ref(true);
@@ -121,7 +112,7 @@ const stats = computed(() => {
     { icon: Building2, tone: 'bg-primary/10 text-primary border-primary/20', value: String(list.length), label: 'Listings' },
     { icon: Layers, tone: 'bg-primary/10 text-primary border-primary/20', value: String(connected.size), label: 'Platforms' },
     { icon: TrendingUp, tone: 'bg-primary/10 text-primary border-primary/20', value: '—', label: 'Sync Rate' },
-    { icon: TriangleAlert, tone: 'bg-amber-50 text-amber-500 border-amber-100 dark:bg-amber-900/30 dark:border-amber-800 dark:text-amber-400', value: String(needAttention), label: 'Need Attention' },
+    { icon: TriangleAlert, tone: 'bg-warning/10 text-warning border-warning/20', value: String(needAttention), label: 'Need Attention' },
   ];
 });
 const platformsToApi = platforms => (platforms || []).map(p => ({ name: p.name, ok: p.status === 'Connected' }));
@@ -541,7 +532,7 @@ const closeAdd = () => {
     <!-- Main Content Area -->
     <div class="flex flex-col h-full w-full overflow-y-auto transition-all duration-300 custom-scrollbar">
       <!-- Header -->
-      <div class="px-8 py-6 border-b border-border bg-card shrink-0">
+      <div class="px-6 lg:px-10 py-6 bg-card shrink-0">
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
             <h1 class="text-base font-medium text-foreground">
@@ -610,7 +601,7 @@ const closeAdd = () => {
       </div>
 
       <!-- Filters & Toolbar -->
-      <div class="px-8 py-5 border-b border-border bg-background shrink-0 sticky top-0 z-40 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div class="px-6 lg:px-10 py-5 border-b border-border bg-background shrink-0 sticky top-0 z-40 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div class="flex flex-wrap items-center gap-2">
           <div class="relative w-48 mr-2">
             <Search class="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground z-10" />
@@ -719,9 +710,21 @@ const closeAdd = () => {
       </div>
 
       <!-- List Area -->
-      <div class="px-8 pb-10 pt-6">
-        <div v-if="filtered.length === 0" class="py-16 text-center text-sm text-muted-foreground">
-          {{ listings.length === 0 ? 'No listings yet.' : 'No listings match your filters.' }}
+      <div class="px-6 lg:px-10 pb-10 pt-6">
+        <div v-if="filtered.length === 0" class="py-16 flex flex-col items-center text-center">
+          <div class="size-16 rounded-full bg-primary/10 ring-8 ring-primary/5 flex items-center justify-center mb-4">
+            <Building2 class="size-7 text-primary" />
+          </div>
+          <h3 class="text-[20px] font-[600] text-foreground mb-2">{{ listings.length === 0 ? 'No listings yet' : 'No listings match your filters' }}</h3>
+          <p class="text-sm text-muted-foreground max-w-md mb-6">{{ listings.length === 0 ? 'Add your first business location to start monitoring reviews and managing your online presence.' : 'Try adjusting your search or filter criteria.' }}</p>
+          <div class="flex items-center gap-3">
+            <button v-if="listings.length === 0" class="inline-flex items-center gap-2 h-9 px-4 rounded-lg bg-primary text-primary-foreground text-[13px] font-semibold hover:bg-primary/90 shadow-xs cursor-pointer" @click="openAdd('connect')">
+              <Plus class="size-4" /> Add Your First Listing
+            </button>
+            <button v-else class="inline-flex items-center gap-2 h-9 px-4 rounded-lg border border-border bg-card text-[13px] font-medium text-foreground hover:bg-muted shadow-xs cursor-pointer" @click="query = ''; platformFilter = 'All'; statusFilter = 'All'; locationFilter = 'All'; scoreFilter = 'All'">
+              Reset Filters
+            </button>
+          </div>
         </div>
         <div v-else class="flex flex-col gap-5">
           <div
@@ -733,7 +736,7 @@ const closeAdd = () => {
             <!-- Left Thumbnail -->
             <div class="w-56 shrink-0 relative border-r border-border rounded-l-xl overflow-hidden">
               <img v-if="listing.image" :src="listing.image" class="w-full h-full object-cover" @error="listing.image = ''" />
-              <div v-else class="w-full h-full flex flex-col items-center justify-center gap-2 bg-gradient-to-br text-white select-none" :class="gradientFor(listing.title)">
+              <div v-else class="w-full h-full flex flex-col items-center justify-center gap-2 bg-muted text-muted-foreground select-none" :class="gradientFor(listing.title)">
                 <ImageIcon class="size-7 opacity-80" />
                 <span class="text-3xl font-bold">{{ (listing.title || 'L').charAt(0).toUpperCase() }}</span>
               </div>
@@ -755,7 +758,7 @@ const closeAdd = () => {
 
                 <div class="flex items-center gap-4">
                   <div class="flex items-center gap-2">
-                    <span class="bg-emerald-50 text-emerald-600 border border-emerald-100 shadow-none font-bold text-xs px-2 py-0.5 rounded-md">
+                    <span class="bg-success/10 text-success border border-success/20 shadow-none font-bold text-xs px-2 py-0.5 rounded-md">
                       {{ listing.optimizationScore != null ? `${listing.optimizationScore}%` : '—' }}
                     </span>
                     <span class="text-xs text-muted-foreground font-medium">Optimized</span>
@@ -790,7 +793,7 @@ const closeAdd = () => {
                 <div class="flex flex-col items-end gap-3 text-right">
                   <div class="flex items-center gap-2">
                     <div class="flex items-center text-[13px] font-bold text-foreground">
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="#FBBF24" stroke="#FBBF24" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="mr-1.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="mr-1.5 text-warning"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
                       {{ listing.rating != null ? listing.rating : '—' }}
                       <span class="text-muted-foreground font-normal mx-1.5">•</span>
                       <span class="text-muted-foreground font-medium">{{ listing.reviewsCount }} Reviews</span>
@@ -801,7 +804,7 @@ const closeAdd = () => {
                       <span class="text-[10px] text-muted-foreground">Last sync</span>
                       <span class="text-[11.5px] font-semibold text-foreground">{{ listing.lastSync }}</span>
                     </div>
-                    <CircleCheck class="size-4 text-emerald-500 ml-1" />
+                    <CircleCheck class="size-4 text-success ml-1" />
                   </div>
                 </div>
               </div>
@@ -846,7 +849,7 @@ const closeAdd = () => {
                     <button class="w-full text-left px-3 py-2 text-sm text-foreground hover:bg-muted transition-colors" @click.stop="duplicateListing(listing)">Duplicate</button>
                     <button v-if="isListingDisconnected(listing)" class="w-full text-left px-3 py-2 text-sm text-primary hover:bg-muted transition-colors" @click.stop="connectListing(listing)">Connect</button>
                     <button v-else class="w-full text-left px-3 py-2 text-sm text-foreground hover:bg-muted transition-colors" @click.stop="disconnectListing(listing)">Disconnect</button>
-                    <button class="w-full text-left px-3 py-2 text-sm text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950 transition-colors" @click.stop="deleteListing(listing)">Delete</button>
+                    <button class="w-full text-left px-3 py-2 text-sm text-destructive hover:bg-destructive/10 transition-colors" @click.stop="deleteListing(listing)">Delete</button>
                     <div class="my-1 border-t border-border"></div>
                     <button class="w-full text-left px-3 py-2 text-sm text-foreground hover:bg-muted transition-colors" @click.stop="viewHistory(listing)">View History</button>
                     <button class="w-full text-left px-3 py-2 text-sm text-foreground hover:bg-muted transition-colors" @click.stop="exportListing(listing)">Export</button>
@@ -868,7 +871,7 @@ const closeAdd = () => {
       class="fixed bottom-6 right-6 z-50 bg-foreground text-background px-4 py-3 rounded-lg shadow-xl font-medium text-sm transition-all duration-300 transform flex items-center gap-2"
       :class="toastState.visible ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0 pointer-events-none'"
     >
-      <CircleCheck class="size-4 text-emerald-400" />
+      <CircleCheck class="size-4 text-success" />
       {{ toastState.message }}
     </div>
 
@@ -902,13 +905,13 @@ const closeAdd = () => {
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div class="flex flex-col gap-1.5">
               <label class="text-[13.5px] font-medium text-foreground">Business Name <span class="text-destructive">*</span></label>
-              <input v-model="addForm.name" type="text" placeholder="E.g. Jaipur HQ" class="reset-base h-10 px-4 text-[14px] shadow-sm rounded-md border border-border/80 bg-background text-foreground focus-visible:ring-1 focus-visible:ring-primary/30 focus-visible:outline-none" />
+              <input v-model="addForm.name" type="text" placeholder="E.g. Jaipur HQ" class="reset-base h-9 px-4 text-[14px] shadow-sm rounded-md border border-border/80 bg-background text-foreground focus-visible:ring-1 focus-visible:ring-primary/30 focus-visible:outline-none" />
             </div>
             <div class="flex flex-col gap-1.5">
               <label class="text-[13.5px] font-medium text-foreground">Business Category <span class="text-destructive">*</span></label>
               <DropdownMenu>
                 <DropdownMenuTrigger as-child>
-                  <button type="button" class="w-full h-10 px-4 inline-flex items-center justify-between text-[14px] font-normal shadow-sm rounded-md border border-border/80 bg-background text-foreground focus-visible:ring-1 focus-visible:ring-primary/30 focus-visible:outline-none cursor-pointer">
+                  <button type="button" class="w-full h-9 px-4 inline-flex items-center justify-between text-[14px] font-normal shadow-sm rounded-md border border-border/80 bg-background text-foreground focus-visible:ring-1 focus-visible:ring-primary/30 focus-visible:outline-none cursor-pointer">
                     <span class="truncate">{{ addForm.category }}</span> <ChevronDown class="size-4 opacity-50 shrink-0" />
                   </button>
                 </DropdownMenuTrigger>
@@ -924,7 +927,7 @@ const closeAdd = () => {
               <label class="text-[13.5px] font-medium text-foreground">Primary Platform <span class="text-destructive">*</span></label>
               <DropdownMenu>
                 <DropdownMenuTrigger as-child>
-                  <button type="button" class="w-full h-10 px-4 inline-flex items-center justify-between text-[14px] font-normal shadow-sm rounded-md border border-border/80 bg-background text-foreground focus-visible:ring-1 focus-visible:ring-primary/30 focus-visible:outline-none cursor-pointer">
+                  <button type="button" class="w-full h-9 px-4 inline-flex items-center justify-between text-[14px] font-normal shadow-sm rounded-md border border-border/80 bg-background text-foreground focus-visible:ring-1 focus-visible:ring-primary/30 focus-visible:outline-none cursor-pointer">
                     <span class="truncate">{{ addForm.primaryPlatform }}</span> <ChevronDown class="size-4 opacity-50 shrink-0" />
                   </button>
                 </DropdownMenuTrigger>
@@ -937,7 +940,7 @@ const closeAdd = () => {
               <label class="text-[13.5px] font-medium text-foreground">Country <span class="text-destructive">*</span></label>
               <DropdownMenu>
                 <DropdownMenuTrigger as-child>
-                  <button type="button" class="w-full h-10 px-4 inline-flex items-center justify-between text-[14px] font-normal shadow-sm rounded-md border border-border/80 bg-background text-foreground focus-visible:ring-1 focus-visible:ring-primary/30 focus-visible:outline-none cursor-pointer">
+                  <button type="button" class="w-full h-9 px-4 inline-flex items-center justify-between text-[14px] font-normal shadow-sm rounded-md border border-border/80 bg-background text-foreground focus-visible:ring-1 focus-visible:ring-primary/30 focus-visible:outline-none cursor-pointer">
                     <span class="truncate">{{ addForm.country }}</span> <ChevronDown class="size-4 opacity-50 shrink-0" />
                   </button>
                 </DropdownMenuTrigger>
@@ -953,14 +956,14 @@ const closeAdd = () => {
               <label class="text-[13.5px] font-medium text-foreground">Address <span class="text-destructive">*</span></label>
               <div class="relative">
                 <MapPin class="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground pointer-events-none" />
-                <input v-model="addForm.address" type="text" placeholder="123 Main St, City, State" class="reset-base w-full pl-9 pr-4 h-10 text-[14px] shadow-sm rounded-md border border-border/80 bg-background text-foreground focus-visible:ring-1 focus-visible:ring-primary/30 focus-visible:outline-none" />
+                <input v-model="addForm.address" type="text" placeholder="123 Main St, City, State" class="reset-base w-full pl-9 pr-4 h-9 text-[14px] shadow-sm rounded-md border border-border/80 bg-background text-foreground focus-visible:ring-1 focus-visible:ring-primary/30 focus-visible:outline-none" />
               </div>
             </div>
             <div class="flex flex-col gap-1.5">
               <label class="text-[13.5px] font-medium text-foreground">Phone <span class="text-destructive">*</span></label>
               <div class="relative">
                 <Phone class="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground pointer-events-none" />
-                <input v-model="addForm.phone" type="text" placeholder="+1 (555) 000-0000" class="reset-base w-full pl-9 pr-4 h-10 text-[14px] shadow-sm rounded-md border border-border/80 bg-background text-foreground focus-visible:ring-1 focus-visible:ring-primary/30 focus-visible:outline-none" />
+                <input v-model="addForm.phone" type="text" placeholder="+1 (555) 000-0000" class="reset-base w-full pl-9 pr-4 h-9 text-[14px] shadow-sm rounded-md border border-border/80 bg-background text-foreground focus-visible:ring-1 focus-visible:ring-primary/30 focus-visible:outline-none" />
               </div>
             </div>
           </div>
@@ -970,14 +973,14 @@ const closeAdd = () => {
               <label class="text-[13.5px] font-medium text-foreground">Website</label>
               <div class="relative">
                 <Globe class="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground pointer-events-none" />
-                <input v-model="addForm.website" type="text" placeholder="https://example.com" class="reset-base w-full pl-9 pr-4 h-10 text-[14px] shadow-sm rounded-md border border-border/80 bg-background text-foreground focus-visible:ring-1 focus-visible:ring-primary/30 focus-visible:outline-none" />
+                <input v-model="addForm.website" type="text" placeholder="https://example.com" class="reset-base w-full pl-9 pr-4 h-9 text-[14px] shadow-sm rounded-md border border-border/80 bg-background text-foreground focus-visible:ring-1 focus-visible:ring-primary/30 focus-visible:outline-none" />
               </div>
             </div>
             <div class="flex flex-col gap-1.5">
               <label class="text-[13.5px] font-medium text-foreground">Business Email</label>
               <div class="relative">
                 <Mail class="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground pointer-events-none" />
-                <input v-model="addForm.email" type="email" placeholder="hello@company.com" class="reset-base w-full pl-9 pr-4 h-10 text-[14px] shadow-sm rounded-md border border-border/80 bg-background text-foreground focus-visible:ring-1 focus-visible:ring-primary/30 focus-visible:outline-none" />
+                <input v-model="addForm.email" type="email" placeholder="hello@company.com" class="reset-base w-full pl-9 pr-4 h-9 text-[14px] shadow-sm rounded-md border border-border/80 bg-background text-foreground focus-visible:ring-1 focus-visible:ring-primary/30 focus-visible:outline-none" />
               </div>
             </div>
           </div>
@@ -987,14 +990,14 @@ const closeAdd = () => {
               <label class="text-[13.5px] font-medium text-foreground">Store ID <span class="text-muted-foreground font-normal">(Optional)</span></label>
               <div class="relative">
                 <Hash class="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground pointer-events-none" />
-                <input v-model="addForm.storeId" type="text" placeholder="Internal ID or Code" class="reset-base w-full pl-9 pr-4 h-10 text-[14px] shadow-sm rounded-md border border-border/80 bg-background text-foreground focus-visible:ring-1 focus-visible:ring-primary/30 focus-visible:outline-none" />
+                <input v-model="addForm.storeId" type="text" placeholder="Internal ID or Code" class="reset-base w-full pl-9 pr-4 h-9 text-[14px] shadow-sm rounded-md border border-border/80 bg-background text-foreground focus-visible:ring-1 focus-visible:ring-primary/30 focus-visible:outline-none" />
               </div>
             </div>
             <div class="flex flex-col gap-1.5">
               <label class="text-[13.5px] font-medium text-foreground">Photo URL <span class="text-muted-foreground font-normal">(Optional)</span></label>
               <div class="relative">
                 <ImageIcon class="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground pointer-events-none" />
-                <input v-model="addForm.image" type="text" placeholder="https://…/photo.jpg" class="reset-base w-full pl-9 pr-4 h-10 text-[14px] shadow-sm rounded-md border border-border/80 bg-background text-foreground focus-visible:ring-1 focus-visible:ring-primary/30 focus-visible:outline-none" />
+                <input v-model="addForm.image" type="text" placeholder="https://…/photo.jpg" class="reset-base w-full pl-9 pr-4 h-9 text-[14px] shadow-sm rounded-md border border-border/80 bg-background text-foreground focus-visible:ring-1 focus-visible:ring-primary/30 focus-visible:outline-none" />
               </div>
             </div>
           </div>
@@ -1132,7 +1135,7 @@ const closeAdd = () => {
             <div class="text-muted-foreground mb-2">Platform connections</div>
             <div v-for="p in historyListing.platforms" :key="p.name" class="flex items-center justify-between py-1">
               <span class="text-foreground">{{ p.name }}</span>
-              <span :class="p.status === 'Connected' ? 'text-emerald-600 dark:text-emerald-400' : 'text-muted-foreground'">{{ p.status }}</span>
+              <span :class="p.status === 'Connected' ? 'text-success' : 'text-muted-foreground'">{{ p.status }}</span>
             </div>
           </div>
         </div>

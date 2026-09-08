@@ -87,7 +87,7 @@ onMounted(load);
 <template>
   <div class="flex h-full min-h-0 flex-col bg-muted/10 dark:bg-background">
     <div
-      class="flex flex-col justify-between gap-4 border-b border-border bg-card px-6 py-6 md:flex-row md:items-start"
+      class="flex flex-col justify-between gap-4 bg-card px-6 py-6 md:flex-row md:items-start"
     >
       <div>
         <h1 class="mb-1.5 text-base font-medium tracking-tight text-foreground">
@@ -188,7 +188,7 @@ onMounted(load);
         class="w-full min-w-max whitespace-nowrap text-left text-sm"
       >
         <thead
-          class="sticky top-0 z-10 border-b border-border/60 bg-card text-[12px] font-medium text-muted-foreground shadow-sm"
+          class="sticky top-0 z-10 border-b border-border/60 bg-card text-[14px] font-medium text-muted-foreground shadow-sm"
         >
           <tr>
             <th class="px-4 py-3 font-medium">
@@ -236,9 +236,7 @@ onMounted(load);
                 >
                   {{ deal.name }}
                 </span>
-                <span
-                  class="text-[11px] font-medium uppercase tracking-wide text-muted-foreground"
-                >
+                <span class="text-[11px] font-medium text-muted-foreground">
                   {{ $t('OPPORTUNITIES.ID', { id: deal.id }) }}
                 </span>
               </div>

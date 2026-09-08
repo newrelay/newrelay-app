@@ -551,6 +551,7 @@
         "EMAIL": "Email",
         "CALL": "Call Contact"
       },
+      "AT": "at",
       "ABOUT": {
         "TITLE": "About",
         "EDIT": "Edit contact",

@@ -179,14 +179,14 @@ const saveAbout = async () => {
     >
       <div class="border-b border-border/30 p-6">
         <h3
-          class="capitalize mb-6 flex items-center justify-between text-[15px] font-semibold text-foreground"
+          class="mb-6 flex items-center justify-between text-[15px] font-semibold text-foreground"
         >
           {{ t('CONTACTS_LAYOUT.DETAIL.ABOUT.TITLE') }}
           <RelayButton
             v-if="!isEditing"
             variant="ghost"
             size="icon"
-            class="size-6 text-muted-foreground hover:text-foreground border border-border hover:border-transparent"
+            class="size-6 text-muted-foreground hover:text-foreground"
             :title="t('CONTACTS_LAYOUT.DETAIL.ABOUT.EDIT')"
             @click="startEditing"
           >
@@ -196,94 +196,103 @@ const saveAbout = async () => {
 
         <!-- View mode -->
         <div v-if="!isEditing" class="flex flex-col">
-          <div class="flex items-start gap-3 border-b border-border/30 py-3">
-            <span class="i-lucide-mail size-4 shrink-0 text-muted-foreground" />
+          <div class="flex items-start gap-4 border-b border-border/30 pb-4">
+            <div
+              class="flex size-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary"
+            >
+              <span class="i-lucide-mail size-5" />
+            </div>
             <div class="flex min-w-0 flex-col gap-0.5">
-              <span class="text-[12px] font-medium text-muted-foreground">
+              <span class="text-[13px] text-muted-foreground">
                 {{ t('CONTACTS_LAYOUT.DETAIL.ABOUT.EMAIL') }}
               </span>
               <a
                 v-if="contact?.email"
                 :href="`mailto:${contact.email}`"
-                class="truncate text-[13px] text-foreground hover:text-primary hover:underline"
+                class="truncate text-[14px] font-medium text-primary hover:underline"
               >
                 {{ contact.email }}
               </a>
-              <span v-else class="text-[13px] text-foreground">
+              <span v-else class="text-[14px] font-medium text-foreground">
                 {{ t('CONTACTS_LAYOUT.DETAIL.ABOUT.EMAIL_NOT_PROVIDED') }}
               </span>
             </div>
           </div>
 
-          <div class="flex items-start gap-3 border-b border-border/30 py-3">
-            <span
-              class="i-lucide-phone size-4 shrink-0 text-muted-foreground"
-            />
+          <div class="flex items-start gap-4 border-b border-border/30 py-4">
+            <div
+              class="flex size-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary"
+            >
+              <span class="i-lucide-phone size-5" />
+            </div>
             <div class="flex min-w-0 flex-col gap-0.5">
-              <span class="text-[12px] font-medium text-muted-foreground">
+              <span class="text-[13px] text-muted-foreground">
                 {{ t('CONTACTS_LAYOUT.DETAIL.ABOUT.PHONE') }}
               </span>
               <a
                 v-if="contact?.phoneNumber"
                 :href="`tel:${contact.phoneNumber}`"
-                class="truncate text-[13px] text-foreground transition-colors hover:text-primary"
+                class="truncate text-[14px] font-medium text-foreground transition-colors hover:text-primary"
               >
                 {{ contact.phoneNumber }}
               </a>
-              <span v-else class="text-[13px] text-foreground">
+              <span v-else class="text-[14px] font-medium text-foreground">
                 {{ t('CONTACTS_LAYOUT.DETAIL.ABOUT.PHONE_NOT_PROVIDED') }}
               </span>
             </div>
           </div>
 
-          <div class="flex items-start gap-3 border-b border-border/30 py-3">
-            <span
-              class="i-lucide-map-pin size-4 shrink-0 text-muted-foreground"
-            />
+          <div class="flex items-start gap-4 border-b border-border/30 py-4">
+            <div
+              class="flex size-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary"
+            >
+              <span class="i-lucide-map-pin size-5" />
+            </div>
             <div class="flex min-w-0 flex-col gap-0.5">
-              <span class="text-[12px] font-medium text-muted-foreground">
+              <span class="text-[13px] text-muted-foreground">
                 {{ t('CONTACTS_LAYOUT.DETAIL.ABOUT.ADDRESS') }}
               </span>
-              <span v-if="addressDisplay" class="text-[13px] text-foreground">
+              <span
+                v-if="addressDisplay"
+                class="text-[14px] font-medium text-foreground"
+              >
                 {{ addressDisplay }}
               </span>
-              <span v-else class="text-[13px] text-foreground">
+              <span v-else class="text-[14px] font-medium text-foreground">
                 {{ t('CONTACTS_LAYOUT.DETAIL.ABOUT.ADDRESS_NOT_PROVIDED') }}
               </span>
             </div>
           </div>
 
-          <div v-if="socialEntries.length" class="flex items-start gap-3 py-3">
-            <span
-              class="i-ri-linkedin-box-fill size-4 shrink-0 text-muted-foreground"
-            />
-            <div class="flex min-w-0 flex-col gap-1">
-              <span class="text-[12px] font-medium text-muted-foreground">
-                {{ t('CONTACTS_LAYOUT.DETAIL.ABOUT.SOCIALS') }}
-              </span>
-              <div class="flex flex-wrap gap-2">
-                <a
-                  v-for="social in socialEntries"
-                  :key="social.id"
-                  :href="`https://${social.prefix}${social.handle}`"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  class="text-[13px] text-foreground transition-colors hover:text-primary hover:underline"
-                >
-                  {{ social.id.charAt(0).toUpperCase() + social.id.slice(1) }}
-                </a>
-              </div>
+          <div v-if="socialEntries.length" class="flex items-center gap-4 pt-4">
+            <div class="flex gap-3">
+              <a
+                v-for="social in socialEntries"
+                :key="social.id"
+                :href="`https://${social.prefix}${social.handle}`"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="flex size-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary transition-colors hover:bg-primary/20"
+                :title="social.handle"
+              >
+                <span class="size-5" :class="[social.icon]" />
+              </a>
             </div>
+            <span class="text-[14px] text-muted-foreground">
+              {{ t('CONTACTS_LAYOUT.DETAIL.ABOUT.SOCIALS') }}
+            </span>
           </div>
-          <div v-else class="flex items-start gap-3 py-3">
-            <span
-              class="i-ri-linkedin-box-fill size-4 shrink-0 text-muted-foreground"
-            />
+          <div v-else class="flex items-start gap-4 pt-4">
+            <div
+              class="flex size-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary"
+            >
+              <span class="i-ri-linkedin-box-fill size-5" />
+            </div>
             <div class="flex flex-col gap-0.5">
-              <span class="text-[12px] font-medium text-muted-foreground">
+              <span class="text-[13px] text-muted-foreground">
                 {{ t('CONTACTS_LAYOUT.DETAIL.ABOUT.SOCIALS') }}
               </span>
-              <span class="text-[13px] text-foreground">
+              <span class="text-[14px] font-medium text-foreground">
                 {{ emptyValue }}
               </span>
             </div>
@@ -292,13 +301,15 @@ const saveAbout = async () => {
 
         <!-- Edit mode -->
         <div v-else class="space-y-3">
-          <div class="mb-4 flex flex-col gap-4 border-b border-border/40 pb-4">
+          <div
+            class="mb-4 flex items-center gap-3 border-b border-border/40 pb-4"
+          >
             <div
-              class="flex size-14 items-center justify-center rounded-full bg-muted text-sm font-semibold text-muted-foreground"
+              class="flex size-10 shrink-0 items-center justify-center rounded-full bg-muted text-sm font-semibold text-muted-foreground shadow-sm ring-1 ring-border/50"
             >
               {{ contactInitials }}
             </div>
-            <div class="flex flex-col gap-1.5">
+            <div class="flex min-w-0 flex-1 flex-col gap-1.5">
               <label class="text-[13.5px] font-medium text-foreground">
                 {{ t('CONTACTS_LAYOUT.DETAIL.ABOUT.FULL_NAME') }}
               </label>
@@ -310,7 +321,7 @@ const saveAbout = async () => {
           </div>
 
           <div class="flex flex-col gap-1.5">
-            <label class="text-[13.5px] text-foreground font-[500]">
+            <label class="text-[13.5px] font-medium text-foreground">
               {{ t('CONTACTS_LAYOUT.DETAIL.ABOUT.EMAIL') }}
             </label>
             <RelayInput
@@ -320,7 +331,7 @@ const saveAbout = async () => {
             />
           </div>
           <div class="flex flex-col gap-1.5">
-            <label class="text-[13.5px] text-foreground font-[500]">
+            <label class="text-[13.5px] font-medium text-foreground">
               {{ t('CONTACTS_LAYOUT.DETAIL.ABOUT.PHONE') }}
             </label>
             <RelayInput
@@ -329,7 +340,7 @@ const saveAbout = async () => {
             />
           </div>
           <div class="flex flex-col gap-1.5">
-            <label class="text-[13.5px] text-foreground font-[500]">
+            <label class="text-[13.5px] font-medium text-foreground">
               {{ t('CONTACTS_LAYOUT.DETAIL.ABOUT.ADDRESS') }}
             </label>
             <RelayInput
@@ -339,7 +350,7 @@ const saveAbout = async () => {
           </div>
 
           <div class="flex flex-col gap-1.5 pt-2">
-            <label class="text-[13.5px] text-foreground font-[500]">
+            <label class="text-[13.5px] font-medium text-foreground">
               {{ t('CONTACTS_LAYOUT.DETAIL.ABOUT.SOCIAL_LINKS') }}
             </label>
             <div class="mt-1 space-y-2">
@@ -369,7 +380,7 @@ const saveAbout = async () => {
                 <RelayButton
                   variant="ghost"
                   size="icon"
-                  class="size-8 shrink-0 text-muted-foreground hover:text-destructive border border-border hover:border-transparent"
+                  class="size-8 shrink-0 text-muted-foreground hover:text-destructive"
                   @click="removeSocialLink(link.id)"
                 >
                   <span class="i-lucide-x size-4" />
@@ -384,13 +395,14 @@ const saveAbout = async () => {
                 @action="addSocialLink"
               >
                 <template #trigger>
-                  <button
-                    type="button"
-                    class="reset-base mt-1 flex w-fit cursor-pointer items-center gap-1.5 text-[13px] font-medium text-primary transition-colors hover:underline"
+                  <RelayButton
+                    variant="outline"
+                    size="sm"
+                    class="mt-2 h-8 gap-2 self-start text-xs font-medium text-foreground shadow-sm"
                   >
                     <span class="i-lucide-plus size-3.5" />
                     {{ t('CONTACTS_LAYOUT.DETAIL.ABOUT.ADD_SOCIAL') }}
-                  </button>
+                  </RelayButton>
                 </template>
                 <template #icon="{ item }">
                   <span
@@ -425,7 +437,7 @@ const saveAbout = async () => {
       </div>
 
       <div class="p-6">
-        <h3 class="capitalize mb-4 text-[15px] font-semibold text-foreground">
+        <h3 class="mb-4 text-[15px] font-semibold text-foreground">
           {{ t('CONTACTS_LAYOUT.DETAIL.ABOUT.STATUS_PROPERTIES') }}
         </h3>
         <div class="flex flex-col gap-3">

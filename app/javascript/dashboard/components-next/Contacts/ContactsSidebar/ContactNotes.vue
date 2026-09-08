@@ -113,41 +113,41 @@ useKeyboardEvents(keyboardEvents);
 <template>
   <div>
     <div class="mb-6 flex items-center justify-between">
-      <h3 class="capitalize text-sm font-medium text-foreground">
+      <h3 class="text-sm font-medium text-foreground">
         {{ t('CONTACTS_LAYOUT.SIDEBAR.TABS.NOTES') }}
       </h3>
       <RelayButton
         v-if="!isAddingNote"
         variant="outline"
-        class="flex h-9 items-center gap-1.5 rounded-lg border border-border bg-background px-4 text-[13px] font-medium shadow-sm transition-all hover:border-transparent hover:bg-muted"
+        class="h-8 text-xs font-medium"
         @click="startAddNote"
       >
-        <span class="i-lucide-plus size-4" />
+        <span class="i-lucide-plus size-3" />
         {{ t('CONTACTS_LAYOUT.SIDEBAR.NOTES.ADD_NOTE_BUTTON') }}
       </RelayButton>
     </div>
 
     <div
       v-if="isAddingNote"
-      class="mb-6 flex flex-col gap-3 rounded-xl border border-border/80 bg-background p-4 shadow-sm"
+      class="mb-6 flex flex-col gap-3 rounded-xl border border-border/50 bg-muted/30 p-4 animate-in fade-in slide-in-from-top-2"
     >
       <textarea
         v-model="newNoteContent"
         :placeholder="t('CONTACTS_LAYOUT.SIDEBAR.NOTES.PLACEHOLDER')"
-        class="min-h-[100px] w-full resize-none border-none bg-transparent text-[14px] text-foreground outline-none placeholder:text-muted-foreground/60 focus:ring-0"
+        class="min-h-[100px] w-full resize-none rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground outline-none placeholder:text-muted-foreground/60 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary/30"
       />
-      <div
-        class="flex items-center justify-end gap-2 border-t border-border/50 pt-2"
-      >
+      <div class="flex items-center justify-end gap-2">
         <RelayButton
-          variant="outline"
-          class="h-8 rounded-lg border border-border px-4 text-[13px] font-medium hover:border-transparent"
+          variant="ghost"
+          size="sm"
+          class="h-8 text-xs font-medium"
           @click="cancelAddNote"
         >
           {{ t('CONTACTS_LAYOUT.SIDEBAR.NOTES.CANCEL') }}
         </RelayButton>
         <RelayButton
-          class="h-8 rounded-lg bg-primary px-4 text-[13px] font-medium text-primary-foreground shadow-sm hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-50"
+          size="sm"
+          class="h-8 text-xs font-medium"
           :disabled="!newNoteContent.trim() || isCreatingNote"
           @click="onAdd"
         >
@@ -209,7 +209,7 @@ useKeyboardEvents(keyboardEvents);
                 <RelayButton
                   variant="ghost"
                   size="icon"
-                  class="size-6 rounded-md text-muted-foreground hover:bg-primary/10 hover:text-primary border border-border hover:border-transparent"
+                  class="size-6 rounded-md text-muted-foreground hover:bg-primary/10 hover:text-primary"
                 >
                   <span class="i-lucide-ellipsis size-3.5" />
                 </RelayButton>

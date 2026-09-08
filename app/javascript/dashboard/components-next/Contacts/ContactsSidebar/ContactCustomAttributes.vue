@@ -115,7 +115,7 @@ const showEmptyPlaceholder = computed(
     >
       <span class="i-lucide-user size-6 text-muted-foreground" />
     </div>
-    <h3 class="capitalize mb-1 text-sm font-medium text-foreground">
+    <h3 class="mb-1 text-sm font-medium text-foreground">
       {{ t('CONTACTS_LAYOUT.SIDEBAR.TABS.ATTRIBUTES') }}
     </h3>
     <p class="text-xs text-muted-foreground">
@@ -182,7 +182,7 @@ const showEmptyPlaceholder = computed(
     >
       <span class="i-lucide-user size-6 text-muted-foreground" />
     </div>
-    <h3 class="capitalize mb-1 text-sm font-medium text-foreground">
+    <h3 class="mb-1 text-sm font-medium text-foreground">
       {{ t('CONTACTS_LAYOUT.SIDEBAR.TABS.ATTRIBUTES') }}
     </h3>
     <p class="text-xs text-muted-foreground">

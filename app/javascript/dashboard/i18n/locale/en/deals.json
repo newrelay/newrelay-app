@@ -7,7 +7,45 @@
     "VIEW_BOARD": "Board",
     "EMPTY": {
       "TITLE": "No deals yet",
-      "DESCRIPTION": "Create your first deal to start tracking opportunities."
+      "SUBTITLE": "Deals track your revenue pipeline. They help you visualize your sales process, forecast revenue, and close more business.",
+      "DESCRIPTION": "Create your first deal to start tracking opportunities.",
+      "GETTING_STARTED": "Getting Started",
+      "STEP_BADGE": "3/4 Done",
+      "STEP_WORKSPACE": "Workspace Created",
+      "STEP_CONTACTS": "Contacts Imported",
+      "STEP_COMPANY": "Company Created",
+      "STEP_CREATE": "Create First Deal",
+      "STEP_CREATE_HINT": "Add a potential sale to track its progress.",
+      "ADD_TITLE": "Add your deals",
+      "CREATE": "Create Deal",
+      "OR_IMPORT": "or import",
+      "UPLOAD_CSV": "Upload CSV File",
+      "IMPORT_HUBSPOT": "Import from HubSpot",
+      "IMPORT_SALESFORCE": "Import from Salesforce",
+      "SEARCH_EMPTY_TITLE": "No matches found",
+      "SEARCH_EMPTY_SUBTITLE": "We couldn't find any deals matching \"{query}\". Would you like to create a new deal?",
+      "CLEAR_SEARCH": "Clear Search",
+      "WHY_TITLE": "Why use Deals?",
+      "WHY": {
+        "ONE": {
+          "TITLE": "Track Revenue",
+          "DESC": "Forecast your sales and track potential revenue intuitively."
+        },
+        "TWO": {
+          "TITLE": "Monitor Pipeline",
+          "DESC": "Visualize all stages of your sales pipeline seamlessly."
+        },
+        "THREE": {
+          "TITLE": "Close Faster",
+          "DESC": "Spot bottlenecks and optimize your sales process effectively."
+        },
+        "FOUR": {
+          "TITLE": "Automate Tasks",
+          "DESC": "Trigger automated actions as deals move through stages."
+        }
+      },
+      "DEV_LOAD_DEMO": "Load Demo Deals instead",
+      "DEV_TOGGLE_EMPTY": "Toggle empty states"
     },
     "SEARCH_PLACEHOLDER": "Search deals...",
     "METRICS": {
@@ -102,7 +140,44 @@
     "SEARCH_PLACEHOLDER": "Search opportunities...",
     "EMPTY": {
       "TITLE": "No opportunities yet",
-      "DESCRIPTION": "Create a deal to start tracking opportunities."
+      "SUBTITLE": "Opportunities help you track the lifecycle of your deals from creation to close in detail.",
+      "DESCRIPTION": "Create a deal to start tracking opportunities.",
+      "GETTING_STARTED": "Getting Started",
+      "STEP_BADGE": "1/4 Done",
+      "STEP_WORKSPACE": "Workspace Created",
+      "STEP_CONTACTS": "Sync Contacts",
+      "STEP_CONTACTS_HINT": "Import contacts to link with your deals.",
+      "STEP_STAGES": "Setup Sales Stages",
+      "STEP_CREATE": "Create First Opportunity",
+      "ADD_TITLE": "Build your opportunities",
+      "CREATE": "Create Opportunity",
+      "OR_IMPORT": "or import",
+      "UPLOAD_CSV": "Upload CSV File",
+      "IMPORT_HUBSPOT": "Import from HubSpot",
+      "SEARCH_EMPTY_TITLE": "No matches found",
+      "SEARCH_EMPTY_SUBTITLE": "We couldn't find any opportunities matching \"{query}\". Would you like to create a new opportunity?",
+      "CLEAR_SEARCH": "Clear Search",
+      "WHY_TITLE": "Why use Opportunities?",
+      "WHY": {
+        "ONE": {
+          "TITLE": "Granular Details",
+          "DESC": "Keep track of probability, priority and activities."
+        },
+        "TWO": {
+          "TITLE": "Track Close Rates",
+          "DESC": "Understand how many opportunities are converting."
+        },
+        "THREE": {
+          "TITLE": "Task Management",
+          "DESC": "Stay on top of follow-ups and action items."
+        },
+        "FOUR": {
+          "TITLE": "Value Tracking",
+          "DESC": "Calculate exact pipeline value and weighted value."
+        }
+      },
+      "DEV_LOAD_DEMO": "Load Demo Opportunities instead",
+      "DEV_TOGGLE_EMPTY": "Toggle empty states"
     },
     "NEW": "New Opportunity",
     "ID": "OPP-{id}"

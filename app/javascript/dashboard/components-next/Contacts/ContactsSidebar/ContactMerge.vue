@@ -125,7 +125,7 @@ const initials = name => {
 
 <template>
   <div>
-    <h3 class="capitalize mb-6 text-sm font-medium text-foreground">
+    <h3 class="mb-6 text-sm font-medium text-foreground">
       {{ t('CONTACTS_LAYOUT.SIDEBAR.MERGE.TITLE_NEW') }}
     </h3>
 
@@ -269,9 +269,7 @@ const initials = name => {
                   {{ initials(selectedContact.name) }}
                 </div>
                 <div class="min-w-0">
-                  <h4
-                    class="truncate text-[14px] font-medium capitalize text-foreground"
-                  >
+                  <h4 class="truncate text-[14px] font-medium text-foreground">
                     {{ selectedContact.name }}
                   </h4>
                   <p
@@ -335,9 +333,7 @@ const initials = name => {
                   {{ initials(selectedDuplicate?.name) }}
                 </div>
                 <div class="min-w-0">
-                  <h4
-                    class="truncate text-[14px] font-medium capitalize text-foreground"
-                  >
+                  <h4 class="truncate text-[14px] font-medium text-foreground">
                     {{ selectedDuplicate?.name }}
                   </h4>
                   <p

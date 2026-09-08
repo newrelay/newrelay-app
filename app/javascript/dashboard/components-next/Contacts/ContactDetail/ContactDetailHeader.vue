@@ -1,6 +1,7 @@
 <script setup>
 import { computed, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
+import { useRoute } from 'vue-router';
 import { dynamicTime } from 'shared/helpers/timeHelper';
 import { usePolicy } from 'dashboard/composables/usePolicy';
 
@@ -33,6 +34,7 @@ const emit = defineEmits([
 ]);
 
 const { t } = useI18n();
+const route = useRoute();
 const { checkPermissions } = usePolicy();
 
 const avatarPreviewUrl = ref('');
@@ -50,13 +52,19 @@ const avatarSrc = computed(
 
 const attrs = computed(() => props.contact?.additionalAttributes || {});
 
-const subtitle = computed(() => {
-  const role = attrs.value.description?.trim();
-  const company = attrs.value.companyName?.trim();
-  if (role && company) return `${role} at ${company}`;
-  if (company) return company;
-  if (role) return role;
-  return '';
+const role = computed(() => attrs.value.description?.trim() || '');
+const companyName = computed(() => attrs.value.companyName?.trim() || '');
+
+const companyRoute = computed(() => {
+  const id = props.contact?.companyId;
+  if (!id) return null;
+  return {
+    name: 'companies_dashboard_show',
+    params: {
+      accountId: route.params.accountId,
+      companyId: id,
+    },
+  };
 });
 
 const lastActiveLabel = computed(() => {
@@ -65,6 +73,10 @@ const lastActiveLabel = computed(() => {
     date: dynamicTime(props.contact.lastActivityAt),
   });
 });
+
+const hasMetaLine = computed(() =>
+  Boolean(role.value || companyName.value || lastActiveLabel.value)
+);
 
 const isBlocked = computed(() => Boolean(props.contact?.blocked));
 
@@ -127,7 +139,7 @@ const handleAvatarDelete = () => {
       <RelayButton
         variant="ghost"
         size="icon"
-        class="-ml-2 size-9 text-muted-foreground hover:bg-muted/50 hover:text-foreground border border-border hover:border-transparent"
+        class="-ml-2 size-9 text-muted-foreground hover:bg-muted/50 hover:text-foreground"
         :aria-label="t('CONTACTS_LAYOUT.DETAIL.BACK')"
         @click="emit('back')"
       >
@@ -135,31 +147,44 @@ const handleAvatarDelete = () => {
       </RelayButton>
 
       <div class="flex min-w-0 items-center gap-3">
-        <Avatar
-          :src="avatarSrc"
-          :name="contact?.name || ''"
-          :size="40"
-          rounded-full
-          allow-upload
-          @upload="handleAvatarUpload"
-          @delete="handleAvatarDelete"
-        />
+        <span
+          class="inline-flex shrink-0 overflow-hidden rounded-full shadow-sm ring-1 ring-border/50"
+        >
+          <Avatar
+            :src="avatarSrc"
+            :name="contact?.name || ''"
+            :size="40"
+            rounded-full
+            allow-upload
+            @upload="handleAvatarUpload"
+            @delete="handleAvatarDelete"
+          />
+        </span>
         <div class="min-w-0">
-          <h1
-            class="capitalize truncate text-[16px] font-[500] text-foreground"
-          >
+          <h1 class="truncate text-base font-semibold text-foreground">
             {{ contact?.name || t('CONTACTS_LAYOUT.CARD.UNNAMED_CONTACT') }}
           </h1>
-          <p
-            v-if="subtitle"
-            class="truncate text-[12px] font-normal text-muted-foreground"
-          >
-            {{ subtitle }}
-          </p>
-          <p
-            v-if="lastActiveLabel"
-            class="truncate text-[12px] font-normal text-muted-foreground"
-          >
+          <p v-if="hasMetaLine" class="truncate text-xs text-muted-foreground">
+            <template v-if="role && companyName">
+              {{ role }} {{ t('CONTACTS_LAYOUT.DETAIL.AT') }}
+              <router-link
+                v-if="companyRoute"
+                :to="companyRoute"
+                class="font-medium text-primary transition-colors hover:underline"
+              >
+                {{ companyName }}
+              </router-link>
+              <span v-else>{{ companyName }}</span>
+            </template>
+            <span v-else-if="companyName || role">
+              {{ companyName || role }}
+            </span>
+            <span
+              v-if="(role || companyName) && lastActiveLabel"
+              class="mx-1.5 text-muted-foreground/50"
+            >
+              •
+            </span>
             {{ lastActiveLabel }}
           </p>
         </div>
@@ -202,13 +227,14 @@ const handleAvatarDelete = () => {
         @action="handleMoreAction"
       >
         <template #trigger>
-          <button
-            type="button"
-            class="reset-base flex size-9 items-center justify-center rounded-lg border border-border bg-background text-muted-foreground shadow-sm transition-all hover:border-transparent hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-0"
+          <RelayButton
+            variant="outline"
+            size="icon"
+            class="size-9 rounded-lg text-muted-foreground shadow-sm hover:text-foreground"
             :aria-label="t('CONVERSATION.HEADER.MORE_ACTIONS')"
           >
-            <span class="i-lucide-ellipsis-vertical size-4" />
-          </button>
+            <span class="i-lucide-ellipsis size-4" />
+          </RelayButton>
         </template>
       </RelayActionDropdown>
     </div>

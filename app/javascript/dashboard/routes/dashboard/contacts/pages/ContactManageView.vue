@@ -200,9 +200,9 @@ onMounted(() => {
       <div
         class="flex min-h-0 min-w-0 flex-1 flex-col bg-background lg:overflow-hidden"
       >
-        <div class="shrink-0 px-6">
+        <div class="shrink-0 border-b border-border/40 bg-card px-6 py-4">
           <div
-            class="flex items-center gap-6 border-b border-border"
+            class="inline-flex h-10 items-center justify-center rounded-lg bg-muted/60 p-1 text-muted-foreground"
             role="tablist"
           >
             <button
@@ -211,11 +211,11 @@ onMounted(() => {
               type="button"
               role="tab"
               :aria-selected="activeTab === tab.value"
-              class="reset-base shrink-0 !border-b-2 px-1 pb-2 text-sm transition-colors"
+              class="reset-base inline-flex items-center justify-center whitespace-nowrap rounded-md px-4 py-1.5 text-sm font-medium transition-all"
               :class="
                 activeTab === tab.value
-                  ? 'border-primary font-medium text-foreground'
-                  : 'border-transparent text-muted-foreground hover:text-foreground'
+                  ? 'bg-background text-primary shadow-sm'
+                  : 'hover:text-foreground'
               "
               @click="activeTab = tab.value"
             >

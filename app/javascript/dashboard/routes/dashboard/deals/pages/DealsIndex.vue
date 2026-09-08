@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import { useCrmPipeline } from 'dashboard/composables/useCrmPipeline';
 import {
   RelayButton,
@@ -8,11 +8,15 @@ import {
 } from 'dashboard/components-next/relay';
 import Spinner from 'shared/components/Spinner.vue';
 import DealFormDialog from 'dashboard/components-next/Deals/DealFormDialog.vue';
+import DealEmptyState from 'dashboard/components-next/Deals/EmptyState/DealEmptyState.vue';
+import mockDeals from 'dashboard/components-next/Deals/EmptyState/dealEmptyStateContent';
 import CrmTableBoardToggle from 'dashboard/components-next/Deals/CrmTableBoardToggle.vue';
 import Icon from 'dashboard/components-next/icon/Icon.vue';
 import Avatar from 'dashboard/components-next/avatar/Avatar.vue';
 
 defineOptions({ name: 'DealsIndex' });
+
+const showMockDeals = ref(false);
 
 const {
   selectedDeal,
@@ -20,6 +24,7 @@ const {
   formDialogRef,
   searchQuery,
   uiFlags,
+  deals,
   stages,
   filteredDeals,
   stageMetrics,
@@ -36,6 +41,38 @@ const {
   confirmDelete,
   deleteDeal,
 } = useCrmPipeline();
+
+const displayedDeals = computed(() => {
+  if (!showMockDeals.value) return filteredDeals.value;
+  const query = searchQuery.value.trim().toLowerCase();
+  if (!query) return mockDeals;
+  return mockDeals.filter(deal =>
+    [deal.name, deal.pipelineStage?.name, deal.priority, deal.company?.name]
+      .filter(Boolean)
+      .some(value => String(value).toLowerCase().includes(query))
+  );
+});
+
+const showOnboardingEmpty = computed(
+  () =>
+    !uiFlags.value.fetchingList && !deals.value.length && !showMockDeals.value
+);
+
+const showSearchEmpty = computed(
+  () =>
+    !uiFlags.value.fetchingList &&
+    !showOnboardingEmpty.value &&
+    !displayedDeals.value.length
+);
+
+const onDealClick = deal => {
+  if (showMockDeals.value) return;
+  openEdit(deal);
+};
+
+const clearSearch = () => {
+  searchQuery.value = '';
+};
 
 onMounted(load);
 </script>
@@ -66,7 +103,7 @@ onMounted(load);
     </div>
 
     <div
-      v-if="stageMetrics.length"
+      v-if="stageMetrics.length && !showOnboardingEmpty && !showMockDeals"
       class="grid grid-cols-2 gap-4 p-6 pb-0 md:grid-cols-3 lg:grid-cols-5"
     >
       <div
@@ -96,7 +133,7 @@ onMounted(load);
       </div>
     </div>
 
-    <div class="flex items-center gap-3 px-6 py-4">
+    <div v-if="!showOnboardingEmpty" class="flex items-center gap-3 px-6 py-4">
       <div class="relative w-full max-w-xs">
         <Icon
           icon="i-lucide-search"
@@ -119,18 +156,46 @@ onMounted(load);
       </div>
 
       <div
-        v-else-if="!filteredDeals.length"
+        v-else-if="showOnboardingEmpty"
+        class="flex flex-1 justify-center px-4 py-12"
+      >
+        <DealEmptyState
+          @create="openCreate"
+          @load-mock="showMockDeals = true"
+        />
+      </div>
+
+      <div
+        v-else-if="showSearchEmpty"
         class="flex flex-col items-center justify-center gap-3 rounded-xl border border-border/60 bg-card px-6 py-16 text-center"
       >
+        <div
+          class="flex size-12 items-center justify-center rounded-full bg-muted"
+        >
+          <span class="i-lucide-search size-6 text-muted-foreground" />
+        </div>
         <h2 class="text-[20px] font-[600] text-foreground">
-          {{ $t('DEALS.EMPTY.TITLE') }}
+          {{ $t('DEALS.EMPTY.SEARCH_EMPTY_TITLE') }}
         </h2>
         <p class="max-w-md text-[14px] text-muted-foreground">
-          {{ $t('DEALS.EMPTY.DESCRIPTION') }}
+          {{
+            $t('DEALS.EMPTY.SEARCH_EMPTY_SUBTITLE', {
+              query: searchQuery,
+            })
+          }}
         </p>
-        <RelayButton class="mt-2 h-9 px-4 text-[13px]" @click="openCreate">
-          {{ $t('DEALS.NEW') }}
-        </RelayButton>
+        <div class="mt-2 flex items-center gap-3">
+          <RelayButton
+            v-if="searchQuery"
+            variant="outline"
+            @click="clearSearch"
+          >
+            {{ $t('DEALS.EMPTY.CLEAR_SEARCH') }}
+          </RelayButton>
+          <RelayButton class="h-9 px-4 text-[13px]" @click="openCreate">
+            {{ $t('DEALS.NEW') }}
+          </RelayButton>
+        </div>
       </div>
 
       <div
@@ -169,10 +234,11 @@ onMounted(load);
             </thead>
             <tbody class="divide-y divide-border/40">
               <tr
-                v-for="deal in filteredDeals"
+                v-for="deal in displayedDeals"
                 :key="deal.id"
-                class="group cursor-pointer transition-colors hover:bg-muted/30"
-                @click="openEdit(deal)"
+                class="group transition-colors hover:bg-muted/30"
+                :class="showMockDeals ? '' : 'cursor-pointer'"
+                @click="onDealClick(deal)"
               >
                 <td class="px-5 py-4 align-middle font-medium text-foreground">
                   {{ deal.name }}
@@ -224,6 +290,7 @@ onMounted(load);
                 </td>
                 <td class="px-5 py-4 align-middle" @click.stop>
                   <div
+                    v-if="!showMockDeals"
                     class="flex justify-end gap-1 opacity-0 group-hover:opacity-100"
                   >
                     <RelayButton

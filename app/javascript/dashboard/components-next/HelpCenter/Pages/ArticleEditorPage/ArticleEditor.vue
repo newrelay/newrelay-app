@@ -153,7 +153,7 @@ const handleCreateArticle = event => {
 }
 
 :deep(.ProseMirror-menubar-wrapper) {
-  .ProseMirror-woot-style {
+  .ProseMirror-relay-style {
     @apply min-h-[15rem] max-h-full;
   }
 }

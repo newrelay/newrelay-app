@@ -42,13 +42,19 @@ const executeCopilotAction = (action, data) => {
       <!-- eslint-disable vue/no-bare-strings-in-template, @intlify/vue-i18n/no-raw-text -->
       <span
         class="flex size-7 items-center justify-center rounded text-sm font-bold text-muted-foreground"
-        >B</span>
+      >
+        B
+      </span>
       <span
         class="flex size-7 items-center justify-center rounded text-sm font-medium italic text-muted-foreground"
-        >I</span>
+      >
+        I
+      </span>
       <span
         class="flex size-7 items-center justify-center rounded text-sm font-medium underline text-muted-foreground"
-        >U</span>
+      >
+        U
+      </span>
       <!-- eslint-enable vue/no-bare-strings-in-template, @intlify/vue-i18n/no-raw-text -->
     </div>
     <Transition
@@ -83,7 +89,7 @@ const executeCopilotAction = (action, data) => {
           :placeholder="
             t('COMPOSE_NEW_CONVERSATION.FORM.MESSAGE_EDITOR.PLACEHOLDER')
           "
-          class="h-full [&>div]:!border-transparent [&>div]:!bg-transparent [&>div]:px-0 [&>div]:py-0 [&_.ProseMirror-menubar]:!pt-0 [&_.ProseMirror-woot-style]:!min-h-[12rem] [&_.ProseMirror-woot-style]:!max-h-[18rem] [&_.mention--box]:-top-[7.5rem] [&_.mention--box]:bottom-[unset]"
+          class="h-full [&>div]:!border-transparent [&>div]:!bg-transparent [&>div]:px-0 [&>div]:py-0 [&_.ProseMirror-menubar]:!pt-0 [&_.ProseMirror-relay-style]:!min-h-[12rem] [&_.ProseMirror-relay-style]:!max-h-[18rem] [&_.mention--box]:-top-[7.5rem] [&_.mention--box]:bottom-[unset]"
           :class="
             hasErrors
               ? '[&_.empty-node]:before:!text-destructive [&_.empty-node]:dark:before:!text-destructive'

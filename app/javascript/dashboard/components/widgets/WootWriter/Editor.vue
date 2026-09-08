@@ -35,7 +35,6 @@ import {
 import {
   messageSchema,
   buildMessageSchema,
-  buildEditor,
   EditorView,
   MessageMarkdownTransformer,
   MessageMarkdownSerializer,
@@ -62,6 +61,7 @@ import {
   calculateMenuPosition,
   getEffectiveChannelType,
   stripUnsupportedFormatting,
+  buildEditor,
 } from 'dashboard/helper/editorHelper';
 import {
   hasPressedEnterAndNotCmdOrShift,
@@ -83,6 +83,7 @@ const props = defineProps({
   overrideLineBreaks: { type: Boolean, default: false },
   updateSelectionWith: { type: String, default: '' },
   enableVariables: { type: Boolean, default: false },
+  // eslint-disable-next-line vue/no-unused-properties -- public API; settings editors still pass this
   enableCannedResponses: { type: Boolean, default: true },
   enableCaptainTools: { type: Boolean, default: false },
   variables: { type: Object, default: () => ({}) },
@@ -976,19 +977,19 @@ useEmitter(BUS_EVENTS.INSERT_INTO_RICH_EDITOR, insertContentIntoEditor);
   }
 }
 
-.ProseMirror-woot-style {
+.ProseMirror-relay-style {
   @apply overflow-auto;
 }
 
-.ProseMirror-woot-style:not(
-    :where(.resizable-editor-wrapper .ProseMirror-woot-style)
+.ProseMirror-relay-style:not(
+    :where(.resizable-editor-wrapper .ProseMirror-relay-style)
   ) {
   @apply min-h-[5rem] max-h-[7.5rem];
 }
 
 // Resizable editor wrapper styles
 .resizable-editor-wrapper {
-  .ProseMirror-woot-style {
+  .ProseMirror-relay-style {
     min-height: clamp(
       var(--editor-min-allowed, var(--editor-min-height, 5rem)),
       var(--editor-height, var(--editor-min-height, 5rem)),

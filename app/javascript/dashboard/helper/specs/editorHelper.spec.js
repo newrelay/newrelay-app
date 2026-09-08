@@ -1,4 +1,8 @@
-import { EditorState, EditorView } from '@chatwoot/prosemirror-schema';
+import {
+  EditorState,
+  EditorView,
+  messageSchema,
+} from '@chatwoot/prosemirror-schema';
 import { FORMATTING } from 'dashboard/constants/editor';
 import { Schema } from 'prosemirror-model';
 import {
@@ -19,6 +23,8 @@ import {
   stripInlineBase64Images,
   stripUnsupportedFormatting,
   stripUnsupportedMarkdown,
+  buildEditor,
+  RELAY_EDITOR_CLASS,
 } from '../editorHelper';
 
 // Define a basic ProseMirror schema
@@ -1157,5 +1163,16 @@ describe('Menu positioning helpers', () => {
       expect(result).toHaveProperty('width', 300);
       expect(result.left).toBeGreaterThanOrEqual(0);
     });
+  });
+});
+
+describe('buildEditor', () => {
+  it('adds the relay editor class plugin', () => {
+    const plugins = buildEditor({ schema: messageSchema, placeholder: '' });
+    const classPlugin = plugins.find(
+      plugin => plugin.props?.attributes?.class === RELAY_EDITOR_CLASS
+    );
+
+    expect(classPlugin).toBeTruthy();
   });
 });

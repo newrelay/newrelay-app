@@ -8,7 +8,7 @@ import { MESSAGE_TYPES } from '../../constants';
 import { useMessageContext } from '../../provider.js';
 import { useTranslations } from 'dashboard/composables/useTranslations';
 
-const { content, attachments, contentAttributes, messageType, isInboxView } =
+const { content, attachments, contentAttributes, messageType, isPrivate } =
   useMessageContext();
 
 const { hasTranslations, translationContent } =
@@ -42,10 +42,7 @@ const handleSeeOriginal = () => {
 </script>
 
 <template>
-  <BaseBubble
-    :class="isInboxView?.value ? 'px-4 py-2.5' : 'px-4 py-3'"
-    data-bubble-name="text"
-  >
+  <BaseBubble :class="isPrivate ? '' : 'px-4 py-2.5'" data-bubble-name="text">
     <div class="gap-3 flex flex-col">
       <span v-if="isEmpty" class="opacity-70">
         {{ $t('CONVERSATION.NO_CONTENT') }}

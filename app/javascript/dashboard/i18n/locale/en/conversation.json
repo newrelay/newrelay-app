@@ -369,6 +369,10 @@
       "TODAY": "Today",
       "YESTERDAY": "Yesterday"
     },
+    "INTERNAL_NOTE": {
+      "LABEL": "Internal Note",
+      "ADDED_BY": "Added by {name}"
+    },
     "SIDEBAR": {
       "CONTACT": "Contact",
       "COPILOT": "RelayAI",

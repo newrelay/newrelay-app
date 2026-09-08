@@ -278,6 +278,8 @@ const isBotOrAgentMessage = computed(() => {
  * @returns {import('vue').ComputedRef<'left'|'right'|'center'>} The computed orientation
  */
 const orientation = computed(() => {
+  if (props.private) return ORIENTATION.CENTER;
+
   if (props.contentType === CONTENT_TYPES.VOICE_CALL) {
     return ORIENTATION.LEFT;
   }
@@ -303,6 +305,7 @@ const flexOrientationClass = computed(() => {
 
 const shouldGroupWithNext = computed(() => {
   if (props.status === MESSAGE_STATUS.FAILED) return false;
+  if (props.private) return false;
 
   return props.groupWithNext;
 });
@@ -443,7 +446,10 @@ const shouldRenderMessage = computed(() => {
 });
 
 const showInboxAvatar = computed(
-  () => props.isInboxView && variant.value !== MESSAGE_VARIANTS.ACTIVITY
+  () =>
+    props.isInboxView &&
+    variant.value !== MESSAGE_VARIANTS.ACTIVITY &&
+    variant.value !== MESSAGE_VARIANTS.PRIVATE
 );
 
 const inboxAvatarSrc = computed(() => {
@@ -466,7 +472,11 @@ const inboxAvatarInitial = computed(() =>
 );
 
 const inboxRowClass = computed(() => {
-  if (!props.isInboxView || variant.value === MESSAGE_VARIANTS.ACTIVITY) {
+  if (
+    !props.isInboxView ||
+    variant.value === MESSAGE_VARIANTS.ACTIVITY ||
+    variant.value === MESSAGE_VARIANTS.PRIVATE
+  ) {
     return '';
   }
 
@@ -543,8 +553,9 @@ provideMessageContext({
     :id="`message${props.id}`"
     class="message-bubble-container flex w-full"
     :class="[
-      isInboxView ? '' : 'mb-2',
-      isInboxView ? '' : flexOrientationClass,
+      isInboxView || variant === MESSAGE_VARIANTS.PRIVATE
+        ? ''
+        : flexOrientationClass,
       {
         'group-with-next': shouldGroupWithNext,
         'bg-muted': showBackgroundHighlight,
@@ -561,11 +572,14 @@ provideMessageContext({
       v-else
       class="min-w-0"
       :class="
-        isInboxView
-          ? ['flex max-w-[80%] gap-3', inboxRowClass]
-          : contentType === CONTENT_TYPES.VOICE_CALL || isStandaloneCardMessage
-            ? 'flex w-full min-w-0 max-w-[80%] flex-col'
-            : 'flex w-full flex-col'
+        variant === MESSAGE_VARIANTS.PRIVATE
+          ? 'flex w-full flex-col'
+          : isInboxView
+            ? ['flex max-w-[80%] gap-3', inboxRowClass]
+            : contentType === CONTENT_TYPES.VOICE_CALL ||
+                isStandaloneCardMessage
+              ? 'flex w-full min-w-0 max-w-[80%] flex-col'
+              : 'flex w-full flex-col'
       "
       @contextmenu="openContextMenu($event)"
     >

@@ -55,6 +55,7 @@ import {
 } from 'dashboard/helper/editorHelper';
 import { useCopilotReply } from 'dashboard/composables/useCopilotReply';
 import { isFileTypeAllowedForChannel } from 'shared/helpers/FileHelper';
+import ConfirmationModal from 'dashboard/components/widgets/modal/ConfirmationModal.vue';
 
 import { LOCAL_STORAGE_KEYS } from 'dashboard/constants/localStorage';
 import { LocalStorage } from 'shared/helpers/localStorage';
@@ -81,6 +82,7 @@ export default {
     CopilotEditorSection,
     ContactLogActivityModal,
     ContactScheduleMeetingModal,
+    ConfirmationModal,
   },
   mixins: [inboxMixin, fileUploadMixin, keyboardEventListenerMixins],
   props: {
@@ -1438,9 +1440,7 @@ export default {
         <div
           v-else-if="!showAudioRecorderEditor"
           :class="{
-            'inbox-note-editor bg-amber-500/5 text-amber-900':
-              isInboxVariant && isOnPrivateNote,
-            'bg-amber-500/10': !isInboxVariant && isOnPrivateNote,
+            'inbox-note-editor bg-warning/10 text-warning': isOnPrivateNote,
           }"
         >
           <WootMessageEditor
@@ -1497,7 +1497,6 @@ export default {
             !isSignatureAvailable &&
             isDefaultEditorMode
           "
-          :variant="isInboxVariant ? 'inbox' : 'default'"
         />
       </div>
     </Transition>
@@ -1616,7 +1615,7 @@ export default {
       @insert="onMeetingInsert"
     />
 
-    <woot-confirm-modal
+    <ConfirmationModal
       ref="confirmDialog"
       :title="$t('CONVERSATION.REPLYBOX.UNDEFINED_VARIABLES.TITLE')"
       :description="undefinedVariableMessage"
@@ -1658,10 +1657,10 @@ export default {
 }
 
 .inbox-note-editor :deep(.ProseMirror) {
-  @apply bg-transparent text-amber-900;
+  @apply bg-transparent text-warning;
 
   p.empty-node:first-child::before {
-    @apply text-amber-700/60;
+    @apply text-warning/60;
   }
 }
 

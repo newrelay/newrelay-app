@@ -62,6 +62,10 @@ const isLinearFeatureEnabled = computed(() =>
   isCloudFeatureEnabled(FEATURE_FLAGS.LINEAR)
 );
 
+const isMacrosFeatureEnabled = computed(() =>
+  isCloudFeatureEnabled(FEATURE_FLAGS.MACROS)
+);
+
 const linearIntegration = useFunctionGetter(
   'integrations/getIntegration',
   'linear'
@@ -241,10 +245,7 @@ onMounted(() => {
               />
             </AccordionItem>
           </div>
-          <woot-feature-toggle
-            v-else-if="element.name === 'macros'"
-            feature-key="macros"
-          >
+          <div v-else-if="element.name === 'macros' && isMacrosFeatureEnabled">
             <AccordionItem
               :title="$t('CONVERSATION_SIDEBAR.ACCORDION.MACROS')"
               :is-open="isContactSidebarItemOpen('is_macro_open')"
@@ -252,7 +253,7 @@ onMounted(() => {
             >
               <MacrosList :conversation-id="conversationId" />
             </AccordionItem>
-          </woot-feature-toggle>
+          </div>
           <div
             v-else-if="
               element.name === 'linear_issues' &&

@@ -144,7 +144,7 @@ watch(
 <style lang="scss" scoped>
 .editor-wrapper {
   :deep(.ProseMirror-menubar-wrapper) {
-    .ProseMirror.ProseMirror-woot-style {
+    .ProseMirror.ProseMirror-relay-style {
       p {
         @apply first:mt-0 !important;
       }

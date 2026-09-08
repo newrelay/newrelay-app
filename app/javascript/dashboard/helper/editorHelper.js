@@ -3,7 +3,9 @@ import {
   MessageMarkdownTransformer,
   messageSchema,
   Selection,
+  buildEditor as buildProseMirrorEditor,
 } from '@chatwoot/prosemirror-schema';
+import { Plugin } from 'prosemirror-state';
 import { replaceVariablesInMessage } from '@chatwoot/utils';
 import * as Sentry from '@sentry/vue';
 import camelcaseKeys from 'camelcase-keys';
@@ -624,3 +626,17 @@ export function calculateMenuPosition(coords, rect, isRtl) {
 }
 
 /* End Menu Positioning Helpers */
+
+// Schema package still emits ProseMirror-woot-style; we add this class for app CSS.
+export const RELAY_EDITOR_CLASS = 'ProseMirror-relay-style';
+
+export function buildEditor(options) {
+  return [
+    ...buildProseMirrorEditor(options),
+    new Plugin({
+      props: {
+        attributes: { class: RELAY_EDITOR_CLASS },
+      },
+    }),
+  ];
+}

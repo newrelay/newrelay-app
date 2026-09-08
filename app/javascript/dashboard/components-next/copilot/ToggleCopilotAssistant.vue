@@ -36,7 +36,7 @@ const activeAssistantLabel = computed(() => {
       <template #trigger="{ toggle, isOpen }">
         <Button
           :label="activeAssistantLabel"
-          icon="i-woot-captain"
+          icon="i-lucide-sparkles"
           ghost
           slate
           xs

@@ -3,13 +3,13 @@ import { ref, computed, watch, onMounted, useTemplateRef } from 'vue';
 
 import {
   buildMessageSchema,
-  buildEditor,
   EditorView,
   MessageMarkdownTransformer,
   MessageMarkdownSerializer,
   EditorState,
   Selection,
 } from '@chatwoot/prosemirror-schema';
+import { buildEditor } from 'dashboard/helper/editorHelper';
 
 import { useMessageFormatter } from 'shared/composables/useMessageFormatter';
 
@@ -222,7 +222,7 @@ onMounted(() => {
 .editor--copilot {
   @apply bg-primary/5 dark:bg-primary/10 rounded-md;
 
-  .ProseMirror-woot-style {
+  .ProseMirror-relay-style {
     min-height: 5rem;
     max-height: 7.5rem !important;
     overflow: auto;

@@ -36,7 +36,7 @@ const label = computed(() => {
       <div class="w-full border-t border-border" />
     </div>
     <span
-      class="relative bg-background px-4 text-[13px] font-medium text-muted-foreground"
+      class="relative bg-muted/10 px-4 text-[13px] font-medium text-muted-foreground dark:bg-background"
     >
       {{ label }}
     </span>

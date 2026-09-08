@@ -180,6 +180,7 @@ const shouldGroupWithNext = (index, searchList) => {
   if (!hasSameSender || areBothTemplates) return false;
 
   if (currentMessageType !== nextMessageType) return false;
+  if (current.private || next.private) return false;
 
   // Check if messages are in the same minute by rounding down to nearest minute
   return Math.floor(next.createdAt / 60) === Math.floor(current.createdAt / 60);
@@ -271,9 +272,13 @@ const shouldShowDateSeparator = index => {
     </template>
     <slot name="after" />
   </div>
-  <ul v-else class="list-none bg-transparent px-4">
+  <ul v-else class="flex list-none flex-col gap-4 bg-transparent px-6 py-6">
     <slot name="beforeAll" />
     <template v-for="(message, index) in allMessages" :key="message.id">
+      <InboxMessageDateSeparator
+        v-if="!albumByIndex[index].skip && shouldShowDateSeparator(index)"
+        :timestamp="message.createdAt"
+      />
       <slot
         v-if="
           !albumByIndex[index].skip &&

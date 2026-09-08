@@ -1,5 +1,7 @@
 <script setup>
 import { computed, useAttrs } from 'vue';
+import format from 'date-fns/format';
+import fromUnixTime from 'date-fns/fromUnixTime';
 
 import MessageMeta from '../MessageMeta.vue';
 
@@ -8,6 +10,7 @@ import { useMessageContext } from '../provider.js';
 import { useI18n } from 'vue-i18n';
 
 import MessageFormatter from 'shared/helpers/MessageFormatter.js';
+import { messageTimestamp } from 'shared/helpers/timeHelper';
 import { BUS_EVENTS } from 'shared/constants/busEvents';
 import { MESSAGE_VARIANTS, ORIENTATION } from '../constants';
 
@@ -18,9 +21,20 @@ const props = defineProps({
 defineOptions({ inheritAttrs: false });
 
 const attrs = useAttrs();
-const { variant, inReplyTo, shouldGroupWithNext, orientation, isInboxView } =
-  useMessageContext();
+const {
+  variant,
+  inReplyTo,
+  shouldGroupWithNext,
+  orientation,
+  isInboxView,
+  sender,
+  createdAt,
+} = useMessageContext();
 const { t } = useI18n();
+
+const isPrivateNote = computed(
+  () => variant.value === MESSAGE_VARIANTS.PRIVATE
+);
 
 // Colored fill lives ONLY on the inner surface (never the meta wrapper).
 // Agent/bot/template text: solid primary + white. Media/email override via attrs.
@@ -30,7 +44,7 @@ const maxWidthClass = computed(() =>
 
 const varaintBaseMap = computed(() => ({
   [MESSAGE_VARIANTS.AGENT]: `bg-primary text-primary-foreground shadow-xs border-transparent w-fit ${maxWidthClass.value}`,
-  [MESSAGE_VARIANTS.PRIVATE]: `bg-amber-500/10 text-foreground border-transparent w-fit ${maxWidthClass.value}`,
+  [MESSAGE_VARIANTS.PRIVATE]: '',
   [MESSAGE_VARIANTS.USER]: `bg-card border border-border shadow-xs text-foreground w-fit ${maxWidthClass.value}`,
   [MESSAGE_VARIANTS.ACTIVITY]:
     'bg-muted/50 text-muted-foreground text-sm w-full',
@@ -38,7 +52,7 @@ const varaintBaseMap = computed(() => ({
   [MESSAGE_VARIANTS.TEMPLATE]: `bg-card border border-border shadow-xs text-foreground w-fit ${maxWidthClass.value}`,
   [MESSAGE_VARIANTS.ERROR]: `bg-destructive/10 text-destructive border border-destructive/20 w-fit ${maxWidthClass.value}`,
   [MESSAGE_VARIANTS.EMAIL]: `w-fit ${maxWidthClass.value}`,
-  [MESSAGE_VARIANTS.UNSUPPORTED]: `bg-amber-500/10 border border-dashed border-amber-500/50 text-amber-500 w-fit ${maxWidthClass.value}`,
+  [MESSAGE_VARIANTS.UNSUPPORTED]: `bg-warning/10 border border-dashed border-warning/50 text-warning w-fit ${maxWidthClass.value}`,
 }));
 
 const flexOrientationClass = computed(() => {
@@ -48,6 +62,7 @@ const flexOrientationClass = computed(() => {
 });
 
 const wrapperAlignClass = computed(() => {
+  if (isPrivateNote.value) return 'w-full';
   return orientation.value === ORIENTATION.RIGHT
     ? 'items-end w-full'
     : 'items-start w-full';
@@ -58,7 +73,7 @@ const messageClass = computed(() => {
 
   if (variant.value === MESSAGE_VARIANTS.ACTIVITY) {
     classToApply.push('rounded-lg px-4 py-2 my-2');
-  } else {
+  } else if (!isPrivateNote.value) {
     classToApply.push('rounded-2xl');
     if (orientation.value === ORIENTATION.RIGHT) {
       classToApply.push('ltr:rounded-br-sm rtl:rounded-bl-sm right-bubble');
@@ -68,6 +83,15 @@ const messageClass = computed(() => {
   }
 
   return classToApply;
+});
+
+const senderName = computed(() => sender.value?.name || '');
+
+const noteTime = computed(() => {
+  if (isInboxView?.value) {
+    return format(fromUnixTime(createdAt.value), 'h:mm a');
+  }
+  return messageTimestamp(createdAt.value, 'LLL d, h:mm a');
 });
 
 const scrollToMessage = () => {
@@ -80,7 +104,8 @@ const shouldShowMeta = computed(
   () =>
     !props.hideMeta &&
     !shouldGroupWithNext.value &&
-    variant.value !== MESSAGE_VARIANTS.ACTIVITY
+    variant.value !== MESSAGE_VARIANTS.ACTIVITY &&
+    !isPrivateNote.value
 );
 
 const replyToPreview = computed(() => {
@@ -101,7 +126,45 @@ const replyToPreview = computed(() => {
 </script>
 
 <template>
+  <div v-if="isPrivateNote" class="flex w-full min-w-0 flex-col gap-4">
+    <div class="relative flex w-full items-center justify-center">
+      <div class="absolute inset-0 flex items-center">
+        <div class="w-full border-t border-border" />
+      </div>
+      <span
+        class="relative bg-muted/10 px-4 text-sm font-medium text-muted-foreground dark:bg-background"
+      >
+        {{ t('CONVERSATION.INTERNAL_NOTE.LABEL') }}
+      </span>
+    </div>
+    <div class="flex w-full gap-4 rounded-xl bg-warning/10 p-4">
+      <span class="i-lucide-sticky-note size-5 shrink-0 text-warning" />
+      <div class="flex min-w-0 flex-1 flex-col gap-1 text-sm">
+        <div
+          v-if="inReplyTo"
+          class="mb-2 cursor-pointer rounded-lg bg-black/5 p-2"
+          @click="scrollToMessage"
+        >
+          <div
+            v-dompurify-html="replyToPreview"
+            class="prose prose-bubble line-clamp-2"
+          />
+        </div>
+        <div class="font-medium leading-relaxed text-foreground/90">
+          <slot />
+        </div>
+        <span class="mt-1 text-[13px] font-medium text-muted-foreground">
+          <template v-if="senderName">
+            {{ t('CONVERSATION.INTERNAL_NOTE.ADDED_BY', { name: senderName }) }}
+            <span class="mx-1.5 text-muted-foreground/50">•</span>
+          </template>
+          {{ noteTime }}
+        </span>
+      </div>
+    </div>
+  </div>
   <div
+    v-else
     class="flex min-w-0 w-full flex-col bg-transparent text-sm"
     :class="[wrapperAlignClass, isInboxView?.value ? 'gap-1' : 'gap-1.5']"
   >
@@ -120,12 +183,8 @@ const replyToPreview = computed(() => {
     </div>
     <MessageMeta
       v-if="shouldShowMeta"
-      :class="[
-        flexOrientationClass,
-        variant === MESSAGE_VARIANTS.PRIVATE
-          ? 'text-warning/50'
-          : 'text-muted-foreground',
-      ]"
+      class="text-muted-foreground"
+      :class="[flexOrientationClass]"
     />
   </div>
 </template>

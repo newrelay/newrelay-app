@@ -1,7 +1,6 @@
 <script>
 import {
   fullSchema,
-  buildEditor,
   EditorView,
   ArticleMarkdownSerializer,
   ArticleMarkdownTransformer,
@@ -22,7 +21,7 @@ import { wrapInList } from 'prosemirror-schema-list';
 import { toggleBlockType } from '@chatwoot/prosemirror-schema/src/menu/common';
 import { checkFileSizeLimit } from 'shared/helpers/FileHelper';
 import { isEscape } from 'shared/helpers/KeyboardHelpers';
-import { collapseSelection } from 'dashboard/helper/editorHelper';
+import { collapseSelection, buildEditor } from 'dashboard/helper/editorHelper';
 import { useAlert } from 'dashboard/composables';
 import { useUISettings } from 'dashboard/composables/useUISettings';
 import keyboardEventListenerMixins from 'shared/mixins/keyboardEventListenerMixins';
@@ -499,7 +498,7 @@ export default {
   width: 100%;
 }
 
-.ProseMirror-woot-style {
+.ProseMirror-relay-style {
   min-height: 5rem;
   max-height: 7.5rem;
   overflow: auto;

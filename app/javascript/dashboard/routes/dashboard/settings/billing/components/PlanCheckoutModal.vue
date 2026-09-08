@@ -4,7 +4,7 @@ import { useI18n } from 'vue-i18n';
 import { useAlert } from 'dashboard/composables';
 import Dialog from 'dashboard/components-next/dialog/Dialog.vue';
 import Button from 'dashboard/components-next/button/Button.vue';
-import Input from 'dashboard/components-next/input/Input.vue';
+import { RelayInput, RelayLabel } from 'dashboard/components-next/relay';
 import ComboBox from 'dashboard/components-next/combobox/ComboBox.vue';
 import EnterpriseAccountAPI from 'dashboard/api/enterprise/account';
 
@@ -352,12 +352,17 @@ defineExpose({
       </p>
 
       <div class="flex flex-col gap-2">
-        <Input
-          v-model="couponInput"
-          :label="$t('BILLING_SETTINGS.SELECT_PLAN.COUPON_LABEL')"
-          :placeholder="$t('BILLING_SETTINGS.SELECT_PLAN.COUPON_PLACEHOLDER')"
-          :disabled="!!appliedCouponCode"
-        />
+        <div class="flex flex-col gap-1.5">
+          <RelayLabel class="text-[13.5px] font-medium text-foreground">
+            {{ $t('BILLING_SETTINGS.SELECT_PLAN.COUPON_LABEL') }}
+          </RelayLabel>
+          <RelayInput
+            v-model="couponInput"
+            :placeholder="$t('BILLING_SETTINGS.SELECT_PLAN.COUPON_PLACEHOLDER')"
+            :disabled="!!appliedCouponCode"
+            class-name="h-9 px-4 text-[14px] shadow-sm rounded-md border-border/80 bg-background focus-visible:ring-1 focus-visible:ring-primary/30"
+          />
+        </div>
         <div class="flex gap-2">
           <Button
             v-if="!appliedCouponCode"

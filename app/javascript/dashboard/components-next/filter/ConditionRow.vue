@@ -2,7 +2,6 @@
 import { computed, h, watch, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import Button from 'next/button/Button.vue';
-import Input from 'dashboard/components-next/input/Input.vue';
 import { RelayButton, RelayInput } from 'dashboard/components-next/relay';
 import FilterSelect from './inputs/FilterSelect.vue';
 import MultiSelect from './inputs/MultiSelect.vue';
@@ -325,11 +324,10 @@ defineExpose({ validate, resetValidation });
           disable-search
           :options="booleanOptions"
         />
-        <Input
+        <RelayInput
           v-else
           v-model="values"
           :type="inputFieldType"
-          class="[&>input]:h-8 [&>input]:py-1.5 [&>input]:outline-offset-0"
           :placeholder="t('FILTER.INPUT_PLACEHOLDER')"
         />
       </template>

@@ -27,8 +27,8 @@ watch(
 </script>
 
 <template>
-  <div class="flex flex-col gap-2">
-    <div v-if="authType === 'bearer'" class="flex flex-col gap-2">
+  <div class="flex flex-col gap-1.5">
+    <div v-if="authType === 'bearer'" class="flex flex-col gap-1.5">
       <RelayLabel html-for="captain-tool-bearer-token">
         {{ t('CAPTAIN.CUSTOM_TOOLS.FORM.AUTH_CONFIG.BEARER_TOKEN') }}
       </RelayLabel>
@@ -41,7 +41,7 @@ watch(
       />
     </div>
     <template v-else-if="authType === 'basic'">
-      <div class="flex flex-col gap-2">
+      <div class="flex flex-col gap-1.5">
         <RelayLabel html-for="captain-tool-basic-username">
           {{ t('CAPTAIN.CUSTOM_TOOLS.FORM.AUTH_CONFIG.USERNAME') }}
         </RelayLabel>
@@ -53,7 +53,7 @@ watch(
           "
         />
       </div>
-      <div class="flex flex-col gap-2">
+      <div class="flex flex-col gap-1.5">
         <RelayLabel html-for="captain-tool-basic-password">
           {{ t('CAPTAIN.CUSTOM_TOOLS.FORM.AUTH_CONFIG.PASSWORD') }}
         </RelayLabel>
@@ -68,7 +68,7 @@ watch(
       </div>
     </template>
     <template v-else-if="authType === 'api_key'">
-      <div class="flex flex-col gap-2">
+      <div class="flex flex-col gap-1.5">
         <RelayLabel html-for="captain-tool-api-key">
           {{ t('CAPTAIN.CUSTOM_TOOLS.FORM.AUTH_CONFIG.API_KEY') }}
         </RelayLabel>
@@ -80,7 +80,7 @@ watch(
           "
         />
       </div>
-      <div class="flex flex-col gap-2">
+      <div class="flex flex-col gap-1.5">
         <RelayLabel html-for="captain-tool-api-value">
           {{ t('CAPTAIN.CUSTOM_TOOLS.FORM.AUTH_CONFIG.API_VALUE') }}
         </RelayLabel>

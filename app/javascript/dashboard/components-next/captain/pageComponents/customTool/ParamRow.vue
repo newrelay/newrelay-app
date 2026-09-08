@@ -81,7 +81,7 @@ defineExpose({ validate });
             v-model="type"
             :options="paramTypeOptions"
             :placeholder="t('CAPTAIN.CUSTOM_TOOLS.FORM.PARAM_TYPE.PLACEHOLDER')"
-            class="[&>div>button]:bg-black/10"
+            class="[&>div>button]:bg-muted/30"
           />
         </div>
         <RelayInput

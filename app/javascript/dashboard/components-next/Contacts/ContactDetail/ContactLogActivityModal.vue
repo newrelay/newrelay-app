@@ -213,7 +213,7 @@ const submit = () => {
             value-format="dd-MM-yyyy"
             display-format="MMM d, yyyy"
             :placeholder="t('CONTACTS_LAYOUT.DETAIL.LOG_ACTIVITY.DATE')"
-            trigger-class="h-10 w-full cursor-pointer px-3 text-[14px] rounded-md border border-border/80 bg-background placeholder:text-muted-foreground/60 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary/30"
+            trigger-class="h-9 w-full cursor-pointer px-3 text-[14px] rounded-md border border-border/80 bg-background placeholder:text-muted-foreground/60 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary/30"
           />
         </div>
 

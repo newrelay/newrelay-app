@@ -131,7 +131,7 @@ const handleSubmit = async () => {
 
 <template>
   <form class="flex flex-col gap-4" @submit.prevent="handleSubmit">
-    <div class="flex flex-col gap-1">
+    <div class="flex flex-col gap-1.5">
       <RelayLabel html-for="documentType">
         {{ t('CAPTAIN.DOCUMENTS.FORM.TYPE.LABEL') }}
       </RelayLabel>
@@ -139,7 +139,6 @@ const handleSubmit = async () => {
         id="documentType"
         v-model="state.documentType"
         :options="documentTypeOptions"
-        class="[&>div>button]:bg-black/10"
       />
     </div>
 

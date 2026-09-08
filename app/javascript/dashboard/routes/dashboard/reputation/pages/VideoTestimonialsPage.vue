@@ -1,7 +1,7 @@
 <script setup>
 /* eslint-disable */
 import { ref, computed, onMounted, watch } from 'vue';
-import { RelayInput as Input, RelayBadge as Badge, RelayButton } from 'dashboard/components-next/relay';
+import { RelayInput as Input, RelayBadge as Badge, RelayButton, RelayTextarea } from 'dashboard/components-next/relay';
 import {
   Play, MoreHorizontal, MessageSquare, Heart, Share2, 
   CheckCircle, Search, Filter, Calendar, ExternalLink, 
@@ -992,7 +992,7 @@ const stats = computed(() => {
               </div>
 
               <div class="border-t border-border pt-4 space-y-2">
-                <textarea v-model="noteDraft" rows="3" placeholder="Add a note for your team…" class="w-full rounded-lg border border-border bg-background p-3 text-[13px] focus:outline-none focus:ring-1 focus:ring-primary/30 resize-none"></textarea>
+                <RelayTextarea v-model="noteDraft" :rows="3" placeholder="Add a note for your team…" class-name="text-[13px] resize-none" />
                 <button @click="addNote" :disabled="savingNote || !noteDraft.trim()" class="h-8 px-4 text-xs font-semibold bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 disabled:opacity-50 cursor-pointer inline-flex items-center gap-1.5">
                   <Plus class="size-3.5" /> {{ savingNote ? 'Saving…' : 'Add Note' }}
                 </button>

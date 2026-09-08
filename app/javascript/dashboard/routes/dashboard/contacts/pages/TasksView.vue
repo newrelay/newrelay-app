@@ -878,7 +878,7 @@ onMounted(() => {
                 :placeholder="
                   t('CONTACTS_LAYOUT.TASKS_VIEW.FORM_TITLE_PLACEHOLDER')
                 "
-                class-name="h-10 w-full px-3 text-[14px] rounded-md border border-border/80 bg-background placeholder:text-muted-foreground/60 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary/30"
+                class-name="h-9 w-full px-3 text-[14px] rounded-md border border-border/80 bg-background placeholder:text-muted-foreground/60 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary/30"
               />
             </div>
 
@@ -902,7 +902,7 @@ onMounted(() => {
                 </label>
                 <RelayButton
                   variant="outline"
-                  class="h-10 w-full justify-between rounded-md border-border bg-background px-3 text-[14px] font-normal text-foreground shadow-sm hover:bg-muted/50"
+                  class="h-9 w-full justify-between rounded-md border-border bg-background px-3 text-[14px] font-normal text-foreground shadow-sm hover:bg-muted/50"
                   @click.stop="toggleFilter('formAssignee')"
                 >
                   <span class="truncate">
@@ -940,7 +940,7 @@ onMounted(() => {
                 </label>
                 <RelayButton
                   variant="outline"
-                  class="h-10 w-full justify-between rounded-md border-border bg-background px-3 text-[14px] font-normal shadow-sm hover:bg-muted/50"
+                  class="h-9 w-full justify-between rounded-md border-border bg-background px-3 text-[14px] font-normal shadow-sm hover:bg-muted/50"
                   :class="
                     !taskForm.contactId
                       ? 'text-muted-foreground'
@@ -984,7 +984,7 @@ onMounted(() => {
               </label>
               <RelayButton
                 variant="outline"
-                class="h-10 w-full justify-between rounded-md border-border bg-background px-3 text-[14px] font-normal shadow-sm hover:bg-muted/50"
+                class="h-9 w-full justify-between rounded-md border-border bg-background px-3 text-[14px] font-normal shadow-sm hover:bg-muted/50"
                 :class="
                   !taskForm.dueDate
                     ? 'text-muted-foreground'

@@ -59,4 +59,4 @@ export const TIME_PICKER_ITEM_SELECTED_CLASS =
   'bg-primary font-medium text-primary-foreground hover:bg-primary hover:text-primary-foreground focus:bg-primary focus:text-primary-foreground data-[highlighted]:bg-primary data-[highlighted]:text-primary-foreground';
 
 export const DATE_PICKER_TRIGGER_CLASS =
-  'flex h-10 w-full cursor-pointer items-center justify-between rounded-md border border-border/80 bg-background px-3 text-[14px] text-foreground transition-colors hover:bg-muted/50 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary/30';
+  'flex h-9 w-full cursor-pointer items-center justify-between rounded-md border border-border/80 bg-background px-3 text-[14px] text-foreground transition-colors hover:bg-muted/50 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary/30';

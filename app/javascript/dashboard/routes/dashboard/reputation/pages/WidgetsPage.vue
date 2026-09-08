@@ -2,6 +2,8 @@
 <script setup>
 /* eslint-disable */
 import { ref, onMounted, computed } from 'vue';
+import ComboBox from 'dashboard/components-next/combobox/ComboBox.vue';
+import { RelayInput } from 'dashboard/components-next/relay';
 const axios = window.axios;
 
 const accountId =
@@ -339,35 +341,25 @@ const previewReviewsList = computed(() => {
           <div class="space-y-4">
             <div class="space-y-1.5">
               <label class="block text-muted-foreground text-[13.5px] font-[500] text-foreground">Widget Name</label>
-              <input
-                v-model="activeWidget.name"
-                type="text"
-                class="w-full rounded-xl border border-border p-3 focus:outline-none focus:ring-2 focus:ring-primary text-[14px] border-border/80 bg-background focus-visible:ring-1 focus-visible:ring-primary/30 shadow-sm rounded-md"
-              />
+              <RelayInput v-model="activeWidget.name" type="text" />
             </div>
 
             <div class="space-y-1.5">
               <label class="block text-muted-foreground text-[13.5px] font-[500] text-foreground">Display Style</label>
-              <select
+              <ComboBox
                 v-model="activeWidget.style"
-                class="w-full text-xs rounded-xl border border-border p-3 focus:outline-none focus:ring-2 focus:ring-primary"
-              >
-                <option value="carousel">Carousel (Responsive Slider)</option>
-                <option value="grid">Grid (Columns layout)</option>
-              </select>
+                :options="[{ value: 'carousel', label: 'Carousel (Responsive Slider)' }, { value: 'grid', label: 'Grid (Columns layout)' }]"
+                placeholder="Select style"
+              />
             </div>
 
             <div class="space-y-1.5">
               <label class="block text-muted-foreground text-[13.5px] font-[500] text-foreground">Minimum Rating threshold</label>
-              <select
+              <ComboBox
                 v-model="activeWidget.min_rating"
-                class="w-full text-xs rounded-xl border border-border p-3 focus:outline-none focus:ring-2 focus:ring-primary"
-              >
-                <option :value="5">5 Stars only</option>
-                <option :value="4">4 Stars & Above</option>
-                <option :value="3">3 Stars & Above</option>
-                <option :value="1">All Ratings (1-5 Stars)</option>
-              </select>
+                :options="[{ value: 5, label: '5 Stars only' }, { value: 4, label: '4 Stars & Above' }, { value: 3, label: '3 Stars & Above' }, { value: 1, label: 'All Ratings (1-5 Stars)' }]"
+                placeholder="Select min rating"
+              />
             </div>
 
             <div class="flex items-center justify-between py-2">

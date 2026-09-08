@@ -1,7 +1,8 @@
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, watch, onMounted } from 'vue';
 import { useKeyboardEvents } from 'dashboard/composables/useKeyboardEvents';
 import Button from 'dashboard/components-next/button/Button.vue';
+import { RelayInput } from 'dashboard/components-next/relay';
 
 defineProps({
   title: {
@@ -16,12 +17,12 @@ const searchInputRef = ref(null);
 const searchQuery = ref('');
 
 onMounted(() => {
-  searchInputRef.value.focus();
+  searchInputRef.value?.$el?.focus();
 });
 
-const onInput = e => {
-  emit('search', e.target.value);
-};
+watch(searchQuery, val => {
+  emit('search', val);
+});
 
 const onClose = () => {
   emit('close');
@@ -31,7 +32,7 @@ const keyboardEvents = {
   Slash: {
     action: e => {
       e.preventDefault();
-      searchInputRef.value.focus();
+      searchInputRef.value?.$el?.focus();
     },
   },
   Escape: {
@@ -59,13 +60,11 @@ useKeyboardEvents(keyboardEvents);
       >
         <fluent-icon icon="search" class="" size="18" />
       </div>
-      <input
+      <RelayInput
         ref="searchInputRef"
-        type="text"
+        v-model="searchQuery"
         :placeholder="$t('HELP_CENTER.ARTICLE_SEARCH.PLACEHOLDER')"
-        class="block w-full !h-9 ltr:!pl-8 rtl:!pr-8 dark:!bg-muted !border-border !bg-muted leading-8 text-foreground ring-2 ring-transparent ring-border border border-solid placeholder:text-muted-foreground focus:border-primary focus:ring-primary !mb-0 text-[14px] border-border/80 bg-background focus-visible:ring-1 focus-visible:ring-primary/30 shadow-sm rounded-md"
-        :value="searchQuery"
-        @input="onInput"
+        class-name="pl-9"
       />
     </div>
   </div>

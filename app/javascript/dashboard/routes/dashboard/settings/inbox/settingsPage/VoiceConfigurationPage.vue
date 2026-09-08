@@ -2,14 +2,15 @@
 import { useAlert } from 'dashboard/composables';
 import SettingsFieldSection from 'dashboard/components-next/Settings/SettingsFieldSection.vue';
 import SettingsToggleSection from 'dashboard/components-next/Settings/SettingsToggleSection.vue';
-import NextInput from 'dashboard/components-next/input/Input.vue';
+import { RelayInput, RelayLabel } from 'dashboard/components-next/relay';
 import NextButton from 'dashboard/components-next/button/Button.vue';
 
 export default {
   components: {
     SettingsFieldSection,
     SettingsToggleSection,
-    NextInput,
+    RelayInput,
+    RelayLabel,
     NextButton,
   },
   props: {
@@ -107,20 +108,31 @@ export default {
       <p class="text-sm text-muted-foreground">
         {{ $t('INBOX_MGMT.VOICE_CONFIGURATION.CREDENTIALS.DESCRIPTION') }}
       </p>
-      <NextInput
-        v-if="needsApiKeySid"
-        v-model="apiKeySid"
-        :label="$t('INBOX_MGMT.ADD.VOICE.TWILIO.API_KEY_SID.LABEL')"
-        :placeholder="$t('INBOX_MGMT.ADD.VOICE.TWILIO.API_KEY_SID.PLACEHOLDER')"
-      />
-      <NextInput
-        v-model="apiKeySecret"
-        type="password"
-        :label="$t('INBOX_MGMT.ADD.VOICE.TWILIO.API_KEY_SECRET.LABEL')"
-        :placeholder="
-          $t('INBOX_MGMT.ADD.VOICE.TWILIO.API_KEY_SECRET.PLACEHOLDER')
-        "
-      />
+      <div v-if="needsApiKeySid" class="flex flex-col gap-1.5">
+        <RelayLabel class="text-[13.5px] font-medium text-foreground">
+          {{ $t('INBOX_MGMT.ADD.VOICE.TWILIO.API_KEY_SID.LABEL') }}
+        </RelayLabel>
+        <RelayInput
+          v-model="apiKeySid"
+          :placeholder="
+            $t('INBOX_MGMT.ADD.VOICE.TWILIO.API_KEY_SID.PLACEHOLDER')
+          "
+          class-name="h-9 px-4 text-[14px] shadow-sm rounded-md border-border/80 bg-background focus-visible:ring-1 focus-visible:ring-primary/30"
+        />
+      </div>
+      <div class="flex flex-col gap-1.5">
+        <RelayLabel class="text-[13.5px] font-medium text-foreground">
+          {{ $t('INBOX_MGMT.ADD.VOICE.TWILIO.API_KEY_SECRET.LABEL') }}
+        </RelayLabel>
+        <RelayInput
+          v-model="apiKeySecret"
+          type="password"
+          :placeholder="
+            $t('INBOX_MGMT.ADD.VOICE.TWILIO.API_KEY_SECRET.PLACEHOLDER')
+          "
+          class-name="h-9 px-4 text-[14px] shadow-sm rounded-md border-border/80 bg-background focus-visible:ring-1 focus-visible:ring-primary/30"
+        />
+      </div>
     </div>
 
     <div v-if="inbox.voice_enabled && inbox.voice_call_webhook_url">

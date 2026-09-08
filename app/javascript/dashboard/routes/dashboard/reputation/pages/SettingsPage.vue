@@ -3,6 +3,8 @@
 import { ref, onMounted, computed, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import html2canvas from 'html2canvas';
+import { RelayInput, RelayTextarea } from 'dashboard/components-next/relay';
+import ComboBox from 'dashboard/components-next/combobox/ComboBox.vue';
 const axios = window.axios;
 
 const accountId = window.__STORE__?.getters['auth/getCurrentAccount']?.id || 
@@ -195,6 +197,7 @@ async function checkGoogleOauthCallback() {
       const { data } = await axios.get(`${baseApi()}/integrations/google_locations?oauth_session_id=${currentOauthSessionId.value}`);
       googleLocations.value = data;
       if (data.length > 0) {
+        selectedLocationId.value = data[0].location_id;
         selectedLocation.value = data[0];
       }
     } catch (err) {
@@ -448,6 +451,39 @@ onMounted(async () => {
   await loadData();
   checkGoogleOauthCallback();
 });
+
+const aiMinRatingOptions = [
+  { value: '5', label: '5 Stars only' },
+  { value: '4', label: '4 Stars & above' },
+  { value: '3', label: '3 Stars & above' },
+];
+const templateCategoryOptions = [
+  { value: 'standard', label: 'Standard Review Request' },
+  { value: 'video', label: 'Video Testimonial Request' },
+];
+const spamMinRatingOptions = [
+  { value: '1', label: '1 Star only' },
+  { value: '2', label: '2 Stars & below' },
+  { value: '3', label: '3 Stars & below' },
+];
+const customLogoOptions = [
+  { value: 'link', label: 'Standard link icon' },
+  { value: 'star', label: 'Star rating icon' },
+  { value: 'brand', label: 'Premium trust logo' },
+];
+const googleLocationOptions = computed(() =>
+  googleLocations.value.map(l => ({ value: l.location_id, label: l.location_name }))
+);
+const selectedLocationId = ref('');
+watch(googleLocations, locs => {
+  if (locs.length > 0 && !selectedLocationId.value) {
+    selectedLocationId.value = locs[0].location_id;
+    selectedLocation.value = locs[0];
+  }
+});
+watch(selectedLocationId, id => {
+  selectedLocation.value = googleLocations.value.find(l => l.location_id === id) || null;
+});
 </script>
 
 <template>
@@ -500,13 +536,13 @@ onMounted(async () => {
                 <p class="text-xs text-muted-foreground mt-0.5">Add review platforms by entering the page link to import reviews.</p>
               </div>
               <div class="relative w-full md:w-72">
-                <input
+                <RelayInput
                   v-model="searchQuery"
                   type="text"
                   placeholder="Search platforms..."
-                  class="w-full pl-9 pr-4 py-2 rounded-lg border border-border bg-background p-3 text-xs text-foreground shadow-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/30"
+                  class-name="pl-9"
                 />
-                <span class="absolute left-3 top-2.5 text-muted-foreground">
+                <span class="absolute left-3 top-2.5 text-muted-foreground pointer-events-none">
                   <svg class="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
                 </span>
               </div>
@@ -691,22 +727,14 @@ onMounted(async () => {
 
             <div class="space-y-1">
               <label class="text-[10px] text-muted-foreground uppercase tracking-wider text-[13.5px] font-[500] text-foreground">Minimum Rating to Auto-Reply</label>
-              <select
-                v-model="aiMinRating"
-                class="w-full text-xs rounded-xl border border-border p-2.5 focus:outline-none focus:ring-2 focus:ring-primary"
-              >
-                <option value="5">5 Stars only</option>
-                <option value="4">4 Stars & above</option>
-                <option value="3">3 Stars & above</option>
-              </select>
+              <ComboBox v-model="aiMinRating" :options="aiMinRatingOptions" placeholder="Select rating" />
             </div>
 
             <div class="space-y-1">
               <label class="text-[10px] text-muted-foreground uppercase tracking-wider text-[13.5px] font-[500] text-foreground">Custom AI Instructions</label>
-              <textarea
+              <RelayTextarea
                 v-model="aiInstructions"
-                rows="4"
-                class="w-full rounded-xl border border-border p-3 focus:outline-none focus:ring-2 focus:ring-primary text-[14px] border-border/80 bg-background focus-visible:ring-1 focus-visible:ring-primary/30 shadow-sm rounded-md"
+                :rows="4"
                 placeholder="Instruct the AI on tone, context, or key business details..."
               />
             </div>
@@ -732,11 +760,10 @@ onMounted(async () => {
           <div class="space-y-4">
             <div class="space-y-1">
               <label class="text-[10px] text-muted-foreground uppercase tracking-wider text-[13.5px] font-[500] text-foreground">Review Invite URL</label>
-              <input
+              <RelayInput
                 v-model="customSlug"
                 type="text"
                 placeholder="https://g.page/r/your-business/review"
-                class="w-full rounded-xl border border-border p-2.5 focus:outline-none focus:ring-2 focus:ring-primary text-[14px] border-border/80 bg-background focus-visible:ring-1 focus-visible:ring-primary/30 shadow-sm rounded-md"
               />
               <p class="text-[10px] text-muted-foreground font-semibold mt-1">
                 Enter your own external URL (e.g. Google or Facebook review link) or a custom slug. This link is used for your QR code.
@@ -802,52 +829,30 @@ onMounted(async () => {
               <div class="grid grid-cols-2 gap-3">
                 <div class="space-y-1">
                   <label class="text-[10px] text-muted-foreground uppercase tracking-wider text-[13.5px] font-[500] text-foreground">Template Name</label>
-                  <input
-                    v-model="activeTemplate.name"
-                    type="text"
-                    class="w-full rounded-xl border border-border p-2.5 focus:outline-none focus:ring-2 focus:ring-primary text-[14px] border-border/80 bg-background focus-visible:ring-1 focus-visible:ring-primary/30 shadow-sm rounded-md"
-                  />
+                  <RelayInput v-model="activeTemplate.name" type="text" />
                 </div>
                 <div class="space-y-1">
                   <label class="text-[10px] text-muted-foreground uppercase tracking-wider text-[13.5px] font-[500] text-foreground">Channel</label>
-                  <input
-                    disabled
-                    :value="activeTemplate.channel"
-                    class="w-full rounded-xl border border-border p-2.5 text-muted-foreground capitalize cursor-not-allowed text-[14px] border-border/80 bg-background focus-visible:ring-1 focus-visible:ring-primary/30 shadow-sm rounded-md"
-                  />
+                  <RelayInput :model-value="activeTemplate.channel" disabled class-name="text-muted-foreground capitalize cursor-not-allowed" />
                 </div>
               </div>
 
               <!-- Template Category -->
               <div class="space-y-1">
                 <label class="text-[10px] text-muted-foreground uppercase tracking-wider text-[13.5px] font-[500] text-foreground">Template Category</label>
-                <select
-                  v-model="activeTemplate.template_type"
-                  class="w-full text-xs rounded-xl border border-border p-2.5 focus:outline-none focus:ring-2 focus:ring-primary"
-                >
-                  <option value="standard">Standard Review Request</option>
-                  <option value="video">Video Testimonial Request</option>
-                </select>
+                <ComboBox v-model="activeTemplate.template_type" :options="templateCategoryOptions" placeholder="Select category" />
               </div>
 
               <!-- Subject (Only if email) -->
               <div v-if="activeTemplate.channel === 'email'" class="space-y-1">
                 <label class="text-[10px] text-muted-foreground uppercase tracking-wider text-[13.5px] font-[500] text-foreground">Email Subject</label>
-                <input
-                  v-model="activeTemplate.subject"
-                  type="text"
-                  class="w-full rounded-xl border border-border p-2.5 focus:outline-none focus:ring-2 focus:ring-primary text-[14px] border-border/80 bg-background focus-visible:ring-1 focus-visible:ring-primary/30 shadow-sm rounded-md"
-                />
+                <RelayInput v-model="activeTemplate.subject" type="text" />
               </div>
 
               <!-- Body -->
               <div class="space-y-1">
                 <label class="text-[10px] text-muted-foreground uppercase tracking-wider text-[13.5px] font-[500] text-foreground">Message Content</label>
-                <textarea
-                  v-model="activeTemplate.body"
-                  rows="4"
-                  class="w-full rounded-xl border border-border p-3 focus:outline-none focus:ring-2 focus:ring-primary text-[14px] border-border/80 bg-background focus-visible:ring-1 focus-visible:ring-primary/30 shadow-sm rounded-md"
-                />
+                <RelayTextarea v-model="activeTemplate.body" :rows="4" />
               </div>
 
               <!-- Tag Placeholders -->
@@ -909,11 +914,11 @@ onMounted(async () => {
 
           <div>
             <label class="text-[10px] text-muted-foreground uppercase tracking-wider text-[13.5px] font-[500] text-foreground">Custom Title for QR Code</label>
-            <input
+            <RelayInput
               v-model="qrTitle"
               type="text"
-              class="w-full mt-1 rounded-xl border border-border p-2.5 focus:outline-none focus:ring-2 focus:ring-primary text-[14px] border-border/80 bg-background focus-visible:ring-1 focus-visible:ring-primary/30 shadow-sm rounded-md"
               placeholder="e.g. Scan to Review"
+              class-name="mt-1"
             />
           </div>
 
@@ -987,24 +992,13 @@ onMounted(async () => {
           <div class="space-y-4">
             <div class="space-y-1">
               <label class="text-[10px] text-muted-foreground uppercase tracking-wider text-[13.5px] font-[500] text-foreground">Auto-flag ratings under</label>
-              <select
-                v-model="spamMinRating"
-                class="w-full text-xs rounded-xl border border-border p-2.5 focus:outline-none focus:ring-2 focus:ring-primary"
-              >
-                <option value="1">1 Star only</option>
-                <option value="2">2 Stars & below</option>
-                <option value="3">3 Stars & below</option>
-              </select>
+              <ComboBox v-model="spamMinRating" :options="spamMinRatingOptions" placeholder="Select rating" />
               <p class="text-[10px] text-muted-foreground">Flagged reviews will be marked as isolated and pending manual validation before public publishing.</p>
             </div>
 
             <div class="space-y-1">
               <label class="text-[10px] text-muted-foreground uppercase tracking-wider text-[13.5px] font-[500] text-foreground">Blocklist Keywords</label>
-              <input
-                v-model="spamKeywords"
-                type="text"
-                class="w-full rounded-xl border border-border p-2.5 focus:outline-none focus:ring-2 focus:ring-primary text-[14px] border-border/80 bg-background focus-visible:ring-1 focus-visible:ring-primary/30 shadow-sm rounded-md"
-              />
+              <RelayInput v-model="spamKeywords" type="text" />
               <p class="text-[10px] text-muted-foreground">Comma-separated list of terms. Reviews containing these keywords are auto-marked as spam.</p>
             </div>
 
@@ -1053,23 +1047,21 @@ onMounted(async () => {
           <p class="text-xs text-muted-foreground">Your Google Account has no registered Google Business Profile locations.</p>
         </div>
 
-        <div v-else class="space-y-4">
-          <p class="text-xs text-muted-foreground">
-            We found the following Google Business Profile locations. Select the location you want to link to this account:
-          </p>
+          <div v-else class="space-y-4">
+            <p class="text-xs text-muted-foreground">
+              We found the following Google Business Profile locations. Select the location you want to link to this account:
+            </p>
 
-          <div class="space-y-2">
-            <label class="text-[10px] text-muted-foreground uppercase tracking-wider text-[13.5px] font-[500] text-foreground">Select Location</label>
-            <select
-              v-model="selectedLocation"
-              class="w-full text-xs rounded-xl border border-border p-2.5 focus:outline-none focus:ring-2 focus:ring-primary"
-            >
-              <option v-for="loc in googleLocations" :key="loc.location_id" :value="loc">
-                {{ loc.location_name }}
-              </option>
-            </select>
+            <div class="space-y-2">
+              <label class="text-[10px] text-muted-foreground uppercase tracking-wider text-[13.5px] font-[500] text-foreground">Select Location</label>
+              <ComboBox
+                v-model="selectedLocationId"
+                :options="googleLocationOptions"
+                placeholder="Select a location"
+                search-placeholder="Search locations..."
+              />
+            </div>
           </div>
-        </div>
 
         <!-- Footer -->
         <div class="flex justify-end gap-2 pt-1">
@@ -1113,22 +1105,20 @@ onMounted(async () => {
         <div class="space-y-4">
           <div class="space-y-1">
             <label class="text-[10px] text-muted-foreground uppercase tracking-wider text-[13.5px] font-[500] text-foreground">Listing URL</label>
-            <input
+            <RelayInput
               v-model="listingUrl"
               type="url"
               placeholder="https://..."
-              class="w-full rounded-xl border border-border p-2.5 focus:outline-none focus:ring-2 focus:ring-primary text-[14px] border-border/80 bg-background focus-visible:ring-1 focus-visible:ring-primary/30 shadow-sm rounded-md"
             />
             <p class="text-[10px] text-muted-foreground">The public page URL where consumers leave feedback for your business.</p>
           </div>
 
           <div class="space-y-1">
             <label class="text-[10px] text-muted-foreground uppercase tracking-wider text-[13.5px] font-[500] text-foreground">Listing / Location Label</label>
-            <input
+            <RelayInput
               v-model="listingName"
               type="text"
               placeholder="e.g. My Business Listing"
-              class="w-full rounded-xl border border-border p-2.5 focus:outline-none focus:ring-2 focus:ring-primary text-[14px] border-border/80 bg-background focus-visible:ring-1 focus-visible:ring-primary/30 shadow-sm rounded-md"
             />
           </div>
         </div>
@@ -1172,34 +1162,25 @@ onMounted(async () => {
         <div class="space-y-4">
           <div class="space-y-1">
             <label class="text-[10px] text-muted-foreground uppercase tracking-wider text-[13.5px] font-[500] text-foreground">Channel Platform Name</label>
-            <input
+            <RelayInput
               v-model="customPlatformName"
               type="text"
               placeholder="e.g. Trustpilot"
-              class="w-full rounded-xl border border-border p-2.5 focus:outline-none focus:ring-2 focus:ring-primary text-[14px] border-border/80 bg-background focus-visible:ring-1 focus-visible:ring-primary/30 shadow-sm rounded-md"
             />
           </div>
 
           <div class="space-y-1">
             <label class="text-[10px] text-muted-foreground uppercase tracking-wider text-[13.5px] font-[500] text-foreground">Listing Page Link</label>
-            <input
+            <RelayInput
               v-model="customPlatformUrl"
               type="url"
               placeholder="https://..."
-              class="w-full rounded-xl border border-border p-2.5 focus:outline-none focus:ring-2 focus:ring-primary text-[14px] border-border/80 bg-background focus-visible:ring-1 focus-visible:ring-primary/30 shadow-sm rounded-md"
             />
           </div>
 
           <div class="space-y-1">
             <label class="text-[10px] text-muted-foreground uppercase tracking-wider text-[13.5px] font-[500] text-foreground">Logo/Icon theme</label>
-            <select
-              v-model="customPlatformLogo"
-              class="w-full text-xs rounded-xl border border-border p-2.5 focus:outline-none focus:ring-2 focus:ring-primary"
-            >
-              <option value="link">Standard link icon</option>
-              <option value="star">Star rating icon</option>
-              <option value="brand">Premium trust logo</option>
-            </select>
+            <ComboBox v-model="customPlatformLogo" :options="customLogoOptions" placeholder="Select logo style" />
           </div>
         </div>
 

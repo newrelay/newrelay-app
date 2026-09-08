@@ -103,7 +103,7 @@ watch(
         trailing-icon
         :disabled="disabled"
         no-animation
-        class="justify-between w-full !px-3 !py-2.5 text-foreground font-normal group-hover/combobox:border-border focus:outline-primary"
+        class="justify-between w-full h-9 !px-3 !py-0 text-[14px] text-foreground font-normal group-hover/combobox:border-border focus:outline-primary"
         :class="{
           focused: open,
           '[&:not(.focused)]:dark:outline-border [&:not(.focused)]:hover:enabled:outline-border [&:not(.focused)]:dark:hover:enabled:outline-border':

@@ -9,6 +9,7 @@ import categoriesAPI from 'dashboard/api/helpCenter/categories.js';
 import Dialog from 'dashboard/components-next/dialog/Dialog.vue';
 import ComboBox from 'dashboard/components-next/combobox/ComboBox.vue';
 import Icon from 'dashboard/components-next/icon/Icon.vue';
+import { RelayLabel } from 'dashboard/components-next/relay';
 
 const props = defineProps({
   selectedArticleIds: {
@@ -175,10 +176,10 @@ defineExpose({ dialogRef });
     @confirm="onConfirm"
   >
     <div class="flex flex-col gap-6">
-      <div class="flex flex-col gap-2">
-        <span class="text-sm font-medium text-foreground">
+      <div class="flex flex-col gap-1.5">
+        <RelayLabel>
           {{ t('HELP_CENTER.ARTICLES_PAGE.BULK_TRANSLATE.LOCALE_LABEL') }}
-        </span>
+        </RelayLabel>
         <ComboBox
           v-model="selectedLocale"
           :options="localeOptions"
@@ -188,13 +189,13 @@ defineExpose({ dialogRef });
           class="[&>div>button:not(.focused)]:!outline-accent [&>div>button:not(.focused)]:dark:!outline-accent"
         />
       </div>
-      <div class="flex flex-col gap-2">
-        <span class="text-sm font-medium text-foreground">
+      <div class="flex flex-col gap-1.5">
+        <RelayLabel>
           {{ t('HELP_CENTER.ARTICLES_PAGE.BULK_TRANSLATE.CATEGORY_LABEL') }}
           <span class="text-muted-foreground font-normal">
             {{ t('HELP_CENTER.ARTICLES_PAGE.BULK_TRANSLATE.OPTIONAL') }}
           </span>
-        </span>
+        </RelayLabel>
         <ComboBox
           v-model="selectedCategoryId"
           :options="categoryOptions"

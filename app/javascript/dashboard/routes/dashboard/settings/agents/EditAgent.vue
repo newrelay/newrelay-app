@@ -10,7 +10,7 @@ import {
   RelayInput,
   RelayLabel,
 } from 'dashboard/components-next/relay';
-import Icon from 'dashboard/components-next/icon/Icon.vue';
+import ComboBox from 'dashboard/components-next/combobox/ComboBox.vue';
 import Auth from '../../../../api/auth';
 import wootConstants from 'dashboard/constants/globals';
 
@@ -117,8 +117,9 @@ const availabilityStatuses = computed(() =>
   }))
 );
 
-const selectClass =
-  'flex h-10 w-full appearance-none rounded-md border border-border/80 bg-background px-4 text-[14px] text-foreground shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary/30';
+const roleOptions = computed(() =>
+  roles.value.map(role => ({ value: role.id, label: role.label }))
+);
 
 const editAgent = async () => {
   v$.value.$touch();
@@ -171,7 +172,7 @@ const resetPassword = async () => {
           v-model="agentName"
           type="text"
           :placeholder="$t('AGENT_MGMT.EDIT.FORM.NAME.PLACEHOLDER')"
-          class-name="h-10 px-4 text-[14px] shadow-sm rounded-md border-border/80 bg-background focus-visible:ring-1 focus-visible:ring-primary/30"
+          class-name="h-9 px-4 text-[14px] shadow-sm rounded-md border-border/80 bg-background focus-visible:ring-1 focus-visible:ring-primary/30"
           @blur="v$.agentName.$touch"
         />
         <p v-if="v$.agentName.$error" class="text-xs text-destructive">
@@ -187,19 +188,11 @@ const resetPassword = async () => {
           {{ $t('AGENT_MGMT.EDIT.FORM.AGENT_TYPE.LABEL') }}
         </RelayLabel>
         <div class="relative">
-          <select
+          <ComboBox
             id="edit-agent-role"
             v-model="selectedRoleId"
-            :class="selectClass"
-            @change="v$.selectedRoleId.$touch"
-          >
-            <option v-for="role in roles" :key="role.id" :value="role.id">
-              {{ role.label }}
-            </option>
-          </select>
-          <Icon
-            icon="i-lucide-chevron-down"
-            class="pointer-events-none absolute top-1/2 size-4 -translate-y-1/2 text-muted-foreground/60 ltr:right-3 rtl:left-3"
+            :options="roleOptions"
+            @update:model-value="v$.selectedRoleId.$touch"
           />
         </div>
         <p v-if="v$.selectedRoleId.$error" class="text-xs text-destructive">
@@ -215,23 +208,11 @@ const resetPassword = async () => {
           {{ $t('AGENT_MGMT.EDIT.FORM.AGENT_AVAILABILITY.LABEL') }}
         </RelayLabel>
         <div class="relative">
-          <select
+          <ComboBox
             id="edit-agent-availability"
             v-model="agentAvailability"
-            :class="selectClass"
-            @change="v$.agentAvailability.$touch"
-          >
-            <option
-              v-for="status in availabilityStatuses"
-              :key="status.value"
-              :value="status.value"
-            >
-              {{ status.label }}
-            </option>
-          </select>
-          <Icon
-            icon="i-lucide-chevron-down"
-            class="pointer-events-none absolute top-1/2 size-4 -translate-y-1/2 text-muted-foreground/60 ltr:right-3 rtl:left-3"
+            :options="availabilityStatuses"
+            @update:model-value="v$.agentAvailability.$touch"
           />
         </div>
         <p v-if="v$.agentAvailability.$error" class="text-xs text-destructive">
@@ -251,7 +232,7 @@ const resetPassword = async () => {
           class="h-9 px-4 text-[13px] font-medium text-primary hover:bg-primary/10 hover:text-primary border border-border hover:border-transparent"
           @click="resetPassword"
         >
-          <Icon icon="i-lucide-lock" class="size-4" />
+          <span class="i-lucide-lock size-4" />
           {{ $t('AGENT_MGMT.EDIT.PASSWORD_RESET.ADMIN_RESET_BUTTON') }}
         </RelayButton>
       </div>

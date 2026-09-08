@@ -23,10 +23,10 @@ import timezones from 'dashboard/routes/dashboard/settings/inbox/helpers/timezon
 
 const emit = defineEmits(['create', 'update']);
 const FORM_INPUT_CLASS =
-  'h-10 w-full px-3 text-[14px] placeholder:text-muted-foreground/60 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary/30';
+  'h-9 w-full px-3 text-[14px] placeholder:text-muted-foreground/60 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary/30';
 const FORM_INPUT_ERROR_CLASS = 'border-destructive';
 const DROPDOWN_TRIGGER_CLASS =
-  'h-10 w-full justify-between rounded-md border border-border/80 bg-background px-4 text-[14px] font-normal text-foreground shadow-sm hover:bg-background focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary/30';
+  'h-9 w-full justify-between rounded-md border border-border/80 bg-background px-4 text-[14px] font-normal text-foreground shadow-sm hover:bg-background focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary/30';
 const MODAL_DROPDOWN_SEARCH_INPUT_CLASS =
   'h-9 w-full pl-9 text-[13px] rounded-md border border-border/80 bg-background placeholder:text-muted-foreground/60 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary/30';
 const MODAL_DROPDOWN_ITEM_CLASS =

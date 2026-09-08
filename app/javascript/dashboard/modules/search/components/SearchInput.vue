@@ -2,6 +2,10 @@
 import { ref, useTemplateRef, onMounted, onUnmounted } from 'vue';
 import { debounce } from '@chatwoot/utils';
 import RecentSearches from './RecentSearches.vue';
+import {
+  RelayInput,
+  RELAY_FORM_INLINE_INPUT_CLASS,
+} from 'dashboard/components-next/relay';
 
 const emit = defineEmits(['search', 'selectRecentSearch']);
 
@@ -17,10 +21,10 @@ const recentSearchesRef = useTemplateRef('recentSearchesRef');
 const handler = e => {
   if (e.key === '/' && document.activeElement.tagName !== 'INPUT') {
     e.preventDefault();
-    searchInput.value.focus();
+    searchInput.value.$el.focus();
   } else if (e.key === 'Escape' && document.activeElement.tagName === 'INPUT') {
     e.preventDefault();
-    searchInput.value.blur();
+    searchInput.value.$el.blur();
   }
 };
 
@@ -56,7 +60,7 @@ const onSelectRecentSearch = query => {
   searchQuery.value = query;
   emit('selectRecentSearch', query);
   showRecentSearches.value = false;
-  searchInput.value.focus();
+  searchInput.value.$el.focus();
 };
 
 const addToRecentSearches = query => {
@@ -70,7 +74,7 @@ defineExpose({
 });
 
 onMounted(() => {
-  searchInput.value.focus();
+  searchInput.value.$el.focus();
   document.addEventListener('keydown', handler);
 });
 
@@ -99,11 +103,10 @@ onUnmounted(() => {
           }"
         />
       </div>
-      <input
+      <RelayInput
         ref="searchInput"
         v-model="searchQuery"
-        type="search"
-        class="reset-base outline-none w-full m-0 bg-transparent border-transparent shadow-none text-foreground dark:text-foreground active:border-transparent active:shadow-none hover:border-transparent hover:shadow-none focus:border-transparent focus:shadow-none placeholder:text-muted-foreground text-base"
+        :class-name="`${RELAY_FORM_INLINE_INPUT_CLASS} text-[14px] text-foreground placeholder:text-muted-foreground px-0 py-0 h-auto`"
         :placeholder="$t('SEARCH.INPUT_PLACEHOLDER')"
         @focus="onFocus"
         @blur="onBlur"

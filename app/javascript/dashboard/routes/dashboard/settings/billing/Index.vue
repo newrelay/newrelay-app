@@ -819,6 +819,7 @@ onMounted(() => {
                       v-model="agencyPriceInput"
                       type="number"
                       min="1"
+                      class-name="h-9"
                     />
                   </div>
                   <DetailItem

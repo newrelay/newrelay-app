@@ -4,7 +4,11 @@ import { useMapGetter } from 'dashboard/composables/store';
 import { useI18n } from 'vue-i18n';
 import { useAccount } from 'dashboard/composables/useAccount';
 import { useAlert } from 'dashboard/composables';
-import { RelayButton, RelaySwitch } from 'dashboard/components-next/relay';
+import {
+  RelayButton,
+  RelaySwitch,
+  RelayTextarea,
+} from 'dashboard/components-next/relay';
 import DurationInput from 'next/input/DurationInput.vue';
 import SingleSelect from 'dashboard/components-next/filter/inputs/SingleSelect.vue';
 import { DURATION_UNITS } from 'dashboard/components-next/input/constants';
@@ -169,14 +173,14 @@ const onEnabledChange = val => {
           <label class="text-foreground text-[14px] text-[13.5px] font-[500]">
             {{ t('GENERAL_SETTINGS.FORM.AUTO_RESOLVE.MESSAGE.LABEL') }}
           </label>
-          <textarea
+          <RelayTextarea
             v-model="message"
             :disabled="!isEnabled"
             rows="4"
-            class="border-border/80 text-foreground placeholder:text-muted-foreground focus-visible:ring-primary/30 w-full resize-y border bg-background p-3 text-[14px] shadow-xs focus-visible:outline-none focus-visible:ring-1 disabled:cursor-not-allowed disabled:opacity-50 shadow-sm rounded-md"
             :placeholder="
               t('GENERAL_SETTINGS.FORM.AUTO_RESOLVE.MESSAGE.PLACEHOLDER')
             "
+            class-name="min-h-[96px] resize-y text-[14px] shadow-sm rounded-md border-border/80 bg-background focus-visible:ring-1 focus-visible:ring-primary/30 disabled:cursor-not-allowed disabled:opacity-50"
           />
           <p class="text-muted-foreground pt-1 text-[12.5px]">
             {{ t('GENERAL_SETTINGS.FORM.AUTO_RESOLVE.MESSAGE.HELP') }}

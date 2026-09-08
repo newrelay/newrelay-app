@@ -93,7 +93,7 @@ export default {
           v-model="shortCode"
           type="text"
           :placeholder="$t('CANNED_MGMT.EDIT.FORM.SHORT_CODE.PLACEHOLDER')"
-          class-name="h-10 px-4 text-[14px] shadow-sm rounded-md border-border/80 bg-background focus-visible:ring-1 focus-visible:ring-primary/30"
+          class-name="h-9 px-4 text-[14px] shadow-sm rounded-md border-border/80 bg-background focus-visible:ring-1 focus-visible:ring-primary/30"
           @input="v$.shortCode.$touch"
         />
         <p v-if="v$.shortCode.$error" class="text-xs text-destructive">

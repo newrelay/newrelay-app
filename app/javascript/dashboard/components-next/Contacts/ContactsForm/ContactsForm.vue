@@ -5,7 +5,7 @@ import { required, email } from '@vuelidate/validators';
 import { useVuelidate } from '@vuelidate/core';
 import { splitName } from '@chatwoot/utils';
 import countries from 'shared/constants/countries.js';
-import Input from 'dashboard/components-next/input/Input.vue';
+import { RelayInput } from 'dashboard/components-next/relay';
 import ComboBox from 'dashboard/components-next/combobox/ComboBox.vue';
 import Icon from 'dashboard/components-next/icon/Icon.vue';
 import PhoneNumberInput from 'dashboard/components-next/phonenumberinput/PhoneNumberInput.vue';
@@ -212,12 +212,6 @@ const getFormBinding = key => {
   });
 };
 
-const getMessageType = key => {
-  return isValidationField(key) && v$.value[getValidationKey(key)]?.$error
-    ? 'error'
-    : 'info';
-};
-
 const handleCountrySelection = value => {
   const selectedCountry = countries.find(option => option.id === value);
   state.additionalAttributes.country = selectedCountry?.name || '';
@@ -271,12 +265,6 @@ defineExpose({
             v-model="state.additionalAttributes.countryCode"
             :options="countryOptions"
             :placeholder="item.placeholder"
-            class="[&>div>button]:h-8"
-            :class="{
-              '[&>div>button]:bg-black/10 [&>div>button:not(.focused)]:!outline-transparent':
-                !isDetailsView,
-              '[&>div>button]:!bg-black/10': isDetailsView,
-            }"
             @update:model-value="handleCountrySelection"
           />
           <PhoneNumberInput
@@ -285,17 +273,11 @@ defineExpose({
             :placeholder="item.placeholder"
             :show-border="isDetailsView"
           />
-          <Input
+          <RelayInput
             v-else
             v-model="getFormBinding(item.key).value"
             :placeholder="item.placeholder"
-            :message-type="getMessageType(item.key)"
-            :custom-input-class="`h-8 !pt-1 !pb-1 ${
-              !isDetailsView
-                ? '[&:not(.error,.focus)]:!outline-transparent'
-                : ''
-            }`"
-            class="w-full"
+            class-name="h-9 w-full"
             @input="
               isValidationField(item.key) &&
                 v$[getValidationKey(item.key)].$touch()
@@ -379,13 +361,13 @@ defineExpose({
             :icon="item.icon"
             class="flex-shrink-0 text-muted-foreground size-4"
           />
-          <input
+          <RelayInput
             v-model="
               state.additionalAttributes.socialProfiles[item.key.toLowerCase()]
             "
-            class="w-auto min-w-[100px] bg-transparent outline-none reset-base text-foreground dark:text-foreground placeholder:text-muted-foreground dark:placeholder:text-muted-foreground text-[14px] shadow-sm rounded-md border-border/80 bg-background focus-visible:ring-1 focus-visible:ring-primary/30"
             :placeholder="item.placeholder"
             :size="item.placeholder.length"
+            class-name="w-auto min-w-[100px] border-none bg-transparent px-0 shadow-none text-[14px] h-auto"
             @input="emit('update', state)"
           />
         </div>

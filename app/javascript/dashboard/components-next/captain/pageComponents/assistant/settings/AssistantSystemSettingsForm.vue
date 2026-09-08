@@ -142,7 +142,7 @@ watch(
           min="0"
           max="1"
           step="0.1"
-          class="h-2 w-full cursor-pointer appearance-none bg-muted accent-primary text-[14px] shadow-sm rounded-md border-border/80 bg-background focus-visible:ring-1 focus-visible:ring-primary/30"
+          class="h-2 w-full cursor-pointer appearance-none bg-muted accent-primary"
         />
         <span
           class="rounded bg-muted px-2 py-0.5 font-mono text-xs font-semibold text-foreground"

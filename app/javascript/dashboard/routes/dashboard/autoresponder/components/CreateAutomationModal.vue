@@ -262,7 +262,7 @@ const nextStep = () => {
                   <RelayDropdownMenuTrigger as-child>
                     <button
                       type="button"
-                      class="w-full h-10 px-3 flex items-center justify-between text-sm shadow-sm rounded-md border border-border/80 bg-background cursor-pointer outline-none focus-visible:ring-1 focus-visible:ring-primary/30"
+                      class="w-full h-9 px-3 flex items-center justify-between text-sm shadow-sm rounded-md border border-border/80 bg-background cursor-pointer outline-none focus-visible:ring-1 focus-visible:ring-primary/30"
                     >
                       <span class="text-foreground">{{
                         selectedInbox?.name ||

@@ -6,12 +6,12 @@ import { CONTACTS_EVENTS } from 'dashboard/helper/AnalyticsHelper/events';
 import { vOnClickOutside } from '@vueuse/components';
 import { useTrack } from 'dashboard/composables';
 import NextButton from 'next/button/Button.vue';
-import NextInput from 'dashboard/components-next/input/Input.vue';
+import { RelayInput } from 'dashboard/components-next/relay';
 
 export default {
   components: {
     NextButton,
-    NextInput,
+    RelayInput,
   },
   directives: {
     onClickOutside: vOnClickOutside,
@@ -105,13 +105,24 @@ export default {
       {{ $t('FILTER.CUSTOM_VIEWS.ADD.TITLE') }}
     </h3>
     <form class="w-full grid gap-6" @submit.prevent="saveCustomViews">
-      <NextInput
-        v-model="name"
-        :placeholder="$t('FILTER.CUSTOM_VIEWS.ADD.PLACEHOLDER')"
-        :message="v$.name.$error && $t('FILTER.CUSTOM_VIEWS.ADD.ERROR_MESSAGE')"
-        :message-type="v$.name.$error && 'error'"
-        @blur="v$.name.$touch"
-      />
+      <div class="flex flex-col gap-1.5">
+        <RelayInput
+          v-model="name"
+          :placeholder="$t('FILTER.CUSTOM_VIEWS.ADD.PLACEHOLDER')"
+          :class-name="
+            v$.name.$error
+              ? 'border-destructive/60 focus-visible:ring-destructive/20'
+              : ''
+          "
+          @blur="v$.name.$touch"
+        />
+        <p
+          v-if="v$.name.$error"
+          class="text-[12px] font-medium text-destructive"
+        >
+          {{ $t('FILTER.CUSTOM_VIEWS.ADD.ERROR_MESSAGE') }}
+        </p>
+      </div>
       <div class="flex flex-row justify-end w-full gap-2">
         <NextButton faded slate sm @click.prevent="onClose">
           {{ $t('FILTER.CUSTOM_VIEWS.ADD.CANCEL_BUTTON') }}

@@ -3,10 +3,9 @@ import { computed, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useMapGetter } from 'dashboard/composables/store';
 
-import Icon from 'dashboard/components-next/icon/Icon.vue';
 import Button from 'dashboard/components-next/button/Button.vue';
-import Input from 'dashboard/components-next/input/Input.vue';
 import Popover from 'dashboard/components-next/popover/Popover.vue';
+import { RelayInput } from 'dashboard/components-next/relay';
 import ContentTemplateForm from './ContentTemplateForm.vue';
 
 const props = defineProps({
@@ -82,24 +81,19 @@ const handleSendMessage = (template, hide) => {
         v-if="!selectedTemplate"
         class="flex flex-col gap-2 p-4 items-center w-[21.875rem]"
       >
-        <div class="w-full">
-          <Input
+        <div class="relative w-full">
+          <span
+            class="pointer-events-none absolute top-1/2 -translate-y-1/2 size-3.5 text-muted-foreground i-lucide-search ltr:left-3 rtl:right-3"
+          />
+          <RelayInput
             v-model="searchQuery"
-            type="search"
             :placeholder="
               t(
                 'COMPOSE_NEW_CONVERSATION.FORM.TWILIO_OPTIONS.SEARCH_PLACEHOLDER'
               )
             "
-            custom-input-class="ltr:pl-10 rtl:pr-10"
-          >
-            <template #prefix>
-              <Icon
-                icon="i-lucide-search"
-                class="absolute top-2 size-3.5 ltr:left-3 rtl:right-3"
-              />
-            </template>
-          </Input>
+            class-name="ltr:pl-9 rtl:pr-9"
+          />
         </div>
         <div
           v-for="template in filteredTemplates"

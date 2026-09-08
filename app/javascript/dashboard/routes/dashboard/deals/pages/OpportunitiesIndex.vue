@@ -122,7 +122,7 @@ onMounted(load);
         />
         <RelayInput
           v-model="searchQuery"
-          class="h-9 rounded-lg border-border/60 bg-background pl-9 text-[13px] shadow-sm"
+          class-name="h-9 rounded-lg border-border/60 bg-background pl-9 text-[14px] shadow-sm"
           :placeholder="$t('OPPORTUNITIES.SEARCH_PLACEHOLDER')"
         />
       </div>

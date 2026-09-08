@@ -8,7 +8,7 @@ import { email, required } from '@vuelidate/validators';
 import { useVuelidate } from '@vuelidate/core';
 
 import Dialog from 'dashboard/components-next/dialog/Dialog.vue';
-import Input from 'dashboard/components-next/input/Input.vue';
+import { RelayInput, RelayLabel } from 'dashboard/components-next/relay';
 import NextButton from 'dashboard/components-next/button/Button.vue';
 
 const props = defineProps({
@@ -147,24 +147,32 @@ defineExpose({ dialogRef });
           class="flex items-start gap-3 w-full"
           @submit.prevent="handleSend"
         >
-          <Input
-            v-model="state.email"
-            :placeholder="
-              t(
-                'HELP_CENTER.PORTAL_SETTINGS.CONFIGURATION_FORM.CUSTOM_DOMAIN.DNS_CONFIGURATION_DIALOG.SEND_INSTRUCTIONS.PLACEHOLDER'
-              )
-            "
-            :message="
-              v$.email.$error
-                ? t(
-                    'HELP_CENTER.PORTAL_SETTINGS.CONFIGURATION_FORM.CUSTOM_DOMAIN.DNS_CONFIGURATION_DIALOG.SEND_INSTRUCTIONS.ERROR'
-                  )
-                : ''
-            "
-            :message-type="v$.email.$error ? 'error' : 'info'"
-            class="w-full"
-            @blur="v$.email.$touch()"
-          />
+          <div class="flex flex-col gap-1.5 w-full">
+            <RelayLabel html-for="dns-email">
+              {{
+                t(
+                  'HELP_CENTER.PORTAL_SETTINGS.CONFIGURATION_FORM.CUSTOM_DOMAIN.DNS_CONFIGURATION_DIALOG.SEND_INSTRUCTIONS.EMAIL_LABEL'
+                )
+              }}
+            </RelayLabel>
+            <RelayInput
+              id="dns-email"
+              v-model="state.email"
+              :placeholder="
+                t(
+                  'HELP_CENTER.PORTAL_SETTINGS.CONFIGURATION_FORM.CUSTOM_DOMAIN.DNS_CONFIGURATION_DIALOG.SEND_INSTRUCTIONS.PLACEHOLDER'
+                )
+              "
+              @blur="v$.email.$touch()"
+            />
+            <p v-if="v$.email.$error" class="text-[12px] text-destructive">
+              {{
+                t(
+                  'HELP_CENTER.PORTAL_SETTINGS.CONFIGURATION_FORM.CUSTOM_DOMAIN.DNS_CONFIGURATION_DIALOG.SEND_INSTRUCTIONS.ERROR'
+                )
+              }}
+            </p>
+          </div>
           <NextButton
             :label="
               t(
@@ -172,7 +180,7 @@ defineExpose({ dialogRef });
               )
             "
             type="submit"
-            class="flex-shrink-0"
+            class="flex-shrink-0 mt-[22px]"
           />
         </form>
       </div>

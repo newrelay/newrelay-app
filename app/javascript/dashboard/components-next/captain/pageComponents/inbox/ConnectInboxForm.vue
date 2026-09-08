@@ -5,7 +5,7 @@ import { useVuelidate } from '@vuelidate/core';
 import { required } from '@vuelidate/validators';
 import { useMapGetter } from 'dashboard/composables/store';
 
-import { RelayButton } from 'dashboard/components-next/relay';
+import { RelayButton, RelayLabel } from 'dashboard/components-next/relay';
 import ComboBox from 'dashboard/components-next/combobox/ComboBox.vue';
 
 const props = defineProps({
@@ -79,17 +79,17 @@ const handleSubmit = async () => {
 
 <template>
   <form class="flex flex-col gap-4" @submit.prevent="handleSubmit">
-    <div class="flex flex-col gap-1">
-      <label for="inbox" class="text-foreground text-[13.5px] font-medium">
+    <div class="flex flex-col gap-1.5">
+      <RelayLabel html-for="inbox">
         {{ t('CAPTAIN.INBOXES.FORM.INBOX.LABEL') }}
-      </label>
+      </RelayLabel>
       <ComboBox
         id="inbox"
         v-model="state.inboxId"
         :options="inboxList"
         :has-error="!!formErrors.inboxId"
         :placeholder="t('CAPTAIN.INBOXES.FORM.INBOX.PLACEHOLDER')"
-        class="[&>div>button]:bg-black/10 [&>div>button:not(.focused)]:dark:outline-border [&>div>button:not(.focused)]:hover:!outline-border"
+        class="[&>div>button:not(.focused)]:dark:outline-border [&>div>button:not(.focused)]:hover:!outline-border"
         :message="formErrors.inboxId"
       />
     </div>

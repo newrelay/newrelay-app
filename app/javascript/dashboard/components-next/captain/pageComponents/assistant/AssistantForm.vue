@@ -117,7 +117,7 @@ watch(
 
 <template>
   <form class="flex flex-col gap-4" @submit.prevent="handleSubmit">
-    <div class="flex flex-col gap-2">
+    <div class="flex flex-col gap-1.5">
       <RelayLabel html-for="captain-assistant-name">
         {{ t('CAPTAIN.ASSISTANTS.FORM.NAME.LABEL') }}
       </RelayLabel>
@@ -139,7 +139,7 @@ watch(
       :message-type="formErrors.description ? 'error' : 'info'"
     />
 
-    <div class="flex flex-col gap-2">
+    <div class="flex flex-col gap-1.5">
       <RelayLabel html-for="captain-assistant-product-name">
         {{ t('CAPTAIN.ASSISTANTS.FORM.PRODUCT_NAME.LABEL') }}
       </RelayLabel>
@@ -202,14 +202,14 @@ watch(
       <RelayButton
         type="button"
         variant="outline"
-        class="h-10 w-full"
+        class="h-9 w-full"
         @click="handleCancel"
       >
         {{ t('CAPTAIN.FORM.CANCEL') }}
       </RelayButton>
       <RelayButton
         type="submit"
-        class="h-10 w-full"
+        class="h-9 w-full"
         :disabled="isLoading || isSubmitDisabled"
       >
         <span

@@ -8,6 +8,7 @@ import { PORTALS_EVENTS } from 'dashboard/helper/AnalyticsHelper/events';
 import allLocales from 'shared/constants/locales.js';
 import Dialog from 'dashboard/components-next/dialog/Dialog.vue';
 import ComboBox from 'dashboard/components-next/combobox/ComboBox.vue';
+import { RelayLabel } from 'dashboard/components-next/relay';
 
 const props = defineProps({
   portal: {
@@ -126,18 +127,23 @@ defineExpose({ dialogRef });
     @confirm="onCreate"
   >
     <div class="flex flex-col gap-6">
-      <ComboBox
-        v-model="selectedLocale"
-        :options="locales"
-        :placeholder="
-          t('HELP_CENTER.LOCALES_PAGE.ADD_LOCALE_DIALOG.COMBOBOX.PLACEHOLDER')
-        "
-        class="[&>div>button:not(.focused)]:!outline-accent [&>div>button:not(.focused)]:dark:!outline-accent"
-      />
-      <div class="flex flex-col gap-2">
-        <span class="text-[13.5px] font-medium text-foreground">
+      <div class="flex flex-col gap-1.5">
+        <RelayLabel>
+          {{ t('HELP_CENTER.LOCALES_PAGE.ADD_LOCALE_DIALOG.COMBOBOX.LABEL') }}
+        </RelayLabel>
+        <ComboBox
+          v-model="selectedLocale"
+          :options="locales"
+          :placeholder="
+            t('HELP_CENTER.LOCALES_PAGE.ADD_LOCALE_DIALOG.COMBOBOX.PLACEHOLDER')
+          "
+          class="[&>div>button:not(.focused)]:!outline-accent [&>div>button:not(.focused)]:dark:!outline-accent"
+        />
+      </div>
+      <div class="flex flex-col gap-1.5">
+        <RelayLabel>
           {{ t('HELP_CENTER.LOCALES_PAGE.ADD_LOCALE_DIALOG.STATUS.LABEL') }}
-        </span>
+        </RelayLabel>
         <ComboBox
           v-model="localeStatus"
           :options="statusOptions"

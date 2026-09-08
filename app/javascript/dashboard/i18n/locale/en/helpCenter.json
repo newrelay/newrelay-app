@@ -736,6 +736,7 @@
         "TITLE": "Add a new locale",
         "DESCRIPTION": "Select the language in which this article will be written. This will be added to your list of translations, and you can add more later.",
         "COMBOBOX": {
+          "LABEL": "Locale",
           "PLACEHOLDER": "Select locale..."
         },
         "STATUS": {
@@ -886,6 +887,7 @@
             "SEND_INSTRUCTIONS": {
               "HEADER": "Send instructions",
               "DESCRIPTION": "If you would prefer to have someone from your development team to handle this step, you can enter email address below, and we will send them the required instructions.",
+              "EMAIL_LABEL": "Email address",
               "PLACEHOLDER": "Enter their email",
               "ERROR": "Enter a valid email address",
               "SEND_BUTTON": "Send"

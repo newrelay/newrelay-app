@@ -1,7 +1,7 @@
 <script setup>
 /* eslint-disable */
 import { ref, computed, onMounted } from 'vue';
-import { RelayInput as Input, RelayCheckbox as Checkbox } from 'dashboard/components-next/relay';
+import { RelayInput as Input, RelayCheckbox as Checkbox, RelayTextarea } from 'dashboard/components-next/relay';
 import Avatar from 'dashboard/components-next/avatar/Avatar.vue';
 import { useMapGetter } from 'dashboard/composables/store';
 import { useAlert } from 'dashboard/composables';
@@ -988,11 +988,11 @@ async function sendReply() {
             </div>
 
             <div class="relative">
-              <textarea 
+              <RelayTextarea
                 v-model="replyText"
-                class="w-full h-28 text-xs font-normal text-foreground bg-background border border-border rounded-2xl p-3.5 pb-11 focus:outline-none focus:ring-1 focus:ring-primary/40 resize-none placeholder:text-muted-foreground/60 shadow-xs leading-relaxed"
+                class-name="h-28 text-xs font-normal pb-11 rounded-2xl resize-none placeholder:text-muted-foreground/60 leading-relaxed"
                 placeholder="Write a response..."
-              ></textarea>
+              />
               <div class="absolute bottom-2.5 left-3 right-3 flex justify-between items-center bg-background/80 backdrop-blur-xs pt-1">
                 <div class="flex items-center gap-1">
                   <button class="p-1.5 text-muted-foreground hover:text-foreground rounded-lg hover:bg-muted cursor-pointer"><ImageIcon class="size-4" /></button>
@@ -1025,12 +1025,11 @@ async function sendReply() {
             </div>
 
             <div class="relative">
-              <input
+              <Input
                 v-model="internalNote"
-                @keyup.enter="addInternalNote"
-                type="text"
-                class="w-full text-xs bg-background border border-border rounded-xl px-3.5 py-2.5 pr-10 focus:outline-none shadow-xs"
+                class-name="pr-10 text-xs"
                 placeholder="Add a private note..."
+                @keyup.enter="addInternalNote"
               />
               <button @click="addInternalNote" class="absolute right-2 top-2 p-1 text-warning hover:text-warning rounded cursor-pointer">
                 <Plus class="size-3.5" />

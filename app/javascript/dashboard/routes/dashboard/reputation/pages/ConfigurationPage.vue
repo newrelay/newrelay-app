@@ -11,6 +11,8 @@ import {
 } from 'lucide-vue-next';
 import {
   RelaySwitch,
+  RelayInput,
+  RelayTextarea,
   RelayDropdownMenu as DropdownMenu,
   RelayDropdownMenuTrigger as DropdownMenuTrigger,
   RelayDropdownMenuContent as DropdownMenuContent,
@@ -659,7 +661,7 @@ const autoFlagLabel = computed(() => autoFlagOptions.find(o => o.value === spamS
 
             <div v-if="selectedChannel === 'email'" class="flex flex-col gap-1.5">
               <label class="text-[13.5px] font-medium text-foreground">Email Subject Line</label>
-              <input v-model="emailSubject" class="h-9 px-3 text-[13.5px] rounded-md border border-border/80 bg-background text-foreground shadow-2xs focus:outline-none focus-visible:ring-1 focus-visible:ring-primary/30" />
+              <RelayInput v-model="emailSubject" />
             </div>
 
             <div class="flex flex-col gap-2">
@@ -667,10 +669,10 @@ const autoFlagLabel = computed(() => autoFlagOptions.find(o => o.value === spamS
                 <label class="text-[13.5px] font-medium text-foreground">{{ selectedChannel === 'video' ? 'Video Prompt' : selectedChannel === 'email' ? 'Email Body Copy' : 'Message Content' }}</label>
                 <span v-if="selectedChannel === 'sms'" class="text-[11.5px] text-muted-foreground font-mono">{{ smsMessage.length }} / 160 characters ({{ Math.ceil(smsMessage.length / 160) || 1 }} SMS)</span>
               </div>
-              <textarea v-if="selectedChannel === 'sms'" v-model="smsMessage" rows="4" class="w-full min-h-[150px] text-[14px] p-3 rounded-lg border border-border bg-background text-foreground shadow-xs resize-y focus:outline-none focus:ring-1 focus:ring-primary/30 leading-relaxed"></textarea>
-              <textarea v-else-if="selectedChannel === 'email'" v-model="emailBody" rows="5" class="w-full min-h-[150px] text-[14px] p-3 rounded-lg border border-border bg-background text-foreground shadow-xs resize-y focus:outline-none focus:ring-1 focus:ring-primary/30 leading-relaxed"></textarea>
-              <textarea v-else-if="selectedChannel === 'whatsapp'" v-model="whatsappBody" rows="4" class="w-full min-h-[150px] text-[14px] p-3 rounded-lg border border-border bg-background text-foreground shadow-xs resize-y focus:outline-none focus:ring-1 focus:ring-primary/30 leading-relaxed"></textarea>
-              <textarea v-else v-model="videoPrompt" rows="4" class="w-full min-h-[150px] text-[14px] p-3 rounded-lg border border-border bg-background text-foreground shadow-xs resize-y focus:outline-none focus:ring-1 focus:ring-primary/30 leading-relaxed"></textarea>
+              <RelayTextarea v-if="selectedChannel === 'sms'" v-model="smsMessage" :rows="4" class-name="min-h-[150px]" />
+              <RelayTextarea v-else-if="selectedChannel === 'email'" v-model="emailBody" :rows="5" class-name="min-h-[150px]" />
+              <RelayTextarea v-else-if="selectedChannel === 'whatsapp'" v-model="whatsappBody" :rows="4" class-name="min-h-[150px]" />
+              <RelayTextarea v-else v-model="videoPrompt" :rows="4" class-name="min-h-[150px]" />
 
               <div class="flex items-center gap-2 flex-wrap pt-1">
                 <span class="text-[12.5px] text-muted-foreground font-medium">Insert tag:</span>
@@ -870,8 +872,8 @@ const autoFlagLabel = computed(() => autoFlagOptions.find(o => o.value === spamS
               </div>
             </div>
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
-              <div class="flex flex-col gap-1.5"><label class="text-[13.5px] font-medium text-foreground">QR Call-To-Action Text</label><input v-model="qrTitle" class="h-10 px-3 text-sm rounded-md border border-border bg-background text-foreground focus:outline-none focus-visible:ring-1 focus-visible:ring-primary/30" /></div>
-              <div class="flex flex-col gap-1.5"><label class="text-[13.5px] font-medium text-foreground">Sub-text</label><input v-model="qrSubtitle" class="h-10 px-3 text-sm rounded-md border border-border bg-background text-foreground focus:outline-none focus-visible:ring-1 focus-visible:ring-primary/30" /></div>
+              <div class="flex flex-col gap-1.5"><label class="text-[13.5px] font-medium text-foreground">QR Call-To-Action Text</label><RelayInput v-model="qrTitle" /></div>
+              <div class="flex flex-col gap-1.5"><label class="text-[13.5px] font-medium text-foreground">Sub-text</label><RelayInput v-model="qrSubtitle" /></div>
             </div>
             <div class="flex items-center justify-between p-4 bg-muted/20 rounded-xl border border-border/80">
               <div><div class="text-[13.5px] font-medium text-foreground">Center Brand Icon</div><div class="text-[12.5px] text-muted-foreground mt-0.5">Embed your company brand icon in the center of the QR matrix</div></div>
@@ -950,7 +952,7 @@ const autoFlagLabel = computed(() => autoFlagOptions.find(o => o.value === spamS
           </div>
           <div class="flex flex-col gap-1.5">
             <label class="text-[11.5px] font-semibold text-muted-foreground uppercase tracking-wider">Custom AI Instructions</label>
-            <textarea v-model="aiSettings.customInstructions" rows="4" class="w-full text-[13.5px] p-3.5 rounded-xl border border-border/80 bg-background resize-none focus:outline-none focus:ring-1 focus:ring-primary/30 leading-relaxed"></textarea>
+            <RelayTextarea v-model="aiSettings.customInstructions" :rows="4" class-name="resize-none" />
           </div>
           <div class="flex items-center justify-end pt-3 border-t border-border">
             <button class="h-9 px-4 rounded-md bg-primary text-primary-foreground text-sm font-semibold inline-flex items-center gap-2 cursor-pointer hover:bg-primary/90" @click="saveAiConfig"><Check v-if="isAiSaved" class="size-4" /><Sparkles v-else class="size-4" /> {{ isAiSaved ? 'Saved' : 'Save AI Config' }}</button>
@@ -982,7 +984,7 @@ const autoFlagLabel = computed(() => autoFlagOptions.find(o => o.value === spamS
           </div>
           <div class="flex flex-col gap-1.5">
             <label class="text-[11.5px] font-semibold text-muted-foreground uppercase tracking-wider">Blocklist Keywords</label>
-            <textarea v-model="spamSettings.blocklistKeywords" rows="3" placeholder="scam, fake, competitor…" class="w-full text-[13.5px] p-3.5 rounded-xl border border-border/80 bg-background resize-none focus:outline-none focus:ring-1 focus:ring-primary/30 leading-relaxed"></textarea>
+            <RelayTextarea v-model="spamSettings.blocklistKeywords" :rows="3" placeholder="scam, fake, competitor…" class-name="resize-none" />
             <p class="text-[12px] text-muted-foreground">Comma-separated list of terms. Reviews containing these keywords are auto-marked as spam.</p>
           </div>
           <div class="flex items-center justify-end pt-3 border-t border-border">
@@ -1019,7 +1021,7 @@ const autoFlagLabel = computed(() => autoFlagOptions.find(o => o.value === spamS
           <!-- Template Name -->
           <div class="flex flex-col gap-1.5">
             <label class="text-[13.5px] font-medium text-foreground">Template Name</label>
-            <input v-model="newTemplateForm.name" type="text" :placeholder="newTemplateForm.channel === 'sms' ? 'e.g. VIP Client 5-Star Prompt' : newTemplateForm.channel === 'email' ? 'e.g. Elegant Post-Service Follow-up' : newTemplateForm.channel === 'whatsapp' ? 'e.g. Quick WhatsApp 1-Tap Feedback' : 'e.g. Customer Experience Video'" class="reset-base h-9 px-3 text-[14px] rounded-md border border-border/80 bg-background text-foreground shadow-2xs focus-visible:ring-1 focus-visible:ring-primary/30 focus-visible:outline-none" />
+            <RelayInput v-model="newTemplateForm.name" type="text" :placeholder="newTemplateForm.channel === 'sms' ? 'e.g. VIP Client 5-Star Prompt' : newTemplateForm.channel === 'email' ? 'e.g. Elegant Post-Service Follow-up' : newTemplateForm.channel === 'whatsapp' ? 'e.g. Quick WhatsApp 1-Tap Feedback' : 'e.g. Customer Experience Video'" />
           </div>
 
           <!-- SMS -->
@@ -1029,7 +1031,7 @@ const autoFlagLabel = computed(() => autoFlagOptions.find(o => o.value === spamS
                 <label class="text-[13.5px] font-medium text-foreground">SMS Message Content</label>
                 <span class="text-[11.5px] text-muted-foreground font-mono">{{ newTemplateForm.smsMessage.length }} / 160 chars</span>
               </div>
-              <textarea v-model="newTemplateForm.smsMessage" rows="4" placeholder="Type your SMS message here..." class="reset-base w-full text-[14px] p-3 rounded-lg border border-border bg-background text-foreground shadow-xs focus-visible:ring-1 focus-visible:ring-primary/30 outline-none leading-relaxed resize-none"></textarea>
+              <RelayTextarea v-model="newTemplateForm.smsMessage" :rows="4" placeholder="Type your SMS message here..." class-name="resize-none" />
               <div class="flex items-center gap-2 flex-wrap pt-0.5">
                 <span class="text-[12px] text-muted-foreground font-medium">Insert tag:</span>
                 <button v-for="tag in TAGS" :key="tag" type="button" class="px-2 py-0.5 bg-muted/60 hover:bg-muted text-[11px] font-mono rounded text-foreground border border-border/50 cursor-pointer" @click="insertTagIntoModal(tag)">{{ tag }}</button>
@@ -1042,15 +1044,15 @@ const autoFlagLabel = computed(() => autoFlagOptions.find(o => o.value === spamS
             <div class="space-y-4">
               <div class="flex flex-col gap-1.5">
                 <label class="text-[13.5px] font-medium text-foreground">Email Subject Line</label>
-                <input v-model="newTemplateForm.emailSubject" type="text" placeholder="How was your experience with {{BusinessName}}?" class="reset-base h-9 px-3 text-[14px] rounded-md border border-border/80 bg-background text-foreground shadow-2xs focus-visible:ring-1 focus-visible:ring-primary/30 focus-visible:outline-none" />
+                <RelayInput v-model="newTemplateForm.emailSubject" type="text" placeholder="How was your experience with {{BusinessName}}?" />
               </div>
               <div class="flex flex-col gap-1.5">
                 <label class="text-[13.5px] font-medium text-foreground">Preheader Text</label>
-                <input v-model="newTemplateForm.emailPreheader" type="text" placeholder="We value your feedback. Take 30 seconds to rate us." class="reset-base h-9 px-3 text-[14px] rounded-md border border-border/80 bg-background text-foreground shadow-2xs focus-visible:ring-1 focus-visible:ring-primary/30 focus-visible:outline-none" />
+                <RelayInput v-model="newTemplateForm.emailPreheader" type="text" placeholder="We value your feedback. Take 30 seconds to rate us." />
               </div>
               <div class="flex flex-col gap-2">
                 <label class="text-[13.5px] font-medium text-foreground">Email Body Copy</label>
-                <textarea v-model="newTemplateForm.emailBody" rows="3" placeholder="Write your email body copy..." class="reset-base w-full text-[14px] p-3 rounded-lg border border-border bg-background text-foreground shadow-xs focus-visible:ring-1 focus-visible:ring-primary/30 outline-none leading-relaxed resize-none"></textarea>
+                <RelayTextarea v-model="newTemplateForm.emailBody" :rows="3" placeholder="Write your email body copy..." class-name="resize-none" />
                 <div class="flex items-center gap-2 flex-wrap pt-0.5">
                   <span class="text-[12px] text-muted-foreground font-medium">Insert tag:</span>
                   <button v-for="tag in TAGS" :key="tag" type="button" class="px-2 py-0.5 bg-muted/60 hover:bg-muted text-[11px] font-mono rounded text-foreground border border-border/50 cursor-pointer" @click="insertTagIntoModal(tag)">{{ tag }}</button>
@@ -1058,7 +1060,7 @@ const autoFlagLabel = computed(() => autoFlagOptions.find(o => o.value === spamS
               </div>
               <div class="flex flex-col gap-1.5">
                 <label class="text-[13.5px] font-medium text-foreground">Rating Button Text</label>
-                <input v-model="newTemplateForm.emailButtonText" type="text" placeholder="Rate Us on Google ★★★★★" class="reset-base h-9 px-3 text-[14px] rounded-md border border-border/80 bg-background text-foreground shadow-2xs focus-visible:ring-1 focus-visible:ring-primary/30 focus-visible:outline-none" />
+                <RelayInput v-model="newTemplateForm.emailButtonText" type="text" placeholder="Rate Us on Google ★★★★★" />
               </div>
             </div>
           </template>
@@ -1068,11 +1070,11 @@ const autoFlagLabel = computed(() => autoFlagOptions.find(o => o.value === spamS
             <div class="space-y-4">
               <div class="flex flex-col gap-1.5">
                 <label class="text-[13.5px] font-medium text-foreground">WhatsApp Header Greeting</label>
-                <input v-model="newTemplateForm.waHeader" type="text" placeholder="Hi {{FirstName}} 👋" class="reset-base h-9 px-3 text-[14px] rounded-md border border-border/80 bg-background text-foreground shadow-2xs focus-visible:ring-1 focus-visible:ring-primary/30 focus-visible:outline-none" />
+                <RelayInput v-model="newTemplateForm.waHeader" type="text" placeholder="Hi {{FirstName}} 👋" />
               </div>
               <div class="flex flex-col gap-2">
                 <label class="text-[13.5px] font-medium text-foreground">Body Content</label>
-                <textarea v-model="newTemplateForm.waBody" rows="3" placeholder="Write your WhatsApp message body..." class="reset-base w-full text-[14px] p-3 rounded-lg border border-border bg-background text-foreground shadow-xs focus-visible:ring-1 focus-visible:ring-primary/30 outline-none leading-relaxed resize-none"></textarea>
+                <RelayTextarea v-model="newTemplateForm.waBody" :rows="3" placeholder="Write your WhatsApp message body..." class-name="resize-none" />
                 <div class="flex items-center gap-2 flex-wrap pt-0.5">
                   <span class="text-[12px] text-muted-foreground font-medium">Insert tag:</span>
                   <button v-for="tag in TAGS" :key="tag" type="button" class="px-2 py-0.5 bg-muted/60 hover:bg-muted text-[11px] font-mono rounded text-foreground border border-border/50 cursor-pointer" @click="insertTagIntoModal(tag)">{{ tag }}</button>
@@ -1081,11 +1083,11 @@ const autoFlagLabel = computed(() => autoFlagOptions.find(o => o.value === spamS
               <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
                 <div class="flex flex-col gap-1.5">
                   <label class="text-[13.5px] font-medium text-foreground">Primary CTA Button</label>
-                  <input v-model="newTemplateForm.waButton1" type="text" placeholder="⭐ Leave a 5★ Review" class="reset-base h-9 px-3 text-[14px] rounded-md border border-border/80 bg-background text-foreground shadow-2xs focus-visible:ring-1 focus-visible:ring-primary/30 focus-visible:outline-none" />
+                  <RelayInput v-model="newTemplateForm.waButton1" type="text" placeholder="⭐ Leave a 5★ Review" />
                 </div>
                 <div class="flex flex-col gap-1.5">
                   <label class="text-[13.5px] font-medium text-foreground">Secondary Button</label>
-                  <input v-model="newTemplateForm.waButton2" type="text" placeholder="💬 Talk with Support" class="reset-base h-9 px-3 text-[14px] rounded-md border border-border/80 bg-background text-foreground shadow-2xs focus-visible:ring-1 focus-visible:ring-primary/30 focus-visible:outline-none" />
+                  <RelayInput v-model="newTemplateForm.waButton2" type="text" placeholder="💬 Talk with Support" />
                 </div>
               </div>
             </div>
@@ -1096,11 +1098,11 @@ const autoFlagLabel = computed(() => autoFlagOptions.find(o => o.value === spamS
             <div class="space-y-4">
               <div class="flex flex-col gap-1.5">
                 <label class="text-[13.5px] font-medium text-foreground">Recording Page Headline</label>
-                <input v-model="newTemplateForm.videoHeadline" type="text" placeholder="Share Your Story with {{BusinessName}}" class="reset-base h-9 px-3 text-[14px] rounded-md border border-border/80 bg-background text-foreground shadow-2xs focus-visible:ring-1 focus-visible:ring-primary/30 focus-visible:outline-none" />
+                <RelayInput v-model="newTemplateForm.videoHeadline" type="text" placeholder="Share Your Story with {{BusinessName}}" />
               </div>
               <div class="flex flex-col gap-2">
                 <label class="text-[13.5px] font-medium text-foreground">Prompt Message</label>
-                <textarea v-model="newTemplateForm.videoMessage" rows="3" placeholder="Hi {{FirstName}}, could you record a quick video review sharing your experience?" class="reset-base w-full text-[14px] p-3 rounded-lg border border-border bg-background text-foreground shadow-xs focus-visible:ring-1 focus-visible:ring-primary/30 outline-none leading-relaxed resize-none"></textarea>
+                <RelayTextarea v-model="newTemplateForm.videoMessage" :rows="3" placeholder="Hi {{FirstName}}, could you record a quick video review sharing your experience?" class-name="resize-none" />
                 <div class="flex items-center gap-2 flex-wrap pt-0.5">
                   <span class="text-[12px] text-muted-foreground font-medium">Insert tag:</span>
                   <button v-for="tag in TAGS" :key="tag" type="button" class="px-2 py-0.5 bg-muted/60 hover:bg-muted text-[11px] font-mono rounded text-foreground border border-border/50 cursor-pointer" @click="insertTagIntoModal(tag)">{{ tag }}</button>
@@ -1108,12 +1110,12 @@ const autoFlagLabel = computed(() => autoFlagOptions.find(o => o.value === spamS
               </div>
               <div class="flex flex-col gap-1.5">
                 <label class="text-[13.5px] font-medium text-foreground">Guiding Questions (One per line)</label>
-                <textarea v-model="newTemplateForm.videoQuestions" rows="3" class="reset-base w-full text-[12.5px] p-3 rounded-lg border border-border bg-background text-foreground shadow-xs focus-visible:ring-1 focus-visible:ring-primary/30 outline-none leading-relaxed resize-none font-mono"></textarea>
+                <RelayTextarea v-model="newTemplateForm.videoQuestions" :rows="3" class-name="resize-none font-mono text-[12.5px]" />
               </div>
               <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
                 <div class="flex flex-col gap-1.5">
                   <label class="text-[13.5px] font-medium text-foreground">Recording Button Text</label>
-                  <input v-model="newTemplateForm.videoButtonText" type="text" placeholder="Record Video Testimonial 🎥" class="reset-base h-9 px-3 text-[14px] rounded-md border border-border/80 bg-background text-foreground shadow-2xs focus-visible:ring-1 focus-visible:ring-primary/30 focus-visible:outline-none" />
+                  <RelayInput v-model="newTemplateForm.videoButtonText" type="text" placeholder="Record Video Testimonial 🎥" />
                 </div>
                 <div class="flex flex-col gap-1.5">
                   <label class="text-[13.5px] font-medium text-foreground">Max Duration</label>

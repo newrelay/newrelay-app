@@ -9,7 +9,7 @@ import { useConversationFilterContext } from './provider.js';
 import { useSnakeCase } from 'dashboard/composables/useTransformKeys';
 
 import Button from 'next/button/Button.vue';
-import Input from 'dashboard/components-next/input/Input.vue';
+import { RelayInput, RelayLabel } from 'dashboard/components-next/relay';
 import ConditionRow from './ConditionRow.vue';
 
 const props = defineProps({
@@ -111,10 +111,10 @@ const outsideClickHandler = [
       {{ filterModalHeaderTitle }}
     </h3>
     <div v-if="props.isFolderView">
-      <div class="border-b border-border pb-6">
-        <Input
+      <div class="flex flex-col gap-1.5 border-b border-border pb-6">
+        <RelayLabel>{{ t('FILTER.FOLDER_LABEL') }}</RelayLabel>
+        <RelayInput
           v-model="folderNameLocal"
-          :label="t('FILTER.FOLDER_LABEL')"
           :placeholder="t('FILTER.INPUT_PLACEHOLDER')"
         />
       </div>

@@ -6,7 +6,7 @@ import { helpers } from '@vuelidate/validators';
 import { isValidDomain } from '@chatwoot/utils';
 
 import Dialog from 'dashboard/components-next/dialog/Dialog.vue';
-import Input from 'dashboard/components-next/input/Input.vue';
+import { RelayInput, RelayLabel } from 'dashboard/components-next/relay';
 
 const props = defineProps({
   mode: {
@@ -77,23 +77,27 @@ defineExpose({ dialogRef });
     "
     @confirm="handleDialogConfirm"
   >
-    <Input
-      v-model="formState.customDomain"
-      :label="
-        t(
-          'HELP_CENTER.PORTAL_SETTINGS.CONFIGURATION_FORM.CUSTOM_DOMAIN.DIALOG.LABEL'
-        )
-      "
-      :placeholder="
-        t(
-          'HELP_CENTER.PORTAL_SETTINGS.CONFIGURATION_FORM.CUSTOM_DOMAIN.DIALOG.PLACEHOLDER'
-        )
-      "
-      :message="
-        v$.customDomain.$error ? v$.customDomain.$errors[0].$message : ''
-      "
-      :message-type="v$.customDomain.$error ? 'error' : 'info'"
-      @blur="v$.customDomain.$touch()"
-    />
+    <div class="flex flex-col gap-1.5">
+      <RelayLabel html-for="custom-domain">
+        {{
+          t(
+            'HELP_CENTER.PORTAL_SETTINGS.CONFIGURATION_FORM.CUSTOM_DOMAIN.DIALOG.LABEL'
+          )
+        }}
+      </RelayLabel>
+      <RelayInput
+        id="custom-domain"
+        v-model="formState.customDomain"
+        :placeholder="
+          t(
+            'HELP_CENTER.PORTAL_SETTINGS.CONFIGURATION_FORM.CUSTOM_DOMAIN.DIALOG.PLACEHOLDER'
+          )
+        "
+        @blur="v$.customDomain.$touch()"
+      />
+      <p v-if="v$.customDomain.$error" class="text-[12px] text-destructive">
+        {{ v$.customDomain.$errors[0].$message }}
+      </p>
+    </div>
   </Dialog>
 </template>

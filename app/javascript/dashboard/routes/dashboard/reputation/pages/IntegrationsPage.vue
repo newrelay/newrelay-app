@@ -8,12 +8,13 @@ import {
   LayoutGrid, Grid2X2, List, Building2, Send, CheckCircle2, Loader2,
 } from 'lucide-vue-next';
 import {
-  RelayInput as Input, RelaySwitch,
+  RelayInput as Input, RelaySwitch, RelayTextarea,
   RelayDropdownMenu as DropdownMenu,
   RelayDropdownMenuTrigger as DropdownMenuTrigger,
   RelayDropdownMenuContent as DropdownMenuContent,
   RelayDropdownMenuItem as DropdownMenuItem,
 } from 'dashboard/components-next/relay';
+import ComboBox from 'dashboard/components-next/combobox/ComboBox.vue';
 
 const axios = window.axios;
 const route = useRoute();
@@ -356,6 +357,7 @@ function tagStyles(variant) {
   if (variant === 'amber') return 'bg-warning/10 text-warning';
   return 'bg-muted text-muted-foreground';
 }
+const listingOptions = computed(() => listings.value.map(l => ({ value: l.id, label: l.name })));
 </script>
 
 <template>
@@ -370,12 +372,7 @@ function tagStyles(variant) {
         <div class="flex items-center gap-3">
           <div v-if="listings.length > 1" class="flex items-center gap-2 text-[13px]">
             <span class="text-muted-foreground">Connecting to:</span>
-            <select
-              v-model="selectedListingId"
-              class="h-9 rounded-lg border border-border bg-card shadow-xs text-[13px] font-medium px-2.5 cursor-pointer"
-            >
-              <option v-for="l in listings" :key="l.id" :value="l.id">{{ l.name }}</option>
-            </select>
+            <ComboBox v-model="selectedListingId" :options="listingOptions" placeholder="Select listing" class-name="h-9 text-[13px]" />
           </div>
           <span v-else-if="selectedListing" class="text-[13px] text-muted-foreground">
             Connecting to <span class="font-medium text-foreground">{{ selectedListing.name }}</span>
@@ -577,7 +574,7 @@ function tagStyles(variant) {
             </div>
             <div class="flex flex-col gap-1.5">
               <label class="text-[13px] font-medium text-foreground">Notes <span class="text-muted-foreground font-normal">(optional)</span></label>
-              <textarea v-model="requestNotes" rows="3" class="w-full text-[13.5px] p-3 rounded-lg border border-border bg-background resize-none focus:outline-none focus:ring-1 focus:ring-primary/30"></textarea>
+              <RelayTextarea v-model="requestNotes" :rows="3" class-name="text-[13.5px] resize-none" />
             </div>
             <p v-if="requestError" class="text-[13px] text-destructive">{{ requestError }}</p>
           </div>

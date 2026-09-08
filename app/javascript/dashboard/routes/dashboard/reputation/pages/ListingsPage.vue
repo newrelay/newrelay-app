@@ -905,7 +905,7 @@ const closeAdd = () => {
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div class="flex flex-col gap-1.5">
               <label class="text-[13.5px] font-medium text-foreground">Business Name <span class="text-destructive">*</span></label>
-              <input v-model="addForm.name" type="text" placeholder="E.g. Jaipur HQ" class="reset-base h-9 px-4 text-[14px] shadow-sm rounded-md border border-border/80 bg-background text-foreground focus-visible:ring-1 focus-visible:ring-primary/30 focus-visible:outline-none" />
+              <Input v-model="addForm.name" type="text" placeholder="E.g. Jaipur HQ" />
             </div>
             <div class="flex flex-col gap-1.5">
               <label class="text-[13.5px] font-medium text-foreground">Business Category <span class="text-destructive">*</span></label>
@@ -956,14 +956,14 @@ const closeAdd = () => {
               <label class="text-[13.5px] font-medium text-foreground">Address <span class="text-destructive">*</span></label>
               <div class="relative">
                 <MapPin class="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground pointer-events-none" />
-                <input v-model="addForm.address" type="text" placeholder="123 Main St, City, State" class="reset-base w-full pl-9 pr-4 h-9 text-[14px] shadow-sm rounded-md border border-border/80 bg-background text-foreground focus-visible:ring-1 focus-visible:ring-primary/30 focus-visible:outline-none" />
+                <Input v-model="addForm.address" type="text" placeholder="123 Main St, City, State" class-name="pl-9" />
               </div>
             </div>
             <div class="flex flex-col gap-1.5">
               <label class="text-[13.5px] font-medium text-foreground">Phone <span class="text-destructive">*</span></label>
               <div class="relative">
                 <Phone class="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground pointer-events-none" />
-                <input v-model="addForm.phone" type="text" placeholder="+1 (555) 000-0000" class="reset-base w-full pl-9 pr-4 h-9 text-[14px] shadow-sm rounded-md border border-border/80 bg-background text-foreground focus-visible:ring-1 focus-visible:ring-primary/30 focus-visible:outline-none" />
+                <Input v-model="addForm.phone" type="text" placeholder="+1 (555) 000-0000" class-name="pl-9" />
               </div>
             </div>
           </div>
@@ -973,14 +973,14 @@ const closeAdd = () => {
               <label class="text-[13.5px] font-medium text-foreground">Website</label>
               <div class="relative">
                 <Globe class="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground pointer-events-none" />
-                <input v-model="addForm.website" type="text" placeholder="https://example.com" class="reset-base w-full pl-9 pr-4 h-9 text-[14px] shadow-sm rounded-md border border-border/80 bg-background text-foreground focus-visible:ring-1 focus-visible:ring-primary/30 focus-visible:outline-none" />
+                <Input v-model="addForm.website" type="text" placeholder="https://example.com" class-name="pl-9" />
               </div>
             </div>
             <div class="flex flex-col gap-1.5">
               <label class="text-[13.5px] font-medium text-foreground">Business Email</label>
               <div class="relative">
                 <Mail class="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground pointer-events-none" />
-                <input v-model="addForm.email" type="email" placeholder="hello@company.com" class="reset-base w-full pl-9 pr-4 h-9 text-[14px] shadow-sm rounded-md border border-border/80 bg-background text-foreground focus-visible:ring-1 focus-visible:ring-primary/30 focus-visible:outline-none" />
+                <Input v-model="addForm.email" type="email" placeholder="hello@company.com" class-name="pl-9" />
               </div>
             </div>
           </div>
@@ -990,14 +990,14 @@ const closeAdd = () => {
               <label class="text-[13.5px] font-medium text-foreground">Store ID <span class="text-muted-foreground font-normal">(Optional)</span></label>
               <div class="relative">
                 <Hash class="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground pointer-events-none" />
-                <input v-model="addForm.storeId" type="text" placeholder="Internal ID or Code" class="reset-base w-full pl-9 pr-4 h-9 text-[14px] shadow-sm rounded-md border border-border/80 bg-background text-foreground focus-visible:ring-1 focus-visible:ring-primary/30 focus-visible:outline-none" />
+                <Input v-model="addForm.storeId" type="text" placeholder="Internal ID or Code" class-name="pl-9" />
               </div>
             </div>
             <div class="flex flex-col gap-1.5">
               <label class="text-[13.5px] font-medium text-foreground">Photo URL <span class="text-muted-foreground font-normal">(Optional)</span></label>
               <div class="relative">
                 <ImageIcon class="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground pointer-events-none" />
-                <input v-model="addForm.image" type="text" placeholder="https://…/photo.jpg" class="reset-base w-full pl-9 pr-4 h-9 text-[14px] shadow-sm rounded-md border border-border/80 bg-background text-foreground focus-visible:ring-1 focus-visible:ring-primary/30 focus-visible:outline-none" />
+                <Input v-model="addForm.image" type="text" placeholder="https://…/photo.jpg" class-name="pl-9" />
               </div>
             </div>
           </div>

@@ -3,10 +3,13 @@ import { reactive, watch, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { debounce } from '@chatwoot/utils';
 
-import InlineInput from 'dashboard/components-next/inline-input/InlineInput.vue';
-import TextArea from 'dashboard/components-next/textarea/TextArea.vue';
 import TagInput from 'dashboard/components-next/taginput/TagInput.vue';
-import { RelayButton } from 'dashboard/components-next/relay';
+import {
+  RelayButton,
+  RelayInput,
+  RelayTextarea,
+  RelayLabel,
+} from 'dashboard/components-next/relay';
 
 const props = defineProps({
   article: {
@@ -73,64 +76,50 @@ onMounted(() => {
         <span class="i-lucide-x size-3.5" aria-hidden="true" />
       </RelayButton>
     </div>
-    <div class="flex flex-col gap-2 px-2.5 pb-2">
-      <div>
-        <div class="flex w-full justify-between gap-4 py-2">
-          <label
-            class="min-w-[6.25rem] whitespace-nowrap text-[13px] text-foreground text-[13.5px] font-[500]"
-          >
-            {{
-              t(
-                'HELP_CENTER.EDIT_ARTICLE_PAGE.ARTICLE_PROPERTIES.META_DESCRIPTION'
-              )
-            }}
-          </label>
-          <TextArea
-            v-model="state.description"
-            :placeholder="
-              t(
-                'HELP_CENTER.EDIT_ARTICLE_PAGE.ARTICLE_PROPERTIES.META_DESCRIPTION_PLACEHOLDER'
-              )
-            "
-            class="w-[13.75rem]"
-            custom-text-area-wrapper-class="!p-0 !border-0 !rounded-none !bg-transparent transition-none"
-            custom-text-area-class="max-h-[9.375rem]"
-            auto-height
-            min-height="3rem"
-          />
-        </div>
-        <div class="flex justify-between w-full gap-2 py-2">
-          <InlineInput
-            v-model="state.title"
-            :placeholder="
-              t(
-                'HELP_CENTER.EDIT_ARTICLE_PAGE.ARTICLE_PROPERTIES.META_TITLE_PLACEHOLDER'
-              )
-            "
-            :label="
-              t('HELP_CENTER.EDIT_ARTICLE_PAGE.ARTICLE_PROPERTIES.META_TITLE')
-            "
-            custom-label-class="min-w-[7.5rem]"
-          />
-        </div>
-        <div class="flex justify-between w-full gap-3 py-2">
-          <label
-            class="min-w-[7.5rem] whitespace-nowrap text-[13px] text-foreground text-[13.5px] font-[500]"
-          >
-            {{
-              t('HELP_CENTER.EDIT_ARTICLE_PAGE.ARTICLE_PROPERTIES.META_TAGS')
-            }}
-          </label>
-          <TagInput
-            v-model="state.tags"
-            :placeholder="
-              t(
-                'HELP_CENTER.EDIT_ARTICLE_PAGE.ARTICLE_PROPERTIES.META_TAGS_PLACEHOLDER'
-              )
-            "
-            class="w-[14rem]"
-          />
-        </div>
+    <div class="flex flex-col gap-4 px-2.5 pb-2">
+      <div class="flex flex-col gap-1.5">
+        <RelayLabel>
+          {{
+            t(
+              'HELP_CENTER.EDIT_ARTICLE_PAGE.ARTICLE_PROPERTIES.META_DESCRIPTION'
+            )
+          }}
+        </RelayLabel>
+        <RelayTextarea
+          v-model="state.description"
+          :placeholder="
+            t(
+              'HELP_CENTER.EDIT_ARTICLE_PAGE.ARTICLE_PROPERTIES.META_DESCRIPTION_PLACEHOLDER'
+            )
+          "
+        />
+      </div>
+      <div class="flex flex-col gap-1.5">
+        <RelayLabel>
+          {{ t('HELP_CENTER.EDIT_ARTICLE_PAGE.ARTICLE_PROPERTIES.META_TITLE') }}
+        </RelayLabel>
+        <RelayInput
+          v-model="state.title"
+          :placeholder="
+            t(
+              'HELP_CENTER.EDIT_ARTICLE_PAGE.ARTICLE_PROPERTIES.META_TITLE_PLACEHOLDER'
+            )
+          "
+        />
+      </div>
+      <div class="flex flex-col gap-1.5">
+        <RelayLabel>
+          {{ t('HELP_CENTER.EDIT_ARTICLE_PAGE.ARTICLE_PROPERTIES.META_TAGS') }}
+        </RelayLabel>
+        <TagInput
+          v-model="state.tags"
+          :placeholder="
+            t(
+              'HELP_CENTER.EDIT_ARTICLE_PAGE.ARTICLE_PROPERTIES.META_TAGS_PLACEHOLDER'
+            )
+          "
+          class="w-full"
+        />
       </div>
     </div>
   </div>

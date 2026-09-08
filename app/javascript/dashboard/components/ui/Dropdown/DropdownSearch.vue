@@ -1,5 +1,6 @@
 <script setup>
 import NextButton from 'dashboard/components-next/button/Button.vue';
+import Icon from 'dashboard/components-next/icon/Icon.vue';
 
 defineProps({
   inputPlaceholder: {
@@ -25,16 +26,15 @@ const value = defineModel({
     class="flex items-center justify-between h-10 min-h-[40px] sticky top-0 bg-secondary dark:bg-secondary z-10 gap-2 px-3 border-b rounded-t-xl border-border"
   >
     <div class="flex items-center w-full gap-2" @keyup.space.prevent>
-      <fluent-icon
-        icon="search"
-        size="16"
-        class="text-muted-foreground flex-shrink-0"
+      <Icon
+        icon="i-lucide-search"
+        class="text-muted-foreground size-4 flex-shrink-0"
       />
       <input
         v-model="value"
         :placeholder="inputPlaceholder"
         type="search"
-        class="w-full mb-0 !outline-0 !outline-none bg-transparent text-foreground placeholder:text-muted-foreground reset-base text-[14px] shadow-sm rounded-md border-border/80 bg-background focus-visible:ring-1 focus-visible:ring-primary/30"
+        class="h-9 w-full focus:outline-none bg-transparent text-foreground placeholder:text-muted-foreground text-[14px]"
       />
     </div>
     <!-- Clear filter button -->

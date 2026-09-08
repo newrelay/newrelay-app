@@ -11,7 +11,7 @@ import {
   Paperclip, Smile, Mic, Trash2, Archive, Video, Phone, Info
 } from 'lucide-vue-next';
 import {
-  RelayButton as Button, RelayInput as Input, RelayBadge as Badge,
+  RelayButton as Button, RelayInput as Input, RelayBadge as Badge, RelayTextarea,
   RelayDropdownMenu as DropdownMenu,
   RelayDropdownMenuTrigger as DropdownMenuTrigger,
   RelayDropdownMenuContent as DropdownMenuContent,
@@ -25,6 +25,7 @@ import {
 } from 'dashboard/components-next/relay';
 import RelayDatePicker from 'dashboard/components-next/relay/calendar/DatePicker.vue';
 import RelayTimePicker from 'dashboard/components-next/relay/calendar/TimePicker.vue';
+import ComboBox from 'dashboard/components-next/combobox/ComboBox.vue';
 import { defaultSmsTemplates, defaultEmailTemplates, defaultWhatsAppTemplates } from './data/outreachTemplates';
 
 const props = defineProps({
@@ -715,17 +716,12 @@ function close() {
                 </div>
                 <div class="space-y-1">
                   <label class="text-xs font-medium text-foreground">Timezone</label>
-                  <div class="relative h-9">
-                    <select
-                      v-model="form.scheduleTimezone"
-                      class="w-full h-full px-3 text-xs shadow-sm rounded-md border border-border bg-background appearance-none focus:outline-none focus-visible:ring-1 focus-visible:ring-primary/30 cursor-pointer pr-9 font-medium text-foreground"
-                    >
-                      <option v-for="tz in COMMON_TIMEZONES" :key="tz.value" :value="tz.value">
-                        {{ tz.label }}
-                      </option>
-                    </select>
-                    <Globe class="absolute right-3 top-1/2 -translate-y-1/2 size-4 text-primary pointer-events-none" />
-                  </div>
+                  <ComboBox
+                    v-model="form.scheduleTimezone"
+                    :options="COMMON_TIMEZONES"
+                    placeholder="Select timezone"
+                    search-placeholder="Search timezones..."
+                  />
                 </div>
               </div>
               <p v-if="scheduleError" class="text-sm text-destructive flex items-center gap-1.5">
@@ -800,7 +796,7 @@ function close() {
                       {{ isAiEnhancing ? 'Enhancing…' : 'Improve with Relay AI' }}
                     </button>
                   </div>
-                  <textarea v-model="emailBody" rows="5" class="w-full text-[13.5px] p-3.5 shadow-xs rounded-xl border border-border/80 bg-background resize-none focus:outline-none focus:ring-1 focus:ring-primary/30 leading-relaxed"></textarea>
+                  <RelayTextarea v-model="emailBody" :rows="5" class-name="text-[13.5px] leading-relaxed resize-none" />
                 </div>
               </div>
             </template>
@@ -819,7 +815,7 @@ function close() {
                       {{ isAiEnhancing ? 'Enhancing…' : 'Improve with Relay AI' }}
                     </button>
                   </div>
-                  <textarea v-model="smsMessage" rows="4" class="w-full text-[13.5px] p-3.5 shadow-xs rounded-xl border border-border/80 bg-background resize-none focus:outline-none focus:ring-1 focus:ring-primary/30 leading-relaxed"></textarea>
+                  <RelayTextarea v-model="smsMessage" :rows="4" class-name="text-[13.5px] leading-relaxed resize-none" />
                 </div>
               </div>
             </template>
@@ -839,7 +835,7 @@ function close() {
                       {{ isAiEnhancing ? 'Enhancing…' : 'Improve with Relay AI' }}
                     </button>
                   </div>
-                  <textarea v-model="whatsappBody" rows="4" class="w-full text-[13.5px] p-3.5 shadow-xs rounded-xl border border-border/80 bg-background resize-none focus:outline-none focus:ring-1 focus:ring-primary/30 leading-relaxed"></textarea>
+                  <RelayTextarea v-model="whatsappBody" :rows="4" class-name="text-[13.5px] leading-relaxed resize-none" />
                 </div>
               </div>
             </template>

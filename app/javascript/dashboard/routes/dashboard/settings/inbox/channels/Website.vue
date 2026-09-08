@@ -7,6 +7,7 @@ import GreetingsEditor from 'shared/components/GreetingsEditor.vue';
 import Editor from 'dashboard/components-next/Editor/Editor.vue';
 import { RelayButton, RelayInput } from 'dashboard/components-next/relay';
 import Spinner from 'dashboard/components-next/spinner/Spinner.vue';
+import ComboBox from 'dashboard/components-next/combobox/ComboBox.vue';
 
 const INPUT_CLASS =
   'h-10 rounded-md border-border/80 bg-background px-4 text-[14px] shadow-sm focus-visible:ring-1 focus-visible:ring-primary/30';
@@ -19,6 +20,7 @@ export default {
     RelayButton,
     RelayInput,
     Spinner,
+    ComboBox,
   },
   data() {
     return {
@@ -36,6 +38,25 @@ export default {
     ...mapGetters({
       uiFlags: 'inboxes/getUIFlags',
     }),
+    greetingEnabledValue() {
+      return this.greetingEnabled ? 'true' : 'false';
+    },
+    greetingOptions() {
+      return [
+        {
+          value: 'true',
+          label: this.$t(
+            'INBOX_MGMT.ADD.WEBSITE_CHANNEL.CHANNEL_GREETING_TOGGLE.ENABLED'
+          ),
+        },
+        {
+          value: 'false',
+          label: this.$t(
+            'INBOX_MGMT.ADD.WEBSITE_CHANNEL.CHANNEL_GREETING_TOGGLE.DISABLED'
+          ),
+        },
+      ];
+    },
     textAreaChannels() {
       if (
         this.isATwilioChannel ||
@@ -183,25 +204,11 @@ export default {
             $t('INBOX_MGMT.ADD.WEBSITE_CHANNEL.CHANNEL_GREETING_TOGGLE.LABEL')
           }}
         </label>
-        <select
-          v-model="greetingEnabled"
-          class="h-10 w-full rounded-md border border-border/80 bg-background px-3 text-[14px] text-foreground shadow-sm outline-none focus:ring-1 focus:ring-primary/30"
-        >
-          <option :value="true">
-            {{
-              $t(
-                'INBOX_MGMT.ADD.WEBSITE_CHANNEL.CHANNEL_GREETING_TOGGLE.ENABLED'
-              )
-            }}
-          </option>
-          <option :value="false">
-            {{
-              $t(
-                'INBOX_MGMT.ADD.WEBSITE_CHANNEL.CHANNEL_GREETING_TOGGLE.DISABLED'
-              )
-            }}
-          </option>
-        </select>
+        <ComboBox
+          :model-value="greetingEnabledValue"
+          :options="greetingOptions"
+          @update:model-value="val => (greetingEnabled = val === 'true')"
+        />
         <p class="text-[12.5px] text-muted-foreground">
           {{
             $t(

@@ -51,7 +51,9 @@
       "BEFORE_DATE": "Before {date}",
       "AFTER_DATE": "After {date}",
       "TIME_RANGE": "Filter by time",
-      "CLEAR_FILTER": "Clear filter"
+      "CLEAR_FILTER": "Clear filter",
+      "FROM_DATE": "Start date",
+      "TO_DATE": "End date"
     },
     "FILTERS": {
       "FILTER_MESSAGE": "Filter messages by:",

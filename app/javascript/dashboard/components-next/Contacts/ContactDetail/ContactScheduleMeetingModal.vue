@@ -151,7 +151,7 @@ const submit = () => {
             :placeholder="
               t('CONTACTS_LAYOUT.DETAIL.SCHEDULE_MEETING.TITLE_PLACEHOLDER')
             "
-            class-name="h-10 px-3 text-[14px] shadow-sm rounded-md border-border/80 bg-background focus-visible:ring-1 focus-visible:ring-primary/30"
+            class-name="h-9 px-3 text-[14px] shadow-sm rounded-md border-border/80 bg-background focus-visible:ring-1 focus-visible:ring-primary/30"
           />
         </div>
 
@@ -165,7 +165,7 @@ const submit = () => {
               value-format="dd-MM-yyyy"
               display-format="dd-MM-yyyy"
               :placeholder="t('CONTACTS_LAYOUT.DETAIL.SCHEDULE_MEETING.DATE')"
-              trigger-class="h-10 w-full cursor-pointer px-3 text-[14px] rounded-md border border-border/80 bg-background text-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary/30"
+              trigger-class="h-9 w-full cursor-pointer px-3 text-[14px] rounded-md border border-border/80 bg-background text-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary/30"
             />
           </div>
           <div class="flex flex-col gap-1.5">
@@ -174,7 +174,7 @@ const submit = () => {
             </label>
             <RelayTimePicker
               v-model="form.time"
-              trigger-class="h-10 w-full cursor-pointer px-3 text-[14px] rounded-md border border-border/80 bg-background text-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary/30"
+              trigger-class="h-9 w-full cursor-pointer px-3 text-[14px] rounded-md border border-border/80 bg-background text-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary/30"
             />
           </div>
         </div>

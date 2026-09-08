@@ -12,11 +12,13 @@ import {
   format,
   getUnixTime,
   fromUnixTime,
+  parse,
 } from 'date-fns';
 import { DATE_RANGE_TYPES } from '../helpers/searchHelper';
 
 import Button from 'dashboard/components-next/button/Button.vue';
 import DropdownMenu from 'dashboard/components-next/dropdown-menu/DropdownMenu.vue';
+import { RelayDatePicker } from 'dashboard/components-next/relay';
 
 const emit = defineEmits(['change']);
 const modelValue = defineModel({
@@ -31,9 +33,21 @@ const customFrom = ref('');
 const customTo = ref('');
 const rangeType = ref(DATE_RANGE_TYPES.BETWEEN);
 
-// Calculate min date (90 days ago) for date inputs
-const minDate = computed(() => format(subDays(new Date(), 90), 'yyyy-MM-dd'));
-const maxDate = computed(() => format(new Date(), 'yyyy-MM-dd'));
+// Date boundaries for pickers (Date objects for RelayDatePicker)
+const minDateObj = computed(() => subDays(new Date(), 90));
+const maxDateObj = computed(() => new Date());
+
+// Dynamic per-picker bounds so From ≤ To
+const fromMaxDate = computed(() =>
+  customTo.value
+    ? parse(customTo.value, 'yyyy-MM-dd', new Date())
+    : maxDateObj.value
+);
+const toMinDate = computed(() =>
+  customFrom.value
+    ? parse(customFrom.value, 'yyyy-MM-dd', new Date())
+    : minDateObj.value
+);
 
 // Check if both custom date inputs have values
 const hasCustomDates = computed(() => customFrom.value && customTo.value);
@@ -220,12 +234,13 @@ const onToggleDropdown = () => {
             </span>
           </div>
 
-          <input
+          <RelayDatePicker
             v-model="customFrom"
-            type="date"
-            :min="minDate"
-            :max="customTo || maxDate"
-            class="!w-full !mb-0 !rounded-lg !bg-black/10 !outline-border -outline-offset-1 !px-3 !py-2 !text-sm text-foreground !h-8"
+            value-format="yyyy-MM-dd"
+            display-format="MMM d, yyyy"
+            :min-date="minDateObj"
+            :max-date="fromMaxDate"
+            :placeholder="t('SEARCH.DATE_RANGE.FROM_DATE')"
           />
 
           <div class="flex items-center gap-3 h-5 px-1">
@@ -236,12 +251,13 @@ const onToggleDropdown = () => {
             <div class="flex-1 h-px bg-border" />
           </div>
 
-          <input
+          <RelayDatePicker
             v-model="customTo"
-            type="date"
-            :min="customFrom || minDate"
-            :max="maxDate"
-            class="!w-full !mb-0 !rounded-lg !bg-black/10 !outline-border -outline-offset-1 !px-3 !py-2 !text-sm text-foreground !h-8"
+            value-format="yyyy-MM-dd"
+            display-format="MMM d, yyyy"
+            :min-date="toMinDate"
+            :max-date="maxDateObj"
+            :placeholder="t('SEARCH.DATE_RANGE.TO_DATE')"
           />
 
           <div class="flex items-center gap-2 mt-2">

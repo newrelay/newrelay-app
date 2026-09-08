@@ -11,7 +11,7 @@ import { buildPortalURL } from 'dashboard/helper/portalHelper';
 import { isValidSlug } from 'shared/helpers/Validators';
 
 import Dialog from 'dashboard/components-next/dialog/Dialog.vue';
-import Input from 'dashboard/components-next/input/Input.vue';
+import { RelayInput, RelayLabel } from 'dashboard/components-next/relay';
 
 const emit = defineEmits(['create']);
 
@@ -131,37 +131,63 @@ defineExpose({ dialogRef });
     @confirm="handleDialogConfirm"
   >
     <div class="flex flex-col gap-6">
-      <Input
-        id="portal-name"
-        v-model="state.name"
-        type="text"
-        :placeholder="t('HELP_CENTER.CREATE_PORTAL_DIALOG.NAME.PLACEHOLDER')"
-        :label="t('HELP_CENTER.CREATE_PORTAL_DIALOG.NAME.LABEL')"
-        :message-type="nameError ? 'error' : 'info'"
-        :message="
-          nameError || t('HELP_CENTER.CREATE_PORTAL_DIALOG.NAME.MESSAGE')
-        "
-        @blur="v$.name.$touch()"
-      />
-      <Input
-        id="portal-slug"
-        v-model="state.slug"
-        type="text"
-        :placeholder="t('HELP_CENTER.CREATE_PORTAL_DIALOG.SLUG.PLACEHOLDER')"
-        :label="`${t('HELP_CENTER.CREATE_PORTAL_DIALOG.SLUG.LABEL')}${state.domain ? ' (optional)' : ''}`"
-        :message-type="slugError ? 'error' : 'info'"
-        :message="slugError || buildPortalURL(state.slug)"
-        @input="v$.slug.$touch()"
-        @blur="v$.slug.$touch()"
-      />
-      <Input
-        id="portal-domain"
-        v-model="state.domain"
-        type="text"
-        :placeholder="t('HELP_CENTER.CREATE_PORTAL_DIALOG.DOMAIN.PLACEHOLDER')"
-        :label="`${t('HELP_CENTER.CREATE_PORTAL_DIALOG.DOMAIN.LABEL')}${state.slug ? ' (optional)' : ''}`"
-        :message="t('HELP_CENTER.CREATE_PORTAL_DIALOG.DOMAIN.MESSAGE')"
-      />
+      <div class="flex flex-col gap-1.5">
+        <RelayLabel html-for="portal-name">
+          {{ t('HELP_CENTER.CREATE_PORTAL_DIALOG.NAME.LABEL') }}
+        </RelayLabel>
+        <RelayInput
+          id="portal-name"
+          v-model="state.name"
+          type="text"
+          :placeholder="t('HELP_CENTER.CREATE_PORTAL_DIALOG.NAME.PLACEHOLDER')"
+          @blur="v$.name.$touch()"
+        />
+        <p
+          class="text-[12px]"
+          :class="nameError ? 'text-destructive' : 'text-muted-foreground'"
+        >
+          {{ nameError || t('HELP_CENTER.CREATE_PORTAL_DIALOG.NAME.MESSAGE') }}
+        </p>
+      </div>
+      <div class="flex flex-col gap-1.5">
+        <RelayLabel html-for="portal-slug">
+          {{
+            `${t('HELP_CENTER.CREATE_PORTAL_DIALOG.SLUG.LABEL')}${state.domain ? ' (optional)' : ''}`
+          }}
+        </RelayLabel>
+        <RelayInput
+          id="portal-slug"
+          v-model="state.slug"
+          type="text"
+          :placeholder="t('HELP_CENTER.CREATE_PORTAL_DIALOG.SLUG.PLACEHOLDER')"
+          @input="v$.slug.$touch()"
+          @blur="v$.slug.$touch()"
+        />
+        <p
+          class="text-[12px]"
+          :class="slugError ? 'text-destructive' : 'text-muted-foreground'"
+        >
+          {{ slugError || buildPortalURL(state.slug) }}
+        </p>
+      </div>
+      <div class="flex flex-col gap-1.5">
+        <RelayLabel html-for="portal-domain">
+          {{
+            `${t('HELP_CENTER.CREATE_PORTAL_DIALOG.DOMAIN.LABEL')}${state.slug ? ' (optional)' : ''}`
+          }}
+        </RelayLabel>
+        <RelayInput
+          id="portal-domain"
+          v-model="state.domain"
+          type="text"
+          :placeholder="
+            t('HELP_CENTER.CREATE_PORTAL_DIALOG.DOMAIN.PLACEHOLDER')
+          "
+        />
+        <p class="text-[12px] text-muted-foreground">
+          {{ t('HELP_CENTER.CREATE_PORTAL_DIALOG.DOMAIN.MESSAGE') }}
+        </p>
+      </div>
     </div>
   </Dialog>
 </template>

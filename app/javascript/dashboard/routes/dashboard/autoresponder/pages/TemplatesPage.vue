@@ -143,7 +143,7 @@ function useInAutomation(template) {
             <RelayInput
               v-model="searchQuery"
               :placeholder="t('AUTORESPONDER.TEMPLATES.SEARCH_PLACEHOLDER')"
-              class-name="pl-9 bg-background text-[13.5px]"
+              class-name="pl-9 bg-background text-[14px]"
             />
           </div>
         </div>

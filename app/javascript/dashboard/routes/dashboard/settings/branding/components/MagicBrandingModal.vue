@@ -3,7 +3,7 @@ import { ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import NextModal from 'dashboard/components-next/dialog/Dialog.vue';
 import NextButton from 'dashboard/components-next/button/Button.vue';
-import NextInput from 'dashboard/components-next/input/Input.vue';
+import { RelayInput, RelayTextarea } from 'dashboard/components-next/relay';
 import { useAccount } from 'dashboard/composables/useAccount';
 import { useAlert } from 'dashboard/composables';
 
@@ -185,19 +185,19 @@ watch(
 
       <div class="flex flex-col gap-4">
         <template v-if="activeTab === 'url'">
-          <NextInput
+          <RelayInput
             v-model="urlInput"
             type="url"
             :placeholder="t('BRANDING_SETTINGS.MAGIC_AI.URL_PLACEHOLDER')"
-            class="w-full"
+            class-name="h-9 px-4 text-[14px] shadow-sm rounded-md border-border/80 bg-background focus-visible:ring-1 focus-visible:ring-primary/30"
           />
         </template>
 
         <template v-else-if="activeTab === 'prompt'">
-          <textarea
+          <RelayTextarea
             v-model="promptInput"
             :placeholder="t('BRANDING_SETTINGS.MAGIC_AI.PROMPT_PLACEHOLDER')"
-            class="w-full min-h-[100px] p-3 bg-black/10 border-none outline outline-1 outline-border outline-offset-[-1px] focus:outline-primary text-foreground placeholder:text-muted-foreground text-[14px] border-border/80 bg-background focus-visible:ring-1 focus-visible:ring-primary/30 shadow-sm rounded-md"
+            class-name="min-h-[100px] text-[14px] shadow-sm rounded-md border-border/80 bg-background focus-visible:ring-1 focus-visible:ring-primary/30"
           />
         </template>
 

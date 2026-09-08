@@ -1,5 +1,9 @@
 <script setup>
-import { RelayTooltip } from 'dashboard/components-next/relay';
+import {
+  RelayTooltip,
+  RelayInput,
+  RelayLabel,
+} from 'dashboard/components-next/relay';
 import { reactive, onMounted, ref, watch, computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useAlert } from 'dashboard/composables';
@@ -16,7 +20,6 @@ import CSATTemplate from 'dashboard/components-next/template-preview/CSATTemplat
 import Editor from 'dashboard/components-next/Editor/Editor.vue';
 import FilterSelect from 'dashboard/components-next/filter/inputs/FilterSelect.vue';
 import NextButton from 'dashboard/components-next/button/Button.vue';
-import Input from 'dashboard/components-next/input/Input.vue';
 import ComboBox from 'dashboard/components-next/combobox/ComboBox.vue';
 import languages from 'dashboard/components/widgets/conversation/advancedFilterItems/languages.js';
 import ConfirmTemplateUpdateDialog from './components/ConfirmTemplateUpdateDialog.vue';
@@ -601,12 +604,16 @@ const handleConfirmTemplateUpdate = async () => {
                     />
                   </div>
                 </div>
-                <Input
-                  v-model="state.templateButtonText"
-                  :label="$t('INBOX_MGMT.CSAT.BUTTON_TEXT.LABEL')"
-                  :placeholder="$t('INBOX_MGMT.CSAT.BUTTON_TEXT.PLACEHOLDER')"
-                  class="w-full"
-                />
+                <div class="flex flex-col gap-1.5 w-full">
+                  <RelayLabel class="text-[13.5px] font-medium text-foreground">
+                    {{ $t('INBOX_MGMT.CSAT.BUTTON_TEXT.LABEL') }}
+                  </RelayLabel>
+                  <RelayInput
+                    v-model="state.templateButtonText"
+                    :placeholder="$t('INBOX_MGMT.CSAT.BUTTON_TEXT.PLACEHOLDER')"
+                    class-name="h-9 px-4 text-[14px] shadow-sm rounded-md border-border/80 bg-background focus-visible:ring-1 focus-visible:ring-primary/30"
+                  />
+                </div>
 
                 <WithLabel
                   :label="$t('INBOX_MGMT.CSAT.LANGUAGE.LABEL')"

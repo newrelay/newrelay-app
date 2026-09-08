@@ -653,7 +653,7 @@ defineExpose({ open, close, onSuccess, dialogRef: { open, close } });
                       type="number"
                       min="0"
                       max="100"
-                      class-name="h-8 w-14 px-2 text-sm font-medium"
+                      class-name="h-9 w-14 px-2 text-sm font-medium"
                     />
                     <div
                       class="h-1.5 flex-1 overflow-hidden rounded-full bg-muted"

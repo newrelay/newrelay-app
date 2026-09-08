@@ -217,7 +217,6 @@ watch(() => modelValue.value, resolveContactName, { immediate: true });
     class="relative flex items-center group min-w-0 max-w-full"
   >
     <Button
-      sm
       :variant="showDropdown ? 'faded' : 'ghost'"
       slate
       :label="selectedLabel"

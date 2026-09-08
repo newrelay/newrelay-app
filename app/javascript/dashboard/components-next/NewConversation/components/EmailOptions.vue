@@ -3,6 +3,10 @@ import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 import TagInput from 'dashboard/components-next/taginput/TagInput.vue';
+import {
+  RelayInput,
+  RELAY_FORM_INLINE_INPUT_CLASS,
+} from 'dashboard/components-next/relay';
 
 const props = defineProps({
   contacts: { type: Array, required: true },
@@ -69,12 +73,13 @@ const handleBccUpdate = value => {
   bccEmails.value = value.join(',');
 };
 
-const subjectClass = computed(() => {
-  return [
-    'h-8 w-full border-none bg-transparent px-0 text-sm font-medium text-foreground shadow-none outline-none placeholder:text-muted-foreground focus-visible:ring-0',
+const subjectClassName = computed(() =>
+  [
+    RELAY_FORM_INLINE_INPUT_CLASS,
+    'px-0 font-medium',
     props.hasErrors ? 'placeholder:!text-destructive' : '',
-  ];
-});
+  ].join(' ')
+);
 </script>
 
 <template>
@@ -127,11 +132,10 @@ const subjectClass = computed(() => {
       />
     </div>
     <div class="flex items-center border-b border-border/40 px-4 py-2">
-      <input
+      <RelayInput
         v-model="subject"
-        type="text"
         :placeholder="t(`${i18nPrefix}.SUBJECT_PLACEHOLDER`)"
-        :class="subjectClass"
+        :class-name="subjectClassName"
       />
     </div>
   </div>

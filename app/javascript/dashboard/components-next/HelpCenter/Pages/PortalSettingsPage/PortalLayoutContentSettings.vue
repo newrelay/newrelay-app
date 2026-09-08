@@ -6,6 +6,7 @@ import { useStore } from 'dashboard/composables/store';
 import {
   RelayButton,
   RelayLabel,
+  RelayInput,
   RelayActionDropdown,
 } from 'dashboard/components-next/relay';
 import Icon from 'dashboard/components-next/icon/Icon.vue';
@@ -205,7 +206,9 @@ defineExpose({
             <input
               v-model="state.widgetColor"
               type="color"
-              class="sr-only text-[14px] shadow-sm rounded-md border-border/80 bg-background focus-visible:ring-1 focus-visible:ring-primary/30"
+              tabindex="-1"
+              aria-hidden="true"
+              class="sr-only"
             />
             <span
               class="block size-10 rounded-full border-2 border-background shadow-sm ring-1 ring-border/50"
@@ -387,10 +390,10 @@ defineExpose({
             >
               {{ platform.prefix }}
             </span>
-            <input
+            <RelayInput
               v-model="state.socialProfiles[platform.key]"
               type="text"
-              class="min-w-0 flex-1 bg-transparent text-[14px] text-foreground outline-none placeholder:text-muted-foreground/50 shadow-sm rounded-md border-border/80 bg-background focus-visible:ring-1 focus-visible:ring-primary/30"
+              class-name="border-0 bg-transparent shadow-none focus-visible:ring-0 h-auto flex-1 min-w-0 w-auto px-0 py-0"
               :placeholder="
                 t(
                   'HELP_CENTER.PORTAL_SETTINGS.LAYOUT_CONTENT.SOCIAL_LINKS.PLACEHOLDER'

@@ -7,6 +7,7 @@
 import { reactive, ref, onMounted } from 'vue';
 import { RelaySwitch, RelayInput, RelayButton } from 'dashboard/components-next/relay';
 import { Bot, Shield, Bell, Code, Sparkles, Save, Check, Copy } from 'lucide-vue-next';
+import ComboBox from 'dashboard/components-next/combobox/ComboBox.vue';
 
 const axios = window.axios;
 const accountId =
@@ -52,8 +53,22 @@ function copyCode() {
 }
 
 const inputClass = 'h-9 text-[14px]';
-const selectClass =
-  'h-9 px-3 text-[13.5px] bg-background border border-border/80 rounded-md text-foreground w-full shadow-2xs focus-visible:ring-1 focus-visible:ring-primary/30 outline-none cursor-pointer';
+const aiToneOptions = [
+  { value: 'Friendly', label: 'Friendly & Enthusiastic' },
+  { value: 'Professional', label: 'Professional & Courteous' },
+  { value: 'Warm', label: 'Warm & Grateful' },
+  { value: 'Concise', label: 'Concise & Direct' },
+];
+const aiDelayOptions = [
+  { value: '5_mins', label: '5 minutes' },
+  { value: '15_mins', label: '15 minutes (Recommended)' },
+  { value: '1_hour', label: '1 hour' },
+  { value: 'immediate', label: 'Immediate' },
+];
+const thresholdOptions = [
+  { value: '4', label: '4 Stars & Above (Allow 4 and 5 stars to public sites)' },
+  { value: '5', label: '5 Stars Only (Strict 5-star gating)' },
+];
 </script>
 
 <template>
@@ -108,21 +123,11 @@ const selectClass =
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
             <div class="flex flex-col gap-1.5">
               <label class="text-[13.5px] font-medium text-foreground">AI Response Tone</label>
-              <select v-model="settings.aiTone" :class="selectClass">
-                <option value="Friendly">Friendly &amp; Enthusiastic</option>
-                <option value="Professional">Professional &amp; Courteous</option>
-                <option value="Warm">Warm &amp; Grateful</option>
-                <option value="Concise">Concise &amp; Direct</option>
-              </select>
+              <ComboBox v-model="settings.aiTone" :options="aiToneOptions" placeholder="Select tone" />
             </div>
             <div class="flex flex-col gap-1.5">
               <label class="text-[13.5px] font-medium text-foreground">Natural Response Delay</label>
-              <select v-model="settings.aiDelay" :class="selectClass">
-                <option value="5_mins">5 minutes</option>
-                <option value="15_mins">15 minutes (Recommended)</option>
-                <option value="1_hour">1 hour</option>
-                <option value="immediate">Immediate</option>
-              </select>
+              <ComboBox v-model="settings.aiDelay" :options="aiDelayOptions" placeholder="Select delay" />
             </div>
           </div>
         </div>
@@ -148,10 +153,7 @@ const selectClass =
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div class="flex flex-col gap-1.5">
               <label class="text-[13.5px] font-medium text-foreground">Public Review Threshold</label>
-              <select v-model="settings.positiveThreshold" :class="selectClass">
-                <option value="4">4 Stars &amp; Above (Allow 4 and 5 stars to public sites)</option>
-                <option value="5">5 Stars Only (Strict 5-star gating)</option>
-              </select>
+              <ComboBox v-model="settings.positiveThreshold" :options="thresholdOptions" placeholder="Select threshold" />
             </div>
             <div class="flex flex-col gap-1.5">
               <label class="text-[13.5px] font-medium text-foreground">Private Resolution Form URL</label>

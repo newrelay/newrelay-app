@@ -2,17 +2,33 @@
 import PageHeader from '../../SettingsSubPageHeader.vue';
 import BandwidthSms from './BandwidthSms.vue';
 import Twilio from './Twilio.vue';
+import ComboBox from 'dashboard/components-next/combobox/ComboBox.vue';
 
 export default {
   components: {
     PageHeader,
     Twilio,
     BandwidthSms,
+    ComboBox,
   },
   data() {
     return {
       provider: 'twilio',
     };
+  },
+  computed: {
+    providerOptions() {
+      return [
+        {
+          value: 'twilio',
+          label: this.$t('INBOX_MGMT.ADD.SMS.PROVIDERS.TWILIO'),
+        },
+        {
+          value: '360dialog',
+          label: this.$t('INBOX_MGMT.ADD.SMS.PROVIDERS.BANDWIDTH'),
+        },
+      ];
+    },
   },
 };
 </script>
@@ -27,17 +43,7 @@ export default {
       <label class="text-[13.5px] text-foreground font-[500]">
         {{ $t('INBOX_MGMT.ADD.SMS.PROVIDERS.LABEL') }}
       </label>
-      <select
-        v-model="provider"
-        class="h-10 w-full rounded-md border border-border/80 bg-background px-3 text-[14px] text-foreground shadow-sm outline-none focus:ring-1 focus:ring-primary/30"
-      >
-        <option value="twilio">
-          {{ $t('INBOX_MGMT.ADD.SMS.PROVIDERS.TWILIO') }}
-        </option>
-        <option value="360dialog">
-          {{ $t('INBOX_MGMT.ADD.SMS.PROVIDERS.BANDWIDTH') }}
-        </option>
-      </select>
+      <ComboBox v-model="provider" :options="providerOptions" />
     </div>
     <Twilio v-if="provider === 'twilio'" type="sms" />
     <BandwidthSms v-else />

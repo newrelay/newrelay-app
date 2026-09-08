@@ -13,7 +13,7 @@ import { useVuelidate } from '@vuelidate/core';
 import { requiredIf } from '@vuelidate/validators';
 import { useI18n } from 'vue-i18n';
 
-import Input from 'dashboard/components-next/input/Input.vue';
+import { RelayInput } from 'dashboard/components-next/relay';
 import {
   buildTemplateParameters,
   allKeysRequired,
@@ -224,10 +224,10 @@ defineExpose({
           }}
         </p>
         <div class="flex items-center mb-2.5">
-          <Input
+          <RelayInput
             :model-value="processedParams.header?.media_url || ''"
             type="url"
-            class="flex-1"
+            class-name="flex-1"
             :placeholder="
               t('WHATSAPP_TEMPLATES.PARSER.MEDIA_URL_LABEL', {
                 type: formatType,
@@ -237,10 +237,10 @@ defineExpose({
           />
         </div>
         <div v-if="isDocumentTemplate" class="flex items-center mb-2.5">
-          <Input
+          <RelayInput
             :model-value="processedParams.header?.media_name || ''"
             type="text"
-            class="flex-1"
+            class-name="flex-1"
             :placeholder="
               t('WHATSAPP_TEMPLATES.PARSER.DOCUMENT_NAME_PLACEHOLDER')
             "
@@ -259,10 +259,10 @@ defineExpose({
           :key="`body-${key}`"
           class="flex items-center mb-2.5"
         >
-          <Input
+          <RelayInput
             v-model="processedParams.body[key]"
             type="text"
-            class="flex-1"
+            class-name="flex-1"
             :placeholder="
               t('WHATSAPP_TEMPLATES.PARSER.VARIABLE_PLACEHOLDER', {
                 variable: key,
@@ -282,10 +282,10 @@ defineExpose({
           :key="`button-${index}`"
           class="flex items-center mb-2.5"
         >
-          <Input
+          <RelayInput
             v-model="processedParams.buttons[index].parameter"
             type="text"
-            class="flex-1"
+            class-name="flex-1"
             :placeholder="t('WHATSAPP_TEMPLATES.PARSER.BUTTON_PARAMETER')"
           />
         </div>

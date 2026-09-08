@@ -4,7 +4,7 @@ import { useI18n } from 'vue-i18n';
 import { useAlert } from 'dashboard/composables';
 import Dialog from 'dashboard/components-next/dialog/Dialog.vue';
 import Button from 'dashboard/components-next/button/Button.vue';
-import Input from 'dashboard/components-next/input/Input.vue';
+import { RelayInput, RelayLabel } from 'dashboard/components-next/relay';
 import Select from 'dashboard/components-next/select/Select.vue';
 import TextArea from 'dashboard/components-next/textarea/TextArea.vue';
 import TagMultiSelectComboBox from 'dashboard/components-next/combobox/TagMultiSelectComboBox.vue';
@@ -105,10 +105,10 @@ defineExpose({ open, close });
     @close="handleClose"
   >
     <div class="flex flex-col gap-4">
-      <div class="flex flex-col gap-1">
-        <label class="text-foreground text-[13.5px] font-[500]">
+      <div class="flex flex-col gap-1.5">
+        <RelayLabel class="text-[13.5px] font-medium text-foreground">
           {{ $t('BILLING_SETTINGS.ENTERPRISE_INQUIRY.COMPANY_SIZE.LABEL') }}
-        </label>
+        </RelayLabel>
         <Select
           v-model="companySize"
           class="w-full"
@@ -119,20 +119,25 @@ defineExpose({ open, close });
         />
       </div>
 
-      <Input
-        v-model="teamSize"
-        type="number"
-        min="1"
-        :label="$t('BILLING_SETTINGS.ENTERPRISE_INQUIRY.TEAM_SIZE.LABEL')"
-        :placeholder="
-          $t('BILLING_SETTINGS.ENTERPRISE_INQUIRY.TEAM_SIZE.PLACEHOLDER')
-        "
-      />
+      <div class="flex flex-col gap-1.5">
+        <RelayLabel class="text-[13.5px] font-medium text-foreground">
+          {{ $t('BILLING_SETTINGS.ENTERPRISE_INQUIRY.TEAM_SIZE.LABEL') }}
+        </RelayLabel>
+        <RelayInput
+          v-model="teamSize"
+          type="number"
+          min="1"
+          :placeholder="
+            $t('BILLING_SETTINGS.ENTERPRISE_INQUIRY.TEAM_SIZE.PLACEHOLDER')
+          "
+          class-name="h-9 px-4 text-[14px] shadow-sm rounded-md border-border/80 bg-background focus-visible:ring-1 focus-visible:ring-primary/30"
+        />
+      </div>
 
-      <div class="flex flex-col gap-1">
-        <label class="text-foreground text-[13.5px] font-[500]">
+      <div class="flex flex-col gap-1.5">
+        <RelayLabel class="text-[13.5px] font-medium text-foreground">
           {{ $t('BILLING_SETTINGS.ENTERPRISE_INQUIRY.FEATURES.LABEL') }}
-        </label>
+        </RelayLabel>
         <TagMultiSelectComboBox
           v-model="desiredFeatures"
           :options="FEATURE_OPTIONS"

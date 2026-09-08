@@ -12,6 +12,7 @@ import {
   RelayInput,
   RelayLabel,
   RelayModal,
+  RelayTextarea,
 } from 'dashboard/components-next/relay';
 
 const props = defineProps({
@@ -154,7 +155,7 @@ const handleSubmit = async () => {
           {{ $t('CANNED_MGMT.ADD.DESC') }}
         </p>
 
-        <div class="flex flex-col gap-2.5">
+        <div class="flex flex-col gap-1.5">
           <RelayLabel
             html-for="canned-short-code"
             class="text-[13.5px] font-medium text-foreground"
@@ -166,7 +167,7 @@ const handleSubmit = async () => {
             v-model="shortCode"
             type="text"
             :placeholder="$t(getTranslationKey('SHORT_CODE.PLACEHOLDER'))"
-            class-name="h-10 px-4 text-[14px] shadow-sm rounded-md border-border/80 bg-background focus-visible:ring-1 focus-visible:ring-primary/30"
+            class-name="h-9 px-4 text-[14px] shadow-sm rounded-md border-border/80 bg-background focus-visible:ring-1 focus-visible:ring-primary/30"
             @blur="v$.shortCode.$touch"
           />
           <p v-if="v$.shortCode.$error" class="text-xs text-destructive">
@@ -174,19 +175,19 @@ const handleSubmit = async () => {
           </p>
         </div>
 
-        <div class="flex flex-col gap-2.5">
+        <div class="flex flex-col gap-1.5">
           <RelayLabel
             html-for="canned-content"
             class="text-[13.5px] font-medium text-foreground"
           >
             {{ $t(getTranslationKey('CONTENT.LABEL')) }}
           </RelayLabel>
-          <textarea
+          <RelayTextarea
             id="canned-content"
             v-model="content"
             :placeholder="$t(getTranslationKey('CONTENT.PLACEHOLDER'))"
-            class="w-full min-h-[120px] resize-y border border-border/80 bg-background p-3 text-[14px] text-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary/30 shadow-sm rounded-md"
-            :class="{ 'border-destructive': v$.content.$error }"
+            class-name="min-h-[120px] resize-y text-[14px] shadow-sm rounded-md border-border/80 bg-background focus-visible:ring-1 focus-visible:ring-primary/30"
+            :has-error="v$.content.$error"
             @blur="v$.content.$touch"
           />
           <p v-if="v$.content.$error" class="text-xs text-destructive">

@@ -3,10 +3,10 @@ import { computed, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useMapGetter } from 'dashboard/composables/store';
 
-import Icon from 'dashboard/components-next/icon/Icon.vue';
 import Button from 'dashboard/components-next/button/Button.vue';
 import Popover from 'dashboard/components-next/popover/Popover.vue';
 import WhatsappTemplate from './WhatsappTemplate.vue';
+import { RelayInput } from 'dashboard/components-next/relay';
 
 const props = defineProps({
   inboxId: {
@@ -83,19 +83,17 @@ const handleSendMessage = (template, hide) => {
         class="flex flex-col gap-2 p-4 items-center w-[21.875rem]"
       >
         <div class="relative w-full">
-          <Icon
-            icon="i-lucide-search"
-            class="absolute size-3.5 top-2 ltr:left-3 rtl:right-3"
+          <span
+            class="pointer-events-none absolute top-1/2 -translate-y-1/2 size-3.5 text-muted-foreground i-lucide-search ltr:left-3 rtl:right-3"
           />
-          <input
+          <RelayInput
             v-model="searchQuery"
-            type="search"
             :placeholder="
               t(
                 'COMPOSE_NEW_CONVERSATION.FORM.WHATSAPP_OPTIONS.SEARCH_PLACEHOLDER'
               )
             "
-            class="w-full h-8 py-2 ltr:pl-10 rtl:pr-10 ltr:pr-2 rtl:pl-2 reset-base outline-none border-none bg-black/10 dark:bg-card text-foreground text-[14px] shadow-sm rounded-md border-border/80 bg-background focus-visible:ring-1 focus-visible:ring-primary/30"
+            class-name="ltr:pl-9 rtl:pr-9"
           />
         </div>
         <div

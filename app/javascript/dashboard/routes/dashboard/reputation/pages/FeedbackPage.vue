@@ -3,6 +3,7 @@
 import { ref, computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { isReputationDemoSurfacesEnabled } from 'dashboard/featureFlags';
+import { RelayInput } from 'dashboard/components-next/relay';
 import {
   Search,
   Star,
@@ -210,11 +211,11 @@ function ratingLabel(rating) {
         <div class="flex flex-col sm:flex-row sm:items-center gap-3">
           <div class="relative flex-1 max-w-sm">
             <Search class="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-            <input
+            <RelayInput
               v-model="searchQuery"
               type="text"
               placeholder="Search feedback..."
-              class="w-full h-9 pl-9 pr-3 rounded-lg border border-input bg-background text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring"
+              class-name="pl-9 h-9"
             />
           </div>
           <div class="flex items-center gap-1.5">

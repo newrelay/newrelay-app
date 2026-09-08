@@ -14,6 +14,7 @@
 
 **All 5 phases complete, plus the deferred Phase 2 leftovers — 25 FRDs total.**
 - [x] Phase 2 leftovers: [23-custom-filters.md](23-custom-filters.md), [24-bulk-actions.md](24-bulk-actions.md), [25-working-hours.md](25-working-hours.md)
+- [ ] Phase 6 — Planned (pre-build, not as-built): [26-mcp-server.md](26-mcp-server.md) — MCP server exposing Chatwoot as tools for external AI agents (Claude, Cursor, etc.). Documented ahead of build as a one-off exception to this folder's as-built scope (see its §9).
 
 See [22-webhooks-integrations.md](22-webhooks-integrations.md) for the program-wide summary of cross-cutting findings (Billing test coverage is the top-priority gap).
 

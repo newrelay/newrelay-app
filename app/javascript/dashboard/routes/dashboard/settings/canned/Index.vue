@@ -138,7 +138,7 @@ const confirmDeletion = () => {
           class="flex flex-col justify-between gap-4 border-b border-border/40 p-4 sm:flex-row sm:items-center sm:p-6"
         >
           <div>
-            <h3 class="capitalize text-base font-medium text-foreground">
+            <h3 class="text-base font-medium text-foreground">
               {{ $t('CANNED_MGMT.HEADER') }}
             </h3>
             <p class="mt-1 max-w-3xl text-sm text-muted-foreground">
@@ -200,7 +200,7 @@ const confirmDeletion = () => {
                   class="size-6 text-muted-foreground"
                 />
               </div>
-              <h3 class="capitalize text-base font-medium text-foreground">
+              <h3 class="text-base font-medium text-foreground">
                 {{ $t('CANNED_MGMT.LIST.404') }}
               </h3>
               <p class="mt-1 text-[13.5px] text-muted-foreground">

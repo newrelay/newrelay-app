@@ -274,9 +274,7 @@ const confirmPlaceHolderText = computed(() =>
                 class="size-6 text-muted-foreground/70"
               />
             </div>
-            <h3
-              class="capitalize mb-1.5 text-base font-semibold text-foreground"
-            >
+            <h3 class="mb-1.5 text-base font-semibold text-foreground">
               {{ $t('TEAMS_SETTINGS.LIST.EMPTY_TITLE') }}
             </h3>
             <p

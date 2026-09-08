@@ -353,7 +353,7 @@ const handleMagicPaletteApplied = palette => {
                       class="i-lucide-sun size-6 text-muted-foreground/60 transition-colors group-hover:text-primary/80"
                     />
                   </div>
-                  <h4 class="capitalize text-sm font-medium text-foreground">
+                  <h4 class="text-sm font-medium text-foreground">
                     {{ $t('BRANDING_SETTINGS.LOGO_SETTINGS.LIGHT_LOGO.TITLE') }}
                   </h4>
                   <p
@@ -405,7 +405,7 @@ const handleMagicPaletteApplied = palette => {
                       class="i-lucide-moon size-6 text-muted-foreground/60 transition-colors group-hover:text-primary/80"
                     />
                   </div>
-                  <h4 class="capitalize text-sm font-medium text-foreground">
+                  <h4 class="text-sm font-medium text-foreground">
                     {{ $t('BRANDING_SETTINGS.LOGO_SETTINGS.DARK_LOGO.TITLE') }}
                   </h4>
                   <p
@@ -455,7 +455,7 @@ const handleMagicPaletteApplied = palette => {
                       class="i-lucide-globe size-5 text-muted-foreground/60 transition-colors group-hover:text-primary/80"
                     />
                   </div>
-                  <h4 class="capitalize text-sm font-medium text-foreground">
+                  <h4 class="text-sm font-medium text-foreground">
                     {{ $t('BRANDING_SETTINGS.LOGO_SETTINGS.FAVICON.TITLE') }}
                   </h4>
                   <p

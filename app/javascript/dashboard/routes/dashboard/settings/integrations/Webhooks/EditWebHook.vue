@@ -46,7 +46,7 @@ const onSubmit = async webhook => {
 <template>
   <div class="flex flex-col gap-6">
     <div class="relative -mt-2 flex items-center justify-between">
-      <h3 class="capitalize text-base font-semibold text-foreground">
+      <h3 class="text-base font-semibold text-foreground">
         {{ t('INTEGRATION_SETTINGS.WEBHOOK.EDIT.TITLE') }}
       </h3>
       <button

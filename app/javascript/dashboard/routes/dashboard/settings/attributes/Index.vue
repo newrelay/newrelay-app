@@ -178,7 +178,7 @@ const confirmDeleteAttribute = async () => {
         class="mb-8 overflow-hidden rounded-xl border border-border/60 bg-card shadow-xs"
       >
         <div class="border-b border-border/40 p-4 sm:p-6">
-          <h3 class="capitalize text-base font-semibold text-foreground">
+          <h3 class="text-base font-semibold text-foreground">
             {{ $t('ATTRIBUTES_MGMT.HEADER') }}
           </h3>
           <p class="mt-1 max-w-4xl text-sm text-muted-foreground">

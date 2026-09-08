@@ -301,7 +301,7 @@ defineExpose({
 
       <div class="space-y-4 border-t border-border/40 pt-4">
         <div>
-          <h4 class="capitalize text-[14px] font-semibold text-foreground">
+          <h4 class="text-[14px] font-semibold text-foreground">
             {{ t(`${BASE_KEY}.FORM.FAIR_DISTRIBUTION.LABEL`) }}
           </h4>
           <p class="mt-1 text-[12.5px] leading-relaxed text-muted-foreground">

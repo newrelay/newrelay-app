@@ -71,7 +71,7 @@ onMounted(() => {
     <template #body>
       <div class="mt-2 space-y-8">
         <div>
-          <h2 class="capitalize text-base font-medium text-foreground">
+          <h2 class="text-base font-medium text-foreground">
             {{ t('SECURITY_SETTINGS.TITLE') }}
           </h2>
           <p class="mt-0.5 text-[13px] text-muted-foreground">
@@ -108,7 +108,7 @@ onMounted(() => {
                   class="size-7 text-muted-foreground/60"
                 />
               </div>
-              <h4 class="capitalize text-base font-medium text-foreground mb-1">
+              <h4 class="text-base font-medium text-foreground mb-1">
                 {{ $t('AUDIT_LOGS.LIST.EMPTY_TITLE') }}
               </h4>
               <p

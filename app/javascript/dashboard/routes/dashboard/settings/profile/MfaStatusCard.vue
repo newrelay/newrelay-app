@@ -29,7 +29,7 @@ const startSetup = () => {
         icon="i-lucide-lock-keyhole"
         class="size-8 text-muted-foreground mx-auto mb-4 block"
       />
-      <h3 class="capitalize text-base font-medium text-foreground mb-2">
+      <h3 class="text-base font-medium text-foreground mb-2">
         {{ $t('MFA_SETTINGS.ENHANCE_SECURITY') }}
       </h3>
       <p class="text-sm text-muted-foreground mb-6 max-w-md mx-auto">
@@ -50,7 +50,7 @@ const startSetup = () => {
           icon="i-lucide-lock-keyhole"
           class="size-4 flex-shrink-0 text-muted-foreground"
         />
-        <h4 class="capitalize text-sm font-medium text-foreground">
+        <h4 class="text-sm font-medium text-foreground">
           {{ $t('MFA_SETTINGS.STATUS_ENABLED') }}
         </h4>
       </div>

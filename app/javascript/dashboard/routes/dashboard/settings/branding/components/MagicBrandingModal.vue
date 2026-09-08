@@ -253,7 +253,7 @@ watch(
         v-if="options.length > 0"
         class="flex flex-col gap-3 mt-2 pt-5 border-t border-border"
       >
-        <h4 class="capitalize text-sm font-semibold text-foreground">
+        <h4 class="text-sm font-semibold text-foreground">
           {{ t('BRANDING_SETTINGS.MAGIC_AI.RESULTS') }}
         </h4>
         <div class="grid grid-cols-1 gap-3">
@@ -289,7 +289,8 @@ watch(
                 }}</span>
                 <span
                   class="text-xs text-muted-foreground uppercase font-mono"
-                  >{{ option.primary }}</span>
+                  >{{ option.primary }}</span
+                >
               </div>
             </div>
             <span

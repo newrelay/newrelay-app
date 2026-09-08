@@ -173,7 +173,7 @@ onMounted(() => {
     <div class="flex flex-col justify-between gap-8 md:flex-row md:items-start">
       <div class="max-w-xl">
         <div class="mb-2 flex items-center gap-2">
-          <h3 class="capitalize text-[15px] font-medium text-foreground">
+          <h3 class="text-[15px] font-medium text-foreground">
             {{ t('SECURITY_SETTINGS.SAML.TITLE') }}
           </h3>
           <RelayTooltip :content="t('GENERAL.BETA_DESCRIPTION')" side="top">

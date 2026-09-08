@@ -120,7 +120,7 @@ const closeInboxSettings = () => {
       >
         <template #toolbar>
           <div>
-            <h3 class="capitalize text-base font-medium text-foreground">
+            <h3 class="text-base font-medium text-foreground">
               {{ $t('INBOX_MGMT.HEADER') }}
             </h3>
             <p class="mt-1 text-sm text-muted-foreground">
@@ -171,9 +171,7 @@ const closeInboxSettings = () => {
                 class="size-6 text-muted-foreground/70"
               />
             </div>
-            <h3
-              class="capitalize mb-1.5 text-base font-semibold text-foreground"
-            >
+            <h3 class="mb-1.5 text-base font-semibold text-foreground">
               {{ $t('INBOX_MGMT.LIST.EMPTY_TITLE') }}
             </h3>
             <p

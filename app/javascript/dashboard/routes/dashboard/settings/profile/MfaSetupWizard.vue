@@ -155,7 +155,7 @@ defineExpose({
         class="bg-card rounded-xl outline-1 outline-border outline p-10 flex flex-col gap-4"
       >
         <div class="text-center">
-          <h3 class="capitalize text-base font-medium text-foreground mb-2">
+          <h3 class="text-base font-medium text-foreground mb-2">
             {{ $t('MFA_SETTINGS.SETUP.STEP1_TITLE') }}
           </h3>
           <p class="text-sm text-muted-foreground">
@@ -237,7 +237,7 @@ defineExpose({
     <!-- Step 2: Backup Codes -->
     <div v-if="setupStep === 'backup'" class="space-y-6">
       <div class="text-start">
-        <h3 class="capitalize text-base font-medium text-foreground mb-2">
+        <h3 class="text-base font-medium text-foreground mb-2">
           {{ $t('MFA_SETTINGS.BACKUP.TITLE') }}
         </h3>
         <p class="text-sm text-muted-foreground">

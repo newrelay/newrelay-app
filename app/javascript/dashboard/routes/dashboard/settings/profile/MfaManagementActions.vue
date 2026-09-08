@@ -110,7 +110,7 @@ defineExpose({
               icon="i-lucide-key"
               class="size-4 flex-shrink-0 text-muted-foreground"
             />
-            <h4 class="capitalize font-medium text-foreground">
+            <h4 class="font-medium text-foreground">
               {{ $t('MFA_SETTINGS.MANAGEMENT.BACKUP_CODES') }}
             </h4>
           </div>
@@ -131,7 +131,7 @@ defineExpose({
               icon="i-lucide-lock-keyhole-open"
               class="size-4 flex-shrink-0 text-muted-foreground"
             />
-            <h4 class="capitalize font-medium text-foreground">
+            <h4 class="font-medium text-foreground">
               {{ $t('MFA_SETTINGS.MANAGEMENT.DISABLE_MFA') }}
             </h4>
           </div>

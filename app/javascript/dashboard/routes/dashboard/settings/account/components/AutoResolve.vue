@@ -125,7 +125,7 @@ const onEnabledChange = val => {
   >
     <div class="flex items-start justify-between gap-4 p-5 sm:p-6">
       <div>
-        <h3 class="capitalize text-foreground text-[16px] font-semibold">
+        <h3 class="text-foreground text-[16px] font-semibold">
           {{ t('GENERAL_SETTINGS.FORM.AUTO_RESOLVE.TITLE') }}
         </h3>
         <p class="text-muted-foreground mt-1.5 text-[13.5px] leading-relaxed">

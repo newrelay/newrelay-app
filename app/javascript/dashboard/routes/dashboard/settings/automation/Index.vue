@@ -208,7 +208,7 @@ const toggleAutomation = async ({ id, name, status }) => {
           class="flex flex-col justify-between gap-4 sm:flex-row sm:items-center"
         >
           <div>
-            <h2 class="capitalize text-base font-medium text-foreground">
+            <h2 class="text-base font-medium text-foreground">
               {{ $t('AUTOMATION.HEADER') }}
             </h2>
             <p
@@ -259,7 +259,7 @@ const toggleAutomation = async ({ id, name, status }) => {
             >
               <Icon icon="i-lucide-zap" class="size-6 text-muted-foreground" />
             </div>
-            <h3 class="capitalize text-base font-medium text-foreground">
+            <h3 class="text-base font-medium text-foreground">
               {{ $t('AUTOMATION.LIST.EMPTY_TITLE') }}
             </h3>
             <p class="mt-1 text-[13.5px] text-muted-foreground">

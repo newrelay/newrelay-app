@@ -228,7 +228,7 @@ const saveMacro = async macroData => {
           class="flex flex-col justify-between gap-4 border-b border-border/40 p-4 sm:flex-row sm:items-center sm:p-6"
         >
           <div>
-            <h3 class="capitalize text-base font-medium text-foreground">
+            <h3 class="text-base font-medium text-foreground">
               {{ $t('MACROS.HEADER') }}
             </h3>
             <p class="mt-1 max-w-3xl text-sm text-muted-foreground">
@@ -290,7 +290,7 @@ const saveMacro = async macroData => {
                   class="size-6 text-muted-foreground"
                 />
               </div>
-              <h3 class="capitalize text-base font-medium text-foreground">
+              <h3 class="text-base font-medium text-foreground">
                 {{ $t('MACROS.LIST.404') }}
               </h3>
             </div>

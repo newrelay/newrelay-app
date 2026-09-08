@@ -47,7 +47,7 @@ const handleCopySecret = async () => {
   <div class="flex flex-col gap-6">
     <template v-if="createdWebhook">
       <div class="relative -mt-2 flex items-center justify-between">
-        <h3 class="capitalize text-base font-semibold text-foreground">
+        <h3 class="text-base font-semibold text-foreground">
           {{ t('INTEGRATION_SETTINGS.WEBHOOK.ADD.API.SUCCESS_MESSAGE') }}
         </h3>
         <button
@@ -110,7 +110,7 @@ const handleCopySecret = async () => {
     <template v-else>
       <div class="relative -mt-2 flex items-start justify-between gap-4">
         <div>
-          <h3 class="capitalize text-base font-semibold text-foreground">
+          <h3 class="text-base font-semibold text-foreground">
             {{ t('INTEGRATION_SETTINGS.WEBHOOK.ADD.TITLE') }}
           </h3>
           <p class="mt-1 text-[13.5px] leading-relaxed text-muted-foreground">

@@ -67,7 +67,7 @@ const goBack = () => {
         {{ t('GENERAL_SETTINGS.BACK') }}
       </button>
       <div class="mx-2 h-4 w-px bg-border/80" />
-      <h2 class="capitalize text-base font-semibold text-foreground">
+      <h2 class="text-base font-semibold text-foreground">
         {{ t('INBOX_MGMT.HEADER') }}
       </h2>
     </div>

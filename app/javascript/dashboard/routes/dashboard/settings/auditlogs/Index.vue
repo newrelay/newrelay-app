@@ -114,7 +114,7 @@ watch(routerPage, (newPage, oldPage) => {
                 class="size-8 text-muted-foreground/60"
               />
             </div>
-            <h4 class="capitalize mb-1.5 text-base font-medium text-foreground">
+            <h4 class="mb-1.5 text-base font-medium text-foreground">
               {{ $t('AUDIT_LOGS.LIST.EMPTY_TITLE') }}
             </h4>
             <p class="max-w-sm text-center text-[14px] text-muted-foreground">

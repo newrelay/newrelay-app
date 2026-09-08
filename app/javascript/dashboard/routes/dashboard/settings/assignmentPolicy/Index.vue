@@ -67,7 +67,7 @@ watch(showCapacityTab, enabled => {
     <template #body>
       <div class="mx-auto max-w-5xl">
         <div class="mb-8">
-          <h2 class="capitalize text-base font-medium text-foreground">
+          <h2 class="text-base font-medium text-foreground">
             {{ $t('ASSIGNMENT_POLICY.INDEX.HEADER.TITLE') }}
           </h2>
           <p class="mt-1 text-sm text-muted-foreground">

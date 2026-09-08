@@ -60,7 +60,7 @@ onMounted(() => {
 <template>
   <div>
     <div class="mb-6 flex items-center justify-between gap-3">
-      <h3 class="capitalize text-[15px] font-medium text-foreground">
+      <h3 class="text-[15px] font-medium text-foreground">
         {{
           $t('ASSIGNMENT_POLICY.AGENT_CAPACITY_POLICY.INDEX.CAPACITY_LIMITS')
         }}
@@ -94,7 +94,7 @@ onMounted(() => {
       >
         <Icon icon="i-lucide-shield-alert" class="size-7 text-emerald-600" />
       </div>
-      <h3 class="capitalize mb-2 text-[16px] font-semibold text-foreground">
+      <h3 class="mb-2 text-[16px] font-semibold text-foreground">
         {{ $t('ASSIGNMENT_POLICY.AGENT_CAPACITY_POLICY.INDEX.EMPTY_TITLE') }}
       </h3>
       <p

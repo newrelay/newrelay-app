@@ -56,7 +56,7 @@ const resetAccessToken = async () => {
     <template #body>
       <div class="space-y-6">
         <div>
-          <h2 class="capitalize text-base font-medium text-foreground">
+          <h2 class="text-base font-medium text-foreground">
             {{ t('INTEGRATION_SETTINGS.API_KEYS.HEADER') }}
           </h2>
           <p
@@ -76,7 +76,7 @@ const resetAccessToken = async () => {
               <Icon icon="i-lucide-code" class="size-5 text-primary" />
             </div>
             <div>
-              <h3 class="capitalize text-base font-semibold text-foreground">
+              <h3 class="text-base font-semibold text-foreground">
                 {{
                   t('INTEGRATION_SETTINGS.API_KEYS.ACCOUNT_ID.SECTION_TITLE')
                 }}
@@ -134,7 +134,7 @@ const resetAccessToken = async () => {
               <Icon icon="i-lucide-key-round" class="size-5 text-primary" />
             </div>
             <div>
-              <h3 class="capitalize text-base font-semibold text-foreground">
+              <h3 class="text-base font-semibold text-foreground">
                 {{ t('INTEGRATION_SETTINGS.API_KEYS.ACCESS_TOKEN.TITLE') }}
               </h3>
               <p class="mt-1 text-sm leading-relaxed text-muted-foreground">

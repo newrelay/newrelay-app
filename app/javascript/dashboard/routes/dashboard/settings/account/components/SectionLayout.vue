@@ -51,7 +51,7 @@ const { t } = useI18n();
       >
         <h4
           v-if="title || beta || $slots.title"
-          class="capitalize flex items-center gap-2 text-base font-semibold text-foreground"
+          class="flex items-center gap-2 text-base font-semibold text-foreground"
         >
           <slot name="title">{{ title }}</slot>
           <RelayTooltip :content="t('GENERAL.BETA_DESCRIPTION')" side="top">

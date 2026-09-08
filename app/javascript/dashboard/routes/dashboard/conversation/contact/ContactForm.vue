@@ -9,13 +9,25 @@ import { useVuelidate } from '@vuelidate/core';
 import countries from 'shared/constants/countries.js';
 import { isPhoneNumberValid } from 'shared/helpers/Validators';
 import parsePhoneNumber from 'libphonenumber-js';
-import NextButton from 'dashboard/components-next/button/Button.vue';
+import {
+  RelayInput,
+  RelayTextarea,
+  RelayLabel,
+  RelayButton,
+  RELAY_FORM_FIELD_CLASS,
+  RELAY_FORM_INPUT_FULL_CLASS,
+} from 'dashboard/components-next/relay';
+import PhoneNumberInput from 'dashboard/components-next/phonenumberinput/PhoneNumberInput.vue';
 import Avatar from 'next/avatar/Avatar.vue';
 import ComboBox from 'dashboard/components-next/combobox/ComboBox.vue';
 
 export default {
   components: {
-    NextButton,
+    RelayInput,
+    RelayTextarea,
+    RelayLabel,
+    RelayButton,
+    PhoneNumberInput,
     Avatar,
     ComboBox,
   },
@@ -35,7 +47,11 @@ export default {
   },
   emits: ['cancel', 'success'],
   setup() {
-    return { v$: useVuelidate() };
+    return {
+      v$: useVuelidate(),
+      RELAY_FORM_FIELD_CLASS,
+      RELAY_FORM_INPUT_FULL_CLASS,
+    };
   },
   data() {
     return {
@@ -119,6 +135,9 @@ export default {
   watch: {
     contact() {
       this.setContactObject();
+    },
+    phoneNumber() {
+      this.setDialCode();
     },
   },
   mounted() {
@@ -287,13 +306,13 @@ export default {
 
 <template>
   <form
-    class="w-full px-8 pt-6 pb-8 contact--form"
+    class="flex w-full flex-col gap-4 px-8 pt-6 pb-8"
     @submit.prevent="handleSubmit"
   >
-    <div class="flex flex-col mb-4 items-start gap-1 w-full">
-      <label class="mb-0.5 text-foreground text-[13.5px] font-[500]">
+    <div class="flex flex-col items-start gap-1.5 w-full">
+      <RelayLabel>
         {{ $t('CONTACT_FORM.FORM.AVATAR.LABEL') }}
-      </label>
+      </RelayLabel>
       <Avatar
         :src="avatarUrl"
         :size="72"
@@ -304,77 +323,72 @@ export default {
         @delete="handleAvatarDelete"
       />
     </div>
-    <div>
-      <div class="w-full">
-        <label :class="{ error: v$.name.$error }">
-          {{ $t('CONTACT_FORM.FORM.NAME.LABEL') }}
-          <input
-            v-model="name"
-            type="text"
-            :placeholder="$t('CONTACT_FORM.FORM.NAME.PLACEHOLDER')"
-            @input="v$.name.$touch"
-          />
-        </label>
-
-        <label :class="{ error: v$.email.$error }">
-          {{ $t('CONTACT_FORM.FORM.EMAIL_ADDRESS.LABEL') }}
-          <input
-            v-model="email"
-            type="text"
-            :placeholder="$t('CONTACT_FORM.FORM.EMAIL_ADDRESS.PLACEHOLDER')"
-            @input="v$.email.$touch"
-          />
-          <span v-if="v$.email.$error" class="message">
-            {{ $t('CONTACT_FORM.FORM.EMAIL_ADDRESS.ERROR') }}
-          </span>
-        </label>
-      </div>
+    <div :class="RELAY_FORM_FIELD_CLASS">
+      <RelayLabel>
+        {{ $t('CONTACT_FORM.FORM.NAME.LABEL') }}
+      </RelayLabel>
+      <RelayInput
+        v-model="name"
+        :placeholder="$t('CONTACT_FORM.FORM.NAME.PLACEHOLDER')"
+        @update:model-value="v$.name.$touch"
+      />
     </div>
-    <div class="w-full">
-      <label :class="{ error: v$.description.$error }">
+    <div :class="RELAY_FORM_FIELD_CLASS">
+      <RelayLabel>
+        {{ $t('CONTACT_FORM.FORM.EMAIL_ADDRESS.LABEL') }}
+      </RelayLabel>
+      <RelayInput
+        v-model="email"
+        type="email"
+        :placeholder="$t('CONTACT_FORM.FORM.EMAIL_ADDRESS.PLACEHOLDER')"
+        @update:model-value="v$.email.$touch"
+      />
+      <span v-if="v$.email.$error" class="text-[13px] text-destructive">
+        {{ $t('CONTACT_FORM.FORM.EMAIL_ADDRESS.ERROR') }}
+      </span>
+    </div>
+    <div :class="RELAY_FORM_FIELD_CLASS">
+      <RelayLabel>
         {{ $t('CONTACT_FORM.FORM.BIO.LABEL') }}
-        <textarea
-          v-model="description"
-          type="text"
-          :placeholder="$t('CONTACT_FORM.FORM.BIO.PLACEHOLDER')"
-          @input="v$.description.$touch"
-        />
-      </label>
+      </RelayLabel>
+      <RelayTextarea
+        v-model="description"
+        :placeholder="$t('CONTACT_FORM.FORM.BIO.PLACEHOLDER')"
+        :rows="3"
+        @update:model-value="v$.description.$touch"
+      />
     </div>
-    <div>
-      <div class="w-full">
-        <label :class="{ error: isPhoneNumberNotValid }">
-          {{ $t('CONTACT_FORM.FORM.PHONE_NUMBER.LABEL') }}
-          <woot-phone-input
-            v-model="phoneNumber"
-            :value="phoneNumber"
-            :error="isPhoneNumberNotValid"
-            :placeholder="$t('CONTACT_FORM.FORM.PHONE_NUMBER.PLACEHOLDER')"
-            @blur="v$.phoneNumber.$touch"
-            @set-code="setPhoneCode"
-          />
-          <span v-if="isPhoneNumberNotValid" class="message">
-            {{ phoneNumberError }}
-          </span>
-        </label>
-        <div
-          v-if="isPhoneNumberNotValid || !phoneNumber"
-          class="relative mx-0 mt-0 mb-2.5 p-2 rounded-md text-sm border border-solid border-warning/20 text-warning bg-warning/10"
-        >
-          {{ $t('CONTACT_FORM.FORM.PHONE_NUMBER.HELP') }}
-        </div>
+    <div :class="RELAY_FORM_FIELD_CLASS">
+      <RelayLabel>
+        {{ $t('CONTACT_FORM.FORM.PHONE_NUMBER.LABEL') }}
+      </RelayLabel>
+      <PhoneNumberInput
+        v-model="phoneNumber"
+        :placeholder="$t('CONTACT_FORM.FORM.PHONE_NUMBER.PLACEHOLDER')"
+      />
+      <span v-if="isPhoneNumberNotValid" class="text-[13px] text-destructive">
+        {{ phoneNumberError }}
+      </span>
+      <div
+        v-if="isPhoneNumberNotValid || !phoneNumber"
+        class="rounded-md border border-warning/20 bg-warning/10 p-2 text-sm text-warning"
+      >
+        {{ $t('CONTACT_FORM.FORM.PHONE_NUMBER.HELP') }}
       </div>
     </div>
-    <woot-input
-      v-model="companyName"
-      class="w-full"
-      :label="$t('CONTACT_FORM.FORM.COMPANY_NAME.LABEL')"
-      :placeholder="$t('CONTACT_FORM.FORM.COMPANY_NAME.PLACEHOLDER')"
-    />
-    <div class="w-full mb-4">
-      <label>
+    <div :class="RELAY_FORM_FIELD_CLASS">
+      <RelayLabel>
+        {{ $t('CONTACT_FORM.FORM.COMPANY_NAME.LABEL') }}
+      </RelayLabel>
+      <RelayInput
+        v-model="companyName"
+        :placeholder="$t('CONTACT_FORM.FORM.COMPANY_NAME.PLACEHOLDER')"
+      />
+    </div>
+    <div :class="RELAY_FORM_FIELD_CLASS">
+      <RelayLabel>
         {{ $t('CONTACT_FORM.FORM.COUNTRY.LABEL') }}
-      </label>
+      </RelayLabel>
       <ComboBox
         :model-value="country.id"
         :options="
@@ -383,51 +397,50 @@ export default {
             label: countryNameWithCode(c),
           }))
         "
-        class="[&>div>button]:!bg-black/10"
         :placeholder="$t('CONTACT_FORM.FORM.COUNTRY.PLACEHOLDER')"
         :search-placeholder="$t('CONTACT_FORM.FORM.COUNTRY.SELECT_PLACEHOLDER')"
         @update:model-value="onCountryChange"
       />
     </div>
-    <woot-input
-      v-model="city"
-      class="w-full"
-      :label="$t('CONTACT_FORM.FORM.CITY.LABEL')"
-      :placeholder="$t('CONTACT_FORM.FORM.CITY.PLACEHOLDER')"
-    />
+    <div :class="RELAY_FORM_FIELD_CLASS">
+      <RelayLabel>
+        {{ $t('CONTACT_FORM.FORM.CITY.LABEL') }}
+      </RelayLabel>
+      <RelayInput
+        v-model="city"
+        :placeholder="$t('CONTACT_FORM.FORM.CITY.PLACEHOLDER')"
+      />
+    </div>
 
-    <div class="w-full">
-      <label>{{ $t('CONTACTS_PAGE.LIST.TABLE_HEADER.SOCIAL_PROFILES') }}</label>
+    <div class="flex flex-col gap-2">
+      <RelayLabel>
+        {{ $t('CONTACTS_PAGE.LIST.TABLE_HEADER.SOCIAL_PROFILES') }}
+      </RelayLabel>
       <div
         v-for="socialProfile in socialProfileKeys"
         :key="socialProfile.key"
-        class="flex items-stretch w-full mb-4"
+        class="flex w-full items-stretch"
       >
         <span
-          class="flex items-center h-10 px-2 text-sm border-solid border-y ltr:border-l rtl:border-r ltr:rounded-l-md rtl:rounded-r-md bg-accent text-muted-foreground border-border"
+          class="flex h-9 items-center border border-border/80 bg-muted px-2 text-[13px] text-muted-foreground ltr:rounded-l-md ltr:border-r-0 rtl:rounded-r-md rtl:border-l-0"
         >
           {{ socialProfile.prefixURL }}
         </span>
         <input
           v-model="socialProfileUserNames[socialProfile.key]"
-          class="input-group-field ltr:!rounded-l-none rtl:!rounded-r-none !mb-0 text-[14px] border-border/80 bg-background focus-visible:ring-1 focus-visible:ring-primary/30 shadow-sm rounded-md"
+          :class="RELAY_FORM_INPUT_FULL_CLASS"
+          class="h-9 !rounded-none ltr:!rounded-r-md rtl:!rounded-l-md"
           type="text"
         />
       </div>
     </div>
-    <div class="flex flex-row justify-start w-full gap-2 px-0 py-2">
-      <NextButton
-        type="submit"
-        :label="$t('CONTACT_FORM.FORM.SUBMIT')"
-        :is-loading="inProgress"
-      />
-      <NextButton
-        faded
-        slate
-        type="reset"
-        :label="$t('CONTACT_FORM.FORM.CANCEL')"
-        @click.prevent="onCancel"
-      />
+    <div class="flex flex-row justify-start gap-3 pt-2">
+      <RelayButton type="submit" :disabled="inProgress">
+        {{ $t('CONTACT_FORM.FORM.SUBMIT') }}
+      </RelayButton>
+      <RelayButton type="button" variant="outline" @click="onCancel">
+        {{ $t('CONTACT_FORM.FORM.CANCEL') }}
+      </RelayButton>
     </div>
   </form>
 </template>

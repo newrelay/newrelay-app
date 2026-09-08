@@ -4,6 +4,7 @@ import Icon from 'dashboard/components-next/icon/Icon.vue';
 import Avatar from 'dashboard/components-next/avatar/Avatar.vue';
 import CardPriorityIcon from 'dashboard/components-next/Conversation/ConversationCard/CardPriorityIcon.vue';
 import IssueHeader from './IssueHeader.vue';
+import Label from 'dashboard/components-next/label/Label.vue';
 
 const props = defineProps({
   linkedIssue: {
@@ -97,15 +98,16 @@ const unlinkIssue = () => {
         </div>
       </div>
 
-      <div v-if="labels.length" class="flex flex-wrap">
-        <woot-label
+      <div v-if="labels.length" class="flex flex-wrap gap-1.5">
+        <Label
           v-for="label in labels"
           :key="label.id"
-          :title="label.name"
-          :description="label.description"
-          :color="label.color"
-          variant="smooth"
-          small
+          compact
+          :label="{
+            title: label.name,
+            description: label.description,
+            color: label.color,
+          }"
         />
       </div>
     </div>

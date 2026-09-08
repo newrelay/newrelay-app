@@ -10,6 +10,7 @@ import {
   RelayDropdownMenu,
   RelayDropdownMenuTrigger,
   RelayDropdownMenuContent,
+  DROPDOWN_MENU_MODAL_SEARCHABLE_CONTENT_CLASS,
 } from 'dashboard/components-next/relay';
 import { RELAY_SIDEBAR_TEXT_ACTION_CLASS } from 'dashboard/components-next/relay/sidebar/constants';
 
@@ -70,6 +71,7 @@ export default {
       closeDropdownLabel,
       toggleLabels,
       sidebarTextActionClass: RELAY_SIDEBAR_TEXT_ACTION_CLASS,
+      dropdownContentClass: DROPDOWN_MENU_MODAL_SEARCHABLE_CONTENT_CLASS,
     };
   },
   data() {
@@ -107,7 +109,7 @@ export default {
           <RelayDropdownMenuContent
             align="start"
             :side-offset="4"
-            :class="DROPDOWN_MENU_MODAL_SEARCHABLE_CONTENT_CLASS"
+            :class="dropdownContentClass"
           >
             <LabelDropdown
               v-if="showSearchDropdownLabel"
@@ -123,17 +125,17 @@ export default {
       </div>
 
       <div v-if="activeLabels.length" class="flex flex-wrap items-center gap-2">
-        <woot-label
+        <button
           v-for="label in activeLabels"
           :key="label.id"
-          :title="label.title"
-          :description="label.description"
-          show-close
-          :color="label.color"
-          variant="smooth"
-          class="max-w-[calc(100%-0.5rem)] !h-6 !rounded-full !border-none !bg-primary/10 !px-3 !py-1 !text-[11px] !font-normal !text-primary"
-          @remove="removeLabelFromConversation"
-        />
+          type="button"
+          class="inline-flex h-6 max-w-[calc(100%-0.5rem)] items-center gap-1.5 rounded-full bg-primary/10 px-3 py-1 text-[11px] font-normal text-primary"
+          :title="label.description"
+          @click="removeLabelFromConversation(label.title)"
+        >
+          {{ label.title }}
+          <span class="i-lucide-x size-3 shrink-0 opacity-60" />
+        </button>
       </div>
     </div>
     <Spinner v-else />

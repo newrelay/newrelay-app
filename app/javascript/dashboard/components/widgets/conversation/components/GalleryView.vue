@@ -179,14 +179,14 @@ onMounted(() => {
 
 <template>
   <TeleportWithDirection to="body">
-    <woot-modal
-      v-model:show="show"
-      full-width
-      :show-close-button="false"
-      :on-close="onClose"
+    <div
+      v-if="show"
+      class="fixed inset-0 z-[200] flex flex-col bg-background"
+      role="dialog"
+      aria-modal="true"
     >
       <div
-        class="bg-background flex flex-col h-[inherit] w-[inherit] overflow-hidden select-none"
+        class="flex h-full w-full flex-col overflow-hidden bg-background select-none"
         @click="onClose"
       >
         <header
@@ -366,6 +366,6 @@ onMounted(() => {
           </div>
         </footer>
       </div>
-    </woot-modal>
+    </div>
   </TeleportWithDirection>
 </template>

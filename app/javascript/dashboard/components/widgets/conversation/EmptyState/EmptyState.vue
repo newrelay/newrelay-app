@@ -4,12 +4,14 @@ import { useAdmin } from 'dashboard/composables/useAdmin';
 import OnboardingView from '../OnboardingView.vue';
 import EmptyStateMessage from './EmptyStateMessage.vue';
 import { RelayMessagesEmptyState } from 'dashboard/components-next/relay';
+import Spinner from 'dashboard/components-next/spinner/Spinner.vue';
 
 export default {
   components: {
     OnboardingView,
     EmptyStateMessage,
     RelayMessagesEmptyState,
+    Spinner,
   },
   props: {
     isOnExpandedLayout: {
@@ -55,10 +57,15 @@ export default {
 
 <template>
   <div :class="emptyClassName">
-    <woot-loading-state
+    <div
       v-if="uiFlags.isFetching || loadingChatList"
-      :message="loadingIndicatorMessage"
-    />
+      class="flex flex-col items-center justify-center gap-3"
+    >
+      <Spinner class="text-primary" />
+      <p class="mb-0 text-sm text-muted-foreground">
+        {{ loadingIndicatorMessage }}
+      </p>
+    </div>
     <!-- No inboxes (admin) → stepper; has inboxes + empty list → all-set or filter empty -->
     <OnboardingView
       v-if="

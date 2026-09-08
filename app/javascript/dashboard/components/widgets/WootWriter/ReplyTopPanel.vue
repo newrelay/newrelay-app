@@ -182,16 +182,21 @@ export default {
         type="button"
         role="tab"
         :aria-selected="isReplyActive"
-        class="rounded-none h-full border-b-2 transition-colors flex items-center gap-1.5 px-0 font-semibold text-sm"
+        class="relative -mb-px h-full rounded-none bg-transparent px-0 font-semibold text-sm shadow-none transition-colors flex items-center gap-1.5"
         :class="
           isReplyActive
-            ? 'border-primary text-foreground shadow-none bg-transparent'
-            : 'border-transparent text-muted-foreground hover:text-foreground shadow-none bg-transparent'
+            ? 'text-foreground'
+            : 'text-muted-foreground hover:text-foreground'
         "
         :disabled="disabled || isReplyRestricted"
         @click="handleReplyClick"
       >
         {{ $t('CONVERSATION.REPLYBOX.REPLY') }}
+        <span
+          v-if="isReplyActive"
+          class="absolute inset-x-0 bottom-0 h-0.5 bg-primary"
+          aria-hidden="true"
+        />
       </button>
 
       <!-- AI Reply -->
@@ -200,17 +205,22 @@ export default {
         type="button"
         role="tab"
         :aria-selected="isAiActive"
-        class="rounded-none h-full border-b-2 transition-colors flex items-center gap-1.5 px-0 font-semibold text-sm"
+        class="relative -mb-px h-full rounded-none bg-transparent px-0 font-semibold text-sm shadow-none transition-colors flex items-center gap-1.5"
         :class="
           isAiActive
-            ? 'border-primary text-primary shadow-none bg-transparent'
-            : 'border-transparent text-muted-foreground hover:text-foreground shadow-none bg-transparent'
+            ? 'text-primary'
+            : 'text-muted-foreground hover:text-foreground'
         "
         :disabled="disabled || isEditorDisabled || isReplyRestricted"
         @click="handleAiReplyClick"
       >
         <span class="i-lucide-wand-sparkles size-4" />
         {{ $t('CONVERSATION.REPLYBOX.AI_REPLY') }}
+        <span
+          v-if="isAiActive"
+          class="absolute inset-x-0 bottom-0 h-0.5 bg-primary"
+          aria-hidden="true"
+        />
       </button>
     </div>
 

@@ -105,21 +105,33 @@ export default {
       :show-back-button="isOnExpandedLayout && !isInboxView"
     />
     <OnCallBanner v-if="currentChat.id" :conversation-id="currentChat.id" />
-    <woot-tabs
+    <div
       v-if="dashboardApps.length && currentChat.id"
-      :index="activeIndex"
-      class="h-10"
-      @change="onDashboardAppTabChange"
+      class="flex h-10 shrink-0 items-end gap-6 border-b border-border px-4"
+      role="tablist"
     >
-      <woot-tabs-item
+      <button
         v-for="tab in dashboardAppTabs"
         :key="tab.key"
-        :index="tab.index"
-        :name="tab.name"
-        :show-badge="false"
-        is-compact
-      />
-    </woot-tabs>
+        type="button"
+        role="tab"
+        :aria-selected="activeIndex === tab.index"
+        class="relative -mb-px px-1 pb-2.5 text-sm font-medium transition-colors"
+        :class="
+          activeIndex === tab.index
+            ? 'text-foreground'
+            : 'text-muted-foreground hover:text-foreground'
+        "
+        @click="onDashboardAppTabChange(tab.index)"
+      >
+        {{ tab.name }}
+        <span
+          v-if="activeIndex === tab.index"
+          class="absolute inset-x-0 bottom-0 h-0.5 bg-primary"
+          aria-hidden="true"
+        />
+      </button>
+    </div>
     <div v-show="!activeIndex" class="flex h-full min-h-0 m-0">
       <MessagesView
         v-if="currentChat.id"

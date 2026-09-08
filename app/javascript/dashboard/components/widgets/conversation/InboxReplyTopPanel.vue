@@ -71,13 +71,13 @@ export default {
     },
     replyTabClass() {
       return this.isReplyActive
-        ? 'px-4 py-2.5 text-sm font-semibold text-foreground border-b-2 border-foreground -mb-px bg-transparent'
-        : 'px-4 py-2.5 text-sm font-medium text-muted-foreground hover:text-foreground border-b-2 border-transparent -mb-px transition-colors';
+        ? 'relative -mb-px px-4 py-2.5 text-sm font-semibold text-foreground bg-transparent'
+        : 'relative -mb-px px-4 py-2.5 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors';
     },
     noteTabClass() {
       return this.isNoteActive
-        ? 'px-4 py-2.5 text-sm font-semibold text-amber-600 border-b-2 border-amber-500 -mb-px bg-amber-500/10'
-        : 'px-4 py-2.5 text-sm font-medium text-muted-foreground hover:text-foreground border-b-2 border-transparent -mb-px transition-colors';
+        ? 'relative -mb-px px-4 py-2.5 text-sm font-semibold text-amber-600 bg-amber-500/10'
+        : 'relative -mb-px px-4 py-2.5 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors';
     },
   },
 };
@@ -103,6 +103,11 @@ export default {
             contactName: contactName || $t('CONVERSATION.REPLYBOX.CONTACT'),
           })
         }}
+        <span
+          v-if="isReplyActive"
+          class="absolute inset-x-0 bottom-0 h-0.5 bg-primary"
+          aria-hidden="true"
+        />
       </button>
       <button
         type="button"
@@ -114,6 +119,11 @@ export default {
         @click="handleNoteClick"
       >
         {{ $t('CONVERSATION.REPLYBOX.INTERNAL_COMMENT') }}
+        <span
+          v-if="isNoteActive"
+          class="absolute inset-x-0 bottom-0 h-0.5 bg-amber-500"
+          aria-hidden="true"
+        />
       </button>
     </div>
     <button

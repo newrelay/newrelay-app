@@ -145,7 +145,25 @@ articles
 
 ---
 
-## 9. Open gaps / notes
+## 9. Price / plan gating
+
+**Gating type:** Mixed — Help Center itself is ungated; embedding search is Business-only.
+**`feature_key`(s):** `help_center` (all plans); `help_center_embedding_search` (premium)
+
+| Plan | Included? | Limit / quota | Notes |
+|---|---|---|---|
+| Hobby | yes (Help Center) | — | embedding search off |
+| Standard | yes (Help Center) | — | embedding search off |
+| Business | yes | — | `help_center_embedding_search` on |
+| Enterprise | yes | negotiated | |
+
+**Credits / usage:** none (article generation via Captain is billed under [18-captain-ai.md](18-captain-ai.md))
+**Enforced by:** `account.feature_enabled?` after `ReconcilePlanFeaturesService`
+**Source:** `lib/seeders/plan_feature_limit_seeder.rb`
+
+---
+
+## 10. Open gaps / notes
 
 - Locale-fallback behavior (what a visitor sees when their locale has no translated article) not directly confirmed — worth a quick check if multi-locale help centers are actively used.
 - Custom-domain SSL provisioning mechanism (`ssl_settings`) not investigated — flag if custom domains are a priority area.

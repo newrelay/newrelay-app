@@ -136,6 +136,24 @@ copilot_messages          # (schema not individually inspected; child of copilot
 
 ---
 
-## 9. Open gaps / notes
+## 9. Price / plan gating
+
+**Gating type:** Mixed — Assistant / Copilot / V2 / custom tools / auto-sync are Business-only; inline `captain_tasks` is ungated; documents and responses are credit quotas (0 on Hobby/Standard).
+**`feature_key`(s):** boolean `captain_integration`, `captain_integration_v2`, `captain_v1_action_classifier`, `captain_document_auto_sync`, `custom_tools` (premium); `captain_tasks` (all plans). Resource `captain_documents`, `captain_responses`.
+
+| Plan | Included? | Limit / quota | Notes |
+|---|---|---|---|
+| Hobby | tasks yes; Assistant/Copilot no | 0 documents; 0 responses | premium Captain flags off |
+| Standard | tasks yes; Assistant/Copilot no | 0 documents; 0 responses | premium Captain flags off |
+| Business | yes | 200 documents; 300 responses | all Captain premium flags on |
+| Enterprise | yes | negotiated | `EnterpriseContract` can override quotas and feature list |
+
+**Credits / usage:** plan allowance is `captain_responses` (0 / 0 / 300) and `captain_documents` (0 / 0 / 200). Usage is `account.custom_attributes['captain_responses_usage']`, incremented by 1 per Copilot/task call (`increment_response_usage`). `config/llm.yml` exposes a per-model `credit_multiplier` (e.g. GPT-4.1 Mini = 1, GPT-4.1 = 3) on the model picker — live deduction is +1, not multiplied. Top-ups go through billing (`TopupCheckoutService`) — see [20-billing-subscription.md](20-billing-subscription.md).
+**Enforced by:** `ReconcilePlanFeaturesService` → `account.feature_enabled?('captain_integration'|...)` and `account.limits['captain_documents']` / `account.limits['captain_responses']`
+**Source:** `lib/seeders/plan_feature_limit_seeder.rb`; multipliers from `config/llm.yml`
+
+---
+
+## 10. Open gaps / notes
 
 - None significant — this is the most mature, most-tested subsystem reviewed. `credit_multiplier` per model ties directly to account billing usage; cross-reference with the Billing/Subscription FRD (next in this phase) for how credits are actually deducted/enforced — not traced in this pass.

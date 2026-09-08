@@ -118,7 +118,25 @@ inboxes
 
 ---
 
-## 9. Open gaps / notes
+## 9. Price / plan gating
+
+**Gating type:** Mixed — inbox management is ungated; advanced assignment is Business-only. Per-channel gating lives in [05-channels.md](05-channels.md).
+**`feature_key`(s):** `inbox_management` (all plans); `advanced_assignment` (premium)
+
+| Plan | Included? | Limit / quota | Notes |
+|---|---|---|---|
+| Hobby | yes | — | `advanced_assignment` off |
+| Standard | yes | — | `advanced_assignment` off |
+| Business | yes | — | `advanced_assignment` on |
+| Enterprise | yes | negotiated | |
+
+**Credits / usage:** none
+**Enforced by:** `account.feature_enabled?` after `ReconcilePlanFeaturesService`
+**Source:** `lib/seeders/plan_feature_limit_seeder.rb` (`PREMIUM_ONLY_FEATURES` includes `advanced_assignment`)
+
+---
+
+## 10. Open gaps / notes
 
 - No soft-delete/archive for inboxes — deletion is destructive (`destroy_async` cascade). Confirm this matches product expectations before treating as a gap vs. intended.
 - Assignment-order and fair-distribution logic tested where, exactly, needs confirming (likely `assignment_service_spec.rb`, not yet cross-checked here).

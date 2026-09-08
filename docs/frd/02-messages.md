@@ -120,7 +120,25 @@ messages
 
 ---
 
-## 9. Open gaps / notes
+## 9. Price / plan gating
+
+**Gating type:** Ungated. Messages have no own `PlanFeatureLimit` row; they inherit conversation count and retention.
+**`feature_key`(s):** none for messages themselves. Related: resource `conversations`, `data_retention_months`; boolean `voice_recorder` (all plans)
+
+| Plan | Included? | Limit / quota | Notes |
+|---|---|---|---|
+| Hobby | yes | 200 conversations; 1 month retention | |
+| Standard | yes | 2,000 conversations; 6 months retention | |
+| Business | yes | 20,000 conversations; 12 months retention | |
+| Enterprise | yes | negotiated | `EnterpriseContract` can override |
+
+**Credits / usage:** none (Captain compose tasks are billed under [18-captain-ai.md](18-captain-ai.md), not per message)
+**Enforced by:** same conversation/retention limits as [01-conversations.md](01-conversations.md)
+**Source:** `lib/seeders/plan_feature_limit_seeder.rb`
+
+---
+
+## 10. Open gaps / notes
 
 - No unique DB constraint on `source_id` — duplicate-message dedup for retried webhooks appears to be application-level only; worth verifying against the relevant `Channel::*` inbox processor before relying on it.
 - Controller-level test coverage for message actions not confirmed; flagged for follow-up.

@@ -104,6 +104,24 @@ custom_roles
 
 ---
 
-## 9. Open gaps / notes
+## 9. Price / plan gating
+
+**Gating type:** Boolean flag — both SLA and Custom Roles are Business-only.
+**`feature_key`(s):** `sla`, `custom_roles`
+
+| Plan | Included? | Limit / quota | Notes |
+|---|---|---|---|
+| Hobby | no | — | |
+| Standard | no | — | |
+| Business | yes | — | |
+| Enterprise | yes | negotiated | |
+
+**Credits / usage:** none
+**Enforced by:** `account.feature_enabled?('sla')` / `account.feature_enabled?('custom_roles')` after `ReconcilePlanFeaturesService`
+**Source:** `lib/seeders/plan_feature_limit_seeder.rb` (`PREMIUM_ONLY_FEATURES` includes both)
+
+---
+
+## 10. Open gaps / notes
 
 - None significant — both features are well-scoped, well-tested, and the SLA job fan-out pattern (accounts → applied SLAs → individual evaluation) is a solid reference for any future per-conversation scheduled evaluation work.

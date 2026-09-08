@@ -131,7 +131,25 @@ team_members
 
 ---
 
-## 9. Open gaps / notes
+## 9. Price / plan gating
+
+**Gating type:** Mixed — agent/team management is ungated; seat count is a resource quota (`seats` stored as `account.limits['agents']`). Custom roles are in [19-sla-custom-roles.md](19-sla-custom-roles.md).
+**`feature_key`(s):** resource `seats`; boolean `agent_management`, `team_management`, `agent_bots` (all plans)
+
+| Plan | Included? | Limit / quota | Notes |
+|---|---|---|---|
+| Hobby | yes | 1 seat | |
+| Standard | yes | 5 seats | |
+| Business | yes | 20 seats | |
+| Enterprise | yes | negotiated | `EnterpriseContract.negotiated_limit_overrides['seats']` maps to `account.limits['agents']` |
+
+**Credits / usage:** none
+**Enforced by:** `ReconcilePlanFeaturesService` maps `seats` → `account.limits['agents']`
+**Source:** `lib/seeders/plan_feature_limit_seeder.rb`
+
+---
+
+## 10. Open gaps / notes
 
 - No direct `account_user_spec.rb` found — flagged for confirmation, likely low-risk given controller-level coverage.
 - Unassignment cascade behavior when an agent is removed from a team/account is not confirmed against conversations already assigned to them — worth a quick check if "orphaned assignee" is a real concern.

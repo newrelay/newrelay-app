@@ -137,7 +137,25 @@ conversations
 
 ---
 
-## 9. Open gaps / notes
+## 9. Price / plan gating
+
+**Gating type:** Mixed — core conversation UI is ungated; count and retention are resource quotas; two related flags are Business-only.
+**`feature_key`(s):** resource `conversations`, `data_retention_months`; boolean `auto_resolve_conversations` (all plans); `conversation_required_attributes`, `advanced_assignment` (premium)
+
+| Plan | Included? | Limit / quota | Notes |
+|---|---|---|---|
+| Hobby | yes | 200 conversations; 1 month retention | |
+| Standard | yes | 2,000 conversations; 6 months retention | |
+| Business | yes | 20,000 conversations; 12 months retention | `conversation_required_attributes` and `advanced_assignment` enabled |
+| Enterprise | yes | negotiated | `EnterpriseContract.negotiated_limit_overrides` can override quotas |
+
+**Credits / usage:** none
+**Enforced by:** `Enterprise::Billing::ReconcilePlanFeaturesService` → `account.limits['conversations']` / `account.limits['data_retention_months']` (purged by `Internal::PurgeExpiredConversationsJob`); premium flags via `account.feature_enabled?`
+**Source:** `lib/seeders/plan_feature_limit_seeder.rb` (Hobby / Standard / Business). Enterprise is negotiated via `EnterpriseContract`.
+
+---
+
+## 10. Open gaps / notes
 
 - No explicit request-spec coverage found for several controller actions (`mute`, `custom_attributes`, `toggle_priority`) — confirm before treating as tested.
 - Assignee-removal cascade behavior not verified against code; flagged for follow-up, not a confirmed bug.

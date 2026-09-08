@@ -139,7 +139,25 @@ comment_automation_message_logs
 
 ---
 
-## 9. Open gaps / notes
+## 9. Price / plan gating
+
+**Gating type:** Not in the plan matrix. No `feature_key` in `config/features.yml` or `PlanFeatureLimit`.
+**`feature_key`(s):** none
+
+| Plan | Included? | Limit / quota | Notes |
+|---|---|---|---|
+| Hobby | not gated | — | availability is code/channel presence, not a plan row |
+| Standard | not gated | — | |
+| Business | not gated | — | |
+| Enterprise | not gated | — | |
+
+**Credits / usage:** none
+**Enforced by:** Instagram channel + campaign records, not `ReconcilePlanFeaturesService`
+**Source:** `lib/seeders/plan_feature_limit_seeder.rb` — no matching key. Do not invent a SKU.
+
+---
+
+## 10. Open gaps / notes
 
 - **Social account management and response controls are not yet backed by real data** — they run entirely on `MockAutoresponderStore`. This is fine for demo purposes but means the "assign team/member to a social account" and "per-post-type response defaults" features don't actually persist against real Instagram Business accounts today. Flag before promising this as a production-ready settings surface.
 - Core matching/DM pipeline, by contrast, is fully real and well-tested — safe to treat as production-ready for genuine Instagram channels.

@@ -113,6 +113,24 @@ automation_rules
 
 ---
 
-## 9. Open gaps / notes
+## 9. Price / plan gating
+
+**Gating type:** Resource quota. The `automations` boolean is on for every self-serve plan; the cap is numeric.
+**`feature_key`(s):** resource `automations`; boolean `automations` (all plans)
+
+| Plan | Included? | Limit / quota | Notes |
+|---|---|---|---|
+| Hobby | yes | 3 automations | |
+| Standard | yes | 15 automations | |
+| Business | yes | 100 automations | |
+| Enterprise | yes | negotiated | `EnterpriseContract.negotiated_limit_overrides` can override |
+
+**Credits / usage:** none
+**Enforced by:** `Enterprise::Billing::ReconcilePlanFeaturesService` → `account.limits['automations']`
+**Source:** `lib/seeders/plan_feature_limit_seeder.rb`
+
+---
+
+## 10. Open gaps / notes
 
 - None significant found — this is one of the better-tested subsystems in the codebase. Worth using as the reference pattern (listener + condition service + action service split) when documenting Macros next, since Macros reuse the same `ActionService` base.

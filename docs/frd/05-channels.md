@@ -112,6 +112,24 @@ channel_api          - account_id, webhook_url (generic inbound/outbound API cha
 
 ---
 
-## 9. Open gaps / notes
+## 9. Price / plan gating
+
+**Gating type:** Mixed — most channels are ungated; Voice is Business-only.
+**`feature_key`(s):** `channel_email`, `channel_facebook`, `channel_website`, `channel_instagram`, `channel_tiktok`, `inbound_emails`, `whatsapp_campaign` (all plans); `channel_voice` (premium)
+
+| Plan | Included? | Limit / quota | Notes |
+|---|---|---|---|
+| Hobby | yes (except Voice) | — | `channel_voice` off |
+| Standard | yes (except Voice) | — | `channel_voice` off |
+| Business | yes | — | `channel_voice` on |
+| Enterprise | yes | negotiated | |
+
+**Credits / usage:** none in `PlanFeatureLimit` (WhatsApp/SMS carrier fees are outside this matrix)
+**Enforced by:** `account.feature_enabled?('channel_voice')` after `ReconcilePlanFeaturesService`
+**Source:** `lib/seeders/plan_feature_limit_seeder.rb` (`PREMIUM_ONLY_FEATURES` includes `channel_voice`)
+
+---
+
+## 10. Open gaps / notes
 
 - This is an overview FRD covering 11 channel types at a summary level — per-channel column lists and webhook signature-verification details were not individually verified against `db/schema.rb`/each controller in this pass. Recommend a dedicated deep-dive FRD for WhatsApp specifically (highest complexity: calling, templates, 24h window) if that's a priority area.

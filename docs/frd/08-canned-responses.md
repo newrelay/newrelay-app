@@ -87,7 +87,25 @@ No background jobs, no external integrations — pure CRUD.
 
 ---
 
-## 9. Open gaps / notes
+## 9. Price / plan gating
+
+**Gating type:** Ungated boolean. No resource quota.
+**`feature_key`(s):** `canned_responses`
+
+| Plan | Included? | Limit / quota | Notes |
+|---|---|---|---|
+| Hobby | yes | — | |
+| Standard | yes | — | |
+| Business | yes | — | |
+| Enterprise | yes | negotiated | |
+
+**Credits / usage:** none
+**Enforced by:** `account.feature_enabled?('canned_responses')` after `ReconcilePlanFeaturesService`
+**Source:** `lib/seeders/plan_feature_limit_seeder.rb`
+
+---
+
+## 10. Open gaps / notes
 
 - Uniqueness on `short_code` is enforced by Rails validation (`scope: :account_id`) but no corresponding unique DB index was seen in the schema excerpt — a race condition (two simultaneous creates) could theoretically produce duplicate short_codes. Low-risk given usage pattern (admin-authored, infrequent), but worth confirming if it matters.
 - `order_by_search` scope has no dedicated model spec — flagged above.

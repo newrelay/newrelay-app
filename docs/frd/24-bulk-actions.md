@@ -92,7 +92,25 @@ No dedicated table for the bulk operation itself — conversations/contacts/labe
 
 ---
 
-## 9. Open gaps / notes
+## 9. Price / plan gating
+
+**Gating type:** Mixed — bulk actions themselves are not in the matrix; the bulk-action audit log flag is Business-only.
+**`feature_key`(s):** none for bulk actions. Related: `audit_logs` (premium)
+
+| Plan | Included? | Limit / quota | Notes |
+|---|---|---|---|
+| Hobby | bulk actions not gated; audit log no | — | `audit_logs` off |
+| Standard | bulk actions not gated; audit log no | — | `audit_logs` off |
+| Business | yes | — | `audit_logs` on |
+| Enterprise | yes | negotiated | |
+
+**Credits / usage:** none
+**Enforced by:** conversation permissions for the action; `account.feature_enabled?('audit_logs')` for the audit trail
+**Source:** `lib/seeders/plan_feature_limit_seeder.rb` (`PREMIUM_ONLY_FEATURES` includes `audit_logs`)
+
+---
+
+## 10. Open gaps / notes
 
 - Per-record failure isolation within `BulkActionsJob`/`Contacts::BulkActionJob` not directly confirmed — same class of open question as flagged for `MacrosExecutionJob` in [07-macros.md](07-macros.md). Worth a single pass checking all "loop over N records in a background job" code paths in the codebase for consistent error-isolation behavior.
 - No direct `BulkActionAudit` model spec found.

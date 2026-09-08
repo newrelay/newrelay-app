@@ -41,7 +41,7 @@ access_tokens
 
 **Relationships:** No new associations. `AccessToken belongs_to :owner` (existing, polymorphic `User`/`AgentBot`) is the only lookup used.
 
-**Migration file(s):** One new migration, `add_scopes_and_last_used_at_to_access_tokens`. Added in Phase 1 specifically so Phase 3 (OAuth 2.1 / scoped tokens) can issue rows against the same table instead of forking the auth model later — see architecture review note in §10.
+**Migration file(s):** One new migration, `add_scopes_and_last_used_at_to_access_tokens`. Added in Phase 1 specifically so Phase 3 (OAuth 2.1 / scoped tokens) can issue rows against the same table instead of forking the auth model later — see architecture review note in §11.
 
 ---
 
@@ -59,7 +59,7 @@ POST-only, no SSE transport in v1 (see §8 — `fast-mcp`'s SSE mode holds a Pum
 - `app/models/access_token.rb` (existing, read-only reuse; `scopes`/`last_used_at` columns added per §3, unused until Phase 3)
 - `app/controllers/concerns/access_token_auth_helper.rb` (existing — pattern reused, not directly inherited, since the mount isn't an `ActionController`)
 - `app/models/concerns/featurable.rb` / `Account#feature_enabled?` (existing, reused as-is)
-- Auth hook sets `Current.mcp = true` alongside `Current.user`, so every write stamps its MCP origin for the Enterprise audit log (see §10)
+- Auth hook sets `Current.mcp = true` alongside `Current.user`, so every write stamps its MCP origin for the Enterprise audit log (see §11)
 
 **Background jobs:** None in v1 — all tool calls are synchronous request/response.
 
@@ -142,7 +142,25 @@ Each phase ships independently — Phase 2 does not start until Phase 1 is deplo
 
 ---
 
-## 10. Open gaps / notes
+## 10. Price / plan gating
+
+**Gating type:** Planned boolean flag. `mcp_integration` is not in `config/features.yml` or `PlanFeatureLimit` yet (this FRD is pre-build).
+**`feature_key`(s):** `mcp_integration` (to be added; default disabled)
+
+| Plan | Included? | Limit / quota | Notes |
+|---|---|---|---|
+| Hobby | TBD | — | not in the seeder today |
+| Standard | TBD | — | not in the seeder today |
+| Business | TBD | — | not in the seeder today |
+| Enterprise | TBD | negotiated | Phase 3 notes a possible per-plan tool catalog via `prepend_mod_with` |
+
+**Credits / usage:** none planned
+**Enforced by (designed):** `account.feature_enabled?('mcp_integration')` per tool call, fail closed
+**Source:** not in `lib/seeders/plan_feature_limit_seeder.rb` yet — do not invent plan inclusion until the flag is seeded
+
+---
+
+## 11. Open gaps / notes
 
 **Architecture review (2026-09-08, `cto` review):** verdict *sound with caveats* — approved with two changes folded into Phase 1 above:
 1. `AccessToken` has no scopes/expiry/`last_used_at` today, so Phase 3 OAuth would otherwise need to fork the auth model rather than extend it — fixed by adding the nullable columns in Phase 1 (§3, §9).

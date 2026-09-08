@@ -86,7 +86,25 @@ Filter *application* itself happens via each resource's own `filter` action (e.g
 
 ---
 
-## 9. Open gaps / notes
+## 9. Price / plan gating
+
+**Gating type:** Not in the plan matrix. No `custom_filters` key in `config/features.yml` or `PlanFeatureLimit`.
+**`feature_key`(s):** none
+
+| Plan | Included? | Limit / quota | Notes |
+|---|---|---|---|
+| Hobby | not gated | — | available to any account user who can use conversation filters |
+| Standard | not gated | — | |
+| Business | not gated | — | |
+| Enterprise | not gated | — | |
+
+**Credits / usage:** none
+**Enforced by:** inbox/account membership, not `ReconcilePlanFeaturesService`
+**Source:** `lib/seeders/plan_feature_limit_seeder.rb` — no matching key
+
+---
+
+## 10. Open gaps / notes
 
 - `FilterService`'s query-building logic has no directly confirmed isolated spec — worth a quick check if this becomes a priority area, since it's the one piece of real logic in an otherwise simple CRUD feature.
 - Enforcement point for the 1000-filters-per-user limit not directly confirmed.

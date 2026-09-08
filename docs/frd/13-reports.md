@@ -116,6 +116,24 @@ Unique key on `(account_id, date, dimension_type, dimension_id, metric)` — one
 
 ---
 
-## 9. Open gaps / notes
+## 9. Price / plan gating
+
+**Gating type:** Ungated boolean. No report-row quota.
+**`feature_key`(s):** `reports`, `report_rollup`
+
+| Plan | Included? | Limit / quota | Notes |
+|---|---|---|---|
+| Hobby | yes | — | |
+| Standard | yes | — | |
+| Business | yes | — | |
+| Enterprise | yes | negotiated | |
+
+**Credits / usage:** none
+**Enforced by:** `account.feature_enabled?('reports')` after `ReconcilePlanFeaturesService`
+**Source:** `lib/seeders/plan_feature_limit_seeder.rb`
+
+---
+
+## 10. Open gaps / notes
 
 - None significant — well-architected (raw event + rollup + registry + per-report builder separation) and well-tested. Good reference pattern if a new custom report type needs to be added later (Reputation/CRM reporting could follow the same `builders/v2/reports/*_builder.rb` convention).

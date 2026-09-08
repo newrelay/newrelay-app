@@ -111,6 +111,24 @@ Unique index on `message_id` — one response per CSAT message (can't double-sub
 
 ---
 
-## 9. Open gaps / notes
+## 9. Price / plan gating
+
+**Gating type:** Mixed — CSAT surveys have no dedicated `feature_key` (ungated in practice); review notes are Business-only.
+**`feature_key`(s):** `csat_review_notes` (premium). No `csat` key in `config/features.yml`.
+
+| Plan | Included? | Limit / quota | Notes |
+|---|---|---|---|
+| Hobby | surveys yes; review notes no | — | |
+| Standard | surveys yes; review notes no | — | |
+| Business | yes | — | `csat_review_notes` on |
+| Enterprise | yes | negotiated | |
+
+**Credits / usage:** none
+**Enforced by:** `account.feature_enabled?('csat_review_notes')` after `ReconcilePlanFeaturesService`
+**Source:** `lib/seeders/plan_feature_limit_seeder.rb` (`PREMIUM_ONLY_FEATURES` includes `csat_review_notes`)
+
+---
+
+## 10. Open gaps / notes
 
 - None significant found — this is another well-covered, well-guarded subsystem (send-priority fallback chain is a nice pattern worth reusing elsewhere).

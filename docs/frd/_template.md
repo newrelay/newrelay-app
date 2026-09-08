@@ -82,6 +82,26 @@ table_name
 
 ---
 
-## 9. Open gaps / notes
+## 9. Price / plan gating
+
+**Gating type:** Ungated / Boolean flag / Resource quota / Credits / Mixed
+**`feature_key`(s):** [...]   # from `PlanFeatureLimit` / `config/features.yml`
+
+| Plan | Included? | Limit / quota | Notes |
+|---|---|---|---|
+| Hobby | | | |
+| Standard | | | |
+| Business | | | |
+| Enterprise | | negotiated | `EnterpriseContract` can override |
+
+**Credits / usage:** none / [e.g. `captain_responses`, `credit_multiplier` in `config/llm.yml`]
+**Enforced by:** `Enterprise::Billing::ReconcilePlanFeaturesService` (`account.feature_enabled?` / `account.limits[...]`)
+**Source:** `lib/seeders/plan_feature_limit_seeder.rb` (Hobby / Standard / Business only). Enterprise is not a fixed matrix row.
+
+If the feature is not in the seeder or `config/features.yml`, say so explicitly — do not invent prices or limits.
+
+---
+
+## 10. Open gaps / notes
 
 [Anything noticed while documenting — not a feature request, just observations for later triage.]

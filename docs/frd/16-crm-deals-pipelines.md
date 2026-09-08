@@ -138,7 +138,25 @@ companies
 
 ---
 
-## 9. Open gaps / notes
+## 9. Price / plan gating
+
+**Gating type:** Mixed — CRM / deals / pipelines flags are ungated; Companies is Business-only.
+**`feature_key`(s):** `crm`, `crm_integration`, `crm_v2` (all plans; `crm_v2` is `chatwoot_internal`); `companies` (premium)
+
+| Plan | Included? | Limit / quota | Notes |
+|---|---|---|---|
+| Hobby | CRM yes; Companies no | — | `companies` off |
+| Standard | CRM yes; Companies no | — | `companies` off |
+| Business | yes | — | `companies` on |
+| Enterprise | yes | negotiated | |
+
+**Credits / usage:** none
+**Enforced by:** `account.feature_enabled?('companies')` after `ReconcilePlanFeaturesService`; deal `company_id` also gated by `ChatwootApp.enterprise?` in OSS
+**Source:** `lib/seeders/plan_feature_limit_seeder.rb` (`PREMIUM_ONLY_FEATURES` includes `companies`)
+
+---
+
+## 10. Open gaps / notes
 
 - Deletion cascade behavior for `Pipeline`/`PipelineStage` when deals still reference them wasn't directly confirmed — worth a quick check (`dependent: :restrict_with_error` vs `:destroy` vs nothing) since a dangling `pipeline_stage_id` would break the `stage_belongs_to_pipeline` invariant.
 - No direct `pipeline_spec.rb`/`pipeline_stage_spec.rb`/`task_spec.rb` found — likely adequately covered indirectly, but not confirmed.

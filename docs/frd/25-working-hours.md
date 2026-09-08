@@ -82,7 +82,25 @@ No unique index observed on `(inbox_id, day_of_week)` in the schema excerpt — 
 
 ---
 
-## 9. Open gaps / notes
+## 9. Price / plan gating
+
+**Gating type:** Not in the plan matrix. Working hours are inbox settings, not a `feature_key`.
+**`feature_key`(s):** none (lives under inbox; see [04-inboxes.md](04-inboxes.md))
+
+| Plan | Included? | Limit / quota | Notes |
+|---|---|---|---|
+| Hobby | not gated | — | any inbox can enable `working_hours_enabled` |
+| Standard | not gated | — | |
+| Business | not gated | — | |
+| Enterprise | not gated | — | |
+
+**Credits / usage:** none
+**Enforced by:** inbox settings, not `ReconcilePlanFeaturesService`
+**Source:** `lib/seeders/plan_feature_limit_seeder.rb` — no matching key
+
+---
+
+## 10. Open gaps / notes
 
 - No DB-level unique constraint on `(inbox_id, day_of_week)` was found — relies on application code to avoid duplicate day rows per inbox. Low risk in practice (only reachable through the dedicated update path) but worth knowing if direct DB writes are ever done.
 - The timezone-reinterpretation behavior on inbox timezone change (previous bullet) is inferred from the schema, not directly confirmed by reading `open_at?`'s implementation — worth a quick check if this edge case matters operationally.

@@ -115,7 +115,25 @@ campaigns
 
 ---
 
-## 9. Open gaps / notes
+## 9. Price / plan gating
+
+**Gating type:** Ungated boolean. No campaign-count quota in the matrix.
+**`feature_key`(s):** `campaigns`, `whatsapp_campaign`
+
+| Plan | Included? | Limit / quota | Notes |
+|---|---|---|---|
+| Hobby | yes | — | |
+| Standard | yes | — | |
+| Business | yes | — | |
+| Enterprise | yes | negotiated | |
+
+**Credits / usage:** none in `PlanFeatureLimit` (WhatsApp template/carrier fees are outside this matrix)
+**Enforced by:** `account.feature_enabled?('campaigns')` after `ReconcilePlanFeaturesService`
+**Source:** `lib/seeders/plan_feature_limit_seeder.rb`
+
+---
+
+## 10. Open gaps / notes
 
 - Exact `campaign_analytics` metrics (what's actually measured — sent count, reply rate, etc.) not verified against the controller/serializer in this pass.
 - Partial-failure behavior of one-off bulk sends (does one failed recipient abort the batch?) not directly confirmed — worth checking if this becomes operationally important (e.g. large SMS blasts).

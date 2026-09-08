@@ -119,7 +119,25 @@ contacts
 
 ---
 
-## 9. Open gaps / notes
+## 9. Price / plan gating
+
+**Gating type:** Resource quota (contact count). Contact UI itself is ungated.
+**`feature_key`(s):** resource `contacts`; boolean `ip_lookup` (all plans)
+
+| Plan | Included? | Limit / quota | Notes |
+|---|---|---|---|
+| Hobby | yes | 500 contacts | |
+| Standard | yes | 5,000 contacts | |
+| Business | yes | 50,000 contacts | |
+| Enterprise | yes | negotiated | `EnterpriseContract.negotiated_limit_overrides` can override |
+
+**Credits / usage:** none
+**Enforced by:** `Enterprise::Billing::ReconcilePlanFeaturesService` → `account.limits['contacts']`
+**Source:** `lib/seeders/plan_feature_limit_seeder.rb`
+
+---
+
+## 10. Open gaps / notes
 
 - Import parsing logic (`DataImport::ContactManager`) has a CSV fixture but no confirmed spec file exercising it directly — verify before treating as tested.
 - Stale-contact cleanup cadence (cron schedule) not confirmed here — check `config/schedule.yml` if precise timing matters.

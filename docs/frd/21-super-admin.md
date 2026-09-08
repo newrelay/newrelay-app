@@ -88,7 +88,25 @@ Server-rendered `administrate` views (ERB, not Vue) — a deliberately different
 
 ---
 
-## 9. Open gaps / notes
+## 9. Price / plan gating
+
+**Gating type:** Operator-only. Super Admin is not a customer plan SKU.
+**`feature_key`(s):** none. Super Admin auth is a separate Devise scope, not `PlanFeatureLimit`.
+
+| Plan | Included? | Limit / quota | Notes |
+|---|---|---|---|
+| Hobby | no | — | not sold to accounts |
+| Standard | no | — | |
+| Business | no | — | |
+| Enterprise | no | — | instance operators only |
+
+**Credits / usage:** none
+**Enforced by:** Super Admin session / `SuperAdmin::*Controller`, not `ReconcilePlanFeaturesService`
+**Source:** not in `lib/seeders/plan_feature_limit_seeder.rb`
+
+---
+
+## 10. Open gaps / notes
 
 - Per-resource test coverage not individually confirmed — flag the billing/marketplace-specific screens (`enterprise_contracts`, `enterprise_inquiries`, `plan_management`, `payment_gateways`) for closer scrutiny given they're newrelay-custom and money-adjacent, consistent with the coverage gap already flagged in [20-billing-subscription.md](20-billing-subscription.md).
 - `installation_configs` value storage/serialization format wasn't fully inspected — worth a look if instance-wide config behavior needs to be understood precisely.

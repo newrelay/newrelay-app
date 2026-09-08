@@ -92,7 +92,25 @@ macros
 
 ---
 
-## 9. Open gaps / notes
+## 9. Price / plan gating
+
+**Gating type:** Ungated boolean. No resource quota.
+**`feature_key`(s):** `macros`
+
+| Plan | Included? | Limit / quota | Notes |
+|---|---|---|---|
+| Hobby | yes | — | |
+| Standard | yes | — | |
+| Business | yes | — | |
+| Enterprise | yes | negotiated | |
+
+**Credits / usage:** none
+**Enforced by:** `account.feature_enabled?('macros')` after `ReconcilePlanFeaturesService`
+**Source:** `lib/seeders/plan_feature_limit_seeder.rb` (`macros` is not in `PREMIUM_ONLY_FEATURES`)
+
+---
+
+## 10. Open gaps / notes
 
 - Unlike `AutomationRules::ActionService#perform`, which wraps each action in its own `rescue`, it's not confirmed here whether `Macros::ExecutionService#perform` does the same per-action error isolation, or whether one bad action/conversation could abort the rest of a bulk macro run. Worth a quick code check before relying on "partial failure is safe" behavior.
 - No job-level spec found for `MacrosExecutionJob` — flagged for follow-up.

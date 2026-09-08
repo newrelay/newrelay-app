@@ -108,7 +108,25 @@ integrations_hooks
 
 ---
 
-## 9. Open gaps / notes
+## 9. Price / plan gating
+
+**Gating type:** Mixed — integrations / dashboard apps are ungated; API access is Business-only.
+**`feature_key`(s):** `integrations`, `linear_integration`, `notion_integration` (all plans); `shopify_integration` (all plans, `chatwoot_internal`); `api_access` (premium)
+
+| Plan | Included? | Limit / quota | Notes |
+|---|---|---|---|
+| Hobby | integrations yes; API access no | — | `api_access` off |
+| Standard | integrations yes; API access no | — | `api_access` off |
+| Business | yes | — | `api_access` on |
+| Enterprise | yes | negotiated | |
+
+**Credits / usage:** none
+**Enforced by:** `account.feature_enabled?` after `ReconcilePlanFeaturesService`; integration apps may also check `feature_flag` in `config/integration/apps.yml`
+**Source:** `lib/seeders/plan_feature_limit_seeder.rb` (`PREMIUM_ONLY_FEATURES` includes `api_access`)
+
+---
+
+## 10. Open gaps / notes
 
 - `WebhookJob`'s retry/backoff behavior on delivery failure wasn't directly inspected — worth confirming if webhook reliability becomes a support issue.
 - The full `config/integration/apps.yml` list (which specific third-party integrations exist beyond `webhooks`/`dashboard_apps`/`openai`) wasn't fully enumerated in this pass.

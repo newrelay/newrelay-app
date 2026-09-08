@@ -14,7 +14,7 @@
 
 **All 5 phases complete, plus the deferred Phase 2 leftovers — 25 FRDs total.**
 - [x] Phase 2 leftovers: [23-custom-filters.md](23-custom-filters.md), [24-bulk-actions.md](24-bulk-actions.md), [25-working-hours.md](25-working-hours.md)
-- [ ] Phase 6 — Planned (pre-build, not as-built): [26-mcp-server.md](26-mcp-server.md) — MCP server exposing Chatwoot as tools for external AI agents (Claude, Cursor, etc.). Documented ahead of build as a one-off exception to this folder's as-built scope (see its §9).
+- [ ] Phase 6 — Planned (pre-build, not as-built): [26-mcp-server.md](26-mcp-server.md) — MCP server exposing Chatwoot as tools for external AI agents (Claude, Cursor, etc.). Documented ahead of build as a one-off exception to this folder's as-built scope (see its §11).
 
 See [22-webhooks-integrations.md](22-webhooks-integrations.md) for the program-wide summary of cross-cutting findings (Billing test coverage is the top-priority gap).
 
@@ -24,7 +24,7 @@ See [22-webhooks-integrations.md](22-webhooks-integrations.md) for the program-w
 
 We already have `docs/templates/feature-bible-template.md`, but it's a **forward-looking spec** template (External Dependencies & Lead Time, AI Implementation Instructions, Rollout Plan — for features not yet built).
 
-For documenting **existing/shipped** features, those sections don't fit. I'll use a leaner **as-built** template instead: `docs/frd/_template.md` (see below), with sections matching exactly what you asked for — what it is, how it works, data model, API, frontend, test coverage, dev tools, edge cases.
+For documenting **existing/shipped** features, those sections don't fit. I'll use a leaner **as-built** template instead: `docs/frd/_template.md` (see below), with sections matching exactly what you asked for — what it is, how it works, data model, API, frontend, test coverage, dev tools, edge cases, price/plan gating.
 
 For **new custom features not yet built**, we keep using `docs/templates/feature-bible-template.md` as-is (already proven — see `docs/solution-notes/*-feature-bible.md`, `*-prd.md`).
 
@@ -120,4 +120,5 @@ See `docs/frd/_template.md`:
 - Existing test coverage (real spec files, what's covered / gaps)
 - Dev tools used (gems, JS libs, external services actually wired in)
 - Edge cases / failure modes observed in code
+- Price / plan gating (which plans include it, quotas, credits — from `PlanFeatureLimit` / `lib/seeders/plan_feature_limit_seeder.rb`, not invented list prices)
 - Open gaps (things noticed while documenting, not feature requests)

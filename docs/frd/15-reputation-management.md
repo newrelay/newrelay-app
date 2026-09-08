@@ -146,7 +146,25 @@ reputation_video_testimonials - video collection: token (unique), status lifecyc
 
 ---
 
-## 9. Open gaps / notes
+## 9. Price / plan gating
+
+**Gating type:** Ungated boolean. Reputation listings/reviews have no resource quota in the current matrix.
+**`feature_key`(s):** `reputation_demo_surfaces` (all plans). No `reputation` / listings / reviews keys in `PlanFeatureLimit`.
+
+| Plan | Included? | Limit / quota | Notes |
+|---|---|---|---|
+| Hobby | yes | — | not a separate SKU in the seeder |
+| Standard | yes | — | |
+| Business | yes | — | |
+| Enterprise | yes | negotiated | |
+
+**Credits / usage:** none in `PlanFeatureLimit` (GBP/provider API quotas are outside this matrix)
+**Enforced by:** `account.feature_enabled?('reputation_demo_surfaces')` after `ReconcilePlanFeaturesService`
+**Source:** `lib/seeders/plan_feature_limit_seeder.rb` — `reputation_demo_surfaces` is not in `PREMIUM_ONLY_FEATURES`
+
+---
+
+## 10. Open gaps / notes
 
 - **Test coverage is the biggest gap in this module** — the gated feedback funnel (`FeedbackController`, the actual trust-protecting mechanism) and OAuth/token handling (`Integration`, `OauthService`) have no direct specs found. Given this is a differentiator feature with real external API/token risk, this is worth prioritizing before wider rollout.
 - The "high rating → redirect to real public review" half of the gated funnel wasn't fully traced in this pass (only the "low rating → private feedback" half was confirmed in code) — verify `FeedbackController` or its frontend counterpart actually performs that redirect.

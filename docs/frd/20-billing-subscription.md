@@ -134,7 +134,25 @@ Only ~10 spec files found across `spec/enterprise/**` matching billing/subscript
 
 ---
 
-## 9. Open gaps / notes
+## 9. Price / plan gating
+
+**Gating type:** This module *defines* the matrix other FRDs cite. Not a customer-facing SKU. Related: reseller dashboard is Business-only; sub-account count is a resource quota.
+**`feature_key`(s):** this table is the source (`plan_key` + `feature_key`). Related keys: `reseller_dashboard` (premium); resource `t3_subaccounts`
+
+| Plan | Included? | Limit / quota | Notes |
+|---|---|---|---|
+| Hobby | n/a (this is the catalog) | 0 T3 sub-accounts | `reseller_dashboard` off |
+| Standard | n/a | 3 T3 sub-accounts | `reseller_dashboard` off |
+| Business | n/a | 25 T3 sub-accounts | `reseller_dashboard` on |
+| Enterprise | n/a | negotiated | no seeder row; `EnterpriseContract` is the plan |
+
+**Credits / usage:** Captain top-ups (`TopupCheckoutService`) add to `captain_responses`; not priced in this FRD.
+**Enforced by:** `Enterprise::Billing::ReconcilePlanFeaturesService` reads `plan_feature_limits` and writes `account.limits` / feature flags
+**Source:** `lib/seeders/plan_feature_limit_seeder.rb` — Super Admin `plan_management` edits live rows
+
+---
+
+## 10. Open gaps / notes
 
 - **Test coverage is the most significant gap found in this entire FRD program.** A 30-service billing subsystem handling two payment providers, commission splits, and enterprise contracts with only ~10 specs is a real risk area — recommend prioritizing this for a dedicated review/test-hardening pass.
 - Stripe is architecturally still fully present in the code despite the documented business decision to consolidate on Razorpay — new billing work should default to the Razorpay path per `docs/subscription-feature-bible-v2.md`, and Stripe-path changes should be treated as maintenance-only unless told otherwise.

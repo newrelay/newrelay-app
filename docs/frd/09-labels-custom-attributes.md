@@ -121,7 +121,25 @@ Values themselves live in `conversations.custom_attributes`, `contacts.custom_at
 
 ---
 
-## 9. Open gaps / notes
+## 9. Price / plan gating
+
+**Gating type:** Mixed — labels and custom attributes are ungated; required conversation attributes are Business-only.
+**`feature_key`(s):** `labels`, `custom_attributes` (all plans); `conversation_required_attributes` (premium)
+
+| Plan | Included? | Limit / quota | Notes |
+|---|---|---|---|
+| Hobby | yes (labels / custom attributes) | — | `conversation_required_attributes` off |
+| Standard | yes (labels / custom attributes) | — | `conversation_required_attributes` off |
+| Business | yes | — | `conversation_required_attributes` on |
+| Enterprise | yes | negotiated | |
+
+**Credits / usage:** none
+**Enforced by:** `account.feature_enabled?` after `ReconcilePlanFeaturesService`
+**Source:** `lib/seeders/plan_feature_limit_seeder.rb` (`PREMIUM_ONLY_FEATURES` includes `conversation_required_attributes`)
+
+---
+
+## 10. Open gaps / notes
 
 - Deleting a `CustomAttributeDefinition` does not appear to cascade-clean the corresponding key out of existing `custom_attributes` jsonb blobs — orphaned keys may persist on old records. Not necessarily a bug (could be intentional to preserve historical data) but worth confirming intent.
 - Backend-side regex validation on custom attribute value writes not confirmed — may be frontend-only enforcement.

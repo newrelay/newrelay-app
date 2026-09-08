@@ -29,66 +29,43 @@ const emit = defineEmits([
   <div class="flex flex-col gap-0 border-b border-border/40 bg-background">
     <!-- Two-section layout for search views (main contacts, label views) -->
     <template v-if="showSearch">
-      <!-- Top: Title + subtitle + action buttons -->
-      <div
-        class="flex flex-col gap-3 px-4 pb-4 pt-5 sm:flex-row sm:items-start sm:justify-between sm:px-6"
-      >
-        <div class="min-w-0">
-          <h1
-            class="capitalize text-[16px] font-[500] tracking-tight text-foreground"
-          >
-            {{ headerTitle }}
-          </h1>
-          <p v-if="!isLabelView" class="mt-0.5 text-sm text-muted-foreground">
-            {{ $t('CONTACTS_LAYOUT.HEADER.DESCRIPTION') }}
-          </p>
-        </div>
-        <div class="flex min-w-0 flex-wrap items-center gap-2">
-          <RelayButton
-            v-if="
-              hasActiveFilters &&
-              !isSegmentsView &&
-              !isLabelView &&
-              !isActiveView
-            "
-            variant="outline"
-            size="icon"
-            class="size-10 rounded-lg shadow-sm"
-            @click="emit('createSegment')"
-          >
-            <span class="i-lucide-save size-4" />
-          </RelayButton>
-
-          <ComposeConversation>
-            <template #trigger>
-              <RelayButton
-                variant="outline"
-                class="h-9 rounded-lg border border-border bg-background px-4 text-[13px] font-medium shadow-sm transition-all hover:border-transparent hover:bg-muted"
-              >
-                {{ buttonLabel }}
-              </RelayButton>
-            </template>
-          </ComposeConversation>
-
-          <RelayButton
-            class="h-9 gap-2 rounded-lg px-3 text-sm font-medium shadow-sm"
-            @click="emit('add')"
-          >
-            <span class="i-lucide-plus size-4" />
-            {{
-              $t('CONTACTS_LAYOUT.HEADER.ACTIONS.CONTACT_CREATION.ADD_CONTACT')
-            }}
-          </RelayButton>
-
-          <ContactMoreActions
-            @add="emit('add')"
-            @import="emit('import')"
-            @export="emit('export')"
-          />
-        </div>
-      </div>
-
-      <!-- Bottom: Search + Columns + Filters toolbar -->
+      <Teleport to="#contacts-listing-header-actions">
+        <RelayButton
+          v-if="
+            hasActiveFilters && !isSegmentsView && !isLabelView && !isActiveView
+          "
+          variant="outline"
+          size="icon"
+          class="size-9 rounded-lg shadow-sm"
+          @click="emit('createSegment')"
+        >
+          <span class="i-lucide-save size-4" />
+        </RelayButton>
+        <ComposeConversation>
+          <template #trigger>
+            <RelayButton
+              variant="outline"
+              class="h-9 rounded-lg border border-border bg-background px-4 text-[13px] font-medium shadow-sm transition-all hover:border-transparent hover:bg-muted"
+            >
+              {{ buttonLabel }}
+            </RelayButton>
+          </template>
+        </ComposeConversation>
+        <RelayButton
+          class="h-9 gap-2 rounded-lg px-3 text-sm font-medium shadow-sm"
+          @click="emit('add')"
+        >
+          <span class="i-lucide-plus size-4" />
+          {{
+            $t('CONTACTS_LAYOUT.HEADER.ACTIONS.CONTACT_CREATION.ADD_CONTACT')
+          }}
+        </RelayButton>
+        <ContactMoreActions
+          @add="emit('add')"
+          @import="emit('import')"
+          @export="emit('export')"
+        />
+      </Teleport>
       <div
         class="flex flex-col gap-3 px-4 py-3 sm:flex-row sm:items-center sm:justify-between sm:px-6"
       >

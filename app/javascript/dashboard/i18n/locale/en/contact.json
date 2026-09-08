@@ -311,6 +311,7 @@
       "BLOCK_CONTACT": "Block contact",
       "UNBLOCK_CONTACT": "Unblock contact",
       "SUB_NAV": {
+        "ALL": "All",
         "CONTACTS": "Contacts",
         "SMART_LISTS": "Smart Lists",
         "BULK_ACTIONS": "Bulk Actions",

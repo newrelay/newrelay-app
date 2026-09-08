@@ -46,12 +46,10 @@ const isTabActive = tab =>
 <template>
   <div class="flex flex-col h-full w-full overflow-hidden bg-background">
     <div class="px-8 pt-6 shrink-0">
-      <h1
-        class="capitalize text-[16px] font-[500] tracking-tight text-foreground mb-1"
-      >
+      <h1 class="text-base font-medium tracking-tight text-foreground mb-1">
         {{ $t('REPORT.REPORTS_TITLE') }}
       </h1>
-      <p class="text-sm text-muted-foreground mb-4">
+      <p class="text-[14px] text-muted-foreground mb-4">
         {{ $t('REPORT.REPORTS_SUBTITLE') }}
       </p>
       <div

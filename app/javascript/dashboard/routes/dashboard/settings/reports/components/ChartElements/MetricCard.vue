@@ -154,7 +154,7 @@ const xAxisLabels = computed(() => {
         <span class="size-5" :class="[metricIcon]" />
       </div>
       <div class="flex flex-col">
-        <h3 class="capitalize text-[14px] font-medium text-muted-foreground">
+        <h3 class="text-[14px] font-medium text-muted-foreground">
           {{ metric.NAME }}
         </h3>
 
@@ -236,14 +236,18 @@ const xAxisLabels = computed(() => {
           }}</span>
           <div class="flex items-center gap-1.5 mt-0.5">
             <div class="size-2 bg-primary rounded-sm" />
-            <span class="text-[11px] leading-none text-white/90">{{ metric.NAME }}: {{ item.displayValue }}</span>
+            <span class="text-[11px] leading-none text-white/90"
+              >{{ metric.NAME }}: {{ item.displayValue }}</span
+            >
           </div>
           <div
             v-if="item.count > 0 && isAverageMetricType(metric.KEY)"
             class="flex items-center gap-1.5 mt-0.5"
           >
             <div class="size-2 bg-white/20 rounded-sm" />
-            <span class="text-[11px] leading-none text-white/70">{{ $t('REPORT.CONVERSATION_COUNT') }}: {{ item.count }}</span>
+            <span class="text-[11px] leading-none text-white/70"
+              >{{ $t('REPORT.CONVERSATION_COUNT') }}: {{ item.count }}</span
+            >
           </div>
           <!-- Tooltip Arrow -->
           <div

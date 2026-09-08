@@ -1,5 +1,5 @@
 <script>
-import V4Button from 'dashboard/components-next/button/Button.vue';
+import RelayButton from 'dashboard/components-next/relay/button/Button.vue';
 import { useAlert, useTrack } from 'dashboard/composables';
 import ReportFilters from './components/ReportFilters.vue';
 import { GROUP_BY_FILTER } from './constants';
@@ -22,7 +22,7 @@ export default {
   components: {
     ReportFilters,
     ReportContainer,
-    V4Button,
+    RelayButton,
   },
   data() {
     return {
@@ -111,12 +111,10 @@ export default {
       show-group-by
       @filter-change="onFilterChange"
     >
-      <V4Button
-        :label="$t('REPORT.DOWNLOAD_CONVERSATION_REPORTS')"
-        icon="i-ph-download-simple"
-        size="sm"
-        @click="downloadConversationReports"
-      />
+      <RelayButton @click="downloadConversationReports">
+        <span class="i-lucide-download size-4" />
+        {{ $t('REPORT.DOWNLOAD_CONVERSATION_REPORTS') }}
+      </RelayButton>
     </ReportFilters>
     <ReportContainer :group-by="groupBy" />
   </div>

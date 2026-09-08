@@ -2,7 +2,7 @@
 import { ref } from 'vue';
 import ReportHeader from './components/ReportHeader.vue';
 import SummaryReports from './components/SummaryReports.vue';
-import V4Button from 'dashboard/components-next/button/Button.vue';
+import RelayButton from 'dashboard/components-next/relay/button/Button.vue';
 
 const summarReportsRef = ref(null);
 
@@ -16,12 +16,10 @@ const onDownloadClick = () => {
     :header-title="$t('TEAM_REPORTS.HEADER')"
     :header-description="$t('TEAM_REPORTS.DESCRIPTION')"
   >
-    <V4Button
-      :label="$t('TEAM_REPORTS.DOWNLOAD_TEAM_REPORTS')"
-      icon="i-ph-download-simple"
-      size="sm"
-      @click="onDownloadClick"
-    />
+    <RelayButton @click="onDownloadClick">
+      <span class="i-lucide-download size-4" />
+      {{ $t('TEAM_REPORTS.DOWNLOAD_TEAM_REPORTS') }}
+    </RelayButton>
   </ReportHeader>
 
   <SummaryReports

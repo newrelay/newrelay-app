@@ -24,9 +24,7 @@ defineProps({
     <div class="flex items-center justify-between gap-3 p-6 pb-4">
       <slot name="header">
         <div class="flex items-center gap-3">
-          <h3
-            class="capitalize text-base font-medium text-foreground tracking-tight"
-          >
+          <h3 class="text-base font-medium text-foreground tracking-tight">
             {{ header }}
           </h3>
           <span

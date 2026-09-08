@@ -1,5 +1,5 @@
 <script>
-import V4Button from 'dashboard/components-next/button/Button.vue';
+import RelayButton from 'dashboard/components-next/relay/button/Button.vue';
 import { useAlert } from 'dashboard/composables';
 import ReportFilters from './ReportFilters.vue';
 import ReportContainer from '../ReportContainer.vue';
@@ -10,7 +10,7 @@ import ReportHeader from './ReportHeader.vue';
 export default {
   components: {
     ReportHeader,
-    V4Button,
+    RelayButton,
     ReportFilters,
     ReportContainer,
   },
@@ -163,12 +163,10 @@ export default {
 
 <template>
   <ReportHeader :header-title="reportTitle" :has-back-button="hasBackButton">
-    <V4Button
-      :label="downloadButtonLabel"
-      icon="i-ph-download-simple"
-      size="sm"
-      @click="downloadReports"
-    />
+    <RelayButton @click="downloadReports">
+      <span class="i-lucide-download size-4" />
+      {{ downloadButtonLabel }}
+    </RelayButton>
   </ReportHeader>
 
   <ReportFilters

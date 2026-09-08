@@ -28,21 +28,19 @@ defineProps({
     }"
   >
     <h3
-      class="capitalize flex items-center m-0 text-sm font-medium text-muted-foreground"
+      class="flex items-center gap-1 m-0 text-sm font-medium text-muted-foreground"
     >
       <span data-test-id="reportMetricLabel">{{ label }}</span>
       <RelayTooltip :content="infoText">
-        <fluent-icon
+        <span
           data-test-id="reportMetricInfo"
-          size="14"
-          icon="info"
-          class="text-muted-foreground my-0 mx-1 mt-0.5"
+          class="i-lucide-info size-3.5 text-muted-foreground opacity-60 cursor-default"
         />
       </RelayTooltip>
     </h3>
     <h4
       data-test-id="reportMetricValue"
-      class="capitalize mt-1 mb-0 text-2xl text-foreground"
+      class="mt-1 mb-0 text-2xl text-foreground"
     >
       {{ value }}
     </h4>

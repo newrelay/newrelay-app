@@ -5,7 +5,7 @@ import { useToggle } from '@vueuse/core';
 import { useStore, useMapGetter } from 'dashboard/composables/store';
 import { useLiveRefresh } from 'dashboard/composables/useLiveRefresh';
 import DropdownMenu from 'dashboard/components-next/dropdown-menu/DropdownMenu.vue';
-import Button from 'dashboard/components-next/button/Button.vue';
+import RelayButton from 'dashboard/components-next/relay/button/Button.vue';
 import { useI18n } from 'vue-i18n';
 
 const { t } = useI18n();
@@ -103,9 +103,7 @@ onMounted(() => {
     <div class="flex-1 flex flex-col gap-4">
       <div class="flex items-center justify-between h-8">
         <div class="flex items-center gap-3">
-          <h3
-            class="capitalize text-base font-medium text-foreground tracking-tight"
-          >
+          <h3 class="text-base font-medium text-foreground tracking-tight">
             {{ $t(`${accounti18nKey}.HEADER`) }}
           </h3>
           <div
@@ -122,14 +120,14 @@ onMounted(() => {
           v-on-clickaway="() => toggleDropdown(false)"
           class="relative"
         >
-          <Button
-            sm
-            slate
-            faded
-            :label="selectedTeamLabel"
-            class="capitalize rounded-md"
+          <RelayButton
+            variant="outline"
+            class="h-8 px-3 text-[14px] bg-card hover:bg-muted font-medium border-border/80 shadow-sm"
             @click="toggleDropdown()"
-          />
+          >
+            {{ selectedTeamLabel }}
+            <span class="i-lucide-chevron-down size-3.5 opacity-50" />
+          </RelayButton>
           <DropdownMenu
             v-if="showDropdown"
             :menu-items="teamMenuList"
@@ -153,7 +151,7 @@ onMounted(() => {
                 <span :class="card.icon" class="size-3.5" />
               </span>
               <h3
-                class="capitalize text-[13px] font-medium text-muted-foreground transition-colors group-hover:text-foreground"
+                class="text-[13px] font-medium text-muted-foreground transition-colors group-hover:text-foreground"
               >
                 {{ card.label }}
               </h3>
@@ -181,9 +179,7 @@ onMounted(() => {
     <!-- Agent status column -->
     <div class="flex flex-col gap-4 w-full xl:w-[320px] shrink-0">
       <div class="flex items-center gap-3 h-8">
-        <h3
-          class="capitalize text-base font-medium text-foreground tracking-tight"
-        >
+        <h3 class="text-base font-medium text-foreground tracking-tight">
           {{ $t('OVERVIEW_REPORTS.AGENT_STATUS.HEADER') }}
         </h3>
         <div

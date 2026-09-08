@@ -38,7 +38,7 @@ onMounted(fetchMetrics);
 
 <template>
   <div
-    class="flex flex-wrap mx-0 shadow outline-1 outline outline-card rounded-xl bg-secondary px-6 py-5"
+    class="rounded-xl border border-border bg-card shadow-sm flex flex-wrap items-stretch p-6 gap-6"
   >
     <ReportMetricCard
       :label="$t('BOT_REPORTS.METRIC.TOTAL_CONVERSATIONS.LABEL')"

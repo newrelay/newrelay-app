@@ -1,5 +1,5 @@
 <script>
-import V4Button from 'dashboard/components-next/button/Button.vue';
+import RelayButton from 'dashboard/components-next/relay/button/Button.vue';
 import { mapGetters } from 'vuex';
 import { useAlert } from 'dashboard/composables';
 import SLAMetrics from './components/SLA/SLAMetrics.vue';
@@ -10,7 +10,7 @@ import ReportHeader from './components/ReportHeader.vue';
 export default {
   name: 'SLAReports',
   components: {
-    V4Button,
+    RelayButton,
     ReportHeader,
     SLAMetrics,
     SLATable,
@@ -82,12 +82,10 @@ export default {
 
 <template>
   <ReportHeader :header-title="$t('SLA_REPORTS.HEADER')">
-    <V4Button
-      :label="$t('SLA_REPORTS.DOWNLOAD_SLA_REPORTS')"
-      icon="i-ph-download-simple"
-      size="sm"
-      @click="downloadReports"
-    />
+    <RelayButton @click="downloadReports">
+      <span class="i-lucide-download size-4" />
+      {{ $t('SLA_REPORTS.DOWNLOAD_SLA_REPORTS') }}
+    </RelayButton>
   </ReportHeader>
   <div class="flex flex-col flex-1 gap-6">
     <SLAReportFilters @filter-change="onFilterChange" />

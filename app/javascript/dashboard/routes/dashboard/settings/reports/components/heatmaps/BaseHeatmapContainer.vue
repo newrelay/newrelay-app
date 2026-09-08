@@ -15,7 +15,7 @@ import startOfDay from 'date-fns/startOfDay';
 import startOfMonth from 'date-fns/startOfMonth';
 import subDays from 'date-fns/subDays';
 import DropdownMenu from 'dashboard/components-next/dropdown-menu/DropdownMenu.vue';
-import Button from 'dashboard/components-next/button/Button.vue';
+import RelayButton from 'dashboard/components-next/relay/button/Button.vue';
 import { useI18n } from 'vue-i18n';
 import { downloadCsvFile } from 'dashboard/helper/downloadHelper';
 
@@ -276,15 +276,15 @@ onMounted(() => {
           v-on-clickaway="() => toggleInboxDropdown(false)"
           class="relative flex items-center group"
         >
-          <Button
-            sm
-            slate
-            faded
-            icon="i-lucide-inbox"
-            :label="selectedInboxFilter.label"
-            class="rounded-md max-w-[200px]"
+          <RelayButton
+            variant="outline"
+            class="h-8 px-3 text-[14px] bg-card hover:bg-muted font-medium border-border/80 shadow-sm max-w-[200px] truncate"
             @click="toggleInboxDropdown()"
-          />
+          >
+            <span class="i-lucide-inbox size-3.5 opacity-70 shrink-0" />
+            <span class="truncate">{{ selectedInboxFilter.label }}</span>
+            <span class="i-lucide-chevron-down size-3.5 opacity-50 shrink-0" />
+          </RelayButton>
           <DropdownMenu
             v-if="showInboxDropdown"
             :menu-items="inboxMenuItems"
@@ -297,14 +297,14 @@ onMounted(() => {
         <RelayTooltip
           :content="t('OVERVIEW_REPORTS.CONVERSATION_HEATMAP.DOWNLOAD_REPORT')"
         >
-          <Button
-            sm
-            slate
-            faded
-            icon="i-lucide-download"
-            class="rounded-md"
+          <RelayButton
+            variant="outline"
+            size="icon"
+            class="h-8 w-8 bg-card hover:bg-muted border-border/80 shadow-sm"
             @click="downloadHeatmapData"
-          />
+          >
+            <span class="i-lucide-download size-3.5 opacity-70" />
+          </RelayButton>
         </RelayTooltip>
       </template>
       <BaseHeatmap

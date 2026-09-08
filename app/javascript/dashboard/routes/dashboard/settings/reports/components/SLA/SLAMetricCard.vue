@@ -33,11 +33,8 @@ export default {
     >
       {{ label }}
       <RelayTooltip :content="toolTip" side="right">
-        <fluent-icon
-          size="14"
-          icon="information"
-          type="outline"
-          class="flex flex-shrink-0 text-sm font-normal text-muted-foreground sm:font-medium"
+        <span
+          class="i-lucide-info size-3.5 text-muted-foreground opacity-60 cursor-default"
         />
       </RelayTooltip>
     </span>

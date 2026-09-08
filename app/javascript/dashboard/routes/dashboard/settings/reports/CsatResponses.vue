@@ -7,7 +7,7 @@ import CsatFilters from './components/Csat/CsatFilters.vue';
 import { generateFileName } from '../../../../helper/downloadHelper';
 import { REPORTS_EVENTS } from '../../../../helper/AnalyticsHelper/events';
 import { FEATURE_FLAGS } from '../../../../featureFlags';
-import V4Button from 'dashboard/components-next/button/Button.vue';
+import RelayButton from 'dashboard/components-next/relay/button/Button.vue';
 import ReportHeader from './components/ReportHeader.vue';
 
 export default {
@@ -17,7 +17,7 @@ export default {
     CsatTable,
     CsatFilters,
     ReportHeader,
-    V4Button,
+    RelayButton,
   },
   data() {
     return {
@@ -116,12 +116,10 @@ export default {
 
 <template>
   <ReportHeader :header-title="$t('CSAT_REPORTS.HEADER')">
-    <V4Button
-      :label="$t('CSAT_REPORTS.DOWNLOAD')"
-      icon="i-ph-download-simple"
-      size="sm"
-      @click="downloadReports"
-    />
+    <RelayButton @click="downloadReports">
+      <span class="i-lucide-download size-4" />
+      {{ $t('CSAT_REPORTS.DOWNLOAD') }}
+    </RelayButton>
   </ReportHeader>
 
   <div class="flex flex-col gap-6">

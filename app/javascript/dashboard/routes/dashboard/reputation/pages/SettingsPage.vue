@@ -520,7 +520,7 @@ onMounted(async () => {
                   <svg class="size-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" /></svg>
                 </div>
                 <div>
-                  <h4 class="capitalize font-extrabold text-sm text-foreground dark:text-white">Custom Links</h4>
+                  <h4 class="font-semibold text-sm text-foreground">Custom Links</h4>
                   <p class="text-[10px] text-muted-foreground mt-0.5">Connect any standard feedback url</p>
                 </div>
                 <button
@@ -544,7 +544,7 @@ onMounted(async () => {
                       {{ platform.name.substring(0, 2) }}
                     </div>
                     <div>
-                      <h4 class="capitalize font-extrabold text-sm text-foreground dark:text-white">{{ platform.name }}</h4>
+                      <h4 class="font-semibold text-sm text-foreground">{{ platform.name }}</h4>
                       <span
                         class="text-[9px] uppercase tracking-wider font-extrabold"
                         :class="getIntegrationForPlatform(platform.id).length > 0 ? 'text-emerald-500' : 'text-muted-foreground'"
@@ -593,8 +593,8 @@ onMounted(async () => {
 
                 <!-- Card Action footer -->
                 <div class="mt-4 border-t border-border pt-3">
-                  <div v-if="getIntegrationForPlatform(platform.id).length > 0" class="text-xs text-emerald-500 font-bold flex items-center gap-1">
-                    <span class="size-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                  <div v-if="getIntegrationForPlatform(platform.id).length > 0" class="text-xs text-success font-bold flex items-center gap-1">
+                    <span class="size-1.5 rounded-full bg-success animate-pulse"></span>
                     Syncing Reviews
                   </div>
                   <button
@@ -626,7 +626,7 @@ onMounted(async () => {
                       LK
                     </div>
                     <div class="min-w-0">
-                      <h4 class="capitalize font-extrabold text-sm text-foreground dark:text-white truncate">
+                      <h4 class="font-semibold text-sm text-foreground truncate">
                         {{ customInt.location_name.split(' - ')[0] }}
                       </h4>
                       <span class="text-[9px] uppercase tracking-wider font-extrabold text-emerald-500">Connected</span>
@@ -660,14 +660,14 @@ onMounted(async () => {
         <!-- 2. Reviews AI View -->
         <div v-else-if="currentTab === 'reviews_ai'" class="bg-card rounded-2xl border border-border/80 shadow-sm p-6 space-y-6">
           <div>
-            <h3 class="capitalize font-extrabold text-foreground dark:text-white text-base">Reviews AI</h3>
+            <h3 class="font-semibold text-foreground text-base">Reviews AI</h3>
             <p class="text-xs text-muted-foreground mt-0.5">Automate and customize review replies with AI assistance</p>
           </div>
 
           <div class="space-y-4">
             <div class="flex items-center justify-between p-4 rounded-xl border border-border bg-background/50 ">
               <div>
-                <h4 class="capitalize text-sm font-bold text-foreground dark:text-white">Enable Auto-Reply with AI</h4>
+                <h4 class="text-sm font-semibold text-foreground">Enable Auto-Reply with AI</h4>
                 <p class="text-xs text-muted-foreground mt-0.5">Instantly draft and publish responses based on customer reviews</p>
               </div>
               <button
@@ -725,7 +725,7 @@ onMounted(async () => {
         <!-- 3. Review Link View -->
         <div v-else-if="currentTab === 'review_link'" class="bg-card rounded-2xl border border-border/80 shadow-sm p-6 space-y-6">
           <div>
-            <h3 class="capitalize font-extrabold text-foreground dark:text-white text-base">Review Short Link</h3>
+            <h3 class="font-semibold text-foreground text-base">Review Short Link</h3>
             <p class="text-xs text-muted-foreground mt-0.5">Customize the shortlink sent out to invite reviews</p>
           </div>
 
@@ -761,7 +761,7 @@ onMounted(async () => {
         >
           <div class="flex items-center justify-between">
             <div>
-              <h3 class="capitalize font-extrabold text-foreground dark:text-white text-base">
+              <h3 class="font-semibold text-foreground text-base">
                 {{ currentTab === 'sms_requests' ? 'SMS' : currentTab === 'email_requests' ? 'Email' : 'WhatsApp' }} Invite Templates
               </h3>
               <p class="text-xs text-muted-foreground mt-0.5">Customize outbound customer requests templates</p>
@@ -903,7 +903,7 @@ onMounted(async () => {
         <!-- 5. Reviews QR View -->
         <div v-else-if="currentTab === 'reviews_qr'" class="bg-card rounded-2xl border border-border/80 shadow-sm p-6 space-y-6">
           <div>
-            <h3 class="capitalize font-extrabold text-foreground dark:text-white text-base">Reviews QR Code</h3>
+            <h3 class="font-semibold text-foreground text-base">Reviews QR Code</h3>
             <p class="text-xs text-muted-foreground mt-0.5">Generate QR code for tables, counters, or physical print review invites</p>
           </div>
 
@@ -932,7 +932,7 @@ onMounted(async () => {
                   </svg>
                 </div>
                 
-                <h3 class="capitalize font-extrabold text-foreground text-xl text-center leading-tight">
+                <h3 class="font-bold text-foreground text-xl text-center leading-tight">
                   {{ qrTitle || 'We value your feedback!' }}
                 </h3>
                 <p class="mt-2 text-muted-foreground text-xs text-center font-medium">
@@ -954,7 +954,7 @@ onMounted(async () => {
             </div>
 
             <div class="space-y-2">
-              <h4 class="capitalize font-extrabold text-sm text-foreground dark:text-white">Collect Offline Feedback Instantly</h4>
+              <h4 class="font-semibold text-sm text-foreground">Collect Offline Feedback Instantly</h4>
               <p class="text-xs text-muted-foreground max-w-sm">Place this QR code at checkout counters, tables, or product packages to let customers scan and write reviews instantly.</p>
             </div>
 
@@ -980,7 +980,7 @@ onMounted(async () => {
         <!-- 6. Spam Reviews View -->
         <div v-else-if="currentTab === 'spam_reviews'" class="bg-card rounded-2xl border border-border/80 shadow-sm p-6 space-y-6">
           <div>
-            <h3 class="capitalize font-extrabold text-foreground dark:text-white text-base">Spam Reviews Filters</h3>
+            <h3 class="font-semibold text-foreground text-base">Spam Reviews Filters</h3>
             <p class="text-xs text-muted-foreground mt-0.5">Automatically identify and isolate low rating or fake feedback</p>
           </div>
 
@@ -1031,7 +1031,7 @@ onMounted(async () => {
         <div class="flex items-center justify-between">
           <div class="flex items-center gap-3">
             <div class="p-2 rounded-xl bg-destructive/10 text-destructive font-extrabold text-xs">GB</div>
-            <h3 class="capitalize font-extrabold text-foreground dark:text-white text-base">Select Google Business Location</h3>
+            <h3 class="font-semibold text-foreground text-base">Select Google Business Location</h3>
           </div>
           <button class="text-muted-foreground hover:text-foreground" @click="showLocationModal = false">
             <svg class="size-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
@@ -1099,7 +1099,7 @@ onMounted(async () => {
     >
       <div class="bg-card rounded-2xl border border-border/80 max-w-md w-full shadow-2xl p-6 space-y-5 animate-fade-in">
         <div class="flex items-center justify-between">
-          <h3 class="capitalize font-extrabold text-foreground dark:text-white text-base">
+          <h3 class="font-semibold text-foreground text-base">
             Connect {{ selectedPlatform?.name }} Listing
           </h3>
           <button 
@@ -1158,7 +1158,7 @@ onMounted(async () => {
     >
       <div class="bg-card rounded-2xl border border-border/80 max-w-md w-full shadow-2xl p-6 space-y-5">
         <div class="flex items-center justify-between">
-          <h3 class="capitalize font-extrabold text-foreground dark:text-white text-base">
+          <h3 class="font-semibold text-foreground text-base">
             Create Custom Link Channel
           </h3>
           <button 

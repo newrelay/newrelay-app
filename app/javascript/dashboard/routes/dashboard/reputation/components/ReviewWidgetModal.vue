@@ -43,12 +43,12 @@ const widgetConfig = ref({
 });
 
 const allReviews = [
-  { id: 1, author: 'Sarah Jenkins', role: 'Verified Customer', avatar: 'https://i.pravatar.cc/150?u=a042581f4e29026704d', platform: 'Google', rating: 5, date: '2 days ago', content: 'Absolutely incredible service! The team was super responsive and helped me resolve my issue within minutes. Highly recommended to anyone looking for a solid solution.' },
-  { id: 2, author: 'Michael Chang', role: 'Local Guide', avatar: 'https://i.pravatar.cc/150?u=a042581f4e29026704e', platform: 'Yelp', rating: 4, date: '4 days ago', content: 'Good overall experience, smooth workflows and the product itself is fantastic. The customer support team has been very helpful.' },
-  { id: 3, author: 'Emily Rodriguez', role: 'Verified Buyer', avatar: 'https://i.pravatar.cc/150?u=a042581f4e29026704f', platform: 'Facebook', rating: 5, date: '1 week ago', content: "We've been using this for 3 months now and it has completely transformed how we handle customer engagement. The AI features are a true game changer." },
-  { id: 4, author: 'Chloe Bennett', role: 'Verified Customer', avatar: 'https://i.pravatar.cc/150?u=a042581f4e29026704a', platform: 'Trustpilot', rating: 5, date: '2 weeks ago', content: 'Super slick interface, great customer support, and fast setup. Our conversion rates increased by 22% after adding the reviews widget.' },
-  { id: 5, author: 'David Lee', role: 'Business Owner', avatar: 'https://i.pravatar.cc/150?u=a042581f4e29026704b', platform: 'Google', rating: 5, date: '3 weeks ago', content: 'The best investment our team made this year. High quality service and very friendly support staff whenever we needed anything.' },
-  { id: 6, author: 'Jessica Taylor', role: 'Verified Buyer', avatar: 'https://i.pravatar.cc/150?u=a042581f4e29026704c', platform: 'Google', rating: 5, date: '1 month ago', content: "Couldn't be happier with the results. Seamless experience and our clients constantly mention how trustworthy the reviews look!" },
+  { id: 1, author: 'Sarah Jenkins', role: 'Verified Customer', platform: 'Google', rating: 5, date: '2 days ago', content: 'Absolutely incredible service! The team was super responsive and helped me resolve my issue within minutes. Highly recommended to anyone looking for a solid solution.' },
+  { id: 2, author: 'Michael Chang', role: 'Local Guide', platform: 'Yelp', rating: 4, date: '4 days ago', content: 'Good overall experience, smooth workflows and the product itself is fantastic. The customer support team has been very helpful.' },
+  { id: 3, author: 'Emily Rodriguez', role: 'Verified Buyer', platform: 'Facebook', rating: 5, date: '1 week ago', content: "We've been using this for 3 months now and it has completely transformed how we handle customer engagement. The AI features are a true game changer." },
+  { id: 4, author: 'Chloe Bennett', role: 'Verified Customer', platform: 'Trustpilot', rating: 5, date: '2 weeks ago', content: 'Super slick interface, great customer support, and fast setup. Our conversion rates increased by 22% after adding the reviews widget.' },
+  { id: 5, author: 'David Lee', role: 'Business Owner', platform: 'Google', rating: 5, date: '3 weeks ago', content: 'The best investment our team made this year. High quality service and very friendly support staff whenever we needed anything.' },
+  { id: 6, author: 'Jessica Taylor', role: 'Verified Buyer', platform: 'Google', rating: 5, date: '1 month ago', content: "Couldn't be happier with the results. Seamless experience and our clients constantly mention how trustworthy the reviews look!" },
 ];
 
 const previewReviews = computed(() => {
@@ -500,7 +500,7 @@ const isDark = computed(() => widgetConfig.value.theme === 'dark' || previewBg.v
                           <div class="space-y-2">
                             <div class="flex items-center justify-between gap-1.5">
                               <div class="flex items-center gap-2 min-w-0">
-                                <img v-if="widgetConfig.showAvatar" :src="item.avatar" :alt="item.author" class="size-7 rounded-full object-cover border border-border/60 shrink-0" />
+                                <span v-if="widgetConfig.showAvatar" class="size-7 rounded-full shrink-0 border border-border/60 flex items-center justify-center text-[10px] font-bold" :class="isDark ? 'bg-slate-700 text-slate-200' : 'bg-slate-200 text-slate-700'">{{ item.author.charAt(0) }}</span>
                                 <div class="min-w-0">
                                   <div class="flex items-center gap-1">
                                     <span class="text-xs font-semibold truncate" :class="isDark ? 'text-slate-100' : 'text-slate-900'">{{ item.author }}</span>
@@ -533,7 +533,7 @@ const isDark = computed(() => widgetConfig.value.theme === 'dark' || previewBg.v
                     <div v-for="item in previewReviews.slice(0, 2)" :key="item.id" class="p-3 border space-y-1.5 shadow-xs" :class="[widgetConfig.cardRadius, isDark ? 'bg-slate-800/90 border-slate-700/80' : 'bg-slate-50/90 border-slate-200/80']">
                       <div class="flex items-center justify-between gap-1.5">
                         <div class="flex items-center gap-1.5 min-w-0">
-                          <img v-if="widgetConfig.showAvatar" :src="item.avatar" class="size-6 rounded-full object-cover shrink-0" />
+                          <span v-if="widgetConfig.showAvatar" class="size-6 rounded-full shrink-0 flex items-center justify-center text-[9px] font-bold" :class="isDark ? 'bg-slate-700 text-slate-200' : 'bg-slate-200 text-slate-700'">{{ item.author.charAt(0) }}</span>
                           <span class="text-xs font-semibold truncate" :class="isDark ? 'text-slate-100' : 'text-slate-900'">{{ item.author }}</span>
                         </div>
                         <span v-if="widgetConfig.showPlatformLogo" class="text-[9px] font-medium text-muted-foreground">{{ item.platform }}</span>
@@ -623,7 +623,7 @@ const isDark = computed(() => widgetConfig.value.theme === 'dark' || previewBg.v
                           <div class="space-y-2.5">
                             <div class="flex items-center justify-between gap-2">
                               <div class="flex items-center gap-2.5 min-w-0">
-                                <img v-if="widgetConfig.showAvatar" :src="item.avatar" :alt="item.author" class="size-8 sm:size-9 rounded-full object-cover border border-border/60 shrink-0" />
+                                <span v-if="widgetConfig.showAvatar" class="size-8 sm:size-9 rounded-full shrink-0 border border-border/60 flex items-center justify-center text-[11px] font-bold" :class="isDark ? 'bg-slate-700 text-slate-200' : 'bg-slate-200 text-slate-700'">{{ item.author.charAt(0) }}</span>
                                 <div class="min-w-0">
                                   <div class="flex items-center gap-1">
                                     <span class="text-xs font-semibold truncate" :class="isDark ? 'text-slate-100' : 'text-slate-900'">{{ item.author }}</span>
@@ -657,7 +657,7 @@ const isDark = computed(() => widgetConfig.value.theme === 'dark' || previewBg.v
                       <div class="space-y-2">
                         <div class="flex items-center justify-between gap-2">
                           <div class="flex items-center gap-2 min-w-0">
-                            <img v-if="widgetConfig.showAvatar" :src="item.avatar" class="size-7 rounded-full object-cover shrink-0" />
+                            <span v-if="widgetConfig.showAvatar" class="size-7 rounded-full shrink-0 flex items-center justify-center text-[10px] font-bold" :class="isDark ? 'bg-slate-700 text-slate-200' : 'bg-slate-200 text-slate-700'">{{ item.author.charAt(0) }}</span>
                             <span class="text-xs font-semibold truncate" :class="isDark ? 'text-slate-100' : 'text-slate-900'">{{ item.author }}</span>
                           </div>
                           <span v-if="widgetConfig.showPlatformLogo" class="text-[10px] font-medium shrink-0" :class="isDark ? 'text-slate-400' : 'text-slate-500'">{{ item.platform }}</span>

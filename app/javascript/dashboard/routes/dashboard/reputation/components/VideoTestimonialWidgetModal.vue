@@ -42,19 +42,26 @@ const widgetConfig = ref({
   bubblePosition: 'bottom-right',
 });
 
-// Thumbnails/avatars use pravatar (CSP-allowlisted); Unsplash stills would be blocked.
 const allVideoTestimonials = [
-  { id: 1, author: 'Sarah Johnson', company: 'Marketing VP, Lumina Tech', avatar: 'https://i.pravatar.cc/150?u=s1', thumbnail: 'https://i.pravatar.cc/400?u=vt1', duration: '0:47', rating: 5, platform: 'Google', aiHighlight: true, aiTag: 'Fast Setup', quote: 'Our team saw a 42% conversion spike within the first 10 days of adding this to our landing pages!' },
-  { id: 2, author: 'Michael Brown', company: 'Founder, CloudFlow', avatar: 'https://i.pravatar.cc/150?u=m2', thumbnail: 'https://i.pravatar.cc/400?u=vt2', duration: '01:12', rating: 5, platform: 'Facebook', aiHighlight: true, aiTag: 'ROI & Value', quote: 'The video quality and seamless playback built instant trust with enterprise prospects.' },
-  { id: 3, author: 'Emily Rodriguez', company: 'Director of Growth, DesignHub', avatar: 'https://i.pravatar.cc/150?u=e3', thumbnail: 'https://i.pravatar.cc/400?u=vt3', duration: '00:35', rating: 5, platform: 'Yelp', aiHighlight: false, aiTag: 'Easy Onboarding', quote: 'Setup took literally under 3 minutes. Cleanest review widget studio in the industry.' },
-  { id: 4, author: 'David Lee', company: 'Operations Lead, Apex Systems', avatar: 'https://i.pravatar.cc/150?u=d4', thumbnail: 'https://i.pravatar.cc/400?u=vt4', duration: '01:05', rating: 5, platform: 'Trustpilot', aiHighlight: true, aiTag: 'Support 10/10', quote: 'The customer service and automated review routing have saved us over 15 hours every week.' },
-  { id: 5, author: 'James Wilson', company: 'Logistics Pro', avatar: 'https://i.pravatar.cc/150?u=j5', thumbnail: 'https://i.pravatar.cc/400?u=vt5', duration: '00:59', rating: 4, platform: 'Google', aiHighlight: false, aiTag: 'Reliability', quote: 'High reliability and excellent video compression for ultra fast load times on mobile.' },
-  { id: 6, author: 'Elena Rostova', company: 'Head of Brand, Velvet Labs', avatar: 'https://i.pravatar.cc/150?u=e6', thumbnail: 'https://i.pravatar.cc/400?u=vt6', duration: '00:44', rating: 5, platform: 'Direct', aiHighlight: true, aiTag: 'Conversion Booster', quote: 'Having authentic customer faces and voices on our checkout page eliminated all hesitation.' },
-  { id: 7, author: 'Marcus Chen', company: 'CTO, QuantumScale', avatar: 'https://i.pravatar.cc/150?u=m7', thumbnail: 'https://i.pravatar.cc/400?u=vt7', duration: '01:18', rating: 5, platform: 'Google', aiHighlight: true, aiTag: 'Scalability', quote: 'Integrating the video carousel directly onto our pricing page boosted demo requests by 38%.' },
-  { id: 8, author: 'Sophia Williams', company: 'Product Lead, NovaCore', avatar: 'https://i.pravatar.cc/150?u=s8', thumbnail: 'https://i.pravatar.cc/400?u=vt8', duration: '00:52', rating: 5, platform: 'Facebook', aiHighlight: true, aiTag: 'User Friendly', quote: 'Our customers love recording their feedback through the seamless mobile browser link.' },
-  { id: 9, author: 'Alex Rivera', company: 'Growth Engineer, Veloce AI', avatar: 'https://i.pravatar.cc/150?u=a9', thumbnail: 'https://i.pravatar.cc/400?u=vt9', duration: '00:41', rating: 5, platform: 'Trustpilot', aiHighlight: false, aiTag: 'Seamless Embed', quote: 'The CDN widget loads in less than 40ms. Zero impact on Core Web Vitals score.' },
-  { id: 10, author: 'Rachel Kim', company: 'Marketing Manager, Bloom Studio', avatar: 'https://i.pravatar.cc/150?u=r10', thumbnail: 'https://i.pravatar.cc/400?u=vt10', duration: '01:03', rating: 5, platform: 'Direct', aiHighlight: true, aiTag: 'High Retention', quote: 'Authentic customer video stories have completely transformed our brand trust.' },
+  { id: 1, author: 'Sarah Johnson', company: 'Marketing VP, Lumina Tech', duration: '0:47', rating: 5, platform: 'Google', aiHighlight: true, aiTag: 'Fast Setup', quote: 'Our team saw a 42% conversion spike within the first 10 days of adding this to our landing pages!' },
+  { id: 2, author: 'Michael Brown', company: 'Founder, CloudFlow', duration: '01:12', rating: 5, platform: 'Facebook', aiHighlight: true, aiTag: 'ROI & Value', quote: 'The video quality and seamless playback built instant trust with enterprise prospects.' },
+  { id: 3, author: 'Emily Rodriguez', company: 'Director of Growth, DesignHub', duration: '00:35', rating: 5, platform: 'Yelp', aiHighlight: false, aiTag: 'Easy Onboarding', quote: 'Setup took literally under 3 minutes. Cleanest review widget studio in the industry.' },
+  { id: 4, author: 'David Lee', company: 'Operations Lead, Apex Systems', duration: '01:05', rating: 5, platform: 'Trustpilot', aiHighlight: true, aiTag: 'Support 10/10', quote: 'The customer service and automated review routing have saved us over 15 hours every week.' },
+  { id: 5, author: 'James Wilson', company: 'Logistics Pro', duration: '00:59', rating: 4, platform: 'Google', aiHighlight: false, aiTag: 'Reliability', quote: 'High reliability and excellent video compression for ultra fast load times on mobile.' },
+  { id: 6, author: 'Elena Rostova', company: 'Head of Brand, Velvet Labs', duration: '00:44', rating: 5, platform: 'Direct', aiHighlight: true, aiTag: 'Conversion Booster', quote: 'Having authentic customer faces and voices on our checkout page eliminated all hesitation.' },
+  { id: 7, author: 'Marcus Chen', company: 'CTO, QuantumScale', duration: '01:18', rating: 5, platform: 'Google', aiHighlight: true, aiTag: 'Scalability', quote: 'Integrating the video carousel directly onto our pricing page boosted demo requests by 38%.' },
+  { id: 8, author: 'Sophia Williams', company: 'Product Lead, NovaCore', duration: '00:52', rating: 5, platform: 'Facebook', aiHighlight: true, aiTag: 'User Friendly', quote: 'Our customers love recording their feedback through the seamless mobile browser link.' },
+  { id: 9, author: 'Alex Rivera', company: 'Growth Engineer, Veloce AI', duration: '00:41', rating: 5, platform: 'Trustpilot', aiHighlight: false, aiTag: 'Seamless Embed', quote: 'The CDN widget loads in less than 40ms. Zero impact on Core Web Vitals score.' },
+  { id: 10, author: 'Rachel Kim', company: 'Marketing Manager, Bloom Studio', duration: '01:03', rating: 5, platform: 'Direct', aiHighlight: true, aiTag: 'High Retention', quote: 'Authentic customer video stories have completely transformed our brand trust.' },
 ];
+
+const THUMB_GRADIENTS = [
+  'from-violet-600 to-indigo-500', 'from-blue-600 to-cyan-500', 'from-emerald-600 to-teal-500',
+  'from-amber-500 to-orange-500', 'from-rose-500 to-pink-500', 'from-fuchsia-600 to-purple-500',
+  'from-sky-500 to-blue-600', 'from-lime-500 to-emerald-500', 'from-red-500 to-rose-600',
+  'from-indigo-500 to-violet-600',
+];
+function thumbGradient(id) { return THUMB_GRADIENTS[(id - 1) % THUMB_GRADIENTS.length]; }
 
 const previewVideos = computed(() => {
   return allVideoTestimonials.filter(v => {
@@ -380,7 +387,7 @@ const isDark = computed(() => widgetConfig.value.theme === 'dark' || previewBg.v
                   <div v-if="widgetConfig.layout === 'grid'" class="grid gap-4 w-full" :class="previewDevice === 'mobile' ? 'grid-cols-1' : previewDevice === 'tablet' ? 'grid-cols-2' : 'grid-cols-3'">
                     <div v-for="item in previewVideos" :key="item.id" class="group relative overflow-hidden border transition-all hover:shadow-lg cursor-pointer flex flex-col" :class="[widgetConfig.cardRadius, isDark ? 'bg-slate-800/90 border-slate-700/80 text-white' : 'bg-slate-50/90 border-slate-200/80 text-slate-900 shadow-xs']" @click="activePlayingVideo = item">
                       <div class="relative w-full aspect-[4/5] overflow-hidden bg-slate-900">
-                        <img :src="item.thumbnail" :alt="item.author" class="w-full h-full object-cover" />
+                        <div class="w-full h-full flex items-center justify-center bg-gradient-to-br" :class="thumbGradient(item.id)"><span class="text-5xl font-bold text-white/30 select-none">{{ item.author.charAt(0) }}</span></div>
                         <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
                         <div v-if="widgetConfig.showPlayButton" class="absolute inset-0 flex items-center justify-center"><div class="size-11 rounded-full bg-white/90 text-slate-900 flex items-center justify-center shadow-xl group-hover:scale-110 group-hover:bg-primary group-hover:text-primary-foreground transition-all"><Play class="size-5 ml-0.5 fill-current" /></div></div>
                         <div v-if="widgetConfig.showDuration" class="absolute bottom-3 right-3 px-2 py-0.5 rounded-md bg-black/60 backdrop-blur-md text-white text-[10px] font-mono font-medium flex items-center gap-1"><Clock class="size-2.5" /><span>{{ item.duration }}</span></div>
@@ -393,7 +400,7 @@ const isDark = computed(() => widgetConfig.value.theme === 'dark' || previewBg.v
                           <p v-if="widgetConfig.showTranscript" class="text-[11.5px] line-clamp-2 leading-relaxed italic" :class="isDark ? 'text-slate-300' : 'text-slate-600'">"{{ item.quote }}"</p>
                         </div>
                         <div v-if="widgetConfig.showAuthorAvatar" class="flex items-center gap-2 pt-1 border-t" :class="isDark ? 'border-slate-700' : 'border-slate-200'">
-                          <img :src="item.avatar" :alt="item.author" class="size-6 rounded-full object-cover border border-border" />
+                          <span class="size-6 rounded-full border border-border flex items-center justify-center text-[10px] font-bold shrink-0" :class="isDark ? 'bg-slate-700 text-slate-200' : 'bg-slate-200 text-slate-700'">{{ item.author.charAt(0) }}</span>
                           <div class="min-w-0">
                             <div class="text-[12px] font-semibold truncate flex items-center gap-1" :class="isDark ? 'text-white' : 'text-slate-900'"><span>{{ item.author }}</span><CheckCircle2 v-if="widgetConfig.showVerifiedCheck" class="size-3 text-primary shrink-0" /></div>
                             <div v-if="widgetConfig.showCompany" class="text-[10px] truncate" :class="isDark ? 'text-slate-400' : 'text-slate-500'">{{ item.company }}</div>
@@ -409,7 +416,7 @@ const isDark = computed(() => widgetConfig.value.theme === 'dark' || previewBg.v
                       <div class="flex gap-4 transition-transform duration-500 ease-out" :style="{ transform: `translateX(-${carouselIndex * (previewDevice === 'mobile' ? 100 : 50)}%)` }">
                         <div v-for="item in previewVideos" :key="item.id" class="shrink-0 w-full sm:w-[calc(50%-8px)] border overflow-hidden shadow-md flex flex-col group cursor-pointer transition-all" :class="[widgetConfig.cardRadius, isDark ? 'bg-slate-800/90 border-slate-700/80 text-white' : 'bg-slate-50/90 border-slate-200 text-slate-900']" @click="activePlayingVideo = item">
                           <div class="relative w-full aspect-[16/9] sm:aspect-[4/3] bg-slate-900 overflow-hidden">
-                            <img :src="item.thumbnail" :alt="item.author" class="w-full h-full object-cover" />
+                            <div class="w-full h-full flex items-center justify-center bg-gradient-to-br" :class="thumbGradient(item.id)"><span class="text-5xl font-bold text-white/30 select-none">{{ item.author.charAt(0) }}</span></div>
                             <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent"></div>
                             <div v-if="widgetConfig.showPlayButton" class="absolute inset-0 flex items-center justify-center"><div class="size-12 rounded-full bg-white text-slate-900 flex items-center justify-center shadow-xl group-hover:scale-110 group-hover:bg-primary group-hover:text-white transition-all"><Play class="size-5 ml-0.5 fill-current" /></div></div>
                             <div v-if="widgetConfig.showDuration" class="absolute bottom-2 right-2 px-2 py-0.5 rounded bg-black/70 text-white text-[10px] font-mono">{{ item.duration }}</div>
@@ -422,7 +429,7 @@ const isDark = computed(() => widgetConfig.value.theme === 'dark' || previewBg.v
                               <p v-if="widgetConfig.showTranscript" class="text-[12px] font-medium line-clamp-2" :class="isDark ? 'text-slate-200' : 'text-slate-700'">"{{ item.quote }}"</p>
                             </div>
                             <div v-if="widgetConfig.showAuthorAvatar" class="flex items-center gap-2 pt-1 border-t" :class="isDark ? 'border-slate-700' : 'border-slate-200'">
-                              <img :src="item.avatar" :alt="item.author" class="size-5 rounded-full object-cover" />
+                              <span class="size-5 rounded-full flex items-center justify-center text-[9px] font-bold shrink-0" :class="isDark ? 'bg-slate-700 text-slate-200' : 'bg-slate-200 text-slate-700'">{{ item.author.charAt(0) }}</span>
                               <div class="min-w-0"><div class="text-[11.5px] font-semibold truncate flex items-center gap-1" :class="isDark ? 'text-white' : 'text-slate-900'"><span>{{ item.author }}</span><CheckCircle2 v-if="widgetConfig.showVerifiedCheck" class="size-3 text-primary shrink-0" /></div><div v-if="widgetConfig.showCompany" class="text-[10px] truncate" :class="isDark ? 'text-slate-400' : 'text-slate-500'">{{ item.company }}</div></div>
                             </div>
                           </div>
@@ -437,8 +444,8 @@ const isDark = computed(() => widgetConfig.value.theme === 'dark' || previewBg.v
                   <div v-else-if="widgetConfig.layout === 'bubble'" class="w-full py-8 flex flex-col items-center justify-center min-h-[260px]">
                     <div class="text-center text-xs mb-6 max-w-sm" :class="isDark ? 'text-slate-400' : 'text-muted-foreground'">Floating video bubble is docked to the <span class="font-bold" :class="isDark ? 'text-slate-200' : 'text-foreground'">{{ widgetConfig.bubblePosition }}</span> of your user's viewport.</div>
                     <div class="relative p-1.5 rounded-full border-2 shadow-2xl flex items-center gap-3 pr-4 group cursor-pointer hover:scale-105 transition-all" :class="isDark ? 'bg-slate-800 text-white border-primary ring-1 ring-white/10' : 'bg-white text-slate-900 border-primary shadow-xl ring-1 ring-black/5'" @click="activePlayingVideo = previewVideos[0]">
-                      <div class="relative size-14 rounded-full overflow-hidden border-2 shadow-md shrink-0" :class="isDark ? 'border-slate-700 bg-slate-900' : 'border-white bg-slate-100'">
-                        <img :src="(previewVideos[0] || allVideoTestimonials[0]).thumbnail" class="w-full h-full object-cover" />
+                      <div class="relative size-14 rounded-full overflow-hidden border-2 shadow-md shrink-0 flex items-center justify-center" :class="[isDark ? 'border-slate-700' : 'border-white', thumbGradient((previewVideos[0] || allVideoTestimonials[0]).id)]">
+                        <span class="text-2xl font-bold text-white/40 select-none">{{ (previewVideos[0] || allVideoTestimonials[0]).author.charAt(0) }}</span>
                         <div class="absolute inset-0 bg-black/30 flex items-center justify-center"><Play class="size-5 text-white fill-white" /></div>
                       </div>
                       <div>
@@ -452,8 +459,8 @@ const isDark = computed(() => widgetConfig.value.theme === 'dark' || previewBg.v
                   <div v-else-if="widgetConfig.layout === 'story_strip'" class="w-full py-4 overflow-x-auto hide-scrollbar flex items-center gap-4 justify-center">
                     <div v-for="item in previewVideos" :key="item.id" class="flex flex-col items-center gap-1.5 cursor-pointer group shrink-0" @click="activePlayingVideo = item">
                       <div class="p-0.5 rounded-full bg-gradient-to-tr from-amber-500 via-rose-500 to-primary group-hover:scale-105 transition-transform shadow-md">
-                        <div class="size-16 rounded-full overflow-hidden border-2 bg-slate-900 relative" :class="isDark ? 'border-slate-900' : 'border-white'">
-                          <img :src="item.thumbnail" :alt="item.author" class="w-full h-full object-cover" />
+                        <div class="size-16 rounded-full overflow-hidden border-2 bg-slate-900 relative flex items-center justify-center" :class="[isDark ? 'border-slate-900' : 'border-white', thumbGradient(item.id)]">
+                          <span class="text-2xl font-bold text-white/40 select-none">{{ item.author.charAt(0) }}</span>
                           <div class="absolute inset-0 bg-black/20 flex items-center justify-center"><Play class="size-4 text-white fill-white" /></div>
                         </div>
                       </div>
@@ -480,8 +487,8 @@ const isDark = computed(() => widgetConfig.value.theme === 'dark' || previewBg.v
     <!-- Compact video player popup -->
     <div v-if="activePlayingVideo" class="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-in fade-in" @click.self="activePlayingVideo = null">
       <div class="relative w-full max-w-md bg-slate-950 text-white rounded-2xl overflow-hidden border border-slate-800 shadow-2xl flex flex-col">
-        <div class="relative w-full aspect-[9/16] max-h-[70vh] bg-slate-900">
-          <img :src="activePlayingVideo.thumbnail" class="w-full h-full object-cover" />
+        <div class="relative w-full aspect-[9/16] max-h-[70vh] bg-slate-900 flex items-center justify-center" :class="thumbGradient(activePlayingVideo.id)">
+          <span class="text-7xl font-bold text-white/20 select-none">{{ activePlayingVideo.author.charAt(0) }}</span>
           <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-black/30"></div>
           <button class="absolute top-3 right-3 size-8 rounded-full bg-black/50 hover:bg-black/70 flex items-center justify-center cursor-pointer" @click="activePlayingVideo = null"><X class="size-4" /></button>
           <div class="absolute inset-0 flex items-center justify-center"><div class="size-16 rounded-full bg-white/90 text-slate-900 flex items-center justify-center shadow-xl"><Play class="size-7 ml-0.5 fill-current" /></div></div>
@@ -489,7 +496,7 @@ const isDark = computed(() => widgetConfig.value.theme === 'dark' || previewBg.v
             <div class="flex items-center gap-0.5 text-amber-400"><Star v-for="s in activePlayingVideo.rating" :key="s" class="size-3.5 fill-amber-400" /></div>
             <p class="text-sm font-medium leading-relaxed">"{{ activePlayingVideo.quote }}"</p>
             <div class="flex items-center gap-2 pt-1">
-              <img :src="activePlayingVideo.avatar" class="size-7 rounded-full object-cover border border-white/20" />
+              <span class="size-7 rounded-full border border-white/20 flex items-center justify-center text-[11px] font-bold bg-white/20 text-white shrink-0">{{ activePlayingVideo.author.charAt(0) }}</span>
               <div><div class="text-xs font-semibold flex items-center gap-1">{{ activePlayingVideo.author }}<CheckCircle2 class="size-3 text-primary" /></div><div class="text-[10px] text-white/60">{{ activePlayingVideo.company }}</div></div>
             </div>
           </div>

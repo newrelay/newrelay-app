@@ -12,6 +12,7 @@ import {
 import RequestReviewsModal from '../components/RequestReviewsModal.vue';
 import ShareReportModal from '../components/ShareReportModal.vue';
 import FeedbackBreakdownModal from '../components/FeedbackBreakdownModal.vue';
+import Avatar from 'dashboard/components-next/avatar/Avatar.vue';
 import { isReputationDemoSurfacesEnabled } from 'dashboard/featureFlags';
 
 const axios = window.axios;
@@ -36,7 +37,7 @@ const integrations = ref([]);
 const summary = ref(null);
 const aiData = ref(null); // { sentiment, insights:[{title,text}] } from /ai_insights, or null
 
-const insightColors = ['bg-emerald-500', 'bg-amber-500', 'bg-primary'];
+const insightColors = ['bg-success', 'bg-warning', 'bg-primary'];
 const aiIsMock = computed(() => !(aiData.value && aiData.value.insights && aiData.value.insights.length));
 const insightsList = computed(() =>
   aiIsMock.value
@@ -76,7 +77,6 @@ const recentReviews = computed(() =>
   allReviews.value.slice(0, 3).map(r => ({
     id: r.id,
     author: r.reviewer_name || 'Anonymous',
-    avatar: `https://i.pravatar.cc/150?u=review${r.id}`,
     platform: (r.provider || 'google').charAt(0).toUpperCase() + (r.provider || 'google').slice(1),
     rating: r.rating || 5,
     date: formatRelativeDate(r.reviewed_at),
@@ -547,7 +547,7 @@ async function generateReviewReplies() {
         <div v-else class="divide-y divide-border">
           <div v-for="review in recentReviews" :key="review.id" class="p-6 hover:bg-muted/30 transition-colors flex flex-col sm:flex-row gap-5">
             <div class="shrink-0">
-              <img :src="review.avatar" alt="Avatar" class="size-10 rounded-full border border-border" />
+              <Avatar :name="review.author" :size="40" />
             </div>
 
             <div class="flex-1">

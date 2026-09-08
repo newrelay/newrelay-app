@@ -537,11 +537,11 @@ const closeAdd = () => {
 </script>
 
 <template>
-  <div class="relative flex h-[calc(100vh-4rem)] w-full overflow-hidden bg-[#FAFAFA] dark:bg-background">
+  <div class="relative flex h-[calc(100vh-4rem)] w-full overflow-hidden bg-background">
     <!-- Main Content Area -->
     <div class="flex flex-col h-full w-full overflow-y-auto transition-all duration-300 custom-scrollbar">
       <!-- Header -->
-      <div class="px-8 py-6 border-b border-border bg-white dark:bg-card shrink-0">
+      <div class="px-8 py-6 border-b border-border bg-card shrink-0">
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
             <h1 class="text-base font-medium text-foreground">
@@ -553,7 +553,7 @@ const closeAdd = () => {
             <!-- Export Dropdown -->
             <div class="relative">
               <button
-                class="inline-flex items-center h-9 gap-2 shadow-xs bg-white dark:bg-card border border-input text-[13px] font-semibold px-4 rounded-md hover:bg-accent hover:text-accent-foreground transition-colors"
+                class="inline-flex items-center h-9 gap-2 shadow-xs bg-card border border-input text-[13px] font-semibold px-4 rounded-md hover:bg-accent hover:text-accent-foreground transition-colors"
                 @click.stop="toggleMenu('export')"
               >
                 <Download class="size-4" /> 
@@ -610,7 +610,7 @@ const closeAdd = () => {
       </div>
 
       <!-- Filters & Toolbar -->
-      <div class="px-8 py-5 border-b border-border bg-[#FAFAFA] dark:bg-background shrink-0 sticky top-0 z-40 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div class="px-8 py-5 border-b border-border bg-background shrink-0 sticky top-0 z-40 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div class="flex flex-wrap items-center gap-2">
           <div class="relative w-48 mr-2">
             <Search class="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground z-10" />
@@ -618,14 +618,14 @@ const closeAdd = () => {
               v-model="query"
               type="text"
               placeholder="Search listings..."
-              class-name="w-full pl-9 h-9 text-sm rounded-lg border-border bg-white dark:bg-card shadow-xs"
+              class-name="w-full pl-9 h-9 text-sm rounded-lg border-border bg-card shadow-xs"
             />
           </div>
 
           <!-- Platform Dropdown -->
           <div class="relative">
             <button
-              class="inline-flex items-center h-9 gap-1.5 rounded-lg text-xs font-medium bg-white dark:bg-card border border-border shadow-xs px-3 hover:bg-muted transition-colors text-foreground"
+              class="inline-flex items-center h-9 gap-1.5 rounded-lg text-xs font-medium bg-card border border-border shadow-xs px-3 hover:bg-muted transition-colors text-foreground"
               :class="platformFilter !== 'All' ? 'text-primary border-primary/40' : ''"
               @click.stop="toggleMenu('platform')"
             >
@@ -647,7 +647,7 @@ const closeAdd = () => {
           <!-- Status Dropdown -->
           <div class="relative">
             <button
-              class="inline-flex items-center h-9 gap-1.5 rounded-lg text-xs font-medium bg-white dark:bg-card border border-border shadow-xs px-3 hover:bg-muted transition-colors text-foreground"
+              class="inline-flex items-center h-9 gap-1.5 rounded-lg text-xs font-medium bg-card border border-border shadow-xs px-3 hover:bg-muted transition-colors text-foreground"
               :class="statusFilter !== 'All' ? 'text-primary border-primary/40' : ''"
               @click.stop="toggleMenu('status')"
             >
@@ -669,7 +669,7 @@ const closeAdd = () => {
           <!-- Location Dropdown -->
           <div class="relative">
             <button
-              class="inline-flex items-center h-9 gap-1.5 rounded-lg text-xs font-medium bg-white dark:bg-card border border-border shadow-xs px-3 hover:bg-muted transition-colors text-foreground"
+              class="inline-flex items-center h-9 gap-1.5 rounded-lg text-xs font-medium bg-card border border-border shadow-xs px-3 hover:bg-muted transition-colors text-foreground"
               :class="locationFilter !== 'All' ? 'text-primary border-primary/40' : ''"
               @click.stop="toggleMenu('location')"
             >
@@ -691,7 +691,7 @@ const closeAdd = () => {
           <!-- Score Dropdown -->
           <div class="relative">
             <button
-              class="inline-flex items-center h-9 gap-1.5 rounded-lg text-xs font-medium bg-white dark:bg-card border border-border shadow-xs px-3 hover:bg-muted transition-colors text-foreground"
+              class="inline-flex items-center h-9 gap-1.5 rounded-lg text-xs font-medium bg-card border border-border shadow-xs px-3 hover:bg-muted transition-colors text-foreground"
               :class="scoreFilter !== 'All' ? 'text-primary border-primary/40' : ''"
               @click.stop="toggleMenu('score')"
             >
@@ -712,7 +712,7 @@ const closeAdd = () => {
         </div>
 
         <div class="flex items-center gap-3">
-          <button class="inline-flex items-center h-9 gap-2 rounded-lg text-xs font-medium bg-white dark:bg-card border border-border shadow-xs px-3 hover:bg-muted transition-colors text-foreground">
+          <button class="inline-flex items-center h-9 gap-2 rounded-lg text-xs font-medium bg-card border border-border shadow-xs px-3 hover:bg-muted transition-colors text-foreground">
             <Funnel class="size-3.5" /> Filters
           </button>
         </div>
@@ -727,7 +727,7 @@ const closeAdd = () => {
           <div
             v-for="listing in filtered"
             :key="listing.id"
-            class="bg-white dark:bg-card border border-border rounded-xl hover:shadow-md transition-all duration-300 flex cursor-pointer relative shadow-xs"
+            class="bg-card border border-border rounded-xl hover:shadow-md transition-all duration-300 flex cursor-pointer relative shadow-xs"
             @click="openListing(listing)"
           >
             <!-- Left Thumbnail -->
@@ -769,10 +769,10 @@ const closeAdd = () => {
                   <h4 class="text-[11px] font-bold text-muted-foreground mb-2">Connected Platforms</h4>
                   <div class="flex items-center gap-3">
                     <div v-for="platform in listing.platforms" :key="platform.name" class="relative group cursor-pointer">
-                      <div class="size-8 rounded-full bg-white border border-border shadow-xs flex items-center justify-center p-1.5" v-html="getPlatformIcon(platform.name)"></div>
+                      <div class="size-8 rounded-full bg-card border border-border shadow-xs flex items-center justify-center p-1.5" v-html="getPlatformIcon(platform.name)"></div>
                       <div
-                        class="absolute -bottom-1 -right-1 size-4 rounded-full flex items-center justify-center ring-2 ring-white dark:ring-card"
-                        :class="platform.status === 'Connected' ? 'bg-emerald-500' : 'bg-rose-500'"
+                        class="absolute -bottom-1 -right-1 size-4 rounded-full flex items-center justify-center ring-2 ring-card"
+                        :class="platform.status === 'Connected' ? 'bg-success' : 'bg-destructive'"
                       >
                         <Check v-if="platform.status === 'Connected'" class="size-2.5 text-white" style="stroke-width: 3" />
                         <X v-else class="size-2.5 text-white" style="stroke-width: 3" />
@@ -818,13 +818,13 @@ const closeAdd = () => {
                   </router-link>
                   <router-link
                     :to="{ name: 'reputation_reviews' }"
-                    class="inline-flex items-center h-8 gap-2 text-xs font-medium bg-white dark:bg-card border border-border hover:bg-muted rounded-md px-3 shadow-xs transition-colors text-foreground"
+                    class="inline-flex items-center h-8 gap-2 text-xs font-medium bg-card border border-border hover:bg-muted rounded-md px-3 shadow-xs transition-colors text-foreground"
                     @click.stop
                   >
                     View Reviews
                   </router-link>
                   <button
-                    class="inline-flex items-center h-8 gap-2 text-xs font-medium bg-white dark:bg-card border border-border hover:bg-muted rounded-md px-3 shadow-xs transition-colors text-foreground"
+                    class="inline-flex items-center h-8 gap-2 text-xs font-medium bg-card border border-border hover:bg-muted rounded-md px-3 shadow-xs transition-colors text-foreground"
                     @click.stop="showToast(`Syncing ${listing.title}...`)"
                   >
                     <RotateCw class="size-3.5" /> Sync Now
@@ -832,7 +832,7 @@ const closeAdd = () => {
                 </div>
                 <div class="relative">
                   <button
-                    class="inline-flex items-center justify-center size-8 bg-white dark:bg-card border border-border hover:bg-muted rounded-md shadow-xs transition-colors"
+                    class="inline-flex items-center justify-center size-8 bg-card border border-border hover:bg-muted rounded-md shadow-xs transition-colors"
                     @click.stop="toggleActionsMenu(listing, $event)"
                   >
                     <MoreHorizontal class="size-4 text-muted-foreground" />
@@ -1005,7 +1005,7 @@ const closeAdd = () => {
         <div v-else-if="addStep === 'connect'" class="p-6 flex flex-col gap-6 overflow-y-auto">
           <div class="flex items-center gap-3 mb-1">
             <div class="size-10 rounded-full flex items-center justify-center shadow-sm border border-border shrink-0"
-                 :class="addForm.primaryPlatform === 'Manual' ? 'bg-muted text-muted-foreground' : 'bg-white'"
+                 :class="addForm.primaryPlatform === 'Manual' ? 'bg-muted text-muted-foreground' : 'bg-card'"
                  v-html="addForm.primaryPlatform === 'Manual' ? '' : getPlatformIcon(addForm.primaryPlatform.split(' ')[0])">
             </div>
             <div>
@@ -1028,7 +1028,7 @@ const closeAdd = () => {
 
         <!-- Step 3: Success -->
         <div v-else class="p-8 flex flex-col items-center justify-center gap-6 min-h-[320px] text-center">
-          <div class="size-16 rounded-full bg-emerald-500/10 text-emerald-500 flex items-center justify-center border-4 border-emerald-500/15">
+          <div class="size-16 rounded-full bg-success/10 text-success flex items-center justify-center border-4 border-success/15">
             <CircleCheck class="size-8" />
           </div>
           <div>
@@ -1086,7 +1086,7 @@ const closeAdd = () => {
             </label>
           </div>
           <div v-else class="flex flex-col items-center justify-center text-center py-6">
-            <div class="size-14 rounded-full bg-emerald-500/10 text-emerald-500 flex items-center justify-center mb-4">
+            <div class="size-14 rounded-full bg-success/10 text-success flex items-center justify-center mb-4">
               <CircleCheck class="size-8" />
             </div>
             <h3 class="text-base font-semibold text-foreground">Export ready</h3>

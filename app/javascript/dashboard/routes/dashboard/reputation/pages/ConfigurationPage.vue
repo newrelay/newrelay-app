@@ -691,7 +691,7 @@ const autoFlagLabel = computed(() => autoFlagOptions.find(o => o.value === spamS
         <div class="lg:col-span-4 bg-slate-100/70 dark:bg-slate-900/40 backdrop-blur-xl rounded-xl border border-border p-4 sm:p-5 shadow-xs flex flex-col items-center justify-center relative overflow-hidden min-h-[520px]">
             <div class="absolute -top-12 -right-12 size-48 rounded-full bg-primary/10 blur-3xl pointer-events-none"></div>
             <div class="absolute -bottom-12 -left-12 size-48 rounded-full bg-primary/10 blur-3xl pointer-events-none"></div>
-            <div class="w-[260px] sm:w-[272px] h-[460px] bg-white/95 dark:bg-card/95 backdrop-blur-md rounded-[30px] shadow-[0_20px_60px_-15px_rgba(0,0,0,0.12)] dark:shadow-[0_25px_60px_-15px_rgba(0,0,0,0.7)] border border-slate-200/80 dark:border-slate-800/80 flex flex-col overflow-hidden relative z-10">
+            <div class="w-[260px] sm:w-[272px] h-[460px] bg-background/95 dark:bg-card/95 backdrop-blur-md rounded-[30px] shadow-[0_20px_60px_-15px_rgba(0,0,0,0.12)] dark:shadow-[0_25px_60px_-15px_rgba(0,0,0,0.7)] border border-slate-200/80 dark:border-slate-800/80 flex flex-col overflow-hidden relative z-10">
               <div class="pt-3 px-4 pb-1 flex items-center justify-between text-[10.5px] font-medium text-foreground/80 shrink-0 select-none">
                 <span class="font-semibold text-foreground">9:41</span>
                 <div class="flex items-center gap-1 text-foreground/70"><Signal class="size-2.5" /><Wifi class="size-2.5" /><div class="w-4 h-2 rounded-[2px] border border-foreground/70 p-0.5 flex items-center"><div class="h-full w-2 bg-foreground/80 rounded-[1px]"></div></div></div>
@@ -752,7 +752,7 @@ const autoFlagLabel = computed(() => autoFlagOptions.find(o => o.value === spamS
 
                 <!-- Video Content Area -->
                 <div class="flex-1 overflow-y-auto p-3 space-y-2.5 hide-scrollbar bg-slate-50/60 dark:bg-slate-900/40">
-                  <div class="p-3 bg-white dark:bg-card border border-border/60 rounded-2xl shadow-xs space-y-2.5">
+                  <div class="p-3 bg-card border border-border/60 rounded-2xl shadow-xs space-y-2.5">
                     <div class="text-[12px] font-bold text-foreground leading-tight">{{ pvVideoHeadline }}</div>
                     <div class="text-[11px] leading-relaxed text-muted-foreground whitespace-pre-wrap">{{ pvVideo }}</div>
 
@@ -904,7 +904,7 @@ const autoFlagLabel = computed(() => autoFlagOptions.find(o => o.value === spamS
               <div class="size-36 bg-white p-2.5 rounded-xl border border-border shadow-xs flex items-center justify-center relative">
                 <img v-if="qrDataUrl" :src="qrDataUrl" alt="Review link QR code" class="size-full rounded-md" />
                 <div v-else class="size-full rounded-md bg-muted animate-pulse"></div>
-                <div v-if="includeLogo" class="absolute size-7 rounded-full bg-primary text-primary-foreground flex items-center justify-center shadow-md ring-2 ring-white"><Star class="size-3.5 fill-current" /></div>
+                <div v-if="includeLogo" class="absolute size-7 rounded-full bg-primary text-primary-foreground flex items-center justify-center shadow-md ring-2 ring-background"><Star class="size-3.5 fill-current" /></div>
               </div>
               <div class="text-[11px] font-mono text-slate-500 truncate w-full">{{ reviewLinkShort }}</div>
             </div>

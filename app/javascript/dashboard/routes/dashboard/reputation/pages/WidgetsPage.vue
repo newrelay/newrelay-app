@@ -313,7 +313,7 @@ const previewReviewsList = computed(() => {
           </svg>
         </button>
         <div>
-          <h2 class="capitalize text-xl font-extrabold text-foreground dark:text-white tracking-tight flex items-center gap-2">
+          <h2 class="text-xl font-bold text-foreground tracking-tight flex items-center gap-2">
             Edit {{ activeWidget?.name || 'Widget' }}
           </h2>
         </div>
@@ -328,7 +328,7 @@ const previewReviewsList = computed(() => {
           class="bg-card rounded-2xl border border-border/80 shadow-sm p-6 space-y-4"
         >
           <div>
-            <h3 class="capitalize font-extrabold text-foreground dark:text-white text-sm">
+            <h3 class="font-semibold text-foreground text-sm">
               Widget Configuration
             </h3>
             <p class="text-[10px] text-muted-foreground mt-0.5">
@@ -446,7 +446,7 @@ const previewReviewsList = computed(() => {
         >
           <div class="flex items-center justify-between">
             <div>
-              <h3 class="capitalize font-extrabold text-foreground dark:text-white text-sm">
+              <h3 class="font-semibold text-foreground text-sm">
                 Interactive Live Preview
               </h3>
               <p class="text-[10px] text-muted-foreground mt-0.5">
@@ -641,7 +641,7 @@ const previewReviewsList = computed(() => {
           class="bg-card rounded-2xl border border-border/80 shadow-sm p-6 space-y-4"
         >
           <div>
-            <h3 class="capitalize font-extrabold text-foreground dark:text-white text-sm">
+            <h3 class="font-semibold text-foreground text-sm">
               HTML Embed Script
             </h3>
             <p class="text-[10px] text-muted-foreground mt-0.5">
@@ -661,7 +661,7 @@ const previewReviewsList = computed(() => {
               class="px-4 py-2 rounded-xl text-xs font-bold shadow-sm transition-all flex items-center gap-1.5"
               :class="
                 copiedId === activeWidget.id
-                  ? 'bg-emerald-500 text-white'
+                  ? 'bg-success text-success-foreground'
                   : 'bg-primary/10 hover:bg-primary/10 text-primary '
               "
               @click="copyEmbed(activeWidget)"

@@ -115,7 +115,7 @@ function close() {
               <span class="font-medium text-foreground">{{ total.toLocaleString() }} Total Ratings</span>
             </div>
             <div class="h-3 w-full bg-muted rounded-full overflow-hidden flex gap-0.5 p-0.5">
-              <div class="bg-emerald-500 rounded-l-full h-full" :style="{ width: pct(positive) + '%' }"></div>
+              <div class="bg-success rounded-l-full h-full" :style="{ width: pct(positive) + '%' }"></div>
               <div class="bg-amber-400 h-full" :style="{ width: pct(neutral) + '%' }"></div>
               <div class="bg-destructive rounded-r-full h-full" :style="{ width: pct(negative) + '%' }"></div>
             </div>
@@ -166,7 +166,7 @@ function close() {
               <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
                 <div v-for="item in improvementTopics" :key="item.topic" class="p-2.5 rounded-lg bg-amber-500/5 border border-amber-500/15 flex items-center justify-between text-xs">
                   <div class="flex items-center gap-2">
-                    <span class="size-1.5 rounded-full bg-amber-500 shrink-0"></span>
+                    <span class="size-1.5 rounded-full bg-warning shrink-0"></span>
                     <span class="font-medium text-foreground truncate">{{ item.topic }}</span>
                   </div>
                   <span class="text-muted-foreground font-medium shrink-0">{{ item.mentions }} mentions</span>

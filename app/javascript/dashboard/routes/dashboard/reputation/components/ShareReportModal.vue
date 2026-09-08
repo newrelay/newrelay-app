@@ -292,7 +292,7 @@ function close() {
           </div>
           
           <!-- Mock Report Preview UI -->
-          <div class="w-full aspect-[1/1.2] max-h-[480px] overflow-y-auto bg-white dark:bg-card rounded-xl border border-border p-8 hide-scrollbar">
+          <div class="w-full aspect-[1/1.2] max-h-[480px] overflow-y-auto bg-card rounded-xl border border-border p-8 hide-scrollbar">
             <div class="max-w-2xl mx-auto space-y-8">
               <!-- Report Header -->
               <div class="border-b border-border pb-6">

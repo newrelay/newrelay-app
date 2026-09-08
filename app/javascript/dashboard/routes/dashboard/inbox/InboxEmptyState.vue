@@ -4,10 +4,7 @@ import { useStore } from 'vuex';
 import { useI18n } from 'vue-i18n';
 import { useRouter } from 'vue-router';
 import { useAccount } from 'dashboard/composables/useAccount';
-import {
-  useChannelBrandIcon,
-  useChannelIcon,
-} from 'dashboard/components-next/icon/provider';
+import { useChannelIcon } from 'dashboard/components-next/icon/provider';
 import wootConstants from 'dashboard/constants/globals';
 import Spinner from 'dashboard/components-next/spinner/Spinner.vue';
 import { RelayButton } from 'dashboard/components-next/relay';
@@ -38,18 +35,15 @@ const activeInbox = computed(() => {
   return inboxes.value.find(inbox => Number(inbox.id) === inboxId) || {};
 });
 
-const channelBrandIcon = useChannelBrandIcon(activeInbox);
 const channelMonoIcon = useChannelIcon(activeInbox);
 const channelHeroIcon = computed(
-  () => channelBrandIcon.value || channelMonoIcon.value || 'i-lucide-inbox'
+  () => channelMonoIcon.value || 'i-lucide-inbox'
 );
-const channelHeroIsBrand = computed(() => Boolean(channelBrandIcon.value));
 
 const supportedChannels = computed(() => [
   {
     key: 'whatsapp',
-    icon: 'i-logos-whatsapp-icon',
-    brand: true,
+    icon: 'i-woot-whatsapp',
     label: t('INBOX.EMPTY.WHATSAPP'),
   },
   { key: 'email', icon: 'i-lucide-mail', label: t('INBOX.EMPTY.EMAIL') },
@@ -60,14 +54,12 @@ const supportedChannels = computed(() => [
   },
   {
     key: 'messenger',
-    icon: 'i-logos-messenger',
-    brand: true,
+    icon: 'i-woot-messenger',
     label: t('INBOX.EMPTY.MESSENGER'),
   },
   {
     key: 'instagram',
-    icon: 'i-woot-instagram-color',
-    brand: true,
+    icon: 'i-woot-instagram',
     label: t('INBOX.EMPTY.INSTAGRAM'),
   },
   {
@@ -109,13 +101,7 @@ const learnMore = () => {
         <div
           class="absolute inset-2 flex items-center justify-center rounded-full border border-primary/10 bg-background"
         >
-          <span
-            class="size-10"
-            :class="[
-              channelHeroIcon,
-              channelHeroIsBrand ? 'opacity-90' : 'text-primary',
-            ]"
-          />
+          <span class="size-10 text-primary" :class="channelHeroIcon" />
         </div>
       </div>
       <h2 class="text-[20px] font-[600] text-foreground mb-2 tracking-tight">
@@ -209,10 +195,7 @@ const learnMore = () => {
             <div
               class="flex size-12 items-center justify-center rounded-xl border border-border bg-card"
             >
-              <span
-                class="size-6 opacity-90 dark:opacity-80"
-                :class="[channel.icon, channel.brand ? '' : 'text-primary']"
-              />
+              <span class="size-6 text-primary" :class="channel.icon" />
             </div>
             <span class="text-sm font-normal text-muted-foreground">
               {{ channel.label }}

@@ -650,13 +650,13 @@ const stats = computed(() => {
               >
                 <img :src="video.thumbnail" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
                 <div class="absolute inset-0 bg-black/10 group-hover:bg-black/30 transition-colors flex items-center justify-center">
-                  <div class="size-12 rounded-full bg-white/90 backdrop-blur-xs flex items-center justify-center text-foreground shadow-lg transform transition-transform group-hover:scale-110">
+                  <div class="size-12 rounded-full bg-background/90 backdrop-blur-xs flex items-center justify-center text-foreground shadow-lg transform transition-transform group-hover:scale-110">
                     <Play class="size-5 ml-1 fill-current opacity-80" />
                   </div>
                 </div>
                 
                 <!-- Top Left Platform Icon (14px SVG) -->
-                <div class="absolute top-3 left-3 bg-white size-7 rounded-full flex items-center justify-center shadow-md overflow-hidden p-1.5" v-html="getPlatformIcon(video.platform)"></div>
+                <div class="absolute top-3 left-3 bg-card size-7 rounded-full flex items-center justify-center shadow-md overflow-hidden p-1.5" v-html="getPlatformIcon(video.platform)"></div>
                 
                 <!-- Bottom Right Duration -->
                 <div class="absolute bottom-3 right-3 px-2 py-1 bg-black/70 backdrop-blur-xs rounded text-[10px] font-bold text-white tracking-wider shadow-xs">
@@ -779,7 +779,7 @@ const stats = computed(() => {
         <!-- Header -->
         <div class="px-6 py-4 border-b border-border flex items-center justify-between shrink-0 bg-muted/20">
           <div class="flex items-center gap-3">
-            <div class="size-6 bg-white rounded-full overflow-hidden flex items-center justify-center shrink-0 p-1 border border-border" v-html="getPlatformIcon(selectedVideo.platform)"></div>
+            <div class="size-6 bg-card rounded-full overflow-hidden flex items-center justify-center shrink-0 p-1 border border-border" v-html="getPlatformIcon(selectedVideo.platform)"></div>
             <h2 class="font-bold text-foreground text-sm">{{ selectedVideo.author }}</h2>
             <Badge v-if="insights.marketing_score >= 70" class="bg-primary/10 text-primary border border-primary/20 shadow-none font-medium text-[10px] px-2 py-0.5 rounded-md ml-1">Marketing Ready</Badge>
           </div>
@@ -916,7 +916,7 @@ const stats = computed(() => {
                     <div class="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider mb-2">Marketing Score</div>
                     <div class="flex items-center gap-2">
                       <div class="flex-1 h-2 bg-muted rounded-full overflow-hidden">
-                        <div class="h-full bg-emerald-500 rounded-full" :style="{ width: (insights.marketing_score || 0) + '%' }"></div>
+                        <div class="h-full bg-success rounded-full" :style="{ width: (insights.marketing_score || 0) + '%' }"></div>
                       </div>
                       <span class="text-xs font-bold text-foreground">{{ insights.marketing_score }}%</span>
                     </div>
@@ -963,7 +963,7 @@ const stats = computed(() => {
               </div>
               <div v-else class="relative border-l-2 border-border ml-2.5 pl-6 space-y-6">
                 <div v-for="event in timeline" :key="event.key" class="relative">
-                  <div class="absolute -left-[35.5px] top-0 size-6 rounded-full flex items-center justify-center ring-4 ring-white dark:ring-card" :class="event.dot">
+                  <div class="absolute -left-[35.5px] top-0 size-6 rounded-full flex items-center justify-center ring-4 ring-background" :class="event.dot">
                     <component :is="iconFor(event.key)" class="size-3.5" :class="event.ic" />
                   </div>
                   <div class="font-medium text-[13.5px] text-foreground">{{ event.label }}</div>

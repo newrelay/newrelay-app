@@ -2,6 +2,7 @@
 /* eslint-disable */
 import { ref, computed, onMounted } from 'vue';
 import { RelayInput as Input, RelayCheckbox as Checkbox } from 'dashboard/components-next/relay';
+import Avatar from 'dashboard/components-next/avatar/Avatar.vue';
 import { useMapGetter } from 'dashboard/composables/store';
 import { useAlert } from 'dashboard/composables';
 import {
@@ -83,7 +84,6 @@ function mapReview(r) {
   return {
     id: r.id,
     author: r.reviewer_name || 'Anonymous',
-    avatar: `https://i.pravatar.cc/150?u=review${r.id}`,
     platform: displayPlatform,
     location: '',
     rating: r.rating || 5,
@@ -347,7 +347,7 @@ async function sendReply() {
 </script>
 
 <template>
-  <div class="relative flex h-[calc(100vh-4rem)] w-full overflow-hidden bg-[#FAFAFA] dark:bg-background">
+  <div class="relative flex h-[calc(100vh-4rem)] w-full overflow-hidden bg-background">
     <RequestReviewsModal v-model:open="isRequestModalOpen" />
     <ReviewWidgetModal v-model:open="isWidgetModalOpen" />
 
@@ -566,7 +566,7 @@ async function sendReply() {
                   :class="activeRatingFilter === opt.value ? 'text-primary' : 'text-foreground'"
                   @click="activeRatingFilter = activeRatingFilter === opt.value ? 0 : opt.value; showFilterDropdown = false"
                 >
-                  <span class="flex items-center gap-2"><Star class="size-4 text-[#FFB020]" /> {{ opt.label }}</span>
+                  <span class="flex items-center gap-2"><Star class="size-4 text-amber-400" /> {{ opt.label }}</span>
                   <Check v-if="activeRatingFilter === opt.value" class="size-3.5 shrink-0" />
                 </button>
 
@@ -609,7 +609,7 @@ async function sendReply() {
       </div>
 
       <!-- Feed Container -->
-      <div class="flex-1 bg-[#FAFAFA] dark:bg-background overflow-y-auto pb-10">
+      <div class="flex-1 bg-background overflow-y-auto pb-10">
         <div 
           class="transition-all duration-300"
           :class="[
@@ -626,7 +626,7 @@ async function sendReply() {
             :class="activeReviewMenuId === review.id ? 'z-30' : ''"
           >
             <!-- Timeline elements -->
-            <div v-if="viewMode === 'timeline'" class="absolute -left-[38.5px] top-8 size-3.5 rounded-full bg-primary ring-4 ring-white dark:ring-[#FAFAFA] transition-colors z-10" :class="selectedReview?.id === review.id ? 'ring-primary/20 scale-125' : ''"></div>
+            <div v-if="viewMode === 'timeline'" class="absolute -left-[38.5px] top-8 size-3.5 rounded-full bg-primary ring-4 ring-background transition-colors z-10" :class="selectedReview?.id === review.id ? 'ring-primary/20 scale-125' : ''"></div>
             
             <div v-if="viewMode === 'timeline' && review.timelineDate" class="absolute -left-[145px] top-6 w-[90px] text-left z-10">
               <div class="font-bold text-foreground text-[13.5px]">{{ review.timelineDate.title }}</div>
@@ -648,7 +648,7 @@ async function sendReply() {
               <div v-if="viewMode === 'grid'" class="flex flex-col h-full gap-4">
                 <div class="flex items-start justify-between">
                   <div class="flex items-center gap-3">
-                    <img :src="review.avatar" class="size-10 rounded-full object-cover" />
+                    <Avatar :name="review.author" :size="40" />
                     <div>
                       <div class="font-bold text-[14px] text-foreground">{{ review.author }}</div>
                       <div class="flex items-center gap-1.5 text-xs text-muted-foreground mt-0.5">
@@ -657,8 +657,8 @@ async function sendReply() {
                       </div>
                     </div>
                   </div>
-                  <div class="flex text-[#FFB020]">
-                    <Star v-for="i in 5" :key="i" class="size-3" :class="i <= review.rating ? 'fill-[#FFB020]' : 'text-muted-foreground/30'" />
+                  <div class="flex text-amber-400">
+                    <Star v-for="i in 5" :key="i" class="size-3" :class="i <= review.rating ? 'fill-amber-400' : 'text-muted-foreground/30'" />
                   </div>
                 </div>
                 
@@ -704,11 +704,11 @@ async function sendReply() {
                 <!-- Author & Rating Info -->
                 <div class="w-[320px] shrink-0 flex items-center gap-4">
                   <div class="relative group/avatar cursor-pointer shrink-0">
-                    <img :src="review.avatar" class="size-11 rounded-full object-cover shrink-0" />
+                    <Avatar :name="review.author" :size="44" />
                     <!-- Hover Popover Card -->
                     <div class="absolute left-0 bottom-full mb-2 hidden group-hover/avatar:block z-50 w-64 p-4 bg-popover border border-border rounded-xl shadow-xl animate-in fade-in zoom-in-95 duration-200 origin-bottom-left">
                       <div class="font-bold text-foreground mb-3 text-sm flex items-center gap-2">
-                        <img :src="review.avatar" class="size-6 rounded-full object-cover" />
+                        <Avatar :name="review.author" :size="24" />
                         {{ review.author }}
                       </div>
                       <div class="space-y-2 text-[13px]">
@@ -739,8 +739,8 @@ async function sendReply() {
                         <span class="text-[11px] text-muted-foreground whitespace-nowrap">{{ review.date }}</span>
                       </div>
                       <div class="flex items-center gap-2">
-                        <div class="flex gap-0.5 text-[#FFB020]">
-                          <Star v-for="i in 5" :key="i" class="size-[13px]" :class="i <= review.rating ? 'fill-[#FFB020]' : 'text-muted-foreground/30'" />
+                        <div class="flex gap-0.5 text-amber-400">
+                          <Star v-for="i in 5" :key="i" class="size-[13px]" :class="i <= review.rating ? 'fill-amber-400' : 'text-muted-foreground/30'" />
                         </div>
                         <div 
                           v-if="review.sentiment === 'Positive'" 
@@ -880,7 +880,7 @@ async function sendReply() {
           <div>
             <div class="flex items-start justify-between mb-3">
               <div class="flex items-center gap-3">
-                <img :src="selectedReview.avatar" class="size-10 rounded-full border border-border object-cover shrink-0" />
+                <Avatar :name="selectedReview.author" :size="40" />
                 <div>
                   <h3 class="font-bold text-sm text-foreground">{{ selectedReview.author }}</h3>
                   <div class="flex items-center gap-2 mt-0.5">
@@ -888,8 +888,8 @@ async function sendReply() {
                   </div>
                 </div>
               </div>
-              <div class="flex gap-0.5 text-[#FFB020] pt-1">
-                <Star v-for="i in 5" :key="i" class="size-3.5" :class="i <= selectedReview.rating ? 'fill-[#FFB020]' : 'text-muted-foreground/30'" />
+              <div class="flex gap-0.5 text-amber-400 pt-1">
+                <Star v-for="i in 5" :key="i" class="size-3.5" :class="i <= selectedReview.rating ? 'fill-amber-400' : 'text-muted-foreground/30'" />
               </div>
             </div>
             <p class="text-sm text-foreground leading-relaxed bg-muted/30 p-4 rounded-xl border border-border/50 shadow-xs">

@@ -110,6 +110,27 @@
         "PLACEHOLDER": "Select company"
       }
     },
+    "DRAWER": {
+      "VIEW_COMPANY": "View Company",
+      "DEAL_VALUE": "Deal Value",
+      "CLOSE_DATE": "Close Date",
+      "DEAL_INFO": "Deal Info",
+      "PIPELINE": "Pipeline",
+      "NO_VALUE": "—",
+      "TABS": {
+        "OVERVIEW": "Overview",
+        "CONTACTS": "Contacts",
+        "ACTIVITY": "Activity",
+        "FILES": "Files",
+        "NOTES": "Notes"
+      },
+      "EMPTY": {
+        "CONTACTS": "No contact is linked to this deal yet.",
+        "ACTIVITY": "Activity for this deal will appear here.",
+        "FILES": "No files attached to this deal.",
+        "NOTES": "No notes on this deal yet."
+      }
+    },
     "PRIORITY": {
       "LOW": "Low",
       "MEDIUM": "Medium",

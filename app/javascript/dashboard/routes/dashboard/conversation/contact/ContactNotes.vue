@@ -8,8 +8,7 @@ import Editor from 'dashboard/components-next/Editor/Editor.vue';
 import NextButton from 'dashboard/components-next/button/Button.vue';
 import ContactNoteItem from 'next/Contacts/ContactsSidebar/components/ContactNoteItem.vue';
 import Spinner from 'dashboard/components-next/spinner/Spinner.vue';
-import RelayModalHeader from 'dashboard/components-next/relay/modal/RelayModalHeader.vue';
-import { RELAY_MODAL_BODY_CLASS } from 'dashboard/components-next/relay/modal/constants';
+import { RelayModal } from 'dashboard/components-next/relay';
 import { RELAY_SIDEBAR_TEXT_ACTION_CLASS } from 'dashboard/components-next/relay/sidebar/constants';
 
 const props = defineProps({
@@ -147,36 +146,29 @@ watch(
       </span>
     </div>
 
-    <woot-modal
-      v-model:show="shouldShowCreateModal"
-      :on-close="closeCreateModal"
-      :close-on-backdrop-click="false"
-      class="!items-start [&>div]:!top-12 [&>div]:sticky"
+    <RelayModal
+      :show="shouldShowCreateModal"
+      :title="t('CONTACTS_LAYOUT.SIDEBAR.NOTES.ADD_NOTE')"
+      @close="closeCreateModal"
     >
-      <div class="flex w-full flex-col overflow-hidden">
-        <RelayModalHeader
-          :title="t('CONTACTS_LAYOUT.SIDEBAR.NOTES.ADD_NOTE')"
-          :show-close="false"
+      <div class="flex flex-col gap-6">
+        <Editor
+          v-model="noteContent"
+          focus-on-mount
+          :placeholder="t('CONTACTS_LAYOUT.SIDEBAR.NOTES.PLACEHOLDER')"
+          class="[&>div]:!border-transparent [&>div]:px-4 [&>div]:py-4"
         />
-        <div class="flex flex-col gap-6" :class="[RELAY_MODAL_BODY_CLASS]">
-          <Editor
-            v-model="noteContent"
-            focus-on-mount
-            :placeholder="t('CONTACTS_LAYOUT.SIDEBAR.NOTES.PLACEHOLDER')"
-            class="[&>div]:!border-transparent [&>div]:px-4 [&>div]:py-4"
+        <div class="flex items-center justify-end gap-3">
+          <NextButton
+            solid
+            blue
+            :label="t('CONTACTS_LAYOUT.SIDEBAR.NOTES.SAVE')"
+            :is-loading="isCreatingNote"
+            :disabled="!noteContent || isCreatingNote"
+            @click="onAdd"
           />
-          <div class="flex items-center justify-end gap-3">
-            <NextButton
-              solid
-              blue
-              :label="t('CONTACTS_LAYOUT.SIDEBAR.NOTES.SAVE')"
-              :is-loading="isCreatingNote"
-              :disabled="!noteContent || isCreatingNote"
-              @click="onAdd"
-            />
-          </div>
         </div>
       </div>
-    </woot-modal>
+    </RelayModal>
   </div>
 </template>

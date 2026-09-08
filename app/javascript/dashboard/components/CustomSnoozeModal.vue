@@ -73,54 +73,48 @@ const selectTime = slot => {
 </script>
 
 <template>
-  <div class="flex flex-col">
-    <woot-modal-header :header-title="$t('CONVERSATION.CUSTOM_SNOOZE.TITLE')" />
-    <form
-      class="modal-content w-full px-8 pb-8 pt-4"
-      @submit.prevent="chooseTime"
-    >
-      <div class="flex flex-col gap-4 sm:flex-row">
-        <RelayCalendar
-          v-model="selectedDate"
-          :disabled-date="disabledDate"
-          show-footer
-          class="shrink-0"
-        />
-        <div
-          class="max-h-[280px] min-w-[9rem] overflow-y-auto rounded-md border border-border p-1"
+  <form class="flex flex-col gap-4" @submit.prevent="chooseTime">
+    <div class="flex flex-col gap-4 sm:flex-row">
+      <RelayCalendar
+        v-model="selectedDate"
+        :disabled-date="disabledDate"
+        show-footer
+        class="shrink-0"
+      />
+      <div
+        class="max-h-[280px] min-w-[9rem] overflow-y-auto rounded-md border border-border p-1"
+      >
+        <button
+          v-for="slot in timeSlots"
+          :key="slot"
+          type="button"
+          :disabled="isTimeDisabled(slot)"
+          :class="
+            cn(
+              TIME_PICKER_ITEM_CLASS,
+              selectedTime === slot && TIME_PICKER_ITEM_SELECTED_CLASS,
+              isTimeDisabled(slot) && 'pointer-events-none opacity-40'
+            )
+          "
+          @click="selectTime(slot)"
         >
-          <button
-            v-for="slot in timeSlots"
-            :key="slot"
-            type="button"
-            :disabled="isTimeDisabled(slot)"
-            :class="
-              cn(
-                TIME_PICKER_ITEM_CLASS,
-                selectedTime === slot && TIME_PICKER_ITEM_SELECTED_CLASS,
-                isTimeDisabled(slot) && 'pointer-events-none opacity-40'
-              )
-            "
-            @click="selectTime(slot)"
-          >
-            {{ slot }}
-          </button>
-        </div>
+          {{ slot }}
+        </button>
       </div>
-      <div class="flex w-full flex-row justify-end gap-2 px-0 py-2">
-        <NextButton
-          faded
-          slate
-          type="reset"
-          :label="$t('CONVERSATION.CUSTOM_SNOOZE.CANCEL')"
-          @click.prevent="emit('close')"
-        />
-        <NextButton
-          type="submit"
-          :disabled="!canSubmit"
-          :label="$t('CONVERSATION.CUSTOM_SNOOZE.APPLY')"
-        />
-      </div>
-    </form>
-  </div>
+    </div>
+    <div class="flex w-full flex-row justify-end gap-2">
+      <NextButton
+        faded
+        slate
+        type="reset"
+        :label="$t('CONVERSATION.CUSTOM_SNOOZE.CANCEL')"
+        @click.prevent="emit('close')"
+      />
+      <NextButton
+        type="submit"
+        :disabled="!canSubmit"
+        :label="$t('CONVERSATION.CUSTOM_SNOOZE.APPLY')"
+      />
+    </div>
+  </form>
 </template>

@@ -1,11 +1,10 @@
 <script>
-import Modal from '../../Modal.vue';
-import NextButton from 'dashboard/components-next/button/Button.vue';
+import { RelayModal, RelayButton } from 'dashboard/components-next/relay';
 
 export default {
   components: {
-    Modal,
-    NextButton,
+    RelayModal,
+    RelayButton,
   },
   props: {
     title: {
@@ -34,18 +33,17 @@ export default {
   methods: {
     showConfirmation() {
       this.show = true;
-      return new Promise((resolve, reject) => {
+      return new Promise(resolve => {
         this.resolvePromise = resolve;
-        this.rejectPromise = reject;
       });
     },
     confirm() {
-      this.resolvePromise(true);
+      this.resolvePromise?.(true);
       this.show = false;
     },
 
     cancel() {
-      this.resolvePromise(false);
+      this.resolvePromise?.(false);
       this.show = false;
     },
   },
@@ -53,13 +51,19 @@ export default {
 </script>
 
 <template>
-  <Modal v-model:show="show" :on-close="cancel">
-    <div class="h-auto overflow-auto flex flex-col">
-      <woot-modal-header :header-title="title" :header-content="description" />
-      <div class="flex flex-row justify-end gap-2 py-4 px-6 w-full">
-        <NextButton faded type="reset" :label="cancelLabel" @click="cancel" />
-        <NextButton type="submit" :label="confirmLabel" @click="confirm" />
-      </div>
+  <RelayModal
+    :show="show"
+    :title="title"
+    :description="description"
+    @close="cancel"
+  >
+    <div class="flex justify-end gap-3">
+      <RelayButton type="button" variant="outline" @click="cancel">
+        {{ cancelLabel }}
+      </RelayButton>
+      <RelayButton type="button" @click="confirm">
+        {{ confirmLabel }}
+      </RelayButton>
     </div>
-  </Modal>
+  </RelayModal>
 </template>

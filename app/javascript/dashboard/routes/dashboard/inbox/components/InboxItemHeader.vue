@@ -17,6 +17,7 @@ import { emitter } from 'shared/helpers/mitt';
 import {
   RelayButton,
   RelayActionDropdown,
+  RelayModal,
 } from 'dashboard/components-next/relay';
 import ConversationProfileSummary from 'dashboard/components/widgets/conversation/ConversationProfileSummary.vue';
 
@@ -25,6 +26,7 @@ export default {
     PaginationButton,
     RelayButton,
     RelayActionDropdown,
+    RelayModal,
     CustomSnoozeModal,
     ConversationProfileSummary,
   },
@@ -267,14 +269,15 @@ export default {
         <span class="i-lucide-panel-right size-4" />
       </RelayButton>
     </div>
-    <woot-modal
-      v-model:show="showCustomSnoozeModal"
-      :on-close="hideCustomSnoozeModal"
+    <RelayModal
+      :show="showCustomSnoozeModal"
+      :title="$t('CONVERSATION.CUSTOM_SNOOZE.TITLE')"
+      @close="hideCustomSnoozeModal"
     >
       <CustomSnoozeModal
         @close="hideCustomSnoozeModal"
         @choose-time="scheduleCustomSnooze"
       />
-    </woot-modal>
+    </RelayModal>
   </div>
 </template>

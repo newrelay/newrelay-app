@@ -1,10 +1,13 @@
 <script>
 import TemplatesPicker from './TemplatesPicker.vue';
 import WhatsAppTemplateReply from './WhatsAppTemplateReply.vue';
+import { RelayModal } from 'dashboard/components-next/relay';
+
 export default {
   components: {
     TemplatesPicker,
     WhatsAppTemplateReply,
+    RelayModal,
   },
   props: {
     show: {
@@ -16,21 +19,13 @@ export default {
       default: undefined,
     },
   },
-  emits: ['onSend', 'cancel', 'update:show'],
+  emits: ['onSend', 'cancel'],
   data() {
     return {
       selectedWaTemplate: null,
     };
   },
   computed: {
-    localShow: {
-      get() {
-        return this.show;
-      },
-      set(value) {
-        this.$emit('update:show', value);
-      },
-    },
     modalHeaderContent() {
       return this.selectedWaTemplate
         ? this.$t('WHATSAPP_TEMPLATES.MODAL.TEMPLATE_SELECTED_SUBTITLE', {
@@ -50,6 +45,7 @@ export default {
       this.$emit('onSend', message);
     },
     onClose() {
+      this.selectedWaTemplate = null;
       this.$emit('cancel');
     },
   },
@@ -57,29 +53,23 @@ export default {
 </script>
 
 <template>
-  <woot-modal v-model:show="localShow" :on-close="onClose" size="modal-big">
-    <woot-modal-header
-      :header-title="$t('WHATSAPP_TEMPLATES.MODAL.TITLE')"
-      :header-content="modalHeaderContent"
+  <RelayModal
+    :show="show"
+    :title="$t('WHATSAPP_TEMPLATES.MODAL.TITLE')"
+    :description="modalHeaderContent"
+    size="xl"
+    @close="onClose"
+  >
+    <TemplatesPicker
+      v-if="!selectedWaTemplate"
+      :inbox-id="inboxId"
+      @on-select="pickTemplate"
     />
-    <div class="row modal-content">
-      <TemplatesPicker
-        v-if="!selectedWaTemplate"
-        :inbox-id="inboxId"
-        @on-select="pickTemplate"
-      />
-      <WhatsAppTemplateReply
-        v-else
-        :template="selectedWaTemplate"
-        @reset-template="onResetTemplate"
-        @send-message="onSendMessage"
-      />
-    </div>
-  </woot-modal>
+    <WhatsAppTemplateReply
+      v-else
+      :template="selectedWaTemplate"
+      @reset-template="onResetTemplate"
+      @send-message="onSendMessage"
+    />
+  </RelayModal>
 </template>
-
-<style scoped>
-.modal-content {
-  padding: 1.5625rem 2rem;
-}
-</style>

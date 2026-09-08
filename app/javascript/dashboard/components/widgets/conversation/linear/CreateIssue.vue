@@ -10,6 +10,11 @@ import { parseLinearAPIErrorResponse } from 'dashboard/store/utils/api';
 import SearchableDropdown from './SearchableDropdown.vue';
 import { LINEAR_EVENTS } from 'dashboard/helper/AnalyticsHelper/events';
 import Button from 'dashboard/components-next/button/Button.vue';
+import {
+  RelayInput,
+  RelayLabel,
+  RelayTextarea,
+} from 'dashboard/components-next/relay';
 
 const props = defineProps({
   conversationId: {
@@ -48,7 +53,6 @@ const statusDesiredOrder = [
 ];
 
 const isCreating = ref(false);
-const inputStyles = { borderRadius: '0.75rem', fontSize: '0.875rem' };
 
 const formState = reactive({
   title: '',
@@ -213,33 +217,38 @@ onMounted(getTeams);
 </script>
 
 <template>
-  <div>
-    <woot-input
-      v-model="formState.title"
-      :class="{ error: v$.title.$error }"
-      class="w-full"
-      :styles="{ ...inputStyles, padding: '0.375rem 0.75rem' }"
-      :label="$t('INTEGRATION_SETTINGS.LINEAR.ADD_OR_LINK.FORM.TITLE.LABEL')"
-      :placeholder="
-        $t('INTEGRATION_SETTINGS.LINEAR.ADD_OR_LINK.FORM.TITLE.PLACEHOLDER')
-      "
-      :error="nameError"
-      @input="v$.title.$touch"
-    />
-    <label>
-      {{ $t('INTEGRATION_SETTINGS.LINEAR.ADD_OR_LINK.FORM.DESCRIPTION.LABEL') }}
-      <textarea
+  <div class="flex flex-col gap-4">
+    <div class="flex flex-col gap-1.5">
+      <RelayLabel>
+        {{ $t('INTEGRATION_SETTINGS.LINEAR.ADD_OR_LINK.FORM.TITLE.LABEL') }}
+      </RelayLabel>
+      <RelayInput
+        v-model="formState.title"
+        :placeholder="
+          $t('INTEGRATION_SETTINGS.LINEAR.ADD_OR_LINK.FORM.TITLE.PLACEHOLDER')
+        "
+        @update:model-value="v$.title.$touch"
+      />
+      <p v-if="nameError" class="mb-0 text-[13px] text-destructive">
+        {{ nameError }}
+      </p>
+    </div>
+    <div class="flex flex-col gap-1.5">
+      <RelayLabel>
+        {{
+          $t('INTEGRATION_SETTINGS.LINEAR.ADD_OR_LINK.FORM.DESCRIPTION.LABEL')
+        }}
+      </RelayLabel>
+      <RelayTextarea
         v-model="formState.description"
-        :style="{ ...inputStyles, padding: '0.5rem 0.75rem' }"
-        rows="3"
-        class="text-[14px] shadow-sm rounded-md border-border/80 bg-background focus-visible:ring-1 focus-visible:ring-primary/30"
+        :rows="3"
         :placeholder="
           $t(
             'INTEGRATION_SETTINGS.LINEAR.ADD_OR_LINK.FORM.DESCRIPTION.PLACEHOLDER'
           )
         "
       />
-    </label>
+    </div>
     <div class="flex flex-col gap-4">
       <SearchableDropdown
         v-for="dropdown in dropdowns"

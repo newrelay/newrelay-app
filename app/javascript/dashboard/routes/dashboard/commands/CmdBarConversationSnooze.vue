@@ -9,6 +9,7 @@ import { findSnoozeTime } from 'dashboard/helper/snoozeHelpers';
 import { CMD_SNOOZE_CONVERSATION } from 'dashboard/helper/commandbar/events';
 import wootConstants from 'dashboard/constants/globals';
 import CustomSnoozeModal from 'dashboard/components/CustomSnoozeModal.vue';
+import { RelayModal } from 'dashboard/components-next/relay';
 
 const store = useStore();
 const getters = useStoreGetters();
@@ -62,13 +63,14 @@ useEmitter(CMD_SNOOZE_CONVERSATION, onCmdSnoozeConversation);
 </script>
 
 <template>
-  <woot-modal
-    v-model:show="showCustomSnoozeModal"
-    :on-close="hideCustomSnoozeModal"
+  <RelayModal
+    :show="showCustomSnoozeModal"
+    :title="t('CONVERSATION.CUSTOM_SNOOZE.TITLE')"
+    @close="hideCustomSnoozeModal"
   >
     <CustomSnoozeModal
       @close="hideCustomSnoozeModal"
       @choose-time="chooseSnoozeTime"
     />
-  </woot-modal>
+  </RelayModal>
 </template>

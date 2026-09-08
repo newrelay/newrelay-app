@@ -19,6 +19,7 @@ import BulkUpdateActions from './BulkUpdateActions.vue';
 import BulkLabelActions from './BulkLabelActions.vue';
 import BulkTeamActions from './BulkTeamActions.vue';
 import CustomSnoozeModal from 'dashboard/components/CustomSnoozeModal.vue';
+import { RelayModal } from 'dashboard/components-next/relay';
 
 const props = defineProps({
   conversations: {
@@ -201,13 +202,14 @@ onUnmounted(() => {
       </div>
     </div>
   </Transition>
-  <woot-modal
-    v-model:show="showCustomTimeSnoozeModal"
-    :on-close="hideCustomSnoozeModal"
+  <RelayModal
+    :show="showCustomTimeSnoozeModal"
+    :title="$t('CONVERSATION.CUSTOM_SNOOZE.TITLE')"
+    @close="hideCustomSnoozeModal"
   >
     <CustomSnoozeModal
       @close="hideCustomSnoozeModal"
       @choose-time="customSnoozeTime"
     />
-  </woot-modal>
+  </RelayModal>
 </template>

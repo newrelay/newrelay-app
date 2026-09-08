@@ -2,10 +2,15 @@
 import { validEmailsByComma } from './helpers/emailHeadHelper';
 import { useVuelidate } from '@vuelidate/core';
 import ButtonV4 from 'dashboard/components-next/button/Button.vue';
+import {
+  RelayInput,
+  RELAY_FORM_INLINE_INPUT_CLASS,
+} from 'dashboard/components-next/relay';
 
 export default {
   components: {
     ButtonV4,
+    RelayInput,
   },
   props: {
     ccEmails: {
@@ -23,7 +28,7 @@ export default {
   },
   emits: ['update:bccEmails', 'update:ccEmails', 'update:toEmails'],
   setup() {
-    return { v$: useVuelidate() };
+    return { v$: useVuelidate(), RELAY_FORM_INLINE_INPUT_CLASS };
   },
   data() {
     return {
@@ -96,11 +101,10 @@ export default {
           {{ $t('CONVERSATION.REPLYBOX.EMAIL_HEAD.TO') }}
         </label>
         <div class="flex-1 min-w-0 m-0 rounded-none whitespace-nowrap">
-          <woot-input
+          <RelayInput
             v-model="v$.toEmailsVal.$model"
             type="text"
-            class="[&>input]:!mb-0 [&>input]:border-transparent [&>input]:!outline-none [&>input]:h-8 [&>input]:!text-sm [&>input]:!border-0 [&>input]:border-none [&>input]:!bg-transparent dark:[&>input]:!bg-transparent"
-            :class="{ error: v$.toEmailsVal.$error }"
+            :class-name="RELAY_FORM_INLINE_INPUT_CLASS"
             :placeholder="$t('CONVERSATION.REPLYBOX.EMAIL_HEAD.CC.PLACEHOLDER')"
             @blur="onBlur"
           />
@@ -115,11 +119,10 @@ export default {
           {{ $t('CONVERSATION.REPLYBOX.EMAIL_HEAD.CC.LABEL') }}
         </label>
         <div class="flex-1 min-w-0 m-0 rounded-none whitespace-nowrap">
-          <woot-input
+          <RelayInput
             v-model="v$.ccEmailsVal.$model"
-            class="[&>input]:!mb-0 [&>input]:border-transparent [&>input]:!outline-none [&>input]:h-8 [&>input]:!text-sm [&>input]:!border-0 [&>input]:border-none [&>input]:!bg-transparent dark:[&>input]:!bg-transparent"
             type="text"
-            :class="{ error: v$.ccEmailsVal.$error }"
+            :class-name="RELAY_FORM_INLINE_INPUT_CLASS"
             :placeholder="$t('CONVERSATION.REPLYBOX.EMAIL_HEAD.CC.PLACEHOLDER')"
             @blur="onBlur"
           />
@@ -145,11 +148,10 @@ export default {
           {{ $t('CONVERSATION.REPLYBOX.EMAIL_HEAD.BCC.LABEL') }}
         </label>
         <div class="flex-1 min-w-0 m-0 rounded-none whitespace-nowrap">
-          <woot-input
+          <RelayInput
             v-model="v$.bccEmailsVal.$model"
             type="text"
-            class="[&>input]:!mb-0 [&>input]:border-transparent [&>input]:!outline-none [&>input]:h-8 [&>input]:!text-sm [&>input]:!border-0 [&>input]:border-none [&>input]:!bg-transparent dark:[&>input]:!bg-transparent"
-            :class="{ error: v$.bccEmailsVal.$error }"
+            :class-name="RELAY_FORM_INLINE_INPUT_CLASS"
             :placeholder="
               $t('CONVERSATION.REPLYBOX.EMAIL_HEAD.BCC.PLACEHOLDER')
             "

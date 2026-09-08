@@ -8,6 +8,7 @@ import CreateOrLinkIssue from './CreateOrLinkIssue.vue';
 import LinearIssueItem from './LinearIssueItem.vue';
 import NextButton from 'dashboard/components-next/button/Button.vue';
 import Spinner from 'dashboard/components-next/spinner/Spinner.vue';
+import { RelayModal } from 'dashboard/components-next/relay';
 import { LINEAR_EVENTS } from 'dashboard/helper/AnalyticsHelper/events';
 import { parseLinearAPIErrorResponse } from 'dashboard/store/utils/api';
 
@@ -116,17 +117,18 @@ onMounted(() => {
       />
     </div>
 
-    <woot-modal
-      v-model:show="shouldShowCreateModal"
-      :on-close="closeCreateModal"
-      :close-on-backdrop-click="false"
-      class="!items-start [&>div]:!top-12 [&>div]:sticky"
+    <RelayModal
+      :show="shouldShowCreateModal"
+      :title="$t('INTEGRATION_SETTINGS.LINEAR.ADD_OR_LINK.TITLE')"
+      :description="$t('INTEGRATION_SETTINGS.LINEAR.ADD_OR_LINK.DESCRIPTION')"
+      size="lg"
+      @close="closeCreateModal"
     >
       <CreateOrLinkIssue
         :conversation="conversation"
         :account-id="currentAccountId"
         @close="closeCreateModal"
       />
-    </woot-modal>
+    </RelayModal>
   </div>
 </template>

@@ -23,15 +23,17 @@ const props = defineProps({
   size: {
     type: String,
     default: 'md',
-    validator: value => ['md', 'lg'].includes(value),
+    validator: value => ['md', 'lg', 'xl'].includes(value),
   },
 });
 
 const emit = defineEmits(['close']);
 
-const maxWidthClass = computed(() =>
-  props.size === 'lg' ? 'max-w-[550px]' : 'max-w-[500px]'
-);
+const maxWidthClass = computed(() => {
+  if (props.size === 'xl') return 'max-w-4xl';
+  if (props.size === 'lg') return 'max-w-[550px]';
+  return 'max-w-[500px]';
+});
 </script>
 
 <template>

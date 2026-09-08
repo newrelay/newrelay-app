@@ -2,11 +2,19 @@
 import { useVuelidate } from '@vuelidate/core';
 import { required, minLength, email } from '@vuelidate/validators';
 import { useAlert } from 'dashboard/composables';
-import NextButton from 'dashboard/components-next/button/Button.vue';
+import {
+  RelayModal,
+  RelayButton,
+  RelayInput,
+  RelayLabel,
+} from 'dashboard/components-next/relay';
 
 export default {
   components: {
-    NextButton,
+    RelayModal,
+    RelayButton,
+    RelayInput,
+    RelayLabel,
   },
   props: {
     show: {
@@ -18,7 +26,7 @@ export default {
       default: () => ({}),
     },
   },
-  emits: ['cancel', 'update:show'],
+  emits: ['cancel'],
   setup() {
     return { v$: useVuelidate() };
   },
@@ -37,14 +45,6 @@ export default {
     },
   },
   computed: {
-    localShow: {
-      get() {
-        return this.show;
-      },
-      set(value) {
-        this.$emit('update:show', value);
-      },
-    },
     sentToOtherEmailAddress() {
       return this.selectedType === 'other_email_address';
     },
@@ -75,6 +75,9 @@ export default {
     onCancel() {
       this.$emit('cancel');
     },
+    selectType(type) {
+      this.selectedType = type;
+    },
     async onSubmit() {
       this.isSubmitting = false;
       try {
@@ -100,82 +103,102 @@ export default {
 </script>
 
 <template>
-  <woot-modal v-model:show="localShow" :on-close="onCancel">
-    <div class="flex flex-col h-auto overflow-auto">
-      <woot-modal-header
-        :header-title="$t('EMAIL_TRANSCRIPT.TITLE')"
-        :header-content="$t('EMAIL_TRANSCRIPT.DESC')"
-      />
-      <form class="w-full" @submit.prevent="onSubmit">
-        <div class="w-full">
-          <div
-            v-if="currentChat.meta.sender && currentChat.meta.sender.email"
-            class="flex items-center gap-2"
+  <RelayModal
+    :show="show"
+    :title="$t('EMAIL_TRANSCRIPT.TITLE')"
+    :description="$t('EMAIL_TRANSCRIPT.DESC')"
+    @close="onCancel"
+  >
+    <form class="flex flex-col gap-4" @submit.prevent="onSubmit">
+      <div class="flex flex-col gap-2">
+        <button
+          v-if="currentChat.meta.sender && currentChat.meta.sender.email"
+          type="button"
+          class="flex items-center gap-3 rounded-md px-1 py-1.5 text-left"
+          @click="selectType('contact')"
+        >
+          <span
+            class="flex size-4 shrink-0 items-center justify-center rounded-full border"
+            :class="
+              selectedType === 'contact' ? 'border-primary' : 'border-border'
+            "
           >
-            <input
-              id="contact"
-              v-model="selectedType"
-              type="radio"
-              name="selectedType"
-              value="contact"
+            <span
+              v-if="selectedType === 'contact'"
+              class="size-2 rounded-full bg-primary"
             />
-            <label for="contact">{{
-              $t('EMAIL_TRANSCRIPT.FORM.SEND_TO_CONTACT')
-            }}</label>
-          </div>
-          <div v-if="currentChat.meta.assignee" class="flex items-center gap-2">
-            <input
-              id="assignee"
-              v-model="selectedType"
-              type="radio"
-              name="selectedType"
-              value="assignee"
+          </span>
+          <span class="text-[13.5px] font-medium text-foreground">
+            {{ $t('EMAIL_TRANSCRIPT.FORM.SEND_TO_CONTACT') }}
+          </span>
+        </button>
+        <button
+          v-if="currentChat.meta.assignee"
+          type="button"
+          class="flex items-center gap-3 rounded-md px-1 py-1.5 text-left"
+          @click="selectType('assignee')"
+        >
+          <span
+            class="flex size-4 shrink-0 items-center justify-center rounded-full border"
+            :class="
+              selectedType === 'assignee' ? 'border-primary' : 'border-border'
+            "
+          >
+            <span
+              v-if="selectedType === 'assignee'"
+              class="size-2 rounded-full bg-primary"
             />
-            <label for="assignee">{{
-              $t('EMAIL_TRANSCRIPT.FORM.SEND_TO_AGENT')
-            }}</label>
-          </div>
-          <div class="flex items-center gap-2">
-            <input
-              id="other_email_address"
-              v-model="selectedType"
-              type="radio"
-              name="selectedType"
-              value="other_email_address"
+          </span>
+          <span class="text-[13.5px] font-medium text-foreground">
+            {{ $t('EMAIL_TRANSCRIPT.FORM.SEND_TO_AGENT') }}
+          </span>
+        </button>
+        <button
+          type="button"
+          class="flex items-center gap-3 rounded-md px-1 py-1.5 text-left"
+          @click="selectType('other_email_address')"
+        >
+          <span
+            class="flex size-4 shrink-0 items-center justify-center rounded-full border"
+            :class="
+              selectedType === 'other_email_address'
+                ? 'border-primary'
+                : 'border-border'
+            "
+          >
+            <span
+              v-if="selectedType === 'other_email_address'"
+              class="size-2 rounded-full bg-primary"
             />
-            <label for="other_email_address">{{
-              $t('EMAIL_TRANSCRIPT.FORM.SEND_TO_OTHER_EMAIL_ADDRESS')
-            }}</label>
-          </div>
-          <div v-if="sentToOtherEmailAddress" class="w-[50%] mt-1">
-            <label :class="{ error: v$.email.$error }">
-              <input
-                v-model="email"
-                type="text"
-                :placeholder="$t('EMAIL_TRANSCRIPT.FORM.EMAIL.PLACEHOLDER')"
-                @input="v$.email.$touch"
-              />
-              <span v-if="v$.email.$error" class="message">
-                {{ $t('EMAIL_TRANSCRIPT.FORM.EMAIL.ERROR') }}
-              </span>
-            </label>
-          </div>
-        </div>
-        <div class="flex flex-row justify-end w-full gap-2 px-0 py-2">
-          <NextButton
-            faded
-            slate
-            type="reset"
-            :label="$t('EMAIL_TRANSCRIPT.CANCEL')"
-            @click.prevent="onCancel"
-          />
-          <NextButton
-            type="submit"
-            :label="$t('EMAIL_TRANSCRIPT.SUBMIT')"
-            :disabled="!isFormValid"
-          />
-        </div>
-      </form>
-    </div>
-  </woot-modal>
+          </span>
+          <span class="text-[13.5px] font-medium text-foreground">
+            {{ $t('EMAIL_TRANSCRIPT.FORM.SEND_TO_OTHER_EMAIL_ADDRESS') }}
+          </span>
+        </button>
+      </div>
+      <div v-if="sentToOtherEmailAddress" class="flex flex-col gap-1.5">
+        <RelayLabel html-for="transcript-email">
+          {{ $t('EMAIL_TRANSCRIPT.FORM.EMAIL.PLACEHOLDER') }}
+        </RelayLabel>
+        <RelayInput
+          id="transcript-email"
+          v-model="email"
+          type="email"
+          :placeholder="$t('EMAIL_TRANSCRIPT.FORM.EMAIL.PLACEHOLDER')"
+          @update:model-value="v$.email.$touch"
+        />
+        <span v-if="v$.email.$error" class="text-[13px] text-destructive">
+          {{ $t('EMAIL_TRANSCRIPT.FORM.EMAIL.ERROR') }}
+        </span>
+      </div>
+      <div class="flex justify-end gap-3">
+        <RelayButton type="button" variant="outline" @click="onCancel">
+          {{ $t('EMAIL_TRANSCRIPT.CANCEL') }}
+        </RelayButton>
+        <RelayButton type="submit" :disabled="!isFormValid">
+          {{ $t('EMAIL_TRANSCRIPT.SUBMIT') }}
+        </RelayButton>
+      </div>
+    </form>
+  </RelayModal>
 </template>

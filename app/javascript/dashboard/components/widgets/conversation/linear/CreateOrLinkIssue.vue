@@ -49,47 +49,42 @@ const onClickTabChange = index => {
 </script>
 
 <template>
-  <div class="flex flex-col h-auto overflow-auto">
-    <woot-modal-header
-      :header-title="$t('INTEGRATION_SETTINGS.LINEAR.ADD_OR_LINK.TITLE')"
-      :header-content="
-        $t('INTEGRATION_SETTINGS.LINEAR.ADD_OR_LINK.DESCRIPTION')
-      "
-    />
-
-    <div class="flex flex-col h-auto overflow-auto">
-      <div class="flex flex-col px-8 pb-4 mt-1">
-        <woot-tabs
-          class="ltr:[&>ul]:pl-0 rtl:[&>ul]:pr-0 h-10"
-          :index="selectedTabIndex"
-          @change="onClickTabChange"
-        >
-          <woot-tabs-item
-            v-for="(tab, index) in tabs"
-            :key="tab.key"
-            :index="index"
-            :name="tab.name"
-            :show-badge="false"
-            is-compact
-          />
-        </woot-tabs>
-      </div>
-      <div v-if="selectedTabIndex === 0" class="flex flex-col px-8 pb-4">
-        <CreateIssue
-          :account-id="accountId"
-          :conversation-id="conversation.id"
-          :title="title"
-          @close="onClose"
+  <div class="flex flex-col gap-4">
+    <div class="flex gap-6 border-b border-border" role="tablist">
+      <button
+        v-for="(tab, index) in tabs"
+        :key="tab.key"
+        type="button"
+        role="tab"
+        :aria-selected="selectedTabIndex === index"
+        class="relative -mb-px px-1 pb-2.5 text-sm font-medium transition-colors"
+        :class="
+          selectedTabIndex === index
+            ? 'text-foreground'
+            : 'text-muted-foreground hover:text-foreground'
+        "
+        @click="onClickTabChange(index)"
+      >
+        {{ tab.name }}
+        <span
+          v-if="selectedTabIndex === index"
+          class="absolute inset-x-0 bottom-0 h-0.5 bg-primary"
+          aria-hidden="true"
         />
-      </div>
-
-      <div v-else class="flex flex-col px-8 pb-4">
-        <LinkIssue
-          :conversation-id="conversation.id"
-          :title="title"
-          @close="onClose"
-        />
-      </div>
+      </button>
     </div>
+    <CreateIssue
+      v-if="selectedTabIndex === 0"
+      :account-id="accountId"
+      :conversation-id="conversation.id"
+      :title="title"
+      @close="onClose"
+    />
+    <LinkIssue
+      v-else
+      :conversation-id="conversation.id"
+      :title="title"
+      @close="onClose"
+    />
   </div>
 </template>

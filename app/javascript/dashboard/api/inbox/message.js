@@ -106,6 +106,12 @@ class MessageApi extends ApiClient {
     return axios.get(`${this.url}/${conversationId}/messages`, { params });
   }
 
+  search({ conversationId, q }) {
+    return axios.get(`${this.url}/${conversationId}/messages/search`, {
+      params: { q },
+    });
+  }
+
   translateMessage(conversationId, messageId, targetLanguage) {
     return axios.post(
       `${this.url}/${conversationId}/messages/${messageId}/translate`,

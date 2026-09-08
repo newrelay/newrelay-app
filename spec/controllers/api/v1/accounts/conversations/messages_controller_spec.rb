@@ -189,6 +189,53 @@ RSpec.describe 'Conversation Messages API', type: :request do
     end
   end
 
+  describe 'GET /api/v1/accounts/{account.id}/conversations/:id/messages/search' do
+    let(:conversation) { create(:conversation, account: account) }
+
+    context 'when it is an unauthenticated user' do
+      it 'returns unauthorized' do
+        get "/api/v1/accounts/#{account.id}/conversations/#{conversation.display_id}/messages/search",
+            params: { q: 'hello' }
+
+        expect(response).to have_http_status(:unauthorized)
+      end
+    end
+
+    context 'when it is an authenticated user with access to conversation' do
+      let(:agent) { create(:user, account: account, role: :agent) }
+
+      before do
+        create(:inbox_member, inbox: conversation.inbox, user: agent)
+      end
+
+      it 'returns matching message ids newest first' do
+        older = create(:message, conversation: conversation, account: account, inbox: conversation.inbox, content: 'hello world')
+        newer = create(:message, conversation: conversation, account: account, inbox: conversation.inbox, content: 'hello again')
+        create(:message, conversation: conversation, account: account, inbox: conversation.inbox, content: 'unrelated')
+
+        get "/api/v1/accounts/#{account.id}/conversations/#{conversation.display_id}/messages/search",
+            params: { q: 'hello' },
+            headers: agent.create_new_auth_token,
+            as: :json
+
+        expect(response).to have_http_status(:success)
+        expect(response.parsed_body.dig('payload', 'ids')).to eq([newer.id, older.id])
+      end
+
+      it 'returns empty ids when the query is shorter than two characters' do
+        create(:message, conversation: conversation, account: account, inbox: conversation.inbox, content: 'ab')
+
+        get "/api/v1/accounts/#{account.id}/conversations/#{conversation.display_id}/messages/search",
+            params: { q: 'a' },
+            headers: agent.create_new_auth_token,
+            as: :json
+
+        expect(response).to have_http_status(:success)
+        expect(response.parsed_body.dig('payload', 'ids')).to eq([])
+      end
+    end
+  end
+
   describe 'DELETE /api/v1/accounts/{account.id}/conversations/:conversation_id/messages/:id' do
     let(:message) { create(:message, account: account, content_attributes: { bcc_emails: ['hello@chatwoot.com'] }) }
     let(:conversation) { message.conversation }

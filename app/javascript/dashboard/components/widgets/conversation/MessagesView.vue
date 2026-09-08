@@ -341,7 +341,7 @@ export default {
           this.isProgrammaticScroll = true;
           messageElement.scrollIntoView({ behavior: 'smooth' });
           this.fetchPreviousMessages();
-        } else {
+        } else if (!messageId) {
           this.scrollToBottom();
         }
       });

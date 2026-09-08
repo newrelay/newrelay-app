@@ -43,6 +43,16 @@ describe('#ConversationAPI', () => {
         }
       );
     });
+
+    it('#search', () => {
+      messageAPI.search({ conversationId: 12, q: 'hello' });
+      expect(axiosMock.get).toHaveBeenCalledWith(
+        `/api/v1/conversations/12/messages/search`,
+        {
+          params: { q: 'hello' },
+        }
+      );
+    });
   });
   describe('#buildCreatePayload', () => {
     it('builds form payload if file is available', () => {

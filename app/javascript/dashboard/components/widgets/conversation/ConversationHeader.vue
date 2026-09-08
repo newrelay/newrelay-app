@@ -1,8 +1,9 @@
 <script setup>
-import { computed, ref, nextTick } from 'vue';
+import { computed, ref, nextTick, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useStore } from 'vuex';
 import { useUISettings } from 'dashboard/composables/useUISettings';
+import { useConversationMessageSearch } from 'dashboard/composables/useConversationMessageSearch';
 import { useCallActions } from 'dashboard/composables/useCallSession';
 import MoreActions from './MoreActions.vue';
 import ConversationProfileSummary from './ConversationProfileSummary.vue';
@@ -28,6 +29,16 @@ const isSimulateCallDisabled = computed(
 const isMessageSearchOpen = ref(false);
 const messageSearchQuery = ref('');
 const messageSearchInput = ref(null);
+
+const {
+  matchCount,
+  activeIndex,
+  hasQuery,
+  search: searchMessages,
+  reset: resetMessageSearch,
+  goToNext,
+  goToPrevious,
+} = useConversationMessageSearch();
 
 const headerIconButtonClass =
   'size-8 shrink-0 border-transparent text-muted-foreground shadow-none hover:border-transparent hover:text-foreground focus-visible:ring-0';
@@ -61,7 +72,42 @@ const openMessageSearch = () => {
 const closeMessageSearch = () => {
   isMessageSearchOpen.value = false;
   messageSearchQuery.value = '';
+  resetMessageSearch();
 };
+
+const onSearchKeydown = event => {
+  if (event.key === 'Escape') {
+    closeMessageSearch();
+    return;
+  }
+  if (event.key === 'Enter' && event.shiftKey) {
+    event.preventDefault();
+    goToPrevious();
+    return;
+  }
+  if (event.key === 'Enter' || event.key === 'ArrowDown') {
+    event.preventDefault();
+    goToNext();
+    return;
+  }
+  if (event.key === 'ArrowUp') {
+    event.preventDefault();
+    goToPrevious();
+  }
+};
+
+watch(messageSearchQuery, value => {
+  searchMessages(props.chat?.id, value);
+});
+
+watch(
+  () => props.chat?.id,
+  () => {
+    if (isMessageSearchOpen.value) {
+      closeMessageSearch();
+    }
+  }
+);
 
 const toggleSidebar = () => {
   updateUISettings({
@@ -88,9 +134,9 @@ const toggleSidebar = () => {
       >
         <div
           v-if="isMessageSearchOpen"
-          class="absolute inset-y-0 left-0 right-0 z-10 flex items-center bg-card pr-2"
+          class="absolute inset-y-0 left-0 right-0 z-10 flex items-center gap-1 bg-card pr-2"
         >
-          <div class="relative w-full">
+          <div class="relative min-w-0 flex-1">
             <span
               class="i-lucide-search pointer-events-none absolute left-2.5 top-1/2 size-4 -translate-y-1/2 text-muted-foreground"
             />
@@ -99,18 +145,52 @@ const toggleSidebar = () => {
               v-model="messageSearchQuery"
               type="text"
               :placeholder="t('CONVERSATION.HEADER.SEARCH_PLACEHOLDER')"
-              class="reset-base no-margin box-border h-9 w-full rounded-md border border-border/80 bg-muted/30 pl-8 pr-8 text-[14px] text-foreground shadow-sm placeholder:text-muted-foreground/70 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary/30"
-              @keydown.esc="closeMessageSearch"
+              class="reset-base no-margin box-border h-9 w-full rounded-md border border-border/80 bg-muted/30 pl-8 pr-3 text-[14px] text-foreground shadow-sm placeholder:text-muted-foreground/70 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary/30"
+              @keydown="onSearchKeydown"
             />
-            <button
-              type="button"
-              class="reset-base absolute right-1 top-1/2 flex size-7 -translate-y-1/2 items-center justify-center rounded-sm border-0 bg-transparent p-0 text-muted-foreground transition-colors hover:bg-muted/50 hover:text-foreground"
-              :aria-label="t('CONVERSATION.HEADER.CLOSE')"
-              @click="closeMessageSearch"
-            >
-              <span class="i-lucide-x size-3.5" />
-            </button>
           </div>
+          <span
+            v-if="hasQuery"
+            class="shrink-0 px-1 text-[12px] tabular-nums text-muted-foreground"
+          >
+            {{
+              matchCount
+                ? t('CONVERSATION.HEADER.SEARCH_MATCHES', {
+                    current: activeIndex + 1,
+                    total: matchCount,
+                  })
+                : t('CONVERSATION.HEADER.SEARCH_NO_RESULTS')
+            }}
+          </span>
+          <RelayButton
+            variant="ghost"
+            size="icon"
+            :disabled="!matchCount"
+            :class="headerIconButtonClass"
+            :aria-label="t('CONVERSATION.HEADER.SEARCH_PREVIOUS')"
+            @click="goToPrevious"
+          >
+            <span class="i-lucide-chevron-up size-4" />
+          </RelayButton>
+          <RelayButton
+            variant="ghost"
+            size="icon"
+            :disabled="!matchCount"
+            :class="headerIconButtonClass"
+            :aria-label="t('CONVERSATION.HEADER.SEARCH_NEXT')"
+            @click="goToNext"
+          >
+            <span class="i-lucide-chevron-down size-4" />
+          </RelayButton>
+          <RelayButton
+            variant="ghost"
+            size="icon"
+            :class="headerIconButtonClass"
+            :aria-label="t('CONVERSATION.HEADER.CLOSE')"
+            @click="closeMessageSearch"
+          >
+            <span class="i-lucide-x size-4" />
+          </RelayButton>
         </div>
       </Transition>
     </div>

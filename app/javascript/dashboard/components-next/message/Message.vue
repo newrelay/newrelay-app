@@ -8,6 +8,7 @@ import { emitter } from 'shared/helpers/mitt';
 import { useRoute } from 'vue-router';
 import { useI18n } from 'vue-i18n';
 import { LocalStorage } from 'shared/helpers/localStorage';
+import { useConversationMessageSearch } from 'dashboard/composables/useConversationMessageSearch';
 import { ACCOUNT_EVENTS } from 'dashboard/helper/AnalyticsHelper/events';
 import { LOCAL_STORAGE_KEYS } from 'dashboard/constants/localStorage';
 import { BUS_EVENTS } from 'shared/constants/busEvents';
@@ -139,11 +140,21 @@ const props = defineProps({
 const emit = defineEmits(['retry']);
 
 const { t } = useI18n();
+const { activeMatchId, matchIds } = useConversationMessageSearch();
 const contextMenuPosition = ref({});
 const showBackgroundHighlight = ref(false);
 const showContextMenu = ref(false);
 const route = useRoute();
 const currentUser = useMapGetter('getCurrentUser');
+
+const isSearchHit = computed(() =>
+  matchIds.value.some(id => Number(id) === Number(props.id))
+);
+const isActiveSearchMatch = computed(
+  () =>
+    activeMatchId.value != null &&
+    Number(activeMatchId.value) === Number(props.id)
+);
 
 const STANDALONE_CARD_TYPES = [
   ATTACHMENT_TYPES.FILE,
@@ -537,6 +548,8 @@ provideMessageContext({
       {
         'group-with-next': shouldGroupWithNext,
         'bg-muted': showBackgroundHighlight,
+        'rounded-md bg-primary/10': isSearchHit && !isActiveSearchMatch,
+        'rounded-md bg-primary/20 ring-2 ring-primary/50': isActiveSearchMatch,
       },
     ]"
     :data-message-id="props.id"

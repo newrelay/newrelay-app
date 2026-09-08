@@ -5,6 +5,10 @@ class Api::V1::Accounts::Conversations::MessagesController < Api::V1::Accounts::
     @messages = message_finder.perform
   end
 
+  def search
+    render json: { payload: { ids: search_message_ids } }
+  end
+
   def create
     user = Current.user || @resource
     mb = Messages::MessageBuilder.new(user, @conversation, params)
@@ -62,6 +66,19 @@ class Api::V1::Accounts::Conversations::MessagesController < Api::V1::Accounts::
 
   def message_finder
     @message_finder ||= MessageFinder.new(@conversation, params)
+  end
+
+  def search_message_ids
+    query = params[:q].to_s.strip
+    return [] if query.length < 2
+
+    escaped = ActiveRecord::Base.sanitize_sql_like(query)
+    # ponytail: 200-match cap; page or raise the limit if agents need full-history find
+    @conversation.messages
+                 .where('content ILIKE :q OR processed_message_content ILIKE :q', q: "%#{escaped}%")
+                 .order(created_at: :desc)
+                 .limit(200)
+                 .pluck(:id)
   end
 
   def permitted_params

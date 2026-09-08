@@ -271,7 +271,7 @@ const handleContactSelect = contactId => {
 
     <div class="flex flex-col gap-3">
       <div class="flex items-center justify-between gap-3">
-        <h4 class="capitalize text-sm font-medium text-foreground">
+        <h4 class="text-sm font-medium text-foreground">
           {{ t('COMPANIES.DETAIL.SIDEBAR.TABS.CONTACTS') }}
         </h4>
         <span

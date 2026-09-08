@@ -283,7 +283,8 @@
       "IMPORT_HUBSPOT": "Import from HubSpot",
       "IMPORT_SALESFORCE": "Import from Salesforce",
       "SEARCH_EMPTY_TITLE": "No matches found",
-      "SEARCH_EMPTY_SUBTITLE": "We couldn't find any companies matching your search. Try clearing search or create a new company.",
+      "SEARCH_EMPTY_SUBTITLE": "We couldn't find any companies matching \"{query}\". Would you like to create a new company?",
+      "CLEAR_SEARCH": "Clear Search",
       "WHY_TITLE": "Why use Companies?",
       "WHY": {
         "ORGANIZE_TITLE": "Organize Contacts",
@@ -294,7 +295,9 @@
         "REVENUE_DESC": "See lifetime value, ARR, and financial health per company.",
         "TIMELINE_TITLE": "View Timeline",
         "TIMELINE_DESC": "Access a unified history of all emails, calls, and meetings."
-      }
+      },
+      "DEV_LOAD_DEMO": "Load Demo Companies instead",
+      "DEV_TOGGLE_EMPTY": "Toggle empty states"
     }
   },
   "COMPANIES_LAYOUT": {

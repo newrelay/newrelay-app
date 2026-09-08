@@ -10,10 +10,12 @@ import { useCompaniesStore } from 'dashboard/stores/companies';
 import CompaniesListLayout from 'dashboard/components-next/Companies/CompaniesListLayout.vue';
 import CompaniesTable from 'dashboard/components-next/Companies/CompaniesTable.vue';
 import CompanyEmptyState from 'dashboard/components-next/Companies/EmptyState/CompanyEmptyState.vue';
+import mockCompanies from 'dashboard/components-next/Companies/EmptyState/companyEmptyStateContent';
 import CompanyCreateDialog from 'dashboard/components-next/Companies/CompanyCreateDialog.vue';
 import CompanyImportDialog from 'dashboard/components-next/Companies/CompanyImportDialog.vue';
 import CompanyFiltersDrawer from 'dashboard/components-next/Companies/CompanyFiltersDrawer.vue';
 import Spinner from 'dashboard/components-next/spinner/Spinner.vue';
+import { RelayButton } from 'dashboard/components-next/relay';
 
 const DEFAULT_SORT_FIELD = 'name';
 const DEBOUNCE_DELAY = 300;
@@ -83,7 +85,11 @@ const buildSortAttr = () =>
 
 const sortParam = computed(() => buildSortAttr());
 
-const hasCompanies = computed(() => companies.value.length > 0);
+const showMockCompanies = ref(false);
+const hasRealCompanies = computed(() => companies.value.length > 0);
+const hasCompanies = computed(
+  () => showMockCompanies.value || hasRealCompanies.value
+);
 const isIndexFirstPage = computed(() => pageNumber.value === 1);
 const showEmptyStateLayout = computed(
   () =>
@@ -139,6 +145,10 @@ const displayedCompanies = computed(() => {
     activeFilters.value.every(filter => matchesFilter(company, filter))
   );
 });
+
+const listCompanies = computed(() =>
+  showMockCompanies.value ? mockCompanies : displayedCompanies.value
+);
 
 const updateURLParams = (page, search = '', sort = '') => {
   const query = {
@@ -233,6 +243,11 @@ const clearFilters = () => {
   activeFilters.value = [];
 };
 
+const clearSearch = () => {
+  searchValue.value = '';
+  fetchCompanies(1, '', sortParam.value);
+};
+
 const removeFilter = index => {
   activeFilters.value = activeFilters.value.filter((_, i) => i !== index);
 };
@@ -287,6 +302,7 @@ onMounted(() => {
       v-else-if="showEmptyStateLayout"
       @create="openCreateCompanyDialog"
       @import="openImportDialog"
+      @load-mock="showMockCompanies = true"
     />
 
     <div
@@ -298,21 +314,43 @@ onMounted(() => {
       >
         <span class="i-lucide-search size-6 text-muted-foreground" />
       </div>
-      <h3 class="capitalize text-lg font-medium text-foreground">
+      <h3 class="text-lg font-medium text-foreground">
         {{ t('COMPANIES.EMPTY_STATE.SEARCH_EMPTY_TITLE') }}
       </h3>
-      <p class="max-w-sm text-sm text-muted-foreground">
-        {{ t('COMPANIES.EMPTY_STATE.SEARCH_EMPTY_SUBTITLE') }}
+      <p v-if="searchQuery" class="max-w-sm text-sm text-muted-foreground">
+        {{
+          t('COMPANIES.EMPTY_STATE.SEARCH_EMPTY_SUBTITLE', {
+            query: searchQuery,
+          })
+        }}
       </p>
+      <div class="mt-4 flex items-center justify-center gap-3">
+        <RelayButton v-if="searchQuery" variant="outline" @click="clearSearch">
+          {{ t('COMPANIES.EMPTY_STATE.CLEAR_SEARCH') }}
+        </RelayButton>
+        <RelayButton
+          v-else-if="activeFilters.length"
+          variant="outline"
+          @click="clearFilters"
+        >
+          {{ t('COMPANIES.FILTERS.CLEAR') }}
+        </RelayButton>
+        <RelayButton class="gap-2 shadow-sm" @click="openCreateCompanyDialog">
+          {{ t('COMPANIES.ACTIONS.CREATE') }}
+        </RelayButton>
+      </div>
     </div>
 
     <CompaniesTable
       v-else
-      :companies="displayedCompanies"
+      :companies="listCompanies"
       :visible-columns="visibleColumns"
-      :current-page="pageNumber"
-      :total-items="Number(meta.totalCount || 0)"
+      :current-page="showMockCompanies ? 1 : pageNumber"
+      :total-items="
+        showMockCompanies ? mockCompanies.length : Number(meta.totalCount || 0)
+      "
       :items-per-page="25"
+      :is-preview="showMockCompanies"
       @show-company="showCompany"
       @update:current-page="onPageChange"
     />

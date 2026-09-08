@@ -17,6 +17,7 @@ import ContactEmptyState from 'dashboard/components-next/Contacts/EmptyState/Con
 import Spinner from 'dashboard/components-next/spinner/Spinner.vue';
 import ContactsTable from 'dashboard/components-next/Contacts/Pages/ContactsTable.vue';
 import mockContacts from 'dashboard/components-next/Contacts/EmptyState/contactEmptyStateContent';
+import CreateNewContactDialog from 'dashboard/components-next/Contacts/ContactsForm/CreateNewContactDialog.vue';
 import ContactsBulkActionBar from '../components/ContactsBulkActionBar.vue';
 import Popover from 'dashboard/components-next/popover/Popover.vue';
 import ColumnManager from 'dashboard/components-next/Contacts/ColumnManager.vue';
@@ -169,6 +170,20 @@ const emptyStateMessage = computed(() => {
   if (!searchQuery.value || hasAppliedFilters.value)
     return t('CONTACTS_LAYOUT.EMPTY_STATE.LIST_EMPTY_STATE_TITLE');
   return t('CONTACTS_LAYOUT.EMPTY_STATE.SEARCH_EMPTY_STATE_TITLE');
+});
+
+const tableEmptyMode = computed(() => {
+  if (!showEmptyText.value) return '';
+  if (searchQuery.value) return 'search';
+  if (hasAppliedFilters.value) return 'filters';
+  return 'list';
+});
+
+const tableEmptySubtitle = computed(() => {
+  if (!searchQuery.value) return '';
+  return t('CONTACTS_LAYOUT.EMPTY_STATE.SEARCH_EMPTY_STATE_SUBTITLE', {
+    query: searchQuery.value,
+  });
 });
 
 const visibleContactIds = computed(() =>
@@ -458,6 +473,17 @@ const handleSort = async ({ sort, order }) => {
     : fetchContacts());
 };
 
+const createNewContactDialogRef = ref(null);
+
+const openCreateContact = () => {
+  createNewContactDialogRef.value?.dialogRef.open();
+};
+
+const clearSearch = () => {
+  searchValue.value = '';
+  fetchContacts(1);
+};
+
 const createContact = async contact => {
   const i18nPrefix = 'CONTACTS_LAYOUT.HEADER.ACTIONS.CONTACT_CREATION';
   try {
@@ -616,23 +642,6 @@ onMounted(async () => {
           @load-mock="showMockContacts = true"
         />
 
-        <div
-          v-else-if="showEmptyText"
-          class="flex flex-col items-center justify-center space-y-3 py-16 text-center"
-        >
-          <div
-            class="flex size-12 items-center justify-center rounded-full bg-muted"
-          >
-            <span class="i-lucide-search size-6 text-muted-foreground" />
-          </div>
-          <h3 class="capitalize text-lg font-medium text-foreground">
-            {{ emptyStateMessage }}
-          </h3>
-          <p v-if="searchQuery" class="max-w-sm text-sm text-muted-foreground">
-            {{ t('CONTACTS_LAYOUT.EMPTY_STATE.SEARCH_EMPTY_STATE_SUBTITLE') }}
-          </p>
-        </div>
-
         <div v-else class="flex flex-col">
           <ContactsTable
             :contacts="listContacts"
@@ -641,9 +650,19 @@ onMounted(async () => {
             :active-sort="sortState.activeSort"
             :active-ordering="sortState.activeOrdering"
             :is-preview="showMockContacts"
+            :empty-mode="tableEmptyMode"
+            :empty-title="emptyStateMessage"
+            :empty-subtitle="tableEmptySubtitle"
             @toggle-contact="toggleContactSelection"
             @toggle-all="toggleSelectAll"
             @update:sort="handleSort"
+            @clear-search="clearSearch"
+            @add-contact="openCreateContact"
+            @clear-filters="() => fetchContacts(1)"
+          />
+          <CreateNewContactDialog
+            ref="createNewContactDialogRef"
+            @create="createContact"
           />
           <RelayDeleteConfirmModal
             v-if="selectedCount"

@@ -80,16 +80,9 @@ const showInitialLoadingState = computed(
 
 const emptyValue = computed(() => t('COMPANIES.EMPTY_VALUE'));
 const attrs = computed(() => company.value?.additionalAttributes || {});
-const displayName = computed(
-  () => company.value?.name || t('COMPANIES.UNNAMED')
-);
 const aboutText = computed(() => {
-  const name = displayName.value;
-  const fallback = t('COMPANIES.DETAIL.ABOUT.FALLBACK', { name });
-  if (company.value?.description) {
-    return `${company.value.description} ${fallback}`;
-  }
-  return fallback;
+  if (company.value?.description) return company.value.description;
+  return t('COMPANIES.DETAIL.DESCRIPTION.EMPTY');
 });
 
 const websiteHref = computed(() => {
@@ -357,7 +350,7 @@ onBeforeUnmount(() => {
             class="relative -mb-px h-full px-1 text-[14px] font-medium transition-colors"
             :class="
               activeTab === tab.value
-                ? 'text-foreground'
+                ? 'text-primary'
                 : 'text-muted-foreground hover:text-foreground'
             "
             @click="activeTab = tab.value"
@@ -401,7 +394,7 @@ onBeforeUnmount(() => {
                     <span class="i-lucide-building size-4 text-foreground/70" />
                   </div>
                   <h3
-                    class="capitalize text-base font-medium tracking-tight text-foreground"
+                    class="text-base font-medium tracking-tight text-foreground"
                   >
                     {{ t('COMPANIES.DETAIL.ABOUT.TITLE') }}
                   </h3>
@@ -424,7 +417,7 @@ onBeforeUnmount(() => {
                       />
                     </div>
                     <h3
-                      class="capitalize text-base font-medium tracking-tight text-foreground"
+                      class="text-base font-medium tracking-tight text-foreground"
                     >
                       {{ t('COMPANIES.DETAIL.DETAILS_CARD.TITLE') }}
                     </h3>
@@ -640,7 +633,7 @@ onBeforeUnmount(() => {
                     />
                   </div>
                   <h3
-                    class="capitalize text-base font-medium tracking-tight text-foreground"
+                    class="text-base font-medium tracking-tight text-foreground"
                   >
                     {{ t('COMPANIES.DETAIL.DESCRIPTION.TITLE') }}
                   </h3>
@@ -648,7 +641,7 @@ onBeforeUnmount(() => {
                 <p class="text-[14px] leading-relaxed text-muted-foreground">
                   {{
                     company.description ||
-                    t('COMPANIES.DETAIL.DESCRIPTION.FALLBACK')
+                    t('COMPANIES.DETAIL.DESCRIPTION.EMPTY')
                   }}
                 </p>
               </div>
@@ -683,7 +676,7 @@ onBeforeUnmount(() => {
                 <div class="mb-6 flex items-center gap-2">
                   <span class="i-lucide-bar-chart-2 size-4 text-primary" />
                   <h3
-                    class="capitalize text-base font-medium tracking-tight text-foreground"
+                    class="text-base font-medium tracking-tight text-foreground"
                   >
                     {{ t('COMPANIES.DETAIL.SUMMARY.TITLE') }}
                   </h3>
@@ -704,7 +697,7 @@ onBeforeUnmount(() => {
                       {{ t('COMPANIES.DETAIL.SUMMARY.DEALS') }}
                     </span>
                     <span class="text-xl font-bold text-foreground">
-                      {{ 0 }}
+                      {{ t('REPORT.DATA_PENDING') }}
                     </span>
                   </div>
                   <div class="flex flex-col gap-1.5">
@@ -712,7 +705,7 @@ onBeforeUnmount(() => {
                       {{ t('COMPANIES.DETAIL.SUMMARY.OPEN_TASKS') }}
                     </span>
                     <span class="text-xl font-bold text-foreground">
-                      {{ 0 }}
+                      {{ t('REPORT.DATA_PENDING') }}
                     </span>
                   </div>
                 </div>
@@ -725,7 +718,7 @@ onBeforeUnmount(() => {
                   <div class="flex items-center gap-2">
                     <span class="i-lucide-users size-4 text-primary" />
                     <h3
-                      class="capitalize text-base font-medium tracking-tight text-foreground"
+                      class="text-base font-medium tracking-tight text-foreground"
                     >
                       {{ t('COMPANIES.DETAIL.RECENT_CONTACTS.TITLE') }}
                     </h3>
@@ -745,7 +738,7 @@ onBeforeUnmount(() => {
                   class="flex flex-col space-y-5"
                 >
                   <button
-                    v-for="(contact, index) in recentContacts"
+                    v-for="contact in recentContacts"
                     :key="contact.id"
                     type="button"
                     class="flex w-full items-center justify-between text-left"
@@ -770,7 +763,7 @@ onBeforeUnmount(() => {
                       </div>
                     </div>
                     <RelayBadge
-                      v-if="index === 0"
+                      v-if="contact.role === 'owner'"
                       variant="secondary"
                       class="rounded-full border-transparent bg-primary/10 px-2.5 font-medium text-primary hover:bg-primary/20"
                     >
@@ -790,7 +783,7 @@ onBeforeUnmount(() => {
                   <div class="flex items-center gap-2">
                     <span class="i-lucide-activity size-4 text-primary" />
                     <h3
-                      class="capitalize text-base font-medium tracking-tight text-foreground"
+                      class="text-base font-medium tracking-tight text-foreground"
                     >
                       {{ t('COMPANIES.DETAIL.ACTIVITY.TITLE') }}
                     </h3>

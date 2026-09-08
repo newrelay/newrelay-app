@@ -2,6 +2,7 @@
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import Avatar from 'dashboard/components-next/avatar/Avatar.vue';
+import { RelayButton } from 'dashboard/components-next/relay';
 
 const props = defineProps({
   companies: { type: Array, required: true },
@@ -20,6 +21,7 @@ const props = defineProps({
   currentPage: { type: Number, default: 1 },
   totalItems: { type: Number, default: 0 },
   itemsPerPage: { type: Number, default: 25 },
+  isPreview: { type: Boolean, default: false },
 });
 
 const emit = defineEmits(['showCompany', 'update:currentPage']);
@@ -54,6 +56,7 @@ const websiteHref = company => {
 };
 
 const openCompany = id => {
+  if (props.isPreview) return;
   emit('showCompany', id);
 };
 </script>
@@ -184,22 +187,24 @@ const openCompany = id => {
         }}
       </span>
       <div class="flex items-center gap-1.5">
-        <button
-          type="button"
-          class="h-7 rounded-md px-3 text-xs font-medium transition-colors hover:bg-accent disabled:pointer-events-none disabled:opacity-40"
+        <RelayButton
+          variant="ghost"
+          size="sm"
+          class="h-7 px-3 text-xs"
           :disabled="isFirstPage"
           @click="emit('update:currentPage', currentPage - 1)"
         >
           {{ t('COMPANIES_LAYOUT.PAGINATION_FOOTER.PREVIOUS') }}
-        </button>
-        <button
-          type="button"
-          class="h-7 rounded-md px-3 text-xs font-medium transition-colors hover:bg-accent disabled:pointer-events-none disabled:opacity-40"
+        </RelayButton>
+        <RelayButton
+          variant="ghost"
+          size="sm"
+          class="h-7 px-3 text-xs"
           :disabled="isLastPage"
           @click="emit('update:currentPage', currentPage + 1)"
         >
           {{ t('COMPANIES_LAYOUT.PAGINATION_FOOTER.NEXT') }}
-        </button>
+        </RelayButton>
       </div>
     </div>
   </div>

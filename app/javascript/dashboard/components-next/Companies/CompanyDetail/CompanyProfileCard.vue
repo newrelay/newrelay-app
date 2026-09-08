@@ -136,7 +136,7 @@ const commitNameEdit = async () => {
           <div class="flex items-center gap-3">
             <h2
               v-if="!isEditingName"
-              class="capitalize group flex cursor-pointer items-center gap-2 text-base font-medium tracking-tight text-foreground"
+              class="group flex cursor-pointer items-center gap-2 text-xl font-bold tracking-tight text-foreground"
               @click="isEditingName = true"
             >
               {{ displayName }}
@@ -148,7 +148,7 @@ const commitNameEdit = async () => {
               v-else
               v-model="nameDraft"
               type="text"
-              class="border border-border bg-background px-2 py-0.5 text-xl font-bold text-foreground focus:outline-none focus:ring-1 focus:ring-primary/50 text-[14px] shadow-sm rounded-md border-border/80 focus-visible:ring-1 focus-visible:ring-primary/30"
+              class="rounded-md border border-border bg-background px-2 py-0.5 text-xl font-bold text-foreground shadow-sm focus:outline-none focus:ring-1 focus:ring-primary/50"
               @blur="commitNameEdit"
               @keyup.enter="commitNameEdit"
             />

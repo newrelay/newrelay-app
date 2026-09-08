@@ -58,9 +58,7 @@ const propertyLabel = property => {
   <div class="flex flex-col gap-6">
     <div class="flex items-center justify-between">
       <div>
-        <h1
-          class="capitalize text-[16px] font-[500] tracking-tight text-foreground"
-        >
+        <h1 class="text-base font-medium tracking-tight text-foreground">
           {{ headerTitle }}
         </h1>
         <p v-if="headerSubtitle" class="mt-1.5 text-sm text-muted-foreground">
@@ -94,7 +92,7 @@ const propertyLabel = property => {
           />
           <RelayInput
             type="search"
-            class-name="h-9 w-full rounded-lg border-border/60 bg-card pl-9 text-sm shadow-sm"
+            class-name="h-10 w-full rounded-lg border-border/60 bg-card pl-9 text-sm shadow-sm"
             :model-value="searchValue"
             :placeholder="t('COMPANIES.SEARCH_PLACEHOLDER')"
             @update:model-value="emit('search', $event)"

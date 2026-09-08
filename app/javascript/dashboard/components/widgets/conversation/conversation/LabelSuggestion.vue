@@ -158,16 +158,16 @@ export default {
 <template>
   <li
     v-if="shouldShowSuggestions"
-    class="label-suggestion right list-none"
+    class="mt-4 flex list-none flex-row justify-end"
     @mouseover="isHovered = true"
     @mouseleave="isHovered = false"
   >
-    <div class="wrap">
-      <div class="label-suggestion--container">
-        <h6 class="label-suggestion--title">
+    <div class="flex">
+      <div class="max-w-[300px]">
+        <h6 class="mt-0.5 text-[10px] font-medium text-muted-foreground">
           {{ $t('LABEL_MGMT.SUGGESTIONS.SUGGESTED_LABELS') }}
         </h6>
-        <div class="label-suggestion--options">
+        <div class="flex items-center gap-0.5 text-end">
           <RelayTooltip
             v-for="label in preparedLabels"
             :key="label.title"
@@ -180,16 +180,21 @@ export default {
             side="top"
           >
             <button
-              class="label-suggestion--option !px-0"
+              type="button"
+              class="inline-flex h-6 items-center gap-1.5 rounded-full border border-dashed border-border px-2.5 text-[11px] font-medium text-muted-foreground"
+              :class="
+                selectedLabels.includes(label.title)
+                  ? 'border-transparent bg-primary text-primary-foreground'
+                  : ''
+              "
               @click="pushOrAddLabel(label.title)"
             >
-              <woot-label
-                variant="dashed"
-                v-bind="label"
-                :bg-color="
-                  selectedLabels.includes(label.title) ? '#2781F6' : ''
-                "
+              <span
+                v-if="!selectedLabels.includes(label.title)"
+                class="size-2 shrink-0 rounded-sm"
+                :style="{ background: label.color }"
               />
+              {{ label.title }}
             </button>
           </RelayTooltip>
           <RelayTooltip
@@ -240,7 +245,7 @@ export default {
           </RelayTooltip>
         </div>
       </div>
-      <div class="sender--info has-tooltip" data-original-title="null">
+      <div class="flex items-center">
         <RelayTooltip
           :content="{
             content: replaceInstallationName(
@@ -256,34 +261,3 @@ export default {
     </div>
   </li>
 </template>
-
-<style scoped lang="scss">
-.wrap {
-  display: flex;
-}
-
-.label-suggestion {
-  flex-direction: row;
-  justify-content: flex-end;
-  margin-top: 1rem;
-
-  .label-suggestion--container {
-    max-width: 300px;
-  }
-
-  .label-suggestion--options {
-    @apply gap-0.5 text-end flex items-center;
-
-    button.label-suggestion--option {
-      .label {
-        cursor: pointer;
-        margin-bottom: 0;
-      }
-    }
-  }
-
-  .label-suggestion--title {
-    @apply text-muted-foreground mt-0.5 text-xxs;
-  }
-}
-</style>

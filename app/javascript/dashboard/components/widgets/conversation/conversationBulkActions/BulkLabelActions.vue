@@ -123,7 +123,7 @@ const handleDismiss = () => {
     <RelayTooltip v-if="!isTypeContact" :content="tooltipLabel">
       <NextButton
         :label="buttonLabel"
-        :icon="isRemoveAction ? 'i-woot-tag-remove' : 'i-lucide-tag'"
+        :icon="isRemoveAction ? 'i-lucide-tag-off' : 'i-lucide-tag'"
         slate
         size="xs"
         ghost
@@ -141,7 +141,7 @@ const handleDismiss = () => {
       @click="toggleDropdown()"
     >
       <span
-        :class="isRemoveAction ? 'i-woot-tag-remove' : 'i-lucide-tag'"
+        :class="isRemoveAction ? 'i-lucide-tag-off' : 'i-lucide-tag'"
         class="size-3.5 shrink-0"
       />
       {{ buttonLabel }}

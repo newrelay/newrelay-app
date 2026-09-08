@@ -54,7 +54,7 @@ const handleCopy = async e => {
     @click="handlePreview"
   >
     <h4
-      class="capitalize w-full mb-0 -mx-1 text-sm rounded-sm ltr:text-left rtl:text-right text-foreground hover:underline group-hover:underline"
+      class="w-full mb-0 -mx-1 text-sm rounded-sm ltr:text-left rtl:text-right text-foreground hover:underline group-hover:underline"
     >
       {{ title }}
     </h4>

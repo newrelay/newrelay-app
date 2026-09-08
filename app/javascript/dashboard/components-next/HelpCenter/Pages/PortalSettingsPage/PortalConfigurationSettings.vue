@@ -143,7 +143,7 @@ const openDomainDialog = () => {
   <div class="mt-4 rounded-xl border border-border bg-muted/10 p-5">
     <div class="flex flex-col items-start justify-between gap-4 sm:flex-row">
       <div class="flex-1 space-y-2">
-        <h3 class="capitalize text-[14px] font-semibold text-foreground">
+        <h3 class="text-[14px] font-semibold text-foreground">
           {{
             t(
               'HELP_CENTER.PORTAL_SETTINGS.CONFIGURATION_FORM.CUSTOM_DOMAIN.HEADER'

@@ -212,21 +212,28 @@ const isTabActive = value => activeTabValue.value === value;
     class="flex w-full flex-col justify-between gap-4 sm:flex-row sm:items-center"
   >
     <div class="flex flex-wrap items-center gap-4">
-      <div class="flex flex-wrap items-center gap-5 text-[14px]">
+      <div class="flex items-center gap-5 text-[14px]" role="tablist">
         <button
           v-for="tab in tabs"
           :key="tab.value"
           type="button"
-          class="transition-colors"
+          role="tab"
+          :aria-selected="isTabActive(tab.value)"
+          class="relative pb-2.5 font-medium whitespace-nowrap transition-colors"
           :class="
             isTabActive(tab.value)
-              ? 'font-medium text-primary'
+              ? 'text-foreground'
               : 'text-muted-foreground hover:text-foreground'
           "
           @click="handleTabChange(tab)"
         >
           {{ tab.label }}
           <span v-if="tab.count != null">({{ tab.count }})</span>
+          <span
+            v-if="isTabActive(tab.value)"
+            class="absolute inset-x-0 bottom-0 h-0.5 bg-primary"
+            aria-hidden="true"
+          />
         </button>
       </div>
 

@@ -200,7 +200,7 @@ const handleClick = id => {
 
       <div class="flex min-w-0 flex-1 flex-col gap-1.5">
         <h3
-          class="capitalize truncate text-[15px] font-normal text-foreground transition-colors group-hover:text-primary"
+          class="truncate text-[15px] font-normal text-foreground transition-colors group-hover:text-primary"
         >
           {{ title }}
         </h3>

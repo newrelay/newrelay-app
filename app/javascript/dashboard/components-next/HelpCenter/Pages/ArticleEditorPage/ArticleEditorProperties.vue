@@ -57,7 +57,7 @@ onMounted(() => {
     <div
       class="mb-1 flex items-center justify-between border-b border-border/40 px-2.5 py-2"
     >
-      <h3 class="capitalize text-[13.5px] font-medium text-foreground">
+      <h3 class="text-[13.5px] font-medium text-foreground">
         {{
           t(
             'HELP_CENTER.EDIT_ARTICLE_PAGE.ARTICLE_PROPERTIES.ARTICLE_PROPERTIES'

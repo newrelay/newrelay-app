@@ -69,7 +69,7 @@ const togglePortalSwitcher = () => {
           <OnClickOutside @trigger="showPortalSwitcher = false">
             <RelayButton
               variant="outline"
-              class="h-9 px-3 text-[14px] font-medium"
+              class="h-9 px-3 text-[14px] font-medium border-border/60 shadow-sm bg-background hover:bg-accent"
               @click="togglePortalSwitcher"
             >
               {{ activePortalName }}

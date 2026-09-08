@@ -169,9 +169,7 @@ defineExpose({
   <div
     class="flex w-full flex-col gap-6 rounded-2xl border border-border/40 bg-card p-6 shadow-sm"
   >
-    <h2
-      class="capitalize flex items-center gap-2 text-base font-medium text-foreground"
-    >
+    <h2 class="flex items-center gap-2 text-base font-medium text-foreground">
       <span
         class="i-lucide-paintbrush size-4 text-primary"
         aria-hidden="true"
@@ -225,7 +223,7 @@ defineExpose({
 
     <div class="space-y-4 border-t border-border/40 pt-6">
       <div class="space-y-1">
-        <h3 class="capitalize text-[14px] font-semibold text-foreground">
+        <h3 class="text-[14px] font-semibold text-foreground">
           {{ t('HELP_CENTER.PORTAL_SETTINGS.LAYOUT_CONTENT.HEADER') }}
         </h3>
         <p class="text-[13px] text-muted-foreground">
@@ -358,7 +356,7 @@ defineExpose({
         class="mt-2 space-y-4 border-t border-border/40 pt-6"
       >
         <div class="space-y-1">
-          <h3 class="capitalize text-[14px] font-semibold text-foreground">
+          <h3 class="text-[14px] font-semibold text-foreground">
             {{
               t(
                 'HELP_CENTER.PORTAL_SETTINGS.LAYOUT_CONTENT.SOCIAL_LINKS.HEADER'

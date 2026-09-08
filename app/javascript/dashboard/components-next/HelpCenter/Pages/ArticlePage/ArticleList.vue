@@ -201,7 +201,9 @@ watch(
     @end="onDragEnd"
   >
     <template #item="{ element }">
-      <li class="list-none">
+      <li
+        class="list-none [&.article-ghost-class]:bg-muted [&.article-ghost-class]:opacity-50"
+      >
         <ArticleCard
           :id="element.id"
           :key="element.id"
@@ -224,9 +226,3 @@ watch(
     </template>
   </Draggable>
 </template>
-
-<style lang="scss" scoped>
-.article-ghost-class {
-  @apply bg-muted opacity-50;
-}
-</style>

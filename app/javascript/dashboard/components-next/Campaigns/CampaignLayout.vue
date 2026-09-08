@@ -21,29 +21,28 @@ const handleButtonClick = () => {
 </script>
 
 <template>
-  <section class="flex flex-col w-full h-full overflow-hidden bg-background">
-    <header
-      class="sticky top-0 z-10 px-8 border-b border-border/60 bg-background/80 backdrop-blur-md shrink-0"
-    >
-      <div class="w-full max-w-7xl mx-auto">
-        <div class="flex items-center justify-between w-full h-16 gap-4">
-          <h1
-            class="capitalize text-[16px] font-[500] tracking-tight text-foreground"
-          >
+  <section
+    class="flex flex-col w-full h-full overflow-hidden bg-background/50 animate-in fade-in duration-300"
+  >
+    <div class="flex-1 overflow-y-auto px-8 py-8">
+      <div class="w-full max-w-7xl mx-auto flex flex-col gap-6">
+        <!-- Header -->
+        <div
+          class="flex flex-col sm:flex-row sm:items-center justify-between gap-4"
+        >
+          <h1 class="text-[20px] font-medium tracking-tight text-foreground">
             {{ headerTitle }}
           </h1>
           <div
             v-on-click-outside="[
               () => emit('close'),
-              // This will prevent closing the modal when the editor Create link popup is open
               { ignore: ['dialog.ProseMirror-prompt-backdrop'] },
             ]"
             class="relative group/campaign-button"
           >
             <RelayButton
               variant="default"
-              size="sm"
-              class="h-9 gap-2 font-medium shadow-xs"
+              class="h-10 px-4 text-[13.5px] font-medium gap-2 shadow-sm"
               @click="handleButtonClick"
             >
               <span class="i-lucide-plus size-4" />
@@ -52,15 +51,10 @@ const handleButtonClick = () => {
             <slot name="action" />
           </div>
         </div>
-      </div>
-    </header>
 
-    <main
-      class="flex-1 flex flex-col min-h-0 px-8 py-8 overflow-y-auto bg-background/50"
-    >
-      <div class="w-full max-w-7xl mx-auto flex-1 flex flex-col">
+        <!-- Content -->
         <slot name="default" />
       </div>
-    </main>
+    </div>
   </section>
 </template>

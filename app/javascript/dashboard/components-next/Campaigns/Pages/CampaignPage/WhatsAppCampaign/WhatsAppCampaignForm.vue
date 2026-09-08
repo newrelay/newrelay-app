@@ -5,11 +5,23 @@ import { useVuelidate } from '@vuelidate/core';
 import { required, minLength } from '@vuelidate/validators';
 import { useMapGetter } from 'dashboard/composables/store';
 
-import Input from 'dashboard/components-next/input/Input.vue';
-import Button from 'dashboard/components-next/button/Button.vue';
+import {
+  RelayButton,
+  RelayInput,
+  RelayLabel,
+  RELAY_FORM_FIELD_CLASS,
+  RELAY_FORM_LABEL_CLASS,
+} from 'dashboard/components-next/relay';
 import ComboBox from 'dashboard/components-next/combobox/ComboBox.vue';
 import TagMultiSelectComboBox from 'dashboard/components-next/combobox/TagMultiSelectComboBox.vue';
 import WhatsAppTemplateParser from 'dashboard/components-next/whatsapp/WhatsAppTemplateParser.vue';
+
+defineProps({
+  showActionButtons: {
+    type: Boolean,
+    default: true,
+  },
+});
 
 const emit = defineEmits(['submit', 'cancel']);
 
@@ -168,22 +180,36 @@ watch(
     state.templateId = null;
   }
 );
+
+defineExpose({
+  submit: handleSubmit,
+  prepareCampaignDetails,
+  isSubmitDisabled,
+});
 </script>
 
 <template>
-  <form class="flex flex-col gap-4" @submit.prevent="handleSubmit">
-    <Input
-      v-model="state.title"
-      :label="t('CAMPAIGN.WHATSAPP.CREATE.FORM.TITLE.LABEL')"
-      :placeholder="t('CAMPAIGN.WHATSAPP.CREATE.FORM.TITLE.PLACEHOLDER')"
-      :message="formErrors.title"
-      :message-type="formErrors.title ? 'error' : 'info'"
-    />
+  <form class="flex flex-col gap-5" @submit.prevent="handleSubmit">
+    <!-- Title -->
+    <div :class="RELAY_FORM_FIELD_CLASS">
+      <RelayLabel :class="RELAY_FORM_LABEL_CLASS">
+        {{ t('CAMPAIGN.WHATSAPP.CREATE.FORM.TITLE.LABEL') }}
+      </RelayLabel>
+      <RelayInput
+        v-model="state.title"
+        :placeholder="t('CAMPAIGN.WHATSAPP.CREATE.FORM.TITLE.PLACEHOLDER')"
+        class-name="h-10 text-[14px] shadow-sm rounded-md border-border/80 bg-muted/30 focus-visible:bg-background focus-visible:ring-1 focus-visible:ring-primary/30 placeholder:text-muted-foreground/60"
+      />
+      <p v-if="formErrors.title" class="text-[12px] text-destructive">
+        {{ formErrors.title }}
+      </p>
+    </div>
 
-    <div class="flex flex-col gap-1.5">
-      <label for="inbox" class="text-foreground text-[13.5px] font-medium">
+    <!-- Select Inbox -->
+    <div :class="RELAY_FORM_FIELD_CLASS">
+      <RelayLabel :class="RELAY_FORM_LABEL_CLASS">
         {{ t('CAMPAIGN.WHATSAPP.CREATE.FORM.INBOX.LABEL') }}
-      </label>
+      </RelayLabel>
       <ComboBox
         id="inbox"
         v-model="state.inboxId"
@@ -191,14 +217,15 @@ watch(
         :has-error="!!formErrors.inbox"
         :placeholder="t('CAMPAIGN.WHATSAPP.CREATE.FORM.INBOX.PLACEHOLDER')"
         :message="formErrors.inbox"
-        class="[&>div>button]:bg-black/10 [&>div>button:not(.focused)]:dark:outline-border [&>div>button:not(.focused)]:hover:!outline-border"
+        class="[&>div>button]:bg-muted/30 [&>div>button:not(.focused)]:dark:outline-border [&>div>button:not(.focused)]:hover:!outline-border"
       />
     </div>
 
-    <div class="flex flex-col gap-1.5">
-      <label for="template" class="text-foreground text-[13.5px] font-medium">
+    <!-- WhatsApp Template -->
+    <div :class="RELAY_FORM_FIELD_CLASS">
+      <RelayLabel :class="RELAY_FORM_LABEL_CLASS">
         {{ t('CAMPAIGN.WHATSAPP.CREATE.FORM.TEMPLATE.LABEL') }}
-      </label>
+      </RelayLabel>
       <ComboBox
         id="template"
         v-model="state.templateId"
@@ -206,9 +233,9 @@ watch(
         :has-error="!!formErrors.template"
         :placeholder="t('CAMPAIGN.WHATSAPP.CREATE.FORM.TEMPLATE.PLACEHOLDER')"
         :message="formErrors.template"
-        class="[&>div>button]:bg-black/10 [&>div>button:not(.focused)]:dark:outline-border [&>div>button:not(.focused)]:hover:!outline-border"
+        class="[&>div>button]:bg-muted/30 [&>div>button:not(.focused)]:dark:outline-border [&>div>button:not(.focused)]:hover:!outline-border"
       />
-      <p class="mt-1 text-xs text-muted-foreground">
+      <p class="text-[12px] text-muted-foreground">
         {{ t('CAMPAIGN.WHATSAPP.CREATE.FORM.TEMPLATE.INFO') }}
       </p>
     </div>
@@ -220,10 +247,11 @@ watch(
       :template="selectedTemplate"
     />
 
-    <div class="flex flex-col gap-1.5">
-      <label for="audience" class="text-foreground text-[13.5px] font-medium">
+    <!-- Audience -->
+    <div :class="RELAY_FORM_FIELD_CLASS">
+      <RelayLabel :class="RELAY_FORM_LABEL_CLASS">
         {{ t('CAMPAIGN.WHATSAPP.CREATE.FORM.AUDIENCE.LABEL') }}
-      </label>
+      </RelayLabel>
       <TagMultiSelectComboBox
         v-model="state.selectedAudience"
         :options="audienceList"
@@ -231,36 +259,49 @@ watch(
         :placeholder="t('CAMPAIGN.WHATSAPP.CREATE.FORM.AUDIENCE.PLACEHOLDER')"
         :has-error="!!formErrors.audience"
         :message="formErrors.audience"
-        class="[&>div>button]:bg-black/10"
+        class="[&>div>button]:bg-muted/30"
       />
     </div>
 
-    <Input
-      v-model="state.scheduledAt"
-      :label="t('CAMPAIGN.WHATSAPP.CREATE.FORM.SCHEDULED_AT.LABEL')"
-      type="datetime-local"
-      :min="currentDateTime"
-      :placeholder="t('CAMPAIGN.WHATSAPP.CREATE.FORM.SCHEDULED_AT.PLACEHOLDER')"
-      :message="formErrors.scheduledAt"
-      :message-type="formErrors.scheduledAt ? 'error' : 'info'"
-    />
+    <!-- Scheduled time -->
+    <div :class="RELAY_FORM_FIELD_CLASS">
+      <RelayLabel :class="RELAY_FORM_LABEL_CLASS">
+        {{ t('CAMPAIGN.WHATSAPP.CREATE.FORM.SCHEDULED_AT.LABEL') }}
+      </RelayLabel>
+      <RelayInput
+        v-model="state.scheduledAt"
+        type="datetime-local"
+        :min="currentDateTime"
+        :placeholder="
+          t('CAMPAIGN.WHATSAPP.CREATE.FORM.SCHEDULED_AT.PLACEHOLDER')
+        "
+        class-name="h-10 text-[14px] shadow-sm rounded-md border-border/80 bg-muted/30 focus-visible:bg-background focus-visible:ring-1 focus-visible:ring-primary/30"
+      />
+      <p v-if="formErrors.scheduledAt" class="text-[12px] text-destructive">
+        {{ formErrors.scheduledAt }}
+      </p>
+    </div>
 
-    <div class="flex gap-3 justify-between items-center w-full">
-      <Button
-        variant="faded"
-        color="slate"
+    <!-- Action buttons (inline fallback) -->
+    <div
+      v-if="showActionButtons"
+      class="flex items-center gap-3 pt-2 border-t border-border/60"
+    >
+      <RelayButton
         type="button"
-        :label="t('CAMPAIGN.WHATSAPP.CREATE.FORM.BUTTONS.CANCEL')"
-        class="w-full bg-accent text-primary hover:bg-accent"
+        variant="outline"
+        class="flex-1 h-10 bg-muted/30 text-foreground border-border/80 shadow-sm"
         @click="handleCancel"
-      />
-      <Button
-        :label="t('CAMPAIGN.WHATSAPP.CREATE.FORM.BUTTONS.CREATE')"
-        class="w-full"
+      >
+        {{ t('CAMPAIGN.WHATSAPP.CREATE.FORM.BUTTONS.CANCEL') }}
+      </RelayButton>
+      <RelayButton
         type="submit"
-        :is-loading="isCreating"
+        class="flex-1 h-10 shadow-sm"
         :disabled="isCreating || isSubmitDisabled"
-      />
+      >
+        {{ t('CAMPAIGN.WHATSAPP.CREATE.FORM.BUTTONS.CREATE') }}
+      </RelayButton>
     </div>
   </form>
 </template>

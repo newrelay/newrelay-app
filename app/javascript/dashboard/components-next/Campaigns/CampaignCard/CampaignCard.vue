@@ -91,7 +91,7 @@ const inboxIcon = computed(() => {
 
 <template>
   <div
-    class="group flex items-center justify-between gap-4 p-5 rounded-xl border border-border bg-card shadow-sm transition-colors hover:border-border/80"
+    class="group flex items-center justify-between gap-4 p-5 rounded-xl border border-border bg-card shadow-sm transition-colors hover:border-border/80 cursor-default"
   >
     <div class="flex flex-col items-start flex-1 min-w-0">
       <div class="flex items-center gap-3 mb-2.5 w-fit">
@@ -132,8 +132,7 @@ const inboxIcon = computed(() => {
       <RelayButton
         v-if="isLiveChatType"
         variant="ghost"
-        size="sm"
-        class="size-8 p-0 bg-muted/50 text-muted-foreground hover:text-foreground border border-border hover:border-transparent"
+        class="size-8 p-0 bg-muted/50 text-muted-foreground hover:text-foreground border border-transparent hover:border-transparent"
         :title="t('CAMPAIGN.LIVE_CHAT.EDIT.TITLE')"
         @click="emit('edit')"
       >
@@ -141,8 +140,7 @@ const inboxIcon = computed(() => {
       </RelayButton>
       <RelayButton
         variant="ghost"
-        size="sm"
-        class="size-8 p-0 bg-destructive/10 text-destructive/70 hover:bg-destructive/20 hover:text-destructive border border-border hover:border-transparent"
+        class="size-8 p-0 bg-destructive/10 text-destructive/70 hover:bg-destructive/20 hover:text-destructive border border-transparent hover:border-transparent"
         :title="t('CAMPAIGN.CONFIRM_DELETE.CONFIRM')"
         @click="emit('delete')"
       >

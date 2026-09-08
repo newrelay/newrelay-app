@@ -5,11 +5,23 @@ import { useVuelidate } from '@vuelidate/core';
 import { required, minLength } from '@vuelidate/validators';
 import { useMapGetter } from 'dashboard/composables/store';
 
-import Input from 'dashboard/components-next/input/Input.vue';
-import TextArea from 'dashboard/components-next/textarea/TextArea.vue';
-import Button from 'dashboard/components-next/button/Button.vue';
+import {
+  RelayButton,
+  RelayInput,
+  RelayLabel,
+  RelayTextarea,
+  RELAY_FORM_FIELD_CLASS,
+  RELAY_FORM_LABEL_CLASS,
+} from 'dashboard/components-next/relay';
 import ComboBox from 'dashboard/components-next/combobox/ComboBox.vue';
 import TagMultiSelectComboBox from 'dashboard/components-next/combobox/TagMultiSelectComboBox.vue';
+
+defineProps({
+  showActionButtons: {
+    type: Boolean,
+    default: true,
+  },
+});
 
 const emit = defineEmits(['submit', 'cancel']);
 
@@ -107,92 +119,115 @@ const handleSubmit = async () => {
   resetState();
   handleCancel();
 };
+
+defineExpose({
+  submit: handleSubmit,
+  prepareCampaignDetails,
+  isSubmitDisabled,
+});
 </script>
 
 <template>
-  <form class="flex flex-col gap-4 h-full" @submit.prevent="handleSubmit">
-    <div class="overflow-y-auto flex-1 min-h-0">
-      <div class="flex flex-col gap-4">
-        <Input
-          v-model="state.title"
-          :label="t('CAMPAIGN.SMS.CREATE.FORM.TITLE.LABEL')"
-          :placeholder="t('CAMPAIGN.SMS.CREATE.FORM.TITLE.PLACEHOLDER')"
-          :message="formErrors.title"
-          :message-type="formErrors.title ? 'error' : 'info'"
-        />
-
-        <TextArea
-          v-model="state.message"
-          :label="t('CAMPAIGN.SMS.CREATE.FORM.MESSAGE.LABEL')"
-          :placeholder="t('CAMPAIGN.SMS.CREATE.FORM.MESSAGE.PLACEHOLDER')"
-          show-character-count
-          :message="formErrors.message"
-          :message-type="formErrors.message ? 'error' : 'info'"
-        />
-
-        <div class="flex flex-col gap-1">
-          <label for="inbox" class="mb-0.5 text-sm font-medium text-foreground">
-            {{ t('CAMPAIGN.SMS.CREATE.FORM.INBOX.LABEL') }}
-          </label>
-          <ComboBox
-            id="inbox"
-            v-model="state.inboxId"
-            :options="inboxOptions"
-            :has-error="!!formErrors.inbox"
-            :placeholder="t('CAMPAIGN.SMS.CREATE.FORM.INBOX.PLACEHOLDER')"
-            :message="formErrors.inbox"
-            class="[&>div>button]:bg-black/10 [&>div>button:not(.focused)]:dark:outline-border [&>div>button:not(.focused)]:hover:!outline-border"
-          />
-        </div>
-
-        <div class="flex flex-col gap-1">
-          <label
-            for="audience"
-            class="mb-0.5 text-sm font-medium text-foreground"
-          >
-            {{ t('CAMPAIGN.SMS.CREATE.FORM.AUDIENCE.LABEL') }}
-          </label>
-          <TagMultiSelectComboBox
-            v-model="state.selectedAudience"
-            :options="audienceList"
-            :label="t('CAMPAIGN.SMS.CREATE.FORM.AUDIENCE.LABEL')"
-            :placeholder="t('CAMPAIGN.SMS.CREATE.FORM.AUDIENCE.PLACEHOLDER')"
-            :has-error="!!formErrors.audience"
-            :message="formErrors.audience"
-            class="[&>div>button]:bg-black/10"
-          />
-        </div>
-
-        <Input
-          v-model="state.scheduledAt"
-          :label="t('CAMPAIGN.SMS.CREATE.FORM.SCHEDULED_AT.LABEL')"
-          type="datetime-local"
-          :min="currentDateTime"
-          :placeholder="t('CAMPAIGN.SMS.CREATE.FORM.SCHEDULED_AT.PLACEHOLDER')"
-          :message="formErrors.scheduledAt"
-          :message-type="formErrors.scheduledAt ? 'error' : 'info'"
-        />
-      </div>
+  <form class="flex flex-col gap-5" @submit.prevent="handleSubmit">
+    <!-- Title -->
+    <div :class="RELAY_FORM_FIELD_CLASS">
+      <RelayLabel :class="RELAY_FORM_LABEL_CLASS">
+        {{ t('CAMPAIGN.SMS.CREATE.FORM.TITLE.LABEL') }}
+      </RelayLabel>
+      <RelayInput
+        v-model="state.title"
+        :placeholder="t('CAMPAIGN.SMS.CREATE.FORM.TITLE.PLACEHOLDER')"
+        class-name="h-10 text-[14px] shadow-sm rounded-md border-border/80 bg-muted/30 focus-visible:bg-background focus-visible:ring-1 focus-visible:ring-primary/30 placeholder:text-muted-foreground/60"
+      />
+      <p v-if="formErrors.title" class="text-[12px] text-destructive">
+        {{ formErrors.title }}
+      </p>
     </div>
 
+    <!-- Message -->
+    <div :class="RELAY_FORM_FIELD_CLASS">
+      <RelayLabel :class="RELAY_FORM_LABEL_CLASS">
+        {{ t('CAMPAIGN.SMS.CREATE.FORM.MESSAGE.LABEL') }}
+      </RelayLabel>
+      <RelayTextarea
+        v-model="state.message"
+        :placeholder="t('CAMPAIGN.SMS.CREATE.FORM.MESSAGE.PLACEHOLDER')"
+        class-name="text-[14px] shadow-sm rounded-md border-border/80 bg-muted/30 focus-visible:bg-background focus-visible:ring-1 focus-visible:ring-primary/30 placeholder:text-muted-foreground/60 min-h-[110px] resize-none"
+      />
+      <p v-if="formErrors.message" class="text-[12px] text-destructive">
+        {{ formErrors.message }}
+      </p>
+    </div>
+
+    <!-- Select Inbox -->
+    <div :class="RELAY_FORM_FIELD_CLASS">
+      <RelayLabel :class="RELAY_FORM_LABEL_CLASS">
+        {{ t('CAMPAIGN.SMS.CREATE.FORM.INBOX.LABEL') }}
+      </RelayLabel>
+      <ComboBox
+        id="inbox"
+        v-model="state.inboxId"
+        :options="inboxOptions"
+        :has-error="!!formErrors.inbox"
+        :placeholder="t('CAMPAIGN.SMS.CREATE.FORM.INBOX.PLACEHOLDER')"
+        :message="formErrors.inbox"
+        class="[&>div>button]:bg-muted/30 [&>div>button:not(.focused)]:dark:outline-border [&>div>button:not(.focused)]:hover:!outline-border"
+      />
+    </div>
+
+    <!-- Audience -->
+    <div :class="RELAY_FORM_FIELD_CLASS">
+      <RelayLabel :class="RELAY_FORM_LABEL_CLASS">
+        {{ t('CAMPAIGN.SMS.CREATE.FORM.AUDIENCE.LABEL') }}
+      </RelayLabel>
+      <TagMultiSelectComboBox
+        v-model="state.selectedAudience"
+        :options="audienceList"
+        :label="t('CAMPAIGN.SMS.CREATE.FORM.AUDIENCE.LABEL')"
+        :placeholder="t('CAMPAIGN.SMS.CREATE.FORM.AUDIENCE.PLACEHOLDER')"
+        :has-error="!!formErrors.audience"
+        :message="formErrors.audience"
+        class="[&>div>button]:bg-muted/30"
+      />
+    </div>
+
+    <!-- Scheduled time -->
+    <div :class="RELAY_FORM_FIELD_CLASS">
+      <RelayLabel :class="RELAY_FORM_LABEL_CLASS">
+        {{ t('CAMPAIGN.SMS.CREATE.FORM.SCHEDULED_AT.LABEL') }}
+      </RelayLabel>
+      <RelayInput
+        v-model="state.scheduledAt"
+        type="datetime-local"
+        :min="currentDateTime"
+        :placeholder="t('CAMPAIGN.SMS.CREATE.FORM.SCHEDULED_AT.PLACEHOLDER')"
+        class-name="h-10 text-[14px] shadow-sm rounded-md border-border/80 bg-muted/30 focus-visible:bg-background focus-visible:ring-1 focus-visible:ring-primary/30"
+      />
+      <p v-if="formErrors.scheduledAt" class="text-[12px] text-destructive">
+        {{ formErrors.scheduledAt }}
+      </p>
+    </div>
+
+    <!-- Action buttons (inline fallback) -->
     <div
-      class="flex items-center justify-between w-full gap-3 flex-shrink-0 pt-4 border-t border-border"
+      v-if="showActionButtons"
+      class="flex items-center gap-3 pt-2 border-t border-border/60"
     >
-      <Button
-        variant="faded"
-        color="slate"
+      <RelayButton
         type="button"
-        :label="t('CAMPAIGN.SMS.CREATE.FORM.BUTTONS.CANCEL')"
-        class="w-full bg-accent text-primary hover:bg-accent"
+        variant="outline"
+        class="flex-1 h-10 bg-muted/30 text-foreground border-border/80 shadow-sm"
         @click="handleCancel"
-      />
-      <Button
-        :label="t('CAMPAIGN.SMS.CREATE.FORM.BUTTONS.CREATE')"
-        class="w-full"
+      >
+        {{ t('CAMPAIGN.SMS.CREATE.FORM.BUTTONS.CANCEL') }}
+      </RelayButton>
+      <RelayButton
         type="submit"
-        :is-loading="isCreating"
+        class="flex-1 h-10 shadow-sm"
         :disabled="isCreating || isSubmitDisabled"
-      />
+      >
+        {{ t('CAMPAIGN.SMS.CREATE.FORM.BUTTONS.CREATE') }}
+      </RelayButton>
     </div>
   </form>
 </template>

@@ -110,32 +110,34 @@ onMounted(load);
 </script>
 
 <template>
-  <div class="flex h-full min-h-0 flex-col bg-background">
-    <div
-      class="flex flex-wrap items-start justify-between gap-4 border-b border-border bg-card px-6 py-6"
-    >
-      <div>
-        <h1 class="text-base font-medium text-foreground">
-          {{ $t('CAMPAIGN_ANALYTICS.HEADER') }}
-        </h1>
-        <p class="mt-1 text-[13px] font-medium text-muted-foreground">
-          {{ $t('CAMPAIGN_ANALYTICS.DESCRIPTION') }}
-        </p>
-      </div>
-      <RelayButton
-        variant="outline"
-        class="h-9 border-border px-4 text-[13px] font-medium hover:border-transparent"
-        @click="goToCampaigns"
+  <div
+    class="flex h-full min-h-0 flex-col bg-background/50 animate-in fade-in duration-300"
+  >
+    <div class="px-8 py-8 flex flex-col gap-6">
+      <!-- Header -->
+      <div
+        class="flex flex-col sm:flex-row sm:items-center justify-between gap-4"
       >
-        {{ $t('CAMPAIGN_ANALYTICS.EMPTY.CTA') }}
-      </RelayButton>
-    </div>
+        <div>
+          <h1 class="text-[20px] font-medium tracking-tight text-foreground">
+            {{ $t('CAMPAIGN_ANALYTICS.HEADER') }}
+          </h1>
+          <p class="mt-1 text-[13px] text-muted-foreground">
+            {{ $t('CAMPAIGN_ANALYTICS.DESCRIPTION') }}
+          </p>
+        </div>
+        <RelayButton
+          variant="outline"
+          class="h-10 border-border/80 px-4 text-[13.5px] font-medium hover:border-transparent"
+          @click="goToCampaigns"
+        >
+          {{ $t('CAMPAIGN_ANALYTICS.EMPTY.CTA') }}
+        </RelayButton>
+      </div>
 
-    <DealMetricsRow :metrics="metrics" />
+      <DealMetricsRow :metrics="metrics" />
 
-    <div
-      class="flex items-center gap-3 border-b border-border bg-card px-6 py-3"
-    >
+      <!-- Search -->
       <div class="relative w-full max-w-xs">
         <Icon
           icon="i-lucide-search"
@@ -149,7 +151,7 @@ onMounted(load);
       </div>
     </div>
 
-    <div class="min-h-0 flex-1 overflow-auto p-6">
+    <div class="min-h-0 flex-1 overflow-auto px-8 pb-8">
       <div v-if="loading" class="flex items-center justify-center py-20">
         <Spinner />
       </div>

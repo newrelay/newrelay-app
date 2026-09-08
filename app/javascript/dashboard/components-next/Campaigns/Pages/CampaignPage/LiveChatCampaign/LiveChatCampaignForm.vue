@@ -7,8 +7,15 @@ import { useMapGetter, useStore } from 'dashboard/composables/store';
 import { useAlert } from 'dashboard/composables';
 import { URLPattern } from 'urlpattern-polyfill';
 
-import Input from 'dashboard/components-next/input/Input.vue';
-import Button from 'dashboard/components-next/button/Button.vue';
+import {
+  RelayButton,
+  RelayInput,
+  RelayLabel,
+  RelayCheckbox,
+  RELAY_FORM_FIELD_CLASS,
+  RELAY_FORM_LABEL_CLASS,
+  RELAY_FORM_CHECKBOX_ROW_CLASS,
+} from 'dashboard/components-next/relay';
 import ComboBox from 'dashboard/components-next/combobox/ComboBox.vue';
 import Editor from 'dashboard/components-next/Editor/Editor.vue';
 
@@ -201,31 +208,48 @@ watch(
   { immediate: true }
 );
 
-defineExpose({ prepareCampaignDetails, isSubmitDisabled });
+defineExpose({
+  submit: handleSubmit,
+  prepareCampaignDetails,
+  isSubmitDisabled,
+});
 </script>
 
 <template>
-  <form class="flex flex-col gap-4" @submit.prevent="handleSubmit">
-    <Input
-      v-model="state.title"
-      :label="t('CAMPAIGN.LIVE_CHAT.CREATE.FORM.TITLE.LABEL')"
-      :placeholder="t('CAMPAIGN.LIVE_CHAT.CREATE.FORM.TITLE.PLACEHOLDER')"
-      :message="formErrors.title"
-      :message-type="formErrors.title ? 'error' : 'info'"
-    />
+  <form class="flex flex-col gap-5" @submit.prevent="handleSubmit">
+    <!-- Title -->
+    <div :class="RELAY_FORM_FIELD_CLASS">
+      <RelayLabel :class="RELAY_FORM_LABEL_CLASS">
+        {{ t('CAMPAIGN.LIVE_CHAT.CREATE.FORM.TITLE.LABEL') }}
+      </RelayLabel>
+      <RelayInput
+        v-model="state.title"
+        :placeholder="t('CAMPAIGN.LIVE_CHAT.CREATE.FORM.TITLE.PLACEHOLDER')"
+        class-name="h-10 text-[14px] shadow-sm rounded-md border-border/80 bg-muted/30 focus-visible:bg-background focus-visible:ring-1 focus-visible:ring-primary/30 placeholder:text-muted-foreground/60"
+      />
+      <p v-if="formErrors.title" class="text-[12px] text-destructive">
+        {{ formErrors.title }}
+      </p>
+    </div>
 
-    <Editor
-      v-model="state.message"
-      :label="t('CAMPAIGN.LIVE_CHAT.CREATE.FORM.MESSAGE.LABEL')"
-      :placeholder="t('CAMPAIGN.LIVE_CHAT.CREATE.FORM.MESSAGE.PLACEHOLDER')"
-      :message="formErrors.message"
-      :message-type="formErrors.message ? 'error' : 'info'"
-    />
+    <!-- Message -->
+    <div :class="RELAY_FORM_FIELD_CLASS">
+      <RelayLabel :class="RELAY_FORM_LABEL_CLASS">
+        {{ t('CAMPAIGN.LIVE_CHAT.CREATE.FORM.MESSAGE.LABEL') }}
+      </RelayLabel>
+      <Editor
+        v-model="state.message"
+        :placeholder="t('CAMPAIGN.LIVE_CHAT.CREATE.FORM.MESSAGE.PLACEHOLDER')"
+        :message="formErrors.message"
+        :message-type="formErrors.message ? 'error' : 'info'"
+      />
+    </div>
 
-    <div class="flex flex-col gap-1.5">
-      <label for="inbox" class="text-foreground text-[13.5px] font-medium">
+    <!-- Select Inbox -->
+    <div :class="RELAY_FORM_FIELD_CLASS">
+      <RelayLabel :class="RELAY_FORM_LABEL_CLASS">
         {{ t('CAMPAIGN.LIVE_CHAT.CREATE.FORM.INBOX.LABEL') }}
-      </label>
+      </RelayLabel>
       <ComboBox
         id="inbox"
         v-model="state.inboxId"
@@ -233,14 +257,15 @@ defineExpose({ prepareCampaignDetails, isSubmitDisabled });
         :has-error="!!formErrors.inbox"
         :placeholder="t('CAMPAIGN.LIVE_CHAT.CREATE.FORM.INBOX.PLACEHOLDER')"
         :message="formErrors.inbox"
-        class="[&>div>button]:bg-black/10 [&>div>button:not(.focused)]:dark:outline-border [&>div>button:not(.focused)]:hover:!outline-border"
+        class="[&>div>button]:bg-muted/30 [&>div>button:not(.focused)]:dark:outline-border [&>div>button:not(.focused)]:hover:!outline-border"
       />
     </div>
 
-    <div class="flex flex-col gap-1.5">
-      <label for="sentBy" class="text-foreground text-[13.5px] font-medium">
+    <!-- Sent by -->
+    <div :class="RELAY_FORM_FIELD_CLASS">
+      <RelayLabel :class="RELAY_FORM_LABEL_CLASS">
         {{ t('CAMPAIGN.LIVE_CHAT.CREATE.FORM.SENT_BY.LABEL') }}
-      </label>
+      </RelayLabel>
       <ComboBox
         id="sentBy"
         v-model="state.senderId"
@@ -248,80 +273,97 @@ defineExpose({ prepareCampaignDetails, isSubmitDisabled });
         :has-error="!!formErrors.sender"
         :disabled="!state.inboxId"
         :placeholder="t('CAMPAIGN.LIVE_CHAT.CREATE.FORM.SENT_BY.PLACEHOLDER')"
-        class="[&>div>button]:bg-black/10 [&>div>button:not(.focused)]:dark:outline-border [&>div>button:not(.focused)]:hover:!outline-border"
+        class="[&>div>button]:bg-muted/30 [&>div>button:not(.focused)]:dark:outline-border [&>div>button:not(.focused)]:hover:!outline-border"
         :message="formErrors.sender"
       />
     </div>
 
-    <Input
-      v-model="state.endPoint"
-      type="url"
-      :label="t('CAMPAIGN.LIVE_CHAT.CREATE.FORM.END_POINT.LABEL')"
-      :placeholder="t('CAMPAIGN.LIVE_CHAT.CREATE.FORM.END_POINT.PLACEHOLDER')"
-      :message="formErrors.endPoint"
-      :message-type="formErrors.endPoint ? 'error' : 'info'"
-    />
-
-    <Input
-      v-model="state.timeOnPage"
-      type="number"
-      :label="t('CAMPAIGN.LIVE_CHAT.CREATE.FORM.TIME_ON_PAGE.LABEL')"
-      :placeholder="
-        t('CAMPAIGN.LIVE_CHAT.CREATE.FORM.TIME_ON_PAGE.PLACEHOLDER')
-      "
-      :message="formErrors.timeOnPage"
-      :message-type="formErrors.timeOnPage ? 'error' : 'info'"
-    />
-
-    <fieldset class="flex flex-col gap-2.5">
-      <legend class="mb-2.5 text-sm font-medium text-foreground">
-        {{ t('CAMPAIGN.LIVE_CHAT.CREATE.FORM.OTHER_PREFERENCES.TITLE') }}
-      </legend>
-
-      <label
-        class="flex items-center gap-2 text-[13.5px] font-[500] text-foreground"
-      >
-        <input v-model="state.enabled" type="checkbox" />
-        <span class="text-sm font-medium text-foreground">
-          {{ t('CAMPAIGN.LIVE_CHAT.CREATE.FORM.OTHER_PREFERENCES.ENABLED') }}
-        </span>
-      </label>
-
-      <label
-        class="flex items-center gap-2 text-[13.5px] font-[500] text-foreground"
-      >
-        <input v-model="state.triggerOnlyDuringBusinessHours" type="checkbox" />
-        <span class="text-sm font-medium text-foreground">
-          {{
-            t(
-              'CAMPAIGN.LIVE_CHAT.CREATE.FORM.OTHER_PREFERENCES.TRIGGER_ONLY_BUSINESS_HOURS'
-            )
-          }}
-        </span>
-      </label>
-    </fieldset>
-
-    <div
-      v-if="showActionButtons"
-      class="flex items-center justify-between w-full gap-3"
-    >
-      <Button
-        type="button"
-        variant="faded"
-        color="slate"
-        :label="t('CAMPAIGN.LIVE_CHAT.CREATE.FORM.BUTTONS.CANCEL')"
-        class="w-full bg-accent text-primary hover:bg-accent"
-        @click="handleCancel"
+    <!-- URL -->
+    <div :class="RELAY_FORM_FIELD_CLASS">
+      <RelayLabel :class="RELAY_FORM_LABEL_CLASS">
+        {{ t('CAMPAIGN.LIVE_CHAT.CREATE.FORM.END_POINT.LABEL') }}
+      </RelayLabel>
+      <RelayInput
+        v-model="state.endPoint"
+        type="url"
+        :placeholder="t('CAMPAIGN.LIVE_CHAT.CREATE.FORM.END_POINT.PLACEHOLDER')"
+        class-name="h-10 text-[14px] shadow-sm rounded-md border-border/80 bg-muted/30 focus-visible:bg-background focus-visible:ring-1 focus-visible:ring-primary/30 placeholder:text-muted-foreground/60"
       />
-      <Button
-        type="submit"
-        :label="
-          t(`CAMPAIGN.LIVE_CHAT.CREATE.FORM.BUTTONS.${mode.toUpperCase()}`)
+      <p v-if="formErrors.endPoint" class="text-[12px] text-destructive">
+        {{ formErrors.endPoint }}
+      </p>
+    </div>
+
+    <!-- Time on page -->
+    <div :class="RELAY_FORM_FIELD_CLASS">
+      <RelayLabel :class="RELAY_FORM_LABEL_CLASS">
+        {{ t('CAMPAIGN.LIVE_CHAT.CREATE.FORM.TIME_ON_PAGE.LABEL') }}
+      </RelayLabel>
+      <RelayInput
+        v-model="state.timeOnPage"
+        type="number"
+        :placeholder="
+          t('CAMPAIGN.LIVE_CHAT.CREATE.FORM.TIME_ON_PAGE.PLACEHOLDER')
         "
-        class="w-full"
-        :is-loading="isCreating"
-        :disabled="isCreating || isSubmitDisabled"
+        class-name="h-10 text-[14px] shadow-sm rounded-md border-border/80 bg-muted/30 focus-visible:bg-background focus-visible:ring-1 focus-visible:ring-primary/30 placeholder:text-muted-foreground/60"
       />
+      <p v-if="formErrors.timeOnPage" class="text-[12px] text-destructive">
+        {{ formErrors.timeOnPage }}
+      </p>
+    </div>
+
+    <!-- Other preferences -->
+    <div class="flex flex-col gap-3">
+      <RelayLabel :class="RELAY_FORM_LABEL_CLASS">
+        {{ t('CAMPAIGN.LIVE_CHAT.CREATE.FORM.OTHER_PREFERENCES.TITLE') }}
+      </RelayLabel>
+      <div class="flex flex-col gap-3">
+        <label
+          class="cursor-pointer group"
+          :class="[RELAY_FORM_CHECKBOX_ROW_CLASS]"
+        >
+          <RelayCheckbox v-model="state.enabled" />
+          <span
+            class="text-[14px] text-muted-foreground group-hover:text-foreground transition-colors"
+          >
+            {{ t('CAMPAIGN.LIVE_CHAT.CREATE.FORM.OTHER_PREFERENCES.ENABLED') }}
+          </span>
+        </label>
+        <label
+          class="cursor-pointer group"
+          :class="[RELAY_FORM_CHECKBOX_ROW_CLASS]"
+        >
+          <RelayCheckbox v-model="state.triggerOnlyDuringBusinessHours" />
+          <span
+            class="text-[14px] text-muted-foreground group-hover:text-foreground transition-colors"
+          >
+            {{
+              t(
+                'CAMPAIGN.LIVE_CHAT.CREATE.FORM.OTHER_PREFERENCES.TRIGGER_ONLY_BUSINESS_HOURS'
+              )
+            }}
+          </span>
+        </label>
+      </div>
+    </div>
+
+    <!-- Action buttons (inline fallback when not used in dialog) -->
+    <div v-if="showActionButtons" class="flex items-center gap-3 pt-2">
+      <RelayButton
+        type="button"
+        variant="outline"
+        class="flex-1 h-10 bg-muted/30 text-foreground border-border/80 shadow-sm"
+        @click="handleCancel"
+      >
+        {{ t('CAMPAIGN.LIVE_CHAT.CREATE.FORM.BUTTONS.CANCEL') }}
+      </RelayButton>
+      <RelayButton
+        type="submit"
+        class="flex-1 h-10 shadow-sm"
+        :disabled="isCreating || isSubmitDisabled"
+      >
+        {{ t(`CAMPAIGN.LIVE_CHAT.CREATE.FORM.BUTTONS.${mode.toUpperCase()}`) }}
+      </RelayButton>
     </div>
   </form>
 </template>

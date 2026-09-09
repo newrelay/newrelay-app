@@ -31,6 +31,8 @@ class Seeders::AccountSeeder
     @account.teams.destroy_all
     @account.conversations.destroy_all
     @account.labels.destroy_all
+    CommentAutomation::Campaign.where(account_id: @account.id).delete_all if defined?(CommentAutomation::Campaign)
+    Campaign.where(account_id: @account.id).delete_all if defined?(Campaign)
     @account.inboxes.destroy_all
     @account.contacts.destroy_all
     @account.custom_roles.destroy_all if @account.respond_to?(:custom_roles)
@@ -115,12 +117,10 @@ class Seeders::AccountSeeder
   def seed_contacts
     @account_data['contacts'].each_with_index do |contact_data, idx|
       contact = @account.contacts.find_or_initialize_by(email: contact_data['email'])
-      if contact.new_record?
-        contact.update!(contact_data.slice('name', 'email'))
-      end
+      contact.update!(contact_data.slice('name', 'email')) if contact.new_record?
 
       gender = contact_data['gender'].to_s.downcase == 'female' ? 'women' : 'men'
-      avatar_num = ((contact.id || idx + 1) % 95) + 1
+      avatar_num = ((contact.id || (idx + 1)) % 95) + 1
       avatar_url = contact_data['avatar_url'].presence || "https://randomuser.me/api/portraits/#{gender}/#{avatar_num}.jpg"
 
       # Reset avatar rate limiting attributes so seeding always attaches avatar

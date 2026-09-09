@@ -35,6 +35,8 @@ const emit = defineEmits([
 ]);
 
 const { accountScopedRoute, isOnChatwootCloud } = useAccount();
+const currentRole = useMapGetter('getCurrentRole');
+const currentCustomRoleId = useMapGetter('getCurrentCustomRoleId');
 const store = useStore();
 const { t } = useI18n();
 
@@ -727,13 +729,17 @@ const navSections = computed(() => [
   },
 ]);
 
-const settingsMenuItem = computed(() => ({
-  name: 'Settings',
-  label: t('SIDEBAR.SETTINGS'),
-  icon: 'i-lucide-settings',
-  to: accountScopedRoute('settings_home'),
-  activeOn: ['settings_home', ...SETTINGS_ROUTE_NAMES],
-}));
+const settingsMenuItem = computed(() => {
+  const isAdmin =
+    currentRole.value === 'administrator' && currentCustomRoleId.value == null;
+  return {
+    name: 'Settings',
+    label: t('SIDEBAR.SETTINGS'),
+    icon: 'i-lucide-settings',
+    to: accountScopedRoute(isAdmin ? 'general_settings_index' : 'canned_list'),
+    activeOn: ['settings_home', ...SETTINGS_ROUTE_NAMES],
+  };
+});
 
 const logoutMenuItem = computed(() => ({
   name: 'Logout',

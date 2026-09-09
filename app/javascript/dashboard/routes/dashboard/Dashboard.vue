@@ -14,6 +14,7 @@ import { useMapGetter } from 'dashboard/composables/store';
 import { useI18n } from 'vue-i18n';
 
 import wootConstants from 'dashboard/constants/globals';
+import { SETTINGS_ROUTE_NAMES } from 'dashboard/routes/dashboard/settings/settings.navigation';
 
 const CommandBar = defineAsyncComponent(
   () => import('./commands/commandbar.vue')
@@ -229,8 +230,8 @@ export default {
         return this.t('PROFILE_SETTINGS.TITLE');
       }
       if (
-        String(routeName).includes('settings') ||
-        String(routeName).includes('agent_list')
+        routeName === 'settings_home' ||
+        SETTINGS_ROUTE_NAMES.includes(routeName)
       ) {
         return this.t('SIDEBAR.SETTINGS');
       }

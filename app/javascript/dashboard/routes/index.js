@@ -12,6 +12,22 @@ const routes = [...dashboard.routes];
 
 export const router = createRouter({ history: createWebHistory(), routes });
 
+const settingsHomeDestination = to => {
+  const accountId = Number(to.params.accountId);
+  const accounts = store.getters.getCurrentUser?.accounts || [];
+  const currentAccount = accounts.find(
+    account => Number(account.id) === accountId
+  );
+  const isAdmin =
+    currentAccount?.role === 'administrator' &&
+    currentAccount.custom_role_id == null;
+
+  return {
+    name: isAdmin ? 'general_settings_index' : 'canned_list',
+    params: { accountId: to.params.accountId },
+  };
+};
+
 export const validateAuthenticateRoutePermission = async (to, next) => {
   let user = store.getters.getCurrentUser;
 
@@ -29,6 +45,10 @@ export const validateAuthenticateRoutePermission = async (to, next) => {
   if (!store.getters.isLoggedIn || !user) {
     window.location.assign('/app/login');
     return next(false);
+  }
+
+  if (to.name === 'settings_home') {
+    return next(settingsHomeDestination(to));
   }
 
   const { accounts = [], account_id: accountId } = user;

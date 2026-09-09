@@ -2,7 +2,7 @@
 // [TODO] Use Teleport to move the modal to the end of the body
 import { ref, computed, onMounted } from 'vue';
 import { useEventListener } from '@vueuse/core';
-import Button from 'dashboard/components-next/button/Button.vue';
+import { RELAY_MODAL_CLOSE_BUTTON_CLASS } from 'dashboard/components-next/relay/modal/constants';
 
 const { modalType, closeOnBackdropClick, onClose } = defineProps({
   closeOnBackdropClick: { type: Boolean, default: true },
@@ -86,14 +86,15 @@ onMounted(() => {
         @mouse.stop
         @mousedown="event => event.stopPropagation()"
       >
-        <Button
+        <button
           v-if="showCloseButton"
-          ghost
-          slate
-          icon="i-lucide-x"
+          type="button"
           class="absolute z-10 ltr:right-2 rtl:left-2 top-2"
+          :class="RELAY_MODAL_CLOSE_BUTTON_CLASS"
           @click="close"
-        />
+        >
+          <span class="i-lucide-x size-4" />
+        </button>
         <slot />
       </div>
     </div>

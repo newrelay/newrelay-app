@@ -2,6 +2,7 @@
 /* eslint-disable */
 import { ref, computed, watch } from 'vue';
 import { RelaySwitch, RelayCheckbox } from 'dashboard/components-next/relay';
+import { RELAY_MODAL_CLOSE_BUTTON_CLASS } from 'dashboard/components-next/relay/modal/constants';
 import {
   X, LayoutGrid, Code2, Copy, Check, Sparkles, Monitor, Tablet,
   Smartphone, Sliders, Palette, Filter, ChevronLeft, ChevronRight,
@@ -174,7 +175,7 @@ const isDark = computed(() => widgetConfig.value.theme === 'dark' || previewBg.v
             <button @click="mobileViewMode = 'editor'" class="px-2.5 py-1 rounded-md text-xs font-medium transition-all cursor-pointer" :class="mobileViewMode === 'editor' ? 'bg-card text-foreground shadow-xs font-semibold' : 'text-muted-foreground'">Customizer</button>
             <button @click="mobileViewMode = 'preview'" class="px-2.5 py-1 rounded-md text-xs font-medium transition-all cursor-pointer" :class="mobileViewMode === 'preview' ? 'bg-card text-foreground shadow-xs font-semibold' : 'text-muted-foreground'">Preview</button>
           </div>
-          <button class="inline-flex items-center justify-center text-muted-foreground border border-border hover:border-transparent hover:bg-muted size-8 sm:size-9 rounded-lg cursor-pointer" @click="close"><X class="size-4 sm:size-5" /></button>
+          <button type="button" :class="RELAY_MODAL_CLOSE_BUTTON_CLASS" @click="close"><X class="size-4" /></button>
         </div>
       </div>
 

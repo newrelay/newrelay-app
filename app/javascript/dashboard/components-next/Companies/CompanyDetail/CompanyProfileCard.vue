@@ -3,7 +3,8 @@ import { computed, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useAlert } from 'dashboard/composables';
 import Avatar from 'dashboard/components-next/avatar/Avatar.vue';
-import { RelayBadge, RelayButton } from 'dashboard/components-next/relay';
+import { RelayBadge } from 'dashboard/components-next/relay';
+import { RELAY_MODAL_CLOSE_BUTTON_CLASS } from 'dashboard/components-next/relay/modal/constants';
 import { useCompaniesStore } from 'dashboard/stores/companies';
 
 const props = defineProps({
@@ -106,15 +107,15 @@ const commitNameEdit = async () => {
     class="flex shrink-0 flex-col border-b border-border/50 bg-card px-8 py-6"
   >
     <div class="mb-4">
-      <RelayButton
-        variant="ghost"
-        size="sm"
-        class="-ml-2 h-8 rounded-md px-2 text-[13px] font-medium text-muted-foreground hover:text-foreground border border-border hover:border-transparent"
+      <button
+        type="button"
+        class="-ml-2"
+        :class="RELAY_MODAL_CLOSE_BUTTON_CLASS"
+        :aria-label="t('COMPANIES.DETAIL.BACK')"
         @click="emit('back')"
       >
-        <span class="i-lucide-arrow-left mr-1.5 size-4" />
-        {{ t('COMPANIES.DETAIL.BACK') }}
-      </RelayButton>
+        <span class="i-lucide-arrow-left size-4" />
+      </button>
     </div>
 
     <div class="flex items-start justify-between">

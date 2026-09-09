@@ -8,6 +8,7 @@ import { copyTextToClipboard } from 'shared/helpers/clipboard';
 import WebhookForm from './WebhookForm.vue';
 import Icon from 'dashboard/components-next/icon/Icon.vue';
 import { RelayButton } from 'dashboard/components-next/relay';
+import { RELAY_MODAL_CLOSE_BUTTON_CLASS } from 'dashboard/components-next/relay/modal/constants';
 
 const props = defineProps({
   onClose: {
@@ -52,10 +53,10 @@ const handleCopySecret = async () => {
         </h3>
         <button
           type="button"
-          class="text-muted-foreground transition-colors hover:text-foreground"
+          :class="RELAY_MODAL_CLOSE_BUTTON_CLASS"
           @click="props.onClose()"
         >
-          <Icon icon="i-lucide-x" class="size-5" />
+          <Icon icon="i-lucide-x" class="size-4" />
         </button>
       </div>
 
@@ -123,10 +124,11 @@ const handleCopySecret = async () => {
         </div>
         <button
           type="button"
-          class="shrink-0 text-muted-foreground transition-colors hover:text-foreground"
+          class="shrink-0"
+          :class="RELAY_MODAL_CLOSE_BUTTON_CLASS"
           @click="props.onClose()"
         >
-          <Icon icon="i-lucide-x" class="size-5" />
+          <Icon icon="i-lucide-x" class="size-4" />
         </button>
       </div>
 

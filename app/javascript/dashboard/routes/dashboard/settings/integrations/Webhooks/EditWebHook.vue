@@ -5,6 +5,7 @@ import { useStore } from 'vuex';
 import { useAlert } from 'dashboard/composables';
 import WebhookForm from './WebhookForm.vue';
 import Icon from 'dashboard/components-next/icon/Icon.vue';
+import { RELAY_MODAL_CLOSE_BUTTON_CLASS } from 'dashboard/components-next/relay/modal/constants';
 
 const props = defineProps({
   value: {
@@ -51,10 +52,10 @@ const onSubmit = async webhook => {
       </h3>
       <button
         type="button"
-        class="text-muted-foreground transition-colors hover:text-foreground"
+        :class="RELAY_MODAL_CLOSE_BUTTON_CLASS"
         @click="props.onClose()"
       >
-        <Icon icon="i-lucide-x" class="size-5" />
+        <Icon icon="i-lucide-x" class="size-4" />
       </button>
     </div>
 

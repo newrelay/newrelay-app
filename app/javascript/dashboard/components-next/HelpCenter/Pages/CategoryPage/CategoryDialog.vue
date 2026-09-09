@@ -145,7 +145,7 @@ onMounted(() => {
             :class="RELAY_MODAL_CLOSE_BUTTON_CLASS"
             @click="handleClose"
           >
-            <span class="i-lucide-x size-5" aria-hidden="true" />
+            <span class="i-lucide-x size-4" aria-hidden="true" />
           </button>
         </div>
 

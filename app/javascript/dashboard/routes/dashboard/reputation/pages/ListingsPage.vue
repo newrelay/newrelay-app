@@ -35,6 +35,7 @@ import {
   RelayDropdownMenuContent as DropdownMenuContent,
   RelayDropdownMenuItem as DropdownMenuItem,
 } from 'dashboard/components-next/relay';
+import { RELAY_MODAL_CLOSE_BUTTON_CLASS } from 'dashboard/components-next/relay/modal/constants';
 
 const router = useRouter();
 const accountId =
@@ -895,8 +896,8 @@ const closeAdd = () => {
               </p>
             </div>
           </div>
-          <button class="size-8 rounded-full flex items-center justify-center text-muted-foreground hover:bg-muted transition-colors" @click="closeAdd">
-            <X class="size-5" />
+          <button type="button" :class="RELAY_MODAL_CLOSE_BUTTON_CLASS" @click="closeAdd">
+            <X class="size-4" />
           </button>
         </div>
 
@@ -1076,8 +1077,8 @@ const closeAdd = () => {
               <p class="text-sm text-muted-foreground font-medium">Choose the columns to include.</p>
             </div>
           </div>
-          <button class="size-8 rounded-full flex items-center justify-center text-muted-foreground hover:bg-muted transition-colors" @click="closeExport">
-            <X class="size-5" />
+          <button type="button" :class="RELAY_MODAL_CLOSE_BUTTON_CLASS" @click="closeExport">
+            <X class="size-4" />
           </button>
         </div>
 

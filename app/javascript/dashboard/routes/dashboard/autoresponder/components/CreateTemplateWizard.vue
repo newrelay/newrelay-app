@@ -9,6 +9,7 @@ import {
   RelayLabel,
   RelayCheckbox,
 } from 'dashboard/components-next/relay';
+import { RELAY_MODAL_CLOSE_BUTTON_CLASS } from 'dashboard/components-next/relay/modal/constants';
 import {
   RELAY_FORM_FIELD_CLASS,
   RELAY_FORM_CHECKBOX_ROW_CLASS,
@@ -176,10 +177,11 @@ const nextStep = () => {
         </div>
         <button
           type="button"
-          class="absolute right-6 top-1/2 -translate-y-1/2 text-muted-foreground hover:bg-muted p-2 rounded-full transition-colors"
+          class="absolute right-6 top-1/2 -translate-y-1/2"
+          :class="RELAY_MODAL_CLOSE_BUTTON_CLASS"
           @click="closeWizard"
         >
-          <span class="i-lucide-x size-5" />
+          <span class="i-lucide-x size-4" />
         </button>
       </div>
 

@@ -1,5 +1,6 @@
 <script setup>
 import { RelayTooltip } from 'dashboard/components-next/relay';
+import { RELAY_MODAL_CLOSE_BUTTON_CLASS } from 'dashboard/components-next/relay/modal/constants';
 import Button from './button/Button.vue';
 
 defineProps({
@@ -40,7 +41,13 @@ const handleButtonClick = button => {
           />
         </RelayTooltip>
         <RelayTooltip :content="$t('GENERAL.CLOSE')">
-          <Button icon="i-lucide-x" ghost sm @click="$emit('close')" />
+          <button
+            type="button"
+            :class="RELAY_MODAL_CLOSE_BUTTON_CLASS"
+            @click="$emit('close')"
+          >
+            <span class="i-lucide-x size-4" />
+          </button>
         </RelayTooltip>
       </div>
     </div>

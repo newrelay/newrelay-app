@@ -22,6 +22,7 @@ import {
   DROPDOWN_MENU_SEARCH_WRAPPER_CLASS,
   DROPDOWN_MENU_SEARCH_ICON_CLASS,
   DROPDOWN_MENU_SEARCH_INPUT_CLASS,
+  RELAY_MODAL_CLOSE_BUTTON_CLASS,
 } from 'dashboard/components-next/relay';
 import RelayDatePicker from 'dashboard/components-next/relay/calendar/DatePicker.vue';
 import RelayTimePicker from 'dashboard/components-next/relay/calendar/TimePicker.vue';
@@ -512,8 +513,8 @@ function close() {
             <span :class="currentStep >= 4 ? 'text-primary font-medium' : 'text-muted-foreground'">4. Review</span>
           </div>
         </div>
-        <button class="size-8 rounded-full flex items-center justify-center text-muted-foreground hover:bg-muted cursor-pointer transition-colors" @click="close">
-          <X class="size-5" />
+        <button type="button" :class="RELAY_MODAL_CLOSE_BUTTON_CLASS" @click="close">
+          <X class="size-4" />
         </button>
       </div>
       

@@ -16,6 +16,7 @@ import SettingsLayout from 'dashboard/routes/dashboard/settings/SettingsLayout.v
 import AssignmentPolicyForm from 'dashboard/routes/dashboard/settings/assignmentPolicy/pages/components/AgentAssignmentPolicyForm.vue';
 import ConfirmInboxDialog from 'dashboard/routes/dashboard/settings/assignmentPolicy/pages/components/ConfirmInboxDialog.vue';
 import InboxLinkDialog from 'dashboard/routes/dashboard/settings/assignmentPolicy/pages/components/InboxLinkDialog.vue';
+import { RELAY_MODAL_CLOSE_BUTTON_CLASS } from 'dashboard/components-next/relay/modal/constants';
 
 const BASE_KEY = 'ASSIGNMENT_POLICY.AGENT_ASSIGNMENT_POLICY';
 
@@ -285,11 +286,11 @@ watch(routeId, fetchPolicyData, { immediate: true });
           </h3>
           <button
             type="button"
-            class="text-muted-foreground transition-colors hover:text-foreground"
+            :class="RELAY_MODAL_CLOSE_BUTTON_CLASS"
             :aria-label="$t(`${BASE_KEY}.FORM.CANCEL_BUTTON`)"
             @click="handleCancel"
           >
-            <Icon icon="i-lucide-x" class="size-5" />
+            <Icon icon="i-lucide-x" class="size-4" />
           </button>
         </div>
         <AssignmentPolicyForm

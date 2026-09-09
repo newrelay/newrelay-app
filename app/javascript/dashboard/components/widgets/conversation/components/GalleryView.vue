@@ -7,7 +7,10 @@ import { useKeyboardEvents } from 'dashboard/composables/useKeyboardEvents';
 import { downloadFile } from '@chatwoot/utils';
 import { formatBytes } from 'shared/helpers/FileHelper';
 import { RelayButton } from 'dashboard/components-next/relay';
-import { RELAY_DIALOG_OVERLAY_CLASS } from 'dashboard/components-next/relay/modal/constants';
+import {
+  RELAY_DIALOG_OVERLAY_CLASS,
+  RELAY_MODAL_CLOSE_BUTTON_CLASS,
+} from 'dashboard/components-next/relay/modal/constants';
 import TeleportWithDirection from 'dashboard/components-next/TeleportWithDirection.vue';
 
 const props = defineProps({
@@ -214,15 +217,14 @@ watch(
               <span class="i-lucide-download size-3.5" />
               {{ t('CONVERSATION.DOWNLOAD') }}
             </RelayButton>
-            <RelayButton
-              variant="ghost"
-              size="icon"
-              class="size-8 text-muted-foreground hover:text-foreground"
+            <button
+              type="button"
+              :class="RELAY_MODAL_CLOSE_BUTTON_CLASS"
               :aria-label="t('CONVERSATION.HEADER.CLOSE')"
               @click="onClose"
             >
               <span class="i-lucide-x size-4" />
-            </RelayButton>
+            </button>
           </div>
         </header>
 

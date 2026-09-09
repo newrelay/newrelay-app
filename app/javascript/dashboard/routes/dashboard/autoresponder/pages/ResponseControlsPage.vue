@@ -10,6 +10,7 @@ import {
   RelayDropdownMenuContent,
   RelayDropdownMenuItem,
 } from 'dashboard/components-next/relay';
+import { RELAY_MODAL_CLOSE_BUTTON_CLASS } from 'dashboard/components-next/relay/modal/constants';
 import { useAlert } from 'dashboard/composables';
 import { useAccount } from 'dashboard/composables/useAccount';
 import CommentAutomationResponseControlsAPI from 'dashboard/api/commentAutomationResponseControls';
@@ -599,10 +600,10 @@ const filteredItems = computed(() => {
           </div>
           <button
             type="button"
-            class="p-1.5 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted transition-colors shrink-0"
+            :class="RELAY_MODAL_CLOSE_BUTTON_CLASS"
             @click="isDrawerOpen = false"
           >
-            <span class="i-lucide-x size-5" />
+            <span class="i-lucide-x size-4" />
           </button>
         </div>
 

@@ -10,7 +10,10 @@ import {
   RelayModalHeader,
   RelayActionDropdown,
 } from 'dashboard/components-next/relay';
-import { RELAY_DIALOG_OVERLAY_CLASS } from 'dashboard/components-next/relay/modal/constants';
+import {
+  RELAY_DIALOG_OVERLAY_CLASS,
+  RELAY_MODAL_CLOSE_BUTTON_CLASS,
+} from 'dashboard/components-next/relay/modal/constants';
 import {
   RELAY_FORM_FIELD_CLASS,
   RELAY_FORM_LABEL_CLASS,
@@ -365,15 +368,13 @@ defineExpose({ open, close, onSuccess, dialogRef: { open, close } });
                   {{ $t('DEALS.FORM.NAME.ERROR') }}
                 </p>
               </div>
-              <RelayButton
+              <button
                 type="button"
-                variant="ghost"
-                size="icon"
-                class="size-8 shrink-0 text-muted-foreground hover:bg-muted"
+                :class="RELAY_MODAL_CLOSE_BUTTON_CLASS"
                 @click="close"
               >
                 <span class="i-lucide-x size-4" />
-              </RelayButton>
+              </button>
             </div>
 
             <div class="mb-6 flex items-center justify-between gap-3">

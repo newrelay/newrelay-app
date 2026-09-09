@@ -9,7 +9,7 @@ import {
   DROPDOWN_MENU_MODAL_SEARCHABLE_CONTENT_CLASS,
   DROPDOWN_MENU_MODAL_SEARCHABLE_LIST_CLASS,
 } from 'dashboard/components-next/relay/dropdown-menu/constants';
-import Button from 'dashboard/components-next/button/Button.vue';
+import { RELAY_MODAL_CLOSE_BUTTON_CLASS } from 'dashboard/components-next/relay/modal/constants';
 import Avatar from 'next/avatar/Avatar.vue';
 import MultiselectDropdownItems from 'shared/components/ui/MultiselectDropdownItems.vue';
 
@@ -126,7 +126,13 @@ const displayLabel = computed(() => {
           >
             {{ multiselectorTitle }}
           </h4>
-          <Button ghost slate xs icon="i-lucide-x" @click="isOpen = false" />
+          <button
+            type="button"
+            :class="RELAY_MODAL_CLOSE_BUTTON_CLASS"
+            @click="isOpen = false"
+          >
+            <span class="i-lucide-x size-4" />
+          </button>
         </div>
         <div :class="DROPDOWN_MENU_MODAL_SEARCHABLE_LIST_CLASS">
           <MultiselectDropdownItems

@@ -1,5 +1,6 @@
 <script>
 import { RelayTooltip } from 'dashboard/components-next/relay';
+import { RELAY_MODAL_CLOSE_BUTTON_CLASS } from 'dashboard/components-next/relay/modal/constants';
 import Spinner from 'shared/components/Spinner.vue';
 import { useAlert } from 'dashboard/composables';
 import { mapGetters } from 'vuex';
@@ -27,6 +28,7 @@ export default {
     const { agentsList } = useAgentsList(false);
     return {
       agentsList,
+      RELAY_MODAL_CLOSE_BUTTON_CLASS,
     };
   },
   data() {
@@ -222,7 +224,13 @@ export default {
         >
           {{ $t('CONVERSATION_PARTICIPANTS.ADD_PARTICIPANTS') }}
         </h4>
-        <NextButton ghost slate xs icon="i-lucide-x" @click="onCloseDropdown" />
+        <button
+          type="button"
+          :class="RELAY_MODAL_CLOSE_BUTTON_CLASS"
+          @click="onCloseDropdown"
+        >
+          <span class="i-lucide-x size-4" />
+        </button>
       </div>
       <MultiselectDropdownItems
         :options="agentsList"

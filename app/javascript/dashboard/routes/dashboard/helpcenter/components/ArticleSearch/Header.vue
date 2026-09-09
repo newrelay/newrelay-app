@@ -1,7 +1,7 @@
 <script setup>
 import { ref, watch, onMounted } from 'vue';
 import { useKeyboardEvents } from 'dashboard/composables/useKeyboardEvents';
-import Button from 'dashboard/components-next/button/Button.vue';
+import { RELAY_MODAL_CLOSE_BUTTON_CLASS } from 'dashboard/components-next/relay/modal/constants';
 import { RelayInput } from 'dashboard/components-next/relay';
 
 defineProps({
@@ -51,7 +51,13 @@ useKeyboardEvents(keyboardEvents);
       <h3 class="text-base text-foreground">
         {{ title }}
       </h3>
-      <Button ghost xs slate icon="i-lucide-x" @click="onClose" />
+      <button
+        type="button"
+        :class="RELAY_MODAL_CLOSE_BUTTON_CLASS"
+        @click="onClose"
+      >
+        <span class="i-lucide-x size-4" />
+      </button>
     </div>
 
     <div class="relative">

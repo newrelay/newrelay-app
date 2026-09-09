@@ -2,6 +2,7 @@
 /* eslint-disable */
 import { ref, computed, onMounted, watch } from 'vue';
 import { RelayInput as Input, RelayBadge as Badge, RelayButton, RelayTextarea } from 'dashboard/components-next/relay';
+import { RELAY_MODAL_CLOSE_BUTTON_CLASS } from 'dashboard/components-next/relay/modal/constants';
 import {
   Play, MoreHorizontal, MessageSquare, Heart, Share2, 
   CheckCircle, Search, Filter, Calendar, ExternalLink, 
@@ -783,7 +784,7 @@ const stats = computed(() => {
             <h2 class="font-bold text-foreground text-sm">{{ selectedVideo.author }}</h2>
             <Badge v-if="insights.marketing_score >= 70" class="bg-primary/10 text-primary border border-primary/20 shadow-none font-medium text-[10px] px-2 py-0.5 rounded-md ml-1">Marketing Ready</Badge>
           </div>
-          <button class="p-1.5 text-muted-foreground hover:text-foreground rounded-lg hover:bg-muted cursor-pointer" @click="closePanel">
+          <button type="button" :class="RELAY_MODAL_CLOSE_BUTTON_CLASS" @click="closePanel">
             <X class="size-4" />
           </button>
         </div>

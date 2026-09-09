@@ -5,11 +5,11 @@ import { debounce } from '@chatwoot/utils';
 
 import TagInput from 'dashboard/components-next/taginput/TagInput.vue';
 import {
-  RelayButton,
   RelayInput,
   RelayTextarea,
   RelayLabel,
 } from 'dashboard/components-next/relay';
+import { RELAY_MODAL_CLOSE_BUTTON_CLASS } from 'dashboard/components-next/relay/modal/constants';
 
 const props = defineProps({
   article: {
@@ -67,14 +67,13 @@ onMounted(() => {
           )
         }}
       </h3>
-      <RelayButton
-        variant="ghost"
-        size="icon"
-        class="size-7 text-muted-foreground hover:text-foreground border border-border hover:border-transparent"
+      <button
+        type="button"
+        :class="RELAY_MODAL_CLOSE_BUTTON_CLASS"
         @click="emit('close')"
       >
-        <span class="i-lucide-x size-3.5" aria-hidden="true" />
-      </RelayButton>
+        <span class="i-lucide-x size-4" aria-hidden="true" />
+      </button>
     </div>
     <div class="flex flex-col gap-4 px-2.5 pb-2">
       <div class="flex flex-col gap-1.5">

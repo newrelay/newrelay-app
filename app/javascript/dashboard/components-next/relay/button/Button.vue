@@ -42,8 +42,7 @@ const variants = {
     'border border-input bg-background shadow-xs hover:bg-accent hover:text-accent-foreground hover:border-transparent',
   secondary:
     'bg-secondary text-secondary-foreground shadow-xs hover:bg-secondary/80',
-  ghost:
-    'border border-border bg-background shadow-xs hover:border-transparent hover:bg-accent hover:text-accent-foreground',
+  ghost: 'hover:bg-accent hover:text-accent-foreground',
   link: 'text-primary underline-offset-4 hover:underline',
 };
 

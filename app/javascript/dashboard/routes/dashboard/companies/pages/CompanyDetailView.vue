@@ -17,6 +17,7 @@ import {
   RelayButton,
   RelayInput,
 } from 'dashboard/components-next/relay';
+import { RELAY_MODAL_CLOSE_BUTTON_CLASS } from 'dashboard/components-next/relay/modal/constants';
 import { useCompaniesStore } from 'dashboard/stores/companies';
 
 const route = useRoute();
@@ -854,10 +855,10 @@ onBeforeUnmount(() => {
             </div>
             <button
               type="button"
-              class="reset-base shrink-0 rounded-full p-2 text-muted-foreground transition-colors hover:bg-muted/50 hover:text-foreground"
+              :class="RELAY_MODAL_CLOSE_BUTTON_CLASS"
               @click="closeAllContactsModal"
             >
-              <span class="i-lucide-x size-5" />
+              <span class="i-lucide-x size-4" />
             </button>
           </div>
         </div>

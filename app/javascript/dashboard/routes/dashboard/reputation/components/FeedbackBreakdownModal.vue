@@ -3,6 +3,7 @@
 import { computed } from 'vue';
 import { X, ThumbsUp, Smile, Frown, Meh, CheckCircle2, Globe } from 'lucide-vue-next';
 import { RelayButton as Button } from 'dashboard/components-next/relay';
+import { RELAY_MODAL_CLOSE_BUTTON_CLASS } from 'dashboard/components-next/relay/modal/constants';
 
 const props = defineProps({
   open: { type: Boolean, default: false },
@@ -68,9 +69,9 @@ function close() {
             <p class="text-[12.5px] text-muted-foreground mt-0.5">Aggregated sentiment across all channels.</p>
           </div>
         </div>
-        <Button variant="ghost" size="icon" class="text-muted-foreground border border-border hover:border-transparent" @click="close">
-          <X class="size-5" />
-        </Button>
+        <button type="button" :class="RELAY_MODAL_CLOSE_BUTTON_CLASS" @click="close">
+          <X class="size-4" />
+        </button>
       </div>
 
       <!-- Body -->

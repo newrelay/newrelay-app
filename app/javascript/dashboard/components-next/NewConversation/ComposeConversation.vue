@@ -27,6 +27,7 @@ import {
 } from 'dashboard/components-next/NewConversation/helpers/composeConversationHelper';
 
 import { RelayButton } from 'dashboard/components-next/relay';
+import { RELAY_MODAL_CLOSE_BUTTON_CLASS } from 'dashboard/components-next/relay/modal/constants';
 import ComposeNewConversationForm from 'dashboard/components-next/NewConversation/components/ComposeNewConversationForm.vue';
 
 const props = defineProps({
@@ -371,7 +372,7 @@ onBeforeUnmount(() => {
           <RelayButton
             variant="ghost"
             size="icon"
-            class="size-6 rounded-md text-muted-foreground hover:bg-muted hover:text-foreground border border-border hover:border-transparent"
+            class="size-6 rounded-md text-muted-foreground hover:bg-accent hover:text-foreground"
             :title="
               isMinimized
                 ? t('COMPOSE_NEW_CONVERSATION.ACTIONS.RESTORE')
@@ -384,7 +385,7 @@ onBeforeUnmount(() => {
           <RelayButton
             variant="ghost"
             size="icon"
-            class="size-6 rounded-md text-muted-foreground hover:bg-muted hover:text-foreground border border-border hover:border-transparent"
+            class="size-6 rounded-md text-muted-foreground hover:bg-accent hover:text-foreground"
             :title="
               isMaximized
                 ? t('COMPOSE_NEW_CONVERSATION.ACTIONS.EXIT_FULLSCREEN')
@@ -399,15 +400,14 @@ onBeforeUnmount(() => {
               "
             />
           </RelayButton>
-          <RelayButton
-            variant="ghost"
-            size="icon"
-            class="size-6 rounded-md text-muted-foreground hover:bg-muted hover:text-foreground border border-border hover:border-transparent"
+          <button
+            type="button"
+            :class="RELAY_MODAL_CLOSE_BUTTON_CLASS"
             :title="t('COMPOSE_NEW_CONVERSATION.ACTIONS.CLOSE')"
             @click.stop="closeCompose"
           >
-            <span class="i-lucide-x size-3.5" />
-          </RelayButton>
+            <span class="i-lucide-x size-4" />
+          </button>
         </div>
       </div>
 

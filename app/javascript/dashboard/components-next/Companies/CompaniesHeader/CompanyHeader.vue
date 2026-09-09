@@ -178,7 +178,7 @@ const operatorShowsValue = operator =>
               </span>
               <button
                 type="button"
-                class="ml-1 flex size-4 items-center justify-center rounded-full border border-border bg-background text-muted-foreground shadow-xs transition-colors hover:border-transparent hover:bg-accent hover:text-foreground focus:outline-none"
+                class="ml-1 text-muted-foreground hover:text-foreground"
                 @click="emit('removeFilter', index)"
               >
                 <span class="i-lucide-x size-3" />

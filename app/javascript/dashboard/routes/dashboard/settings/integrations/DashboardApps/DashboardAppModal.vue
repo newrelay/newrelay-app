@@ -8,6 +8,7 @@ import { useStore } from 'dashboard/composables/store';
 import Dialog from 'dashboard/components-next/dialog/Dialog.vue';
 import Icon from 'dashboard/components-next/icon/Icon.vue';
 import { RelayButton, RelayInput } from 'dashboard/components-next/relay';
+import { RELAY_MODAL_CLOSE_BUTTON_CLASS } from 'dashboard/components-next/relay/modal/constants';
 
 const props = defineProps({
   show: {
@@ -138,10 +139,10 @@ const submit = async () => {
         </h3>
         <button
           type="button"
-          class="text-muted-foreground transition-colors hover:text-foreground"
+          :class="RELAY_MODAL_CLOSE_BUTTON_CLASS"
           @click="closeModal"
         >
-          <Icon icon="i-lucide-x" class="size-5" />
+          <Icon icon="i-lucide-x" class="size-4" />
         </button>
       </div>
 

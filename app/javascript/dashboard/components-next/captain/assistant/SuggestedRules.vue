@@ -1,6 +1,7 @@
 <script setup>
 import { useI18n } from 'vue-i18n';
 import { RelayButton } from 'dashboard/components-next/relay';
+import { RELAY_MODAL_CLOSE_BUTTON_CLASS } from 'dashboard/components-next/relay/modal/constants';
 
 defineProps({
   title: {
@@ -46,14 +47,13 @@ const onClickClose = () => {
           {{ t('CAPTAIN.ASSISTANTS.GUARDRAILS.ADD.SUGGESTED.ADD') }}
         </RelayButton>
       </div>
-      <RelayButton
-        variant="ghost"
-        size="icon"
-        class="size-6 flex-shrink-0 text-muted-foreground hover:text-foreground border border-border hover:border-transparent"
+      <button
+        type="button"
+        :class="RELAY_MODAL_CLOSE_BUTTON_CLASS"
         @click="onClickClose"
       >
-        <span class="i-lucide-x size-3.5" />
-      </RelayButton>
+        <span class="i-lucide-x size-4" />
+      </button>
     </div>
     <div class="flex w-full flex-col items-start gap-3">
       <div

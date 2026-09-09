@@ -9,6 +9,7 @@ import Breadcrumb from 'dashboard/components-next/breadcrumb/Breadcrumb.vue';
 import Icon from 'dashboard/components-next/icon/Icon.vue';
 import SettingsLayout from 'dashboard/routes/dashboard/settings/SettingsLayout.vue';
 import AssignmentPolicyForm from 'dashboard/routes/dashboard/settings/assignmentPolicy/pages/components/AgentAssignmentPolicyForm.vue';
+import { RELAY_MODAL_CLOSE_BUTTON_CLASS } from 'dashboard/components-next/relay/modal/constants';
 
 const route = useRoute();
 const router = useRouter();
@@ -121,13 +122,13 @@ const handleSubmit = async formState => {
           </h3>
           <button
             type="button"
-            class="text-muted-foreground transition-colors hover:text-foreground"
+            :class="RELAY_MODAL_CLOSE_BUTTON_CLASS"
             :aria-label="
               $t('ASSIGNMENT_POLICY.AGENT_ASSIGNMENT_POLICY.FORM.CANCEL_BUTTON')
             "
             @click="handleCancel"
           >
-            <Icon icon="i-lucide-x" class="size-5" />
+            <Icon icon="i-lucide-x" class="size-4" />
           </button>
         </div>
         <AssignmentPolicyForm

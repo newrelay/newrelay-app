@@ -8,7 +8,8 @@ import {
   Search, FilePlus2
 } from 'lucide-vue-next';
 import { 
-  RelayButton as Button, RelayInput as Input, RelayBadge as Badge
+  RelayButton as Button, RelayInput as Input, RelayBadge as Badge,
+  RELAY_MODAL_CLOSE_BUTTON_CLASS,
 } from 'dashboard/components-next/relay';
 
 const props = defineProps({
@@ -154,8 +155,8 @@ function close() {
             <span :class="currentStep >= 4 ? 'text-primary font-medium' : 'text-muted-foreground'">4. Share</span>
           </div>
         </div>
-        <button class="size-8 rounded-full flex items-center justify-center text-muted-foreground hover:bg-muted cursor-pointer transition-colors" @click="close">
-          <X class="size-5" />
+        <button type="button" :class="RELAY_MODAL_CLOSE_BUTTON_CLASS" @click="close">
+          <X class="size-4" />
         </button>
       </div>
       

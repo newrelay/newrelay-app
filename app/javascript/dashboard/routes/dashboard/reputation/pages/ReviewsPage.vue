@@ -2,6 +2,7 @@
 /* eslint-disable */
 import { ref, computed, onMounted } from 'vue';
 import { RelayInput as Input, RelayCheckbox as Checkbox, RelayTextarea } from 'dashboard/components-next/relay';
+import { RELAY_MODAL_CLOSE_BUTTON_CLASS } from 'dashboard/components-next/relay/modal/constants';
 import Avatar from 'dashboard/components-next/avatar/Avatar.vue';
 import { useMapGetter } from 'dashboard/composables/store';
 import { useAlert } from 'dashboard/composables';
@@ -869,7 +870,7 @@ async function sendReply() {
         <!-- Header -->
         <div class="px-5 py-4 border-b border-border flex items-center justify-between bg-card shrink-0">
           <h2 class="text-[15px] font-semibold text-foreground">Review Details</h2>
-          <button class="p-1 text-muted-foreground hover:text-foreground rounded-lg hover:bg-muted cursor-pointer" @click="closeReviewDetail">
+          <button type="button" :class="RELAY_MODAL_CLOSE_BUTTON_CLASS" @click="closeReviewDetail">
             <X class="size-4" />
           </button>
         </div>

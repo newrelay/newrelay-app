@@ -10,6 +10,7 @@ import { useVuelidate } from '@vuelidate/core';
 import Dialog from 'dashboard/components-next/dialog/Dialog.vue';
 import { RelayInput, RelayLabel } from 'dashboard/components-next/relay';
 import NextButton from 'dashboard/components-next/button/Button.vue';
+import { RELAY_MODAL_CLOSE_BUTTON_CLASS } from 'dashboard/components-next/relay/modal/constants';
 
 const props = defineProps({
   customDomain: {
@@ -83,14 +84,14 @@ defineExpose({ dialogRef });
     :show-confirm-button="false"
     @close="resetForm"
   >
-    <NextButton
-      icon="i-lucide-x"
-      sm
-      ghost
-      slate
-      class="flex-shrink-0 absolute top-2 ltr:right-2 rtl:left-2"
+    <button
+      type="button"
+      class="absolute top-2 ltr:right-2 rtl:left-2"
+      :class="RELAY_MODAL_CLOSE_BUTTON_CLASS"
       @click="onClose"
-    />
+    >
+      <span class="i-lucide-x size-4" />
+    </button>
     <div class="flex flex-col gap-6 divide-y divide-border">
       <div class="flex flex-col gap-6">
         <div class="flex flex-col gap-2 ltr:pr-10 rtl:pl-10">

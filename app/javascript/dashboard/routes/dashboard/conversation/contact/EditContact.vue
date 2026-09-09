@@ -3,7 +3,7 @@ import { useStore } from 'dashboard/composables/store';
 import { useMapGetter } from 'dashboard/composables/store';
 import { useKeyboardEvents } from 'dashboard/composables/useKeyboardEvents';
 import ContactForm from './ContactForm.vue';
-import Button from 'dashboard/components-next/button/Button.vue';
+import { RELAY_MODAL_CLOSE_BUTTON_CLASS } from 'dashboard/components-next/relay/modal/constants';
 
 const props = defineProps({
   show: { type: Boolean, default: false },
@@ -56,7 +56,13 @@ useKeyboardEvents({
             {{ $t('EDIT_CONTACT.DESC') }}
           </p>
         </div>
-        <Button icon="i-lucide-x" slate ghost sm @click="onCancel" />
+        <button
+          type="button"
+          :class="RELAY_MODAL_CLOSE_BUTTON_CLASS"
+          @click="onCancel"
+        >
+          <span class="i-lucide-x size-4" />
+        </button>
       </div>
       <ContactForm
         :contact="contact"

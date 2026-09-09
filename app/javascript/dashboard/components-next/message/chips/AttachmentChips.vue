@@ -83,6 +83,7 @@ const files = computed(() => {
 <template>
   <MediaAlbum
     v-if="mediaAttachments.length > 1"
+    class="w-[250px] max-w-[260px]"
     :attachments="mediaAttachments"
   />
   <div v-else-if="mediaAttachments.length" :class="classToApply">

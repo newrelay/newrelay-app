@@ -111,6 +111,7 @@
       "MORE_ACTIONS": "More actions",
       "SEARCH_ACTION": "Search messages",
       "SEARCH_PLACEHOLDER": "Search in conversation...",
+      "SEARCH_FOUND": "{count} found",
       "SEARCH_MATCHES": "{current} of {total}",
       "SEARCH_NO_RESULTS": "No results",
       "SEARCH_PREVIOUS": "Previous match",
@@ -550,6 +551,8 @@
       "VIEW_ALL": "View all",
       "SHOW_LESS": "Show less",
       "MORE_COUNT": "+{count}",
+      "MORE_IMAGES": "more",
+      "IMAGES_ATTACHED": "{count} images attached",
       "UNTITLED_FILE": "Untitled file",
       "PDF_LABEL": "PDF"
     },
@@ -637,6 +640,10 @@
   },
   "GALLERY_VIEW": {
     "ERROR_DOWNLOADING": "Unable to download attachment. Please try again",
-    "EXPAND": "Open preview"
+    "EXPAND": "Open preview",
+    "SHARED_IMAGE": "Shared image",
+    "IMAGE_OF": "Image {current} of {total}",
+    "PREVIOUS": "Previous image",
+    "NEXT": "Next image"
   }
 }

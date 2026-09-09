@@ -8,13 +8,21 @@ describe Enterprise::Billing::HandleStripeEventService do
   let(:subscription) { double }
   let!(:account) { create(:account, custom_attributes: { stripe_customer_id: 'cus_123' }) }
 
+  # Feature gating now flows through Enterprise::Billing::ReconcilePlanFeaturesService,
+  # which reads its matrix from PlanFeatureLimit (plan_key must be one of
+  # PlanFeatureLimit::PLAN_KEYS: hobby/standard/business/enterprise) - there are no
+  # hardcoded per-plan feature constants on this class anymore.
+  let(:standard_plan_features) { %w[channel_instagram] }
+  let(:business_plan_features) { %w[sla custom_roles help_center channel_email] }
+  let(:enterprise_plan_features) { %w[audit_logs] }
+
   before do
     # Create cloud plans configuration
     create(:installation_config, {
              name: 'CHATWOOT_CLOUD_PLANS',
              value: [
-               { 'name' => 'Hacker', 'product_id' => ['plan_id_hacker'], 'price_ids' => ['price_hacker'] },
-               { 'name' => 'Startups', 'product_id' => ['plan_id_startups'], 'price_ids' => ['price_startups'] },
+               { 'name' => 'Hobby', 'product_id' => ['plan_id_hobby'], 'price_ids' => ['price_hobby'] },
+               { 'name' => 'Standard', 'product_id' => ['plan_id_standard'], 'price_ids' => ['price_standard'] },
                { 'name' => 'Business', 'product_id' => ['plan_id_business'], 'price_ids' => ['price_business'] },
                { 'name' => 'Enterprise', 'product_id' => ['plan_id_enterprise'], 'price_ids' => ['price_enterprise'] }
              ]
@@ -23,8 +31,8 @@ describe Enterprise::Billing::HandleStripeEventService do
     create(:installation_config, {
              name: 'CAPTAIN_CLOUD_PLAN_LIMITS',
              value: {
-               'hacker' => { 'responses' => 0 },
-               'startups' => { 'responses' => 300 },
+               'hobby' => { 'responses' => 0 },
+               'standard' => { 'responses' => 300 },
                'business' => { 'responses' => 500 },
                'enterprise' => { 'responses' => 800 }
              }
@@ -41,23 +49,41 @@ describe Enterprise::Billing::HandleStripeEventService do
     allow(data).to receive(:previous_attributes).and_return({})
     allow(subscription).to receive(:[]).with('quantity').and_return('10')
     allow(subscription).to receive(:[]).with('status').and_return('active')
+    allow(subscription).to receive(:[]).with('current_period_start').and_return(1_686_567_520)
     allow(subscription).to receive(:[]).with('current_period_end').and_return(1_686_567_520)
     allow(subscription).to receive(:customer).and_return('cus_123')
+    # process_platform_subscription_updated reads these via method calls (not
+    # hash access) to build the Subscription record.
+    allow(subscription).to receive(:status).and_return('active')
+    allow(subscription).to receive(:cancel_at_period_end).and_return(false)
     allow(event).to receive(:type).and_return('customer.subscription.updated')
+
+    cumulative_by_plan_key = {
+      'hobby' => [],
+      'standard' => standard_plan_features,
+      'business' => standard_plan_features + business_plan_features,
+      'enterprise' => standard_plan_features + business_plan_features + enterprise_plan_features
+    }
+    all_gated_features = standard_plan_features + business_plan_features + enterprise_plan_features
+    cumulative_by_plan_key.each do |plan_key, enabled_features|
+      all_gated_features.each do |feature|
+        PlanFeatureLimit.create!(plan_key: plan_key, feature_key: feature, enabled: enabled_features.include?(feature))
+      end
+    end
   end
 
   describe 'subscription update handling' do
     it 'updates account attributes and disables premium features for default plan' do
-      # Setup for default (Hacker) plan
+      # Setup for default (Hobby) plan
       allow(subscription).to receive(:[]).with('plan')
-                                         .and_return({ 'id' => 'test', 'product' => 'plan_id_hacker', 'name' => 'Hacker' })
+                                         .and_return({ 'id' => 'test', 'product' => 'plan_id_hobby', 'name' => 'Hobby' })
 
       stripe_event_service.new.perform(event: event)
 
       # Verify account attributes were updated
       expect(account.reload.custom_attributes).to include(
-        'plan_name' => 'Hacker',
-        'stripe_product_id' => 'plan_id_hacker',
+        'plan_name' => 'Hobby',
+        'stripe_product_id' => 'plan_id_hobby',
         'subscription_status' => 'active'
       )
 
@@ -76,7 +102,7 @@ describe Enterprise::Billing::HandleStripeEventService do
 
       # Setup for any plan
       allow(subscription).to receive(:[]).with('plan')
-                                         .and_return({ 'id' => 'test', 'product' => 'plan_id_startups', 'name' => 'Startups' })
+                                         .and_return({ 'id' => 'test', 'product' => 'plan_id_standard', 'name' => 'Standard' })
       allow(subscription).to receive(:[]).with('current_period_start').and_return(1_686_567_520)
 
       # Simulate billing period renewal with previous_attributes showing old period
@@ -92,7 +118,7 @@ describe Enterprise::Billing::HandleStripeEventService do
   describe 'subscription quantity update' do
     before do
       allow(subscription).to receive(:[]).with('plan')
-                                         .and_return({ 'id' => 'price_startups', 'product' => 'plan_id_startups', 'name' => 'Startups' })
+                                         .and_return({ 'id' => 'price_standard', 'product' => 'plan_id_standard', 'name' => 'Standard' })
     end
 
     it 'updates subscribed_quantity' do
@@ -122,7 +148,7 @@ describe Enterprise::Billing::HandleStripeEventService do
 
   describe 'subscription deletion handling' do
     it 'drops the account back to a no-plan state instead of re-subscribing it' do
-      account.update!(custom_attributes: account.custom_attributes.merge('plan_name' => 'Startups'))
+      account.update!(custom_attributes: account.custom_attributes.merge('plan_name' => 'Standard'))
       allow(event).to receive(:type).and_return('customer.subscription.deleted')
 
       expect(Enterprise::Billing::CreateStripeCustomerService).not_to receive(:new)
@@ -136,55 +162,48 @@ describe Enterprise::Billing::HandleStripeEventService do
   end
 
   describe 'plan-specific feature management' do
-    context 'with default plan (Hacker)' do
+    context 'with default plan (Hobby)' do
       it 'disables all premium features' do
         allow(subscription).to receive(:[]).with('plan')
-                                           .and_return({ 'id' => 'test', 'product' => 'plan_id_hacker', 'name' => 'Hacker' })
+                                           .and_return({ 'id' => 'test', 'product' => 'plan_id_hobby', 'name' => 'Hobby' })
 
         # Enable features first
-        described_class::STARTUP_PLAN_FEATURES.each do |feature|
-          account.enable_features(feature)
-        end
-        account.enable_features(*described_class::BUSINESS_PLAN_FEATURES)
-        account.enable_features(*described_class::ENTERPRISE_PLAN_FEATURES)
+        all_gated_features = standard_plan_features + business_plan_features + enterprise_plan_features
+        account.enable_features(*all_gated_features)
         account.save!
 
         account.reload
-        expect(account).to be_feature_enabled(described_class::STARTUP_PLAN_FEATURES.first)
+        expect(account).to be_feature_enabled(standard_plan_features.first)
 
         stripe_event_service.new.perform(event: event)
 
         account.reload
 
-        all_features = described_class::STARTUP_PLAN_FEATURES +
-                       described_class::BUSINESS_PLAN_FEATURES +
-                       described_class::ENTERPRISE_PLAN_FEATURES
-
-        all_features.each do |feature|
+        all_gated_features.each do |feature|
           expect(account).not_to be_feature_enabled(feature)
         end
       end
     end
 
-    context 'with Startups plan' do
+    context 'with Standard plan' do
       it 'enables common features but not premium features' do
         allow(subscription).to receive(:[]).with('plan')
-                                           .and_return({ 'id' => 'test', 'product' => 'plan_id_startups', 'name' => 'Startups' })
+                                           .and_return({ 'id' => 'test', 'product' => 'plan_id_standard', 'name' => 'Standard' })
 
         stripe_event_service.new.perform(event: event)
 
-        # Verify basic (Startups) features are enabled
+        # Verify basic (Standard) features are enabled
         account.reload
-        described_class::STARTUP_PLAN_FEATURES.each do |feature|
+        standard_plan_features.each do |feature|
           expect(account).to be_feature_enabled(feature)
         end
 
         # But business and enterprise features should be disabled
-        described_class::BUSINESS_PLAN_FEATURES.each do |feature|
+        business_plan_features.each do |feature|
           expect(account).not_to be_feature_enabled(feature)
         end
 
-        described_class::ENTERPRISE_PLAN_FEATURES.each do |feature|
+        enterprise_plan_features.each do |feature|
           expect(account).not_to be_feature_enabled(feature)
         end
       end
@@ -198,15 +217,15 @@ describe Enterprise::Billing::HandleStripeEventService do
         stripe_event_service.new.perform(event: event)
 
         account.reload
-        described_class::STARTUP_PLAN_FEATURES.each do |feature|
+        standard_plan_features.each do |feature|
           expect(account).to be_feature_enabled(feature)
         end
 
-        described_class::BUSINESS_PLAN_FEATURES.each do |feature|
+        business_plan_features.each do |feature|
           expect(account).to be_feature_enabled(feature)
         end
 
-        described_class::ENTERPRISE_PLAN_FEATURES.each do |feature|
+        enterprise_plan_features.each do |feature|
           expect(account).not_to be_feature_enabled(feature)
         end
       end
@@ -220,15 +239,15 @@ describe Enterprise::Billing::HandleStripeEventService do
         stripe_event_service.new.perform(event: event)
 
         account.reload
-        described_class::STARTUP_PLAN_FEATURES.each do |feature|
+        standard_plan_features.each do |feature|
           expect(account).to be_feature_enabled(feature)
         end
 
-        described_class::BUSINESS_PLAN_FEATURES.each do |feature|
+        business_plan_features.each do |feature|
           expect(account).to be_feature_enabled(feature)
         end
 
-        described_class::ENTERPRISE_PLAN_FEATURES.each do |feature|
+        enterprise_plan_features.each do |feature|
           expect(account).to be_feature_enabled(feature)
         end
       end
@@ -261,9 +280,9 @@ describe Enterprise::Billing::HandleStripeEventService do
         expect(account).to be_feature_enabled('audit_logs')
         expect(account).to be_feature_enabled('custom_roles')
 
-        # Now downgrade to Hacker plan (which normally wouldn't have these features)
+        # Now downgrade to Hobby plan (which normally wouldn't have these features)
         allow(subscription).to receive(:[]).with('plan')
-                                           .and_return({ 'id' => 'test', 'product' => 'plan_id_hacker', 'name' => 'Hacker' })
+                                           .and_return({ 'id' => 'test', 'product' => 'plan_id_hobby', 'name' => 'Hobby' })
 
         service.perform(event: event)
         account.reload
@@ -314,7 +333,7 @@ describe Enterprise::Billing::HandleStripeEventService do
       end
     end
 
-    context 'when downgrading from Business to Startups plan' do
+    context 'when downgrading from Business to Standard plan' do
       before do
         # Start with Business plan
         allow(subscription).to receive(:[]).with('plan')
@@ -327,9 +346,9 @@ describe Enterprise::Billing::HandleStripeEventService do
         # Verify business features were enabled
         expect(account).to be_feature_enabled('sla')
 
-        # Downgrade to Startups plan
+        # Downgrade to Standard plan
         allow(subscription).to receive(:[]).with('plan')
-                                           .and_return({ 'id' => 'test', 'product' => 'plan_id_startups', 'name' => 'Startups' })
+                                           .and_return({ 'id' => 'test', 'product' => 'plan_id_standard', 'name' => 'Standard' })
         service.perform(event: event)
 
         account.reload
@@ -340,11 +359,11 @@ describe Enterprise::Billing::HandleStripeEventService do
       end
     end
 
-    context 'when downgrading from Startups to Hacker plan' do
+    context 'when downgrading from Standard to Hobby plan' do
       before do
-        # Start with Startups plan
+        # Start with Standard plan
         allow(subscription).to receive(:[]).with('plan')
-                                           .and_return({ 'id' => 'test', 'product' => 'plan_id_startups', 'name' => 'Startups' })
+                                           .and_return({ 'id' => 'test', 'product' => 'plan_id_standard', 'name' => 'Standard' })
         service.perform(event: event)
         account.reload
       end
@@ -353,9 +372,9 @@ describe Enterprise::Billing::HandleStripeEventService do
         # Verify startup features were enabled
         expect(account).to be_feature_enabled('channel_instagram')
 
-        # Downgrade to Hacker (default) plan
+        # Downgrade to Hobby (default) plan
         allow(subscription).to receive(:[]).with('plan')
-                                           .and_return({ 'id' => 'test', 'product' => 'plan_id_hacker', 'name' => 'Hacker' })
+                                           .and_return({ 'id' => 'test', 'product' => 'plan_id_hobby', 'name' => 'Hobby' })
         service.perform(event: event)
 
         account.reload

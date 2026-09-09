@@ -24,6 +24,6 @@ export const RELAY_MODAL_DESCRIPTION_CLASS =
 
 export const RELAY_MODAL_BODY_CLASS = 'flex-1 overflow-y-auto p-6';
 
-/** Icon close on drawers/modals — bordered surface, not a bare glyph. */
+/** Icon close — shadcn ghost size-8, no resting fill (hover:bg-accent only). */
 export const RELAY_MODAL_CLOSE_BUTTON_CLASS =
-  'reset-base flex size-8 shrink-0 items-center justify-center rounded-md border border-border bg-background text-muted-foreground shadow-xs transition-colors hover:border-transparent hover:bg-accent hover:text-foreground';
+  'reset-base inline-flex size-8 shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-md p-0 text-sm font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0';

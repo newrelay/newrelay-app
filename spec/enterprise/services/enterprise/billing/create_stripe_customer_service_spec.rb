@@ -23,12 +23,20 @@ describe Enterprise::Billing::CreateStripeCustomerService do
       create(
         :installation_config,
         { name: 'CHATWOOT_CLOUD_PLANS', value: [
-          { 'name' => 'A Plan Name', 'product_id' => ['prod_hacker_random'], 'price_ids' => ['price_hacker_random'] }
+          { 'name' => 'Hobby', 'product_id' => ['prod_hobby_random'], 'price_ids' => ['price_hobby_random'] }
         ] }
       )
     end
 
     it 'preserves unrelated custom attributes, clears is_creating_customer, and reconciles default-plan features' do
+      # ReconcilePlanFeaturesService (called at the end of #perform) only acts when
+      # PlanFeatureLimit has rows for the resolved plan_key - 'enterprise' seeds the
+      # master feature registry that gets disabled first, 'hobby' is this plan's own
+      # (empty) allowlist, so help_center ends up disabled like any other plan feature
+      # not included on Hobby.
+      PlanFeatureLimit.create!(plan_key: 'enterprise', feature_key: 'help_center', enabled: true)
+      PlanFeatureLimit.create!(plan_key: 'hobby', feature_key: 'help_center', enabled: false)
+
       account.update!(
         custom_attributes: {
           'is_creating_customer' => true,
@@ -51,7 +59,7 @@ describe Enterprise::Billing::CreateStripeCustomerService do
         'stripe_price_id' => 'price_random_number',
         'stripe_product_id' => 'prod_random_number',
         'subscribed_quantity' => 2,
-        'plan_name' => 'A Plan Name',
+        'plan_name' => 'Hobby',
         'onboarding_source' => 'billing_page',
         'subscription_status' => 'active',
         'subscription_ends_on' => subscription_ends_on
@@ -72,7 +80,7 @@ describe Enterprise::Billing::CreateStripeCustomerService do
       expect(Stripe::Customer).not_to have_received(:create)
       expect(Stripe::Subscription)
         .to have_received(:create)
-        .with({ customer: 'cus_random_number', items: [{ price: 'price_hacker_random', quantity: 2 }] })
+        .with({ customer: 'cus_random_number', items: [{ price: 'price_hobby_random', quantity: 2 }] })
 
       expect(account.reload.custom_attributes).to eq(
         {
@@ -80,7 +88,7 @@ describe Enterprise::Billing::CreateStripeCustomerService do
           stripe_price_id: 'price_random_number',
           stripe_product_id: 'prod_random_number',
           subscribed_quantity: 2,
-          plan_name: 'A Plan Name',
+          plan_name: 'Hobby',
           subscription_status: 'active',
           subscription_ends_on: subscription_ends_on
         }.with_indifferent_access
@@ -98,7 +106,7 @@ describe Enterprise::Billing::CreateStripeCustomerService do
       expect(Stripe::Customer).to have_received(:create).with({ name: account.name, email: admin1.email })
       expect(Stripe::Subscription)
         .to have_received(:create)
-        .with({ customer: customer.id, items: [{ price: 'price_hacker_random', quantity: 2 }] })
+        .with({ customer: customer.id, items: [{ price: 'price_hobby_random', quantity: 2 }] })
 
       expect(account.reload.custom_attributes).to eq(
         {
@@ -106,7 +114,7 @@ describe Enterprise::Billing::CreateStripeCustomerService do
           stripe_price_id: 'price_random_number',
           stripe_product_id: 'prod_random_number',
           subscribed_quantity: 2,
-          plan_name: 'A Plan Name',
+          plan_name: 'Hobby',
           subscription_status: 'active',
           subscription_ends_on: subscription_ends_on
         }.with_indifferent_access

@@ -22,7 +22,7 @@ describe Enterprise::Billing::TopupFulfillmentService do
     end
 
     it 'creates a Stripe credit grant' do
-      service.fulfill(credits: 1000, amount_cents: 2000, currency: 'usd')
+      service.fulfill(credits: 1000, amount_cents: 2000, currency: 'usd', stripe_session_id: 'cs_test')
 
       expect(Stripe::Billing::CreditGrant).to have_received(:create).with(
         hash_including(

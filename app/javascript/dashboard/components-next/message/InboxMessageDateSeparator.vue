@@ -31,14 +31,15 @@ const label = computed(() => {
 </script>
 
 <template>
-  <div class="relative my-2 flex items-center justify-center">
-    <div class="absolute inset-0 flex items-center">
-      <div class="w-full border-t border-border" />
+  <div class="my-2 flex items-center justify-center">
+    <div class="flex w-[40%] items-center gap-3">
+      <div class="flex-1 border-t border-border" />
+      <span
+        class="shrink-0 select-none text-[12px] font-medium text-muted-foreground"
+      >
+        {{ label }}
+      </span>
+      <div class="flex-1 border-t border-border" />
     </div>
-    <span
-      class="relative bg-muted/10 px-4 text-[13px] font-medium text-muted-foreground dark:bg-background"
-    >
-      {{ label }}
-    </span>
   </div>
 </template>

@@ -8,6 +8,7 @@ import { useContactFilterContext } from './contactProvider.js';
 import { useSnakeCase } from 'dashboard/composables/useTransformKeys';
 
 import { RelayButton, RelayInput } from 'dashboard/components-next/relay';
+import { RELAY_MODAL_CLOSE_BUTTON_CLASS } from 'dashboard/components-next/relay/modal/constants';
 import ConditionRow from './ConditionRow.vue';
 
 const props = defineProps({
@@ -114,14 +115,13 @@ onBeforeUnmount(() => emit('close'));
           >
             {{ filterModalHeaderTitle }}
           </h2>
-          <RelayButton
-            variant="ghost"
-            size="icon"
-            class="size-8 text-muted-foreground hover:text-foreground border border-border hover:border-transparent"
+          <button
+            type="button"
+            :class="RELAY_MODAL_CLOSE_BUTTON_CLASS"
             @click="close"
           >
             <span class="i-lucide-x size-4" />
-          </RelayButton>
+          </button>
         </div>
 
         <div class="no-scrollbar flex-1 overflow-y-auto pr-2">

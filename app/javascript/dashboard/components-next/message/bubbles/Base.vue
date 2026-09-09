@@ -126,17 +126,7 @@ const replyToPreview = computed(() => {
 </script>
 
 <template>
-  <div v-if="isPrivateNote" class="flex w-full min-w-0 flex-col gap-4">
-    <div class="relative flex w-full items-center justify-center">
-      <div class="absolute inset-0 flex items-center">
-        <div class="w-full border-t border-border" />
-      </div>
-      <span
-        class="relative bg-muted/10 px-4 text-sm font-medium text-muted-foreground dark:bg-background"
-      >
-        {{ t('CONVERSATION.INTERNAL_NOTE.LABEL') }}
-      </span>
-    </div>
+  <div v-if="isPrivateNote" class="my-2 flex w-full min-w-0 flex-col">
     <div class="flex w-full gap-4 rounded-xl bg-warning/10 p-4">
       <span class="i-lucide-sticky-note size-5 shrink-0 text-warning" />
       <div class="flex min-w-0 flex-1 flex-col gap-1 text-sm">

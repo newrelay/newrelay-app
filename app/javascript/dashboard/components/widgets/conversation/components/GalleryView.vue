@@ -1,16 +1,13 @@
 <script setup>
-import { ref, computed, onMounted, useTemplateRef } from 'vue';
+import { ref, computed, onMounted, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useAlert } from 'dashboard/composables';
 
-import { useStoreGetters } from 'dashboard/composables/store';
 import { useKeyboardEvents } from 'dashboard/composables/useKeyboardEvents';
-import { useImageZoom } from 'dashboard/composables/useImageZoom';
-import { messageTimestamp } from 'shared/helpers/timeHelper';
 import { downloadFile } from '@chatwoot/utils';
-
-import NextButton from 'dashboard/components-next/button/Button.vue';
-import Avatar from 'next/avatar/Avatar.vue';
+import { formatBytes } from 'shared/helpers/FileHelper';
+import { RelayButton } from 'dashboard/components-next/relay';
+import { RELAY_DIALOG_OVERLAY_CLASS } from 'dashboard/components-next/relay/modal/constants';
 import TeleportWithDirection from 'dashboard/components-next/TeleportWithDirection.vue';
 
 const props = defineProps({
@@ -32,7 +29,6 @@ const emit = defineEmits(['close']);
 const show = defineModel('show', { type: Boolean, default: false });
 
 const { t } = useI18n();
-const getters = useStoreGetters();
 
 const ALLOWED_FILE_TYPES = {
   IMAGE: 'image',
@@ -57,31 +53,13 @@ const activeImageIndex = ref(
   })()
 );
 
-const imageRef = useTemplateRef('imageRef');
-
-const {
-  imageWrapperStyle,
-  imageStyle,
-  onRotate,
-  activeImageRotation,
-  onZoom,
-  onDoubleClickZoomImage,
-  onWheelImageZoom,
-  onMouseMove,
-  onMouseLeave,
-  resetZoomAndRotation,
-} = useImageZoom(imageRef);
-
-const currentUser = computed(() => getters.getCurrentUser.value);
 const hasMoreThanOneAttachment = computed(
   () => props.allAttachments.length > 1
 );
 
-const readableTime = computed(() => {
-  const { created_at: createdAt } = activeAttachment.value;
-  if (!createdAt) return '';
-  return messageTimestamp(createdAt, 'LLL d yyyy, h:mm a') || '';
-});
+const showDots = computed(
+  () => hasMoreThanOneAttachment.value && props.allAttachments.length <= 16
+);
 
 const isImage = computed(
   () => activeFileType.value === ALLOWED_FILE_TYPES.IMAGE
@@ -95,28 +73,24 @@ const isAudio = computed(
   () => activeFileType.value === ALLOWED_FILE_TYPES.AUDIO
 );
 
-const senderDetails = computed(() => {
-  const {
-    name,
-    available_name: availableName,
-    avatar_url,
-    thumbnail,
-    id,
-  } = activeAttachment.value?.sender || props.attachment?.sender || {};
-
-  return {
-    name: currentUser.value?.id === id ? 'You' : name || availableName || '',
-    avatar: thumbnail || avatar_url || '',
-  };
-});
-
 const fileNameFromDataUrl = computed(() => {
   const { data_url: dataUrl } = activeAttachment.value;
-  if (!dataUrl) return '';
+  if (!dataUrl) return t('GALLERY_VIEW.SHARED_IMAGE');
 
   const fileName = dataUrl.split('/').pop();
-  return fileName ? decodeURIComponent(fileName) : '';
+  return fileName
+    ? decodeURIComponent(fileName)
+    : t('GALLERY_VIEW.SHARED_IMAGE');
 });
+
+const fileSizeLabel = computed(() => {
+  const size =
+    activeAttachment.value.file_size ?? activeAttachment.value.fileSize;
+  if (size == null || size === '') return '';
+  return formatBytes(size);
+});
+
+const metaDot = '\u2022';
 
 const onClose = () => emit('close');
 
@@ -133,7 +107,13 @@ const onClickChangeAttachment = (attachment, index) => {
 
   activeImageIndex.value = index;
   setImageAndVideoSrc(attachment);
-  resetZoomAndRotation();
+};
+
+const stepAttachment = delta => {
+  const total = props.allAttachments.length;
+  if (total <= 1) return;
+  const nextIndex = (activeImageIndex.value + delta + total) % total;
+  onClickChangeAttachment(props.allAttachments[nextIndex], nextIndex);
 };
 
 const onClickDownload = async () => {
@@ -143,7 +123,7 @@ const onClickDownload = async () => {
   try {
     isDownloading.value = true;
     await downloadFile({ url, type, extension });
-  } catch (error) {
+  } catch {
     useAlert(t('GALLERY_VIEW.ERROR_DOWNLOADING'));
   } finally {
     isDownloading.value = false;
@@ -153,20 +133,10 @@ const onClickDownload = async () => {
 const keyboardEvents = {
   Escape: { action: onClose },
   ArrowLeft: {
-    action: () => {
-      onClickChangeAttachment(
-        props.allAttachments[activeImageIndex.value - 1],
-        activeImageIndex.value - 1
-      );
-    },
+    action: () => stepAttachment(-1),
   },
   ArrowRight: {
-    action: () => {
-      onClickChangeAttachment(
-        props.allAttachments[activeImageIndex.value + 1],
-        activeImageIndex.value + 1
-      );
-    },
+    action: () => stepAttachment(1),
   },
 };
 
@@ -175,197 +145,163 @@ useKeyboardEvents(keyboardEvents);
 onMounted(() => {
   setImageAndVideoSrc(props.attachment);
 });
+
+watch(
+  () => props.attachment?.id,
+  () => {
+    setImageAndVideoSrc(props.attachment);
+  }
+);
 </script>
 
 <template>
   <TeleportWithDirection to="body">
-    <div
-      v-if="show"
-      class="fixed inset-0 z-[200] flex flex-col bg-background"
-      role="dialog"
-      aria-modal="true"
-    >
+    <template v-if="show">
       <div
-        class="flex h-full w-full flex-col overflow-hidden bg-background select-none"
+        class="!z-[250]"
+        :class="[RELAY_DIALOG_OVERLAY_CLASS]"
+        role="presentation"
         @click="onClose"
+      />
+      <div
+        class="fixed left-1/2 top-1/2 z-[250] flex max-h-[90vh] w-full max-w-4xl -translate-x-1/2 -translate-y-1/2 flex-col overflow-hidden rounded-2xl border border-border bg-card shadow-2xl"
+        role="dialog"
+        aria-modal="true"
+        @click.stop
       >
         <header
-          class="z-10 flex items-center justify-between w-full h-16 px-6 py-2 bg-background border-b border-border"
-          @click.stop
+          class="flex items-center justify-between border-b border-border bg-card px-6 py-4"
         >
-          <div
-            v-if="senderDetails"
-            class="flex items-center min-w-[15rem] shrink-0"
-          >
-            <Avatar
-              v-if="senderDetails.avatar"
-              :name="senderDetails.name"
-              :src="senderDetails.avatar"
-              :size="40"
-              rounded-full
-              class="flex-shrink-0"
-            />
-            <div class="flex flex-col ml-2 rtl:ml-0 rtl:mr-2 overflow-hidden">
-              <h3 class="capitalize text-base leading-5 m-0 font-medium">
-                <span
-                  class="overflow-hidden text-foreground whitespace-nowrap text-ellipsis"
-                >
-                  {{ senderDetails.name }}
-                </span>
+          <div class="flex min-w-0 items-center gap-3">
+            <div
+              class="flex size-8 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary"
+            >
+              <span class="i-lucide-image size-4" />
+            </div>
+            <div class="flex min-w-0 flex-col">
+              <h3 class="m-0 truncate text-[14px] font-medium text-foreground">
+                {{ fileNameFromDataUrl }}
               </h3>
-              <span
-                class="text-xs text-muted-foreground whitespace-nowrap text-ellipsis"
+              <p
+                class="m-0 flex items-center gap-2 text-[11px] text-muted-foreground"
               >
-                {{ readableTime }}
-              </span>
+                <span
+                  v-if="hasMoreThanOneAttachment"
+                  class="font-medium text-primary"
+                >
+                  {{
+                    t('GALLERY_VIEW.IMAGE_OF', {
+                      current: activeImageIndex + 1,
+                      total: allAttachments.length,
+                    })
+                  }}
+                </span>
+                <span v-if="hasMoreThanOneAttachment && fileSizeLabel">
+                  {{ metaDot }}
+                </span>
+                <span v-if="fileSizeLabel">{{ fileSizeLabel }}</span>
+              </p>
             </div>
           </div>
-
-          <div
-            class="flex-1 mx-2 px-2 truncate text-sm font-medium text-center text-foreground"
-          >
-            <span v-dompurify-html="fileNameFromDataUrl" class="truncate" />
-          </div>
-
-          <div class="flex items-center gap-2 ml-2 shrink-0">
-            <NextButton
-              v-if="isImage"
-              icon="i-lucide-zoom-in"
-              slate
-              ghost
-              @click="onZoom(0.1)"
-            />
-            <NextButton
-              v-if="isImage"
-              icon="i-lucide-zoom-out"
-              slate
-              ghost
-              @click="onZoom(-0.1)"
-            />
-            <NextButton
-              v-if="isImage"
-              icon="i-lucide-rotate-ccw"
-              slate
-              ghost
-              @click="onRotate('counter-clockwise')"
-            />
-            <NextButton
-              v-if="isImage"
-              icon="i-lucide-rotate-cw"
-              slate
-              ghost
-              @click="onRotate('clockwise')"
-            />
-            <NextButton
-              icon="i-lucide-download"
-              slate
-              ghost
-              :is-loading="isDownloading"
+          <div class="flex items-center gap-2">
+            <RelayButton
+              variant="outline"
+              size="sm"
+              class="h-8 gap-1.5 px-3 text-[12px] font-medium shadow-xs"
               :disabled="isDownloading"
               @click="onClickDownload"
-            />
-            <NextButton icon="i-lucide-x" slate ghost @click="onClose" />
+            >
+              <span class="i-lucide-download size-3.5" />
+              {{ t('CONVERSATION.DOWNLOAD') }}
+            </RelayButton>
+            <RelayButton
+              variant="ghost"
+              size="icon"
+              class="size-8 text-muted-foreground hover:text-foreground"
+              :aria-label="t('CONVERSATION.HEADER.CLOSE')"
+              @click="onClose"
+            >
+              <span class="i-lucide-x size-4" />
+            </RelayButton>
           </div>
         </header>
 
-        <main class="flex items-stretch flex-1 h-full overflow-hidden">
-          <div class="flex items-center justify-center w-16 shrink-0">
-            <NextButton
-              v-if="hasMoreThanOneAttachment"
-              icon="ltr:i-lucide-chevron-left rtl:i-lucide-chevron-right"
-              class="z-10"
-              blue
-              faded
-              lg
-              :disabled="activeImageIndex === 0"
-              @click.stop="
-                onClickChangeAttachment(
-                  allAttachments[activeImageIndex - 1],
-                  activeImageIndex - 1
-                )
-              "
-            />
-          </div>
-
-          <div class="flex-1 flex items-center justify-center overflow-hidden">
-            <div
-              v-if="isImage"
-              :style="imageWrapperStyle"
-              class="flex items-center justify-center origin-center"
-              :class="{
-                // Adjust dimensions when rotated 90/270 degrees to maintain visibility
-                // and prevent image from overflowing container in different aspect ratios
-                'w-[calc(100dvh-8rem)] h-[calc(100dvw-7rem)]':
-                  activeImageRotation % 180 !== 0,
-                'size-full': activeImageRotation % 180 === 0,
-              }"
-            >
-              <img
-                ref="imageRef"
-                :key="activeAttachment.id || activeAttachment.data_url"
-                :src="activeAttachment.data_url"
-                :style="imageStyle"
-                class="max-h-full max-w-full object-contain duration-100 ease-in-out transform select-none"
-                @click.stop
-                @dblclick.stop="onDoubleClickZoomImage"
-                @wheel.prevent.stop="onWheelImageZoom"
-                @mousemove="onMouseMove"
-                @mouseleave="onMouseLeave"
-              />
-            </div>
-
-            <video
-              v-if="isVideo"
-              :key="activeAttachment.id || activeAttachment.data_url"
-              :src="activeAttachment.data_url"
-              controls
-              playsInline
-              :autoplay="autoPlay"
-              class="max-h-full max-w-full object-contain"
-              @click.stop
-            />
-
-            <audio
-              v-if="isAudio"
-              :key="activeAttachment.id || activeAttachment.data_url"
-              controls
-              :autoplay="autoPlay"
-              class="w-full max-w-md"
-              @click.stop
-            >
-              <source :src="`${activeAttachment.data_url}?t=${Date.now()}`" />
-            </audio>
-          </div>
-
-          <div class="flex items-center justify-center w-16 shrink-0">
-            <NextButton
-              v-if="hasMoreThanOneAttachment"
-              icon="ltr:i-lucide-chevron-right rtl:i-lucide-chevron-left"
-              class="z-10"
-              blue
-              faded
-              lg
-              :disabled="activeImageIndex === allAttachments.length - 1"
-              @click.stop="
-                onClickChangeAttachment(
-                  allAttachments[activeImageIndex + 1],
-                  activeImageIndex + 1
-                )
-              "
-            />
-          </div>
-        </main>
-
-        <footer
-          class="z-10 flex items-center justify-center h-12 border-t border-border"
+        <div
+          class="relative flex min-h-[360px] flex-1 items-center justify-center overflow-hidden bg-muted/15 p-4 dark:bg-muted/10 sm:p-8"
         >
-          <div
-            class="rounded-md flex items-center justify-center px-3 py-1 bg-muted text-foreground text-sm font-medium"
+          <button
+            v-if="hasMoreThanOneAttachment"
+            type="button"
+            class="reset-base absolute left-4 z-10 flex size-10 cursor-pointer items-center justify-center rounded-full border border-border/80 bg-background/90 text-foreground shadow-lg transition-all hover:scale-105 hover:bg-background"
+            :aria-label="t('GALLERY_VIEW.PREVIOUS')"
+            @click="stepAttachment(-1)"
           >
-            {{ `${activeImageIndex + 1} / ${allAttachments.length}` }}
+            <span class="i-lucide-chevron-left size-5 rtl:rotate-180" />
+          </button>
+
+          <img
+            v-if="isImage"
+            :key="activeAttachment.id || activeAttachment.data_url"
+            :src="activeAttachment.data_url"
+            :alt="fileNameFromDataUrl"
+            class="max-h-[70vh] max-w-full rounded-lg border border-border/40 object-contain shadow-md"
+          />
+
+          <video
+            v-else-if="isVideo"
+            :key="activeAttachment.id || activeAttachment.data_url"
+            :src="activeAttachment.data_url"
+            controls
+            playsInline
+            :autoplay="autoPlay"
+            class="max-h-[70vh] max-w-full rounded-lg object-contain"
+          />
+
+          <audio
+            v-else-if="isAudio"
+            :key="activeAttachment.id || activeAttachment.data_url"
+            controls
+            :autoplay="autoPlay"
+            class="w-full max-w-md"
+          >
+            <source :src="`${activeAttachment.data_url}?t=${Date.now()}`" />
+          </audio>
+
+          <button
+            v-if="hasMoreThanOneAttachment"
+            type="button"
+            class="reset-base absolute right-4 z-10 flex size-10 cursor-pointer items-center justify-center rounded-full border border-border/80 bg-background/90 text-foreground shadow-lg transition-all hover:scale-105 hover:bg-background"
+            :aria-label="t('GALLERY_VIEW.NEXT')"
+            @click="stepAttachment(1)"
+          >
+            <span class="i-lucide-chevron-right size-5 rtl:rotate-180" />
+          </button>
+
+          <div
+            v-if="showDots"
+            class="absolute bottom-3 left-1/2 flex -translate-x-1/2 items-center gap-1.5 rounded-full border border-border bg-background/90 px-3 py-1.5 shadow-md backdrop-blur-sm"
+          >
+            <button
+              v-for="(item, idx) in allAttachments"
+              :key="item.id || idx"
+              type="button"
+              class="reset-base size-2 rounded-full p-0 transition-all"
+              :class="
+                activeImageIndex === idx
+                  ? 'scale-125 bg-primary ring-2 ring-primary/30'
+                  : 'bg-muted-foreground/30 hover:bg-muted-foreground/70'
+              "
+              :aria-label="
+                t('GALLERY_VIEW.IMAGE_OF', {
+                  current: idx + 1,
+                  total: allAttachments.length,
+                })
+              "
+              @click="onClickChangeAttachment(item, idx)"
+            />
           </div>
-        </footer>
+        </div>
       </div>
-    </div>
+    </template>
   </TeleportWithDirection>
 </template>

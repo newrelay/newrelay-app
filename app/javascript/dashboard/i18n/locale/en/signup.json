@@ -22,7 +22,7 @@
     },
     "EMAIL": {
       "LABEL": "Work email",
-      "PLACEHOLDER": "name@company.com",
+      "PLACEHOLDER": "name{'@'}company.com",
       "ERROR": "Please enter a valid work email address."
     },
     "PASSWORD": {

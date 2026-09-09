@@ -61,7 +61,7 @@
         "PHONE": "Phone Number",
         "PHONE_PLACEHOLDER": "e.g. +1 (555) 123-4567",
         "EMAIL": "Email",
-        "EMAIL_PLACEHOLDER": "e.g. hello@acme.com",
+        "EMAIL_PLACEHOLDER": "e.g. hello{'@'}acme.com",
         "WEBSITE": "Website",
         "WEBSITE_PLACEHOLDER": "e.g. https://acme.com",
         "ADDRESS": "Address",

@@ -10,7 +10,7 @@
     "CONTINUE_TO": "Login to continue to",
     "EMAIL": {
       "LABEL": "Email",
-      "PLACEHOLDER": "name@company.com",
+      "PLACEHOLDER": "name{'@'}company.com",
       "ERROR": "Please enter a valid email address"
     },
     "PASSWORD": {

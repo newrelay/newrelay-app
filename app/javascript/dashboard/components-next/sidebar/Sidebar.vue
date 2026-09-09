@@ -667,67 +667,59 @@ const primaryMenuItems = computed(() => {
         },
       ],
     },
+    {
+      name: 'Portals',
+      label: t('SIDEBAR.KNOWLEDGE_BASE'),
+      icon: 'i-lucide-help-circle',
+      children: [
+        {
+          name: 'Articles',
+          label: t('SIDEBAR.HELP_CENTER.ARTICLES'),
+          activeOn: [
+            'portals_articles_index',
+            'portals_articles_new',
+            'portals_articles_edit',
+          ],
+          to: accountScopedRoute('portals_index', {
+            navigationPath: 'portals_articles_index',
+          }),
+        },
+        {
+          name: 'Categories',
+          label: t('SIDEBAR.HELP_CENTER.CATEGORIES'),
+          activeOn: [
+            'portals_categories_index',
+            'portals_categories_articles_index',
+            'portals_categories_articles_new',
+            'portals_categories_articles_edit',
+          ],
+          to: accountScopedRoute('portals_index', {
+            navigationPath: 'portals_categories_index',
+          }),
+        },
+        {
+          name: 'Locales',
+          label: t('SIDEBAR.HELP_CENTER.LOCALES'),
+          activeOn: ['portals_locales_index'],
+          to: accountScopedRoute('portals_index', {
+            navigationPath: 'portals_locales_index',
+          }),
+        },
+        {
+          // Distinct from footer account Settings (name: 'Settings')
+          name: 'Portal Settings',
+          label: t('SIDEBAR.HELP_CENTER.SETTINGS'),
+          activeOn: ['portals_settings_index'],
+          to: accountScopedRoute('portals_index', {
+            navigationPath: 'portals_settings_index',
+          }),
+        },
+      ],
+    },
   ];
 });
 
-const administrationMenuItems = computed(() => [
-  {
-    name: 'Portals',
-    label: t('SIDEBAR.KNOWLEDGE_BASE'),
-    icon: 'i-lucide-help-circle',
-    children: [
-      {
-        name: 'Articles',
-        label: t('SIDEBAR.HELP_CENTER.ARTICLES'),
-        activeOn: [
-          'portals_articles_index',
-          'portals_articles_new',
-          'portals_articles_edit',
-        ],
-        to: accountScopedRoute('portals_index', {
-          navigationPath: 'portals_articles_index',
-        }),
-      },
-      {
-        name: 'Categories',
-        label: t('SIDEBAR.HELP_CENTER.CATEGORIES'),
-        activeOn: [
-          'portals_categories_index',
-          'portals_categories_articles_index',
-          'portals_categories_articles_new',
-          'portals_categories_articles_edit',
-        ],
-        to: accountScopedRoute('portals_index', {
-          navigationPath: 'portals_categories_index',
-        }),
-      },
-      {
-        name: 'Locales',
-        label: t('SIDEBAR.HELP_CENTER.LOCALES'),
-        activeOn: ['portals_locales_index'],
-        to: accountScopedRoute('portals_index', {
-          navigationPath: 'portals_locales_index',
-        }),
-      },
-      {
-        // Distinct from footer account Settings (name: 'Settings')
-        name: 'Portal Settings',
-        label: t('SIDEBAR.HELP_CENTER.SETTINGS'),
-        activeOn: ['portals_settings_index'],
-        to: accountScopedRoute('portals_index', {
-          navigationPath: 'portals_settings_index',
-        }),
-      },
-    ],
-  },
-]);
-
-const navSections = computed(() => [
-  { items: primaryMenuItems.value },
-  {
-    items: administrationMenuItems.value,
-  },
-]);
+const navSections = computed(() => [{ items: primaryMenuItems.value }]);
 
 const settingsMenuItem = computed(() => {
   const isAdmin =

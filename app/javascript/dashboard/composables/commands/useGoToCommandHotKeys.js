@@ -3,16 +3,14 @@ import { useI18n } from 'vue-i18n';
 import { useMapGetter } from 'dashboard/composables/store';
 import { useRouter } from 'vue-router';
 import { useAdmin } from 'dashboard/composables/useAdmin';
+import { usePolicy } from 'dashboard/composables/usePolicy';
 import {
   ICON_ACCOUNT_SETTINGS,
   ICON_AGENT_REPORTS,
-  ICON_APPS,
-  ICON_CANNED_RESPONSE,
   ICON_CONTACT_DASHBOARD,
   ICON_CONVERSATION_DASHBOARD,
   ICON_INBOXES,
   ICON_INBOX_REPORTS,
-  ICON_LABELS,
   ICON_LABEL_REPORTS,
   ICON_NOTIFICATION,
   ICON_REPORTS_OVERVIEW,
@@ -22,6 +20,7 @@ import {
 } from 'dashboard/helper/commandbar/icons';
 import { frontendURL } from 'dashboard/helper/URLHelper';
 import { FEATURE_FLAGS } from 'dashboard/featureFlags';
+import { SETTINGS_NAV_SECTIONS } from 'dashboard/routes/dashboard/settings/settings.navigation';
 
 const GO_TO_COMMANDS = [
   {
@@ -104,68 +103,6 @@ const GO_TO_COMMANDS = [
     role: ['administrator'],
   },
   {
-    id: 'open_agent_settings',
-    section: 'COMMAND_BAR.SECTIONS.SETTINGS',
-    title: 'COMMAND_BAR.COMMANDS.GO_TO_SETTINGS_AGENTS',
-    featureFlag: FEATURE_FLAGS.AGENT_MANAGEMENT,
-    icon: ICON_AGENT_REPORTS,
-    path: accountId => `accounts/${accountId}/settings/agents/list`,
-    role: ['administrator'],
-  },
-  {
-    id: 'open_team_settings',
-    title: 'COMMAND_BAR.COMMANDS.GO_TO_SETTINGS_TEAMS',
-    featureFlag: FEATURE_FLAGS.TEAM_MANAGEMENT,
-    section: 'COMMAND_BAR.SECTIONS.SETTINGS',
-    icon: ICON_TEAM_REPORTS,
-    path: accountId => `accounts/${accountId}/settings/teams/list`,
-    role: ['administrator'],
-  },
-  {
-    id: 'open_inbox_settings',
-    title: 'COMMAND_BAR.COMMANDS.GO_TO_SETTINGS_INBOXES',
-    featureFlag: FEATURE_FLAGS.INBOX_MANAGEMENT,
-    section: 'COMMAND_BAR.SECTIONS.SETTINGS',
-    icon: ICON_INBOXES,
-    path: accountId => `accounts/${accountId}/settings/inboxes/list`,
-    role: ['administrator'],
-  },
-  {
-    id: 'open_label_settings',
-    title: 'COMMAND_BAR.COMMANDS.GO_TO_SETTINGS_LABELS',
-    featureFlag: FEATURE_FLAGS.LABELS,
-    section: 'COMMAND_BAR.SECTIONS.SETTINGS',
-    icon: ICON_LABELS,
-    path: accountId => `accounts/${accountId}/settings/labels/list`,
-    role: ['administrator'],
-  },
-  {
-    id: 'open_canned_response_settings',
-    title: 'COMMAND_BAR.COMMANDS.GO_TO_SETTINGS_CANNED_RESPONSES',
-    featureFlag: FEATURE_FLAGS.CANNED_RESPONSES,
-    section: 'COMMAND_BAR.SECTIONS.SETTINGS',
-    icon: ICON_CANNED_RESPONSE,
-    path: accountId => `accounts/${accountId}/settings/canned-response/list`,
-    role: ['administrator', 'agent'],
-  },
-  {
-    id: 'open_applications_settings',
-    title: 'COMMAND_BAR.COMMANDS.GO_TO_SETTINGS_APPLICATIONS',
-    featureFlag: FEATURE_FLAGS.INTEGRATIONS,
-    section: 'COMMAND_BAR.SECTIONS.SETTINGS',
-    icon: ICON_APPS,
-    path: accountId => `accounts/${accountId}/settings/applications`,
-    role: ['administrator'],
-  },
-  {
-    id: 'open_account_settings',
-    title: 'COMMAND_BAR.COMMANDS.GO_TO_SETTINGS_ACCOUNT',
-    section: 'COMMAND_BAR.SECTIONS.SETTINGS',
-    icon: ICON_ACCOUNT_SETTINGS,
-    path: accountId => `accounts/${accountId}/settings/general`,
-    role: ['administrator'],
-  },
-  {
     id: 'open_profile_settings',
     title: 'COMMAND_BAR.COMMANDS.GO_TO_SETTINGS_PROFILE',
     section: 'COMMAND_BAR.SECTIONS.SETTINGS',
@@ -187,6 +124,7 @@ export function useGoToCommandHotKeys() {
   const { t } = useI18n();
   const router = useRouter();
   const { isAdmin } = useAdmin();
+  const { shouldShow } = usePolicy();
 
   const currentAccountId = useMapGetter('getCurrentAccountId');
   const isFeatureEnabledOnAccount = useMapGetter(
@@ -196,6 +134,45 @@ export function useGoToCommandHotKeys() {
   const openRoute = url => {
     router.push(frontendURL(url));
   };
+
+  const findRouteMeta = routeName => {
+    const match = router.getRoutes().find(r => r.name === routeName);
+    return match?.meta || {};
+  };
+
+  const isSettingsItemAllowed = item => {
+    if (
+      item.requiresAdvancedAssignment &&
+      !isFeatureEnabledOnAccount.value(
+        currentAccountId.value,
+        FEATURE_FLAGS.ADVANCED_ASSIGNMENT
+      )
+    ) {
+      return false;
+    }
+    const meta = findRouteMeta(item.routeName);
+    return shouldShow(
+      meta.featureFlag,
+      meta.permissions,
+      meta.installationTypes
+    );
+  };
+
+  const settingsCommands = computed(() =>
+    SETTINGS_NAV_SECTIONS.flatMap(section =>
+      section.items.filter(isSettingsItemAllowed).map(item => ({
+        id: `open_settings_${item.key}`,
+        section: t('COMMAND_BAR.SECTIONS.SETTINGS'),
+        title: t(item.labelKey),
+        icon: ICON_ACCOUNT_SETTINGS,
+        handler: () =>
+          router.push({
+            name: item.routeName,
+            params: { accountId: currentAccountId.value },
+          }),
+      }))
+    )
+  );
 
   const goToCommandHotKeys = computed(() => {
     let commands = GO_TO_COMMANDS.filter(cmd => {
@@ -212,13 +189,15 @@ export function useGoToCommandHotKeys() {
       commands = commands.filter(command => command.role.includes('agent'));
     }
 
-    return commands.map(command => ({
+    const staticCommands = commands.map(command => ({
       id: command.id,
       section: t(command.section),
       title: t(command.title),
       icon: command.icon,
       handler: () => openRoute(command.path(currentAccountId.value)),
     }));
+
+    return [...staticCommands, ...settingsCommands.value];
   });
 
   return {

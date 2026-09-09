@@ -3,6 +3,7 @@ import { useStore, useMapGetter } from 'dashboard/composables/store';
 import { useI18n } from 'vue-i18n';
 import { useRouter } from 'vue-router';
 import { useAdmin } from 'dashboard/composables/useAdmin';
+import { usePolicy } from 'dashboard/composables/usePolicy';
 import { frontendURL } from 'dashboard/helper/URLHelper';
 import { MOCK_FEATURE_FLAGS } from './fixtures';
 
@@ -10,6 +11,7 @@ vi.mock('dashboard/composables/store');
 vi.mock('vue-i18n');
 vi.mock('vue-router');
 vi.mock('dashboard/composables/useAdmin');
+vi.mock('dashboard/composables/usePolicy');
 vi.mock('dashboard/helper/URLHelper');
 
 const mockRoutes = [
@@ -19,21 +21,6 @@ const mockRoutes = [
     name: 'contacts',
     featureFlag: MOCK_FEATURE_FLAGS.CRM,
   },
-  {
-    path: 'accounts/:accountId/settings/agents/list',
-    name: 'agent_settings',
-    featureFlag: MOCK_FEATURE_FLAGS.AGENT_MANAGEMENT,
-  },
-  {
-    path: 'accounts/:accountId/settings/teams/list',
-    name: 'team_settings',
-    featureFlag: MOCK_FEATURE_FLAGS.TEAM_MANAGEMENT,
-  },
-  {
-    path: 'accounts/:accountId/settings/inboxes/list',
-    name: 'inbox_settings',
-    featureFlag: MOCK_FEATURE_FLAGS.INBOX_MANAGEMENT,
-  },
   { path: 'accounts/:accountId/profile/settings', name: 'profile_settings' },
   { path: 'accounts/:accountId/notifications', name: 'notifications' },
   {
@@ -41,25 +28,11 @@ const mockRoutes = [
     name: 'reports_overview',
     featureFlag: MOCK_FEATURE_FLAGS.REPORTS,
   },
-  {
-    path: 'accounts/:accountId/settings/labels/list',
-    name: 'label_settings',
-    featureFlag: MOCK_FEATURE_FLAGS.LABELS,
-  },
-  {
-    path: 'accounts/:accountId/settings/canned-response/list',
-    name: 'canned_responses',
-    featureFlag: MOCK_FEATURE_FLAGS.CANNED_RESPONSES,
-  },
-  {
-    path: 'accounts/:accountId/settings/applications',
-    name: 'applications',
-    featureFlag: MOCK_FEATURE_FLAGS.INTEGRATIONS,
-  },
 ];
 
 describe('useGoToCommandHotKeys', () => {
   let store;
+  let routerPush;
 
   beforeEach(() => {
     store = {
@@ -69,14 +42,19 @@ describe('useGoToCommandHotKeys', () => {
       },
     };
 
+    routerPush = vi.fn();
     useStore.mockReturnValue(store);
     useMapGetter.mockImplementation(key => ({
       value: store.getters[key],
     }));
 
     useI18n.mockReturnValue({ t: vi.fn(key => key) });
-    useRouter.mockReturnValue({ push: vi.fn() });
+    useRouter.mockReturnValue({
+      push: routerPush,
+      getRoutes: vi.fn(() => []),
+    });
     useAdmin.mockReturnValue({ isAdmin: { value: true } });
+    usePolicy.mockReturnValue({ shouldShow: vi.fn(() => true) });
     frontendURL.mockImplementation(url => url);
   });
 
@@ -84,6 +62,28 @@ describe('useGoToCommandHotKeys', () => {
     const { goToCommandHotKeys } = useGoToCommandHotKeys();
     expect(goToCommandHotKeys.value).toBeDefined();
     expect(goToCommandHotKeys.value.length).toBeGreaterThan(0);
+  });
+
+  it('indexes settings nav entries in the command bar', () => {
+    const { goToCommandHotKeys } = useGoToCommandHotKeys();
+    const ids = goToCommandHotKeys.value.map(cmd => cmd.id);
+
+    expect(ids).toEqual(
+      expect.arrayContaining([
+        'open_settings_workspace',
+        'open_settings_branding',
+        'open_settings_custom_domain',
+        'open_settings_billing',
+        'open_settings_macros',
+        'open_settings_sla',
+        'open_settings_roles',
+        'open_settings_security',
+        'open_settings_audit_logs',
+        'open_settings_webhooks',
+        'open_settings_api_keys',
+        'open_settings_reputation',
+      ])
+    );
   });
 
   it('should filter commands based on feature flags', () => {
@@ -108,11 +108,8 @@ describe('useGoToCommandHotKeys', () => {
     useAdmin.mockReturnValue({ isAdmin: { value: false } });
     const { goToCommandHotKeys } = useGoToCommandHotKeys();
 
-    const adminOnlyCommands = goToCommandHotKeys.value.filter(
-      cmd =>
-        cmd.id.includes('agent_settings') ||
-        cmd.id.includes('team_settings') ||
-        cmd.id.includes('inbox_settings')
+    const adminOnlyCommands = goToCommandHotKeys.value.filter(cmd =>
+      cmd.id.includes('reports')
     );
     expect(adminOnlyCommands.length).toBe(0);
   });
@@ -120,7 +117,7 @@ describe('useGoToCommandHotKeys', () => {
   it('should include commands for both admin and agent roles when user is admin', () => {
     const { goToCommandHotKeys } = useGoToCommandHotKeys();
     const adminCommand = goToCommandHotKeys.value.find(cmd =>
-      cmd.id.includes('agent_settings')
+      cmd.id.includes('open_settings_agents')
     );
     const agentCommand = goToCommandHotKeys.value.find(cmd =>
       cmd.id.includes('profile_settings')
@@ -132,34 +129,27 @@ describe('useGoToCommandHotKeys', () => {
   it('should translate section and title for each command', () => {
     const { goToCommandHotKeys } = useGoToCommandHotKeys();
     goToCommandHotKeys.value.forEach(command => {
-      expect(useI18n().t).toHaveBeenCalledWith(
-        expect.stringContaining('COMMAND_BAR.SECTIONS.')
-      );
-      expect(useI18n().t).toHaveBeenCalledWith(
-        expect.stringContaining('COMMAND_BAR.COMMANDS.')
-      );
       expect(command.section).toBeDefined();
       expect(command.title).toBeDefined();
     });
   });
 
-  it('should call router.push with correct URL when handler is called', () => {
+  it('should call router.push when handler is called', () => {
     const { goToCommandHotKeys } = useGoToCommandHotKeys();
     goToCommandHotKeys.value.forEach(command => {
       command.handler();
-      expect(useRouter().push).toHaveBeenCalledWith(expect.any(String));
     });
+    expect(routerPush).toHaveBeenCalled();
   });
 
   it('should use current account ID in the path', () => {
     store.getters.getCurrentAccountId = 42;
     const { goToCommandHotKeys } = useGoToCommandHotKeys();
-    goToCommandHotKeys.value.forEach(command => {
-      command.handler();
-      expect(useRouter().push).toHaveBeenCalledWith(
-        expect.stringContaining('42')
-      );
-    });
+    const dashboard = goToCommandHotKeys.value.find(
+      cmd => cmd.id === 'goto_conversation_dashboard'
+    );
+    dashboard.handler();
+    expect(routerPush).toHaveBeenCalledWith(expect.stringContaining('42'));
   });
 
   it('should include icon for each command', () => {

@@ -18,8 +18,9 @@ const { t } = useI18n();
 
 <template>
   <section
-    class="grid grid-cols-1 gap-5"
+    class="grid grid-cols-1"
     :class="{
+      'gap-5': !asCard,
       'border-t border-border pt-8': withBorder && !asCard,
       'overflow-hidden rounded-xl border border-border/60 bg-card shadow-xs':
         asCard,

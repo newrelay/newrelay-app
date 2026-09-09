@@ -6,7 +6,10 @@ import { useI18n } from 'vue-i18n';
 import Button from 'dashboard/components-next/button/Button.vue';
 import TeleportWithDirection from 'dashboard/components-next/TeleportWithDirection.vue';
 import RelayModalHeader from 'dashboard/components-next/relay/modal/RelayModalHeader.vue';
-import { RELAY_MODAL_BODY_CLASS } from 'dashboard/components-next/relay/modal/constants';
+import {
+  RELAY_MODAL_BODY_CLASS,
+  RELAY_NATIVE_DIALOG_BACKDROP_CLASS,
+} from 'dashboard/components-next/relay/modal/constants';
 
 const props = defineProps({
   type: {
@@ -123,8 +126,9 @@ defineExpose({ open, close });
   <TeleportWithDirection to="body">
     <dialog
       ref="dialogRef"
-      class="w-full transition-all duration-300 ease-in-out shadow-xl rounded-xl bg-transparent border-0 p-0 outline-none backdrop:bg-black/50 backdrop:backdrop-blur-[8px]"
+      class="w-full rounded-xl border-0 bg-transparent p-0 shadow-xl outline-none transition-all duration-300 ease-in-out"
       :class="[
+        RELAY_NATIVE_DIALOG_BACKDROP_CLASS,
         maxWidthClass,
         positionClass,
         overflowYAuto ? 'overflow-y-auto' : 'overflow-visible',

@@ -31,11 +31,13 @@
         "CARD": {
           "ENTER_KEY": {
             "HEADING": "Enter (↵)",
-            "CONTENT": "Send messages by pressing Enter key instead of clicking the send button."
+            "CONTENT": "Send messages by pressing Enter key instead of clicking the send button.",
+            "MOCK_SEND": "Send (↵)"
           },
           "CMD_ENTER_KEY": {
             "HEADING": "Cmd/Ctrl + Enter (⌘ + ↵)",
-            "CONTENT": "Send messages by pressing Cmd/Ctrl + enter key instead of clicking the send button."
+            "CONTENT": "Send messages by pressing Cmd/Ctrl + enter key instead of clicking the send button.",
+            "MOCK_SEND": "Send (⌘ + ↵)"
           }
         }
       },
@@ -88,7 +90,8 @@
       "SECURITY_SECTION": {
         "TITLE": "Security",
         "NOTE": "Manage additional security features for your account.",
-        "MFA_BUTTON": "Manage Two-Factor Authentication"
+        "MFA_BUTTON": "Manage Two-Factor Authentication",
+        "MFA_UNAVAILABLE": "Two-factor authentication is not available on this installation."
       },
       "ACCESS_TOKEN": {
         "TITLE": "Access Token",
@@ -279,7 +282,7 @@
     "BILLING": "Billing",
     "CONTACT_SUPPORT": "Contact support",
     "SELECTOR_SUBTITLE": "Select an account from the following list",
-    "PROFILE_SETTINGS": "Profile settings",
+    "PROFILE_SETTINGS": "Profile Setting",
     "YEAR_IN_REVIEW": "Year in Review",
     "KEYBOARD_SHORTCUTS": "Keyboard shortcuts",
     "APPEARANCE": "Change appearance",

@@ -10,6 +10,7 @@ import {
   RelayDropdownMenuTrigger,
   RelayDropdownMenuContent,
   RelayDropdownMenuItem,
+  RELAY_DIALOG_OVERLAY_CLASS,
   RELAY_FORM_FIELD_CLASS,
   RELAY_FORM_LABEL_CLASS,
   DROPDOWN_MENU_SEARCH_HEADER_CLASS,
@@ -311,7 +312,8 @@ defineExpose({ open, close });
   <Teleport to="body">
     <div
       v-if="isOpen"
-      class="fixed inset-0 z-[200] flex items-center justify-center bg-background/80 p-4 backdrop-blur-sm transition-all duration-300"
+      class="flex items-center justify-center p-4 transition-all duration-300"
+      :class="[RELAY_DIALOG_OVERLAY_CLASS]"
       @click.self="close"
     >
       <div

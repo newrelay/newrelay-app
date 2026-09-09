@@ -8,6 +8,10 @@ export const RELAY_DIALOG_OVERLAY_CLASS = [
   'data-relay-overlay',
 ].join(' ');
 
+/** Native `<dialog>` `::backdrop` — same fill/blur as `RELAY_DIALOG_OVERLAY_CLASS`. */
+export const RELAY_NATIVE_DIALOG_BACKDROP_CLASS =
+  'backdrop:bg-background/80 backdrop:backdrop-blur-[8px]';
+
 /** Modal header — title, description, bottom divider; form body starts below. */
 export const RELAY_MODAL_HEADER_CLASS =
   'flex shrink-0 items-center justify-between border-b border-border/80 p-6';

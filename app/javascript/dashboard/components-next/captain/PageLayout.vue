@@ -1,9 +1,8 @@
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import { OnClickOutside } from '@vueuse/components';
 import { useRoute } from 'vue-router';
-import { useI18n } from 'vue-i18n';
-import { useMapGetter } from 'dashboard/composables/store.js';
+import { useMapGetter, useStore } from 'dashboard/composables/store.js';
 import { usePolicy } from 'dashboard/composables/usePolicy';
 import { RelayButton } from 'dashboard/components-next/relay';
 import BackButton from 'dashboard/components/widgets/BackButton.vue';
@@ -74,26 +73,34 @@ const props = defineProps({
 
 const emit = defineEmits(['click', 'close', 'update:currentPage']);
 
-const { t } = useI18n();
-
 const route = useRoute();
 const { shouldShowPaywall } = usePolicy();
 
 const showAssistantSwitcherDropdown = ref(false);
 const createAssistantDialogRef = ref(null);
 
+const store = useStore();
 const assistants = useMapGetter('captainAssistants/getRecords');
 const uiFlags = useMapGetter('captainAssistants/getUIFlags');
 
 const currentAssistantId = computed(() => route.params.assistantId);
 const isFetchingAssistants = computed(() => uiFlags.value?.fetchingList);
 
-const activeAssistantName = computed(() => {
+const activeAssistant = computed(() => {
+  const id = Number(currentAssistantId.value);
   return (
-    assistants.value?.find(
-      assistant => assistant.id === Number(currentAssistantId.value)
-    )?.name || t('CAPTAIN.ASSISTANT_SWITCHER.NEW_ASSISTANT')
+    assistants.value?.find(assistant => Number(assistant.id) === id) ||
+    assistants.value?.[0] ||
+    null
   );
+});
+
+const activeAssistantName = computed(() => activeAssistant.value?.name || '');
+
+onMounted(() => {
+  if (props.showAssistantSwitcher && !assistants.value?.length) {
+    store.dispatch('captainAssistants/get');
+  }
 });
 
 const showPaywall = computed(() => {
@@ -140,7 +147,7 @@ const handleCreateAssistant = () => {
                 >
                   <RelayButton
                     variant="ghost"
-                    class="h-auto max-w-[14rem] gap-1.5 border border-input px-0 text-base font-medium text-foreground hover:border-transparent hover:bg-transparent hover:opacity-80"
+                    class="h-auto max-w-[14rem] gap-1.5 border-0 px-0 text-xl font-semibold text-foreground hover:bg-transparent hover:opacity-80"
                     :disabled="isFetchingAssistants"
                     @click="toggleAssistantSwitcher"
                   >
@@ -171,7 +178,7 @@ const handleCreateAssistant = () => {
                 />
                 <h1
                   v-if="headerTitle"
-                  class="hidden text-base font-medium tracking-tight text-foreground sm:block"
+                  class="hidden text-xl font-medium text-muted-foreground sm:block"
                 >
                   {{ headerTitle }}
                 </h1>

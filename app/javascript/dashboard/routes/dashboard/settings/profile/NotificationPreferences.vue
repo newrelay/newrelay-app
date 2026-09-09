@@ -4,7 +4,6 @@ import { useI18n } from 'vue-i18n';
 import { useStore, useMapGetter } from 'dashboard/composables/store';
 import { useAlert } from 'dashboard/composables';
 import Icon from 'dashboard/components-next/icon/Icon.vue';
-import ComboBox from 'dashboard/components-next/combobox/ComboBox.vue';
 import { RelayCheckbox, RelaySwitch } from 'dashboard/components-next/relay';
 import {
   hasPushPermissions,
@@ -12,18 +11,7 @@ import {
   verifyServiceWorkerExistence,
 } from 'dashboard/helper/pushHelper.js';
 import { FEATURE_FLAGS } from 'dashboard/featureFlags';
-import { timeZoneOptions } from 'dashboard/routes/dashboard/settings/inbox/helpers/businessHour';
 import { NOTIFICATION_TYPES } from './constants';
-
-const DAY_OPTIONS = [
-  { label: 'Mon', flag: 'monday' },
-  { label: 'Tue', flag: 'tuesday' },
-  { label: 'Wed', flag: 'wednesday' },
-  { label: 'Thu', flag: 'thursday' },
-  { label: 'Fri', flag: 'friday' },
-  { label: 'Sat', flag: 'saturday' },
-  { label: 'Sun', flag: 'sunday' },
-];
 
 const INITIAL_VISIBLE = 4;
 
@@ -38,58 +26,12 @@ const pushFlags = useMapGetter('userNotificationSettings/getSelectedPushFlags');
 const isFeatureEnabledonAccount = useMapGetter(
   'accounts/isFeatureEnabledonAccount'
 );
-const quietHoursRecord = useMapGetter('userNotificationSettings/getQuietHours');
 
 const selectedEmailFlags = ref([]);
 const selectedPushFlags = ref([]);
 const hasEnabledPushPermissions = ref(false);
 const searchQuery = ref('');
 const showAll = ref(false);
-
-// Delivery Channels state
-const deliveryInApp = ref(true);
-const deliveryEmail = ref(true);
-const deliveryPush = ref(true);
-const deliverySlack = ref(false);
-const deliveryTeams = ref(false);
-
-// Quiet hours state (initialized from userNotificationSettings/getQuietHours, see watcher below)
-const quietHoursEnabled = ref(false);
-const quietHoursFrom = ref('22:00');
-const quietHoursTo = ref('07:00');
-const selectedTimezone = ref(Intl.DateTimeFormat().resolvedOptions().timeZone);
-const activeDays = ref([
-  'monday',
-  'tuesday',
-  'wednesday',
-  'thursday',
-  'friday',
-]);
-const availableDays = DAY_OPTIONS;
-const availableTimezones = timeZoneOptions();
-
-const padTimePart = value => String(value ?? 0).padStart(2, '0');
-
-watch(
-  quietHoursRecord,
-  record => {
-    if (!record) return;
-    quietHoursEnabled.value = record.enabled;
-    if (record.fromHour != null) {
-      quietHoursFrom.value = `${padTimePart(record.fromHour)}:${padTimePart(record.fromMinute)}`;
-    }
-    if (record.toHour != null) {
-      quietHoursTo.value = `${padTimePart(record.toHour)}:${padTimePart(record.toMinute)}`;
-    }
-    if (record.timezone) {
-      selectedTimezone.value = record.timezone;
-    }
-    if (record.days?.length) {
-      activeDays.value = record.days;
-    }
-  },
-  { immediate: true }
-);
 
 const isSLAEnabled = computed(() =>
   isFeatureEnabledonAccount.value(accountId.value, FEATURE_FLAGS.SLA)
@@ -165,21 +107,10 @@ const toggleInput = (selected, current) => {
 };
 
 const updateNotificationSettings = async () => {
-  const [fromHour, fromMinute] = quietHoursFrom.value.split(':').map(Number);
-  const [toHour, toMinute] = quietHoursTo.value.split(':').map(Number);
   try {
     await store.dispatch('userNotificationSettings/update', {
       selectedEmailFlags: selectedEmailFlags.value,
       selectedPushFlags: selectedPushFlags.value,
-      quietHours: {
-        enabled: quietHoursEnabled.value,
-        fromHour,
-        fromMinute,
-        toHour,
-        toMinute,
-        timezone: selectedTimezone.value,
-        days: activeDays.value,
-      },
     });
     useAlert(t('PROFILE_SETTINGS.FORM.API.UPDATE_SUCCESS'));
   } catch (error) {
@@ -207,14 +138,6 @@ const handleChannelToggle = (type, flagType, enabled) => {
     handleEmailInput(id);
   } else {
     handlePushInput(id);
-  }
-};
-
-const toggleDay = day => {
-  if (activeDays.value.includes(day)) {
-    activeDays.value = activeDays.value.filter(d => d !== day);
-  } else {
-    activeDays.value.push(day);
   }
 };
 
@@ -270,14 +193,11 @@ onMounted(() => {
 </script>
 
 <template>
-  <div
-    id="profile-settings-notifications"
-    class="flex-1 w-full max-w-4xl min-w-0"
-  >
-    <div class="max-w-3xl space-y-8">
+  <div id="profile-settings-notifications" class="flex-1 w-full min-w-0">
+    <div class="w-full space-y-8">
       <!-- CARD 1: Notification preferences -->
       <div
-        class="border border-border/60 bg-card rounded-xl shadow-xs overflow-hidden"
+        class="border border-border/60 bg-card rounded-xl shadow-sm overflow-hidden"
       >
         <div
           class="p-4 sm:p-6 border-b border-border/40 flex flex-col md:flex-row md:items-center justify-between gap-4"
@@ -435,263 +355,24 @@ onMounted(() => {
             </div>
           </div>
         </div>
-      </div>
 
-      <!-- CARD 2: Delivery channels -->
-      <div
-        class="border border-border/60 bg-card rounded-xl shadow-xs overflow-hidden mt-8"
-      >
-        <div class="p-4 sm:p-6 border-b border-border/40">
-          <h3 class="text-base font-semibold text-foreground">
-            {{ $t('PROFILE_SETTINGS.FORM.NOTIFICATIONS.DELIVERY_CHANNELS') }}
-          </h3>
-          <p class="text-sm text-muted-foreground mt-1">
-            {{
-              $t(
-                'PROFILE_SETTINGS.FORM.NOTIFICATIONS.DELIVERY_CHANNELS_SUBTITLE'
-              )
-            }}
-          </p>
-        </div>
-
-        <div class="p-4 sm:p-6 space-y-6">
-          <!-- In-app -->
-          <div class="flex items-center justify-between">
-            <div class="flex items-center gap-4">
-              <div class="size-10 flex items-center justify-center shrink-0">
-                <Icon
-                  icon="i-lucide-monitor"
-                  class="size-5 text-muted-foreground"
-                />
-              </div>
-              <div>
-                <h4 class="text-sm font-medium text-foreground">
-                  {{ $t('PROFILE_SETTINGS.FORM.NOTIFICATIONS.IN_APP') }}
-                </h4>
-                <p class="text-xs text-muted-foreground mt-0.5">
-                  {{
-                    $t('PROFILE_SETTINGS.FORM.NOTIFICATIONS.IN_APP_DESCRIPTION')
-                  }}
-                </p>
-              </div>
-            </div>
-            <RelayCheckbox v-model="deliveryInApp" />
-          </div>
-
-          <!-- Email -->
-          <div class="flex items-center justify-between">
-            <div class="flex items-center gap-4">
-              <div class="size-10 flex items-center justify-center shrink-0">
-                <Icon
-                  icon="i-lucide-mail"
-                  class="size-5 text-muted-foreground"
-                />
-              </div>
-              <div>
-                <h4 class="text-sm font-medium text-foreground">
-                  {{ $t('PROFILE_SETTINGS.FORM.NOTIFICATIONS.EMAIL') }}
-                </h4>
-                <p class="text-xs text-muted-foreground mt-0.5">
-                  {{
-                    $t('PROFILE_SETTINGS.FORM.NOTIFICATIONS.EMAIL_DESCRIPTION')
-                  }}
-                </p>
-              </div>
-            </div>
-            <RelayCheckbox v-model="deliveryEmail" />
-          </div>
-
-          <!-- Push notifications -->
-          <div class="flex items-center justify-between">
-            <div class="flex items-center gap-4">
-              <div class="size-10 flex items-center justify-center shrink-0">
-                <Icon
-                  icon="i-lucide-smartphone"
-                  class="size-5 text-muted-foreground"
-                />
-              </div>
-              <div>
-                <h4 class="text-sm font-medium text-foreground">
-                  {{ $t('PROFILE_SETTINGS.FORM.NOTIFICATIONS.PUSH_TITLE') }}
-                </h4>
-                <p class="text-xs text-muted-foreground mt-0.5">
-                  {{
-                    $t('PROFILE_SETTINGS.FORM.NOTIFICATIONS.PUSH_DESCRIPTION')
-                  }}
-                </p>
-              </div>
-            </div>
-            <RelayCheckbox
-              :model-value="hasEnabledPushPermissions || deliveryPush"
-              @update:model-value="onRequestPermissions"
-            />
-          </div>
-
-          <!-- Slack -->
-          <div class="flex items-center justify-between">
-            <div class="flex items-center gap-4">
-              <div class="size-10 flex items-center justify-center shrink-0">
-                <Icon icon="i-lucide-hash" class="size-5 text-[#E01E5A]" />
-              </div>
-              <div>
-                <h4 class="text-sm font-medium text-foreground">
-                  {{ $t('PROFILE_SETTINGS.FORM.NOTIFICATIONS.SLACK') }}
-                </h4>
-                <p class="text-xs text-muted-foreground mt-0.5">
-                  {{
-                    $t('PROFILE_SETTINGS.FORM.NOTIFICATIONS.SLACK_DESCRIPTION')
-                  }}
-                </p>
-              </div>
-            </div>
-            <RelayCheckbox v-model="deliverySlack" />
-          </div>
-
-          <!-- Microsoft Teams -->
-          <div class="flex items-center justify-between">
-            <div class="flex items-center gap-4">
-              <div class="size-10 flex items-center justify-center shrink-0">
-                <Icon
-                  icon="i-lucide-message-square"
-                  class="size-5 text-[#6264A7]"
-                />
-              </div>
-              <div>
-                <h4 class="text-sm font-medium text-foreground">
-                  {{ $t('PROFILE_SETTINGS.FORM.NOTIFICATIONS.TEAMS') }}
-                </h4>
-                <p class="text-xs text-muted-foreground mt-0.5">
-                  {{
-                    $t('PROFILE_SETTINGS.FORM.NOTIFICATIONS.TEAMS_DESCRIPTION')
-                  }}
-                </p>
-              </div>
-            </div>
-            <RelayCheckbox v-model="deliveryTeams" />
-          </div>
-
-          <!-- Manage Integrations Link -->
-          <div class="pt-2">
-            <router-link
-              to="integrations"
-              class="text-sm font-medium text-primary hover:text-primary/80 flex items-center gap-1.5 transition-colors"
-            >
-              {{
-                $t('PROFILE_SETTINGS.FORM.NOTIFICATIONS.MANAGE_INTEGRATIONS')
-              }}
-              <Icon icon="i-lucide-external-link" class="size-3.5" />
-            </router-link>
-          </div>
-        </div>
-      </div>
-
-      <!-- CARD 3: Quiet hours -->
-      <div
-        class="border border-border/60 bg-card rounded-xl shadow-xs overflow-hidden mt-8 mb-4"
-      >
         <div
-          class="p-4 sm:p-6 flex flex-col md:flex-row md:items-center justify-between gap-4"
-          :class="{ 'border-b border-border/40': quietHoursEnabled }"
+          class="p-4 sm:p-6 border-t border-border/40 flex items-center justify-between gap-4"
         >
-          <div>
-            <h3 class="text-base font-semibold text-foreground">
-              {{ $t('PROFILE_SETTINGS.FORM.NOTIFICATIONS.QUIET_HOURS') }}
-            </h3>
-            <p class="text-sm text-muted-foreground mt-1">
-              {{ $t('PROFILE_SETTINGS.FORM.NOTIFICATIONS.QUIET_HOURS_NOTE') }}
-            </p>
-          </div>
-          <RelaySwitch v-model="quietHoursEnabled" />
-        </div>
-
-        <div v-if="quietHoursEnabled" class="p-6 space-y-6">
-          <!-- From & To Row -->
-          <div class="flex flex-col sm:flex-row items-center gap-6">
-            <!-- From -->
-            <div class="flex items-center gap-4 w-full sm:w-1/2">
-              <span
-                class="text-sm font-medium text-muted-foreground w-12 shrink-0"
-              >
-                {{ $t('PROFILE_SETTINGS.FORM.NOTIFICATIONS.FROM') }}
-              </span>
-              <div class="relative flex-1">
-                <input
-                  v-model="quietHoursFrom"
-                  type="time"
-                  class="w-full h-11 rounded-xl border border-border/60 bg-muted/20 px-4 text-sm font-medium text-foreground shadow-xs transition-colors focus:border-primary focus:outline-none"
-                />
-              </div>
-            </div>
-
-            <!-- To -->
-            <div class="flex items-center gap-4 w-full sm:w-1/2">
-              <span
-                class="text-sm font-medium text-muted-foreground w-8 text-center shrink-0"
-              >
-                {{ $t('PROFILE_SETTINGS.FORM.NOTIFICATIONS.TO') }}
-              </span>
-              <div class="relative flex-1">
-                <input
-                  v-model="quietHoursTo"
-                  type="time"
-                  class="w-full h-11 rounded-xl border border-border/60 bg-muted/20 px-4 text-sm font-medium text-foreground shadow-xs transition-colors focus:border-primary focus:outline-none"
-                />
-              </div>
-            </div>
-          </div>
-
-          <!-- Time zone -->
-          <div class="flex flex-col sm:flex-row sm:items-center gap-4">
-            <span
-              class="text-sm font-medium text-muted-foreground w-12 shrink-0 leading-tight"
-            >
-              {{ $t('PROFILE_SETTINGS.FORM.NOTIFICATIONS.TIMEZONE') }}
+          <div class="flex items-center gap-3 text-foreground min-w-0">
+            <Icon
+              icon="i-lucide-bell"
+              class="size-4 text-muted-foreground shrink-0"
+            />
+            <span class="text-[14px]">
+              {{ $t('PROFILE_SETTINGS.FORM.NOTIFICATIONS.BROWSER_PERMISSION') }}
             </span>
-            <div class="relative flex-1">
-              <ComboBox
-                v-model="selectedTimezone"
-                :options="availableTimezones"
-              />
-            </div>
           </div>
-
-          <!-- Day selector pills -->
-          <div class="flex flex-wrap gap-2 pt-2">
-            <button
-              v-for="day in availableDays"
-              :key="day.flag"
-              type="button"
-              class="px-4 py-2 text-xs font-medium rounded transition-colors border"
-              :class="[
-                activeDays.includes(day.flag)
-                  ? 'border-primary/20 bg-primary/10 text-primary'
-                  : 'border-border bg-background text-muted-foreground hover:bg-muted',
-              ]"
-              @click="toggleDay(day.flag)"
-            >
-              {{ day.label }}
-            </button>
-          </div>
+          <RelaySwitch
+            :model-value="hasEnabledPushPermissions"
+            @update:model-value="onRequestPermissions"
+          />
         </div>
-      </div>
-
-      <!-- Action Buttons -->
-      <div
-        class="pt-6 pb-2 flex justify-end gap-3 border-t border-border/40 mt-8"
-      >
-        <button
-          type="button"
-          class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-hidden focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 border border-input bg-background shadow-xs hover:bg-accent hover:text-accent-foreground hover:border-transparent h-9 px-4 py-2"
-        >
-          {{ $t('PROFILE_SETTINGS.FORM.NOTIFICATIONS.CANCEL') }}
-        </button>
-        <button
-          type="button"
-          class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-hidden focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-primary text-primary-foreground hover:bg-primary/90 h-9 px-4 py-2 shadow-sm"
-          @click="updateNotificationSettings"
-        >
-          {{ $t('PROFILE_SETTINGS.FORM.NOTIFICATIONS.SAVE_CHANGES') }}
-        </button>
       </div>
     </div>
   </div>

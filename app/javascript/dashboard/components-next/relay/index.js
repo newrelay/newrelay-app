@@ -19,6 +19,7 @@ export { default as RelayDeleteConfirmModal } from './modal/RelayDeleteConfirmMo
 export { default as RelayModalHeader } from './modal/RelayModalHeader.vue';
 export {
   RELAY_DIALOG_OVERLAY_CLASS,
+  RELAY_NATIVE_DIALOG_BACKDROP_CLASS,
   RELAY_MODAL_OVERLAY_BLUR_CLASS,
   RELAY_MODAL_HEADER_CLASS,
   RELAY_MODAL_TITLE_CLASS,

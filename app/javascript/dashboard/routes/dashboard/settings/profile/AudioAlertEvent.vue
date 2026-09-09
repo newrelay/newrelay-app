@@ -56,25 +56,14 @@ const setValue = (isChecked, value) => {
 
   selectedValue.value = updatedValue;
 };
-
-const alertDescription = computed(() => {
-  const base =
-    'PROFILE_SETTINGS.FORM.AUDIO_NOTIFICATIONS_SECTION.ALERT_COMBINATIONS.';
-
-  if (props.value === '' || props.value === 'none') {
-    return base + 'NONE';
-  }
-
-  return base + selectedValue.value.join('+').toUpperCase();
-});
 </script>
 
 <template>
-  <div>
-    <label class="pb-1" :class="[RELAY_FORM_LABEL_CLASS]">
+  <div class="flex flex-col gap-3 pt-2 border-t border-border/40">
+    <label class="mb-1" :class="[RELAY_FORM_LABEL_CLASS]">
       {{ label }}
     </label>
-    <div class="mt-2.5 flex flex-col gap-3">
+    <div class="flex flex-col gap-3">
       <div
         v-for="option in alertEvents"
         :key="option.value"
@@ -87,7 +76,7 @@ const alertDescription = computed(() => {
         />
         <label
           :for="`checkbox-${option.value}`"
-          class="cursor-pointer text-xs font-medium text-foreground"
+          class="cursor-pointer text-[14px] text-foreground"
         >
           {{
             $t(
@@ -95,9 +84,6 @@ const alertDescription = computed(() => {
             )
           }}
         </label>
-      </div>
-      <div class="mt-1 text-xs text-muted-foreground">
-        {{ $t(alertDescription) }}
       </div>
     </div>
   </div>

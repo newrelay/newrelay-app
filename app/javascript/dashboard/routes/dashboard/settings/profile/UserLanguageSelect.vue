@@ -5,8 +5,8 @@ import { useAlert } from 'dashboard/composables';
 import { useConfig } from 'dashboard/composables/useConfig';
 import { useAccount } from 'dashboard/composables/useAccount';
 import { useUISettings } from 'dashboard/composables/useUISettings';
-
-import FormSelect from 'v3/components/Form/Select.vue';
+import { RELAY_FORM_LABEL_CLASS } from 'dashboard/components-next/relay/form/constants';
+import SiteLanguageSelect from '../account/components/SiteLanguageSelect.vue';
 
 defineProps({
   label: { type: String, default: '' },
@@ -22,12 +22,15 @@ const currentLanguage = computed(() => uiSettings.value?.locale ?? '');
 
 const languageOptions = computed(() => [
   {
-    name: t(
+    value: '',
+    label: t(
       'PROFILE_SETTINGS.FORM.INTERFACE_SECTION.LANGUAGE.USE_ACCOUNT_DEFAULT'
     ),
-    iso_639_1_code: '',
   },
-  ...(enabledLanguages ?? []),
+  ...(enabledLanguages ?? []).map(option => ({
+    value: option.iso_639_1_code,
+    label: option.name,
+  })),
 ]);
 
 const updateLanguage = async languageCode => {
@@ -73,31 +76,17 @@ const selectedValue = computed({
 </script>
 
 <template>
-  <div class="flex gap-2 justify-between w-full items-start">
-    <div>
-      <label class="text-foreground leading-6 text-[13.5px] font-[500]">
+  <div class="flex items-center justify-between gap-4 py-2">
+    <div class="flex flex-col min-w-0">
+      <label :class="RELAY_FORM_LABEL_CLASS">
         {{ label }}
       </label>
-      <p class="text-muted-foreground">
+      <p class="text-[13px] text-muted-foreground mt-0.5">
         {{ description }}
       </p>
     </div>
-    <FormSelect
-      v-model="selectedValue"
-      name="language"
-      spacing="compact"
-      class="min-w-28 mt-px"
-      :options="languageOptions"
-      label=""
-    >
-      <option
-        v-for="option in languageOptions"
-        :key="option.iso_639_1_code || 'default'"
-        :value="option.iso_639_1_code"
-        :selected="option.iso_639_1_code === selectedValue"
-      >
-        {{ option.name }}
-      </option>
-    </FormSelect>
+    <div class="w-[180px] shrink-0">
+      <SiteLanguageSelect v-model="selectedValue" :options="languageOptions" />
+    </div>
   </div>
 </template>

@@ -8,11 +8,7 @@ import { useConfig } from 'dashboard/composables/useConfig';
 import { useAccount } from 'dashboard/composables/useAccount';
 import { FEATURE_FLAGS } from '../../../../featureFlags';
 import SettingsLayout from '../SettingsLayout.vue';
-import {
-  RelayButton,
-  RelayInput,
-  RelayLabel,
-} from 'dashboard/components-next/relay';
+import { RelayButton, RelayInput } from 'dashboard/components-next/relay';
 import SiteLanguageSelect from './components/SiteLanguageSelect.vue';
 import AccountId from './components/AccountId.vue';
 import BuildInfo from './components/BuildInfo.vue';
@@ -25,7 +21,6 @@ export default {
     SettingsLayout,
     RelayButton,
     RelayInput,
-    RelayLabel,
     SiteLanguageSelect,
     AccountId,
     BuildInfo,
@@ -176,9 +171,12 @@ export default {
             <div class="grid gap-8">
               <div class="grid grid-cols-1 gap-8 md:grid-cols-2">
                 <div class="flex flex-col gap-2">
-                  <RelayLabel html-for="account-name">
+                  <label
+                    for="account-name"
+                    class="text-sm font-medium text-foreground"
+                  >
                     {{ $t('GENERAL_SETTINGS.FORM.NAME.LABEL') }}
-                  </RelayLabel>
+                  </label>
                   <RelayInput
                     id="account-name"
                     v-model="name"
@@ -192,9 +190,12 @@ export default {
                   </p>
                 </div>
                 <div class="flex flex-col gap-2">
-                  <RelayLabel html-for="site-language">
+                  <label
+                    for="site-language"
+                    class="text-sm font-medium text-foreground"
+                  >
                     {{ $t('GENERAL_SETTINGS.FORM.LANGUAGE.LABEL') }}
-                  </RelayLabel>
+                  </label>
                   <SiteLanguageSelect
                     id="site-language"
                     v-model="locale"
@@ -223,9 +224,12 @@ export default {
                   v-if="featureCustomReplyDomainEnabled"
                   class="flex flex-col gap-2"
                 >
-                  <RelayLabel html-for="custom-domain">
+                  <label
+                    for="custom-domain"
+                    class="text-sm font-medium text-foreground"
+                  >
                     {{ $t('GENERAL_SETTINGS.FORM.DOMAIN.LABEL') }}
-                  </RelayLabel>
+                  </label>
                   <RelayInput
                     id="custom-domain"
                     v-model="domain"
@@ -248,9 +252,12 @@ export default {
                   v-if="featureCustomReplyEmailEnabled"
                   class="flex flex-col gap-2"
                 >
-                  <RelayLabel html-for="support-email">
+                  <label
+                    for="support-email"
+                    class="text-sm font-medium text-foreground"
+                  >
                     {{ $t('GENERAL_SETTINGS.FORM.SUPPORT_EMAIL.LABEL') }}
-                  </RelayLabel>
+                  </label>
                   <RelayInput
                     id="support-email"
                     v-model="supportEmail"

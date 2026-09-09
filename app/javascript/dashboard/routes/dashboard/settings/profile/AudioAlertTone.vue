@@ -1,9 +1,10 @@
 <script setup>
-import { RelayTooltip } from 'dashboard/components-next/relay';
+import { RelayButton, RelayTooltip } from 'dashboard/components-next/relay';
 import { computed } from 'vue';
-import Icon from 'next/icon/Icon.vue';
+import Icon from 'dashboard/components-next/icon/Icon.vue';
 import * as Sentry from '@sentry/vue';
-import FormSelect from 'v3/components/Form/Select.vue';
+import { RELAY_FORM_LABEL_CLASS } from 'dashboard/components-next/relay/form/constants';
+import SiteLanguageSelect from '../account/components/SiteLanguageSelect.vue';
 
 const props = defineProps({
   value: {
@@ -64,35 +65,32 @@ const playAudio = async () => {
 </script>
 
 <template>
-  <div class="flex items-center gap-2">
-    <FormSelect
-      v-model="selectedValue"
-      name="alertTone"
-      spacing="compact"
-      class="flex-grow"
-      :value="selectedValue"
-      :options="alertTones"
-      :label="label"
-    >
-      <option
-        v-for="tone in alertTones"
-        :key="tone.label"
-        :value="tone.value"
-        :selected="tone.value === selectedValue"
+  <div class="flex flex-col gap-1.5">
+    <label :class="RELAY_FORM_LABEL_CLASS">
+      {{ label }}
+    </label>
+    <div class="flex items-center gap-3">
+      <div class="min-w-0 flex-1">
+        <SiteLanguageSelect
+          v-model="selectedValue"
+          :options="alertTones"
+          :show-search="false"
+        />
+      </div>
+      <RelayTooltip
+        :content="$t('PROFILE_SETTINGS.FORM.AUDIO_NOTIFICATIONS_SECTION.PLAY')"
+        side="top"
       >
-        {{ tone.label }}
-      </option>
-    </FormSelect>
-    <RelayTooltip
-      :content="$t('PROFILE_SETTINGS.FORM.AUDIO_NOTIFICATIONS_SECTION.PLAY')"
-      side="top"
-    >
-      <button
-        class="mt-[1.75rem] flex size-10 flex-shrink-0 appearance-none items-center justify-center rounded-xl border-0 shadow-sm outline-none ring-1 ring-inset ring-border focus:ring-2 focus:ring-inset focus:ring-primary"
-        @click="playAudio"
-      >
-        <Icon icon="i-lucide-volume-2" />
-      </button>
-    </RelayTooltip>
+        <RelayButton
+          type="button"
+          variant="outline"
+          size="icon"
+          class="size-10 rounded-md border-border/80 shadow-sm text-muted-foreground shrink-0"
+          @click="playAudio"
+        >
+          <Icon icon="i-lucide-volume-2" class="size-4" />
+        </RelayButton>
+      </RelayTooltip>
+    </div>
   </div>
 </template>

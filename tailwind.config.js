@@ -23,7 +23,12 @@ const defaultSansFonts = [
 
 const tailwindConfig = {
   darkMode: 'class',
-  safelist: ['backdrop-blur-[8px]', 'bg-background/80'],
+  safelist: [
+    'backdrop-blur-[8px]',
+    'bg-background/80',
+    'backdrop:bg-background/80',
+    'backdrop:backdrop-blur-[8px]',
+  ],
   content: [
     './enterprise/app/views/**/*.erb',
     './app/javascript/widget/**/*.vue',

@@ -1,7 +1,8 @@
 <script setup>
 import { computed } from 'vue';
-import FormSelect from 'v3/components/Form/Select.vue';
+import { RELAY_FORM_LABEL_CLASS } from 'dashboard/components-next/relay/form/constants';
 import { useFontSize } from 'dashboard/composables/useFontSize';
+import SiteLanguageSelect from '../account/components/SiteLanguageSelect.vue';
 
 const props = defineProps({
   value: {
@@ -31,32 +32,23 @@ const selectedValue = computed({
 </script>
 
 <template>
-  <div class="flex gap-2 justify-between w-full items-start">
-    <div>
-      <label class="text-foreground leading-6 text-[13.5px] font-[500]">
+  <div
+    class="flex items-center justify-between gap-4 py-2 border-b border-border/40 pb-6"
+  >
+    <div class="flex flex-col min-w-0">
+      <label :class="RELAY_FORM_LABEL_CLASS">
         {{ label }}
       </label>
-      <p class="text-muted-foreground">
+      <p class="text-[13px] text-muted-foreground mt-0.5">
         {{ description }}
       </p>
     </div>
-    <FormSelect
-      v-model="selectedValue"
-      name="fontSize"
-      spacing="compact"
-      class="min-w-28 mt-px"
-      :value="selectedValue"
-      :options="fontSizeOptions"
-      label=""
-    >
-      <option
-        v-for="option in fontSizeOptions"
-        :key="option.value"
-        :value="option.value"
-        :selected="option.value === selectedValue"
-      >
-        {{ option.label }}
-      </option>
-    </FormSelect>
+    <div class="w-32 shrink-0">
+      <SiteLanguageSelect
+        v-model="selectedValue"
+        :options="fontSizeOptions"
+        :show-search="false"
+      />
+    </div>
   </div>
 </template>

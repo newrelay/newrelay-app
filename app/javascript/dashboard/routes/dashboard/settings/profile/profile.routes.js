@@ -16,8 +16,16 @@ export default {
       component: SettingsWrapper,
       props: {
         hideSideMenu: true,
+        fullWidth: true,
       },
       children: [
+        {
+          path: '',
+          redirect: to => ({
+            name: 'profile_settings_index',
+            params: to.params,
+          }),
+        },
         {
           path: 'settings',
           name: 'profile_settings_index',

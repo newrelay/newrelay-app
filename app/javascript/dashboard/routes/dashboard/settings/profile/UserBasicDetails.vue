@@ -91,15 +91,15 @@ export default {
 </script>
 
 <template>
-  <form class="flex flex-col gap-4" @submit.prevent="updateUser('profile')">
-    <div class="flex flex-col gap-2">
+  <form class="flex flex-col gap-5" @submit.prevent="updateUser('profile')">
+    <div class="flex flex-col gap-1.5">
       <RelayLabel html-for="profile-name">
         {{ $t('PROFILE_SETTINGS.FORM.NAME.LABEL') }}
       </RelayLabel>
       <RelayInput
         id="profile-name"
         v-model="userName"
-        class-name="h-10 shadow-xs bg-background"
+        class-name="h-10 px-4 shadow-sm bg-background"
         :placeholder="$t('PROFILE_SETTINGS.FORM.NAME.PLACEHOLDER')"
         @update:model-value="v$.userName.$touch"
         @blur="v$.userName.$touch"
@@ -108,14 +108,14 @@ export default {
         {{ $t('PROFILE_SETTINGS.FORM.NAME.ERROR') }}
       </p>
     </div>
-    <div class="flex flex-col gap-2">
+    <div class="flex flex-col gap-1.5">
       <RelayLabel html-for="profile-display-name">
         {{ $t('PROFILE_SETTINGS.FORM.DISPLAY_NAME.LABEL') }}
       </RelayLabel>
       <RelayInput
         id="profile-display-name"
         v-model="userDisplayName"
-        class-name="h-10 shadow-xs bg-background"
+        class-name="h-10 px-4 shadow-sm bg-background"
         :placeholder="$t('PROFILE_SETTINGS.FORM.DISPLAY_NAME.PLACEHOLDER')"
         @update:model-value="v$.userDisplayName.$touch"
         @blur="v$.userDisplayName.$touch"
@@ -124,14 +124,14 @@ export default {
         {{ $t('PROFILE_SETTINGS.FORM.DISPLAY_NAME.ERROR') }}
       </p>
     </div>
-    <div v-if="emailEnabled" class="flex flex-col gap-2">
+    <div v-if="emailEnabled" class="flex flex-col gap-1.5">
       <RelayLabel html-for="profile-email">
         {{ $t('PROFILE_SETTINGS.FORM.EMAIL.LABEL') }}
       </RelayLabel>
       <RelayInput
         id="profile-email"
         v-model="userEmail"
-        class-name="h-10 shadow-xs bg-background"
+        class-name="h-10 px-4 shadow-sm bg-background"
         :placeholder="$t('PROFILE_SETTINGS.FORM.EMAIL.PLACEHOLDER')"
         @update:model-value="v$.userEmail.$touch"
         @blur="v$.userEmail.$touch"
@@ -141,7 +141,7 @@ export default {
       </p>
     </div>
     <div>
-      <RelayButton type="submit" class="shadow-sm">
+      <RelayButton type="submit" class="h-10 px-6 shadow-sm mt-2">
         {{ $t('PROFILE_SETTINGS.BTN_TEXT') }}
       </RelayButton>
     </div>

@@ -39,18 +39,18 @@ const updateSignature = () => {
 </script>
 
 <template>
-  <form class="flex flex-col gap-6" @submit.prevent="updateSignature()">
+  <form class="flex flex-col gap-4" @submit.prevent="updateSignature()">
     <Editor
       id="message-signature-input"
       v-model="signature"
-      class="min-h-[10rem]"
+      class="min-h-[10rem] mb-0"
       channel-type="Context::MessageSignature"
       :enable-canned-responses="false"
       :show-character-count="false"
       :placeholder="$t('PROFILE_SETTINGS.FORM.MESSAGE_SIGNATURE.PLACEHOLDER')"
     />
     <div>
-      <RelayButton type="submit" class="shadow-sm">
+      <RelayButton type="submit" class="h-10 px-6 shadow-sm">
         {{ $t('PROFILE_SETTINGS.FORM.MESSAGE_SIGNATURE_SECTION.BTN_TEXT') }}
       </RelayButton>
     </div>

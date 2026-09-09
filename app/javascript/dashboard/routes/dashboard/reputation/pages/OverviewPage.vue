@@ -263,14 +263,19 @@ async function generateReviewReplies() {
           <p class="text-sm text-muted-foreground mt-1">Monitor and manage your brand's online presence across all platforms.</p>
         </div>
         <div class="flex items-center gap-3">
-          <button v-if="showDemoSurfaces" @click="handleShareReport" class="h-9 gap-2 shadow-xs bg-card border border-border text-foreground hover:bg-muted text-[13px] font-semibold px-4 rounded-lg inline-flex items-center cursor-pointer">
+          <Button
+            v-if="showDemoSurfaces"
+            variant="outline"
+            class="h-9 gap-2 border-border bg-card shadow-sm hover:border-transparent"
+            @click="handleShareReport"
+          >
             <Share2 class="size-4" />
             Share Report
-          </button>
-          <button @click="handleRequestReviews" class="h-9 gap-2 shadow-xs bg-primary hover:bg-primary/90 text-primary-foreground text-[13px] font-semibold px-4 rounded-lg inline-flex items-center cursor-pointer transition-colors">
+          </Button>
+          <Button class="h-9 gap-2 shadow-sm" @click="handleRequestReviews">
             <Mail class="size-4" />
             Request Reviews
-          </button>
+          </Button>
         </div>
       </div>
 
@@ -283,7 +288,7 @@ async function generateReviewReplies() {
       <!-- Section 1: Top Summary Metrics -->
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <!-- Reputation Score (real — /summary) -->
-        <div class="bg-card rounded-xl border border-border shadow-xs p-5 relative overflow-hidden group hover:border-primary/50 transition-colors">
+        <div class="bg-card rounded-xl border border-border shadow-sm p-5 relative overflow-hidden">
           <div class="flex justify-between items-start mb-4">
             <div>
               <div class="flex items-center gap-2 mb-1">
@@ -291,7 +296,7 @@ async function generateReviewReplies() {
               </div>
               <h3 class="text-3xl font-bold text-foreground">{{ reputationScore }}<span class="text-lg text-muted-foreground font-normal">/100</span></h3>
             </div>
-            <div class="p-2.5 bg-primary/10 rounded-xl text-primary">
+            <div class="p-2.5 bg-primary/10 rounded-lg text-primary">
               <Trophy class="size-5" />
             </div>
           </div>
@@ -304,7 +309,7 @@ async function generateReviewReplies() {
         </div>
 
         <!-- Average Rating (Real) -->
-        <div class="bg-card rounded-xl border border-border shadow-xs p-5 relative overflow-hidden group hover:border-orange-500/50 transition-colors">
+        <div class="bg-card rounded-xl border border-border shadow-sm p-5 relative overflow-hidden">
           <div class="flex justify-between items-start mb-4">
             <div>
               <p class="text-sm font-medium text-muted-foreground mb-1">Average Rating</p>
@@ -316,7 +321,7 @@ async function generateReviewReplies() {
                 </div>
               </div>
             </div>
-            <div class="p-2.5 bg-warning/10 text-warning border border-warning/20 rounded-xl">
+            <div class="p-2.5 bg-primary/10 rounded-lg text-primary">
               <Star class="size-5" />
             </div>
           </div>
@@ -329,13 +334,13 @@ async function generateReviewReplies() {
         </div>
 
         <!-- Total Reviews (Real) -->
-        <div class="bg-card rounded-xl border border-border shadow-xs p-5 relative overflow-hidden group hover:border-primary/50 transition-colors">
+        <div class="bg-card rounded-xl border border-border shadow-sm p-5 relative overflow-hidden">
           <div class="flex justify-between items-start mb-4">
             <div>
               <p class="text-sm font-medium text-muted-foreground mb-1">Total Reviews</p>
               <h3 class="text-3xl font-bold text-foreground">{{ totalReviews.toLocaleString() }}</h3>
             </div>
-            <div class="p-2.5 bg-primary/10 rounded-xl text-primary">
+            <div class="p-2.5 bg-primary/10 rounded-lg text-primary">
               <MessageCircle class="size-5" />
             </div>
           </div>
@@ -348,7 +353,7 @@ async function generateReviewReplies() {
         </div>
 
         <!-- Overall Feedback (Real — positive share of reviews) -->
-        <div class="bg-card rounded-xl border border-border shadow-xs p-5 relative overflow-hidden group hover:border-primary/50 transition-colors cursor-pointer" @click="isFeedbackModalOpen = true">
+        <div class="bg-card rounded-xl border border-border shadow-sm p-5 relative overflow-hidden cursor-pointer hover:bg-muted/20 transition-colors" @click="isFeedbackModalOpen = true">
           <div class="flex justify-between items-start mb-4">
             <div>
               <p class="text-sm font-medium text-muted-foreground mb-1">Overall Feedback</p>
@@ -357,7 +362,7 @@ async function generateReviewReplies() {
                 <span v-if="totalReviews" class="text-base text-success font-semibold">Positive</span>
               </div>
             </div>
-            <div class="p-2.5 bg-primary/10 rounded-xl text-primary">
+            <div class="p-2.5 bg-primary/10 rounded-lg text-primary">
               <ThumbsUp class="size-5" />
             </div>
           </div>
@@ -373,7 +378,7 @@ async function generateReviewReplies() {
       <!-- Section 2: Charts & Insights -->
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <!-- Review Trend (Left - 2/3 width) — real when reviews exist -->
-        <div class="bg-card rounded-xl border border-border shadow-xs p-6 flex flex-col justify-between lg:col-span-2">
+        <div class="bg-card rounded-xl border border-border shadow-sm p-6 flex flex-col justify-between lg:col-span-2">
           <div class="flex justify-between items-center mb-6">
             <div class="flex items-center gap-2">
               <div>
@@ -397,7 +402,7 @@ async function generateReviewReplies() {
           </div>
         </div>
 
-        <div class="bg-card rounded-xl border border-border shadow-xs p-0 flex flex-col overflow-hidden relative">
+        <div class="bg-card rounded-xl border border-border shadow-sm p-0 flex flex-col overflow-hidden relative">
           <div class="h-1 w-full bg-primary"></div>
 
           <div class="p-6 flex-1 flex flex-col">
@@ -433,7 +438,7 @@ async function generateReviewReplies() {
       <!-- Section 3: Platform Ratings & Quick Actions -->
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <!-- Platform Breakdown (Real from reviews; trend from snapshots) -->
-        <div class="bg-card rounded-xl border border-border shadow-xs p-6">
+        <div class="bg-card rounded-xl border border-border shadow-sm p-6">
           <div class="flex items-center gap-2 mb-6">
             <h3 class="text-base font-semibold text-foreground">Platform Breakdown</h3>
             <Info class="size-4 text-muted-foreground opacity-70" />
@@ -483,7 +488,7 @@ async function generateReviewReplies() {
         </div>
 
         <!-- Quick Actions -->
-        <div class="bg-card rounded-xl border border-border shadow-xs p-6">
+        <div class="bg-card rounded-xl border border-border shadow-sm p-6">
           <h3 class="text-base font-semibold text-foreground mb-1">Quick Actions</h3>
           <p class="text-sm text-muted-foreground mb-6">Manage your reputation workflow.</p>
           

@@ -19,7 +19,7 @@ defineProps({
 <template>
   <EmptyStateLayout :title="title" :subtitle="subtitle">
     <template #empty-state-item>
-      <div class="flex flex-col gap-4 p-px">
+      <div class="flex flex-col gap-4 p-px filter blur-[0.5px]">
         <CampaignCard
           v-for="campaign in ONGOING_CAMPAIGN_EMPTY_STATE_CONTENT"
           :key="campaign.id"

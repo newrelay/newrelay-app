@@ -92,33 +92,35 @@ const handleAudioToneChange = value => {
 <template>
   <div
     id="profile-settings-audio-notifications"
-    class="rounded-xl border border-border/60 bg-card p-6 shadow-xs transition-colors flex flex-col gap-6"
+    class="border border-border/60 bg-card rounded-xl p-6 shadow-sm"
   >
-    <div class="border-b border-border/40 pb-4">
-      <h3 class="text-[17px] font-semibold text-foreground">
+    <div class="mb-6">
+      <h2 class="text-base font-semibold text-foreground">
         {{ $t('PROFILE_SETTINGS.FORM.AUDIO_NOTIFICATIONS_SECTION.TITLE') }}
-      </h3>
-      <p class="mt-0.5 text-xs text-muted-foreground">
+      </h2>
+      <p class="text-[13px] text-muted-foreground mt-0.5">
         {{ $t('PROFILE_SETTINGS.FORM.AUDIO_NOTIFICATIONS_SECTION.NOTE') }}
       </p>
     </div>
 
-    <AudioAlertTone
-      :value="alertTone"
-      :label="$t(`${i18nKeyPrefix}.DEFAULT_TONE.TITLE`)"
-      @change="handleAudioToneChange"
-    />
+    <div class="space-y-4">
+      <AudioAlertTone
+        :value="alertTone"
+        :label="$t(`${i18nKeyPrefix}.DEFAULT_TONE.TITLE`)"
+        @change="handleAudioToneChange"
+      />
 
-    <AudioAlertEvent
-      :label="$t(`${i18nKeyPrefix}.ALERT_TYPE.TITLE`)"
-      :value="audioAlert"
-      @update="handAudioAlertChange"
-    />
+      <AudioAlertEvent
+        :label="$t(`${i18nKeyPrefix}.ALERT_TYPE.TITLE`)"
+        :value="audioAlert"
+        @update="handAudioAlertChange"
+      />
 
-    <AudioAlertCondition
-      :items="audioAlertConditions"
-      :label="$t(`${i18nKeyPrefix}.CONDITIONS.TITLE`)"
-      @change="handleAudioAlertConditions"
-    />
+      <AudioAlertCondition
+        :items="audioAlertConditions"
+        :label="$t(`${i18nKeyPrefix}.CONDITIONS.TITLE`)"
+        @change="handleAudioAlertConditions"
+      />
+    </div>
   </div>
 </template>

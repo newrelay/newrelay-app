@@ -20,11 +20,11 @@ const onChange = (id, value) => {
 </script>
 
 <template>
-  <div>
-    <label class="block pb-1" :class="[RELAY_FORM_LABEL_CLASS]">
+  <div class="flex flex-col gap-3 pt-4 border-t border-border/40">
+    <label class="mb-1" :class="[RELAY_FORM_LABEL_CLASS]">
       {{ label }}
     </label>
-    <div class="mt-2.5 flex flex-col gap-3">
+    <div class="flex flex-col gap-3">
       <div v-for="item in items" :key="item.id" class="flex items-center gap-3">
         <RelayCheckbox
           :id="`checkbox-condition-${item.value}`"
@@ -32,7 +32,7 @@ const onChange = (id, value) => {
           @update:model-value="val => onChange(item.value, val)"
         />
         <label
-          class="cursor-pointer text-xs font-medium text-foreground"
+          class="cursor-pointer text-[14px] text-foreground"
           :for="`checkbox-condition-${item.value}`"
         >
           {{ item.label }}

@@ -81,8 +81,8 @@ export default {
 
 <template>
   <form @submit.prevent="changePassword()">
-    <div class="flex flex-col w-full gap-4">
-      <div class="flex flex-col gap-2">
+    <div class="flex flex-col w-full gap-5">
+      <div class="flex flex-col gap-1.5">
         <RelayLabel html-for="current-password">
           {{ $t('PROFILE_SETTINGS.FORM.CURRENT_PASSWORD.LABEL') }}
         </RelayLabel>
@@ -90,7 +90,7 @@ export default {
           id="current-password"
           v-model="currentPassword"
           type="password"
-          class-name="h-10 shadow-xs bg-background"
+          class-name="h-10 px-4 shadow-sm bg-background"
           :placeholder="
             $t('PROFILE_SETTINGS.FORM.CURRENT_PASSWORD.PLACEHOLDER')
           "
@@ -102,7 +102,7 @@ export default {
         </p>
       </div>
 
-      <div class="flex flex-col gap-2">
+      <div class="flex flex-col gap-1.5">
         <RelayLabel html-for="new-password">
           {{ $t('PROFILE_SETTINGS.FORM.PASSWORD.LABEL') }}
         </RelayLabel>
@@ -110,7 +110,7 @@ export default {
           id="new-password"
           v-model="password"
           type="password"
-          class-name="h-10 shadow-xs bg-background"
+          class-name="h-10 px-4 shadow-sm bg-background"
           :placeholder="$t('PROFILE_SETTINGS.FORM.PASSWORD.PLACEHOLDER')"
           @update:model-value="v$.password.$touch"
           @blur="v$.password.$touch"
@@ -120,7 +120,7 @@ export default {
         </p>
       </div>
 
-      <div class="flex flex-col gap-2">
+      <div class="flex flex-col gap-1.5">
         <RelayLabel html-for="confirm-password">
           {{ $t('PROFILE_SETTINGS.FORM.PASSWORD_CONFIRMATION.LABEL') }}
         </RelayLabel>
@@ -128,7 +128,7 @@ export default {
           id="confirm-password"
           v-model="passwordConfirmation"
           type="password"
-          class-name="h-10 shadow-xs bg-background"
+          class-name="h-10 px-4 shadow-sm bg-background"
           :placeholder="
             $t('PROFILE_SETTINGS.FORM.PASSWORD_CONFIRMATION.PLACEHOLDER')
           "
@@ -146,7 +146,7 @@ export default {
       <div>
         <RelayButton
           type="submit"
-          class="shadow-sm"
+          class="h-10 px-6 shadow-sm mt-2"
           :disabled="isButtonDisabled"
         >
           {{ $t('PROFILE_SETTINGS.FORM.PASSWORD_SECTION.BTN_TEXT') }}

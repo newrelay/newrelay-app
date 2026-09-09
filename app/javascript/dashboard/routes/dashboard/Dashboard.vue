@@ -222,6 +222,12 @@ export default {
       if (String(routeName).includes('reputation')) {
         return this.t('SIDEBAR.REPUTATION');
       }
+      if (routeName === 'profile_settings_mfa') {
+        return this.t('MFA_SETTINGS.TITLE');
+      }
+      if (String(routeName).startsWith('profile_settings')) {
+        return this.t('PROFILE_SETTINGS.TITLE');
+      }
       if (
         String(routeName).includes('settings') ||
         String(routeName).includes('agent_list')

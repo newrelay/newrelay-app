@@ -17,6 +17,7 @@ const props = defineProps({
   disabled: { type: Boolean, default: false },
   searchPlaceholder: { type: String, default: '' },
   hasError: { type: Boolean, default: false },
+  showSearch: { type: Boolean, default: true },
 });
 
 const emit = defineEmits(['update:modelValue']);
@@ -81,9 +82,9 @@ const handleAction = ({ value }) => {
     <DropdownMenu
       v-if="open"
       :menu-items="menuItems"
-      show-search
+      :show-search="showSearch"
       :search-placeholder="searchPlaceholder"
-      class="top-full z-50 mt-1 w-full ltr:left-0 rtl:right-0"
+      class="top-full z-50 mt-1 max-h-64 w-full !overflow-y-auto ltr:left-0 rtl:right-0"
       @action="handleAction"
     />
   </div>

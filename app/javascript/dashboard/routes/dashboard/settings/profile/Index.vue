@@ -7,7 +7,6 @@ import { useBranding } from 'shared/composables/useBranding';
 import { clearCookiesOnLogout } from 'dashboard/store/utils/api.js';
 import { copyTextToClipboard } from 'shared/helpers/clipboard';
 import { parseAPIErrorResponse } from 'dashboard/store/utils/api';
-import { parseBoolean } from '@chatwoot/utils';
 import UserProfilePicture from './UserProfilePicture.vue';
 import UserBasicDetails from './UserBasicDetails.vue';
 import MessageSignature from './MessageSignature.vue';
@@ -15,32 +14,31 @@ import FontSize from './FontSize.vue';
 import UserLanguageSelect from './UserLanguageSelect.vue';
 import ChangePassword from './ChangePassword.vue';
 import NotificationPreferences from './NotificationPreferences.vue';
-import SectionLayout from '../account/components/SectionLayout.vue';
-import BaseSettingsHeader from '../components/BaseSettingsHeader.vue';
+import AudioNotifications from './AudioNotifications.vue';
 import AccessToken from './AccessToken.vue';
 import MfaSettingsCard from './MfaSettingsCard.vue';
 import Policy from 'dashboard/components/policy.vue';
-import RadioCard from 'dashboard/components-next/radioCard/RadioCard.vue';
 import {
   ROLES,
   CONVERSATION_PERMISSIONS,
 } from 'dashboard/constants/permissions.js';
 
+const PROFILE_CARD_CLASS =
+  'border border-border/60 bg-card rounded-xl p-6 shadow-sm';
+
 export default {
   components: {
     MessageSignature,
-    SectionLayout,
     FontSize,
     UserLanguageSelect,
     UserProfilePicture,
     Policy,
     UserBasicDetails,
-    RadioCard,
     ChangePassword,
     NotificationPreferences,
+    AudioNotifications,
     AccessToken,
     MfaSettingsCard,
-    BaseSettingsHeader,
   },
   setup() {
     const { isEditorHotKeyEnabled, updateUISettings } = useUISettings();
@@ -53,6 +51,7 @@ export default {
       isEditorHotKeyEnabled,
       updateUISettings,
       replaceInstallationName,
+      profileCardClass: PROFILE_CARD_CLASS,
     };
   },
   data() {
@@ -72,8 +71,9 @@ export default {
           description: this.$t(
             'PROFILE_SETTINGS.FORM.SEND_MESSAGE.CARD.ENTER_KEY.CONTENT'
           ),
-          lightImage: '/assets/images/dashboard/profile/hot-key-enter.svg',
-          darkImage: '/assets/images/dashboard/profile/hot-key-enter-dark.svg',
+          mockSend: this.$t(
+            'PROFILE_SETTINGS.FORM.SEND_MESSAGE.CARD.ENTER_KEY.MOCK_SEND'
+          ),
         },
         {
           key: 'cmd_enter',
@@ -83,9 +83,9 @@ export default {
           description: this.$t(
             'PROFILE_SETTINGS.FORM.SEND_MESSAGE.CARD.CMD_ENTER_KEY.CONTENT'
           ),
-          lightImage: '/assets/images/dashboard/profile/hot-key-ctrl-enter.svg',
-          darkImage:
-            '/assets/images/dashboard/profile/hot-key-ctrl-enter-dark.svg',
+          mockSend: this.$t(
+            'PROFILE_SETTINGS.FORM.SEND_MESSAGE.CARD.CMD_ENTER_KEY.MOCK_SEND'
+          ),
         },
       ],
       notificationPermissions: [...ROLES, ...CONVERSATION_PERMISSIONS],
@@ -98,9 +98,6 @@ export default {
       currentUserId: 'getCurrentUserID',
       globalConfig: 'globalConfig/get',
     }),
-    isMfaEnabled() {
-      return parseBoolean(window.newrelayConfig?.isMfaEnabled);
-    },
   },
   mounted() {
     if (this.currentUserId) {
@@ -218,123 +215,219 @@ export default {
 </script>
 
 <template>
-  <div class="grid max-w-2xl gap-8 ltr:mr-auto rtl:ml-auto">
-    <BaseSettingsHeader :title="$t('PROFILE_SETTINGS.TITLE')" description="" />
-    <SectionLayout title="" description="" as-card class="!pt-0">
-      <div class="flex flex-col gap-6">
-        <UserProfilePicture
-          :src="avatarUrl"
-          :name="name"
-          @change="updateProfilePicture"
-          @delete="deleteProfilePicture"
-        />
-        <UserBasicDetails
-          :name="name"
-          :display-name="displayName"
-          :email="email"
-          :email-enabled="!globalConfig.disableUserProfileUpdate"
-          @update-user="updateProfile"
+  <div class="w-full pb-10">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+      <div :class="profileCardClass">
+        <h2 class="text-base font-semibold text-foreground mb-6">
+          {{ $t('PROFILE_SETTINGS.TITLE') }}
+        </h2>
+        <div class="flex flex-col sm:flex-row gap-6 sm:gap-8">
+          <UserProfilePicture
+            :src="avatarUrl"
+            :name="name"
+            @change="updateProfilePicture"
+            @delete="deleteProfilePicture"
+          />
+          <div class="flex-1 min-w-0">
+            <UserBasicDetails
+              :name="name"
+              :display-name="displayName"
+              :email="email"
+              :email-enabled="!globalConfig.disableUserProfileUpdate"
+              @update-user="updateProfile"
+            />
+          </div>
+        </div>
+      </div>
+
+      <div :class="profileCardClass">
+        <div class="mb-6">
+          <h2 class="text-base font-semibold text-foreground">
+            {{ $t('PROFILE_SETTINGS.FORM.INTERFACE_SECTION.TITLE') }}
+          </h2>
+          <p class="text-[13px] text-muted-foreground mt-0.5">
+            {{
+              replaceInstallationName(
+                $t('PROFILE_SETTINGS.FORM.INTERFACE_SECTION.NOTE')
+              )
+            }}
+          </p>
+        </div>
+        <div class="space-y-6">
+          <FontSize
+            :value="currentFontSize"
+            :label="
+              $t('PROFILE_SETTINGS.FORM.INTERFACE_SECTION.FONT_SIZE.TITLE')
+            "
+            :description="
+              $t('PROFILE_SETTINGS.FORM.INTERFACE_SECTION.FONT_SIZE.NOTE')
+            "
+            @change="updateFontSize"
+          />
+          <UserLanguageSelect
+            :label="
+              $t('PROFILE_SETTINGS.FORM.INTERFACE_SECTION.LANGUAGE.TITLE')
+            "
+            :description="
+              $t('PROFILE_SETTINGS.FORM.INTERFACE_SECTION.LANGUAGE.NOTE')
+            "
+          />
+        </div>
+      </div>
+
+      <div :class="profileCardClass">
+        <div class="mb-6">
+          <h2 class="text-base font-semibold text-foreground">
+            {{ $t('PROFILE_SETTINGS.FORM.MESSAGE_SIGNATURE_SECTION.TITLE') }}
+          </h2>
+          <p
+            class="text-[13px] text-muted-foreground mt-0.5 leading-relaxed pr-4"
+          >
+            {{ $t('PROFILE_SETTINGS.FORM.MESSAGE_SIGNATURE_SECTION.NOTE') }}
+          </p>
+        </div>
+        <MessageSignature
+          :message-signature="messageSignature"
+          @update-signature="updateSignature"
         />
       </div>
-    </SectionLayout>
-    <SectionLayout
-      as-card
-      :title="$t('PROFILE_SETTINGS.FORM.INTERFACE_SECTION.TITLE')"
-      :description="
-        replaceInstallationName(
-          $t('PROFILE_SETTINGS.FORM.INTERFACE_SECTION.NOTE')
-        )
-      "
-    >
-      <div class="flex flex-col items-start gap-6">
-        <FontSize
-          :value="currentFontSize"
-          :label="$t('PROFILE_SETTINGS.FORM.INTERFACE_SECTION.FONT_SIZE.TITLE')"
-          :description="
-            $t('PROFILE_SETTINGS.FORM.INTERFACE_SECTION.FONT_SIZE.NOTE')
-          "
-          @change="updateFontSize"
-        />
-        <UserLanguageSelect
-          :label="$t('PROFILE_SETTINGS.FORM.INTERFACE_SECTION.LANGUAGE.TITLE')"
-          :description="
-            $t('PROFILE_SETTINGS.FORM.INTERFACE_SECTION.LANGUAGE.NOTE')
-          "
-        />
+
+      <div :class="profileCardClass">
+        <div class="mb-6">
+          <h2 class="text-base font-semibold text-foreground">
+            {{ $t('PROFILE_SETTINGS.FORM.SEND_MESSAGE.TITLE') }}
+          </h2>
+          <p class="text-[13px] text-muted-foreground mt-0.5 pr-4">
+            {{ $t('PROFILE_SETTINGS.FORM.SEND_MESSAGE.NOTE') }}
+          </p>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <button
+            v-for="hotKey in hotKeys"
+            :key="hotKey.key"
+            type="button"
+            :aria-pressed="isEditorHotKeyEnabled(hotKey.key)"
+            class="border rounded-xl p-5 cursor-pointer transition-all relative flex flex-col h-full text-left"
+            :class="[
+              isEditorHotKeyEnabled(hotKey.key)
+                ? 'border-primary ring-1 ring-primary/20 bg-primary/5'
+                : 'border-border hover:border-primary/50 bg-card',
+            ]"
+            @click="toggleHotKey(hotKey.key)"
+          >
+            <div class="flex items-center justify-between mb-2">
+              <span class="font-semibold text-[14px] text-foreground">
+                {{ hotKey.title }}
+              </span>
+              <div
+                class="size-4 rounded-full border flex items-center justify-center"
+                :class="[
+                  isEditorHotKeyEnabled(hotKey.key)
+                    ? 'border-primary bg-primary'
+                    : 'border-muted-foreground/30',
+                ]"
+              >
+                <div
+                  v-if="isEditorHotKeyEnabled(hotKey.key)"
+                  class="size-1.5 rounded-full bg-primary-foreground"
+                />
+              </div>
+            </div>
+            <p
+              class="text-[12px] text-muted-foreground leading-relaxed mb-6 flex-1"
+            >
+              {{ hotKey.description }}
+            </p>
+            <div
+              class="rounded-lg p-3 pt-4 border flex flex-col gap-3 mt-auto transition-colors"
+              :class="[
+                isEditorHotKeyEnabled(hotKey.key)
+                  ? 'bg-primary/10 border-primary/20'
+                  : 'bg-muted/30 border-border/50',
+              ]"
+            >
+              <div
+                class="h-2 w-3/4 rounded-full transition-colors"
+                :class="[
+                  isEditorHotKeyEnabled(hotKey.key)
+                    ? 'bg-primary/20'
+                    : 'bg-muted-foreground/20',
+                ]"
+              />
+              <div
+                class="h-2 w-1/2 rounded-full transition-colors"
+                :class="[
+                  isEditorHotKeyEnabled(hotKey.key)
+                    ? 'bg-primary/20'
+                    : 'bg-muted-foreground/20',
+                ]"
+              />
+              <div class="flex justify-end mt-2">
+                <div
+                  class="text-primary-foreground text-[10px] font-medium px-3 py-1.5 rounded transition-colors"
+                  :class="[
+                    isEditorHotKeyEnabled(hotKey.key)
+                      ? 'bg-primary'
+                      : 'bg-primary/50',
+                  ]"
+                >
+                  {{ hotKey.mockSend }}
+                </div>
+              </div>
+            </div>
+          </button>
+        </div>
       </div>
-    </SectionLayout>
-    <SectionLayout
-      as-card
-      :title="$t('PROFILE_SETTINGS.FORM.MESSAGE_SIGNATURE_SECTION.TITLE')"
-      :description="$t('PROFILE_SETTINGS.FORM.MESSAGE_SIGNATURE_SECTION.NOTE')"
-    >
-      <MessageSignature
-        :message-signature="messageSignature"
-        @update-signature="updateSignature"
-      />
-    </SectionLayout>
-    <SectionLayout
-      as-card
-      :title="$t('PROFILE_SETTINGS.FORM.SEND_MESSAGE.TITLE')"
-      :description="$t('PROFILE_SETTINGS.FORM.SEND_MESSAGE.NOTE')"
-    >
+
       <div
-        class="flex w-full flex-col justify-between gap-5 sm:flex-row sm:gap-4"
+        v-if="!globalConfig.disableUserProfileUpdate"
+        :class="profileCardClass"
       >
-        <RadioCard
-          v-for="hotKey in hotKeys"
-          :id="hotKey.key"
-          :key="hotKey.key"
-          :label="hotKey.title"
-          :description="hotKey.description"
-          :is-active="isEditorHotKeyEnabled(hotKey.key)"
-          class="sm:flex-1"
-          @select="toggleHotKey"
-        >
-          <img
-            :src="hotKey.lightImage"
-            :alt="`Light themed image for ${hotKey.title}`"
-            class="block w-full object-cover dark:hidden"
-          />
-          <img
-            :src="hotKey.darkImage"
-            :alt="`Dark themed image for ${hotKey.title}`"
-            class="hidden w-full object-cover dark:block"
-          />
-        </RadioCard>
+        <h2 class="text-base font-semibold text-foreground mb-6">
+          {{ $t('PROFILE_SETTINGS.FORM.PASSWORD_SECTION.TITLE') }}
+        </h2>
+        <ChangePassword />
       </div>
-    </SectionLayout>
-    <SectionLayout
-      v-if="!globalConfig.disableUserProfileUpdate"
-      as-card
-      :title="$t('PROFILE_SETTINGS.FORM.PASSWORD_SECTION.TITLE')"
-      description=""
-    >
-      <ChangePassword />
-    </SectionLayout>
-    <SectionLayout
-      v-if="isMfaEnabled"
-      as-card
-      :title="$t('PROFILE_SETTINGS.FORM.SECURITY_SECTION.TITLE')"
-      :description="$t('PROFILE_SETTINGS.FORM.SECURITY_SECTION.NOTE')"
-    >
-      <MfaSettingsCard />
-    </SectionLayout>
-    <Policy :permissions="notificationPermissions">
-      <NotificationPreferences />
-    </Policy>
-    <SectionLayout
-      as-card
-      :title="$t('PROFILE_SETTINGS.FORM.ACCESS_TOKEN.TITLE')"
-      :description="
-        replaceInstallationName($t('PROFILE_SETTINGS.FORM.ACCESS_TOKEN.NOTE'))
-      "
-    >
-      <AccessToken
-        :value="currentUser.access_token"
-        @on-copy="onCopyToken"
-        @on-reset="resetAccessToken"
-      />
-    </SectionLayout>
+
+      <div :class="profileCardClass">
+        <div class="mb-6">
+          <h2 class="text-base font-semibold text-foreground">
+            {{ $t('PROFILE_SETTINGS.FORM.SECURITY_SECTION.TITLE') }}
+          </h2>
+          <p class="text-[13px] text-muted-foreground mt-0.5">
+            {{ $t('PROFILE_SETTINGS.FORM.SECURITY_SECTION.NOTE') }}
+          </p>
+        </div>
+        <MfaSettingsCard />
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
+      <Policy class="contents" :permissions="audioNotificationPermissions">
+        <AudioNotifications />
+      </Policy>
+      <Policy class="contents" :permissions="notificationPermissions">
+        <NotificationPreferences />
+      </Policy>
+      <div class="md:col-span-2 mb-10" :class="[profileCardClass]">
+        <div class="mb-6">
+          <h2 class="text-base font-semibold text-foreground">
+            {{ $t('PROFILE_SETTINGS.FORM.ACCESS_TOKEN.TITLE') }}
+          </h2>
+          <p class="text-[13px] text-muted-foreground mt-0.5">
+            {{
+              replaceInstallationName(
+                $t('PROFILE_SETTINGS.FORM.ACCESS_TOKEN.NOTE')
+              )
+            }}
+          </p>
+        </div>
+        <AccessToken
+          :value="currentUser.access_token"
+          @on-copy="onCopyToken"
+          @on-reset="resetAccessToken"
+        />
+      </div>
+    </div>
   </div>
 </template>

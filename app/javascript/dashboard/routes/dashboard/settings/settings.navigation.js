@@ -158,6 +158,11 @@ export const SETTINGS_NAV_SECTIONS = [
     icon: 'i-lucide-plug',
     items: [
       {
+        key: 'reputation',
+        labelKey: 'SIDEBAR.INTEGRATION',
+        routeName: 'reputation_integrations',
+      },
+      {
         key: 'apps',
         labelKey: 'SIDEBAR.INTEGRATION_APPS',
         routeName: 'settings_applications',

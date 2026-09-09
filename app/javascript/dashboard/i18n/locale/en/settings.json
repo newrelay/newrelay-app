@@ -412,6 +412,7 @@
     "EXPAND_SIDEBAR": "Expand sidebar",
     "CANNED_RESPONSES": "Quick Replies",
     "INTEGRATIONS": "Integrations",
+    "INTEGRATION": "Integration",
     "INTEGRATION_APPS": "Apps",
     "INTEGRATION_API_KEYS": "API Keys",
     "INTEGRATION_WEBHOOKS": "Webhooks",

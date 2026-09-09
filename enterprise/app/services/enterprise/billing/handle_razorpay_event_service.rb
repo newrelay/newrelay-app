@@ -25,7 +25,8 @@ class Enterprise::Billing::HandleRazorpayEventService
 
     ProcessedWebhookEvent.create!(
       stripe_event_id: "razorpay_#{event_id}_#{entity_fingerprint(payload_entity)}",
-      event_type: @event[:event]
+      event_type: @event[:event],
+      processed_at: Time.current
     )
   rescue ActiveRecord::RecordNotUnique
     # Concurrent duplicate webhook - safe to ignore.

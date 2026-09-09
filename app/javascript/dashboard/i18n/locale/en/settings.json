@@ -186,7 +186,23 @@
           "SLA_MISSED_NEXT_RESPONSE": "When a conversation misses next response SLA.",
           "SLA_MISSED_RESOLUTION": "When a conversation misses resolution SLA."
         },
-        "BROWSER_PERMISSION": "Enable push notifications for your browser so you’re able to receive them"
+        "BROWSER_PERMISSION": "Enable push notifications for your browser so you’re able to receive them",
+        "IN_APP_DESCRIPTION": "Receive notifications inside the platform.",
+        "EMAIL_DESCRIPTION": "Receive notifications via email.",
+        "PUSH_TITLE": "Push notifications",
+        "PUSH_DESCRIPTION": "Receive push notifications on your device.",
+        "SLACK": "Slack",
+        "SLACK_DESCRIPTION": "Receive notifications in Slack.",
+        "TEAMS": "Microsoft Teams",
+        "TEAMS_DESCRIPTION": "Receive notifications in Microsoft Teams.",
+        "MANAGE_INTEGRATIONS": "Manage integrations",
+        "QUIET_HOURS": "Quiet hours",
+        "QUIET_HOURS_NOTE": "Pause non-urgent notifications during these hours.",
+        "FROM": "From",
+        "TO": "To",
+        "TIMEZONE": "Timezone",
+        "CANCEL": "Cancel",
+        "SAVE_CHANGES": "Save changes"
       },
       "API": {
         "UPDATE_SUCCESS": "Your notification preferences are updated successfully",

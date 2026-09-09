@@ -3,7 +3,7 @@ import { ref, onMounted, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import Button from 'dashboard/components-next/button/Button.vue';
 import Checkbox from 'dashboard/components-next/checkbox/Checkbox.vue';
-import Input from 'dashboard/components-next/input/Input.vue';
+import { RelayInput, RelayTextarea } from 'dashboard/components-next/relay';
 import Spinner from 'dashboard/components-next/spinner/Spinner.vue';
 import Avatar from 'dashboard/components-next/avatar/Avatar.vue';
 import PhoneNumberInput from 'dashboard/components-next/phonenumberinput/PhoneNumberInput.vue';
@@ -232,20 +232,16 @@ onMounted(() => {
 
       <div class="flex items-center gap-4">
         <div class="relative w-64">
-          <Input
+          <span
+            class="i-lucide-search pointer-events-none absolute left-2.5 top-2.5 size-4 text-muted-foreground"
+          />
+          <RelayInput
             v-model="searchQuery"
-            type="search"
             :placeholder="
               t('CONTACTS_LAYOUT.COMPANIES_VIEW.SEARCH_PLACEHOLDER')
             "
-            custom-input-class="h-8 [&:not(.focus)]:!border-transparent bg-accent dark:bg-card ltr:!pl-8 !py-1 rtl:!pr-8 w-full"
-          >
-            <template #prefix>
-              <span
-                class="i-lucide-search absolute -translate-y-1/2 text-muted-foreground size-4 top-1/2 ltr:left-2"
-              />
-            </template>
-          </Input>
+            class-name="h-9 pl-9"
+          />
         </div>
       </div>
     </div>
@@ -404,7 +400,7 @@ onMounted(() => {
               {{ t('CONTACTS_LAYOUT.COMPANIES_VIEW.FORM_NAME') }}
               <span class="text-destructive">*</span>
             </label>
-            <Input
+            <RelayInput
               v-model="companyForm.name"
               :placeholder="
                 t('CONTACTS_LAYOUT.COMPANIES_VIEW.FORM_NAME_PLACEHOLDER')
@@ -432,17 +428,18 @@ onMounted(() => {
             >
               {{ t('CONTACTS_LAYOUT.COMPANIES_VIEW.FORM_EMAIL') }}
             </label>
-            <Input
-              v-model="companyForm.email"
-              :placeholder="
-                t('CONTACTS_LAYOUT.COMPANIES_VIEW.FORM_GENERIC_PLACEHOLDER')
-              "
-              class="w-full"
-            >
-              <template #prefix>
-                <span class="i-lucide-mail text-muted-foreground size-4" />
-              </template>
-            </Input>
+            <div class="relative">
+              <span
+                class="i-lucide-mail pointer-events-none absolute left-2.5 top-2.5 size-4 text-muted-foreground"
+              />
+              <RelayInput
+                v-model="companyForm.email"
+                :placeholder="
+                  t('CONTACTS_LAYOUT.COMPANIES_VIEW.FORM_GENERIC_PLACEHOLDER')
+                "
+                class-name="pl-9"
+              />
+            </div>
           </div>
           <div>
             <label
@@ -450,7 +447,7 @@ onMounted(() => {
             >
               {{ t('CONTACTS_LAYOUT.COMPANIES_VIEW.FORM_WEBSITE') }}
             </label>
-            <Input
+            <RelayInput
               v-model="companyForm.website"
               :placeholder="
                 t('CONTACTS_LAYOUT.COMPANIES_VIEW.FORM_GENERIC_PLACEHOLDER')
@@ -464,7 +461,7 @@ onMounted(() => {
             >
               {{ t('CONTACTS_LAYOUT.COMPANIES_VIEW.FORM_ADDRESS') }}
             </label>
-            <Input
+            <RelayInput
               v-model="companyForm.address"
               :placeholder="
                 t('CONTACTS_LAYOUT.COMPANIES_VIEW.FORM_GENERIC_PLACEHOLDER')
@@ -478,7 +475,7 @@ onMounted(() => {
             >
               {{ t('CONTACTS_LAYOUT.COMPANIES_VIEW.FORM_STATE') }}
             </label>
-            <Input
+            <RelayInput
               v-model="companyForm.state"
               :placeholder="
                 t('CONTACTS_LAYOUT.COMPANIES_VIEW.FORM_GENERIC_PLACEHOLDER')
@@ -492,7 +489,7 @@ onMounted(() => {
             >
               {{ t('CONTACTS_LAYOUT.COMPANIES_VIEW.FORM_CITY') }}
             </label>
-            <Input
+            <RelayInput
               v-model="companyForm.city"
               :placeholder="
                 t('CONTACTS_LAYOUT.COMPANIES_VIEW.FORM_GENERIC_PLACEHOLDER')
@@ -506,12 +503,11 @@ onMounted(() => {
             >
               {{ t('CONTACTS_LAYOUT.COMPANIES_VIEW.FORM_DESCRIPTION') }}
             </label>
-            <textarea
+            <RelayTextarea
               v-model="companyForm.description"
               :placeholder="
                 t('CONTACTS_LAYOUT.COMPANIES_VIEW.FORM_GENERIC_PLACEHOLDER')
               "
-              class="w-full min-h-[80px] p-2 border border-muted bg-transparent text-foreground outline-none focus:border-primary text-[14px] border-border/80 bg-background focus-visible:ring-1 focus-visible:ring-primary/30 shadow-sm rounded-md"
             />
           </div>
         </div>

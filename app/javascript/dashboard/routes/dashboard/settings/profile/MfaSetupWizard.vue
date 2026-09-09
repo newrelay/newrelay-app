@@ -4,9 +4,13 @@ import { useI18n } from 'vue-i18n';
 import QRCode from 'qrcode';
 import { copyTextToClipboard } from 'shared/helpers/clipboard';
 import { useAlert } from 'dashboard/composables';
-import Input from 'dashboard/components-next/input/Input.vue';
 import Icon from 'dashboard/components-next/icon/Icon.vue';
-import { RelayButton } from 'dashboard/components-next/relay';
+import {
+  RelayButton,
+  RelayInput,
+  RelayLabel,
+  RELAY_FORM_FIELD_CLASS,
+} from 'dashboard/components-next/relay';
 
 const props = defineProps({
   showSetup: {
@@ -196,7 +200,11 @@ defineExpose({
               {{ $t('MFA_SETTINGS.SETUP.SECRET_KEY') }}
             </label>
             <div class="flex items-center gap-2">
-              <Input :model-value="secretKey" readonly class="flex-1" />
+              <RelayInput
+                :model-value="secretKey"
+                readonly
+                class-name="flex-1"
+              />
               <RelayButton variant="outline" size="sm" @click="copySecret">
                 {{ $t('MFA_SETTINGS.SETUP.COPY') }}
               </RelayButton>
@@ -205,18 +213,20 @@ defineExpose({
         </details>
 
         <div class="flex flex-col items-start gap-3 w-full">
-          <Input
-            v-model="verificationCode"
-            type="text"
-            maxlength="6"
-            pattern="[0-9]{6}"
-            :label="$t('MFA_SETTINGS.SETUP.ENTER_CODE')"
-            :placeholder="$t('MFA_SETTINGS.SETUP.ENTER_CODE_PLACEHOLDER')"
-            :message="verificationError"
-            :message-type="verificationError ? 'error' : 'info'"
-            class="w-full"
-            @keyup.enter="verifyCode"
-          />
+          <div :class="RELAY_FORM_FIELD_CLASS" class="w-full">
+            <RelayLabel>{{ $t('MFA_SETTINGS.SETUP.ENTER_CODE') }}</RelayLabel>
+            <RelayInput
+              v-model="verificationCode"
+              type="text"
+              maxlength="6"
+              pattern="[0-9]{6}"
+              :placeholder="$t('MFA_SETTINGS.SETUP.ENTER_CODE_PLACEHOLDER')"
+              @keyup.enter="verifyCode"
+            />
+            <p v-if="verificationError" class="text-xs text-destructive">
+              {{ verificationError }}
+            </p>
+          </div>
 
           <div class="flex gap-3 mt-1 w-full justify-between">
             <RelayButton variant="outline" class="flex-1" @click="cancelSetup">

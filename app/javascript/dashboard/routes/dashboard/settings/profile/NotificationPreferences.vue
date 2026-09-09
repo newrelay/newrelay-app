@@ -4,12 +4,8 @@ import { useI18n } from 'vue-i18n';
 import { useStore, useMapGetter } from 'dashboard/composables/store';
 import { useAlert } from 'dashboard/composables';
 import Icon from 'dashboard/components-next/icon/Icon.vue';
-import {
-  RelayButton,
-  RelayCheckbox,
-  RelayInput,
-  RelaySwitch,
-} from 'dashboard/components-next/relay';
+import ComboBox from 'dashboard/components-next/combobox/ComboBox.vue';
+import { RelayCheckbox, RelaySwitch } from 'dashboard/components-next/relay';
 import {
   hasPushPermissions,
   requestPushPermissions,
@@ -18,13 +14,6 @@ import {
 import { FEATURE_FLAGS } from 'dashboard/featureFlags';
 import { timeZoneOptions } from 'dashboard/routes/dashboard/settings/inbox/helpers/businessHour';
 import { NOTIFICATION_TYPES } from './constants';
-
-const props = defineProps({
-  showPageHeader: {
-    type: Boolean,
-    default: false,
-  },
-});
 
 const DAY_OPTIONS = [
   { label: 'Mon', flag: 'monday' },
@@ -295,10 +284,10 @@ onMounted(() => {
         >
           <div>
             <h3 class="text-base font-semibold text-foreground">
-              Notification preferences
+              {{ $t('PROFILE_SETTINGS.FORM.NOTIFICATIONS.TITLE') }}
             </h3>
             <p class="text-sm text-muted-foreground mt-1">
-              Choose the events you want to be notified about.
+              {{ $t('PROFILE_SETTINGS.FORM.NOTIFICATIONS.NOTE') }}
             </p>
           </div>
           <div class="relative w-full md:w-64">
@@ -321,7 +310,7 @@ onMounted(() => {
             <input
               v-model="searchQuery"
               class="border-input placeholder:text-muted-foreground focus-visible:ring-ring flex w-full rounded-md border px-3 py-1 text-sm transition-colors focus-visible:ring-1 focus-visible:outline-hidden disabled:cursor-not-allowed disabled:opacity-50 pl-9 h-9 bg-background shadow-none"
-              placeholder="Search events..."
+              :placeholder="$t('PROFILE_SETTINGS.FORM.NOTIFICATIONS.SEARCH')"
             />
           </div>
         </div>
@@ -335,22 +324,22 @@ onMounted(() => {
               <div
                 class="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider pl-2"
               >
-                Event
+                {{ $t('PROFILE_SETTINGS.FORM.NOTIFICATIONS.EVENT') }}
               </div>
               <div
                 class="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider w-16 text-center"
               >
-                In-app
+                {{ $t('PROFILE_SETTINGS.FORM.NOTIFICATIONS.IN_APP') }}
               </div>
               <div
                 class="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider w-16 text-center"
               >
-                Email
+                {{ $t('PROFILE_SETTINGS.FORM.NOTIFICATIONS.EMAIL') }}
               </div>
               <div
                 class="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider w-16 text-center"
               >
-                Push
+                {{ $t('PROFILE_SETTINGS.FORM.NOTIFICATIONS.PUSH') }}
               </div>
             </div>
 
@@ -431,7 +420,11 @@ onMounted(() => {
                   class="text-sm font-medium text-primary hover:text-primary/80 flex items-center gap-1 transition-colors"
                   @click="showAll = !showAll"
                 >
-                  {{ showAll ? 'Show less' : 'Show more' }}
+                  {{
+                    showAll
+                      ? $t('PROFILE_SETTINGS.FORM.NOTIFICATIONS.SHOW_LESS')
+                      : $t('PROFILE_SETTINGS.FORM.NOTIFICATIONS.SHOW_MORE')
+                  }}
                   <Icon
                     icon="i-lucide-chevron-down"
                     class="size-4 transition-transform"
@@ -450,10 +443,14 @@ onMounted(() => {
       >
         <div class="p-4 sm:p-6 border-b border-border/40">
           <h3 class="text-base font-semibold text-foreground">
-            Delivery channels
+            {{ $t('PROFILE_SETTINGS.FORM.NOTIFICATIONS.DELIVERY_CHANNELS') }}
           </h3>
           <p class="text-sm text-muted-foreground mt-1">
-            Choose where you want to receive notifications.
+            {{
+              $t(
+                'PROFILE_SETTINGS.FORM.NOTIFICATIONS.DELIVERY_CHANNELS_SUBTITLE'
+              )
+            }}
           </p>
         </div>
 
@@ -468,9 +465,13 @@ onMounted(() => {
                 />
               </div>
               <div>
-                <h4 class="text-sm font-medium text-foreground">In-app</h4>
+                <h4 class="text-sm font-medium text-foreground">
+                  {{ $t('PROFILE_SETTINGS.FORM.NOTIFICATIONS.IN_APP') }}
+                </h4>
                 <p class="text-xs text-muted-foreground mt-0.5">
-                  Receive notifications inside the platform.
+                  {{
+                    $t('PROFILE_SETTINGS.FORM.NOTIFICATIONS.IN_APP_DESCRIPTION')
+                  }}
                 </p>
               </div>
             </div>
@@ -487,9 +488,13 @@ onMounted(() => {
                 />
               </div>
               <div>
-                <h4 class="text-sm font-medium text-foreground">Email</h4>
+                <h4 class="text-sm font-medium text-foreground">
+                  {{ $t('PROFILE_SETTINGS.FORM.NOTIFICATIONS.EMAIL') }}
+                </h4>
                 <p class="text-xs text-muted-foreground mt-0.5">
-                  Receive notifications via email.
+                  {{
+                    $t('PROFILE_SETTINGS.FORM.NOTIFICATIONS.EMAIL_DESCRIPTION')
+                  }}
                 </p>
               </div>
             </div>
@@ -507,10 +512,12 @@ onMounted(() => {
               </div>
               <div>
                 <h4 class="text-sm font-medium text-foreground">
-                  Push notifications
+                  {{ $t('PROFILE_SETTINGS.FORM.NOTIFICATIONS.PUSH_TITLE') }}
                 </h4>
                 <p class="text-xs text-muted-foreground mt-0.5">
-                  Receive push notifications on your device.
+                  {{
+                    $t('PROFILE_SETTINGS.FORM.NOTIFICATIONS.PUSH_DESCRIPTION')
+                  }}
                 </p>
               </div>
             </div>
@@ -527,9 +534,13 @@ onMounted(() => {
                 <Icon icon="i-lucide-hash" class="size-5 text-[#E01E5A]" />
               </div>
               <div>
-                <h4 class="text-sm font-medium text-foreground">Slack</h4>
+                <h4 class="text-sm font-medium text-foreground">
+                  {{ $t('PROFILE_SETTINGS.FORM.NOTIFICATIONS.SLACK') }}
+                </h4>
                 <p class="text-xs text-muted-foreground mt-0.5">
-                  Receive notifications in Slack.
+                  {{
+                    $t('PROFILE_SETTINGS.FORM.NOTIFICATIONS.SLACK_DESCRIPTION')
+                  }}
                 </p>
               </div>
             </div>
@@ -547,10 +558,12 @@ onMounted(() => {
               </div>
               <div>
                 <h4 class="text-sm font-medium text-foreground">
-                  Microsoft Teams
+                  {{ $t('PROFILE_SETTINGS.FORM.NOTIFICATIONS.TEAMS') }}
                 </h4>
                 <p class="text-xs text-muted-foreground mt-0.5">
-                  Receive notifications in Microsoft Teams.
+                  {{
+                    $t('PROFILE_SETTINGS.FORM.NOTIFICATIONS.TEAMS_DESCRIPTION')
+                  }}
                 </p>
               </div>
             </div>
@@ -563,7 +576,9 @@ onMounted(() => {
               to="integrations"
               class="text-sm font-medium text-primary hover:text-primary/80 flex items-center gap-1.5 transition-colors"
             >
-              Manage integrations
+              {{
+                $t('PROFILE_SETTINGS.FORM.NOTIFICATIONS.MANAGE_INTEGRATIONS')
+              }}
               <Icon icon="i-lucide-external-link" class="size-3.5" />
             </router-link>
           </div>
@@ -579,9 +594,11 @@ onMounted(() => {
           :class="{ 'border-b border-border/40': quietHoursEnabled }"
         >
           <div>
-            <h3 class="text-base font-semibold text-foreground">Quiet hours</h3>
+            <h3 class="text-base font-semibold text-foreground">
+              {{ $t('PROFILE_SETTINGS.FORM.NOTIFICATIONS.QUIET_HOURS') }}
+            </h3>
             <p class="text-sm text-muted-foreground mt-1">
-              Pause non-urgent notifications during these hours.
+              {{ $t('PROFILE_SETTINGS.FORM.NOTIFICATIONS.QUIET_HOURS_NOTE') }}
             </p>
           </div>
           <RelaySwitch v-model="quietHoursEnabled" />
@@ -594,7 +611,9 @@ onMounted(() => {
             <div class="flex items-center gap-4 w-full sm:w-1/2">
               <span
                 class="text-sm font-medium text-muted-foreground w-12 shrink-0"
-                >From</span>
+              >
+                {{ $t('PROFILE_SETTINGS.FORM.NOTIFICATIONS.FROM') }}
+              </span>
               <div class="relative flex-1">
                 <input
                   v-model="quietHoursFrom"
@@ -608,7 +627,9 @@ onMounted(() => {
             <div class="flex items-center gap-4 w-full sm:w-1/2">
               <span
                 class="text-sm font-medium text-muted-foreground w-8 text-center shrink-0"
-                >To</span>
+              >
+                {{ $t('PROFILE_SETTINGS.FORM.NOTIFICATIONS.TO') }}
+              </span>
               <div class="relative flex-1">
                 <input
                   v-model="quietHoursTo"
@@ -623,23 +644,13 @@ onMounted(() => {
           <div class="flex flex-col sm:flex-row sm:items-center gap-4">
             <span
               class="text-sm font-medium text-muted-foreground w-12 shrink-0 leading-tight"
-              >Time<br class="hidden sm:inline" />zone</span>
+            >
+              {{ $t('PROFILE_SETTINGS.FORM.NOTIFICATIONS.TIMEZONE') }}
+            </span>
             <div class="relative flex-1">
-              <select
+              <ComboBox
                 v-model="selectedTimezone"
-                class="w-full appearance-none h-11 rounded-xl border border-border/60 bg-background px-4 pr-10 text-sm font-medium text-foreground shadow-xs transition-colors focus:border-primary focus:outline-none cursor-pointer"
-              >
-                <option
-                  v-for="tz in availableTimezones"
-                  :key="tz.value"
-                  :value="tz.value"
-                >
-                  {{ tz.label }}
-                </option>
-              </select>
-              <Icon
-                icon="i-lucide-chevron-down"
-                class="pointer-events-none absolute right-3.5 top-1/2 -translate-y-1/2 size-4 text-muted-foreground opacity-60"
+                :options="availableTimezones"
               />
             </div>
           </div>
@@ -672,14 +683,14 @@ onMounted(() => {
           type="button"
           class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-hidden focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 border border-input bg-background shadow-xs hover:bg-accent hover:text-accent-foreground hover:border-transparent h-9 px-4 py-2"
         >
-          Cancel
+          {{ $t('PROFILE_SETTINGS.FORM.NOTIFICATIONS.CANCEL') }}
         </button>
         <button
           type="button"
           class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-hidden focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-primary text-primary-foreground hover:bg-primary/90 h-9 px-4 py-2 shadow-sm"
           @click="updateNotificationSettings"
         >
-          Save changes
+          {{ $t('PROFILE_SETTINGS.FORM.NOTIFICATIONS.SAVE_CHANGES') }}
         </button>
       </div>
     </div>

@@ -7,7 +7,7 @@ import { getRegexp } from 'shared/helpers/Validators';
 import Dialog from 'dashboard/components-next/dialog/Dialog.vue';
 import TextArea from 'next/textarea/TextArea.vue';
 import ComboBox from 'dashboard/components-next/combobox/ComboBox.vue';
-import Input from 'dashboard/components-next/input/Input.vue';
+import { RelayInput, RelayDatePicker } from 'dashboard/components-next/relay';
 import ChoiceToggle from 'dashboard/components-next/input/ChoiceToggle.vue';
 import { ATTRIBUTE_TYPES } from './constants';
 
@@ -192,39 +192,38 @@ defineExpose({ open, close });
         </template>
 
         <template v-else-if="attribute.type === ATTRIBUTE_TYPES.NUMBER">
-          <Input
+          <RelayInput
             v-model="formValues[attribute.value]"
             type="number"
-            size="md"
             :placeholder="getPlaceholder(ATTRIBUTE_TYPES.NUMBER)"
-            :message="getErrorMessage(attribute.value)"
-            :message-type="v$[attribute.value].$error ? 'error' : 'info'"
             @blur="v$[attribute.value].$touch"
           />
+          <p v-if="v$[attribute.value].$error" class="text-xs text-destructive">
+            {{ getErrorMessage(attribute.value) }}
+          </p>
         </template>
 
         <template v-else-if="attribute.type === ATTRIBUTE_TYPES.LINK">
-          <Input
+          <RelayInput
             v-model="formValues[attribute.value]"
             type="url"
-            size="md"
             :placeholder="getPlaceholder(ATTRIBUTE_TYPES.LINK)"
-            :message="getErrorMessage(attribute.value)"
-            :message-type="v$[attribute.value].$error ? 'error' : 'info'"
             @blur="v$[attribute.value].$touch"
           />
+          <p v-if="v$[attribute.value].$error" class="text-xs text-destructive">
+            {{ getErrorMessage(attribute.value) }}
+          </p>
         </template>
 
         <template v-else-if="attribute.type === ATTRIBUTE_TYPES.DATE">
-          <Input
+          <RelayDatePicker
             v-model="formValues[attribute.value]"
-            type="date"
-            size="md"
+            value-format="yyyy-MM-dd"
             :placeholder="getPlaceholder(ATTRIBUTE_TYPES.DATE)"
-            :message="getErrorMessage(attribute.value)"
-            :message-type="v$[attribute.value].$error ? 'error' : 'info'"
-            @blur="v$[attribute.value].$touch"
           />
+          <p v-if="v$[attribute.value].$error" class="text-xs text-destructive">
+            {{ getErrorMessage(attribute.value) }}
+          </p>
         </template>
 
         <template v-else-if="attribute.type === ATTRIBUTE_TYPES.LIST">

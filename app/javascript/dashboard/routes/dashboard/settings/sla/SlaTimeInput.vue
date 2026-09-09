@@ -2,11 +2,13 @@
 import validations from './validations';
 import { useVuelidate } from '@vuelidate/core';
 import { RelayInput, RelayLabel } from 'dashboard/components-next/relay';
+import ComboBox from 'dashboard/components-next/combobox/ComboBox.vue';
 
 export default {
   components: {
     RelayInput,
     RelayLabel,
+    ComboBox,
   },
   props: {
     threshold: {
@@ -95,7 +97,7 @@ export default {
       <RelayInput
         v-model="thresholdTime"
         type="number"
-        class-name="h-10 shadow-xs bg-background"
+        class-name="h-9 shadow-xs bg-background"
         :placeholder="placeholder"
         @update:model-value="onThresholdTimeChange"
       />
@@ -104,18 +106,11 @@ export default {
       </p>
     </div>
     <!-- the mt-[26px] handles the label offset -->
-    <select
+    <ComboBox
       v-model="thresholdUnitValue"
-      class="mt-[26px] h-10 min-w-[6.5rem] rounded-lg border border-border/80 bg-background px-3 py-1.5 pr-7 text-sm font-medium text-foreground shadow-sm hover:cursor-pointer focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary/30"
-      @change="onThresholdUnitChange"
-    >
-      <option
-        v-for="(option, index) in options"
-        :key="index"
-        :value="option.value"
-      >
-        {{ option.label }}
-      </option>
-    </select>
+      :options="options"
+      class="mt-[26px] min-w-[6.5rem]"
+      @update:model-value="onThresholdUnitChange"
+    />
   </div>
 </template>

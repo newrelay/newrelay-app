@@ -4,7 +4,7 @@ import { useVuelidate } from '@vuelidate/core';
 import { required, minLength } from '@vuelidate/validators';
 
 import WithLabel from 'v3/components/Form/WithLabel.vue';
-import Input from 'dashboard/components-next/input/Input.vue';
+import { RelayInput } from 'dashboard/components-next/relay';
 import Switch from 'dashboard/components-next/switch/Switch.vue';
 
 defineProps({
@@ -82,7 +82,7 @@ watch(
         class="flex items-center w-full [&>label]:min-w-[120px]"
       >
         <div class="flex-1">
-          <Input
+          <RelayInput
             v-model="policyName"
             type="text"
             :placeholder="namePlaceholder"
@@ -99,7 +99,7 @@ watch(
         class="flex items-center w-full [&>label]:min-w-[120px]"
       >
         <div class="flex-1">
-          <Input
+          <RelayInput
             v-model="description"
             type="text"
             :placeholder="descriptionPlaceholder"

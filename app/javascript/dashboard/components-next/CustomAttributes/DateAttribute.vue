@@ -4,7 +4,7 @@ import { parseISO } from 'date-fns';
 import { useI18n } from 'vue-i18n';
 import { useVuelidate } from '@vuelidate/core';
 import { required } from '@vuelidate/validators';
-import Input from 'dashboard/components-next/input/Input.vue';
+import { RelayDatePicker } from 'dashboard/components-next/relay';
 import Button from 'dashboard/components-next/button/Button.vue';
 
 const props = defineProps({
@@ -122,20 +122,13 @@ const handleInputUpdate = async () => {
       v-on-clickaway="() => toggleEditValue(false)"
       class="flex items-center w-full"
     >
-      <Input
-        v-model="defaultDateValue"
-        type="date"
-        class="w-full [&>p]:absolute [&>p]:mt-0.5 [&>p]:top-8 ltr:[&>p]:left-0 rtl:[&>p]:right-0"
-        :message="
-          hasError
-            ? t('CONTACTS_LAYOUT.SIDEBAR.ATTRIBUTES.VALIDATIONS.INVALID_DATE')
-            : ''
-        "
-        :message-type="hasError ? 'error' : 'info'"
-        autofocus
-        custom-input-class="h-8 ltr:rounded-r-none rtl:rounded-l-none"
-        @enter="handleInputUpdate"
-      />
+      <div class="min-w-0 flex-1">
+        <RelayDatePicker
+          v-model="defaultDateValue"
+          value-format="yyyy-MM-dd"
+          trigger-class="ltr:rounded-r-none rtl:rounded-l-none"
+        />
+      </div>
       <Button
         icon="i-lucide-check"
         :color="hasError ? 'ruby' : 'blue'"

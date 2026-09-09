@@ -9,11 +9,15 @@ import { useI18n } from 'vue-i18n';
 import Integration from './Integration.vue';
 import integrationAPI from 'dashboard/api/integrations';
 
-import Input from 'dashboard/components-next/input/Input.vue';
 import Dialog from 'dashboard/components-next/dialog/Dialog.vue';
 import SettingsLayout from '../SettingsLayout.vue';
 import BaseSettingsHeader from '../components/BaseSettingsHeader.vue';
-import { RelayButton } from 'dashboard/components-next/relay';
+import {
+  RelayButton,
+  RelayInput,
+  RelayLabel,
+  RELAY_FORM_FIELD_CLASS,
+} from 'dashboard/components-next/relay';
 
 defineProps({
   error: {
@@ -138,19 +142,28 @@ onMounted(() => {
           @confirm="handleStoreUrlSubmit"
           @close="hideStoreUrlModal"
         >
-          <Input
-            v-model="storeUrl"
-            :label="t('INTEGRATION_SETTINGS.SHOPIFY.STORE_URL.LABEL')"
-            :placeholder="
-              t('INTEGRATION_SETTINGS.SHOPIFY.STORE_URL.PLACEHOLDER')
-            "
-            :message="
-              !storeUrlError
-                ? t('INTEGRATION_SETTINGS.SHOPIFY.STORE_URL.HELP')
-                : storeUrlError
-            "
-            :message-type="storeUrlError ? 'error' : 'info'"
-          />
+          <div :class="RELAY_FORM_FIELD_CLASS">
+            <RelayLabel>
+              {{ t('INTEGRATION_SETTINGS.SHOPIFY.STORE_URL.LABEL') }}
+            </RelayLabel>
+            <RelayInput
+              v-model="storeUrl"
+              :placeholder="
+                t('INTEGRATION_SETTINGS.SHOPIFY.STORE_URL.PLACEHOLDER')
+              "
+            />
+            <p
+              class="text-xs"
+              :class="
+                storeUrlError ? 'text-destructive' : 'text-muted-foreground'
+              "
+            >
+              {{
+                storeUrlError ||
+                t('INTEGRATION_SETTINGS.SHOPIFY.STORE_URL.HELP')
+              }}
+            </p>
+          </div>
         </Dialog>
       </div>
     </template>

@@ -3,10 +3,14 @@ import { ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { copyTextToClipboard } from 'shared/helpers/clipboard';
 import { useAlert } from 'dashboard/composables';
-import Input from 'dashboard/components-next/input/Input.vue';
 import Icon from 'dashboard/components-next/icon/Icon.vue';
 import Dialog from 'dashboard/components-next/dialog/Dialog.vue';
-import { RelayButton } from 'dashboard/components-next/relay';
+import {
+  RelayButton,
+  RelayInput,
+  RelayLabel,
+  RELAY_FORM_FIELD_CLASS,
+} from 'dashboard/components-next/relay';
 
 const props = defineProps({
   mfaEnabled: {
@@ -156,27 +160,28 @@ defineExpose({
       @confirm="handleDisableMfa"
     >
       <div class="space-y-4">
-        <Input
-          v-model="disablePassword"
-          type="password"
-          :label="$t('MFA_SETTINGS.DISABLE.PASSWORD')"
-        />
-        <Input
-          v-if="!useBackupCodeToDisable"
-          v-model="disableOtpCode"
-          type="text"
-          maxlength="6"
-          :label="$t('MFA_SETTINGS.DISABLE.OTP_CODE')"
-          :placeholder="$t('MFA_SETTINGS.DISABLE.OTP_CODE_PLACEHOLDER')"
-        />
-        <Input
-          v-else
-          v-model="disableBackupCode"
-          type="text"
-          maxlength="8"
-          :label="$t('MFA_SETTINGS.DISABLE.BACKUP_CODE')"
-          :placeholder="$t('MFA_SETTINGS.DISABLE.BACKUP_CODE_PLACEHOLDER')"
-        />
+        <div :class="RELAY_FORM_FIELD_CLASS">
+          <RelayLabel>{{ $t('MFA_SETTINGS.DISABLE.PASSWORD') }}</RelayLabel>
+          <RelayInput v-model="disablePassword" type="password" />
+        </div>
+        <div v-if="!useBackupCodeToDisable" :class="RELAY_FORM_FIELD_CLASS">
+          <RelayLabel>{{ $t('MFA_SETTINGS.DISABLE.OTP_CODE') }}</RelayLabel>
+          <RelayInput
+            v-model="disableOtpCode"
+            type="text"
+            maxlength="6"
+            :placeholder="$t('MFA_SETTINGS.DISABLE.OTP_CODE_PLACEHOLDER')"
+          />
+        </div>
+        <div v-else :class="RELAY_FORM_FIELD_CLASS">
+          <RelayLabel>{{ $t('MFA_SETTINGS.DISABLE.BACKUP_CODE') }}</RelayLabel>
+          <RelayInput
+            v-model="disableBackupCode"
+            type="text"
+            maxlength="8"
+            :placeholder="$t('MFA_SETTINGS.DISABLE.BACKUP_CODE_PLACEHOLDER')"
+          />
+        </div>
         <RelayButton
           variant="link"
           size="sm"
@@ -202,13 +207,15 @@ defineExpose({
       :cancel-button-label="$t('MFA_SETTINGS.DISABLE.CANCEL')"
       @confirm="handleRegenerateBackupCodes"
     >
-      <Input
-        v-model="regenerateOtpCode"
-        type="text"
-        maxlength="6"
-        :label="$t('MFA_SETTINGS.REGENERATE.OTP_CODE')"
-        :placeholder="$t('MFA_SETTINGS.REGENERATE.OTP_CODE_PLACEHOLDER')"
-      />
+      <div :class="RELAY_FORM_FIELD_CLASS">
+        <RelayLabel>{{ $t('MFA_SETTINGS.REGENERATE.OTP_CODE') }}</RelayLabel>
+        <RelayInput
+          v-model="regenerateOtpCode"
+          type="text"
+          maxlength="6"
+          :placeholder="$t('MFA_SETTINGS.REGENERATE.OTP_CODE_PLACEHOLDER')"
+        />
+      </div>
     </Dialog>
 
     <!-- Backup Codes Display Dialog -->

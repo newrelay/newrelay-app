@@ -6,7 +6,11 @@ import { useVuelidate } from '@vuelidate/core';
 import { required } from '@vuelidate/validators';
 
 import Dialog from 'dashboard/components-next/dialog/Dialog.vue';
-import Input from 'dashboard/components-next/input/Input.vue';
+import {
+  RelayInput,
+  RelayLabel,
+  RELAY_FORM_FIELD_CLASS,
+} from 'dashboard/components-next/relay';
 
 const emit = defineEmits(['create']);
 
@@ -54,18 +58,19 @@ defineExpose({ dialogRef });
     :disable-confirm-button="isCreating"
     @confirm="handleDialogConfirm"
   >
-    <Input
-      v-model="state.name"
-      :label="t('CONTACTS_LAYOUT.HEADER.ACTIONS.FILTERS.CREATE_SEGMENT.LABEL')"
-      :placeholder="
-        t('CONTACTS_LAYOUT.HEADER.ACTIONS.FILTERS.CREATE_SEGMENT.PLACEHOLDER')
-      "
-      :message="
-        v$.name.$error
-          ? t('CONTACTS_LAYOUT.HEADER.ACTIONS.FILTERS.CREATE_SEGMENT.ERROR')
-          : ''
-      "
-      :message-type="v$.name.$error ? 'error' : 'info'"
-    />
+    <div :class="RELAY_FORM_FIELD_CLASS">
+      <RelayLabel>
+        {{ t('CONTACTS_LAYOUT.HEADER.ACTIONS.FILTERS.CREATE_SEGMENT.LABEL') }}
+      </RelayLabel>
+      <RelayInput
+        v-model="state.name"
+        :placeholder="
+          t('CONTACTS_LAYOUT.HEADER.ACTIONS.FILTERS.CREATE_SEGMENT.PLACEHOLDER')
+        "
+      />
+      <p v-if="v$.name.$error" class="text-xs text-destructive">
+        {{ t('CONTACTS_LAYOUT.HEADER.ACTIONS.FILTERS.CREATE_SEGMENT.ERROR') }}
+      </p>
+    </div>
   </Dialog>
 </template>

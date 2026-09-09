@@ -4,7 +4,11 @@ import { useI18n } from 'vue-i18n';
 import { useStore } from 'dashboard/composables/store';
 import { useAlert } from 'dashboard/composables';
 import Dialog from 'dashboard/components-next/dialog/Dialog.vue';
-import Input from 'dashboard/components-next/input/Input.vue';
+import {
+  RelayInput,
+  RelayLabel,
+  RELAY_FORM_FIELD_CLASS,
+} from 'dashboard/components-next/relay';
 
 const props = defineProps({
   portal: {
@@ -75,21 +79,24 @@ defineExpose({ openForLocale });
     @confirm="onConfirm"
   >
     <div class="flex flex-col gap-4">
-      <Input
-        v-model="name"
-        :label="t('HELP_CENTER.LOCALES_PAGE.CONTENT_DIALOG.NAME.LABEL')"
-        :placeholder="portal.name"
-      />
-      <Input
-        v-model="pageTitle"
-        :label="t('HELP_CENTER.LOCALES_PAGE.CONTENT_DIALOG.PAGE_TITLE.LABEL')"
-        :placeholder="portal.page_title"
-      />
-      <Input
-        v-model="headerText"
-        :label="t('HELP_CENTER.LOCALES_PAGE.CONTENT_DIALOG.HEADER_TEXT.LABEL')"
-        :placeholder="portal.header_text"
-      />
+      <div :class="RELAY_FORM_FIELD_CLASS">
+        <RelayLabel>
+          {{ t('HELP_CENTER.LOCALES_PAGE.CONTENT_DIALOG.NAME.LABEL') }}
+        </RelayLabel>
+        <RelayInput v-model="name" :placeholder="portal.name" />
+      </div>
+      <div :class="RELAY_FORM_FIELD_CLASS">
+        <RelayLabel>
+          {{ t('HELP_CENTER.LOCALES_PAGE.CONTENT_DIALOG.PAGE_TITLE.LABEL') }}
+        </RelayLabel>
+        <RelayInput v-model="pageTitle" :placeholder="portal.page_title" />
+      </div>
+      <div :class="RELAY_FORM_FIELD_CLASS">
+        <RelayLabel>
+          {{ t('HELP_CENTER.LOCALES_PAGE.CONTENT_DIALOG.HEADER_TEXT.LABEL') }}
+        </RelayLabel>
+        <RelayInput v-model="headerText" :placeholder="portal.header_text" />
+      </div>
     </div>
   </Dialog>
 </template>

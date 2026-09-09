@@ -1097,7 +1097,7 @@ export default {
                                   value: 'right',
                                 },
                               ]"
-                              class="[&>select]:!p-0 min-w-16 [&>select]:!outline-none"
+                              class="min-w-16"
                             />
                           </div>
                           <div class="h-3 w-px bg-border rounded-lg" />
@@ -1127,7 +1127,7 @@ export default {
                                   value: 'expanded_bubble',
                                 },
                               ]"
-                              class="[&>select]:!p-0 min-w-16 [&>select]:!outline-none"
+                              class="min-w-16"
                             />
                           </div>
                         </div>

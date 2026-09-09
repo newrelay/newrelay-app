@@ -6,7 +6,7 @@ import { useI18n } from 'vue-i18n';
 import { extractFilenameFromUrl } from 'dashboard/helper/URLHelper';
 import { TWILIO_CONTENT_TEMPLATE_TYPES } from 'shared/constants/messages';
 
-import Input from 'dashboard/components-next/input/Input.vue';
+import { RelayInput } from 'dashboard/components-next/relay';
 
 const props = defineProps({
   template: {
@@ -223,10 +223,10 @@ defineExpose({
           {{ $t('CONTENT_TEMPLATES.PARSER.MEDIA_URL_LABEL') }}
         </p>
         <div class="flex items-center mb-2.5">
-          <Input
+          <RelayInput
             v-model="processedParams[mediaVariableKey]"
             type="url"
-            class="flex-1"
+            class-name="flex-1"
             :placeholder="
               templateMediaUrl ||
               t('CONTENT_TEMPLATES.PARSER.MEDIA_URL_PLACEHOLDER')
@@ -245,10 +245,10 @@ defineExpose({
           :key="`variable-${variable}`"
           class="flex items-center mb-2.5"
         >
-          <Input
+          <RelayInput
             v-model="processedParams[variable]"
             type="text"
-            class="flex-1"
+            class-name="flex-1"
             :placeholder="
               t('CONTENT_TEMPLATES.PARSER.VARIABLE_PLACEHOLDER', {
                 variable: variable,

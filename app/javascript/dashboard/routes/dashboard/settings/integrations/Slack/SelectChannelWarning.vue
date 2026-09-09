@@ -5,6 +5,7 @@ import { useI18n } from 'vue-i18n';
 import { useAlert } from 'dashboard/composables';
 import { useBranding } from 'shared/composables/useBranding';
 import { useMessageFormatter } from 'shared/composables/useMessageFormatter';
+import ComboBox from 'dashboard/components-next/combobox/ComboBox.vue';
 import { RelayButton } from 'dashboard/components-next/relay';
 import Icon from 'dashboard/components-next/icon/Icon.vue';
 
@@ -23,6 +24,13 @@ const { replaceInstallationName } = useBranding();
 
 const selectedChannelId = ref('');
 const availableChannels = ref([]);
+
+const channelOptions = computed(() =>
+  availableChannels.value.map(channel => ({
+    value: channel.id,
+    label: `#${channel.name}`,
+  }))
+);
 
 const uiFlags = computed(() => store.getters['integrations/getUIFlags']);
 
@@ -96,21 +104,14 @@ const updateIntegration = async () => {
         {{ $t('INTEGRATION_SETTINGS.SLACK.SELECT_CHANNEL.BUTTON_TEXT') }}
       </RelayButton>
       <div v-else class="inline-flex items-center gap-3">
-        <select
+        <ComboBox
           v-model="selectedChannelId"
-          class="h-8 rounded-md border border-warning/40 bg-background px-2 text-xs leading-4 text-foreground shadow-xs"
-        >
-          <option value="">
-            {{ $t('INTEGRATION_SETTINGS.SLACK.SELECT_CHANNEL.OPTION_LABEL') }}
-          </option>
-          <option
-            v-for="channel in availableChannels"
-            :key="channel.id"
-            :value="channel.id"
-          >
-            #{{ channel.name }}
-          </option>
-        </select>
+          :options="channelOptions"
+          :placeholder="
+            $t('INTEGRATION_SETTINGS.SLACK.SELECT_CHANNEL.OPTION_LABEL')
+          "
+          class="min-w-[12rem]"
+        />
         <RelayButton
           size="sm"
           class="h-8 text-[13px]"

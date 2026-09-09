@@ -1,7 +1,8 @@
 <script setup>
-import Icon from 'dashboard/components-next/icon/Icon.vue';
+import { computed } from 'vue';
+import ComboBox from 'dashboard/components-next/combobox/ComboBox.vue';
 
-defineProps({
+const props = defineProps({
   options: {
     type: Array,
     default: () => [],
@@ -39,59 +40,37 @@ const modelValue = defineModel({
   type: [String, Number, Boolean],
   default: '',
 });
+
+const comboOptions = computed(() => {
+  const source = props.groups.length
+    ? props.groups.flatMap(group => group.options)
+    : props.options;
+  return source.map(option => ({
+    value: option.value,
+    label: option.label,
+  }));
+});
+
+const comboValue = computed({
+  get() {
+    const value = modelValue.value;
+    if (typeof value === 'boolean') return String(value);
+    return value ?? '';
+  },
+  set(value) {
+    modelValue.value = value;
+  },
+});
 </script>
 
 <template>
-  <div class="w-fit relative">
-    <select
-      v-model="modelValue"
-      :disabled="disabled"
-      class="appearance-none bg-none rounded-lg border-0 outline-1 outline -outline-offset-1 transition-all duration-200 bg-muted !mb-0 py-2 px-3 pr-10 text-sm"
-      :class="{
-        'outline-border hover:outline-border focus:outline-primary':
-          !error && !disabled,
-        'outline-destructive focus:outline-destructive': error && !disabled,
-        'outline-border bg-muted cursor-not-allowed opacity-60': disabled,
-      }"
-    >
-      <option v-if="placeholder" value="" disabled>
-        {{ placeholder }}
-      </option>
-      <template v-if="groups.length">
-        <optgroup
-          v-for="group in groups"
-          :key="group.label"
-          :label="group.label"
-        >
-          <option
-            v-for="option in group.options"
-            :key="option.value"
-            :value="option.value"
-            :disabled="option.disabled"
-          >
-            {{ option.label }}
-          </option>
-        </optgroup>
-      </template>
-      <template v-else>
-        <option
-          v-for="option in options"
-          :key="option.value"
-          :value="option.value"
-          :disabled="option.disabled"
-        >
-          {{ option.label }}
-        </option>
-      </template>
-    </select>
-    <div
-      class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none"
-    >
-      <Icon
-        icon="i-lucide-chevron-down"
-        class="size-4 text-muted-foreground"
-        :class="{ 'opacity-50': disabled }"
-      />
-    </div>
-  </div>
+  <ComboBox
+    v-model="comboValue"
+    :options="comboOptions"
+    :placeholder="placeholder"
+    :disabled="disabled"
+    :has-error="Boolean(error)"
+    :message="error"
+    class="w-full min-w-0"
+  />
 </template>

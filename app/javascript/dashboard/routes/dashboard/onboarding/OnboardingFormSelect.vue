@@ -1,37 +1,53 @@
 <script setup>
-import Icon from 'dashboard/components-next/icon/Icon.vue';
+import { computed } from 'vue';
+import {
+  RelayDropdownMenu,
+  RelayDropdownMenuTrigger,
+  RelayDropdownMenuContent,
+  RelayDropdownMenuItem,
+} from 'dashboard/components-next/relay';
 
-defineProps({
+const props = defineProps({
   modelValue: { type: String, default: '' },
   options: { type: Array, default: () => [] },
   placeholder: { type: String, default: '' },
   hasError: { type: Boolean, default: false },
 });
 
-defineEmits(['update:modelValue']);
+const emit = defineEmits(['update:modelValue']);
+
+const selectedLabel = computed(() => {
+  const match = props.options.find(option => option.value === props.modelValue);
+  return match?.label || props.placeholder;
+});
 </script>
 
 <template>
-  <div class="relative flex items-center justify-end">
-    <select
-      :value="modelValue"
-      class="!h-auto !w-auto !py-0 !ps-0 !pe-[17px] !m-0 !rounded-none !bg-transparent !bg-none !outline-none text-sm text-end border-0 cursor-pointer appearance-none focus:outline-none focus:ring-0"
-      :class="[
-        modelValue ? 'text-foreground' : 'text-muted-foreground',
-        { 'animate-shake': hasError },
-      ]"
-      @change="$emit('update:modelValue', $event.target.value)"
-    >
-      <option v-if="placeholder" value="" disabled>
-        {{ placeholder }}
-      </option>
-      <option v-for="opt in options" :key="opt.value" :value="opt.value">
+  <RelayDropdownMenu>
+    <RelayDropdownMenuTrigger as-child>
+      <button
+        type="button"
+        class="inline-flex items-center justify-end gap-1 h-9 text-sm text-end border-0 bg-transparent cursor-pointer focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary/30 rounded-md px-1"
+        :class="[
+          modelValue ? 'text-foreground' : 'text-muted-foreground',
+          { 'animate-shake': hasError },
+        ]"
+      >
+        <span class="truncate">{{ selectedLabel }}</span>
+        <span
+          class="i-lucide-chevron-down size-4 shrink-0 text-muted-foreground"
+        />
+      </button>
+    </RelayDropdownMenuTrigger>
+    <RelayDropdownMenuContent align="end" class="min-w-[10rem]">
+      <RelayDropdownMenuItem
+        v-for="opt in options"
+        :key="opt.value"
+        class="cursor-pointer"
+        @click="emit('update:modelValue', opt.value)"
+      >
         {{ opt.label }}
-      </option>
-    </select>
-    <Icon
-      icon="i-lucide-chevron-down"
-      class="pointer-events-none absolute end-0 top-1/2 -translate-y-1/2 text-muted-foreground"
-    />
-  </div>
+      </RelayDropdownMenuItem>
+    </RelayDropdownMenuContent>
+  </RelayDropdownMenu>
 </template>

@@ -7,7 +7,7 @@ import { required } from '@vuelidate/validators';
 import { isValidURL } from 'dashboard/helper/URLHelper.js';
 import { getRegexp } from 'shared/helpers/Validators';
 
-import Input from 'dashboard/components-next/input/Input.vue';
+import { RelayInput } from 'dashboard/components-next/relay';
 import Button from 'dashboard/components-next/button/Button.vue';
 
 const props = defineProps({
@@ -180,26 +180,27 @@ const handleInputUpdate = async () => {
     <div
       v-if="isEditingValue"
       v-on-clickaway="() => toggleEditValue(false)"
-      class="flex items-center w-full"
+      class="flex flex-col w-full gap-1"
     >
-      <Input
-        v-model="editedValue"
-        :placeholder="t('CONTACTS_LAYOUT.SIDEBAR.ATTRIBUTES.TRIGGER.INPUT')"
-        :type="getInputType"
-        class="w-full [&>p]:absolute [&>p]:mt-0.5 [&>p]:top-8 ltr:[&>p]:left-0 rtl:[&>p]:right-0"
-        autofocus
-        :message="attributeErrorMessage"
-        :message-type="hasError ? 'error' : 'info'"
-        custom-input-class="h-8 ltr:rounded-r-none rtl:rounded-l-none"
-        @enter="handleInputUpdate"
-      />
-      <Button
-        icon="i-lucide-check"
-        :color="hasError ? 'ruby' : 'blue'"
-        size="sm"
-        class="flex-shrink-0 ltr:rounded-l-none rtl:rounded-r-none"
-        @click="handleInputUpdate"
-      />
+      <div class="flex items-center w-full">
+        <RelayInput
+          v-model="editedValue"
+          :placeholder="t('CONTACTS_LAYOUT.SIDEBAR.ATTRIBUTES.TRIGGER.INPUT')"
+          :type="getInputType"
+          class-name="ltr:rounded-r-none rtl:rounded-l-none"
+          @keydown.enter="handleInputUpdate"
+        />
+        <Button
+          icon="i-lucide-check"
+          :color="hasError ? 'ruby' : 'blue'"
+          size="sm"
+          class="flex-shrink-0 ltr:rounded-l-none rtl:rounded-r-none"
+          @click="handleInputUpdate"
+        />
+      </div>
+      <p v-if="hasError" class="text-xs text-destructive">
+        {{ attributeErrorMessage }}
+      </p>
     </div>
   </div>
 </template>

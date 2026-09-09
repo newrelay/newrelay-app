@@ -5,7 +5,7 @@ import WootMessageEditor from 'dashboard/components/widgets/WootWriter/Editor.vu
 import NextButton from 'dashboard/components-next/button/Button.vue';
 import SingleSelect from 'dashboard/components-next/filter/inputs/SingleSelect.vue';
 import MultiSelect from 'dashboard/components-next/filter/inputs/MultiSelect.vue';
-import NextInput from 'dashboard/components-next/input/Input.vue';
+import { RelayInput } from 'dashboard/components-next/relay';
 
 export default {
   components: {
@@ -15,7 +15,7 @@ export default {
     NextButton,
     SingleSelect,
     MultiSelect,
-    NextInput,
+    RelayInput,
   },
   props: {
     modelValue: {
@@ -150,18 +150,16 @@ export default {
             :options="dropdownValues"
             :dropdown-max-height="dropdownMaxHeight"
           />
-          <NextInput
+          <RelayInput
             v-else-if="inputType === 'email'"
             v-model="action_params"
             type="email"
-            size="sm"
             :placeholder="$t('AUTOMATION.ACTION.EMAIL_INPUT_PLACEHOLDER')"
           />
-          <NextInput
+          <RelayInput
             v-else-if="inputType === 'url'"
             v-model="action_params"
             type="url"
-            size="sm"
             :placeholder="$t('AUTOMATION.ACTION.URL_INPUT_PLACEHOLDER')"
           />
           <AutomationActionFileInput

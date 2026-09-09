@@ -12,6 +12,7 @@ import {
   RelayInput,
   RelayLabel,
 } from 'dashboard/components-next/relay';
+import ComboBox from 'dashboard/components-next/combobox/ComboBox.vue';
 import {
   generateAutomationPayload,
   getAttributes,
@@ -163,6 +164,13 @@ const automationRuleEvents = computed(() =>
   AUTOMATION_RULE_EVENTS.map(event => ({
     ...event,
     value: t(`AUTOMATION.EVENTS.${event.value}`),
+  }))
+);
+
+const eventOptions = computed(() =>
+  automationRuleEvents.value.map(event => ({
+    value: event.key,
+    label: event.value,
   }))
 );
 
@@ -333,21 +341,13 @@ defineExpose({ open, close });
           >
             {{ $t('AUTOMATION.ADD.FORM.EVENT.LABEL') }}
           </RelayLabel>
-          <select
+          <ComboBox
             id="automation-event"
             v-model="automation.event_name"
-            class="flex h-9 w-full rounded-md border border-border/80 bg-background px-3 text-[14px] text-foreground shadow-sm outline-none focus:ring-1 focus:ring-primary/30"
-            :class="{ 'border-destructive/80': errors.event_name }"
-            @change="onEventChange()"
-          >
-            <option
-              v-for="event in automationRuleEvents"
-              :key="event.key"
-              :value="event.key"
-            >
-              {{ event.value }}
-            </option>
-          </select>
+            :options="eventOptions"
+            :has-error="!!errors.event_name"
+            @update:model-value="onEventChange"
+          />
           <p
             v-if="errors.event_name"
             class="text-[12.5px] font-medium text-destructive"

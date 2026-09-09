@@ -3,20 +3,12 @@ import { computed, onMounted, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import wootConstants from 'dashboard/constants/globals';
 import { useUISettings } from 'dashboard/composables/useUISettings';
-import {
-  RelayButton,
-  RelayCheckbox,
-  RelayLabel,
-  DROPDOWN_MENU_CONTENT_CLASS,
-} from 'dashboard/components-next/relay';
-import { cn } from 'dashboard/components-next/relay/utils/cn';
+import { RelayCheckbox, RelayLabel } from 'dashboard/components-next/relay';
 
 const emit = defineEmits(['filter']);
 
 const { t } = useI18n();
 const { uiSettings, updateUISettings } = useUISettings();
-
-const showSortMenu = ref(false);
 
 const displayOptions = ref([
   {
@@ -54,12 +46,6 @@ const activeDisplayFilter = ref({
   type: '',
 });
 
-const activeSortOption = computed(
-  () =>
-    sortOptions.value.find(option => option.key === activeSort.value)?.name ||
-    ''
-);
-
 const saveSelectedDisplayFilter = () => {
   updateUISettings({
     inbox_filter_by: {
@@ -89,19 +75,14 @@ const updateDisplayOption = option => {
   emit('filter', option);
 };
 
-const toggleSortMenu = () => {
-  showSortMenu.value = !showSortMenu.value;
-};
-
 const onSortOptionClick = option => {
   activeSort.value = option.key;
-  showSortMenu.value = false;
   saveSelectedDisplayFilter();
   emit('filter', option);
 };
 
 const SORT_OPTION_CLASSES =
-  'flex w-full cursor-pointer select-none items-center justify-between rounded-sm px-2 py-1.5 text-left text-xs text-foreground outline-none transition-colors hover:bg-accent hover:text-accent-foreground';
+  'flex w-full cursor-pointer select-none items-center justify-between rounded-sm px-2 py-1.5 text-left text-sm text-foreground outline-none transition-colors hover:bg-accent hover:text-accent-foreground';
 
 onMounted(() => {
   setSavedFilter();
@@ -109,56 +90,24 @@ onMounted(() => {
 </script>
 
 <template>
-  <div
-    :class="cn(DROPDOWN_MENU_CONTENT_CLASS, 'w-56 overflow-visible p-2')"
-    data-state="open"
-  >
-    <div class="relative flex items-center justify-between px-1 py-1.5">
-      <div class="flex items-center gap-2 text-sm text-foreground">
-        <span class="i-lucide-arrow-down-up size-4 shrink-0" />
-        {{ t('INBOX.DISPLAY_MENU.SORT') }}
-      </div>
-      <div class="relative">
-        <RelayButton
-          variant="outline"
-          size="sm"
-          class="h-7 gap-1 px-2 text-xs outline-none"
-          :class="
-            showSortMenu ? 'bg-background hover:bg-background' : undefined
-          "
-          @click="toggleSortMenu"
-        >
-          {{ activeSortOption }}
-          <span class="i-lucide-chevron-down size-3 shrink-0" />
-        </RelayButton>
-        <div
-          v-if="showSortMenu"
-          :class="
-            cn(
-              DROPDOWN_MENU_CONTENT_CLASS,
-              'absolute top-0 z-[60] ltr:left-full rtl:right-full ltr:ml-1 rtl:mr-1'
-            )
-          "
-          data-state="open"
-          role="menu"
-        >
-          <button
-            v-for="option in sortOptions"
-            :key="option.key"
-            type="button"
-            role="menuitem"
-            :class="SORT_OPTION_CLASSES"
-            @click.stop="onSortOptionClick(option)"
-          >
-            {{ option.name }}
-            <span
-              v-if="activeSort === option.key"
-              class="i-lucide-check size-3 shrink-0"
-            />
-          </button>
-        </div>
-      </div>
-    </div>
+  <div>
+    <p class="px-1 py-1.5 text-xs text-muted-foreground">
+      {{ t('INBOX.DISPLAY_MENU.SORT') }}
+    </p>
+    <button
+      v-for="option in sortOptions"
+      :key="option.key"
+      type="button"
+      role="menuitem"
+      :class="SORT_OPTION_CLASSES"
+      @click.stop="onSortOptionClick(option)"
+    >
+      {{ option.name }}
+      <span
+        v-if="activeSort === option.key"
+        class="i-lucide-check size-3 shrink-0"
+      />
+    </button>
 
     <div class="mt-1 px-1 py-1">
       <span class="text-xs text-muted-foreground">

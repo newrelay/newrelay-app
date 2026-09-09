@@ -1,7 +1,9 @@
 <script setup>
 import { ref } from 'vue';
 import { useI18n } from 'vue-i18n';
+import TeleportWithDirection from 'dashboard/components-next/TeleportWithDirection.vue';
 import { RelayButton } from 'dashboard/components-next/relay';
+import { RELAY_DIALOG_OVERLAY_CLASS } from 'dashboard/components-next/relay/modal/constants';
 
 defineProps({
   open: { type: Boolean, default: false },
@@ -15,6 +17,9 @@ const selectedFile = ref(null);
 
 const close = () => {
   selectedFile.value = null;
+  if (fileInput.value) {
+    fileInput.value.value = null;
+  }
   emit('update:open', false);
 };
 
@@ -36,29 +41,30 @@ const onUploadClick = () => {
 </script>
 
 <template>
-  <Teleport to="body">
+  <TeleportWithDirection to="body">
     <div
       v-if="open"
-      data-relay
-      class="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-[8px] transition-all duration-300"
+      class="flex items-center justify-center p-4 transition-all duration-300"
+      :class="[RELAY_DIALOG_OVERLAY_CLASS]"
       @click.self="close"
     >
       <div
+        data-relay
         class="relative w-full max-w-md overflow-hidden rounded-xl border border-border bg-card shadow-2xl"
+        @click.stop
       >
         <div class="p-6">
           <div class="mb-4 flex items-center justify-between">
-            <h2 class="text-base font-medium tracking-tight text-foreground">
+            <h2 class="text-lg font-semibold tracking-tight text-foreground">
               {{ t('COMPANIES.IMPORT.TITLE') }}
             </h2>
-            <RelayButton
-              variant="ghost"
-              size="icon"
-              class="size-8 text-muted-foreground hover:text-foreground"
+            <button
+              type="button"
+              class="flex size-8 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
               @click="close"
             >
               <span class="i-lucide-x size-4" />
-            </RelayButton>
+            </button>
           </div>
           <p class="mb-6 text-sm text-muted-foreground">
             {{ t('COMPANIES.IMPORT.DESCRIPTION') }}
@@ -94,7 +100,7 @@ const onUploadClick = () => {
             ref="fileInput"
             type="file"
             class="hidden"
-            accept=".csv"
+            accept=".csv,text/csv"
             @change="onFileChange"
           />
         </div>
@@ -113,5 +119,5 @@ const onUploadClick = () => {
         </div>
       </div>
     </div>
-  </Teleport>
+  </TeleportWithDirection>
 </template>

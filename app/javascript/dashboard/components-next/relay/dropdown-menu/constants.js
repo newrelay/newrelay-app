@@ -1,5 +1,5 @@
 export const DROPDOWN_MENU_CONTENT_CLASS =
-  'anim-pop bg-popover text-popover-foreground z-50 min-w-[8rem] overflow-hidden rounded-md border border-border p-1 shadow-md';
+  'anim-pop bg-popover text-popover-foreground z-[100] min-w-[8rem] overflow-hidden rounded-md border border-border p-1 shadow-md';
 
 export const DROPDOWN_MENU_ITEM_BASE_CLASS =
   'relative flex w-full cursor-default items-center gap-2 rounded-sm border-0 px-2 py-1.5 text-sm outline-none select-none data-[disabled]:pointer-events-none data-[disabled]:opacity-50 [&_svg]:size-4 [&_svg]:shrink-0';

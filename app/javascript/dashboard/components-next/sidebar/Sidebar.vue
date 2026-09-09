@@ -762,7 +762,7 @@ const logoutMenuItem = computed(() => ({
         ],
       },
     ]"
-    class="group bg-sidebar text-sidebar-foreground flex h-full flex-col border-sidebar-border fixed top-0 z-40 w-60 pb-px text-sm ltr:left-0 ltr:border-r rtl:right-0 rtl:border-l md:relative md:w-auto md:flex-shrink-0 md:ltr:translate-x-0 md:rtl:translate-x-0"
+    class="group bg-sidebar text-sidebar-foreground flex h-full flex-col border-sidebar-border fixed top-0 z-40 w-60 pb-px text-sm ltr:left-0 ltr:border-r rtl:right-0 rtl:border-l md:relative md:z-auto md:w-auto md:flex-shrink-0 md:ltr:translate-x-0 md:rtl:translate-x-0"
     :class="[
       {
         'shadow-lg md:shadow-none': isMobileSidebarOpen,

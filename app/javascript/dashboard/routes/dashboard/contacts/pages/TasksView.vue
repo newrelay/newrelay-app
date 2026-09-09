@@ -23,6 +23,10 @@ import {
   RelayBadge,
   RelayButton,
   RelayCheckbox,
+  RelayDropdownMenu,
+  RelayDropdownMenuContent,
+  RelayDropdownMenuItem,
+  RelayDropdownMenuTrigger,
   RelayInput,
 } from 'dashboard/components-next/relay';
 import TasksAPI from 'dashboard/api/tasks';
@@ -594,27 +598,26 @@ onMounted(() => {
         <!-- Filters -->
         <div class="mb-6 flex items-center justify-between gap-4 py-3">
           <div class="flex flex-wrap items-center gap-4">
-            <div class="relative">
-              <button
-                type="button"
-                class="reset-base flex cursor-pointer items-center gap-1 text-[13px] text-muted-foreground transition-colors hover:text-foreground"
-                @click="toggleFilter('assignee')"
-              >
-                <span>
-                  {{ t('CONTACTS_LAYOUT.TASKS_VIEW.FILTER.ASSIGNEE_LABEL') }}
-                  {{ assigneeFilterLabel }}
-                </span>
-                <span class="i-lucide-chevron-down size-3.5 opacity-50" />
-              </button>
-              <div
-                v-if="openFilter === 'assignee'"
-                class="absolute left-0 top-full z-50 mt-1 max-h-64 min-w-48 overflow-y-auto rounded-md border border-border bg-popover p-1 shadow-md [&::-webkit-scrollbar]:hidden"
-              >
+            <RelayDropdownMenu>
+              <RelayDropdownMenuTrigger as-child>
                 <button
+                  type="button"
+                  class="reset-base flex cursor-pointer items-center gap-1 text-[13px] text-muted-foreground transition-colors hover:text-foreground"
+                >
+                  <span>
+                    {{ t('CONTACTS_LAYOUT.TASKS_VIEW.FILTER.ASSIGNEE_LABEL') }}
+                    {{ assigneeFilterLabel }}
+                  </span>
+                  <span class="i-lucide-chevron-down size-3.5 opacity-50" />
+                </button>
+              </RelayDropdownMenuTrigger>
+              <RelayDropdownMenuContent
+                align="start"
+                class="max-h-64 min-w-48 overflow-y-auto"
+              >
+                <RelayDropdownMenuItem
                   v-for="option in assigneeFilterOptions"
                   :key="option.value"
-                  type="button"
-                  class="reset-base flex w-full cursor-default items-center rounded-sm px-2 py-1.5 text-left text-sm text-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
                   :class="{
                     'bg-accent font-medium text-accent-foreground':
                       assigneeFilter === option.value,
@@ -622,31 +625,27 @@ onMounted(() => {
                   @click="selectAssignee(option.value)"
                 >
                   {{ option.label }}
-                </button>
-              </div>
-            </div>
+                </RelayDropdownMenuItem>
+              </RelayDropdownMenuContent>
+            </RelayDropdownMenu>
 
-            <div class="relative">
-              <button
-                type="button"
-                class="reset-base flex cursor-pointer items-center gap-1 text-[13px] text-muted-foreground transition-colors hover:text-foreground"
-                @click="toggleFilter('status')"
-              >
-                <span>
-                  {{ t('CONTACTS_LAYOUT.TASKS_VIEW.FILTER.STATUS_LABEL') }}
-                  {{ statusFilterLabel }}
-                </span>
-                <span class="i-lucide-chevron-down size-3.5 opacity-50" />
-              </button>
-              <div
-                v-if="openFilter === 'status'"
-                class="absolute left-0 top-full z-50 mt-1 min-w-48 overflow-hidden rounded-md border border-border bg-popover p-1 shadow-md"
-              >
+            <RelayDropdownMenu>
+              <RelayDropdownMenuTrigger as-child>
                 <button
+                  type="button"
+                  class="reset-base flex cursor-pointer items-center gap-1 text-[13px] text-muted-foreground transition-colors hover:text-foreground"
+                >
+                  <span>
+                    {{ t('CONTACTS_LAYOUT.TASKS_VIEW.FILTER.STATUS_LABEL') }}
+                    {{ statusFilterLabel }}
+                  </span>
+                  <span class="i-lucide-chevron-down size-3.5 opacity-50" />
+                </button>
+              </RelayDropdownMenuTrigger>
+              <RelayDropdownMenuContent align="start" class="min-w-48">
+                <RelayDropdownMenuItem
                   v-for="option in statusFilterOptions"
                   :key="option.value"
-                  type="button"
-                  class="reset-base flex w-full cursor-default items-center rounded-sm px-2 py-1.5 text-left text-sm text-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
                   :class="{
                     'bg-accent font-medium text-accent-foreground':
                       statusFilter === option.value,
@@ -654,31 +653,27 @@ onMounted(() => {
                   @click="selectStatus(option.value)"
                 >
                   {{ option.label }}
-                </button>
-              </div>
-            </div>
+                </RelayDropdownMenuItem>
+              </RelayDropdownMenuContent>
+            </RelayDropdownMenu>
 
-            <div class="relative">
-              <button
-                type="button"
-                class="reset-base flex cursor-pointer items-center gap-1 text-[13px] text-muted-foreground transition-colors hover:text-foreground"
-                @click="toggleFilter('dueDate')"
-              >
-                <span>
-                  {{ t('CONTACTS_LAYOUT.TASKS_VIEW.FILTER.DUE_LABEL') }}
-                  {{ dueDateFilterLabel }}
-                </span>
-                <span class="i-lucide-chevron-down size-3.5 opacity-50" />
-              </button>
-              <div
-                v-if="openFilter === 'dueDate'"
-                class="absolute left-0 top-full z-50 mt-1 min-w-48 overflow-hidden rounded-md border border-border bg-popover p-1 shadow-md"
-              >
+            <RelayDropdownMenu>
+              <RelayDropdownMenuTrigger as-child>
                 <button
+                  type="button"
+                  class="reset-base flex cursor-pointer items-center gap-1 text-[13px] text-muted-foreground transition-colors hover:text-foreground"
+                >
+                  <span>
+                    {{ t('CONTACTS_LAYOUT.TASKS_VIEW.FILTER.DUE_LABEL') }}
+                    {{ dueDateFilterLabel }}
+                  </span>
+                  <span class="i-lucide-chevron-down size-3.5 opacity-50" />
+                </button>
+              </RelayDropdownMenuTrigger>
+              <RelayDropdownMenuContent align="start" class="min-w-48">
+                <RelayDropdownMenuItem
                   v-for="option in dueDateFilterOptions"
                   :key="option.value"
-                  type="button"
-                  class="reset-base flex w-full cursor-default items-center rounded-sm px-2 py-1.5 text-left text-sm text-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
                   :class="{
                     'bg-accent font-medium text-accent-foreground':
                       dueDateFilter === option.value,
@@ -686,9 +681,9 @@ onMounted(() => {
                   @click="selectDueDate(option.value)"
                 >
                   {{ option.label }}
-                </button>
-              </div>
-            </div>
+                </RelayDropdownMenuItem>
+              </RelayDropdownMenuContent>
+            </RelayDropdownMenu>
 
             <div class="flex items-center gap-1">
               <RelayButton

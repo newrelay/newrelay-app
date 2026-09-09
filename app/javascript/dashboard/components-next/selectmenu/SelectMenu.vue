@@ -1,6 +1,12 @@
 <script setup>
-import { ref, computed } from 'vue';
+import { computed } from 'vue';
 import Button from 'dashboard/components-next/button/Button.vue';
+import {
+  RelayDropdownMenu,
+  RelayDropdownMenuTrigger,
+  RelayDropdownMenuContent,
+  RelayDropdownMenuItem,
+} from 'dashboard/components-next/relay';
 
 const props = defineProps({
   options: {
@@ -26,60 +32,49 @@ const props = defineProps({
 
 const emit = defineEmits(['update:modelValue']);
 
-const isOpen = ref(false);
-
 const labelValue = computed(() => props.label);
 
-const toggleMenu = () => {
-  isOpen.value = !isOpen.value;
-};
+const contentSide = computed(() => {
+  if (props.subMenuPosition === 'left') return 'left';
+  if (props.subMenuPosition === 'bottom') return 'bottom';
+  return 'right';
+});
 
 const handleSelect = value => {
   emit('update:modelValue', value);
-  isOpen.value = false;
 };
 </script>
 
 <template>
-  <div
-    v-on-clickaway="() => (isOpen = false)"
-    class="relative flex flex-col gap-1 w-fit"
-  >
-    <Button
-      icon="i-lucide-chevron-down"
-      size="sm"
-      trailing-icon
-      color="slate"
-      variant="faded"
-      class="!w-fit max-w-40"
-      :class="{ 'dark:!bg-accent !bg-muted-foreground/20': isOpen }"
-      :label="labelValue"
-      @click="toggleMenu"
-    />
-    <div
-      v-if="isOpen"
-      class="absolute select-none max-w-64 flex flex-col gap-1 bg-accent backdrop-blur-[100px] p-1 top-0 shadow-lg z-40 rounded-lg border border-border dark:border-border/50"
-      :class="{
-        'ltr:left-full rtl:right-full ltr:ml-1 rtl:mr-1':
-          subMenuPosition === 'right',
-        'ltr:right-full rtl:left-full ltr:mr-1 rtl:ml-1':
-          subMenuPosition === 'left',
-        'top-full mt-1 ltr:right-0 rtl:left-0': subMenuPosition === 'bottom',
-      }"
-    >
+  <RelayDropdownMenu>
+    <RelayDropdownMenuTrigger as-child>
       <Button
+        icon="i-lucide-chevron-down"
+        size="sm"
+        trailing-icon
+        color="slate"
+        variant="faded"
+        class="!w-fit max-w-40"
+        :label="labelValue"
+      />
+    </RelayDropdownMenuTrigger>
+    <RelayDropdownMenuContent
+      :side="contentSide"
+      align="start"
+      class="min-w-40 max-w-64"
+    >
+      <RelayDropdownMenuItem
         v-for="option in options"
         :key="option.value"
-        :label="option.label"
-        :icon="option.value === modelValue ? 'i-lucide-check' : ''"
-        size="sm"
-        variant="ghost"
-        color="slate"
-        trailing-icon
-        class="!justify-end !px-2.5 !h-7 border border-border hover:border-transparent"
-        :class="{ '!bg-accent': option.value === modelValue }"
+        class="justify-end px-2.5"
         @click="handleSelect(option.value)"
-      />
-    </div>
-  </div>
+      >
+        {{ option.label }}
+        <span
+          v-if="option.value === modelValue"
+          class="i-lucide-check ml-auto size-3.5 shrink-0"
+        />
+      </RelayDropdownMenuItem>
+    </RelayDropdownMenuContent>
+  </RelayDropdownMenu>
 </template>

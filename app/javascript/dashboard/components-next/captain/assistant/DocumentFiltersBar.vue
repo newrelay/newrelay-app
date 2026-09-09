@@ -1,11 +1,15 @@
 <script setup>
-import { computed, ref } from 'vue';
+import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { vOnClickOutside } from '@vueuse/components';
 
 import Icon from 'dashboard/components-next/icon/Icon.vue';
-import { RelayButton } from 'dashboard/components-next/relay';
-import DropdownMenu from 'dashboard/components-next/dropdown-menu/DropdownMenu.vue';
+import {
+  RelayButton,
+  RelayDropdownMenu,
+  RelayDropdownMenuTrigger,
+  RelayDropdownMenuContent,
+  RelayDropdownMenuItem,
+} from 'dashboard/components-next/relay';
 
 const props = defineProps({
   activeSourceFilter: { type: String, default: 'all' },
@@ -16,8 +20,6 @@ const props = defineProps({
 const emit = defineEmits(['selectSource', 'selectStatus', 'selectSort']);
 
 const { t } = useI18n();
-
-const openMenu = ref(null);
 
 const MENU_CONFIG = [
   {
@@ -97,16 +99,7 @@ const filterMenus = computed(() =>
   })
 );
 
-const closeMenu = () => {
-  openMenu.value = null;
-};
-
-const toggleMenu = menu => {
-  openMenu.value = openMenu.value === menu ? null : menu;
-};
-
 const handleMenuAction = ({ action, value }) => {
-  closeMenu();
   if (action === 'source') emit('selectSource', value);
   else if (action === 'status') emit('selectStatus', value);
   else if (action === 'sort') emit('selectSort', value);
@@ -114,35 +107,40 @@ const handleMenuAction = ({ action, value }) => {
 </script>
 
 <template>
-  <div
-    v-on-click-outside="closeMenu"
-    class="mb-6 inline-flex h-9 w-fit flex-wrap items-center gap-4"
-  >
-    <div v-for="menu in filterMenus" :key="menu.key" class="relative">
-      <RelayButton
-        variant="outline"
-        size="sm"
-        class="h-8 border-border/60 text-[13px] text-foreground"
-        :class="{ 'bg-muted/50': openMenu === menu.key }"
-        @click="toggleMenu(menu.key)"
-      >
-        <span
-          class="size-3.5 shrink-0 opacity-70"
-          :class="[menu.selected.icon]"
-        />
-        <span class="min-w-0 truncate">{{ menu.selected.label }}</span>
-        <Icon
-          icon="i-lucide-chevron-down"
-          class="size-3.5 shrink-0 opacity-50"
-        />
-      </RelayButton>
-      <DropdownMenu
-        v-if="openMenu === menu.key"
-        :menu-items="menu.items"
+  <div class="mb-6 inline-flex h-9 w-fit flex-wrap items-center gap-4">
+    <RelayDropdownMenu v-for="menu in filterMenus" :key="menu.key">
+      <RelayDropdownMenuTrigger as-child>
+        <RelayButton
+          variant="outline"
+          size="sm"
+          class="h-8 border-border/60 text-[13px] text-foreground"
+        >
+          <span
+            class="size-3.5 shrink-0 opacity-70"
+            :class="[menu.selected.icon]"
+          />
+          <span class="min-w-0 truncate">{{ menu.selected.label }}</span>
+          <Icon
+            icon="i-lucide-chevron-down"
+            class="size-3.5 shrink-0 opacity-50"
+          />
+        </RelayButton>
+      </RelayDropdownMenuTrigger>
+      <RelayDropdownMenuContent
+        align="start"
         :class="menu.dropdownClass"
-        class="top-full mt-2 ltr:left-0 rtl:right-0"
-        @action="handleMenuAction"
-      />
-    </div>
+        class="min-w-48"
+      >
+        <RelayDropdownMenuItem
+          v-for="item in menu.items"
+          :key="`${menu.key}-${item.value}`"
+          class="gap-2"
+          @click="handleMenuAction(item)"
+        >
+          <span class="size-3.5 shrink-0 opacity-70" :class="[item.icon]" />
+          {{ item.label }}
+        </RelayDropdownMenuItem>
+      </RelayDropdownMenuContent>
+    </RelayDropdownMenu>
   </div>
 </template>

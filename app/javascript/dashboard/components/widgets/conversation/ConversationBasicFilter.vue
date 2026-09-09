@@ -1,16 +1,18 @@
 <script setup>
-import { RelayTooltip } from 'dashboard/components-next/relay';
-import { computed } from 'vue';
+import { computed, nextTick, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useToggle } from '@vueuse/core';
 import { vOnClickOutside } from '@vueuse/components';
+import { RelayTooltip } from 'dashboard/components-next/relay';
 import { useUISettings } from 'dashboard/composables/useUISettings';
 import { useMapGetter, useStore } from 'dashboard/composables/store.js';
+import { useDropdownPosition } from 'dashboard/composables/useDropdownPosition';
 import wootConstants from 'dashboard/constants/globals';
 import SelectMenu from 'dashboard/components-next/selectmenu/SelectMenu.vue';
 import NextButton from 'dashboard/components-next/button/Button.vue';
+import TeleportWithDirection from 'dashboard/components-next/TeleportWithDirection.vue';
 
-defineProps({
+const props = defineProps({
   isOnExpandedLayout: {
     type: Boolean,
     required: true,
@@ -27,7 +29,22 @@ const { updateUISettings } = useUISettings();
 const chatStatusFilter = useMapGetter('getChatStatusFilter');
 const chatSortFilter = useMapGetter('getChatSortFilter');
 
+const triggerRef = ref(null);
+const dropdownRef = ref(null);
 const [showActionsDropdown, toggleDropdown] = useToggle();
+
+const { fixedPosition, updatePosition } = useDropdownPosition(
+  triggerRef,
+  dropdownRef,
+  showActionsDropdown,
+  { align: props.isOnExpandedLayout ? 'end' : 'start' }
+);
+
+const openDropdown = async () => {
+  toggleDropdown();
+  await nextTick();
+  updatePosition();
+};
 
 const currentStatusFilter = computed(() => {
   return chatStatusFilter.value || wootConstants.STATUS_TYPE.OPEN;
@@ -136,49 +153,53 @@ const handleSortChange = value => {
 </script>
 
 <template>
-  <div class="relative flex">
+  <div ref="triggerRef" class="relative flex">
     <RelayTooltip :content="$t('CHAT_LIST.SORT_TOOLTIP_LABEL')" side="right">
       <NextButton
         icon="i-lucide-arrow-up-down"
         slate
         faded
         xs
-        @click="toggleDropdown()"
+        @click="openDropdown()"
       />
     </RelayTooltip>
-    <div
-      v-if="showActionsDropdown"
-      v-on-click-outside="() => toggleDropdown()"
-      class="mt-1 bg-accent backdrop-blur-[100px] border border-border w-72 rounded-xl p-4 absolute z-40 top-full"
-      :class="{
-        'ltr:left-0 rtl:right-0': !isOnExpandedLayout,
-        'ltr:right-0 rtl:left-0': isOnExpandedLayout,
-      }"
-    >
-      <div class="flex items-center justify-between last:mt-4 gap-2">
-        <span class="text-sm truncate text-foreground">
-          {{ $t('CHAT_LIST.CHAT_SORT.STATUS') }}
-        </span>
-        <SelectMenu
-          :model-value="chatStatusFilter"
-          :options="chatStatusOptions"
-          :label="activeChatStatusLabel"
-          :sub-menu-position="isOnExpandedLayout ? 'left' : 'right'"
-          @update:model-value="handleStatusChange"
-        />
+    <TeleportWithDirection to="body">
+      <div
+        v-if="showActionsDropdown"
+        ref="dropdownRef"
+        v-on-click-outside="[
+          () => toggleDropdown(false),
+          { ignore: ['[data-reka-popper-content-wrapper]', '[data-slot]'] },
+        ]"
+        :class="fixedPosition.class"
+        :style="fixedPosition.style"
+        class="flex w-72 flex-col gap-4 rounded-xl border border-border bg-accent p-4 shadow-md backdrop-blur-[100px]"
+      >
+        <div class="flex items-center justify-between gap-2">
+          <span class="truncate text-sm text-foreground">
+            {{ $t('CHAT_LIST.CHAT_SORT.STATUS') }}
+          </span>
+          <SelectMenu
+            :model-value="chatStatusFilter"
+            :options="chatStatusOptions"
+            :label="activeChatStatusLabel"
+            :sub-menu-position="isOnExpandedLayout ? 'left' : 'right'"
+            @update:model-value="handleStatusChange"
+          />
+        </div>
+        <div class="flex items-center justify-between gap-2">
+          <span class="truncate text-sm text-foreground">
+            {{ $t('CHAT_LIST.CHAT_SORT.ORDER_BY') }}
+          </span>
+          <SelectMenu
+            :model-value="chatSortFilter"
+            :options="chatSortOptions"
+            :label="activeChatSortLabel"
+            :sub-menu-position="isOnExpandedLayout ? 'left' : 'right'"
+            @update:model-value="handleSortChange"
+          />
+        </div>
       </div>
-      <div class="flex items-center justify-between last:mt-4 gap-2">
-        <span class="text-sm truncate text-foreground">
-          {{ $t('CHAT_LIST.CHAT_SORT.ORDER_BY') }}
-        </span>
-        <SelectMenu
-          :model-value="chatSortFilter"
-          :options="chatSortOptions"
-          :label="activeChatSortLabel"
-          :sub-menu-position="isOnExpandedLayout ? 'left' : 'right'"
-          @update:model-value="handleSortChange"
-        />
-      </div>
-    </div>
+    </TeleportWithDirection>
   </div>
 </template>

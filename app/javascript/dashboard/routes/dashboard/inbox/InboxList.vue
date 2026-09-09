@@ -25,7 +25,6 @@ import InboxEmptyState from './InboxEmptyState.vue';
 import IntersectionObserver from 'dashboard/components/IntersectionObserver.vue';
 import CmdBarConversationSnooze from 'dashboard/routes/dashboard/commands/CmdBarConversationSnooze.vue';
 import Spinner from 'dashboard/components-next/spinner/Spinner.vue';
-import { RelayButton } from 'dashboard/components-next/relay';
 
 const { t } = useI18n();
 const route = useRoute();
@@ -38,9 +37,6 @@ const page = ref(1);
 const sortOrder = ref(wootConstants.INBOX_SORT_BY.NEWEST);
 const activeView = ref('all');
 const activeStatusTab = ref('new');
-const showListFilterMenu = ref(false);
-const showTabMoreMenu = ref(false);
-
 // The Inbox lists the current user's assigned conversations. We keep the list in
 // local state (not the global `conversations` store) so this view never clobbers
 // the main Conversations page's filters/list, and vice versa.
@@ -344,20 +340,6 @@ const openConversation = notificationItem => {
   });
 };
 
-const applyListFilter = key => {
-  showListFilterMenu.value = false;
-  if (key === 'assigned') onSelectView('assigned');
-  if (key === 'oldest') {
-    onFilterChange({
-      type: wootConstants.INBOX_FILTER_TYPE.SORT_ORDER,
-      key: wootConstants.INBOX_SORT_BY.OLDEST,
-    });
-  }
-  if (key === 'archived') onSelectView('archived');
-  if (key === 'snoozed') onSelectView('snoozed');
-  if (key === 'spam') onSelectView('spam');
-};
-
 // Switching the status tab changes which conversation status we fetch.
 watch(activeStatusTab, () => reloadConversations());
 
@@ -406,10 +388,10 @@ onMounted(() => {
         class="flex-1 flex flex-col bg-card overflow-hidden"
       >
         <div
-          class="flex items-center justify-between px-4 border-b border-border h-14 shrink-0"
+          class="flex items-center px-4 border-b border-border h-14 shrink-0"
         >
           <div
-            class="flex items-center justify-start gap-6 h-14 flex-1 min-w-0 overflow-hidden"
+            class="flex items-center justify-start gap-6 h-14 min-w-0 overflow-hidden"
             role="tablist"
           >
             <button
@@ -433,114 +415,6 @@ onMounted(() => {
                 class="absolute bottom-0 left-0 right-0 h-0.5 rounded-t-full bg-primary"
               />
             </button>
-          </div>
-
-          <div class="flex items-center gap-1 pl-4 shrink-0">
-            <div class="relative">
-              <RelayButton
-                variant="outline"
-                size="icon"
-                class="h-8 w-8 shrink-0"
-                :aria-label="t('INBOX.LIST.FILTER_TOOLTIP')"
-                @click="showListFilterMenu = !showListFilterMenu"
-              >
-                <span class="i-lucide-list-filter size-4" />
-              </RelayButton>
-              <div
-                v-if="showListFilterMenu"
-                v-on-clickaway="() => (showListFilterMenu = false)"
-                class="absolute right-0 mt-1.5 z-50 w-48 rounded-md border border-border bg-popover p-1 shadow-md"
-              >
-                <button
-                  type="button"
-                  class="w-full flex items-center gap-2 px-2 py-1.5 text-sm rounded-sm hover:bg-muted text-foreground"
-                  @click="applyListFilter('assigned')"
-                >
-                  <span class="i-lucide-user size-4 text-muted-foreground" />
-                  {{ t('INBOX.FILTER_MENU.ASSIGNED_TO_ME') }}
-                </button>
-                <button
-                  type="button"
-                  class="w-full flex items-center gap-2 px-2 py-1.5 text-sm rounded-sm hover:bg-muted text-foreground"
-                  @click="applyListFilter('oldest')"
-                >
-                  <span class="i-lucide-clock size-4 text-muted-foreground" />
-                  {{ t('INBOX.FILTER_MENU.OLDEST_FIRST') }}
-                </button>
-                <div class="my-1 h-px bg-border" />
-                <button
-                  type="button"
-                  class="w-full flex items-center gap-2 px-2 py-1.5 text-sm rounded-sm hover:bg-muted text-foreground"
-                  @click="applyListFilter('archived')"
-                >
-                  <span class="i-lucide-archive size-4 text-muted-foreground" />
-                  {{ t('INBOX.FILTER_MENU.ARCHIVED') }}
-                </button>
-                <button
-                  type="button"
-                  class="w-full flex items-center gap-2 px-2 py-1.5 text-sm rounded-sm hover:bg-muted text-foreground"
-                  @click="applyListFilter('snoozed')"
-                >
-                  <span
-                    class="i-lucide-alarm-clock size-4 text-muted-foreground"
-                  />
-                  {{ t('INBOX.FILTER_MENU.SNOOZED') }}
-                </button>
-              </div>
-            </div>
-            <div class="relative shrink-0">
-              <RelayButton
-                variant="ghost"
-                size="icon"
-                class="size-8 border border-input hover:border-transparent text-muted-foreground"
-                :aria-label="t('INBOX.LIST.MORE_OPTIONS')"
-                @click="showTabMoreMenu = !showTabMoreMenu"
-              >
-                <span class="i-lucide-ellipsis size-4" />
-              </RelayButton>
-              <div
-                v-if="showTabMoreMenu"
-                v-on-clickaway="() => (showTabMoreMenu = false)"
-                class="absolute right-0 mt-1.5 z-50 w-40 rounded-md border border-border bg-popover p-1 shadow-md"
-              >
-                <button
-                  type="button"
-                  class="w-full flex items-center gap-2 px-2 py-1.5 text-sm rounded-sm hover:bg-muted"
-                  @click="
-                    applyListFilter('archived');
-                    showTabMoreMenu = false;
-                  "
-                >
-                  <span class="i-lucide-archive size-4 text-muted-foreground" />
-                  {{ t('INBOX.FILTER_MENU.ARCHIVED') }}
-                </button>
-                <button
-                  type="button"
-                  class="w-full flex items-center gap-2 px-2 py-1.5 text-sm rounded-sm hover:bg-muted"
-                  @click="
-                    applyListFilter('snoozed');
-                    showTabMoreMenu = false;
-                  "
-                >
-                  <span
-                    class="i-lucide-alarm-clock size-4 text-muted-foreground"
-                  />
-                  {{ t('INBOX.FILTER_MENU.SNOOZED') }}
-                </button>
-                <div class="my-1 h-px bg-border" />
-                <button
-                  type="button"
-                  class="w-full flex items-center gap-2 px-2 py-1.5 text-sm rounded-sm hover:bg-muted"
-                  @click="
-                    applyListFilter('spam');
-                    showTabMoreMenu = false;
-                  "
-                >
-                  <span class="i-lucide-ban size-4 text-muted-foreground" />
-                  {{ t('INBOX.FILTER_MENU.SPAM') }}
-                </button>
-              </div>
-            </div>
           </div>
         </div>
 

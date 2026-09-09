@@ -15,16 +15,13 @@ const isImportingContact = computed(() => uiFlags.value.isImporting);
 
 const isOpen = ref(false);
 const fileInput = ref(null);
-
 const hasSelectedFile = ref(null);
-const selectedFileName = ref('');
 
 const handleRemoveFile = () => {
   hasSelectedFile.value = null;
   if (fileInput.value) {
     fileInput.value.value = null;
   }
-  selectedFileName.value = '';
 };
 
 const dialogRef = {
@@ -39,28 +36,14 @@ const dialogRef = {
 
 const handleFileClick = () => fileInput.value?.click();
 
-const processFileName = fileName => {
-  const lastDotIndex = fileName.lastIndexOf('.');
-  const extension = fileName.slice(lastDotIndex);
-  const baseName = fileName.slice(0, lastDotIndex);
-
-  return baseName.length > 20
-    ? `${baseName.slice(0, 20)}...${extension}`
-    : fileName;
-};
-
 const handleFileChange = () => {
-  const file = fileInput.value?.files[0];
-  hasSelectedFile.value = file;
-  selectedFileName.value = file ? processFileName(file.name) : '';
+  hasSelectedFile.value = fileInput.value?.files[0] || null;
 };
 
 const handleFileDrop = event => {
   const file = event.dataTransfer?.files?.[0];
   if (!file) return;
-
   hasSelectedFile.value = file;
-  selectedFileName.value = processFileName(file.name);
 };
 
 const uploadFile = async () => {
@@ -75,111 +58,77 @@ defineExpose({ dialogRef });
   <TeleportWithDirection to="body">
     <div
       v-if="isOpen"
-      class="flex items-center justify-center p-4"
+      class="flex items-center justify-center p-4 transition-all duration-300"
       :class="[RELAY_DIALOG_OVERLAY_CLASS]"
       @click.self="dialogRef.close()"
     >
       <div
         data-relay
-        class="mx-4 flex w-full max-w-[480px] flex-col rounded-xl border border-border/80 bg-background p-6 shadow-xl"
+        class="relative w-full max-w-md overflow-hidden rounded-xl border border-border bg-card shadow-2xl"
         @click.stop
       >
-        <div class="flex flex-col">
-          <h2 class="text-[16px] font-medium text-foreground">
-            {{ t('CONTACTS_LAYOUT.HEADER.ACTIONS.IMPORT_CONTACT.TITLE') }}
-          </h2>
-          <p class="mt-1 text-[14px] text-muted-foreground">
+        <div class="p-6">
+          <div class="mb-4 flex items-center justify-between">
+            <h2 class="text-lg font-semibold tracking-tight text-foreground">
+              {{ t('CONTACTS_LAYOUT.HEADER.ACTIONS.IMPORT_CONTACT.TITLE') }}
+            </h2>
+            <button
+              type="button"
+              class="flex size-8 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+              @click="dialogRef.close()"
+            >
+              <span class="i-lucide-x size-4" />
+            </button>
+          </div>
+          <p class="mb-6 text-sm text-muted-foreground">
             {{ t('CONTACTS_LAYOUT.HEADER.ACTIONS.IMPORT_CONTACT.DESCRIPTION') }}
           </p>
-        </div>
 
-        <div
-          class="mt-5 flex cursor-pointer flex-col items-center gap-3 rounded-xl border border-dashed border-border/80 bg-muted/10 p-10 transition-colors hover:bg-muted/30"
-          @click="handleFileClick"
-          @dragover.prevent
-          @drop.prevent="handleFileDrop"
-        >
-          <template v-if="!hasSelectedFile">
-            <span class="i-lucide-upload size-8 text-muted-foreground" />
-            <div class="space-y-1 text-center">
-              <p class="text-[14px] font-medium text-foreground">
-                {{
-                  t(
-                    'CONTACTS_LAYOUT.HEADER.ACTIONS.IMPORT_CONTACT.DROPZONE_TITLE'
-                  )
-                }}
-              </p>
-              <p class="text-[13px] text-muted-foreground">
-                {{
-                  t(
-                    'CONTACTS_LAYOUT.HEADER.ACTIONS.IMPORT_CONTACT.DROPZONE_HINT'
-                  )
-                }}
-              </p>
-            </div>
-          </template>
-
-          <div v-else class="flex w-full items-center justify-between gap-4">
-            <div class="flex min-w-0 items-center gap-3">
-              <span
-                class="i-lucide-file-spreadsheet size-5 shrink-0 text-primary"
-              />
-              <div class="flex min-w-0 flex-col text-start">
-                <span class="truncate text-[14px] font-medium text-foreground">
-                  {{ selectedFileName }}
-                </span>
-                <span class="text-[13px] text-muted-foreground">
-                  {{
-                    t(
-                      'CONTACTS_LAYOUT.HEADER.ACTIONS.IMPORT_CONTACT.READY_TO_UPLOAD'
-                    )
-                  }}
-                </span>
-              </div>
-            </div>
-            <div class="flex shrink-0 items-center gap-2">
-              <RelayButton
-                type="button"
-                variant="outline"
-                size="sm"
-                class="h-8 border-border text-[13px] hover:border-transparent"
-                @click.stop="handleFileClick"
-              >
-                {{ t('CONTACTS_LAYOUT.HEADER.ACTIONS.IMPORT_CONTACT.CHANGE') }}
-              </RelayButton>
-              <RelayButton
-                type="button"
-                variant="outline"
-                size="sm"
-                class="h-8 border-border text-[13px] hover:border-transparent"
-                @click.stop="handleRemoveFile"
-              >
-                <span class="i-lucide-trash size-3.5" />
-              </RelayButton>
-            </div>
-          </div>
-        </div>
-
-        <input
-          ref="fileInput"
-          type="file"
-          accept="text/csv"
-          class="hidden"
-          @change="handleFileChange"
-        />
-
-        <div class="mt-6 flex gap-3">
-          <RelayButton
+          <button
             type="button"
-            variant="outline"
-            class="h-10 flex-1 rounded-xl border border-border bg-background text-[14px] font-medium shadow-sm hover:border-transparent"
-            @click="dialogRef.close()"
+            class="flex w-full cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-muted-foreground/20 p-10 text-center transition-colors hover:bg-muted/50"
+            @click="handleFileClick"
+            @dragover.prevent
+            @drop.prevent="handleFileDrop"
           >
-            {{ t('DIALOG.BUTTONS.CANCEL') }}
+            <span
+              :class="
+                hasSelectedFile
+                  ? 'i-lucide-file-spreadsheet text-primary'
+                  : 'i-lucide-upload text-muted-foreground'
+              "
+              class="mb-3 size-8"
+            />
+            <p class="mb-1 text-sm font-medium text-foreground">
+              {{
+                hasSelectedFile
+                  ? hasSelectedFile.name
+                  : t(
+                      'CONTACTS_LAYOUT.HEADER.ACTIONS.IMPORT_CONTACT.DROPZONE_TITLE'
+                    )
+              }}
+            </p>
+            <p class="text-xs text-muted-foreground">
+              {{
+                t('CONTACTS_LAYOUT.HEADER.ACTIONS.IMPORT_CONTACT.DROPZONE_HINT')
+              }}
+            </p>
+          </button>
+          <input
+            ref="fileInput"
+            type="file"
+            accept=".csv,text/csv"
+            class="hidden"
+            @change="handleFileChange"
+          />
+        </div>
+        <div
+          class="flex justify-end gap-2 border-t border-border bg-muted/50 p-4"
+        >
+          <RelayButton variant="outline" @click="dialogRef.close()">
+            {{ t('CONTACTS_LAYOUT.HEADER.ACTIONS.IMPORT_CONTACT.CANCEL') }}
           </RelayButton>
           <RelayButton
-            type="button"
-            class="h-10 flex-1 rounded-xl bg-primary text-[14px] font-medium text-primary-foreground shadow-sm hover:bg-primary/90"
             :disabled="isImportingContact || !hasSelectedFile"
             @click="uploadFile"
           >

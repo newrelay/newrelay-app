@@ -110,14 +110,11 @@ const onCreate = async contact => {
         @export="openContactExportDialog"
       />
     </div>
-
-    <div class="hidden">
-      <ContactExportDialog ref="contactExportDialogRef" @export="onExport" />
-      <ContactImportDialog ref="contactImportDialogRef" @import="onImport" />
-      <CreateNewContactDialog
-        ref="createNewContactDialogRef"
-        @create="onCreate"
-      />
-    </div>
+    <ContactExportDialog ref="contactExportDialogRef" @export="onExport" />
+    <ContactImportDialog ref="contactImportDialogRef" @import="onImport" />
+    <CreateNewContactDialog
+      ref="createNewContactDialogRef"
+      @create="onCreate"
+    />
   </div>
 </template>

@@ -1,9 +1,14 @@
 <script setup>
-import { ref, computed, toRef } from 'vue';
+import { computed, toRef } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 import Button from 'dashboard/components-next/button/Button.vue';
 import SelectMenu from 'dashboard/components-next/selectmenu/SelectMenu.vue';
+import {
+  RelayDropdownMenu,
+  RelayDropdownMenuTrigger,
+  RelayDropdownMenuContent,
+} from 'dashboard/components-next/relay';
 
 const props = defineProps({
   activeSort: {
@@ -19,8 +24,6 @@ const props = defineProps({
 const emit = defineEmits(['update:sort']);
 
 const { t } = useI18n();
-
-const isMenuOpen = ref(false);
 
 const sortMenus = [
   {
@@ -56,9 +59,7 @@ const orderingMenus = [
   },
 ];
 
-// Converted the props to refs for better reactivity
 const activeSort = toRef(props, 'activeSort');
-
 const activeOrdering = toRef(props, 'activeOrdering');
 
 const activeSortLabel = computed(() => {
@@ -83,20 +84,16 @@ const handleOrderChange = value => {
 </script>
 
 <template>
-  <div class="relative">
-    <Button
-      icon="i-lucide-arrow-down-up"
-      color="slate"
-      size="sm"
-      variant="ghost"
-      :class="isMenuOpen ? 'bg-accent' : ''"
-      @click="isMenuOpen = !isMenuOpen"
-    />
-    <div
-      v-if="isMenuOpen"
-      v-on-clickaway="() => (isMenuOpen = false)"
-      class="absolute top-full mt-1 ltr:-right-32 rtl:-left-32 sm:ltr:right-0 sm:rtl:left-0 flex flex-col gap-4 bg-accent backdrop-blur-[100px] border border-border w-72 rounded-xl p-4"
-    >
+  <RelayDropdownMenu>
+    <RelayDropdownMenuTrigger as-child>
+      <Button
+        icon="i-lucide-arrow-down-up"
+        color="slate"
+        size="sm"
+        variant="ghost"
+      />
+    </RelayDropdownMenuTrigger>
+    <RelayDropdownMenuContent align="end" class="flex w-72 flex-col gap-4 p-4">
       <div class="flex items-center justify-between gap-2">
         <span class="text-sm text-foreground">
           {{ t('COMPANIES.SORT_BY.LABEL') }}
@@ -121,6 +118,6 @@ const handleOrderChange = value => {
           @update:model-value="handleOrderChange"
         />
       </div>
-    </div>
-  </div>
+    </RelayDropdownMenuContent>
+  </RelayDropdownMenu>
 </template>

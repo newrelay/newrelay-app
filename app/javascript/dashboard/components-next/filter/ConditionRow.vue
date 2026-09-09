@@ -75,6 +75,8 @@ const stackedOperatorLabel = computed(() => {
   const symbolByOp = {
     equal_to: '=',
     not_equal_to: '≠',
+    contains: '⊃',
+    does_not_contain: '⊅',
   };
   const symbol = symbolByOp[filterOperator.value];
   return symbol ? `${symbol} ${label}` : label;

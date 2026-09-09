@@ -109,6 +109,8 @@ export function useOperators() {
     operators.value[FILTER_OPS.NOT_EQUAL_TO],
     operators.value[FILTER_OPS.CONTAINS],
     operators.value[FILTER_OPS.DOES_NOT_CONTAIN],
+    operators.value[FILTER_OPS.IS_PRESENT],
+    operators.value[FILTER_OPS.IS_NOT_PRESENT],
   ]);
 
   /** @type {import('vue').ComputedRef<Array<Operator>>} */

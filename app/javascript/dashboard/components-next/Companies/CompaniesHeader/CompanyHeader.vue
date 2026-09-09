@@ -52,6 +52,22 @@ const propertyLabel = property => {
   };
   return labels[property] || labels.name;
 };
+
+const operatorChipLabel = operator => {
+  const labels = {
+    equal: t('COMPANIES.FILTERS.OPERATOR_IS'),
+    not_equal: t('COMPANIES.FILTERS.OPERATOR_IS_NOT'),
+    contains: t('COMPANIES.FILTERS.OPERATOR_CONTAINS'),
+    does_not_contain: t('COMPANIES.FILTERS.OPERATOR_DOES_NOT_CONTAIN'),
+    starts_with: t('COMPANIES.FILTERS.OPERATOR_STARTS_WITH'),
+    is_present: t('COMPANIES.FILTERS.OPERATOR_IS_PRESENT'),
+    is_not_present: t('COMPANIES.FILTERS.OPERATOR_IS_NOT_PRESENT'),
+  };
+  return labels[operator] || labels.equal;
+};
+
+const operatorShowsValue = operator =>
+  operator !== 'is_present' && operator !== 'is_not_present';
 </script>
 
 <template>
@@ -138,7 +154,11 @@ const propertyLabel = property => {
               v-if="index > 0"
               class="px-1 text-xs font-medium uppercase text-muted-foreground"
             >
-              {{ t('COMPANIES.FILTERS.AND') }}
+              {{
+                activeFilters[index - 1]?.queryOperator === 'or'
+                  ? t('COMPANIES.FILTERS.OR')
+                  : t('COMPANIES.FILTERS.AND')
+              }}
             </span>
             <RelayBadge
               variant="secondary"
@@ -148,13 +168,12 @@ const propertyLabel = property => {
                 {{ propertyLabel(filter.property) }}
               </span>
               <span class="font-medium text-primary">
-                {{
-                  filter.operator === 'not_equal'
-                    ? t('COMPANIES.FILTERS.OPERATOR_IS_NOT')
-                    : t('COMPANIES.FILTERS.OPERATOR_IS')
-                }}
+                {{ operatorChipLabel(filter.operator) }}
               </span>
-              <span class="max-w-[150px] truncate font-semibold">
+              <span
+                v-if="operatorShowsValue(filter.operator)"
+                class="max-w-[150px] truncate font-semibold"
+              >
                 {{ filter.value }}
               </span>
               <button

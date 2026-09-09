@@ -30,8 +30,41 @@ const PROPERTY_OPTIONS = [
 ];
 
 const OPERATOR_OPTIONS = [
-  { value: 'equal', labelKey: 'COMPANIES.FILTERS.OPERATORS.EQUAL' },
-  { value: 'not_equal', labelKey: 'COMPANIES.FILTERS.OPERATORS.NOT_EQUAL' },
+  {
+    value: 'equal',
+    labelKey: 'COMPANIES.FILTERS.OPERATORS.EQUAL',
+    hasInput: true,
+  },
+  {
+    value: 'not_equal',
+    labelKey: 'COMPANIES.FILTERS.OPERATORS.NOT_EQUAL',
+    hasInput: true,
+  },
+  {
+    value: 'contains',
+    labelKey: 'COMPANIES.FILTERS.OPERATORS.CONTAINS',
+    hasInput: true,
+  },
+  {
+    value: 'does_not_contain',
+    labelKey: 'COMPANIES.FILTERS.OPERATORS.DOES_NOT_CONTAIN',
+    hasInput: true,
+  },
+  {
+    value: 'starts_with',
+    labelKey: 'COMPANIES.FILTERS.OPERATORS.STARTS_WITH',
+    hasInput: true,
+  },
+  {
+    value: 'is_present',
+    labelKey: 'COMPANIES.FILTERS.OPERATORS.IS_PRESENT',
+    hasInput: false,
+  },
+  {
+    value: 'is_not_present',
+    labelKey: 'COMPANIES.FILTERS.OPERATORS.IS_NOT_PRESENT',
+    hasInput: false,
+  },
 ];
 
 const createDraft = () => ({
@@ -39,6 +72,7 @@ const createDraft = () => ({
   property: 'name',
   operator: 'equal',
   value: '',
+  queryOperator: 'and',
 });
 
 const filterDrafts = ref([createDraft()]);
@@ -49,7 +83,10 @@ watch(
     if (!isOpen) return;
     filterDrafts.value =
       props.activeFilters.length > 0
-        ? props.activeFilters.map(f => ({ ...f }))
+        ? props.activeFilters.map(f => ({
+            ...f,
+            queryOperator: f.queryOperator || 'and',
+          }))
         : [createDraft()];
     showFilterErrors.value = false;
     openPropertyMenu.value = null;
@@ -57,8 +94,16 @@ watch(
   }
 );
 
+const operatorHasInput = operator => {
+  const opt = OPERATOR_OPTIONS.find(item => item.value === operator);
+  return opt ? opt.hasInput : true;
+};
+
 const isApplyDisabled = computed(() =>
-  filterDrafts.value.some(draft => !String(draft.value || '').trim())
+  filterDrafts.value.some(
+    draft =>
+      operatorHasInput(draft.operator) && !String(draft.value || '').trim()
+  )
 );
 
 const propertyLabel = value => {
@@ -69,6 +114,12 @@ const propertyLabel = value => {
 const operatorLabel = value => {
   const opt = OPERATOR_OPTIONS.find(item => item.value === value);
   return opt ? t(opt.labelKey) : value;
+};
+
+const toggleQueryOperator = index => {
+  const previous = filterDrafts.value[index - 1];
+  if (!previous) return;
+  previous.queryOperator = previous.queryOperator === 'or' ? 'and' : 'or';
 };
 
 const close = () => emit('update:open', false);
@@ -133,12 +184,18 @@ const applyFilters = () => {
               :key="draft.id"
               class="relative flex flex-col gap-3 rounded-xl border border-border bg-muted/10 p-4 shadow-sm"
             >
-              <span
+              <button
                 v-if="index > 0"
-                class="absolute -top-2.5 left-4 bg-card px-2 text-xs font-bold text-muted-foreground"
+                type="button"
+                class="absolute -top-2.5 left-4 bg-card px-2 text-xs font-bold uppercase text-muted-foreground hover:text-foreground"
+                @click="toggleQueryOperator(index)"
               >
-                {{ t('COMPANIES.FILTERS.AND') }}
-              </span>
+                {{
+                  filterDrafts[index - 1].queryOperator === 'or'
+                    ? t('COMPANIES.FILTERS.OR')
+                    : t('COMPANIES.FILTERS.AND')
+                }}
+              </button>
 
               <div class="flex items-center gap-2">
                 <div
@@ -210,6 +267,7 @@ const applyFilters = () => {
                     class="flex w-full cursor-pointer rounded-sm px-2 py-1.5 text-left text-sm hover:bg-accent"
                     @click="
                       draft.operator = op.value;
+                      if (!op.hasInput) draft.value = '';
                       openOperatorMenu = null;
                     "
                   >
@@ -218,7 +276,10 @@ const applyFilters = () => {
                 </div>
               </div>
 
-              <div class="flex w-full flex-col">
+              <div
+                v-if="operatorHasInput(draft.operator)"
+                class="flex w-full flex-col"
+              >
                 <RelayInput
                   v-model="draft.value"
                   :placeholder="t('COMPANIES.FILTERS.VALUE_PLACEHOLDER')"

@@ -135,15 +135,39 @@ const matchesFilter = (company, filter) => {
   const value = String(filter.value || '')
     .toLowerCase()
     .trim();
-  if (filter.operator === 'not_equal') return field !== value;
-  return field.includes(value) || field === value;
+  const present = field.length > 0;
+
+  switch (filter.operator) {
+    case 'not_equal':
+      return field !== value;
+    case 'contains':
+      return field.includes(value);
+    case 'does_not_contain':
+      return !field.includes(value);
+    case 'starts_with':
+      return field.startsWith(value);
+    case 'is_present':
+      return present;
+    case 'is_not_present':
+      return !present;
+    case 'equal':
+    default:
+      return field === value;
+  }
 };
 
 const displayedCompanies = computed(() => {
   if (!activeFilters.value.length) return companies.value;
-  return companies.value.filter(company =>
-    activeFilters.value.every(filter => matchesFilter(company, filter))
-  );
+  return companies.value.filter(company => {
+    const filters = activeFilters.value;
+    let result = matchesFilter(company, filters[0]);
+    for (let i = 1; i < filters.length; i += 1) {
+      const matches = matchesFilter(company, filters[i]);
+      const combiner = filters[i - 1].queryOperator || 'and';
+      result = combiner === 'or' ? result || matches : result && matches;
+    }
+    return result;
+  });
 });
 
 const listCompanies = computed(() =>

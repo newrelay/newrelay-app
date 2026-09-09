@@ -81,7 +81,7 @@ export function useContactFilterContext() {
       label: t('CONTACTS_LAYOUT.FILTER.NAME'),
       inputType: 'plainText',
       dataType: 'text',
-      filterOperators: equalityOperators.value,
+      filterOperators: containmentOperators.value,
       attributeModel: 'standard',
     },
     {

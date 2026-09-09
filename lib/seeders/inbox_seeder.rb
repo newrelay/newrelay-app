@@ -41,7 +41,7 @@ class Seeders::InboxSeeder
 
   def seed_twitter_inbox
     channel = Channel::TwitterProfile.create!(account: @account, twitter_access_token: SecureRandom.hex,
-                                              twitter_access_token_secret: SecureRandom.hex, profile_id: '123')
+                                              twitter_access_token_secret: SecureRandom.hex, profile_id: SecureRandom.hex)
     Inbox.create!(channel: channel, account: @account, name: "#{@company_data['name']} Twitter")
   end
 

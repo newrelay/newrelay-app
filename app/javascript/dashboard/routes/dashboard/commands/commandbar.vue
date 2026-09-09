@@ -22,6 +22,7 @@ import {
   CMD_BULK_ACTION_SNOOZE_CONVERSATION,
 } from 'dashboard/helper/commandbar/events';
 import { emitter } from 'shared/helpers/mitt';
+import { RelayInput } from 'dashboard/components-next/relay';
 
 const store = useStore();
 const { t, tm } = useI18n();
@@ -221,15 +222,21 @@ watch(selectedIndex, () => {
   scrollToSelected();
 });
 
+const focusSearchInput = () => {
+  nextTick(() => {
+    const node = searchInputRef.value;
+    const el = node instanceof HTMLElement ? node : node?.$el;
+    el?.focus?.();
+  });
+};
+
 const open = (options = {}) => {
   isOpen.value = true;
   currentCommandRoot.value = options.parent || null;
   searchQuery.value = '';
   selectedIndex.value = 0;
   dynamicSnoozeActions.value = [];
-  nextTick(() => {
-    searchInputRef.value?.focus();
-  });
+  focusSearchInput();
 };
 
 const close = () => {
@@ -267,9 +274,7 @@ const clearParent = () => {
   currentCommandRoot.value = null;
   searchQuery.value = '';
   selectedIndex.value = 0;
-  nextTick(() => {
-    searchInputRef.value?.focus();
-  });
+  focusSearchInput();
 };
 
 const handleKeyDown = event => {
@@ -358,47 +363,45 @@ onUnmounted(() => {
           @click.stop
         >
           <!-- Top Search Header -->
-          <div class="flex items-center gap-3 border-b border-border px-4 py-3">
-            <span
-              class="i-lucide-search size-4 shrink-0 text-muted-foreground"
-            />
-
-            <!-- Submenu Parent Badge -->
+          <div class="flex flex-col gap-2 border-b border-border p-4">
             <button
               v-if="currentCommandRoot"
               type="button"
-              class="inline-flex items-center gap-1.5 rounded-md border border-border bg-accent px-2 py-0.5 text-xs font-medium text-accent-foreground hover:bg-accent/80 transition-colors"
+              class="inline-flex w-fit items-center gap-1.5 rounded-md border border-border bg-accent px-2 py-0.5 text-xs font-medium text-accent-foreground transition-colors hover:bg-accent/80"
               @click="clearParent"
             >
               <span class="i-lucide-arrow-left size-3 shrink-0" />
               <span>{{ parentTitle }}</span>
             </button>
 
-            <input
-              ref="searchInputRef"
-              v-model="searchQuery"
-              type="text"
-              class="w-full bg-transparent text-sm font-medium text-foreground placeholder:text-muted-foreground focus:outline-none"
-              :placeholder="placeholder"
-              autofocus
-            />
-
-            <!-- Clear Search Query -->
-            <button
-              v-if="searchQuery"
-              type="button"
-              class="rounded-md p-1 text-muted-foreground hover:bg-accent hover:text-accent-foreground"
-              @click="searchQuery = ''"
-            >
-              <span class="i-lucide-x size-4" />
-            </button>
-
-            <!-- Close ESC Hint -->
-            <kbd
-              class="pointer-events-none rounded border border-border bg-muted px-1.5 py-0.5 text-[10px] font-medium text-muted-foreground"
-            >
-              {{ t('COMMAND_BAR.KEYS.ESC') }}
-            </kbd>
+            <div class="flex items-center gap-2">
+              <div class="relative min-w-0 flex-1">
+                <span
+                  class="pointer-events-none absolute inset-y-0 z-[1] flex w-9 items-center justify-center text-muted-foreground ltr:left-0 rtl:right-0"
+                >
+                  <span class="i-lucide-search size-4" />
+                </span>
+                <RelayInput
+                  ref="searchInputRef"
+                  v-model="searchQuery"
+                  class-name="h-9 bg-background px-9"
+                  :placeholder="placeholder"
+                />
+                <button
+                  v-if="searchQuery"
+                  type="button"
+                  class="absolute inset-y-0 z-[1] flex w-9 items-center justify-center text-muted-foreground hover:text-accent-foreground ltr:right-0 rtl:left-0"
+                  @click="searchQuery = ''"
+                >
+                  <span class="i-lucide-x size-4" />
+                </button>
+              </div>
+              <kbd
+                class="pointer-events-none shrink-0 rounded border border-border bg-muted px-1.5 py-0.5 text-[10px] font-medium text-muted-foreground"
+              >
+                {{ t('COMMAND_BAR.KEYS.ESC') }}
+              </kbd>
+            </div>
           </div>
 
           <!-- Command List Body -->

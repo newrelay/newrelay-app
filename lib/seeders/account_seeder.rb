@@ -31,8 +31,8 @@ class Seeders::AccountSeeder
     @account.teams.destroy_all
     @account.conversations.destroy_all
     @account.labels.destroy_all
-    CommentAutomation::Campaign.where(account_id: @account.id).delete_all if defined?(CommentAutomation::Campaign)
-    Campaign.where(account_id: @account.id).delete_all if defined?(Campaign)
+    @account.comment_automation_campaigns.destroy_all if @account.respond_to?(:comment_automation_campaigns)
+    @account.campaigns.destroy_all if @account.respond_to?(:campaigns)
     @account.inboxes.destroy_all
     @account.contacts.destroy_all
     @account.custom_roles.destroy_all if @account.respond_to?(:custom_roles)

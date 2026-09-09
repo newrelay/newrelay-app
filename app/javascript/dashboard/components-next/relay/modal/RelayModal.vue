@@ -1,5 +1,6 @@
 <script setup>
 import { computed } from 'vue';
+import { useEventListener } from '@vueuse/core';
 import TeleportWithDirection from 'dashboard/components-next/TeleportWithDirection.vue';
 import RelayModalHeader from './RelayModalHeader.vue';
 import {
@@ -28,6 +29,13 @@ const props = defineProps({
 });
 
 const emit = defineEmits(['close']);
+
+useEventListener(document, 'keydown', e => {
+  if (props.show && e.code === 'Escape') {
+    emit('close');
+    e.stopPropagation();
+  }
+});
 
 const maxWidthClass = computed(() => {
   if (props.size === 'xl') return 'max-w-4xl';

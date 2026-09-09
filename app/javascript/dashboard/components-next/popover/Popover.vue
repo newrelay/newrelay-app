@@ -99,7 +99,7 @@ defineExpose({ show, hide, toggle });
     <div
       v-if="isActive && isMobile"
       data-popover-backdrop
-      class="fixed inset-0 z-[9999] flex items-start pt-[clamp(3rem,15vh,12rem)] justify-center bg-black/5"
+      class="fixed inset-0 z-[9999] flex items-start pt-[clamp(3rem,15vh,12rem)] justify-center bg-background/80 backdrop-blur-[8px]"
     >
       <div
         ref="mobileContentRef"

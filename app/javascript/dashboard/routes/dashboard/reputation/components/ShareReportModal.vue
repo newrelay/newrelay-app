@@ -135,7 +135,7 @@ function close() {
 <template>
   <div v-if="open" class="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6">
     <!-- Backdrop -->
-    <div class="absolute inset-0 bg-background/80 backdrop-blur-xs" @click="close"></div>
+    <div class="absolute inset-0 bg-background/80 backdrop-blur-[8px]" @click="close"></div>
     
     <!-- Modal -->
     <div class="relative w-full max-w-4xl max-h-[90vh] bg-card rounded-2xl shadow-2xl border border-border flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200">

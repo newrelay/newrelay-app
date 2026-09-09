@@ -169,7 +169,7 @@ const isDark = computed(() => widgetConfig.value.theme === 'dark' || previewBg.v
 <template>
   <div v-if="open" class="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 lg:p-6">
     <!-- Backdrop -->
-    <div class="absolute inset-0 bg-background/80 backdrop-blur-md" @click="close"></div>
+    <div class="absolute inset-0 bg-background/80 backdrop-blur-[8px]" @click="close"></div>
 
     <!-- Modal Container -->
     <div class="relative w-[98vw] sm:w-[96vw] max-w-[1440px] h-[96vh] sm:h-[92vh] bg-card rounded-xl sm:rounded-2xl shadow-2xl border border-border flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200">

@@ -852,7 +852,7 @@ onMounted(() => {
       <div
         v-if="isTaskModalOpen"
         data-relay
-        class="fixed inset-0 z-[60] flex items-start justify-center overflow-y-auto bg-background/80 p-4 backdrop-blur-sm sm:items-center sm:p-6"
+        class="fixed inset-0 z-[60] flex items-start justify-center overflow-y-auto bg-background/80 p-4 backdrop-blur-[8px] sm:items-center sm:p-6"
         @click.self="closeTaskModal"
       >
         <div

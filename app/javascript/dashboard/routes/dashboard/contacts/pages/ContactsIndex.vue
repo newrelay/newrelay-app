@@ -590,7 +590,7 @@ onMounted(async () => {
       :use-infinite-scroll="isSearchView"
       :has-more="hasMore"
       :is-loading-more="isLoadingMore"
-      :show-toolbar="!showEmptyStateLayout"
+      show-toolbar
       @update:current-page="onPageChange"
       @search="
         value => searchContacts(value, 1, false, { clearSelection: false })

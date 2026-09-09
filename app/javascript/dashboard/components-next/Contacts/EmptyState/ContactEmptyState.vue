@@ -42,6 +42,10 @@ const openCreate = () => {
   createNewContactDialogRef.value?.dialogRef.open();
 };
 
+const notifyIntegrationPending = () => {
+  useAlert(t('CONTACTS_LAYOUT.EMPTY_STATE.INTEGRATION_PENDING'));
+};
+
 const openImport = () => {
   contactImportDialogRef.value?.dialogRef.open();
 };
@@ -167,6 +171,36 @@ const onImport = async file => {
             </span>
             <span class="text-xs text-muted-foreground">
               {{ t('CONTACTS_LAYOUT.EMPTY_STATE.IMPORT_CSV_HINT') }}
+            </span>
+          </span>
+        </RelayButton>
+        <RelayButton
+          variant="outline"
+          class="h-14 justify-start px-4 transition-colors hover:bg-muted/50"
+          @click="notifyIntegrationPending"
+        >
+          <span class="i-lucide-users mr-4 size-5 text-muted-foreground" />
+          <span class="flex flex-col items-start">
+            <span class="text-sm font-medium text-foreground">
+              {{ t('CONTACTS_LAYOUT.EMPTY_STATE.GOOGLE_CONTACTS') }}
+            </span>
+            <span class="text-xs text-muted-foreground">
+              {{ t('CONTACTS_LAYOUT.EMPTY_STATE.GOOGLE_CONTACTS_HINT') }}
+            </span>
+          </span>
+        </RelayButton>
+        <RelayButton
+          variant="outline"
+          class="h-14 justify-start px-4 transition-colors hover:bg-muted/50"
+          @click="notifyIntegrationPending"
+        >
+          <span class="i-lucide-share-2 mr-4 size-5 text-muted-foreground" />
+          <span class="flex flex-col items-start">
+            <span class="text-sm font-medium text-foreground">
+              {{ t('CONTACTS_LAYOUT.EMPTY_STATE.META_LEADS') }}
+            </span>
+            <span class="text-xs text-muted-foreground">
+              {{ t('CONTACTS_LAYOUT.EMPTY_STATE.META_LEADS_HINT') }}
             </span>
           </span>
         </RelayButton>

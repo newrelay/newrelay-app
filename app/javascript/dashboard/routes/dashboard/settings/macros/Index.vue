@@ -352,7 +352,7 @@ const saveMacro = async macroData => {
         class="fixed inset-0 z-[101] flex items-center justify-center p-4 sm:p-6 sm:p-8 animate-in fade-in duration-200"
       >
         <div
-          class="absolute inset-0 bg-black/40 backdrop-blur-sm"
+          class="absolute inset-0 bg-background/80 backdrop-blur-[8px]"
           @click="closeBuilder"
         />
         <div

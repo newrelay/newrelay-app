@@ -877,7 +877,7 @@ const closeAdd = () => {
 
     <!-- Add Listing Modal (multi-step) -->
     <div v-if="addOpen" class="fixed inset-0 z-50 flex items-center justify-center p-4">
-      <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" @click="closeAdd"></div>
+      <div class="absolute inset-0 bg-background/80 backdrop-blur-[8px]" @click="closeAdd"></div>
       <div class="relative w-full max-w-xl bg-card border border-border shadow-2xl rounded-2xl overflow-hidden flex flex-col max-h-[90vh]">
         <div class="px-6 py-5 border-b border-border flex items-center justify-between bg-muted/30 shrink-0">
           <div class="flex items-center gap-3">
@@ -1064,7 +1064,7 @@ const closeAdd = () => {
 
     <!-- Export Modal (advanced) -->
     <div v-if="exportOpen" class="fixed inset-0 z-50 flex items-center justify-center p-4">
-      <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" @click="closeExport"></div>
+      <div class="absolute inset-0 bg-background/80 backdrop-blur-[8px]" @click="closeExport"></div>
       <div class="relative w-full max-w-md bg-card border border-border shadow-2xl rounded-2xl overflow-hidden flex flex-col">
         <div class="px-6 py-5 border-b border-border flex items-center justify-between bg-muted/30">
           <div class="flex items-center gap-3">
@@ -1110,7 +1110,7 @@ const closeAdd = () => {
 
     <!-- Listing History Modal -->
     <div v-if="historyListing" class="fixed inset-0 z-50 flex items-center justify-center p-4">
-      <div class="absolute inset-0 bg-background/80 backdrop-blur-sm" @click="historyListing = null"></div>
+      <div class="absolute inset-0 bg-background/80 backdrop-blur-[8px]" @click="historyListing = null"></div>
       <div class="relative bg-card border border-border rounded-2xl shadow-lg max-w-md w-full p-6 space-y-5">
         <div class="flex items-center justify-between pb-3 border-b border-border">
           <h2 class="text-[15px] font-semibold text-foreground">{{ historyListing.title }} — History</h2>

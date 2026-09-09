@@ -572,7 +572,7 @@ const filteredItems = computed(() => {
 
     <div
       v-if="isDrawerOpen && selectedItem"
-      class="fixed inset-0 z-[100] bg-background/60 backdrop-blur-xs flex justify-end"
+      class="fixed inset-0 z-[100] bg-background/80 backdrop-blur-[8px] flex justify-end"
       @click="isDrawerOpen = false"
     >
       <div

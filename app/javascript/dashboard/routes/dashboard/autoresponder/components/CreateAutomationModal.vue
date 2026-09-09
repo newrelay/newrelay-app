@@ -177,7 +177,7 @@ const nextStep = () => {
   <Teleport to="body">
     <div
       v-if="open"
-      class="fixed inset-0 z-[100] flex items-center justify-center bg-background/80 backdrop-blur-md p-4 sm:p-6"
+      class="fixed inset-0 z-[100] flex items-center justify-center bg-background/80 backdrop-blur-[8px] p-4 sm:p-6"
       @click.self="closeModal"
     >
       <div

@@ -347,7 +347,7 @@ onUnmounted(() => {
       >
         <!-- Backdrop -->
         <div
-          class="fixed inset-0 bg-background/80 transition-opacity duration-150"
+          class="fixed inset-0 bg-background/80 backdrop-blur-[8px] transition-opacity duration-150"
           @click="close"
         />
 

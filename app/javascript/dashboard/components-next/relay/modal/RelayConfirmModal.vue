@@ -1,5 +1,6 @@
 <script setup>
 import { ref, computed, watch } from 'vue';
+import { useEventListener } from '@vueuse/core';
 import TeleportWithDirection from 'dashboard/components-next/TeleportWithDirection.vue';
 import RelayButton from '../button/Button.vue';
 import RelayInput from '../input/Input.vue';
@@ -45,6 +46,13 @@ const props = defineProps({
 });
 
 const emit = defineEmits(['close', 'confirm']);
+
+useEventListener(document, 'keydown', e => {
+  if (props.show && e.code === 'Escape') {
+    emit('close');
+    e.stopPropagation();
+  }
+});
 
 const typedConfirmValue = ref('');
 

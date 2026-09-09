@@ -688,7 +688,7 @@ export default {
     >
       <div
         v-if="!embedded"
-        class="absolute inset-0 bg-black/40 backdrop-blur-sm"
+        class="absolute inset-0 bg-background/80 backdrop-blur-[8px]"
         @click="goBack"
       />
       <div

@@ -12,15 +12,8 @@ import {
   useCamelCase,
   useSnakeCase,
 } from 'dashboard/composables/useTransformKeys';
-import {
-  DuplicateContactException,
-  ExceptionWithMessage,
-} from 'shared/helpers/CustomErrors';
 
 import ContactsHeader from 'dashboard/components-next/Contacts/ContactsHeader/ContactHeader.vue';
-import ContactExportDialog from 'dashboard/components-next/Contacts/ContactsForm/ContactExportDialog.vue';
-import ContactImportDialog from 'dashboard/components-next/Contacts/ContactsForm/ContactImportDialog.vue';
-import CreateNewContactDialog from 'dashboard/components-next/Contacts/ContactsForm/CreateNewContactDialog.vue';
 import CreateSegmentDialog from 'dashboard/components-next/Contacts/ContactsForm/CreateSegmentDialog.vue';
 import DeleteSegmentDialog from 'dashboard/components-next/Contacts/ContactsForm/DeleteSegmentDialog.vue';
 import ContactsFilter from 'dashboard/components-next/filter/ContactsFilter.vue';
@@ -42,9 +35,6 @@ const { t } = useI18n();
 const store = useStore();
 const router = useRouter();
 
-const contactExportDialogRef = ref(null);
-const contactImportDialogRef = ref(null);
-const createNewContactDialogRef = ref(null);
 const createSegmentDialogRef = ref(null);
 const deleteSegmentDialogRef = ref(null);
 
@@ -60,47 +50,10 @@ const hasActiveSegments = computed(
 );
 const activeSegmentName = computed(() => props.activeSegment?.name);
 
-const openContactExportDialog = () =>
-  contactExportDialogRef.value?.dialogRef.open();
-const openContactImportDialog = () =>
-  contactImportDialogRef.value?.dialogRef.open();
-const openCreateNewContactDialog = () =>
-  createNewContactDialogRef.value?.dialogRef.open();
-
-const onImport = async file => {
-  try {
-    await store.dispatch('contacts/import', file);
-    contactImportDialogRef.value?.dialogRef.close();
-    useAlert(
-      t('CONTACTS_LAYOUT.HEADER.ACTIONS.IMPORT_CONTACT.SUCCESS_MESSAGE')
-    );
-  } catch (error) {
-    useAlert(
-      error instanceof ExceptionWithMessage
-        ? error.data
-        : (error.message ??
-            t('CONTACTS_LAYOUT.HEADER.ACTIONS.IMPORT_CONTACT.ERROR_MESSAGE'))
-    );
-  }
-};
 const openCreateSegmentDialog = () =>
   createSegmentDialogRef.value?.dialogRef.open();
 const openDeleteSegmentDialog = () =>
   deleteSegmentDialogRef.value?.dialogRef.open();
-
-const onExport = async query => {
-  try {
-    await store.dispatch('contacts/export', query);
-    useAlert(
-      t('CONTACTS_LAYOUT.HEADER.ACTIONS.EXPORT_CONTACT.SUCCESS_MESSAGE')
-    );
-  } catch (error) {
-    useAlert(
-      error.message ||
-        t('CONTACTS_LAYOUT.HEADER.ACTIONS.EXPORT_CONTACT.ERROR_MESSAGE')
-    );
-  }
-};
 
 const onCreateSegment = async payload => {
   try {
@@ -147,29 +100,6 @@ const onDeleteSegment = async payload => {
     useAlert(
       t('CONTACTS_LAYOUT.HEADER.ACTIONS.FILTERS.DELETE_SEGMENT.ERROR_MESSAGE')
     );
-  }
-};
-
-const onCreate = async contact => {
-  try {
-    await store.dispatch('contacts/create', contact);
-    createNewContactDialogRef.value?.dialogRef.close();
-    useAlert(
-      t('CONTACTS_LAYOUT.HEADER.ACTIONS.CONTACT_CREATION.SUCCESS_MESSAGE')
-    );
-  } catch (error) {
-    const i18nPrefix = 'CONTACTS_LAYOUT.HEADER.ACTIONS.CONTACT_CREATION';
-    if (error instanceof DuplicateContactException) {
-      if (error.data.includes('email')) {
-        useAlert(t(`${i18nPrefix}.EMAIL_ADDRESS_DUPLICATE`));
-      } else if (error.data.includes('phone_number')) {
-        useAlert(t(`${i18nPrefix}.PHONE_NUMBER_DUPLICATE`));
-      }
-    } else if (error instanceof ExceptionWithMessage) {
-      useAlert(error.data);
-    } else {
-      useAlert(t(`${i18nPrefix}.ERROR_MESSAGE`));
-    }
   }
 };
 
@@ -270,11 +200,7 @@ defineExpose({
     :is-label-view="isLabelView"
     :is-active-view="isActiveView"
     :has-active-filters="hasAppliedFilters"
-    :button-label="t('CONTACTS_LAYOUT.HEADER.MESSAGE_BUTTON')"
     @search="emit('search', $event)"
-    @add="openCreateNewContactDialog"
-    @import="openContactImportDialog"
-    @export="openContactExportDialog"
     @filter="onToggleFilters"
     @create-segment="openCreateSegmentDialog"
     @delete-segment="openDeleteSegmentDialog"
@@ -295,9 +221,6 @@ defineExpose({
     @clear-filters="clearFilters"
   />
 
-  <ContactExportDialog ref="contactExportDialogRef" @export="onExport" />
-  <ContactImportDialog ref="contactImportDialogRef" @import="onImport" />
-  <CreateNewContactDialog ref="createNewContactDialogRef" @create="onCreate" />
   <CreateSegmentDialog ref="createSegmentDialogRef" @create="onCreateSegment" />
   <DeleteSegmentDialog ref="deleteSegmentDialogRef" @delete="onDeleteSegment" />
 </template>

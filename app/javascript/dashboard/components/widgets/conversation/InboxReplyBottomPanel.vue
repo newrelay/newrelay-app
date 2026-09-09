@@ -412,7 +412,7 @@ export default {
       <transition name="modal-fade">
         <div
           v-show="uploadRef && uploadRef.dropActive"
-          class="fixed inset-0 z-20 flex h-full w-full flex-col items-center justify-center gap-2 bg-background/80 text-foreground backdrop-blur-sm"
+          class="fixed inset-0 z-20 flex h-full w-full flex-col items-center justify-center gap-2 bg-background/80 text-foreground backdrop-blur-[8px]"
         >
           <span class="i-lucide-cloud-upload size-10" />
           <h4 class="break-words text-2xl font-medium capitalize">

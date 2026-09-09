@@ -102,7 +102,7 @@ onBeforeUnmount(() => emit('close'));
   <Teleport to="body">
     <div
       data-relay
-      class="fixed inset-0 z-[60] bg-background/80 backdrop-blur-sm transition-all duration-300"
+      class="fixed inset-0 z-[60] bg-background/80 backdrop-blur-[8px] transition-all duration-300"
       @click.self="close"
     >
       <div

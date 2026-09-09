@@ -995,7 +995,7 @@ const autoFlagLabel = computed(() => autoFlagOptions.find(o => o.value === spamS
     </div>
 
     <!-- Create New Outreach Template modal -->
-    <div v-if="showNewTemplate" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-background/80 backdrop-blur-sm" @click.self="showNewTemplate = false">
+    <div v-if="showNewTemplate" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-background/80 backdrop-blur-[8px]" @click.self="showNewTemplate = false">
       <div class="bg-card border border-border w-full max-w-lg rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
         <!-- Header -->
         <div class="px-6 py-4 border-b border-border flex items-center justify-between shrink-0">

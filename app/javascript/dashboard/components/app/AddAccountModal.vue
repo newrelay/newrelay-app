@@ -1,116 +1,117 @@
-<script>
-import { required, minLength } from '@vuelidate/validators';
-import { mapGetters } from 'vuex';
+<script setup>
+import { ref } from 'vue';
+import { useI18n } from 'vue-i18n';
+import { useRoute } from 'vue-router';
+import { useStore, useMapGetter } from 'dashboard/composables/store';
 import { useVuelidate } from '@vuelidate/core';
+import { required, minLength } from '@vuelidate/validators';
 import { useAlert } from 'dashboard/composables';
-import NextButton from 'dashboard/components-next/button/Button.vue';
+import {
+  RelayButton,
+  RelayInput,
+  RelayLabel,
+  RelayModal,
+  RELAY_FORM_FIELD_CLASS,
+  RELAY_FORM_LABEL_CLASS,
+} from 'dashboard/components-next/relay';
 
-export default {
-  components: {
-    NextButton,
+defineProps({
+  show: {
+    type: Boolean,
+    default: false,
   },
-  props: {
-    show: {
-      type: Boolean,
-      default: false,
-    },
-    hasAccounts: {
-      type: Boolean,
-      default: true,
-    },
+  hasAccounts: {
+    type: Boolean,
+    default: true,
   },
-  emits: ['closeAccountCreateModal'],
-  setup() {
-    return { v$: useVuelidate() };
+});
+
+const emit = defineEmits(['closeAccountCreateModal']);
+const { t } = useI18n();
+const route = useRoute();
+const store = useStore();
+const uiFlags = useMapGetter('agents/getUIFlags');
+
+const accountName = ref('');
+const v$ = useVuelidate(
+  {
+    accountName: { required, minLength: minLength(1) },
   },
-  data() {
-    return {
-      accountName: '',
-    };
-  },
-  validations() {
-    return {
-      accountName: {
-        required,
-        minLength: minLength(1),
-      },
-    };
-  },
-  computed: {
-    ...mapGetters({
-      uiFlags: 'agents/getUIFlags',
-    }),
-  },
-  methods: {
-    async addAccount() {
-      try {
-        const account_id = await this.$store.dispatch('accounts/create', {
-          account_name: this.accountName,
-          parent_id: this.$route.params.accountId,
-        });
-        this.$emit('closeAccountCreateModal');
-        useAlert(this.$t('CREATE_ACCOUNT.API.SUCCESS_MESSAGE'));
-        window.location = `/app/accounts/${account_id}/dashboard`;
-      } catch (error) {
-        if (error.response.status === 422) {
-          useAlert(this.$t('CREATE_ACCOUNT.API.EXIST_MESSAGE'));
-        } else {
-          useAlert(this.$t('CREATE_ACCOUNT.API.ERROR_MESSAGE'));
-        }
-      }
-    },
-  },
+  { accountName }
+);
+
+const close = () => emit('closeAccountCreateModal');
+
+const addAccount = async () => {
+  v$.value.$touch();
+  if (v$.value.$invalid) return;
+
+  try {
+    const accountId = await store.dispatch('accounts/create', {
+      account_name: accountName.value,
+      parent_id: route.params.accountId,
+    });
+    close();
+    useAlert(t('CREATE_ACCOUNT.API.SUCCESS_MESSAGE'));
+    window.location = `/app/accounts/${accountId}/dashboard`;
+  } catch (error) {
+    if (error.response?.status === 422) {
+      useAlert(t('CREATE_ACCOUNT.API.EXIST_MESSAGE'));
+    } else {
+      useAlert(t('CREATE_ACCOUNT.API.ERROR_MESSAGE'));
+    }
+  }
 };
 </script>
 
 <template>
-  <woot-modal :show="show" :on-close="() => $emit('closeAccountCreateModal')">
-    <div class="flex flex-col h-auto overflow-auto">
-      <woot-modal-header
-        :header-title="$t('CREATE_ACCOUNT.NEW_ACCOUNT')"
-        :header-content="$t('CREATE_ACCOUNT.SELECTOR_SUBTITLE')"
-      />
-      <div v-if="!hasAccounts" class="mx-8 mt-6 mb-0 text-sm">
-        <div class="flex items-center rounded-md alert">
-          <div class="ml-1 mr-3">
-            <fluent-icon icon="warning" />
-          </div>
-          {{ $t('CREATE_ACCOUNT.NO_ACCOUNT_WARNING') }}
-        </div>
+  <RelayModal
+    :show="show"
+    :title="t('CREATE_ACCOUNT.NEW_ACCOUNT')"
+    :description="t('CREATE_ACCOUNT.SELECTOR_SUBTITLE')"
+    @close="close"
+  >
+    <form class="flex flex-col gap-5" @submit.prevent="addAccount">
+      <div
+        v-if="!hasAccounts"
+        class="flex items-center gap-3 rounded-md border border-destructive/30 bg-destructive/10 px-3 py-2 text-[13.5px] text-foreground"
+      >
+        <span
+          class="i-lucide-triangle-alert size-4 shrink-0 text-destructive"
+        />
+        {{ t('CREATE_ACCOUNT.NO_ACCOUNT_WARNING') }}
       </div>
 
-      <form class="flex flex-col w-full" @submit.prevent="addAccount">
-        <div class="w-full">
-          <label :class="{ error: v$.accountName.$error }">
-            {{ $t('CREATE_ACCOUNT.FORM.NAME.LABEL') }}
-            <input
-              v-model="accountName"
-              type="text"
-              :placeholder="$t('CREATE_ACCOUNT.FORM.NAME.PLACEHOLDER')"
-              @input="v$.accountName.$touch"
-            />
-          </label>
-        </div>
-        <div class="w-full flex justify-end gap-2 items-center">
-          <NextButton
-            faded
-            slate
-            type="reset"
-            :label="$t('CREATE_ACCOUNT.FORM.CANCEL')"
-            @click.prevent="() => $emit('closeAccountCreateModal')"
-          />
-          <NextButton
-            type="submit"
-            :label="$t('CREATE_ACCOUNT.FORM.SUBMIT')"
-            :is-loading="uiFlags.isCreating"
-            :disabled="
-              v$.accountName.$invalid ||
-              v$.accountName.$invalid ||
-              uiFlags.isCreating
-            "
-          />
-        </div>
-      </form>
-    </div>
-  </woot-modal>
+      <div :class="RELAY_FORM_FIELD_CLASS">
+        <RelayLabel :class="RELAY_FORM_LABEL_CLASS">
+          {{ t('CREATE_ACCOUNT.FORM.NAME.LABEL') }}
+        </RelayLabel>
+        <RelayInput
+          v-model="accountName"
+          type="text"
+          :placeholder="t('CREATE_ACCOUNT.FORM.NAME.PLACEHOLDER')"
+          class-name="h-9 px-4 text-[14px] shadow-sm rounded-md border-border/80 bg-background focus-visible:ring-1 focus-visible:ring-primary/30"
+          @blur="v$.accountName.$touch"
+        />
+      </div>
+
+      <div class="flex justify-end gap-3">
+        <RelayButton
+          type="button"
+          variant="outline"
+          class="h-9 border-border bg-muted px-5 text-[13px] font-medium text-foreground shadow-sm hover:bg-muted/80"
+          @click="close"
+        >
+          {{ t('CREATE_ACCOUNT.FORM.CANCEL') }}
+        </RelayButton>
+        <RelayButton
+          type="submit"
+          class="h-9 px-5 text-[13px] font-medium shadow-sm"
+          :disabled="v$.accountName.$invalid || uiFlags.isCreating"
+        >
+          {{ t('CREATE_ACCOUNT.FORM.SUBMIT') }}
+        </RelayButton>
+      </div>
+    </form>
+  </RelayModal>
 </template>

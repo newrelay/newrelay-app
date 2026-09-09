@@ -40,7 +40,7 @@ const onUploadClick = () => {
     <div
       v-if="open"
       data-relay
-      class="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm transition-all duration-300"
+      class="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-[8px] transition-all duration-300"
       @click.self="close"
     >
       <div

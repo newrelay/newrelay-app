@@ -102,7 +102,7 @@ onMounted(() => {
 
 <style lang="scss">
 .modal-mask {
-  @apply flex items-center justify-center bg-black/10 backdrop-blur-[4px] z-[9990] h-full left-0 fixed top-0 w-full;
+  @apply flex items-center justify-center bg-background/80 backdrop-blur-[8px] z-[9990] h-full left-0 fixed top-0 w-full;
 
   .modal-container {
     &.medium {

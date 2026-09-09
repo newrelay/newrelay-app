@@ -13,7 +13,7 @@ defineEmits(['accept', 'reject', 'minimize']);
 
 <template>
   <div
-    class="fixed inset-0 z-[400] flex animate-in fade-in items-center justify-center bg-background/80 p-4 backdrop-blur-md duration-300 sm:p-8"
+    class="fixed inset-0 z-[400] flex animate-in fade-in items-center justify-center bg-background/80 p-4 backdrop-blur-[8px] duration-300 sm:p-8"
     @click.self="$emit('minimize')"
   >
     <div

@@ -1018,7 +1018,7 @@ watch(selectedLocationId, id => {
     <!-- Google Business Location Selection Modal -->
     <div
       v-if="showLocationModal"
-      class="fixed inset-0 z-50 overflow-y-auto flex items-center justify-center p-4 bg-muted/60 backdrop-blur-sm"
+      class="fixed inset-0 z-50 overflow-y-auto flex items-center justify-center p-4 bg-background/80 backdrop-blur-[8px]"
     >
       <div class="bg-card rounded-2xl border border-border/80 max-w-lg w-full shadow-2xl p-6 space-y-5">
         <!-- Header -->
@@ -1087,7 +1087,7 @@ watch(selectedLocationId, id => {
     <!-- Connection Modal for standard listings -->
     <div
       v-if="showConnectModal"
-      class="fixed inset-0 z-50 overflow-y-auto flex items-center justify-center p-4 bg-muted/60 backdrop-blur-sm"
+      class="fixed inset-0 z-50 overflow-y-auto flex items-center justify-center p-4 bg-background/80 backdrop-blur-[8px]"
     >
       <div class="bg-card rounded-2xl border border-border/80 max-w-md w-full shadow-2xl p-6 space-y-5 animate-fade-in">
         <div class="flex items-center justify-between">
@@ -1144,7 +1144,7 @@ watch(selectedLocationId, id => {
     <!-- Custom link creation Modal -->
     <div
       v-if="showCustomModal"
-      class="fixed inset-0 z-50 overflow-y-auto flex items-center justify-center p-4 bg-muted/60 backdrop-blur-sm"
+      class="fixed inset-0 z-50 overflow-y-auto flex items-center justify-center p-4 bg-background/80 backdrop-blur-[8px]"
     >
       <div class="bg-card rounded-2xl border border-border/80 max-w-md w-full shadow-2xl p-6 space-y-5">
         <div class="flex items-center justify-between">

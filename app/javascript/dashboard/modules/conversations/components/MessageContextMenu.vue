@@ -14,6 +14,7 @@ import {
 import MenuItem from '../../../components/widgets/conversation/contextMenu/menuItem.vue';
 import { useTrack } from 'dashboard/composables';
 import NextButton from 'dashboard/components-next/button/Button.vue';
+import { RelayModal } from 'dashboard/components-next/relay';
 
 export default {
   components: {
@@ -21,6 +22,7 @@ export default {
     MenuItem,
     ContextMenu,
     NextButton,
+    RelayModal,
   },
   props: {
     message: {
@@ -144,6 +146,7 @@ export default {
           messageId: this.messageId,
         });
         useAlert(this.$t('CONVERSATION.SUCCESS_DELETE_MESSAGE'));
+        this.closeDeleteModal();
         this.handleClose();
       } catch (error) {
         useAlert(this.$t('CONVERSATION.FAIL_DELETE_MESSSAGE'));
@@ -159,21 +162,20 @@ export default {
 <template>
   <div class="context-menu">
     <!-- Add To Canned Responses -->
-    <woot-modal
-      v-if="isCannedResponseModalOpen && enabledOptions['cannedResponse']"
-      v-model:show="isCannedResponseModalOpen"
-      :on-close="hideCannedResponseModal"
+    <RelayModal
+      :show="isCannedResponseModalOpen && enabledOptions['cannedResponse']"
+      :title="$t('CANNED_MGMT.ADD.TITLE')"
+      @close="hideCannedResponseModal"
     >
       <AddCannedModal
         :response-content="plainTextContent"
         :on-close="hideCannedResponseModal"
       />
-    </woot-modal>
+    </RelayModal>
     <!-- Confirm Deletion -->
     <woot-delete-modal
       v-if="showDeleteModal && enabledOptions['delete']"
       v-model:show="showDeleteModal"
-      class="context-menu--delete-modal"
       :on-close="closeDeleteModal"
       :on-confirm="confirmDeletion"
       :title="$t('CONVERSATION.CONTEXT_MENU.DELETE_CONFIRMATION.TITLE')"
@@ -268,16 +270,6 @@ export default {
 
   hr {
     @apply m-1 border-b border-solid border-border;
-  }
-}
-
-.context-menu--delete-modal {
-  :deep(.modal-container) {
-    @apply max-w-[30rem];
-
-    h2 {
-      @apply font-medium text-base;
-    }
   }
 }
 </style>

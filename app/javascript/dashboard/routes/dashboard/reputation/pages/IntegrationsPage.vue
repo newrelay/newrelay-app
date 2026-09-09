@@ -519,7 +519,7 @@ const listingOptions = computed(() => listings.value.map(l => ({ value: l.id, la
 
     <!-- Configure modal -->
     <div v-if="isConfigModalOpen && selectedIntegration" class="fixed inset-0 z-50 flex items-center justify-center p-4">
-      <div class="absolute inset-0 bg-background/80 backdrop-blur-sm" @click="isConfigModalOpen = false"></div>
+      <div class="absolute inset-0 bg-background/80 backdrop-blur-[8px]" @click="isConfigModalOpen = false"></div>
       <div class="relative bg-card border border-border rounded-2xl shadow-lg max-w-lg w-full p-6 space-y-5">
         <div class="flex items-center justify-between pb-3 border-b border-border">
           <div class="flex items-center gap-2.5">
@@ -556,7 +556,7 @@ const listingOptions = computed(() => listings.value.map(l => ({ value: l.id, la
 
     <!-- Request integration modal -->
     <div v-if="isRequestModalOpen" class="fixed inset-0 z-50 flex items-center justify-center p-4">
-      <div class="absolute inset-0 bg-background/80 backdrop-blur-sm" @click="isRequestModalOpen = false"></div>
+      <div class="absolute inset-0 bg-background/80 backdrop-blur-[8px]" @click="isRequestModalOpen = false"></div>
       <div class="relative bg-card border border-border rounded-2xl shadow-lg max-w-md w-full p-6 space-y-5">
         <template v-if="!isRequestSubmitted">
           <div class="flex items-center justify-between pb-3 border-b border-border">
@@ -595,7 +595,7 @@ const listingOptions = computed(() => listings.value.map(l => ({ value: l.id, la
 
     <!-- Manual connect modal (non-OAuth platforms) -->
     <div v-if="isConnectModalOpen && connectTarget" class="fixed inset-0 z-50 flex items-center justify-center p-4">
-      <div class="absolute inset-0 bg-background/80 backdrop-blur-sm" @click="isConnectModalOpen = false"></div>
+      <div class="absolute inset-0 bg-background/80 backdrop-blur-[8px]" @click="isConnectModalOpen = false"></div>
       <div class="relative bg-card border border-border rounded-2xl shadow-lg max-w-md w-full p-6 space-y-5">
         <div class="flex items-center justify-between pb-3 border-b border-border">
           <div class="flex items-center gap-2.5">
@@ -626,7 +626,7 @@ const listingOptions = computed(() => listings.value.map(l => ({ value: l.id, la
 
     <!-- Google Business location picker -->
     <div v-if="showLocationModal" class="fixed inset-0 z-50 flex items-center justify-center p-4">
-      <div class="absolute inset-0 bg-background/80 backdrop-blur-sm" @click="showLocationModal = false"></div>
+      <div class="absolute inset-0 bg-background/80 backdrop-blur-[8px]" @click="showLocationModal = false"></div>
       <div class="relative bg-card border border-border rounded-2xl shadow-lg max-w-md w-full p-6 space-y-5">
         <div class="flex items-center justify-between pb-3 border-b border-border">
           <div class="flex items-center gap-2.5">

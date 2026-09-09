@@ -83,7 +83,7 @@ export default {
 
 <template>
   <form @submit.prevent="addCannedResponse()">
-    <div class="space-y-5 px-7 pb-2">
+    <div class="space-y-5">
       <div class="flex flex-col gap-1.5">
         <RelayLabel class="text-[13.5px] font-medium text-foreground">
           {{ $t('CANNED_MGMT.ADD.FORM.SHORT_CODE.LABEL') }}
@@ -119,7 +119,7 @@ export default {
         />
       </div>
     </div>
-    <div class="flex justify-end gap-3 border-t border-border/40 px-7 py-6">
+    <div class="flex justify-end gap-3 border-t border-border/40 pt-5">
       <RelayButton
         type="button"
         variant="outline"

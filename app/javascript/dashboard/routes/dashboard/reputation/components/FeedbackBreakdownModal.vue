@@ -54,7 +54,7 @@ function close() {
 
 <template>
   <div v-if="open" class="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6">
-    <div class="absolute inset-0 bg-background/80 backdrop-blur-sm" @click="close"></div>
+    <div class="absolute inset-0 bg-background/80 backdrop-blur-[8px]" @click="close"></div>
 
     <div class="relative w-full max-w-2xl max-h-[90vh] bg-card rounded-2xl shadow-2xl border border-border flex flex-col overflow-hidden">
       <!-- Header -->

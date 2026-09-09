@@ -3,6 +3,7 @@ import { computed } from 'vue';
 import { useRoute } from 'vue-router';
 import { useI18n } from 'vue-i18n';
 import { useAccount } from 'dashboard/composables/useAccount';
+import ContactsListingHeaderActions from 'dashboard/components-next/Contacts/ContactsHeader/ContactsListingHeaderActions.vue';
 
 const route = useRoute();
 const { t } = useI18n();
@@ -51,10 +52,7 @@ const isActive = tab => {
             {{ t('CONTACTS_LAYOUT.HEADER.DESCRIPTION') }}
           </p>
         </div>
-        <div
-          id="contacts-listing-header-actions"
-          class="flex min-w-0 flex-wrap items-center justify-end gap-2"
-        />
+        <ContactsListingHeaderActions />
       </div>
       <nav
         class="mt-6 flex items-center gap-6 overflow-x-auto no-scrollbar"

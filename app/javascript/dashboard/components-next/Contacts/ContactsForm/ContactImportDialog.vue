@@ -75,7 +75,7 @@ defineExpose({ dialogRef });
   <TeleportWithDirection to="body">
     <div
       v-if="isOpen"
-      class="flex items-center justify-center bg-n-alpha-black2 p-4 backdrop-blur-[4px]"
+      class="flex items-center justify-center p-4"
       :class="[RELAY_DIALOG_OVERLAY_CLASS]"
       @click.self="dialogRef.close()"
     >

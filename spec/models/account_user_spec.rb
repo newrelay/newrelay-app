@@ -28,6 +28,15 @@ RSpec.describe AccountUser do
     end
   end
 
+  describe 'validations' do
+    it 'is invalid when the user is already added to the account' do
+      duplicate = build(:account_user, account: account_user.account, user: account_user.user)
+
+      expect(duplicate).not_to be_valid
+      expect(duplicate.errors[:user_id]).to be_present
+    end
+  end
+
   describe 'destroy call agent::destroy service' do
     it 'gets created with the right default settings' do
       create(:conversation, account: account_user.account, assignee: account_user.user, inbox: inbox)

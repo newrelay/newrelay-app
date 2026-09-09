@@ -405,4 +405,52 @@ RSpec.describe 'Conversation Messages API', type: :request do
       end
     end
   end
+
+  describe 'POST /api/v1/accounts/{account.id}/conversations/:conversation_id/messages/:id/translate' do
+    let(:message) { create(:message, account: account) }
+    let(:conversation) { message.conversation }
+
+    context 'when it is an unauthenticated user' do
+      it 'returns unauthorized' do
+        post "/api/v1/accounts/#{account.id}/conversations/#{conversation.display_id}/messages/#{message.id}/translate"
+        expect(response).to have_http_status(:unauthorized)
+      end
+    end
+
+    context 'when it is an authenticated user with access to conversation' do
+      let(:agent) { create(:user, account: account, role: :agent) }
+
+      before do
+        create(:inbox_member, inbox: conversation.inbox, user: agent)
+      end
+
+      it 'translates and persists the message content' do
+        service = instance_double(Integrations::GoogleTranslate::ProcessorService, perform: 'contenu traduit')
+        allow(Integrations::GoogleTranslate::ProcessorService).to receive(:new)
+          .with(message: message, target_language: 'fr')
+          .and_return(service)
+
+        post "/api/v1/accounts/#{account.id}/conversations/#{conversation.display_id}/messages/#{message.id}/translate",
+             params: { target_language: 'fr' },
+             headers: agent.create_new_auth_token,
+             as: :json
+
+        expect(response).to have_http_status(:success)
+        expect(response.parsed_body['content']).to eq('contenu traduit')
+        expect(message.reload.translations['fr']).to eq('contenu traduit')
+      end
+
+      it 'returns the cached translation without calling the processor again' do
+        message.update!(translations: { 'fr' => 'deja traduit' })
+        expect(Integrations::GoogleTranslate::ProcessorService).not_to receive(:new)
+
+        post "/api/v1/accounts/#{account.id}/conversations/#{conversation.display_id}/messages/#{message.id}/translate",
+             params: { target_language: 'fr' },
+             headers: agent.create_new_auth_token,
+             as: :json
+
+        expect(response).to have_http_status(:success)
+      end
+    end
+  end
 end

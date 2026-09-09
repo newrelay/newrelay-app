@@ -84,6 +84,35 @@ describe Contacts::FilterService do
         expect(result[:contacts].length).to be 1
         expect(result[:contacts].first.name).to eq(en_contact.name)
       end
+
+      it 'filter contacts by name with contains filter_operator' do
+        params[:payload] = [
+          {
+            attribute_key: 'name',
+            filter_operator: 'contains',
+            values: [en_contact.name],
+            query_operator: nil
+          }.with_indifferent_access
+        ]
+
+        result = filter_service.new(account, first_user, params).perform
+        expect(result[:count]).to be 1
+        expect(result[:contacts].first.id).to eq(en_contact.id)
+      end
+
+      it 'filter contacts by name with does_not_contain filter_operator' do
+        params[:payload] = [
+          {
+            attribute_key: 'name',
+            filter_operator: 'does_not_contain',
+            values: [en_contact.name],
+            query_operator: nil
+          }.with_indifferent_access
+        ]
+
+        result = filter_service.new(account, first_user, params).perform
+        expect(result[:contacts].pluck(:id)).not_to include(en_contact.id)
+      end
     end
 
     context 'with standard attributes - phone' do

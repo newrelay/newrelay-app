@@ -155,14 +155,14 @@ onMounted(load);
       </div>
     </div>
 
-    <div class="min-h-0 flex-1 overflow-auto px-6 lg:px-10 pb-6">
+    <div class="flex min-h-0 flex-1 flex-col overflow-auto px-6 lg:px-10 pb-6">
       <div v-if="loading" class="flex items-center justify-center py-20">
         <Spinner />
       </div>
 
       <div
         v-else-if="!filteredCampaigns.length"
-        class="flex flex-col items-center justify-center gap-3 rounded-xl border border-border/60 bg-card px-6 py-16 text-center"
+        class="m-auto flex w-full flex-1 flex-col items-center justify-center gap-3 rounded-xl border border-border/60 bg-card px-6 py-16 text-center"
       >
         <h2 class="text-[20px] font-[600] text-foreground">
           {{ $t('CAMPAIGN_ANALYTICS.EMPTY.TITLE') }}

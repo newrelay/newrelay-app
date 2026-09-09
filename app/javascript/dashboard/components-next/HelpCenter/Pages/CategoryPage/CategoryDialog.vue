@@ -8,6 +8,7 @@ import { PORTALS_EVENTS } from 'dashboard/helper/AnalyticsHelper/events';
 
 import TeleportWithDirection from 'dashboard/components-next/TeleportWithDirection.vue';
 import { RelayButton } from 'dashboard/components-next/relay';
+import { RELAY_MODAL_CLOSE_BUTTON_CLASS } from 'dashboard/components-next/relay/modal/constants';
 import CategoryForm from 'dashboard/components-next/HelpCenter/Pages/CategoryPage/CategoryForm.vue';
 
 const props = defineProps({
@@ -140,7 +141,8 @@ onMounted(() => {
             }}
           </h2>
           <button
-            class="rounded-md p-1 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+            type="button"
+            :class="RELAY_MODAL_CLOSE_BUTTON_CLASS"
             @click="handleClose"
           >
             <span class="i-lucide-x size-5" aria-hidden="true" />

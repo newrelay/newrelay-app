@@ -267,8 +267,8 @@ onMounted(() => {
   <div
     class="relative flex h-full min-h-0 flex-1 flex-col overflow-hidden bg-background"
   >
-    <div class="flex-1 overflow-y-auto p-6">
-      <div class="max-w-6xl">
+    <div class="flex min-h-0 flex-1 flex-col overflow-y-auto p-6">
+      <div class="flex min-h-0 max-w-6xl flex-1 flex-col">
         <h2
           class="capitalize mb-1 text-base font-semibold tracking-tight text-foreground"
         >
@@ -410,7 +410,7 @@ onMounted(() => {
 
         <div
           v-else-if="!audits.length"
-          class="flex flex-col items-center justify-center gap-3 py-16 text-center"
+          class="m-auto flex flex-1 flex-col items-center justify-center gap-3 py-16 text-center"
         >
           <span
             class="i-lucide-activity mb-2 size-10 text-muted-foreground/40"

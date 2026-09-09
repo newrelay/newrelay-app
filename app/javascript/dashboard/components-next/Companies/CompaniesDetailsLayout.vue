@@ -7,7 +7,7 @@ const emit = defineEmits(['back']);
     class="relative flex h-full w-full flex-col overflow-hidden bg-background animate-in fade-in zoom-in-95 duration-200"
   >
     <slot name="header" :on-back="() => emit('back')" />
-    <div class="flex-1 overflow-y-auto">
+    <div class="flex min-h-0 flex-1 flex-col overflow-y-auto">
       <slot />
     </div>
   </section>

@@ -72,7 +72,7 @@ const onImport = async file => {
 
 <template>
   <div
-    class="mx-auto flex max-w-lg flex-1 flex-col items-center justify-center py-12 text-center"
+    class="m-auto flex max-w-lg flex-1 flex-col items-center justify-center py-12 text-center"
   >
     <div
       class="mb-6 mt-2 flex size-16 items-center justify-center rounded-full bg-primary/10 ring-8 ring-primary/5 animate-in fade-in zoom-in-95 duration-500"

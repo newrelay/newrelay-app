@@ -1,4 +1,6 @@
 <script>
+import { RELAY_MODAL_CLOSE_BUTTON_CLASS } from 'dashboard/components-next/relay/modal/constants';
+
 export default {
   inject: ['v$'],
   props: {
@@ -21,6 +23,9 @@ export default {
   },
   emits: ['update:name', 'update:visibility', 'submit', 'close'],
   computed: {
+    closeButtonClass() {
+      return RELAY_MODAL_CLOSE_BUTTON_CLASS;
+    },
     isPublicVisibilityDisabled() {
       return !this.canManagePublicMacros;
     },
@@ -65,11 +70,7 @@ export default {
         <h3 class="text-base font-medium text-foreground">
           {{ $t('MACROS.EDITOR.DETAILS_TITLE') }}
         </h3>
-        <button
-          type="button"
-          class="text-muted-foreground hover:text-foreground transition-colors p-1 rounded-md hover:bg-muted/50 border-0 bg-transparent cursor-pointer flex items-center"
-          @click="$emit('close')"
-        >
+        <button type="button" :class="closeButtonClass" @click="$emit('close')">
           <span class="i-lucide-x size-4.5 block" />
         </button>
       </div>

@@ -43,7 +43,7 @@ const variants = {
   secondary:
     'bg-secondary text-secondary-foreground shadow-xs hover:bg-secondary/80',
   ghost:
-    'border border-border hover:border-transparent hover:bg-accent hover:text-accent-foreground',
+    'border border-border bg-background shadow-xs hover:border-transparent hover:bg-accent hover:text-accent-foreground',
   link: 'text-primary underline-offset-4 hover:underline',
 };
 

@@ -215,7 +215,7 @@ const handleCreateAssistant = () => {
         </div>
         <slot name="subHeader" />
       </header>
-      <main class="min-h-0 flex-1 overflow-y-auto">
+      <main class="flex min-h-0 flex-1 flex-col overflow-y-auto">
         <slot v-if="!showPaywall" name="controls" />
         <div
           v-if="isFetching"
@@ -226,7 +226,10 @@ const handleCreateAssistant = () => {
         <div v-else-if="showPaywall">
           <slot name="paywall" />
         </div>
-        <div v-else-if="isEmpty" class="flex h-full min-h-0 flex-col">
+        <div
+          v-else-if="isEmpty"
+          class="m-auto flex min-h-0 w-full flex-1 flex-col"
+        >
           <slot name="emptyState" />
         </div>
         <slot v-else name="body" />

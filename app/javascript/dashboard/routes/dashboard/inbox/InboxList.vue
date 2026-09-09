@@ -420,7 +420,7 @@ onMounted(() => {
 
         <div
           ref="notificationList"
-          class="flex-1 overflow-y-auto overflow-x-hidden min-h-0"
+          class="flex min-h-0 flex-1 flex-col overflow-x-hidden overflow-y-auto"
         >
           <InboxCard
             v-for="notificationItem in filteredConversations"
@@ -445,7 +445,7 @@ onMounted(() => {
 
           <div
             v-if="!isFetching && !filteredConversations.length"
-            class="flex flex-1 min-h-0 items-stretch"
+            class="m-auto flex w-full flex-1 items-center justify-center"
           >
             <InboxEmptyState
               :active-view="activeView"

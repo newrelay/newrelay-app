@@ -3,6 +3,7 @@ import {
   RELAY_MODAL_HEADER_CLASS,
   RELAY_MODAL_TITLE_CLASS,
   RELAY_MODAL_DESCRIPTION_CLASS,
+  RELAY_MODAL_CLOSE_BUTTON_CLASS,
 } from './constants';
 
 defineProps({
@@ -52,7 +53,7 @@ defineEmits(['close']);
     <button
       v-if="showClose"
       type="button"
-      class="reset-base flex size-8 shrink-0 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+      :class="RELAY_MODAL_CLOSE_BUTTON_CLASS"
       @click="$emit('close')"
     >
       <span class="i-lucide-x size-4" />

@@ -4,6 +4,7 @@ import { useI18n } from 'vue-i18n';
 import { dynamicTime } from 'shared/helpers/timeHelper';
 import { getInboxIconByType } from 'dashboard/helper/inbox';
 import { RelayBadge } from 'dashboard/components-next/relay';
+import { RELAY_MODAL_CLOSE_BUTTON_CLASS } from 'dashboard/components-next/relay/modal/constants';
 import { CHANNEL_NAME_BY_TYPE } from '../constants/channels';
 
 const props = defineProps({
@@ -62,7 +63,7 @@ const reached = computed(() => {
           </h2>
           <button
             type="button"
-            class="p-1.5 text-muted-foreground hover:bg-muted rounded-full transition-colors -mr-1.5"
+            :class="RELAY_MODAL_CLOSE_BUTTON_CLASS"
             @click="closePanel"
           >
             <span class="i-lucide-x size-4" />

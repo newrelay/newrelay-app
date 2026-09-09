@@ -2,6 +2,7 @@
 import { useI18n } from 'vue-i18n';
 import { dynamicTime } from 'shared/helpers/timeHelper';
 import { RelayButton, RelayBadge } from 'dashboard/components-next/relay';
+import { RELAY_MODAL_CLOSE_BUTTON_CLASS } from 'dashboard/components-next/relay/modal/constants';
 
 const props = defineProps({
   open: { type: Boolean, default: false },
@@ -32,7 +33,7 @@ const useInAutomation = () => {
         </h2>
         <button
           type="button"
-          class="p-1.5 text-muted-foreground hover:bg-muted rounded-full transition-colors"
+          :class="RELAY_MODAL_CLOSE_BUTTON_CLASS"
           @click="closePanel"
         >
           <span class="i-lucide-x size-4" />

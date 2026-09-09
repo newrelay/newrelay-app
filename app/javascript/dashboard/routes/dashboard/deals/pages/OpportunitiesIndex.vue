@@ -129,7 +129,7 @@ onMounted(load);
     </div>
 
     <div
-      class="min-h-0 flex-1 overflow-auto"
+      class="flex min-h-0 flex-1 flex-col overflow-auto"
       :class="showOnboardingEmpty ? 'bg-muted/10' : 'bg-card'"
     >
       <div
@@ -141,7 +141,7 @@ onMounted(load);
 
       <div
         v-else-if="showOnboardingEmpty"
-        class="flex flex-1 justify-center px-4 py-12"
+        class="m-auto flex w-full flex-1 justify-center px-4 py-12"
       >
         <DealEmptyState
           variant="opportunities"
@@ -152,7 +152,7 @@ onMounted(load);
 
       <div
         v-else-if="showSearchEmpty"
-        class="flex flex-col items-center justify-center gap-3 px-6 py-16 text-center"
+        class="m-auto flex w-full flex-1 flex-col items-center justify-center gap-3 px-6 py-16 text-center"
       >
         <div
           class="flex size-12 items-center justify-center rounded-full bg-muted"

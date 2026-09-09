@@ -38,15 +38,15 @@ const emit = defineEmits([
     class="relative flex h-full w-full overflow-hidden bg-muted/10 dark:bg-background"
   >
     <div
-      class="flex-1 overflow-y-auto"
-      :class="isEmptyState ? 'px-4 py-12 md:py-16' : 'p-6 lg:px-10'"
+      class="flex min-h-0 flex-1 flex-col overflow-y-auto"
+      :class="isEmptyState ? 'px-4' : 'p-6 lg:px-10'"
     >
       <div
-        class="mx-auto w-full"
+        class="mx-auto flex w-full flex-1 flex-col"
         :class="
           isEmptyState
-            ? 'max-w-5xl'
-            : 'max-w-7xl mx-auto space-y-6 animate-in fade-in duration-500'
+            ? 'm-auto max-w-5xl'
+            : 'max-w-7xl space-y-6 animate-in fade-in duration-500'
         "
       >
         <CompanyHeader

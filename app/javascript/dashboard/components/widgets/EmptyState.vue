@@ -8,7 +8,9 @@ export default {
 </script>
 
 <template>
-  <div class="empty-state py-16 px-1 ml-0 mr-0">
+  <div
+    class="flex h-full min-h-0 flex-1 flex-col items-center justify-center px-1 py-16"
+  >
     <h3
       v-if="title"
       class="capitalize text-foreground block text-center w-full text-[20px] font-[600]"

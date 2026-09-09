@@ -50,9 +50,7 @@ export default {
 </script>
 
 <template>
-  <section
-    class="flex-grow flex-shrink h-full px-4 py-8 overflow-hidden bg-background"
-  >
+  <section class="flex h-full flex-col overflow-hidden bg-background px-4 py-8">
     <div class="flex w-full items-center justify-between gap-2 mb-4">
       <h6 class="text-base font-medium tracking-tight text-foreground">
         {{ $t('NOTIFICATIONS_PAGE.HEADER') }}

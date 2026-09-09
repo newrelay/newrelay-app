@@ -272,7 +272,7 @@ onMounted(() => {
 
     <div
       v-else-if="showEmptyText"
-      class="flex flex-col items-center justify-center space-y-3 py-16 text-center"
+      class="m-auto flex flex-1 flex-col items-center justify-center space-y-3 py-16 text-center"
     >
       <div
         class="flex size-12 items-center justify-center rounded-full bg-muted"

@@ -10,7 +10,10 @@ import {
   RelayInput,
   RelayLabel,
 } from 'dashboard/components-next/relay';
-import { RELAY_DIALOG_OVERLAY_CLASS } from 'dashboard/components-next/relay/modal/constants';
+import {
+  RELAY_DIALOG_OVERLAY_CLASS,
+  RELAY_MODAL_CLOSE_BUTTON_CLASS,
+} from 'dashboard/components-next/relay/modal/constants';
 import Avatar from 'next/avatar/Avatar.vue';
 import { getInboxIconByType, INBOX_TYPES } from 'dashboard/helper/inbox';
 import { AUTORESPONDER_CHANNELS } from '../../constants/channels';
@@ -265,7 +268,7 @@ async function submitMockConnect() {
           </div>
           <button
             type="button"
-            class="p-1 text-muted-foreground hover:bg-muted rounded-full"
+            :class="RELAY_MODAL_CLOSE_BUTTON_CLASS"
             @click="isConnectOpen = false"
           >
             <span class="i-lucide-x size-4" />

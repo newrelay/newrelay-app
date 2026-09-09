@@ -539,8 +539,8 @@ onMounted(() => {
     v-on-click-outside="closeMenus"
     class="relative flex h-full min-h-0 flex-1 flex-col overflow-hidden bg-background"
   >
-    <div class="flex-1 overflow-y-auto p-6">
-      <div class="w-full">
+    <div class="flex min-h-0 flex-1 flex-col overflow-y-auto p-6">
+      <div class="flex min-h-0 w-full flex-1 flex-col">
         <!-- Header -->
         <div class="mb-6 flex items-center justify-between">
           <div class="flex items-center gap-3">
@@ -828,7 +828,7 @@ onMounted(() => {
 
         <div
           v-else
-          class="flex flex-col items-center justify-center gap-3 py-16 text-center"
+          class="m-auto flex flex-1 flex-col items-center justify-center gap-3 py-16 text-center"
         >
           <span
             class="i-lucide-clipboard-list mb-2 size-10 text-muted-foreground/40"

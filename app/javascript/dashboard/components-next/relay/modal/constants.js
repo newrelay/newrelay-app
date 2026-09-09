@@ -23,3 +23,7 @@ export const RELAY_MODAL_DESCRIPTION_CLASS =
   'mb-0 mt-1 text-[14px] font-normal leading-normal text-muted-foreground';
 
 export const RELAY_MODAL_BODY_CLASS = 'flex-1 overflow-y-auto p-6';
+
+/** Icon close on drawers/modals — bordered surface, not a bare glyph. */
+export const RELAY_MODAL_CLOSE_BUTTON_CLASS =
+  'reset-base flex size-8 shrink-0 items-center justify-center rounded-md border border-border bg-background text-muted-foreground shadow-xs transition-colors hover:border-transparent hover:bg-accent hover:text-foreground';

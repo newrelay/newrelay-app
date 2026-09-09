@@ -3,7 +3,10 @@ import { ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import TeleportWithDirection from 'dashboard/components-next/TeleportWithDirection.vue';
 import { RelayButton } from 'dashboard/components-next/relay';
-import { RELAY_DIALOG_OVERLAY_CLASS } from 'dashboard/components-next/relay/modal/constants';
+import {
+  RELAY_DIALOG_OVERLAY_CLASS,
+  RELAY_MODAL_CLOSE_BUTTON_CLASS,
+} from 'dashboard/components-next/relay/modal/constants';
 
 defineProps({
   open: { type: Boolean, default: false },
@@ -60,7 +63,7 @@ const onUploadClick = () => {
             </h2>
             <button
               type="button"
-              class="flex size-8 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+              :class="RELAY_MODAL_CLOSE_BUTTON_CLASS"
               @click="close"
             >
               <span class="i-lucide-x size-4" />

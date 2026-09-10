@@ -36,7 +36,7 @@ onMounted(() => {
 <template>
   <SettingsLayout :no-records-found="false">
     <template #body>
-      <div class="mx-auto flex max-w-4xl flex-col gap-6">
+      <div class="flex w-full flex-col gap-6">
         <AutoResolve v-if="showAutoResolutionConfig" />
         <ConversationRequiredAttributes :is-enabled="showRequiredAttributes" />
       </div>

@@ -138,7 +138,7 @@ const confirmDeletion = () => {
   >
     <template #body>
       <CustomRolePaywall v-if="isBehindAPaywall" />
-      <div v-else class="max-w-5xl">
+      <div v-else class="w-full">
         <div
           class="overflow-hidden rounded-xl border border-border/60 bg-card shadow-xs"
         >

@@ -13,6 +13,7 @@ import {
   RelayInput,
   RelayLabel,
   RelayModal,
+  RelayTextarea,
 } from 'dashboard/components-next/relay';
 
 const props = defineProps({
@@ -282,12 +283,13 @@ watch(() => props.selectedBot, initializeForm, { deep: true });
     :show="show"
     :title="formTitle"
     :description="t('AGENT_BOTS.FORM.SUBTITLE')"
-    size="lg"
+    size="wide"
+    :divided="false"
     flush
     @close="handleFormClose"
   >
     <form @submit.prevent="handleSubmit">
-      <div class="space-y-5 px-7 pb-2">
+      <div class="flex flex-col gap-6 px-8 pb-4">
         <div class="flex flex-col gap-2">
           <RelayLabel class="text-[13.5px] font-medium text-foreground">
             {{ t('AGENT_BOTS.FORM.AVATAR.LABEL') }}
@@ -315,7 +317,7 @@ watch(() => props.selectedBot, initializeForm, { deep: true });
             id="bot-name"
             v-model="formState.botName"
             :placeholder="t('AGENT_BOTS.FORM.NAME.PLACEHOLDER')"
-            class-name="h-10 rounded-md border-border/80 bg-background text-[14px] shadow-sm focus-visible:ring-1 focus-visible:ring-primary/30"
+            class-name="!h-10 !rounded-lg px-4"
             @blur="v$.botName.$touch()"
           />
           <p v-if="botNameError" class="text-[12.5px] text-destructive">
@@ -334,12 +336,12 @@ watch(() => props.selectedBot, initializeForm, { deep: true });
             {{ t('AGENT_BOTS.FORM.DESCRIPTION.LABEL') }}
           </RelayLabel>
           <div class="relative">
-            <textarea
+            <RelayTextarea
               id="bot-description"
               v-model="formState.botDescription"
               :placeholder="t('AGENT_BOTS.FORM.DESCRIPTION.PLACEHOLDER')"
               :maxlength="DESCRIPTION_MAX"
-              class="h-[100px] w-full resize-none border border-border/80 bg-background p-3 text-[14px] text-foreground focus:outline-none focus-visible:ring-1 focus-visible:ring-primary/30 shadow-sm rounded-md"
+              class-name="h-[100px] resize-none !rounded-lg p-3"
             />
             <div
               class="absolute bottom-3 text-[12px] font-medium text-muted-foreground ltr:right-3 rtl:left-3"
@@ -362,8 +364,8 @@ watch(() => props.selectedBot, initializeForm, { deep: true });
             :placeholder="t('AGENT_BOTS.FORM.WEBHOOK_URL.PLACEHOLDER')"
             :class-name="
               botUrlError
-                ? 'h-10 rounded-md border-destructive/80 bg-background text-[14px] shadow-sm focus-visible:ring-1 focus-visible:ring-destructive/30'
-                : 'h-10 rounded-md border-border/80 bg-background text-[14px] shadow-sm focus-visible:ring-1 focus-visible:ring-primary/30'
+                ? '!h-10 !rounded-lg px-4 border-destructive/80 focus-visible:ring-destructive/30'
+                : '!h-10 !rounded-lg px-4'
             "
             @blur="v$.botUrl.$touch()"
           />
@@ -387,7 +389,7 @@ watch(() => props.selectedBot, initializeForm, { deep: true });
                   showTokenValue ? accessToken : '••••••••••••••••••••••••'
                 "
                 readonly
-                class="h-10 w-full border border-border/80 bg-background pl-3 pr-9 font-mono text-[14px] text-foreground focus:outline-none focus-visible:ring-1 focus-visible:ring-primary/30 shadow-sm rounded-md"
+                class="h-10 w-full rounded-lg border border-border/80 bg-background pl-3 pr-9 font-mono text-[14px] text-foreground shadow-sm focus:outline-none focus-visible:ring-1 focus-visible:ring-primary/30"
               />
               <button
                 type="button"
@@ -422,18 +424,18 @@ watch(() => props.selectedBot, initializeForm, { deep: true });
         </div>
       </div>
 
-      <div class="flex justify-end gap-3 border-t border-border/40 px-7 py-6">
+      <div class="flex justify-end gap-3 px-8 pb-8 pt-4">
         <RelayButton
           type="button"
           variant="outline"
-          class="h-9 border-border bg-muted px-5 text-[13px] font-medium text-foreground shadow-sm hover:bg-muted/80"
+          class="h-10 border-border/80 bg-card px-6 text-[13px] font-medium text-foreground hover:bg-muted"
           @click="handleFormClose"
         >
           {{ t('AGENT_BOTS.FORM.CANCEL') }}
         </RelayButton>
         <RelayButton
           type="submit"
-          class="flex h-9 items-center gap-2 px-5 text-[13px] font-medium shadow-sm"
+          class="flex h-10 items-center gap-2 px-6 text-[13px] font-medium"
           :disabled="isSubmitDisabled"
         >
           <Icon icon="i-lucide-wand-2" class="size-4" />
@@ -446,44 +448,40 @@ watch(() => props.selectedBot, initializeForm, { deep: true });
   <RelayModal
     :show="showAccessTokenModal"
     :title="t('AGENT_BOTS.ACCESS_TOKEN.TITLE')"
+    :description="t('AGENT_BOTS.ACCESS_TOKEN.DESCRIPTION')"
     size="md"
     flush
     @close="handleAccessTokenClose"
   >
     <div class="space-y-5 px-7 pb-2">
-      <div>
-        <p class="mb-3 text-[13.5px] font-medium text-foreground">
-          {{ t('AGENT_BOTS.ACCESS_TOKEN.DESCRIPTION') }}
-        </p>
-        <div class="flex items-center gap-2">
-          <div class="relative flex-1">
-            <input
-              :type="showTokenValue ? 'text' : 'password'"
-              :value="showTokenValue ? accessToken : '••••••••••••••••••••••••'"
-              readonly
-              class="h-10 w-full border border-border/80 bg-background pl-3 pr-10 font-mono text-[14px] text-foreground focus:outline-none focus-visible:ring-1 focus-visible:ring-primary/30 shadow-sm rounded-md"
-            />
-            <button
-              type="button"
-              class="absolute top-1/2 p-1 text-muted-foreground transition-colors -translate-y-1/2 hover:text-foreground ltr:right-2.5 rtl:left-2.5"
-              @click="showTokenValue = !showTokenValue"
-            >
-              <Icon
-                :icon="showTokenValue ? 'i-lucide-eye-off' : 'i-lucide-eye'"
-                class="size-4"
-              />
-            </button>
-          </div>
-          <RelayButton
+      <div class="flex items-center gap-2">
+        <div class="relative flex-1">
+          <input
+            :type="showTokenValue ? 'text' : 'password'"
+            :value="showTokenValue ? accessToken : '••••••••••••••••••••••••'"
+            readonly
+            class="h-10 w-full border border-border/80 bg-background pl-3 pr-10 font-mono text-[14px] text-foreground focus:outline-none focus-visible:ring-1 focus-visible:ring-primary/30 shadow-sm rounded-md"
+          />
+          <button
             type="button"
-            variant="outline"
-            class="h-10 shrink-0 border-border/80 bg-card px-3 hover:bg-muted"
-            @click="onCopyToken"
+            class="absolute top-1/2 p-1 text-muted-foreground transition-colors -translate-y-1/2 hover:text-foreground ltr:right-2.5 rtl:left-2.5"
+            @click="showTokenValue = !showTokenValue"
           >
-            <Icon icon="i-lucide-copy" class="size-4" />
-            {{ t('AGENT_BOTS.ACCESS_TOKEN.COPY') }}
-          </RelayButton>
+            <Icon
+              :icon="showTokenValue ? 'i-lucide-eye-off' : 'i-lucide-eye'"
+              class="size-4"
+            />
+          </button>
         </div>
+        <RelayButton
+          type="button"
+          variant="outline"
+          class="h-10 shrink-0 border-border/80 bg-card px-3 hover:bg-muted"
+          @click="onCopyToken"
+        >
+          <Icon icon="i-lucide-copy" class="size-4" />
+          {{ t('AGENT_BOTS.ACCESS_TOKEN.COPY') }}
+        </RelayButton>
       </div>
 
       <div v-if="botSecret">

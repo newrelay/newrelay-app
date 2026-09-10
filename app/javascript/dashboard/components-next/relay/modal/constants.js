@@ -16,6 +16,10 @@ export const RELAY_NATIVE_DIALOG_BACKDROP_CLASS =
 export const RELAY_MODAL_HEADER_CLASS =
   'flex shrink-0 items-start justify-between border-b border-border/80 p-6';
 
+/** Wide / undivided header (Add Bot): extra padding, no divider. */
+export const RELAY_MODAL_HEADER_PLAIN_CLASS =
+  'flex shrink-0 items-start justify-between p-8 pb-6';
+
 export const RELAY_MODAL_TITLE_CLASS =
   'text-base font-medium tracking-tight text-foreground';
 

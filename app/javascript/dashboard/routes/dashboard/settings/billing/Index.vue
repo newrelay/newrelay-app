@@ -741,7 +741,7 @@ onMounted(() => {
     :loading-message="$t('ATTRIBUTES_MGMT.LOADING')"
   >
     <template #body>
-      <div class="flex w-full max-w-3xl flex-col gap-6 ltr:mr-auto rtl:ml-auto">
+      <div class="flex w-full flex-col gap-6">
         <!-- Marketplace client: subscribes to the pricing their reseller parent
            published, instead of picking a direct platform plan. -->
         <section v-if="hasResellerParent" class="grid gap-6">

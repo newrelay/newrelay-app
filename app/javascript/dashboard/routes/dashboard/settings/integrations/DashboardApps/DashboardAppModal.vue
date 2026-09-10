@@ -133,10 +133,17 @@ const submit = async () => {
     @close="closeModal"
   >
     <div class="flex flex-col gap-6">
-      <div class="relative -mt-2 flex items-center justify-between">
-        <h3 class="text-base font-semibold text-foreground">
-          {{ header }}
-        </h3>
+      <div class="relative -mt-2 flex items-start justify-between gap-4">
+        <div class="min-w-0 flex-1">
+          <h3 class="text-base font-medium tracking-tight text-foreground">
+            {{ header }}
+          </h3>
+          <p
+            class="mb-0 mt-1 pr-6 text-[14px] font-normal leading-normal text-muted-foreground"
+          >
+            {{ t('INTEGRATION_SETTINGS.DASHBOARD_APPS.DESCRIPTION') }}
+          </p>
+        </div>
         <button
           type="button"
           :class="RELAY_MODAL_CLOSE_BUTTON_CLASS"

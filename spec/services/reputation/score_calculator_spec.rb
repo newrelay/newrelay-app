@@ -1,11 +1,11 @@
 require 'rails_helper'
 
 RSpec.describe Reputation::ScoreCalculator do
-  Review = Struct.new(:rating, :status, :reviewed_at, keyword_init: true)
+  ScoreCalculatorReview = Struct.new(:rating, :status, :reviewed_at, keyword_init: true)
 
   it 'scores a perfect recent inbox at 100' do
     reviews = Array.new(10) do
-      Review.new(rating: 5, status: 'replied', reviewed_at: Time.current)
+      ScoreCalculatorReview.new(rating: 5, status: 'replied', reviewed_at: Time.current)
     end
     expect(described_class.new(reviews).metrics[:score]).to eq(100)
   end
@@ -21,8 +21,8 @@ RSpec.describe Reputation::ScoreCalculator do
 
   it 'weights rating, response rate, and velocity' do
     reviews = [
-      Review.new(rating: 5, status: 'replied', reviewed_at: Time.current),
-      Review.new(rating: 5, status: 'pending', reviewed_at: Time.current)
+      ScoreCalculatorReview.new(rating: 5, status: 'replied', reviewed_at: Time.current),
+      ScoreCalculatorReview.new(rating: 5, status: 'pending', reviewed_at: Time.current)
     ]
     metrics = described_class.new(reviews).metrics
     # rating 50 + response 15 + velocity (2/10)*20 = 4 → 69

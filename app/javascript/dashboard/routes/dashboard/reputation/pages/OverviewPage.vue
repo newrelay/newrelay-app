@@ -6,7 +6,7 @@ import { RelayButton as Button, RelayBadge as Badge } from 'dashboard/components
 import {
   Star, TrendingUp, TrendingDown, MessageSquare, Bot,
   ArrowRight, MessageCircle, Link, Mail, StarHalf, Share2, Info, Trophy,
-  CheckCircle, Plus, ThumbsUp, ChevronRight
+  CheckCircle, Plus, ThumbsUp, ChevronRight, Check, Globe, ShieldCheck, Lightbulb
 } from 'lucide-vue-next';
 
 import RequestReviewsModal from '../components/RequestReviewsModal.vue';
@@ -55,6 +55,22 @@ const platformSvg = {
   yelp: '<svg viewBox="0 0 24 24" width="20" height="20" xmlns="http://www.w3.org/2000/svg" fill="#E00707"><path d="M12.271 8.782c-.549-3.804-.822-5.72-.822-5.748 0-.888-.622-1.641-1.537-1.887A2.34 2.34 0 0 0 7.3 2.52L3.473 7.337a2.01 2.01 0 0 0-.302 1.895c.28.72.934 1.218 1.695 1.282l5.894.488c1.038.087 1.871-.767 1.511-2.22zm-8.245 6.253l5.374 2.186c1.004.409 2.084-.332 2.084-1.41V11.38c0-1.088-1.096-1.83-2.104-1.41l-5.374 2.185a1.85 1.85 0 0 0-1.148 1.44 1.855 1.855 0 0 0 1.168 1.44zm6.406 5.978l-3.218-4.874a1.796 1.796 0 0 0-2.97-.095 1.855 1.855 0 0 0-.17 1.98l2.28 4.374a2.316 2.316 0 0 0 2.492 1.208 2.302 2.302 0 0 0 1.586-2.593zm9.56-10.826a2.31 2.31 0 0 0-1.92-1.435l-5.916-.489a1.796 1.796 0 0 0-1.493 2.874l3.42 4.96a1.803 1.803 0 0 0 2.8.217l3.477-4.046a2.02 2.02 0 0 0 .368-.654 2.004 2.004 0 0 0-.736-1.427zm-2.278 7.916l-2.277-4.373a1.804 1.804 0 0 0-3.124.149 1.789 1.789 0 0 0 .057 1.695l3.218 4.874a2.305 2.305 0 0 0 2.534.938 2.316 2.316 0 0 0 1.57-2.593 2.31 2.31 0 0 0-1.978-0.69z"/></svg>',
   trustpilot: '<svg viewBox="0 0 24 24" width="20" height="20" xmlns="http://www.w3.org/2000/svg"><rect width="24" height="24" fill="#00B67A" rx="2" ry="2"/><path d="M12 4l2.5 5.2 5.7.8-4.1 4 1 5.7-5.1-2.7-5.1 2.7 1-5.7-4.1-4 5.7-.8L12 4z" fill="#FFF"/></svg>',
 };
+
+const connectPlatforms = [
+  { key: 'google', name: 'Google Business', description: 'Maps & Search ratings', svg: platformSvg.google },
+  { key: 'yelp', name: 'Yelp for Business', description: 'Local customer reviews', svg: platformSvg.yelp },
+  { key: 'facebook', name: 'Facebook Pages', description: 'Page recommendations', svg: platformSvg.facebook },
+  { key: 'trustpilot', name: 'Trustpilot', description: 'Verified review ratings', svg: platformSvg.trustpilot },
+];
+
+const hasConnectedPlatform = computed(() =>
+  (integrations.value || []).some(item => item.status === 'active')
+);
+
+const previewDashboard = ref(false);
+const showOnboarding = computed(
+  () => !hasConnectedPlatform.value && !previewDashboard.value
+);
 
 const avgRating = computed(() => {
   if (!allReviews.value.length) return 0;
@@ -211,6 +227,10 @@ function handleRequestReviews() {
   isRequestModalOpen.value = true;
 }
 
+function goToIntegrations() {
+  router.push({ name: 'reputation_integrations' });
+}
+
 const generatingReplies = ref(false);
 function localDraft(review) {
   const name = (review.reviewer_name || 'there').split(' ')[0];
@@ -256,7 +276,121 @@ async function generateReviewReplies() {
     <ShareReportModal v-if="showDemoSurfaces" v-model:open="isShareModalOpen" />
     <FeedbackBreakdownModal v-model:open="isFeedbackModalOpen" :reviews="allReviews" :show-demo="showDemoSurfaces" />
     
-    <div class="max-w-7xl mx-auto">
+    <div v-if="loading" class="max-w-7xl mx-auto">
+      <div class="flex flex-col items-center justify-center py-24 space-y-4">
+        <div class="size-10 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+        <p class="text-sm font-medium text-muted-foreground">Loading overview...</p>
+      </div>
+    </div>
+
+    <div
+      v-else-if="showOnboarding"
+      class="flex flex-col items-center justify-center text-center max-w-2xl mx-auto w-full py-8"
+    >
+      <div class="size-16 rounded-full bg-primary/10 flex items-center justify-center mb-6 ring-8 ring-primary/5">
+        <Star class="size-8 text-primary" />
+      </div>
+      <h2 class="text-[20px] font-[600] tracking-tight text-foreground mb-2">
+        Connect a Review Platform to Start Monitoring
+      </h2>
+      <p class="text-muted-foreground mb-8 text-sm max-w-lg">
+        Stop switching between review sites. Connect your Google, Yelp, and Facebook profiles and let Relay AI monitor ratings and draft replies automatically.
+      </p>
+
+      <div class="w-full max-w-3xl bg-card/50 border border-border/50 rounded-xl p-5 mb-8 text-left shadow-sm backdrop-blur-sm relative overflow-hidden mx-auto">
+        <div class="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full blur-2xl -translate-y-1/2 translate-x-1/4 pointer-events-none" />
+        <h3 class="text-sm font-semibold text-foreground mb-4 flex items-center justify-between">
+          Getting Started
+          <span class="text-[10px] font-medium text-primary bg-primary/10 px-2 py-0.5 rounded-full tracking-wide uppercase">
+            Step 3 of 4
+          </span>
+        </h3>
+        <div class="flex flex-col relative ml-1">
+          <div class="absolute left-[11px] top-3 bottom-3 w-px bg-border z-0" />
+          <div class="flex items-center gap-4 py-2.5 z-10">
+            <div class="size-[22px] rounded-full bg-primary flex items-center justify-center shrink-0 ring-4 ring-card">
+              <Check class="size-3 text-primary-foreground" />
+            </div>
+            <span class="text-sm font-medium text-muted-foreground line-through">Create Workspace</span>
+          </div>
+          <div class="flex items-center gap-4 py-2.5 z-10">
+            <div class="size-[22px] rounded-full bg-primary flex items-center justify-center shrink-0 ring-4 ring-card">
+              <Check class="size-3 text-primary-foreground" />
+            </div>
+            <span class="text-sm font-medium text-muted-foreground line-through">Import Contacts</span>
+          </div>
+          <div class="flex items-center gap-4 py-2.5 z-10">
+            <div class="size-[22px] rounded-full border-2 border-primary bg-card flex items-center justify-center shrink-0 ring-4 ring-card shadow-sm shadow-primary/20">
+              <div class="size-1.5 rounded-full bg-primary animate-pulse" />
+            </div>
+            <span class="text-sm font-semibold text-foreground">Connect Review Platform</span>
+          </div>
+          <div class="flex items-center gap-4 py-2.5 z-10 opacity-60">
+            <div class="size-[22px] rounded-full border-2 border-muted-foreground/30 bg-card flex items-center justify-center shrink-0 ring-4 ring-card" />
+            <span class="text-sm font-medium text-foreground">First Review Received</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full mb-8 text-left">
+        <div
+          v-for="platform in connectPlatforms"
+          :key="platform.key"
+          class="group flex items-center gap-4 p-3 border border-border/60 bg-card rounded-xl shadow-sm hover:border-border transition-all"
+        >
+          <div class="size-10 rounded-lg bg-muted/30 border border-border flex items-center justify-center shrink-0 p-2" v-html="platform.svg" />
+          <div class="flex flex-col flex-1 min-w-0">
+            <span class="font-semibold text-sm text-foreground truncate">{{ platform.name }}</span>
+            <span class="text-[13px] text-muted-foreground truncate mt-0.5">{{ platform.description }}</span>
+          </div>
+          <Button
+            variant="outline"
+            size="sm"
+            class="h-8 px-4 text-[13px] font-medium bg-background shadow-xs shrink-0 border border-border hover:border-transparent"
+            @click="goToIntegrations"
+          >
+            Connect
+          </Button>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-5 px-5 py-2.5 bg-card rounded-full border border-border/50 shadow-xs opacity-80 mb-8 flex-wrap justify-center">
+        <span class="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider mr-1">Supported Channels:</span>
+        <div class="flex items-center gap-1.5">
+          <Star class="size-4 text-warning" />
+          <span class="text-[13px] font-medium text-foreground">TripAdvisor</span>
+        </div>
+        <div class="flex items-center gap-1.5">
+          <Globe class="size-4 text-primary" />
+          <span class="text-[13px] font-medium text-foreground">Apple Maps</span>
+        </div>
+        <div class="hidden sm:flex items-center gap-1.5">
+          <ShieldCheck class="size-4 text-primary" />
+          <span class="text-[13px] font-medium text-foreground">BBB</span>
+        </div>
+      </div>
+
+      <div class="flex flex-col sm:flex-row items-center gap-4">
+        <button
+          type="button"
+          class="text-sm font-medium text-primary hover:underline flex items-center gap-1.5 transition-colors"
+          @click="goToIntegrations"
+        >
+          <Lightbulb class="size-4" />
+          Learn how Reputation works
+        </button>
+        <Button
+          v-if="showDemoSurfaces"
+          variant="ghost"
+          class="border border-border hover:border-transparent shadow-xs gap-2 text-[13px]"
+          @click="previewDashboard = true"
+        >
+          Explore Demo Dashboard
+        </Button>
+      </div>
+    </div>
+
+    <div v-else class="max-w-7xl mx-auto">
       <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
         <div>
           <h1 class="text-base font-medium tracking-tight text-foreground">Overview</h1>
@@ -279,12 +413,7 @@ async function generateReviewReplies() {
         </div>
       </div>
 
-      <div v-if="loading" class="flex flex-col items-center justify-center py-24 space-y-4">
-        <div class="size-10 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
-        <p class="text-sm font-medium text-muted-foreground">Loading overview...</p>
-      </div>
-
-      <div v-else class="space-y-6">
+      <div class="space-y-6">
       <!-- Section 1: Top Summary Metrics -->
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <!-- Reputation Score (real — /summary) -->

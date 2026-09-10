@@ -26,7 +26,7 @@ describe('#validateAuthenticateRoutePermission', () => {
   });
 
   describe('when user is not logged in', () => {
-    it('should redirect to login', () => {
+    it('should redirect to login', async () => {
       const to = { name: 'some-protected-route', params: { accountId: 1 } };
 
       // Mock the store to simulate user not logged in
@@ -37,7 +37,7 @@ describe('#validateAuthenticateRoutePermission', () => {
       delete window.location;
       window.location = { assign: mockAssign };
 
-      validateAuthenticateRoutePermission(to, next);
+      await validateAuthenticateRoutePermission(to, next);
 
       expect(mockAssign).toHaveBeenCalledWith('/app/login');
     });

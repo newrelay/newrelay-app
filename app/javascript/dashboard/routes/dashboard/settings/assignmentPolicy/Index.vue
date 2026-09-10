@@ -65,7 +65,7 @@ watch(showCapacityTab, enabled => {
 <template>
   <SettingsLayout :no-records-found="false">
     <template #body>
-      <div class="mx-auto max-w-5xl">
+      <div class="w-full">
         <div class="mb-8">
           <h2 class="text-base font-medium text-foreground">
             {{ $t('ASSIGNMENT_POLICY.INDEX.HEADER.TITLE') }}

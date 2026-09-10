@@ -292,7 +292,7 @@ const handleMagicPaletteApplied = palette => {
 <template>
   <SettingsLayout :is-loading="isFetchingItem">
     <template #body>
-      <div class="flex w-full max-w-3xl flex-col gap-8 ltr:mr-auto rtl:ml-auto">
+      <div class="flex w-full flex-col gap-8">
         <!-- Brand Identity -->
         <SectionLayout
           as-card

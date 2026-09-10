@@ -29,7 +29,7 @@ const mountComponent = props =>
 describe('MacroProperties.vue', () => {
   it('allows administrators to select public visibility', async () => {
     const wrapper = mountComponent({ canManagePublicMacros: true });
-    const publicButton = wrapper.findAll('button')[0];
+    const publicButton = wrapper.findAll('button')[1];
 
     await publicButton.trigger('click');
 
@@ -39,7 +39,7 @@ describe('MacroProperties.vue', () => {
 
   it('disables public visibility for agents with helper copy', async () => {
     const wrapper = mountComponent({ canManagePublicMacros: false });
-    const publicButton = wrapper.findAll('button')[0];
+    const publicButton = wrapper.findAll('button')[1];
 
     await publicButton.trigger('click');
 
@@ -56,7 +56,7 @@ describe('MacroProperties.vue', () => {
       macroVisibility: 'global',
     });
 
-    expect(wrapper.findComponent({ name: 'Icon' }).exists()).toBe(true);
+    expect(wrapper.find('.i-lucide-check').exists()).toBe(true);
   });
 
   it('shows existing public macros as read-only for agents', async () => {
@@ -65,7 +65,7 @@ describe('MacroProperties.vue', () => {
       macroVisibility: 'global',
       readOnly: true,
     });
-    const [publicButton, privateButton] = wrapper.findAll('button');
+    const [, publicButton, privateButton] = wrapper.findAll('button');
 
     await privateButton.trigger('click');
 

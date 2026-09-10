@@ -158,7 +158,7 @@ export default {
 <template>
   <SettingsLayout :is-loading="uiFlags.isFetchingItem">
     <template #body>
-      <div class="flex w-full max-w-3xl flex-col gap-8 ltr:mr-auto rtl:ml-auto">
+      <div class="flex w-full flex-col gap-8">
         <form
           class="flex min-w-0 flex-col gap-8"
           @submit.prevent="updateAccount"

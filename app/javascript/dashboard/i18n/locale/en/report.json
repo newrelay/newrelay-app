@@ -2,7 +2,7 @@
   "REPORT": {
     "REPORTS_TITLE": "Reports",
     "REPORTS_SUBTITLE": "Track performance and analyze key metrics across your workspace.",
-    "DATA_PENDING": "NiN",
+    "DATA_PENDING": "N/A",
     "VS_LAST_PERIOD": "vs last 7 days",
     "HEADER": "Conversations",
     "LOADING_CHART": "Loading chart data...",

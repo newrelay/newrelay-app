@@ -130,13 +130,16 @@ describe('copyTextToClipboard', () => {
   });
 
   describe('error handling', () => {
-    it('throws error when clipboard API fails', async () => {
+    it('throws error when clipboard API fails and the fallback also fails', async () => {
       const error = new Error('Clipboard access denied');
       mockWriteText.mockRejectedValueOnce(error);
+      document.execCommand = vi.fn().mockReturnValue(false);
 
       await expect(copyTextToClipboard('test')).rejects.toThrow(
-        'Unable to copy text to clipboard: Clipboard access denied'
+        'Unable to copy text to clipboard: copy command was unsuccessful'
       );
+
+      delete document.execCommand;
     });
 
     it('handles clipboard API not available', async () => {

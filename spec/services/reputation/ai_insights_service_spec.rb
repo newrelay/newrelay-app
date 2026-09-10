@@ -1,13 +1,13 @@
 require 'rails_helper'
 
 RSpec.describe Reputation::AiInsightsService do
-  Review = Struct.new(:rating, :provider, :status, :reputation_review_reply, :body, keyword_init: true)
+  AiInsightsReview = Struct.new(:rating, :provider, :status, :reputation_review_reply, :body, keyword_init: true)
 
   it 'builds insights from review stats when the LLM is unavailable' do
     reviews = [
-      Review.new(rating: 5, provider: 'google', status: 'replied', reputation_review_reply: Object.new),
-      Review.new(rating: 5, provider: 'google', status: 'pending', reputation_review_reply: nil),
-      Review.new(rating: 2, provider: 'google', status: 'pending', reputation_review_reply: nil)
+      AiInsightsReview.new(rating: 5, provider: 'google', status: 'replied', reputation_review_reply: Object.new),
+      AiInsightsReview.new(rating: 5, provider: 'google', status: 'pending', reputation_review_reply: nil),
+      AiInsightsReview.new(rating: 2, provider: 'google', status: 'pending', reputation_review_reply: nil)
     ]
     result = described_class.allocate.from_reviews(reviews)
 

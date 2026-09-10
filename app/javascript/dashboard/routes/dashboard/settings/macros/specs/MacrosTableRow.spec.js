@@ -31,7 +31,9 @@ const mountComponent = props =>
         BaseTableCell: {
           template: '<div><slot /></div>',
         },
-        Button: true,
+        Tooltip: {
+          template: '<div><slot /></div>',
+        },
         RouterLink: {
           template: '<a><slot /></a>',
         },

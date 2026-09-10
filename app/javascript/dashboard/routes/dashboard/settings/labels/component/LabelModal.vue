@@ -87,9 +87,7 @@ const getTranslationKey = base =>
   props.mode === 'edit' ? `LABEL_MGMT.EDIT.${base}` : `LABEL_MGMT.ADD.${base}`;
 
 const modalTitle = computed(() => t(getTranslationKey('TITLE')));
-const modalDescription = computed(() =>
-  props.mode === 'add' ? t('LABEL_MGMT.ADD.DESC') : ''
-);
+const modalDescription = computed(() => t('LABEL_MGMT.ADD.DESC'));
 
 const submitButtonText = computed(() =>
   props.mode === 'edit'

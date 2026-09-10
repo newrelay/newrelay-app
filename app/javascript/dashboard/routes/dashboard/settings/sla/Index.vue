@@ -154,8 +154,8 @@ export default {
         :is-on-chatwoot-cloud="isOnChatwootCloud"
         @upgrade="onClickCTA"
       />
-      <div v-else class="flex-1 w-full max-w-4xl min-w-0">
-        <div class="max-w-3xl space-y-8">
+      <div v-else class="w-full min-w-0">
+        <div class="space-y-8">
           <div class="h-full">
             <div class="h-full animate-in fade-in duration-300">
               <div

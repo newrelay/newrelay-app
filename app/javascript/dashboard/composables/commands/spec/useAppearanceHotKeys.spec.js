@@ -24,7 +24,7 @@ describe('useAppearanceHotKeys', () => {
 
   it('should have the correct number of appearance options', () => {
     const { goToAppearanceHotKeys } = useAppearanceHotKeys();
-    expect(goToAppearanceHotKeys.value.length).toBe(4); // 1 parent + 3 theme options
+    expect(goToAppearanceHotKeys.value.length).toBe(5); // 1 parent + 4 theme options
   });
 
   it('should have the correct parent option', () => {
@@ -33,7 +33,7 @@ describe('useAppearanceHotKeys', () => {
       option => option.id === 'appearance_settings'
     );
     expect(parentOption).toBeDefined();
-    expect(parentOption.children.length).toBe(3);
+    expect(parentOption.children.length).toBe(4);
   });
 
   it('should have the correct theme options', () => {
@@ -41,11 +41,12 @@ describe('useAppearanceHotKeys', () => {
     const themeOptions = goToAppearanceHotKeys.value.filter(
       option => option.parent === 'appearance_settings'
     );
-    expect(themeOptions.length).toBe(3);
+    expect(themeOptions.length).toBe(4);
     expect(themeOptions.map(option => option.id)).toEqual([
       'light',
       'dark',
       'auto',
+      'custom',
     ]);
   });
 

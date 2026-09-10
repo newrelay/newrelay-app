@@ -85,6 +85,10 @@ const modalTitle = computed(() => {
   return t('CANNED_MGMT.ADD.TITLE');
 });
 
+const modalDescription = computed(() =>
+  props.mode === 'add' ? t('CANNED_MGMT.ADD.DESC') : ''
+);
+
 const submitButtonText = computed(() => t(getTranslationKey('SUBMIT')));
 
 const cancelButtonText = computed(() =>
@@ -148,19 +152,13 @@ const handleSubmit = async () => {
   <RelayModal
     :show="show"
     :title="modalTitle"
+    :description="modalDescription"
     size="md"
     flush
     @close="emit('close')"
   >
     <form @submit.prevent="handleSubmit">
       <div class="max-h-[60vh] space-y-5 overflow-y-auto px-7 pb-2">
-        <p
-          v-if="mode === 'add'"
-          class="text-[13.5px] leading-relaxed text-muted-foreground"
-        >
-          {{ $t('CANNED_MGMT.ADD.DESC') }}
-        </p>
-
         <div class="flex flex-col gap-1.5">
           <RelayLabel
             html-for="canned-short-code"

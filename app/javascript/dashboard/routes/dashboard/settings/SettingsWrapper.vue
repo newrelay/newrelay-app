@@ -16,10 +16,6 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
-  wide: {
-    type: Boolean,
-    default: false,
-  },
 });
 
 const route = useRoute();
@@ -38,8 +34,7 @@ const shellInnerClass = computed(() => {
 
 const contentMaxClass = computed(() => {
   if (props.fullWidth) return 'max-w-none';
-  if (props.wide) return 'min-w-0';
-  return props.hideSideMenu ? 'max-w-5xl' : 'max-w-4xl';
+  return 'min-w-0 w-full';
 });
 </script>
 

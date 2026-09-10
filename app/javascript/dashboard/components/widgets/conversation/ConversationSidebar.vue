@@ -49,7 +49,7 @@ const closeContactPanel = () => {
         ],
       },
     ]"
-    class="fixed top-0 z-40 flex h-full w-full max-w-sm flex-col overflow-hidden bg-muted/10 transition-all duration-300 ease-in-out ltr:right-0 rtl:left-0 md:static md:w-[300px] md:min-w-[300px] lg:w-[320px] lg:min-w-[320px] 2xl:w-[320px] 2xl:min-w-[320px] ltr:border-l rtl:border-r border-border"
+    class="fixed top-0 z-40 flex h-full w-full max-w-sm flex-col overflow-hidden bg-sidebar dark:bg-muted/10 transition-all duration-300 ease-in-out ltr:right-0 rtl:left-0 md:static md:w-[300px] md:min-w-[300px] lg:w-[320px] lg:min-w-[320px] 2xl:w-[320px] 2xl:min-w-[320px] ltr:border-l rtl:border-r border-border"
     :class="[
       {
         'md:flex': activeTab === 0,

@@ -15,6 +15,7 @@ const mountChannelLeaf = props =>
       stubs: {
         ChannelIcon: true,
         Icon: true,
+        Tooltip: true,
       },
     },
   });

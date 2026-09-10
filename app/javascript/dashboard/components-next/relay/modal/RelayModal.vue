@@ -24,11 +24,15 @@ const props = defineProps({
   size: {
     type: String,
     default: 'md',
-    validator: value => ['md', 'lg', 'xl'].includes(value),
+    validator: value => ['md', 'lg', 'xl', 'wide'].includes(value),
   },
   flush: {
     type: Boolean,
     default: false,
+  },
+  divided: {
+    type: Boolean,
+    default: true,
   },
 });
 
@@ -42,6 +46,7 @@ useEventListener(document, 'keydown', e => {
 });
 
 const maxWidthClass = computed(() => {
+  if (props.size === 'wide') return 'max-w-[850px]';
   if (props.size === 'xl') return 'max-w-4xl';
   if (props.size === 'lg') return 'max-w-[550px]';
   return 'max-w-[500px]';
@@ -58,13 +63,17 @@ const maxWidthClass = computed(() => {
     >
       <div
         data-relay
-        class="font-geist mx-4 flex max-h-[90vh] w-full flex-col overflow-hidden rounded-xl border border-border/80 bg-background shadow-xl"
-        :class="maxWidthClass"
+        class="font-geist mx-4 flex max-h-[90vh] w-full flex-col overflow-hidden border border-border/80 bg-background"
+        :class="[
+          maxWidthClass,
+          size === 'wide' ? 'rounded-2xl shadow-2xl' : 'rounded-xl shadow-xl',
+        ]"
         @click.stop
       >
         <RelayModalHeader
           :title="title"
           :description="description"
+          :divided="divided"
           @close="emit('close')"
         />
         <div

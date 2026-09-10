@@ -16,7 +16,6 @@ export default {
     {
       path: frontendURL('accounts/:accountId/settings/integration'),
       component: SettingsWrapper,
-      props: { wide: true },
       children: [
         {
           path: '',

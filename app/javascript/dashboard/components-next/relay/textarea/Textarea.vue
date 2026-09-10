@@ -7,6 +7,7 @@ const props = defineProps({
   disabled: { type: Boolean, default: false },
   id: { type: String, default: undefined },
   rows: { type: Number, default: undefined },
+  maxlength: { type: [Number, String], default: undefined },
   className: { type: String, default: '' },
 });
 
@@ -21,6 +22,7 @@ const model = defineModel({ type: String, default: '' });
     :rows="rows"
     :placeholder="placeholder"
     :disabled="disabled"
+    :maxlength="maxlength"
     :class="cn(RELAY_FORM_TEXTAREA_CLASS, props.className)"
   />
 </template>

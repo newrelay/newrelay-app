@@ -21,6 +21,8 @@ By default, it renders:
   <title>
     <%= content_for(:title) %> - <%= application_title %>
   </title>
+  <link rel="icon" type="image/svg+xml" href="/brand-assets/logo_thumbnail.svg">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
   <%= render "stylesheet" %>
   <%= vite_client_tag %>
   <%= vite_javascript_tag 'superadmin' %>

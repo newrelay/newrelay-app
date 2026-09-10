@@ -8,6 +8,8 @@ import RelayModalHeader from './RelayModalHeader.vue';
 import {
   RELAY_DIALOG_OVERLAY_CLASS,
   RELAY_MODAL_BODY_CLASS,
+  RELAY_MODAL_FORM_FOOTER_CLASS,
+  RELAY_MODAL_INPUT_CLASS,
 } from './constants';
 
 const props = defineProps({
@@ -105,25 +107,24 @@ const descriptionText = computed(() =>
               v-model="typedConfirmValue"
               type="text"
               :placeholder="confirmPlaceholder"
-              class-name="h-9 px-4 text-[14px] shadow-sm rounded-md border-border/80 bg-background focus-visible:ring-1 focus-visible:ring-primary/30"
+              :class-name="RELAY_MODAL_INPUT_CLASS"
             />
           </div>
         </div>
 
-        <div
-          class="flex shrink-0 justify-end gap-3 border-t border-border/80 px-6 py-5"
-        >
+        <div :class="RELAY_MODAL_FORM_FOOTER_CLASS">
           <RelayButton
             type="button"
             variant="outline"
-            class="h-9 border-border bg-muted px-5 text-[13px] font-medium text-foreground shadow-sm hover:bg-muted/80"
+            size="lg"
             @click="emit('close')"
           >
             {{ cancelText }}
           </RelayButton>
           <RelayButton
             type="button"
-            class="h-9 bg-destructive px-5 text-[13px] font-medium text-destructive-foreground shadow-sm hover:bg-destructive/90"
+            variant="destructive"
+            size="lg"
             :disabled="isConfirmDisabled"
             @click="handleConfirm"
           >

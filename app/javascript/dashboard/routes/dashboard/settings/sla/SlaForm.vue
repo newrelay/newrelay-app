@@ -9,6 +9,8 @@ import {
   RelayLabel,
   RelaySwitch,
   RelayButton,
+  RELAY_MODAL_FORM_FOOTER_CLASS,
+  RELAY_MODAL_INPUT_CLASS,
 } from 'dashboard/components-next/relay';
 
 export default {
@@ -31,7 +33,11 @@ export default {
   },
   emits: ['close', 'submitSla'],
   setup() {
-    return { v$: useVuelidate() };
+    return {
+      v$: useVuelidate(),
+      RELAY_MODAL_FORM_FOOTER_CLASS,
+      RELAY_MODAL_INPUT_CLASS,
+    };
   },
   data() {
     return {
@@ -170,7 +176,7 @@ export default {
   >
     <!-- Scrollable Body Content -->
     <div
-      class="custom-scrollbar flex-1 space-y-5 overflow-y-auto px-7 pb-2 pr-1"
+      class="custom-scrollbar flex-1 space-y-5 overflow-y-auto px-6 pb-2 pr-1"
     >
       <!-- SLA Name -->
       <div class="flex flex-col gap-1.5">
@@ -180,7 +186,7 @@ export default {
         <RelayInput
           id="sla_name"
           v-model="name"
-          class-name="h-11 text-[14px] shadow-xs rounded-xl border-border/60 bg-muted/20 focus-visible:ring-1 focus-visible:ring-primary/30"
+          :class-name="RELAY_MODAL_INPUT_CLASS"
           :placeholder="$t('SLA.FORM.NAME.PLACEHOLDER')"
           @update:model-value="v$.name.$touch"
           @blur="v$.name.$touch"
@@ -198,7 +204,7 @@ export default {
         <RelayInput
           id="sla_description"
           v-model="description"
-          class-name="h-11 text-[14px] shadow-xs rounded-xl border-border/60 bg-muted/20 focus-visible:ring-1 focus-visible:ring-primary/30"
+          :class-name="RELAY_MODAL_INPUT_CLASS"
           :placeholder="$t('SLA.FORM.DESCRIPTION.PLACEHOLDER')"
         />
       </div>
@@ -226,22 +232,11 @@ export default {
     </div>
 
     <!-- Static Footer Buttons -->
-    <div
-      class="mt-4 flex shrink-0 items-center justify-end gap-3 border-t border-border/40 bg-background px-7 py-6"
-    >
-      <RelayButton
-        type="button"
-        variant="ghost"
-        class="h-10 rounded-lg px-4 text-[13.5px] font-medium text-muted-foreground hover:text-foreground"
-        @click="onClose"
-      >
+    <div :class="RELAY_MODAL_FORM_FOOTER_CLASS">
+      <RelayButton type="button" variant="outline" size="lg" @click="onClose">
         {{ $t('SLA.FORM.CANCEL') }}
       </RelayButton>
-      <RelayButton
-        type="submit"
-        class="h-10 rounded-xl px-6 text-[13.5px] font-medium shadow-sm"
-        :disabled="isSubmitDisabled"
-      >
+      <RelayButton type="submit" size="lg" :disabled="isSubmitDisabled">
         {{ submitLabel }}
       </RelayButton>
     </div>

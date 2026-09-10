@@ -9,6 +9,9 @@ import {
   RelayButton,
   RelayInput,
   RelayLabel,
+  RELAY_MODAL_FORM_BODY_CLASS,
+  RELAY_MODAL_FORM_FOOTER_CLASS,
+  RELAY_MODAL_INPUT_CLASS,
 } from 'dashboard/components-next/relay';
 import ComboBox from 'dashboard/components-next/combobox/ComboBox.vue';
 
@@ -113,7 +116,7 @@ const addAgent = async () => {
 
 <template>
   <form @submit.prevent="addAgent">
-    <div class="space-y-5 px-7 pb-2">
+    <div :class="RELAY_MODAL_FORM_BODY_CLASS">
       <div class="flex flex-col gap-1.5">
         <RelayLabel
           html-for="add-agent-name"
@@ -126,7 +129,7 @@ const addAgent = async () => {
           v-model="agentName"
           type="text"
           :placeholder="$t('AGENT_MGMT.ADD.FORM.NAME.PLACEHOLDER')"
-          class-name="h-9 px-4 text-[14px] shadow-sm rounded-md border-border/80 bg-background focus-visible:ring-1 focus-visible:ring-primary/30"
+          :class-name="RELAY_MODAL_INPUT_CLASS"
           @blur="v$.agentName.$touch"
         />
         <p v-if="v$.agentName.$error" class="text-xs text-destructive">
@@ -166,7 +169,7 @@ const addAgent = async () => {
           v-model="agentEmail"
           type="email"
           :placeholder="$t('AGENT_MGMT.ADD.FORM.EMAIL.PLACEHOLDER')"
-          class-name="h-9 px-4 text-[14px] shadow-sm rounded-md border-border/80 bg-background focus-visible:ring-1 focus-visible:ring-primary/30"
+          :class-name="RELAY_MODAL_INPUT_CLASS"
           @blur="v$.agentEmail.$touch"
         />
         <p v-if="v$.agentEmail.$error" class="text-xs text-destructive">
@@ -175,18 +178,18 @@ const addAgent = async () => {
       </div>
     </div>
 
-    <div class="flex justify-end gap-3 border-t border-border/40 px-7 py-6">
+    <div :class="RELAY_MODAL_FORM_FOOTER_CLASS">
       <RelayButton
         type="button"
         variant="outline"
-        class="h-9 border-border bg-muted px-5 text-[13px] font-medium text-foreground shadow-sm hover:bg-muted/80"
+        size="lg"
         @click="emit('close')"
       >
         {{ $t('AGENT_MGMT.ADD.CANCEL_BUTTON_TEXT') }}
       </RelayButton>
       <RelayButton
         type="submit"
-        class="h-9 px-5 text-[13px] font-medium shadow-sm"
+        size="lg"
         :disabled="v$.$invalid || uiFlags.isCreating"
       >
         {{ $t('AGENT_MGMT.ADD.FORM.SUBMIT') }}

@@ -26,6 +26,9 @@ export {
   RELAY_MODAL_TITLE_CLASS,
   RELAY_MODAL_DESCRIPTION_CLASS,
   RELAY_MODAL_BODY_CLASS,
+  RELAY_MODAL_FORM_BODY_CLASS,
+  RELAY_MODAL_FORM_FOOTER_CLASS,
+  RELAY_MODAL_INPUT_CLASS,
   RELAY_MODAL_CLOSE_BUTTON_CLASS,
 } from './modal/constants';
 export { default as RelayDropdownMenu } from './dropdown-menu/DropdownMenu.vue';

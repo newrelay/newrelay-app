@@ -28,6 +28,15 @@ export const RELAY_MODAL_DESCRIPTION_CLASS =
 
 export const RELAY_MODAL_BODY_CLASS = 'flex-1 overflow-y-auto p-6';
 
+/** Flush form body — header already padded; fields start below the divider. */
+export const RELAY_MODAL_FORM_BODY_CLASS = 'space-y-5 px-6 pb-2';
+
+export const RELAY_MODAL_FORM_FOOTER_CLASS =
+  'flex shrink-0 justify-end gap-3 border-t border-border/40 px-6 py-5';
+
+/** Overrides RelayInput's default `h-9` (cn does not tailwind-merge). */
+export const RELAY_MODAL_INPUT_CLASS = '!h-10 px-4';
+
 /** Icon close — shadcn ghost size-8, no resting fill (hover:bg-accent only). */
 export const RELAY_MODAL_CLOSE_BUTTON_CLASS =
   'reset-base inline-flex size-8 shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-md p-0 text-sm font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0';

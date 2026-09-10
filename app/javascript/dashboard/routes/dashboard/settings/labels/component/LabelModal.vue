@@ -13,6 +13,9 @@ import {
   RelayLabel,
   RelayCheckbox,
   RelayModal,
+  RELAY_MODAL_FORM_BODY_CLASS,
+  RELAY_MODAL_FORM_FOOTER_CLASS,
+  RELAY_MODAL_INPUT_CLASS,
 } from 'dashboard/components-next/relay';
 import ColorPicker from 'dashboard/components-next/colorpicker/ColorPicker.vue';
 
@@ -154,7 +157,7 @@ const handleSubmit = async () => {
     @close="emit('close')"
   >
     <form @submit.prevent="handleSubmit">
-      <div class="space-y-5 px-7 pb-2">
+      <div :class="RELAY_MODAL_FORM_BODY_CLASS">
         <div class="flex flex-col gap-1.5">
           <RelayLabel
             html-for="label-title"
@@ -168,7 +171,7 @@ const handleSubmit = async () => {
             type="text"
             data-testid="label-title"
             :placeholder="$t('LABEL_MGMT.FORM.NAME.PLACEHOLDER')"
-            class-name="lowercase h-10 px-4 text-[14px] shadow-sm rounded-md border-border/80 bg-background focus-visible:ring-1 focus-visible:ring-primary/30"
+            :class-name="`lowercase ${RELAY_MODAL_INPUT_CLASS}`"
             @blur="v$.title.$touch"
           />
           <p v-if="v$.title.$error" class="text-xs text-destructive">
@@ -189,7 +192,7 @@ const handleSubmit = async () => {
             type="text"
             data-testid="label-description"
             :placeholder="$t('LABEL_MGMT.FORM.DESCRIPTION.PLACEHOLDER')"
-            class-name="h-10 px-4 text-[14px] shadow-sm rounded-md border-border/80 bg-background focus-visible:ring-1 focus-visible:ring-primary/30"
+            :class-name="RELAY_MODAL_INPUT_CLASS"
             @blur="v$.description.$touch"
           />
         </div>
@@ -211,11 +214,11 @@ const handleSubmit = async () => {
         </label>
       </div>
 
-      <div class="flex justify-end gap-3 border-t border-border/40 px-7 py-6">
+      <div :class="RELAY_MODAL_FORM_FOOTER_CLASS">
         <RelayButton
           type="button"
           variant="outline"
-          class="h-9 border-border bg-muted px-5 text-[13px] font-medium text-foreground shadow-sm hover:bg-muted/80"
+          size="lg"
           @click="emit('close')"
         >
           {{ $t('LABEL_MGMT.FORM.CANCEL') }}
@@ -223,7 +226,7 @@ const handleSubmit = async () => {
         <RelayButton
           type="submit"
           data-testid="label-submit"
-          class="h-9 px-5 text-[13px] font-medium shadow-sm"
+          size="lg"
           :disabled="isSubmitDisabled"
         >
           {{ submitButtonText }}

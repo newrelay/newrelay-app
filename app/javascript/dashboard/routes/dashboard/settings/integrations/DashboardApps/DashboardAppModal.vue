@@ -6,9 +6,11 @@ import { required, url } from '@vuelidate/validators';
 import { useAlert } from 'dashboard/composables';
 import { useStore } from 'dashboard/composables/store';
 import Dialog from 'dashboard/components-next/dialog/Dialog.vue';
-import Icon from 'dashboard/components-next/icon/Icon.vue';
-import { RelayButton, RelayInput } from 'dashboard/components-next/relay';
-import { RELAY_MODAL_CLOSE_BUTTON_CLASS } from 'dashboard/components-next/relay/modal/constants';
+import {
+  RelayButton,
+  RelayInput,
+  RELAY_MODAL_INPUT_CLASS,
+} from 'dashboard/components-next/relay';
 
 const props = defineProps({
   show: {
@@ -126,93 +128,72 @@ const submit = async () => {
   <Dialog
     ref="dialogRef"
     type="edit"
-    title=""
+    :title="header"
+    :description="t('INTEGRATION_SETTINGS.DASHBOARD_APPS.DESCRIPTION')"
     width="lg"
     :show-cancel-button="false"
     :show-confirm-button="false"
     @close="closeModal"
   >
-    <div class="flex flex-col gap-6">
-      <div class="relative -mt-2 flex items-start justify-between gap-4">
-        <div class="min-w-0 flex-1">
-          <h3 class="text-base font-medium tracking-tight text-foreground">
-            {{ header }}
-          </h3>
-          <p
-            class="mb-0 mt-1 pr-6 text-[14px] font-normal leading-normal text-muted-foreground"
-          >
-            {{ t('INTEGRATION_SETTINGS.DASHBOARD_APPS.DESCRIPTION') }}
-          </p>
-        </div>
-        <button
-          type="button"
-          :class="RELAY_MODAL_CLOSE_BUTTON_CLASS"
-          @click="closeModal"
-        >
-          <Icon icon="i-lucide-x" class="size-4" />
-        </button>
+    <form class="flex flex-col gap-5" @submit.prevent="submit">
+      <div class="flex flex-col gap-1.5">
+        <label class="text-[13.5px] text-foreground font-[500]">
+          {{ t('INTEGRATION_SETTINGS.DASHBOARD_APPS.FORM.TITLE_LABEL') }}
+        </label>
+        <RelayInput
+          v-model="app.title"
+          data-testid="app-title"
+          :placeholder="
+            t('INTEGRATION_SETTINGS.DASHBOARD_APPS.FORM.TITLE_PLACEHOLDER')
+          "
+          :class-name="RELAY_MODAL_INPUT_CLASS"
+          @blur="v$.app.title.$touch()"
+        />
+        <p v-if="v$.app.title.$error" class="text-[12.5px] text-destructive">
+          {{ t('INTEGRATION_SETTINGS.DASHBOARD_APPS.FORM.TITLE_ERROR') }}
+        </p>
       </div>
 
-      <form class="flex flex-col gap-5" @submit.prevent="submit">
-        <div class="flex flex-col gap-1.5">
-          <label class="text-[13.5px] text-foreground font-[500]">
-            {{ t('INTEGRATION_SETTINGS.DASHBOARD_APPS.FORM.TITLE_LABEL') }}
-          </label>
-          <RelayInput
-            v-model="app.title"
-            data-testid="app-title"
-            :placeholder="
-              t('INTEGRATION_SETTINGS.DASHBOARD_APPS.FORM.TITLE_PLACEHOLDER')
-            "
-            class-name="h-10 text-[14px] shadow-sm rounded-md border-border/80 bg-background focus-visible:ring-1 focus-visible:ring-primary/30"
-            @blur="v$.app.title.$touch()"
-          />
-          <p v-if="v$.app.title.$error" class="text-[12.5px] text-destructive">
-            {{ t('INTEGRATION_SETTINGS.DASHBOARD_APPS.FORM.TITLE_ERROR') }}
-          </p>
-        </div>
-
-        <div class="flex flex-col gap-1.5">
-          <label class="text-[13.5px] text-foreground font-[500]">
-            {{ t('INTEGRATION_SETTINGS.DASHBOARD_APPS.FORM.URL_LABEL') }}
-          </label>
-          <RelayInput
-            v-model="app.content.url"
-            data-testid="app-url"
-            :placeholder="
-              t('INTEGRATION_SETTINGS.DASHBOARD_APPS.FORM.URL_PLACEHOLDER')
-            "
-            class-name="h-10 text-[14px] shadow-sm rounded-md border-border/80 bg-background focus-visible:ring-1 focus-visible:ring-primary/30"
-            @blur="v$.app.content.url.$touch()"
-          />
-          <p
-            v-if="v$.app.content.url.$error"
-            class="text-[12.5px] text-destructive"
-          >
-            {{ t('INTEGRATION_SETTINGS.DASHBOARD_APPS.FORM.URL_ERROR') }}
-          </p>
-        </div>
-
-        <div
-          class="mt-2 flex items-center justify-end gap-3 border-t border-border/40 pt-4"
+      <div class="flex flex-col gap-1.5">
+        <label class="text-[13.5px] text-foreground font-[500]">
+          {{ t('INTEGRATION_SETTINGS.DASHBOARD_APPS.FORM.URL_LABEL') }}
+        </label>
+        <RelayInput
+          v-model="app.content.url"
+          data-testid="app-url"
+          :placeholder="
+            t('INTEGRATION_SETTINGS.DASHBOARD_APPS.FORM.URL_PLACEHOLDER')
+          "
+          :class-name="RELAY_MODAL_INPUT_CLASS"
+          @blur="v$.app.content.url.$touch()"
+        />
+        <p
+          v-if="v$.app.content.url.$error"
+          class="text-[12.5px] text-destructive"
         >
-          <RelayButton
-            type="button"
-            variant="ghost"
-            class="h-10 border border-border/40 px-5 font-semibold text-muted-foreground hover:border-transparent hover:bg-muted"
-            @click="closeModal"
-          >
-            {{ t('INTEGRATION_SETTINGS.DASHBOARD_APPS.CREATE.FORM_CANCEL') }}
-          </RelayButton>
-          <RelayButton
-            type="submit"
-            class="h-10 px-6 font-semibold"
-            :disabled="v$.$invalid || isLoading"
-          >
-            {{ submitButtonLabel }}
-          </RelayButton>
-        </div>
-      </form>
-    </div>
+          {{ t('INTEGRATION_SETTINGS.DASHBOARD_APPS.FORM.URL_ERROR') }}
+        </p>
+      </div>
+
+      <div
+        class="mt-2 flex items-center justify-end gap-3 border-t border-border/40 pt-5"
+      >
+        <RelayButton
+          type="button"
+          variant="outline"
+          size="lg"
+          @click="closeModal"
+        >
+          {{ t('INTEGRATION_SETTINGS.DASHBOARD_APPS.CREATE.FORM_CANCEL') }}
+        </RelayButton>
+        <RelayButton
+          type="submit"
+          size="lg"
+          :disabled="v$.$invalid || isLoading"
+        >
+          {{ submitButtonLabel }}
+        </RelayButton>
+      </div>
+    </form>
   </Dialog>
 </template>

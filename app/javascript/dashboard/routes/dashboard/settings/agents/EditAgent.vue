@@ -9,6 +9,8 @@ import {
   RelayButton,
   RelayInput,
   RelayLabel,
+  RELAY_MODAL_FORM_BODY_CLASS,
+  RELAY_MODAL_INPUT_CLASS,
 } from 'dashboard/components-next/relay';
 import ComboBox from 'dashboard/components-next/combobox/ComboBox.vue';
 import Auth from '../../../../api/auth';
@@ -159,7 +161,7 @@ const resetPassword = async () => {
 
 <template>
   <form @submit.prevent="editAgent">
-    <div class="space-y-5 px-7 pb-2">
+    <div :class="RELAY_MODAL_FORM_BODY_CLASS">
       <div class="flex flex-col gap-1.5">
         <RelayLabel
           html-for="edit-agent-name"
@@ -172,7 +174,7 @@ const resetPassword = async () => {
           v-model="agentName"
           type="text"
           :placeholder="$t('AGENT_MGMT.EDIT.FORM.NAME.PLACEHOLDER')"
-          class-name="h-9 px-4 text-[14px] shadow-sm rounded-md border-border/80 bg-background focus-visible:ring-1 focus-visible:ring-primary/30"
+          :class-name="RELAY_MODAL_INPUT_CLASS"
           @blur="v$.agentName.$touch"
         />
         <p v-if="v$.agentName.$error" class="text-xs text-destructive">
@@ -222,14 +224,15 @@ const resetPassword = async () => {
     </div>
 
     <div
-      class="flex items-center justify-between gap-3 border-t border-border/40 px-7 py-6"
+      class="flex items-center justify-between gap-3 border-t border-border/40 px-6 py-5"
     >
       <div>
         <RelayButton
           v-if="provider !== 'saml'"
           type="button"
           variant="ghost"
-          class="h-9 px-4 text-[13px] font-medium text-primary hover:bg-primary/10 hover:text-primary border border-border hover:border-transparent"
+          size="lg"
+          class="border border-border text-primary hover:border-transparent hover:bg-primary/10 hover:text-primary"
           @click="resetPassword"
         >
           <span class="i-lucide-lock size-4" />
@@ -240,14 +243,14 @@ const resetPassword = async () => {
         <RelayButton
           type="button"
           variant="outline"
-          class="h-9 border-border bg-muted px-5 text-[13px] font-medium text-foreground shadow-sm hover:bg-muted/80"
+          size="lg"
           @click="emit('close')"
         >
           {{ $t('AGENT_MGMT.EDIT.CANCEL_BUTTON_TEXT') }}
         </RelayButton>
         <RelayButton
           type="submit"
-          class="h-9 px-5 text-[13px] font-medium shadow-sm"
+          size="lg"
           :disabled="v$.$invalid || uiFlags.isUpdating"
         >
           {{ $t('AGENT_MGMT.EDIT.FORM.SUBMIT') }}

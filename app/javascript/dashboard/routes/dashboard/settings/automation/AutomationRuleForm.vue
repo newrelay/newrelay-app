@@ -11,6 +11,7 @@ import {
   RelayButton,
   RelayInput,
   RelayLabel,
+  RELAY_MODAL_INPUT_CLASS,
 } from 'dashboard/components-next/relay';
 import ComboBox from 'dashboard/components-next/combobox/ComboBox.vue';
 import {
@@ -260,27 +261,13 @@ defineExpose({ open, close });
     ref="dialogRef"
     width="3xl"
     position="top"
+    :title="$t(titleKey)"
+    :description="$t(subtitleKey)"
     :show-cancel-button="false"
     :show-confirm-button="false"
     overflow-y-auto
   >
     <div v-if="automation" class="flex w-full flex-col">
-      <div class="mb-6 flex items-start gap-3">
-        <div
-          class="flex size-10 shrink-0 items-center justify-center rounded-xl border border-primary/20 bg-primary/10 shadow-sm"
-        >
-          <Icon icon="i-lucide-zap" class="size-5 text-primary" />
-        </div>
-        <div>
-          <h3 class="text-base font-medium text-foreground">
-            {{ $t(titleKey) }}
-          </h3>
-          <p class="mt-0.5 text-[13px] text-muted-foreground">
-            {{ $t(subtitleKey) }}
-          </p>
-        </div>
-      </div>
-
       <div class="space-y-6">
         <div class="flex flex-col gap-1.5">
           <RelayLabel
@@ -296,8 +283,8 @@ defineExpose({ open, close });
             :placeholder="$t('AUTOMATION.ADD.FORM.NAME.PLACEHOLDER')"
             :class-name="
               errors.name
-                ? 'h-9 border-destructive/80 text-[14px] shadow-sm focus-visible:ring-destructive/30'
-                : 'h-9 border-border/80 bg-background text-[14px] shadow-sm focus-visible:ring-1 focus-visible:ring-primary/30'
+                ? `${RELAY_MODAL_INPUT_CLASS} border-destructive/80 focus-visible:ring-destructive/30`
+                : RELAY_MODAL_INPUT_CLASS
             "
           />
           <p
@@ -322,8 +309,8 @@ defineExpose({ open, close });
             :placeholder="$t('AUTOMATION.ADD.FORM.DESC.PLACEHOLDER')"
             :class-name="
               errors.description
-                ? 'h-9 border-destructive/80 text-[14px] shadow-sm focus-visible:ring-destructive/30'
-                : 'h-9 border-border/80 bg-background text-[14px] shadow-sm focus-visible:ring-1 focus-visible:ring-primary/30'
+                ? `${RELAY_MODAL_INPUT_CLASS} border-destructive/80 focus-visible:ring-destructive/30`
+                : RELAY_MODAL_INPUT_CLASS
             "
           />
           <p
@@ -469,20 +456,11 @@ defineExpose({ open, close });
         </section>
       </div>
 
-      <div class="mt-8 flex justify-end gap-3 border-t border-border/40 pt-6">
-        <RelayButton
-          type="button"
-          variant="outline"
-          class="h-9 rounded-lg px-4 text-foreground"
-          @click="close"
-        >
+      <div class="mt-8 flex justify-end gap-3 border-t border-border/40 pt-5">
+        <RelayButton type="button" variant="outline" size="lg" @click="close">
           {{ $t(cancelKey) }}
         </RelayButton>
-        <RelayButton
-          type="button"
-          class="h-9 rounded-lg px-4 shadow-sm"
-          @click="emitSaveAutomation"
-        >
+        <RelayButton type="button" size="lg" @click="emitSaveAutomation">
           {{ $t(submitKey) }}
         </RelayButton>
       </div>

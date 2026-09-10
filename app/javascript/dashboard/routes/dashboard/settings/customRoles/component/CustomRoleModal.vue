@@ -18,6 +18,8 @@ import {
   RelayLabel,
   RelayCheckbox,
   RelayModal,
+  RelayTextarea,
+  RELAY_MODAL_FORM_FOOTER_CLASS,
 } from 'dashboard/components-next/relay';
 
 const props = defineProps({
@@ -214,12 +216,12 @@ const isSubmitDisabled = computed(
           >
             {{ $t('CUSTOM_ROLE.FORM.DESCRIPTION.LABEL') }}
           </RelayLabel>
-          <textarea
+          <RelayTextarea
             id="custom-role-description"
             v-model="description"
-            rows="3"
+            :rows="3"
             :placeholder="$t('CUSTOM_ROLE.FORM.DESCRIPTION.PLACEHOLDER')"
-            class="min-h-[90px] w-full resize-none border border-border/80 bg-background p-3 text-[14px] text-foreground outline-none focus:ring-1 focus:ring-primary/30 focus-visible:ring-1 focus-visible:ring-primary/30 shadow-sm rounded-md"
+            class-name="min-h-[90px] resize-none"
             @blur="v$.description.$touch"
           />
           <p v-if="v$.description.$error" class="text-xs text-destructive">
@@ -257,20 +259,16 @@ const isSubmitDisabled = computed(
         </div>
       </div>
 
-      <div class="flex justify-end gap-3 border-t border-border/40 px-7 py-6">
+      <div :class="RELAY_MODAL_FORM_FOOTER_CLASS">
         <RelayButton
           type="button"
           variant="outline"
-          class="h-9 border-border bg-muted px-5 text-[13px] font-medium text-foreground shadow-sm hover:bg-muted/80"
+          size="lg"
           @click="emit('close')"
         >
           {{ $t('CUSTOM_ROLE.FORM.CANCEL_BUTTON_TEXT') }}
         </RelayButton>
-        <RelayButton
-          type="submit"
-          class="h-9 px-5 text-[13px] font-medium shadow-sm"
-          :disabled="isSubmitDisabled"
-        >
+        <RelayButton type="submit" size="lg" :disabled="isSubmitDisabled">
           {{ submitButtonText }}
         </RelayButton>
       </div>

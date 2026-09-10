@@ -3,11 +3,12 @@ import { ref, computed } from 'vue';
 import { OnClickOutside } from '@vueuse/components';
 import { useI18n } from 'vue-i18n';
 
-import Button from 'dashboard/components-next/button/Button.vue';
 import TeleportWithDirection from 'dashboard/components-next/TeleportWithDirection.vue';
 import RelayModalHeader from 'dashboard/components-next/relay/modal/RelayModalHeader.vue';
+import { RelayButton } from 'dashboard/components-next/relay';
 import {
   RELAY_MODAL_BODY_CLASS,
+  RELAY_MODAL_FORM_FOOTER_CLASS,
   RELAY_NATIVE_DIALOG_BACKDROP_CLASS,
 } from 'dashboard/components-next/relay/modal/constants';
 
@@ -147,7 +148,7 @@ defineExpose({ open, close });
             v-if="title || description || $slots.description"
             :title="title"
             :description="description"
-            :show-close="false"
+            @close="close"
           >
             <template v-if="$slots.description" #description>
               <slot name="description" />
@@ -166,26 +167,26 @@ defineExpose({ open, close });
           <slot name="footer">
             <div
               v-if="showCancelButton || showConfirmButton"
-              class="flex items-center justify-between w-full gap-3 px-6 pb-6 pt-4"
+              :class="RELAY_MODAL_FORM_FOOTER_CLASS"
             >
-              <Button
+              <RelayButton
                 v-if="showCancelButton"
-                variant="faded"
-                color="slate"
-                :label="cancelButtonLabel || t('DIALOG.BUTTONS.CANCEL')"
-                class="w-full"
                 type="button"
+                variant="outline"
+                size="lg"
                 @click="close"
-              />
-              <Button
+              >
+                {{ cancelButtonLabel || t('DIALOG.BUTTONS.CANCEL') }}
+              </RelayButton>
+              <RelayButton
                 v-if="showConfirmButton"
-                :color="type === 'edit' ? 'blue' : 'ruby'"
-                :label="confirmButtonLabel || t('DIALOG.BUTTONS.CONFIRM')"
-                class="w-full"
-                :is-loading="isLoading"
-                :disabled="disableConfirmButton || isLoading"
                 type="submit"
-              />
+                size="lg"
+                :variant="type === 'alert' ? 'destructive' : 'default'"
+                :disabled="disableConfirmButton || isLoading"
+              >
+                {{ confirmButtonLabel || t('DIALOG.BUTTONS.CONFIRM') }}
+              </RelayButton>
             </div>
           </slot>
         </form>

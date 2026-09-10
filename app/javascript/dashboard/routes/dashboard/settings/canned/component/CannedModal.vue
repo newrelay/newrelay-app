@@ -13,6 +13,8 @@ import {
   RelayLabel,
   RelayModal,
   RelayTextarea,
+  RELAY_MODAL_FORM_FOOTER_CLASS,
+  RELAY_MODAL_INPUT_CLASS,
 } from 'dashboard/components-next/relay';
 
 const props = defineProps({
@@ -158,7 +160,7 @@ const handleSubmit = async () => {
     @close="emit('close')"
   >
     <form @submit.prevent="handleSubmit">
-      <div class="max-h-[60vh] space-y-5 overflow-y-auto px-7 pb-2">
+      <div class="max-h-[60vh] space-y-5 overflow-y-auto px-6 pb-2">
         <div class="flex flex-col gap-1.5">
           <RelayLabel
             html-for="canned-short-code"
@@ -171,7 +173,7 @@ const handleSubmit = async () => {
             v-model="shortCode"
             type="text"
             :placeholder="$t(getTranslationKey('SHORT_CODE.PLACEHOLDER'))"
-            class-name="h-9 px-4 text-[14px] shadow-sm rounded-md border-border/80 bg-background focus-visible:ring-1 focus-visible:ring-primary/30"
+            :class-name="RELAY_MODAL_INPUT_CLASS"
             @blur="v$.shortCode.$touch"
           />
           <p v-if="v$.shortCode.$error" class="text-xs text-destructive">
@@ -200,22 +202,16 @@ const handleSubmit = async () => {
         </div>
       </div>
 
-      <div
-        class="flex justify-end gap-3 border-t border-border/40 bg-background/50 px-7 py-6"
-      >
+      <div :class="RELAY_MODAL_FORM_FOOTER_CLASS">
         <RelayButton
           type="button"
           variant="outline"
-          class="h-9 border-border bg-muted px-5 text-[13px] font-medium text-foreground shadow-sm hover:bg-muted/80"
+          size="lg"
           @click="emit('close')"
         >
           {{ cancelButtonText }}
         </RelayButton>
-        <RelayButton
-          type="submit"
-          class="h-9 px-5 text-[13px] font-medium shadow-sm"
-          :disabled="isSubmitDisabled"
-        >
+        <RelayButton type="submit" size="lg" :disabled="isSubmitDisabled">
           {{ submitButtonText }}
         </RelayButton>
       </div>

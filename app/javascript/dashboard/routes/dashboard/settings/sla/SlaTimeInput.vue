@@ -1,7 +1,11 @@
 <script>
 import validations from './validations';
 import { useVuelidate } from '@vuelidate/core';
-import { RelayInput, RelayLabel } from 'dashboard/components-next/relay';
+import {
+  RelayInput,
+  RelayLabel,
+  RELAY_MODAL_INPUT_CLASS,
+} from 'dashboard/components-next/relay';
 import ComboBox from 'dashboard/components-next/combobox/ComboBox.vue';
 
 export default {
@@ -30,7 +34,7 @@ export default {
   },
   emits: ['unit', 'isInValid', 'updateThreshold'],
   setup() {
-    return { v$: useVuelidate() };
+    return { v$: useVuelidate(), RELAY_MODAL_INPUT_CLASS };
   },
   data() {
     return {
@@ -97,7 +101,7 @@ export default {
       <RelayInput
         v-model="thresholdTime"
         type="number"
-        class-name="h-9 shadow-xs bg-background"
+        :class-name="RELAY_MODAL_INPUT_CLASS"
         :placeholder="placeholder"
         @update:model-value="onThresholdTimeChange"
       />

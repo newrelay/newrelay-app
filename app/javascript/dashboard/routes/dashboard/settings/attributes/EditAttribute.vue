@@ -9,10 +9,14 @@ import { getRegexp, normalizeRegexPattern } from 'shared/helpers/Validators';
 import { ATTRIBUTE_TYPES } from './constants';
 import TagInput from 'dashboard/components-next/taginput/TagInput.vue';
 import {
+  RelayButton,
   RelayInput,
   RelayCheckbox,
   RelayLabel,
   RelayModal,
+  RelayTextarea,
+  RELAY_MODAL_FORM_FOOTER_CLASS,
+  RELAY_MODAL_INPUT_CLASS,
 } from 'dashboard/components-next/relay';
 
 const props = defineProps({
@@ -183,8 +187,8 @@ watch(
     @close="emit('close')"
   >
     <form @submit.prevent="editAttributes">
-      <div class="max-h-[60vh] space-y-5 overflow-y-auto px-7 pb-2">
-        <div class="flex flex-col gap-2.5">
+      <div class="max-h-[60vh] space-y-5 overflow-y-auto px-6 pb-2">
+        <div class="flex flex-col gap-1.5">
           <RelayLabel class="text-[13.5px] font-medium text-foreground">
             {{ t('ATTRIBUTES_MGMT.ADD.FORM.NAME.LABEL') }}
           </RelayLabel>
@@ -192,7 +196,7 @@ watch(
             v-model="displayName"
             type="text"
             :placeholder="t('ATTRIBUTES_MGMT.ADD.FORM.NAME.PLACEHOLDER')"
-            class-name="h-10 rounded-md border-border/80 bg-background text-[14px] shadow-sm focus-visible:ring-1 focus-visible:ring-primary/30"
+            :class-name="RELAY_MODAL_INPUT_CLASS"
             @blur="v$.displayName.$touch()"
           />
           <p
@@ -203,7 +207,7 @@ watch(
           </p>
         </div>
 
-        <div class="flex flex-col gap-2.5">
+        <div class="flex flex-col gap-1.5">
           <RelayLabel class="text-[13.5px] font-medium text-foreground">
             {{ t('ATTRIBUTES_MGMT.ADD.FORM.KEY.LABEL') }}
           </RelayLabel>
@@ -212,7 +216,7 @@ watch(
             type="text"
             disabled
             :placeholder="t('ATTRIBUTES_MGMT.ADD.FORM.KEY.PLACEHOLDER')"
-            class-name="h-10 rounded-md border-border/80 bg-background text-[14px] shadow-sm focus-visible:ring-1 focus-visible:ring-primary/30"
+            :class-name="RELAY_MODAL_INPUT_CLASS"
           />
           <p
             v-if="v$.attributeKey.$error"
@@ -222,15 +226,15 @@ watch(
           </p>
         </div>
 
-        <div class="flex flex-col gap-2.5">
+        <div class="flex flex-col gap-1.5">
           <RelayLabel class="text-[13.5px] font-medium text-foreground">
             {{ t('ATTRIBUTES_MGMT.ADD.FORM.DESC.LABEL') }}
           </RelayLabel>
-          <textarea
+          <RelayTextarea
             v-model="description"
-            rows="5"
+            :rows="5"
             :placeholder="t('ATTRIBUTES_MGMT.ADD.FORM.DESC.PLACEHOLDER')"
-            class="min-h-[80px] w-full resize-y border border-border/80 bg-background p-3 text-[14px] text-foreground outline-none focus-visible:ring-1 focus-visible:ring-primary/30 shadow-sm rounded-md"
+            class-name="min-h-[80px]"
             @blur="v$.description.$touch()"
           />
           <p
@@ -241,7 +245,7 @@ watch(
           </p>
         </div>
 
-        <div class="flex flex-col gap-2.5">
+        <div class="flex flex-col gap-1.5">
           <RelayLabel class="text-[13.5px] font-medium text-foreground">
             {{ t('ATTRIBUTES_MGMT.ADD.FORM.TYPE.LABEL') }}
           </RelayLabel>
@@ -294,7 +298,7 @@ watch(
             :placeholder="
               t('ATTRIBUTES_MGMT.ADD.FORM.REGEX_PATTERN.PLACEHOLDER')
             "
-            class-name="h-10 rounded-md border-border/80 bg-background text-[14px] shadow-sm focus-visible:ring-1 focus-visible:ring-primary/30"
+            :class-name="RELAY_MODAL_INPUT_CLASS"
           />
         </div>
 
@@ -309,29 +313,23 @@ watch(
             v-model="regexCue"
             type="text"
             :placeholder="t('ATTRIBUTES_MGMT.ADD.FORM.REGEX_CUE.PLACEHOLDER')"
-            class-name="h-10 rounded-md border-border/80 bg-background text-[14px] shadow-sm focus-visible:ring-1 focus-visible:ring-primary/30"
+            :class-name="RELAY_MODAL_INPUT_CLASS"
           />
         </div>
       </div>
 
-      <!-- Footer Actions -->
-      <div
-        class="flex justify-end gap-3 border-t border-border/40 bg-background/50 px-7 py-6"
-      >
-        <button
+      <div :class="RELAY_MODAL_FORM_FOOTER_CLASS">
+        <RelayButton
           type="button"
-          class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md border border-border bg-muted px-5 py-2 h-9 text-[13px] font-medium text-foreground shadow-sm hover:bg-muted/80 transition-colors"
+          variant="outline"
+          size="lg"
           @click="emit('close')"
         >
           {{ t('ATTRIBUTES_MGMT.ADD.CANCEL_BUTTON_TEXT') }}
-        </button>
-        <button
-          type="submit"
-          class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md bg-primary px-5 py-2 h-9 text-[13px] font-medium text-primary-foreground shadow-sm hover:bg-primary/90 transition-colors disabled:opacity-50"
-          :disabled="isButtonDisabled"
-        >
+        </RelayButton>
+        <RelayButton type="submit" size="lg" :disabled="isButtonDisabled">
           {{ t('ATTRIBUTES_MGMT.EDIT.UPDATE_BUTTON_TEXT') }}
-        </button>
+        </RelayButton>
       </div>
     </form>
   </RelayModal>

@@ -1,7 +1,9 @@
 <script setup>
 import { computed, reactive, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
+import { debounce } from '@chatwoot/utils';
 import { useMapGetter } from 'dashboard/composables/store';
+import CompanyAPI from 'dashboard/api/companies';
 import {
   RelayButton,
   RelayCheckbox,
@@ -55,13 +57,17 @@ const avatarFile = ref(null);
 const moreDetailsOpen = ref(false);
 const contactTypeSearch = ref('');
 const timeZoneSearch = ref('');
+const companySearch = ref('');
+const companyOptions = ref([]);
+const isSearchingCompanies = ref(false);
+const selectedCompany = ref(null);
+const previousCompanyId = ref(null);
 
 const form = reactive({
   firstName: '',
   lastName: '',
   email: '',
   phone: '',
-  company: '',
   contactType: 'lead',
   timezone: 'Etc/UTC',
   tags: '',
@@ -160,7 +166,6 @@ const resetForm = () => {
   form.lastName = '';
   form.email = '';
   form.phone = '';
-  form.company = '';
   form.contactType = 'lead';
   form.timezone = 'Etc/UTC';
   form.tags = '';
@@ -177,6 +182,10 @@ const resetForm = () => {
   moreDetailsOpen.value = false;
   contactTypeSearch.value = '';
   timeZoneSearch.value = '';
+  companySearch.value = '';
+  companyOptions.value = [];
+  selectedCompany.value = null;
+  previousCompanyId.value = null;
   editId.value = null;
   existingAdditional.value = {};
   if (avatarInput.value) avatarInput.value.value = '';
@@ -191,9 +200,10 @@ const prefillFromContact = contact => {
   form.lastName = parts.join(' ');
   form.email = contact.email || '';
   form.phone = contact.phone_number || '';
-  form.company = additional.company_name || '';
   form.timezone = additional.timezone || 'Etc/UTC';
   avatarPreview.value = contact.thumbnail || '';
+  selectedCompany.value = contact.company || null;
+  previousCompanyId.value = contact.company?.id ?? null;
 };
 
 const open = contact => {
@@ -232,6 +242,40 @@ const selectOwner = name => {
   form.owner = name;
 };
 
+const runCompanySearch = async query => {
+  if (!query) {
+    companyOptions.value = [];
+    return;
+  }
+  isSearchingCompanies.value = true;
+  try {
+    const {
+      data: { payload },
+    } = await CompanyAPI.search(query);
+    companyOptions.value = payload;
+  } finally {
+    isSearchingCompanies.value = false;
+  }
+};
+
+const debouncedCompanySearch = debounce(runCompanySearch, 300);
+
+const handleCompanySearchInput = value => {
+  companySearch.value = value;
+  selectedCompany.value = null;
+  debouncedCompanySearch(value.trim());
+};
+
+const selectCompany = company => {
+  selectedCompany.value = company;
+  companySearch.value = '';
+  companyOptions.value = [];
+};
+
+const clearSelectedCompany = () => {
+  selectedCompany.value = null;
+};
+
 const handleDisabledSubmitClick = () => {
   if (!isFormValid.value) showErrors.value = true;
 };
@@ -254,9 +298,10 @@ const handleSubmit = async () => {
       phone_number: form.phone.trim(),
       additional_attributes: {
         ...existingAdditional.value,
-        company_name: form.company.trim(),
         timezone: form.timezone,
       },
+      companyId: selectedCompany.value?.id ?? null,
+      previousCompanyId: previousCompanyId.value,
       ...avatarPayload(),
     });
     isSaving.value = false;
@@ -277,8 +322,8 @@ const handleSubmit = async () => {
     name: `${form.firstName.trim()} ${form.lastName.trim()}`.trim(),
     email: form.email.trim(),
     phoneNumber: form.phone.trim() || undefined,
+    companyId: selectedCompany.value?.id ?? undefined,
     additionalAttributes: {
-      companyName: form.company.trim() || undefined,
       emails,
       phoneNumbers: phones,
       timezone: form.timezone,
@@ -540,22 +585,99 @@ defineExpose({ open, close });
           </div>
 
           <!-- Company -->
-          <div class="relative" :class="[RELAY_FORM_FIELD_CLASS]">
+          <div :class="[RELAY_FORM_FIELD_CLASS]">
             <label :class="RELAY_FORM_LABEL_CLASS">
               {{ t('CONTACTS_LAYOUT.ADD_CONTACT_DRAWER.COMPANY') }}
             </label>
-            <div class="relative">
-              <span
-                class="i-lucide-search pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground"
-              />
-              <RelayInput
-                v-model="form.company"
-                :placeholder="
-                  t('CONTACTS_LAYOUT.ADD_CONTACT_DRAWER.COMPANY_PLACEHOLDER')
+            <div
+              v-if="selectedCompany"
+              class="flex h-10 w-full items-center justify-between rounded-md border border-border/80 bg-background px-3 text-[14px]"
+            >
+              <span class="truncate text-foreground">{{
+                selectedCompany.name
+              }}</span>
+              <button
+                type="button"
+                :class="REMOVE_FIELD_BUTTON_CLASS"
+                class="!size-6"
+                :aria-label="
+                  t('CONTACTS_LAYOUT.ADD_CONTACT_DRAWER.COMPANY_REMOVE')
                 "
-                class-name="h-10 w-full pl-9 pr-3 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary/30"
-              />
+                @click="clearSelectedCompany"
+              >
+                <span class="i-lucide-x size-3.5" />
+              </button>
             </div>
+            <RelayDropdownMenu v-else :modal="false">
+              <RelayDropdownMenuTrigger as-child>
+                <RelayButton
+                  variant="outline"
+                  class="text-muted-foreground"
+                  :class="[DROPDOWN_TRIGGER_CLASS]"
+                >
+                  {{
+                    t('CONTACTS_LAYOUT.ADD_CONTACT_DRAWER.COMPANY_PLACEHOLDER')
+                  }}
+                  <span class="i-lucide-search size-4 opacity-50" />
+                </RelayButton>
+              </RelayDropdownMenuTrigger>
+              <RelayDropdownMenuContent
+                align="start"
+                :portal-to="modalPanelRef"
+                :collision-boundary="modalPanelRef"
+                :collision-padding="12"
+                :class="MODAL_DROPDOWN_CONTENT_CLASS"
+              >
+                <div :class="DROPDOWN_MENU_SEARCH_HEADER_CLASS">
+                  <div :class="DROPDOWN_MENU_SEARCH_WRAPPER_CLASS">
+                    <span :class="DROPDOWN_MENU_SEARCH_ICON_CLASS" />
+                    <input
+                      :value="companySearch"
+                      type="text"
+                      :placeholder="
+                        t(
+                          'CONTACTS_LAYOUT.ADD_CONTACT_DRAWER.COMPANY_SEARCH_PLACEHOLDER'
+                        )
+                      "
+                      :class="MODAL_DROPDOWN_SEARCH_INPUT_CLASS"
+                      @input="handleCompanySearchInput($event.target.value)"
+                    />
+                  </div>
+                </div>
+                <div :class="MODAL_DROPDOWN_LIST_CLASS">
+                  <div
+                    v-if="!companySearch.trim()"
+                    class="px-3 py-2 text-[13px] text-muted-foreground"
+                  >
+                    {{
+                      t('CONTACTS_LAYOUT.ADD_CONTACT_DRAWER.COMPANY_INITIAL')
+                    }}
+                  </div>
+                  <div
+                    v-else-if="isSearchingCompanies"
+                    class="px-3 py-2 text-[13px] text-muted-foreground"
+                  >
+                    {{ t('CONTACTS_LAYOUT.ADD_CONTACT_DRAWER.SEARCHING') }}
+                  </div>
+                  <div
+                    v-else-if="!companyOptions.length"
+                    class="px-3 py-2 text-[13px] text-muted-foreground"
+                  >
+                    {{
+                      t('CONTACTS_LAYOUT.ADD_CONTACT_DRAWER.COMPANY_NOT_FOUND')
+                    }}
+                  </div>
+                  <RelayDropdownMenuItem
+                    v-for="company in companyOptions"
+                    :key="company.id"
+                    :class="MODAL_DROPDOWN_ITEM_CLASS"
+                    @click="selectCompany(company)"
+                  >
+                    <span class="truncate">{{ company.name }}</span>
+                  </RelayDropdownMenuItem>
+                </div>
+              </RelayDropdownMenuContent>
+            </RelayDropdownMenu>
           </div>
 
           <hr class="my-6 border-border/50" />

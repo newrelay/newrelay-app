@@ -3,6 +3,7 @@ import { ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useStore } from 'dashboard/composables/store';
 import { useAlert } from 'dashboard/composables';
+import { useCompaniesStore } from 'dashboard/stores/companies';
 import {
   DuplicateContactException,
   ExceptionWithMessage,
@@ -17,6 +18,7 @@ import CreateNewContactDialog from 'dashboard/components-next/Contacts/ContactsF
 
 const { t } = useI18n();
 const store = useStore();
+const companiesStore = useCompaniesStore();
 
 const contactExportDialogRef = ref(null);
 const contactImportDialogRef = ref(null);
@@ -60,9 +62,12 @@ const onExport = async query => {
   }
 };
 
-const onCreate = async contact => {
+const onCreate = async ({ companyId, ...contact }) => {
   try {
-    await store.dispatch('contacts/create', contact);
+    const createdContact = await store.dispatch('contacts/create', contact);
+    if (companyId) {
+      await companiesStore.attachContactToCompany(companyId, createdContact.id);
+    }
     createNewContactDialogRef.value?.dialogRef.close();
     useAlert(
       t('CONTACTS_LAYOUT.HEADER.ACTIONS.CONTACT_CREATION.SUCCESS_MESSAGE')

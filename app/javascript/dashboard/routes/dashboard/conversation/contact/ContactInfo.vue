@@ -7,6 +7,7 @@ import {
   ExceptionWithMessage,
 } from 'shared/helpers/CustomErrors';
 import { useAdmin } from 'dashboard/composables/useAdmin';
+import { useCompaniesStore } from 'dashboard/stores/companies';
 import { isVoiceCallEnabled } from 'dashboard/helper/inbox';
 import Avatar from 'next/avatar/Avatar.vue';
 import AddContactDrawer from 'dashboard/components-next/Contacts/Drawers/AddContactDrawer.vue';
@@ -42,8 +43,10 @@ export default {
   emits: ['panelClose'],
   setup() {
     const { isAdmin } = useAdmin();
+    const companiesStore = useCompaniesStore();
     return {
       isAdmin,
+      companiesStore,
     };
   },
   computed: {
@@ -111,11 +114,25 @@ export default {
     },
     async updateContactField(attrs) {
       const contactId = this.contact.id;
+      const { companyId, previousCompanyId, ...contactAttrs } = attrs;
       try {
         await this.$store.dispatch('contacts/update', {
           id: contactId,
-          ...attrs,
+          ...contactAttrs,
         });
+        if (companyId !== undefined && companyId !== previousCompanyId) {
+          if (companyId) {
+            await this.companiesStore.attachContactToCompany(
+              companyId,
+              contactId
+            );
+          } else if (previousCompanyId) {
+            await this.companiesStore.removeContactFromCompany(
+              previousCompanyId,
+              contactId
+            );
+          }
+        }
         useAlert(this.$t('CONTACT_FORM.SUCCESS_MESSAGE'));
         await this.$store.dispatch('contacts/fetchContactableInbox', contactId);
       } catch (error) {

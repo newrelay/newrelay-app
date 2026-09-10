@@ -42,7 +42,7 @@
         },
         "EMAIL": {
           "LABEL": "Email Address",
-          "PLACEHOLDER": "E.g. john@company.com",
+          "PLACEHOLDER": "E.g. john{'@'}company.com",
           "ERROR": "Email address is required"
         },
         "SUBMIT": "Add Agent"
@@ -81,7 +81,7 @@
         },
         "EMAIL": {
           "LABEL": "Email Address",
-          "PLACEHOLDER": "E.g. john@company.com"
+          "PLACEHOLDER": "E.g. john{'@'}company.com"
         },
         "AGENT_AVAILABILITY": {
           "LABEL": "Availability",

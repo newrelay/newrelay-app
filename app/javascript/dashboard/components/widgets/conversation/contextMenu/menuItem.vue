@@ -50,7 +50,7 @@ const itemClass = computed(() => {
 <template>
   <button
     type="button"
-    class="flex w-full min-w-0 cursor-default items-center gap-2 rounded-sm px-2 py-1.5 text-left text-sm outline-none transition-colors"
+    class="flex w-full min-w-0 cursor-default items-center gap-2 rounded-sm p-0 !px-2 !py-1.5 text-left text-sm outline-none transition-colors"
     :class="itemClass"
   >
     <span

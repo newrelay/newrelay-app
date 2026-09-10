@@ -63,7 +63,7 @@ const hasSlaPolicyId = computed(
       'grid-cols-[minmax(0,2fr)_max-content]': !showLabelsSection,
     }"
     @click="$emit('click', $event)"
-    @contextmenu="$emit('contextmenu', $event)"
+    @contextmenu.prevent="$emit('contextmenu', $event)"
   >
     <!-- LEFT SECTION -->
     <div class="flex items-center gap-2 min-w-0 flex-1">

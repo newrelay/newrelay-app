@@ -230,8 +230,9 @@ export default {
     },
     async snoozeConversation() {
       await this.$store.dispatch('setContextMenuChatId', this.chatId);
-      const ninja = document.querySelector('ninja-keys');
-      ninja.open({ parent: 'snooze_conversation' });
+      document
+        .querySelector('ninja-keys')
+        ?.open({ parent: 'snooze_conversation' });
     },
     assignPriority(priority) {
       this.$emit('assignPriority', priority);

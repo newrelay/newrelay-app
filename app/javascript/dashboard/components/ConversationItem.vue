@@ -29,11 +29,11 @@ const assignTeam = inject('assignTeam');
 const assignLabels = inject('assignLabels');
 const removeLabels = inject('removeLabels');
 const updateConversationStatus = inject('updateConversationStatus');
-const toggleContextMenu = inject('toggleContextMenu');
+const toggleContextMenu = inject('toggleContextMenu', () => {});
 const markAsUnread = inject('markAsUnread');
 const markAsRead = inject('markAsRead');
 const assignPriority = inject('assignPriority');
-const isConversationSelected = inject('isConversationSelected');
+const isConversationSelected = inject('isConversationSelected', () => false);
 const deleteConversation = inject('deleteConversation');
 
 const { uiSettings, updateUISettings } = useUISettings();
@@ -156,44 +156,44 @@ const closeContextMenu = () => {
 
 const onUpdateConversation = (status, snoozedUntil) => {
   closeContextMenu();
-  updateConversationStatus(props.source.id, status, snoozedUntil);
+  updateConversationStatus?.(props.source.id, status, snoozedUntil);
 };
 
 const onAssignAgent = agent => {
-  assignAgent(agent, [props.source.id]);
+  assignAgent?.(agent, [props.source.id]);
   closeContextMenu();
 };
 
 const onAssignLabel = label => {
-  assignLabels([label.title], [props.source.id]);
+  assignLabels?.([label.title], [props.source.id]);
 };
 
 const onRemoveLabel = label => {
-  removeLabels([label.title], [props.source.id]);
+  removeLabels?.([label.title], [props.source.id]);
 };
 
 const onAssignTeam = team => {
-  assignTeam(team, props.source.id);
+  assignTeam?.(team, props.source.id);
   closeContextMenu();
 };
 
 const onMarkAsUnread = () => {
-  markAsUnread(props.source.id);
+  markAsUnread?.(props.source.id);
   closeContextMenu();
 };
 
 const onMarkAsRead = () => {
-  markAsRead(props.source.id);
+  markAsRead?.(props.source.id);
   closeContextMenu();
 };
 
 const onAssignPriority = priority => {
-  assignPriority(priority, props.source.id);
+  assignPriority?.(priority, props.source.id);
   closeContextMenu();
 };
 
 const onDeleteConversation = () => {
-  deleteConversation(props.source.id);
+  deleteConversation?.(props.source.id);
   closeContextMenu();
 };
 </script>
@@ -238,7 +238,6 @@ const onDeleteConversation = () => {
     @toggle-star="onToggleStar"
   />
 
-  <!-- Shared context menu for both layouts -->
   <ContextMenu
     v-if="showContextMenu"
     :x="contextMenu.x"

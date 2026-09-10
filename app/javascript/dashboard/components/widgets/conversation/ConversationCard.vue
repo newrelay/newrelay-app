@@ -96,7 +96,7 @@ const channelSubtext = computed(() => {
       compact ? 'mx-0' : '',
     ]"
     @click="$emit('click', $event)"
-    @contextmenu="$emit('contextmenu', $event)"
+    @contextmenu.prevent="$emit('contextmenu', $event)"
   >
     <div class="relative mt-1 shrink-0">
       <img

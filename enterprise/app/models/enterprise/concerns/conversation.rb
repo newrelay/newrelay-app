@@ -16,6 +16,8 @@ module Enterprise::Concerns::Conversation
   private
 
   def enforce_monthly_conversations_limit
+    return unless account
+
     limit = account.limits['conversations']
     return if limit.nil? # unlimited
 

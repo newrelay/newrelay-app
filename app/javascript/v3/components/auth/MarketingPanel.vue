@@ -3,14 +3,18 @@ import { computed } from 'vue';
 import { useStore } from 'vuex';
 import { useI18n } from 'vue-i18n';
 import { formatInstallationDisplayName } from 'shared/helpers/installationNameHelper';
+import { useStealthMode } from 'dashboard/composables/useStealthMode';
 
 const store = useStore();
 const { t } = useI18n();
+const { isStealthMode } = useStealthMode();
 
 const globalConfig = computed(() => store.getters['globalConfig/get']);
 
 const displayName = computed(() =>
-  formatInstallationDisplayName(globalConfig.value.installationName)
+  isStealthMode.value
+    ? t('SIDEBAR.STEALTH_BRAND_NAME')
+    : formatInstallationDisplayName(globalConfig.value.installationName)
 );
 const WHITE_RELAY_LOGO = '/white-relay-logo.svg';
 
@@ -46,10 +50,12 @@ const features = computed(() => [
         class="size-8 rounded-lg bg-primary text-primary-foreground flex items-center justify-center overflow-hidden p-1.5 shadow-sm"
       >
         <img
+          v-if="!isStealthMode"
           :src="WHITE_RELAY_LOGO"
           :alt="displayName"
           class="size-full object-contain"
         />
+        <span v-else class="i-lucide-layers size-5 text-primary-foreground" />
       </div>
       <span class="text-xl font-bold text-foreground">{{ displayName }}</span>
     </div>

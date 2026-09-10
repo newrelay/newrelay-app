@@ -4,6 +4,10 @@ import { useMessageContext } from '../../provider.js';
 
 import MessageFormatter from 'shared/helpers/MessageFormatter.js';
 import { MESSAGE_VARIANTS } from '../../constants';
+import {
+  highlightSearchHtml,
+  useConversationMessageSearch,
+} from 'dashboard/composables/useConversationMessageSearch';
 
 const props = defineProps({
   content: {
@@ -13,13 +17,17 @@ const props = defineProps({
 });
 
 const { variant } = useMessageContext();
+const { query } = useConversationMessageSearch();
 
 const formattedContent = computed(() => {
   if (variant.value === MESSAGE_VARIANTS.ACTIVITY) {
-    return props.content;
+    return highlightSearchHtml(props.content, query.value);
   }
 
-  return new MessageFormatter(props.content).formattedMessage;
+  return highlightSearchHtml(
+    new MessageFormatter(props.content).formattedMessage,
+    query.value
+  );
 });
 </script>
 

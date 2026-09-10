@@ -10,7 +10,7 @@
 - **Ghost Buttons**: Always add a subtle gray border to define boundaries (e.g., `border border-border`). On hover, remove it (`hover:border-transparent`).
 - **Modals/Popups**: 
   - Backdrop: `bg-background/80 backdrop-blur-[8px]` (prefer `RELAY_DIALOG_OVERLAY_CLASS` from `relay/modal/constants.js`).
-  - Header: `RELAY_MODAL_HEADER_CLASS` — title `text-base font-medium tracking-tight`, description `text-[14px] font-normal text-muted-foreground`, then `border-b border-border/80`. Form fields start below the divider in the body.
+  - Header: `RELAY_MODAL_HEADER_CLASS` — title `text-base font-medium tracking-tight`, description `text-[14px] font-normal text-muted-foreground`. No `border-b` under the title (spacing only), except Add Bot (`RELAY_MODAL_HEADER_PLAIN_CLASS`: `border-b border-border/40`). Footer may use `border-t border-border/40`.
   - Content body: `p-6` (or `pt-4 pb-8 px-8` for legacy woot-modal-content migration).
 - **Forms (in Modals)**:
   - Field wrapper: `flex flex-col gap-1.5` between label and input/textarea.

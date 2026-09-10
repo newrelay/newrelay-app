@@ -14,6 +14,8 @@ module Enterprise::Concerns::Contact
   private
 
   def enforce_contacts_limit
+    return unless account
+
     limit = account.limits['contacts']
     return if limit.nil? # unlimited
 

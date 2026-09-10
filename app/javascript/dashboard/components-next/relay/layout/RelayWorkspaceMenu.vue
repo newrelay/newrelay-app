@@ -9,6 +9,7 @@ import Auth from 'dashboard/api/auth';
 import RelaySwitch from '../switch/Switch.vue';
 import { useImpersonation } from 'dashboard/composables/useImpersonation';
 import { useAlert } from 'dashboard/composables';
+import { useStealthMode } from 'dashboard/composables/useStealthMode';
 
 const emit = defineEmits(['showCreateAccountModal', 'openKeyShortcutModal']);
 
@@ -16,6 +17,7 @@ const WHITE_RELAY_LOGO = '/white-relay-logo.svg';
 
 const { t } = useI18n();
 const store = useStore();
+const { isStealthMode } = useStealthMode();
 const { accountId, currentAccount } = useAccount();
 const currentUser = useMapGetter('getCurrentUser');
 const currentUserAvailability = useMapGetter('getCurrentUserAvailability');
@@ -173,10 +175,12 @@ const onLogout = () => {
           class="flex size-8 shrink-0 items-center justify-center overflow-hidden rounded-full bg-primary p-1.5 text-primary-foreground shadow-xs"
         >
           <img
+            v-if="!isStealthMode"
             :src="WHITE_RELAY_LOGO"
             :alt="brandLogoAlt"
             class="size-full object-contain"
           />
+          <span v-else class="i-lucide-layers size-5 text-primary-foreground" />
         </div>
         <div
           class="absolute -bottom-0.5 -right-0.5 size-3 rounded-full border-2 border-background"
@@ -220,9 +224,14 @@ const onLogout = () => {
                 class="flex size-8 shrink-0 items-center justify-center overflow-hidden rounded-full bg-primary p-1.5 text-primary-foreground shadow-xs"
               >
                 <img
+                  v-if="!isStealthMode"
                   :src="WHITE_RELAY_LOGO"
                   :alt="brandLogoAlt"
                   class="size-full object-contain"
+                />
+                <span
+                  v-else
+                  class="i-lucide-layers size-5 text-primary-foreground"
                 />
               </div>
               <div

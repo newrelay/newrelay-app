@@ -17,6 +17,7 @@ import AuthInput from '../../components/auth/AuthInput.vue';
 import Spinner from 'shared/components/Spinner.vue';
 import MfaVerification from 'dashboard/components/auth/MfaVerification.vue';
 import { formatInstallationDisplayName } from 'shared/helpers/installationNameHelper';
+import { useStealthMode } from 'dashboard/composables/useStealthMode';
 
 const props = defineProps({
   ssoAuthToken: { type: String, default: '' },
@@ -40,6 +41,7 @@ const store = useStore();
 const route = useRoute();
 const router = useRouter();
 const { t } = useI18n();
+const { isStealthMode } = useStealthMode();
 
 const credentials = reactive({
   email: '',
@@ -63,7 +65,9 @@ const v$ = useVuelidate(rules, { credentials });
 
 const globalConfig = computed(() => store.getters['globalConfig/get']);
 const installationDisplayName = computed(() =>
-  formatInstallationDisplayName(globalConfig.value.installationName)
+  isStealthMode.value
+    ? t('SIDEBAR.STEALTH_BRAND_NAME')
+    : formatInstallationDisplayName(globalConfig.value.installationName)
 );
 const allowedLoginMethods = computed(
   () => window.newrelayConfig.allowedLoginMethods || ['email']

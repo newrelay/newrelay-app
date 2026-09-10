@@ -290,7 +290,7 @@ watch(() => props.selectedBot, initializeForm, { deep: true });
     @close="handleFormClose"
   >
     <form @submit.prevent="handleSubmit">
-      <div class="flex flex-col gap-6 px-8 pb-4">
+      <div class="flex flex-col gap-6 px-8 pt-6 pb-4">
         <div class="flex flex-col gap-2">
           <RelayLabel class="text-[13.5px] font-medium text-foreground">
             {{ t('AGENT_BOTS.FORM.AVATAR.LABEL') }}

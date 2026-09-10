@@ -7,6 +7,16 @@ import { BUS_EVENTS } from 'shared/constants/busEvents';
 const MIN_QUERY_LENGTH = 2;
 const SEARCH_DEBOUNCE_MS = 250;
 
+export function highlightSearchHtml(html, rawQuery) {
+  const q = String(rawQuery || '').trim();
+  if (!html || q.length < MIN_QUERY_LENGTH) return html;
+  const escaped = q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  return String(html).replace(
+    new RegExp(`(${escaped})(?![^<]*>)`, 'gi'),
+    '<mark class="rounded-[2px] bg-warning/50 px-0.5 text-foreground">$1</mark>'
+  );
+}
+
 const query = ref('');
 const matchIds = ref([]);
 const activeIndex = ref(0);

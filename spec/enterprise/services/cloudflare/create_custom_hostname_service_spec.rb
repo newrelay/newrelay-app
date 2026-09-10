@@ -9,7 +9,7 @@ RSpec.describe Cloudflare::CreateCustomHostnameService do
     context 'when API token or zone ID is not found' do
       it 'returns error when API token is missing' do
         installation_config_zone_id
-        service = described_class.new(portal: portal)
+        service = described_class.new(record: portal)
 
         result = service.perform
 
@@ -18,7 +18,7 @@ RSpec.describe Cloudflare::CreateCustomHostnameService do
 
       it 'returns error when zone ID is missing' do
         installation_config_api_key
-        service = described_class.new(portal: portal)
+        service = described_class.new(record: portal)
 
         result = service.perform
 
@@ -31,7 +31,7 @@ RSpec.describe Cloudflare::CreateCustomHostnameService do
         installation_config_api_key
         installation_config_zone_id
         portal.update(custom_domain: nil)
-        service = described_class.new(portal: portal)
+        service = described_class.new(record: portal)
 
         result = service.perform
 
@@ -47,7 +47,7 @@ RSpec.describe Cloudflare::CreateCustomHostnameService do
 
       context 'when API request fails' do
         it 'returns error response' do
-          service = described_class.new(portal: portal)
+          service = described_class.new(record: portal)
           error_response = {
             'errors' => [{ 'message' => 'API error' }]
           }
@@ -65,7 +65,7 @@ RSpec.describe Cloudflare::CreateCustomHostnameService do
 
       context 'when API request succeeds but no data is returned' do
         it 'returns hostname creation error' do
-          service = described_class.new(portal: portal)
+          service = described_class.new(record: portal)
           success_response = {
             'result' => nil
           }
@@ -83,7 +83,7 @@ RSpec.describe Cloudflare::CreateCustomHostnameService do
 
       context 'when API request succeeds and data is returned' do
         it 'updates portal SSL settings and returns success' do
-          service = described_class.new(portal: portal)
+          service = described_class.new(record: portal)
           success_response = {
             'result' => {
               'ownership_verification_http' => {

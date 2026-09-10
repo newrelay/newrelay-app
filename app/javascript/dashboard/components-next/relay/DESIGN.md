@@ -216,10 +216,10 @@ Dev-only “show working state” toggles are fine in prototypes; do not ship th
 
 ### Modals / header
 
-- Header wrapper: `RELAY_MODAL_HEADER_CLASS` — `flex shrink-0 items-center justify-between border-b border-border/80 p-6`.
+- Header wrapper: `RELAY_MODAL_HEADER_CLASS` — `flex shrink-0 items-start justify-between p-6` (no `border-b`; NewRelay Agent/Label/Role use spacing, not a rule). **Add Bot** is the exception: `RELAY_MODAL_HEADER_PLAIN_CLASS` uses `border-b border-border/40` with `px-8 py-6`.
 - Title: `text-base font-medium tracking-tight text-foreground` (`RELAY_MODAL_TITLE_CLASS`).
 - Description under title: `text-[14px] font-normal leading-normal text-muted-foreground` (`RELAY_MODAL_DESCRIPTION_CLASS`).
-- Form body starts **below** the header divider (separate scroll/content block with `p-6`).
+- Form body follows the header (`p-6` or flush `px-6`/`px-7`). Footer uses `border-t border-border/40` when actions sit on a bar.
 
 ### Modals / forms
 

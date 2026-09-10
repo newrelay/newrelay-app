@@ -1,5 +1,5 @@
 <script>
-import { defineAsyncComponent, ref, computed, watch } from 'vue';
+import { defineAsyncComponent, ref, computed, watch, onMounted } from 'vue';
 
 import NextSidebar from 'next/sidebar/Sidebar.vue';
 import RelayHeader from 'dashboard/components-next/relay/layout/RelayHeader.vue';
@@ -15,6 +15,10 @@ import { useI18n } from 'vue-i18n';
 
 import wootConstants from 'dashboard/constants/globals';
 import { SETTINGS_ROUTE_NAMES } from 'dashboard/routes/dashboard/settings/settings.navigation';
+import {
+  isStealthMode,
+  syncStealthAppearance,
+} from 'dashboard/composables/useStealthMode';
 
 const CommandBar = defineAsyncComponent(
   () => import('./commands/commandbar.vue')
@@ -123,16 +127,22 @@ export default {
     });
 
     watch(
-      activeBrandName,
-      newName => {
-        if (newName) {
-          document.title = newName;
+      [activeBrandName, isStealthMode],
+      () => {
+        if (isStealthMode.value) {
+          document.title = t('SIDEBAR.STEALTH_DOCUMENT_TITLE');
+          return;
+        }
+        if (activeBrandName.value) {
+          document.title = activeBrandName.value;
         } else {
           document.title = globalConfig.value?.installationName || 'newrelay';
         }
       },
       { immediate: true }
     );
+
+    onMounted(syncStealthAppearance);
 
     return {
       uiSettings,
@@ -144,6 +154,7 @@ export default {
       activeBrandName,
       globalConfig,
       t,
+      isStealthMode,
       hasActiveCall: computed(() => callsStore.hasActiveCall),
       hasIncomingCall: computed(() => callsStore.hasIncomingCall),
     };
@@ -180,7 +191,9 @@ export default {
     headerTitle() {
       const routeName = this.$route.name || '';
       if (String(routeName).startsWith('captain')) {
-        return this.t('SIDEBAR.CAPTAIN');
+        return this.isStealthMode
+          ? this.t('SIDEBAR.STEALTH_AI_NAME')
+          : this.t('SIDEBAR.CAPTAIN');
       }
       if (
         [

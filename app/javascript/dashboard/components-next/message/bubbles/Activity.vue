@@ -3,8 +3,13 @@ import { RelayTooltip } from 'dashboard/components-next/relay';
 import { computed } from 'vue';
 import { messageTimestamp } from 'shared/helpers/timeHelper';
 import { useMessageContext } from '../provider.js';
+import {
+  highlightSearchHtml,
+  useConversationMessageSearch,
+} from 'dashboard/composables/useConversationMessageSearch';
 
 const { content, createdAt } = useMessageContext();
+const { query } = useConversationMessageSearch();
 
 const readableTime = computed(() =>
   messageTimestamp(createdAt.value, 'LLL d, h:mm a')
@@ -37,6 +42,10 @@ const activityIcon = computed(() => {
   return 'i-lucide-info';
 });
 
+const highlightedContent = computed(() =>
+  highlightSearchHtml(content.value, query.value)
+);
+
 const activityIconClass = computed(() => {
   const text = plainContent.value;
   if (text.includes('reopen')) return 'text-primary';
@@ -61,7 +70,7 @@ const activityIconClass = computed(() => {
           :class="[activityIcon, activityIconClass]"
         />
         <span
-          v-dompurify-html="content"
+          v-dompurify-html="highlightedContent"
           class="min-w-0 truncate [&_a]:inline [&_a]:font-medium [&_a]:text-muted-foreground [&_b]:inline [&_b]:font-medium [&_p]:m-0 [&_p]:inline [&_strong]:inline [&_strong]:font-medium"
         />
         <span

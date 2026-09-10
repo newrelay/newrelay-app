@@ -13,8 +13,7 @@ import NextButton from 'dashboard/components-next/button/Button.vue';
 import {
   RelayInput,
   RelayLabel,
-  RelayButton,
-  RelayModal,
+  RelayConfirmModal,
 } from 'dashboard/components-next/relay';
 import SettingsToggleSection from 'dashboard/components-next/Settings/SettingsToggleSection.vue';
 import DropdownMenu from 'dashboard/components-next/dropdown-menu/DropdownMenu.vue';
@@ -691,25 +690,14 @@ onMounted(() => {
       </SettingsToggleSection>
     </SettingsAccordion>
 
-    <RelayModal
+    <RelayConfirmModal
       :show="showDeleteConfirmModal"
       :title="$t('INBOX_MGMT.ASSIGNMENT_POLICY.DELETE_CONFIRM_TITLE')"
-      :description="$t('INBOX_MGMT.ASSIGNMENT_POLICY.DELETE_CONFIRM_MESSAGE')"
-      flush
+      :message="$t('INBOX_MGMT.ASSIGNMENT_POLICY.DELETE_CONFIRM_MESSAGE')"
+      :confirm-text="$t('INBOX_MGMT.ASSIGNMENT_POLICY.CONFIRM_DELETE')"
+      :cancel-text="$t('INBOX_MGMT.ASSIGNMENT_POLICY.CANCEL')"
       @close="cancelDeletePolicy"
-    >
-      <div class="flex justify-end gap-3 px-7 py-6">
-        <RelayButton variant="outline" @click="cancelDeletePolicy">
-          {{ $t('INBOX_MGMT.ASSIGNMENT_POLICY.CANCEL') }}
-        </RelayButton>
-        <RelayButton
-          variant="destructive"
-          :disabled="isDeletingPolicy"
-          @click="deleteAssignmentPolicy"
-        >
-          {{ $t('INBOX_MGMT.ASSIGNMENT_POLICY.CONFIRM_DELETE') }}
-        </RelayButton>
-      </div>
-    </RelayModal>
+      @confirm="deleteAssignmentPolicy"
+    />
   </div>
 </template>

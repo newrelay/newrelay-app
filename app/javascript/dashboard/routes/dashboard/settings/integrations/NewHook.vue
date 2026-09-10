@@ -138,7 +138,7 @@ export default {
     <FormKit
       v-model="values"
       type="form"
-      form-class="w-full grid gap-4 px-7 pb-2 integration-hooks"
+      form-class="w-full grid gap-4 px-6 pb-2 integration-hooks"
       :submit-attrs="{
         inputClass: 'hidden',
         wrapperClass: 'hidden',
@@ -159,12 +159,17 @@ export default {
         validation-name="Inbox"
       />
       <div
-        class="-mx-7 mt-2 flex flex-row justify-end gap-3 border-t border-border/40 px-7 pt-6 pb-6"
+        class="-mx-6 mt-2 flex flex-row justify-end gap-3 border-t border-border/40 px-6 py-5"
       >
-        <RelayButton variant="outline" type="reset" @click.prevent="onClose">
+        <RelayButton
+          variant="outline"
+          type="reset"
+          size="lg"
+          @click.prevent="onClose"
+        >
           {{ $t('INTEGRATION_APPS.ADD.FORM.CANCEL') }}
         </RelayButton>
-        <RelayButton type="submit" :disabled="uiFlags.isCreatingHook">
+        <RelayButton type="submit" size="lg" :disabled="uiFlags.isCreatingHook">
           {{ submitButtonLabel }}
         </RelayButton>
       </div>

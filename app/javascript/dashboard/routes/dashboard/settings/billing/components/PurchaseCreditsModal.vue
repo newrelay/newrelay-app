@@ -3,7 +3,10 @@ import { ref, computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useAlert } from 'dashboard/composables';
 import Dialog from 'dashboard/components-next/dialog/Dialog.vue';
-import { RelayButton } from 'dashboard/components-next/relay';
+import {
+  RelayButton,
+  RELAY_MODAL_FORM_FOOTER_CLASS,
+} from 'dashboard/components-next/relay';
 import CreditPackageCard from './CreditPackageCard.vue';
 import EnterpriseAccountAPI from 'dashboard/api/enterprise/account';
 import { buildCheckoutReturnUrls } from 'dashboard/composables/useBillingCheckoutReturn';
@@ -206,17 +209,13 @@ defineExpose({ open, close });
     </template>
 
     <template #footer>
-      <div class="flex w-full items-center gap-3 sm:gap-4">
+      <div :class="RELAY_MODAL_FORM_FOOTER_CLASS">
         <template v-if="currentStep === 'select'">
-          <RelayButton
-            variant="outline"
-            class="h-11 flex-1 border-transparent bg-muted/50 shadow-none hover:bg-muted"
-            @click="close"
-          >
+          <RelayButton variant="outline" size="lg" @click="close">
             {{ $t('BILLING_SETTINGS.TOPUP.CANCEL') }}
           </RelayButton>
           <RelayButton
-            class="h-11 flex-1 shadow-sm"
+            size="lg"
             :disabled="!selectedOption"
             @click="goToConfirmStep"
           >
@@ -224,18 +223,10 @@ defineExpose({ open, close });
           </RelayButton>
         </template>
         <template v-else>
-          <RelayButton
-            variant="outline"
-            class="h-10 flex-1 border-transparent bg-muted/50 shadow-none hover:bg-muted"
-            @click="goBackToSelectStep"
-          >
+          <RelayButton variant="outline" size="lg" @click="goBackToSelectStep">
             {{ $t('BILLING_SETTINGS.TOPUP.CONFIRM.GO_BACK') }}
           </RelayButton>
-          <RelayButton
-            class="h-10 flex-1 shadow-sm"
-            :disabled="isLoading"
-            @click="handlePurchase"
-          >
+          <RelayButton size="lg" :disabled="isLoading" @click="handlePurchase">
             {{ $t('BILLING_SETTINGS.TOPUP.PURCHASE') }}
           </RelayButton>
         </template>

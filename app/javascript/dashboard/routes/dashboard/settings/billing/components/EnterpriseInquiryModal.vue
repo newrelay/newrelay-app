@@ -3,8 +3,13 @@ import { ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useAlert } from 'dashboard/composables';
 import Dialog from 'dashboard/components-next/dialog/Dialog.vue';
-import Button from 'dashboard/components-next/button/Button.vue';
-import { RelayInput, RelayLabel } from 'dashboard/components-next/relay';
+import {
+  RelayButton,
+  RelayInput,
+  RelayLabel,
+  RELAY_MODAL_FORM_FOOTER_CLASS,
+  RELAY_MODAL_INPUT_CLASS,
+} from 'dashboard/components-next/relay';
 import Select from 'dashboard/components-next/select/Select.vue';
 import TextArea from 'dashboard/components-next/textarea/TextArea.vue';
 import TagMultiSelectComboBox from 'dashboard/components-next/combobox/TagMultiSelectComboBox.vue';
@@ -130,7 +135,7 @@ defineExpose({ open, close });
           :placeholder="
             $t('BILLING_SETTINGS.ENTERPRISE_INQUIRY.TEAM_SIZE.PLACEHOLDER')
           "
-          class-name="h-9 px-4 text-[14px] shadow-sm rounded-md border-border/80 bg-background focus-visible:ring-1 focus-visible:ring-primary/30"
+          :class-name="RELAY_MODAL_INPUT_CLASS"
         />
       </div>
 
@@ -157,23 +162,24 @@ defineExpose({ open, close });
     </div>
 
     <template #footer>
-      <div class="flex items-center justify-between w-full gap-3">
-        <Button
-          variant="faded"
-          color="slate"
-          :label="$t('BILLING_SETTINGS.ENTERPRISE_INQUIRY.CANCEL')"
-          class="w-full"
+      <div :class="RELAY_MODAL_FORM_FOOTER_CLASS">
+        <RelayButton
           type="button"
+          variant="outline"
+          size="lg"
           :disabled="isLoading"
           @click="close"
-        />
-        <Button
-          color="blue"
-          :label="$t('BILLING_SETTINGS.ENTERPRISE_INQUIRY.SUBMIT')"
-          class="w-full"
-          :is-loading="isLoading"
+        >
+          {{ $t('BILLING_SETTINGS.ENTERPRISE_INQUIRY.CANCEL') }}
+        </RelayButton>
+        <RelayButton
+          type="button"
+          size="lg"
+          :disabled="isLoading"
           @click="handleSubmit"
-        />
+        >
+          {{ $t('BILLING_SETTINGS.ENTERPRISE_INQUIRY.SUBMIT') }}
+        </RelayButton>
       </div>
     </template>
   </Dialog>

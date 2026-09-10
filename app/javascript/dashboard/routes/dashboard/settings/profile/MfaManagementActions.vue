@@ -10,6 +10,7 @@ import {
   RelayInput,
   RelayLabel,
   RELAY_FORM_FIELD_CLASS,
+  RELAY_MODAL_INPUT_CLASS,
 } from 'dashboard/components-next/relay';
 
 const props = defineProps({
@@ -162,7 +163,11 @@ defineExpose({
       <div class="space-y-4">
         <div :class="RELAY_FORM_FIELD_CLASS">
           <RelayLabel>{{ $t('MFA_SETTINGS.DISABLE.PASSWORD') }}</RelayLabel>
-          <RelayInput v-model="disablePassword" type="password" />
+          <RelayInput
+            v-model="disablePassword"
+            type="password"
+            :class-name="RELAY_MODAL_INPUT_CLASS"
+          />
         </div>
         <div v-if="!useBackupCodeToDisable" :class="RELAY_FORM_FIELD_CLASS">
           <RelayLabel>{{ $t('MFA_SETTINGS.DISABLE.OTP_CODE') }}</RelayLabel>
@@ -171,6 +176,7 @@ defineExpose({
             type="text"
             maxlength="6"
             :placeholder="$t('MFA_SETTINGS.DISABLE.OTP_CODE_PLACEHOLDER')"
+            :class-name="RELAY_MODAL_INPUT_CLASS"
           />
         </div>
         <div v-else :class="RELAY_FORM_FIELD_CLASS">
@@ -180,6 +186,7 @@ defineExpose({
             type="text"
             maxlength="8"
             :placeholder="$t('MFA_SETTINGS.DISABLE.BACKUP_CODE_PLACEHOLDER')"
+            :class-name="RELAY_MODAL_INPUT_CLASS"
           />
         </div>
         <RelayButton

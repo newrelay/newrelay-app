@@ -14,6 +14,7 @@ import {
   RelayLabel,
   RelayModal,
   RelayTextarea,
+  RELAY_MODAL_FORM_FOOTER_CLASS,
 } from 'dashboard/components-next/relay';
 
 const props = defineProps({
@@ -453,7 +454,7 @@ watch(() => props.selectedBot, initializeForm, { deep: true });
     flush
     @close="handleAccessTokenClose"
   >
-    <div class="space-y-5 px-7 pb-2">
+    <div class="space-y-5 px-6 pb-2">
       <div class="flex items-center gap-2">
         <div class="relative flex-1">
           <input
@@ -523,11 +524,11 @@ watch(() => props.selectedBot, initializeForm, { deep: true });
       </div>
     </div>
 
-    <div class="flex justify-end gap-3 border-t border-border/40 px-7 py-6">
+    <div :class="RELAY_MODAL_FORM_FOOTER_CLASS">
       <RelayButton
         type="button"
         variant="outline"
-        class="h-9 border-border bg-muted px-5 text-[13px] font-medium text-foreground shadow-sm hover:bg-muted/80"
+        size="lg"
         @click="handleAccessTokenClose"
       >
         {{ t('AGENT_BOTS.FORM.CANCEL') }}

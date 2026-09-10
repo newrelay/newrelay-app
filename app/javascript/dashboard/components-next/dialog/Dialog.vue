@@ -5,7 +5,7 @@ import { useI18n } from 'vue-i18n';
 
 import TeleportWithDirection from 'dashboard/components-next/TeleportWithDirection.vue';
 import RelayModalHeader from 'dashboard/components-next/relay/modal/RelayModalHeader.vue';
-import { RelayButton } from 'dashboard/components-next/relay';
+import RelayButton from 'dashboard/components-next/relay/button/Button.vue';
 import {
   RELAY_MODAL_BODY_CLASS,
   RELAY_MODAL_FORM_FOOTER_CLASS,

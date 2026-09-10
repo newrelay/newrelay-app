@@ -3,8 +3,12 @@ import { ref, computed, watch, nextTick } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useAlert } from 'dashboard/composables';
 import Dialog from 'dashboard/components-next/dialog/Dialog.vue';
-import Button from 'dashboard/components-next/button/Button.vue';
-import { RelayInput, RelayLabel } from 'dashboard/components-next/relay';
+import {
+  RelayButton,
+  RelayInput,
+  RelayLabel,
+  RELAY_MODAL_INPUT_CLASS,
+} from 'dashboard/components-next/relay';
 import ComboBox from 'dashboard/components-next/combobox/ComboBox.vue';
 import EnterpriseAccountAPI from 'dashboard/api/enterprise/account';
 
@@ -360,28 +364,29 @@ defineExpose({
             v-model="couponInput"
             :placeholder="$t('BILLING_SETTINGS.SELECT_PLAN.COUPON_PLACEHOLDER')"
             :disabled="!!appliedCouponCode"
-            class-name="h-9 px-4 text-[14px] shadow-sm rounded-md border-border/80 bg-background focus-visible:ring-1 focus-visible:ring-primary/30"
+            :class-name="RELAY_MODAL_INPUT_CLASS"
           />
         </div>
         <div class="flex gap-2">
-          <Button
+          <RelayButton
             v-if="!appliedCouponCode"
             type="button"
-            variant="faded"
-            color="slate"
-            :label="$t('BILLING_SETTINGS.PLAN_CHECKOUT.APPLY_COUPON')"
-            :is-loading="isValidatingCoupon"
+            variant="outline"
+            size="lg"
             :disabled="!couponInput.trim() || isValidatingCoupon"
             @click="handleApplyCoupon"
-          />
-          <Button
+          >
+            {{ $t('BILLING_SETTINGS.PLAN_CHECKOUT.APPLY_COUPON') }}
+          </RelayButton>
+          <RelayButton
             v-else
             type="button"
-            variant="faded"
-            color="slate"
-            :label="$t('BILLING_SETTINGS.PLAN_CHECKOUT.REMOVE_COUPON')"
+            variant="outline"
+            size="lg"
             @click="handleRemoveCoupon"
-          />
+          >
+            {{ $t('BILLING_SETTINGS.PLAN_CHECKOUT.REMOVE_COUPON') }}
+          </RelayButton>
         </div>
         <p v-if="couponError" class="text-xs text-destructive">
           {{ couponError }}
@@ -455,25 +460,18 @@ defineExpose({
         </div>
       </div>
 
-      <div class="flex gap-3 pt-2">
-        <Button
+      <div class="flex justify-end gap-3 border-t border-border/40 pt-5">
+        <RelayButton type="button" variant="outline" size="lg" @click="close">
+          {{ $t('DIALOG.BUTTONS.CANCEL') }}
+        </RelayButton>
+        <RelayButton
           type="button"
-          variant="faded"
-          color="slate"
-          class="w-full"
-          :label="$t('DIALOG.BUTTONS.CANCEL')"
-          @click="close"
-        />
-        <Button
-          type="button"
-          variant="solid"
-          color="blue"
-          class="w-full"
-          :label="$t('BILLING_SETTINGS.PLAN_CHECKOUT.PROCEED')"
-          :disabled="!canProceed"
-          :is-loading="isProceeding"
+          size="lg"
+          :disabled="!canProceed || isProceeding"
           @click="handleProceed"
-        />
+        >
+          {{ $t('BILLING_SETTINGS.PLAN_CHECKOUT.PROCEED') }}
+        </RelayButton>
       </div>
     </div>
   </Dialog>

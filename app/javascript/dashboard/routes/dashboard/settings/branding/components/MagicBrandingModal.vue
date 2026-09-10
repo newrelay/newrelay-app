@@ -2,8 +2,12 @@
 import { ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import NextModal from 'dashboard/components-next/dialog/Dialog.vue';
-import NextButton from 'dashboard/components-next/button/Button.vue';
-import { RelayInput, RelayTextarea } from 'dashboard/components-next/relay';
+import {
+  RelayButton,
+  RelayInput,
+  RelayTextarea,
+  RELAY_MODAL_INPUT_CLASS,
+} from 'dashboard/components-next/relay';
 import { useAccount } from 'dashboard/composables/useAccount';
 import { useAlert } from 'dashboard/composables';
 
@@ -174,7 +178,7 @@ watch(
           :class="[
             activeTab === tab.id
               ? 'bg-muted text-foreground shadow-sm border border-border'
-              : 'text-muted-foreground hover:text-foreground hover:bg-black/10',
+              : 'text-muted-foreground hover:bg-muted hover:text-foreground',
           ]"
           @click="activeTab = tab.id"
         >
@@ -189,7 +193,7 @@ watch(
             v-model="urlInput"
             type="url"
             :placeholder="t('BRANDING_SETTINGS.MAGIC_AI.URL_PLACEHOLDER')"
-            class-name="h-9 px-4 text-[14px] shadow-sm rounded-md border-border/80 bg-background focus-visible:ring-1 focus-visible:ring-primary/30"
+            :class-name="RELAY_MODAL_INPUT_CLASS"
           />
         </template>
 
@@ -223,9 +227,8 @@ watch(
               class="hidden text-[14px] border-border/80 bg-background focus-visible:ring-1 focus-visible:ring-primary/30 shadow-sm rounded-md"
               @change="onImageChange"
             />
-            <NextButton
-              blue
-              size="small"
+            <RelayButton
+              size="sm"
               type="button"
               @click="$refs.fileInputRef.click()"
             >
@@ -234,19 +237,18 @@ watch(
                   ? t('BRANDING_SETTINGS.MAGIC_AI.CHANGE_IMAGE')
                   : t('BRANDING_SETTINGS.MAGIC_AI.UPLOAD_IMAGE')
               }}
-            </NextButton>
+            </RelayButton>
           </div>
         </template>
 
-        <NextButton
-          blue
+        <RelayButton
           class="w-full"
-          :is-loading="isLoading"
+          size="lg"
           :disabled="(!urlInput && !promptInput && !imageBase64) || isLoading"
           @click="generatePalettes"
         >
           {{ t('BRANDING_SETTINGS.MAGIC_AI.GENERATE') }}
-        </NextButton>
+        </RelayButton>
       </div>
 
       <div
@@ -300,14 +302,14 @@ watch(
           </div>
         </div>
 
-        <NextButton
-          blue
-          class="w-full mt-2"
+        <RelayButton
+          class="mt-2 w-full"
+          size="lg"
           :disabled="!selectedOption"
           @click="applyPalette"
         >
           {{ t('BRANDING_SETTINGS.MAGIC_AI.APPLY') }}
-        </NextButton>
+        </RelayButton>
       </div>
     </div>
   </NextModal>

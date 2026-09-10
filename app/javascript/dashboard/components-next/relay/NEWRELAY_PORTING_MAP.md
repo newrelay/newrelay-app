@@ -8,7 +8,7 @@ Reference project: `/Users/deependrasankhala/Downloads/NewRelay-UI-main`
 (dev server: `http://localhost:5174`). Its tokens live in `src/style.css`; ours are a
 **direct 1:1 port** in `app/javascript/dashboard/assets/scss/_relay-theme.scss`.
 
-Last synced with NewRelay-UI `main`: **2026-09-10** (commit `24458e8` confidential mode; `628b7be` bot modal divider; `c3c2a59` / `8e9f1dc` conversation search highlight + system pills). **Tokens unchanged**
+Last synced with NewRelay-UI `main`: **2026-09-10** (commit `628b7be` bot modal divider; `c3c2a59` / `8e9f1dc` conversation search highlight + system pills). **Tokens unchanged**
 (`src/style.css` not touched). Since `c704807`: a full **voice-call UI** landed in
 `conversations/ConversationsView.vue` — an active/incoming **call overlay** (states
 `ringing` / `connected` / `incoming` / `ended`, duration timer, mute / speaker / hangup /

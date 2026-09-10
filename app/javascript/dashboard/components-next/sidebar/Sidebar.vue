@@ -21,7 +21,6 @@ import SidebarChangelogButton from './SidebarChangelogButton.vue';
 import SidebarGroup from './SidebarGroup.vue';
 import { SETTINGS_ROUTE_NAMES } from 'dashboard/routes/dashboard/settings/settings.navigation';
 import { useBranding } from 'shared/composables/useBranding';
-import { useStealthMode } from 'dashboard/composables/useStealthMode';
 
 const props = defineProps({
   isMobileSidebarOpen: {
@@ -42,16 +41,13 @@ const currentCustomRoleId = useMapGetter('getCurrentCustomRoleId');
 const store = useStore();
 const { t } = useI18n();
 const { replaceInstallationName } = useBranding();
-const { isStealthMode } = useStealthMode();
 
 const isACustomBrandedInstance = useMapGetter(
   'globalConfig/isACustomBrandedInstance'
 );
 const isRTL = useMapGetter('accounts/isRTL');
 const brandName = computed(() =>
-  isStealthMode.value
-    ? t('SIDEBAR.STEALTH_BRAND_NAME')
-    : replaceInstallationName(t('SIDEBAR.BRAND_NAME'))
+  replaceInstallationName(t('SIDEBAR.BRAND_NAME'))
 );
 const brandSubtitle = computed(() => t('SIDEBAR.ENTERPRISE_EDITION'));
 const WHITE_RELAY_LOGO = '/white-relay-logo.svg';
@@ -522,7 +518,6 @@ const primaryMenuItems = computed(() => {
     {
       name: 'Reputation',
       icon: 'i-lucide-star',
-      confidential: true,
       label: t('SIDEBAR.REPUTATION'),
       children: [
         {
@@ -576,7 +571,6 @@ const primaryMenuItems = computed(() => {
     {
       name: 'Autoresponder',
       icon: 'i-lucide-zap',
-      confidential: true,
       label: t('SIDEBAR.AUTORESPONDER'),
       children: [
         {
@@ -729,17 +723,7 @@ const primaryMenuItems = computed(() => {
   ];
 });
 
-const navSections = computed(() => {
-  const items = primaryMenuItems.value
-    .filter(item => !isStealthMode.value || !item.confidential)
-    .map(item => {
-      if (isStealthMode.value && item.name === 'Captain') {
-        return { ...item, label: t('SIDEBAR.STEALTH_AI_NAME') };
-      }
-      return item;
-    });
-  return [{ items }];
-});
+const navSections = computed(() => [{ items: primaryMenuItems.value }]);
 
 const settingsMenuItem = computed(() => {
   const isAdmin =
@@ -799,14 +783,9 @@ const logoutMenuItem = computed(() => ({
           :title="isEffectivelyCollapsed ? brandName : undefined"
         >
           <img
-            v-if="!isStealthMode"
             :src="WHITE_RELAY_LOGO"
             :alt="brandName"
             class="size-full object-contain"
-          />
-          <span
-            v-else
-            class="i-lucide-layers size-5 text-sidebar-primary-foreground"
           />
         </div>
         <div

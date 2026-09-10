@@ -4,12 +4,6 @@ import { applyBrandColorVariables } from 'dashboard/helper/colorHelper';
 import { setColorTheme } from 'dashboard/helper/themeHelper';
 import { LocalStorage } from 'shared/helpers/localStorage';
 import { LOCAL_STORAGE_KEYS } from 'dashboard/constants/localStorage';
-import { useAlert } from 'dashboard/composables';
-import {
-  bindStealthHotkeys,
-  isStealthMode,
-  syncStealthAppearance,
-} from 'dashboard/composables/useStealthMode';
 
 export default {
   components: { SnackbarContainer },
@@ -19,28 +13,13 @@ export default {
   mounted() {
     this.applyTheme();
     this.listenToThemeChanges();
-    syncStealthAppearance();
-    this.unbindStealthHotkeys = bindStealthHotkeys({
-      onToggle: enabled => {
-        useAlert(
-          this.$t(
-            enabled ? 'SIDEBAR.STEALTH_MODE_ON' : 'SIDEBAR.STEALTH_MODE_OFF'
-          )
-        );
-      },
-    });
     window.addEventListener('theme-changed', this.onThemeChanged);
     this.setLocale(window.newrelayConfig.selectedLocale);
-    if (
-      !isStealthMode.value &&
-      window.globalConfig &&
-      window.globalConfig.BRAND_COLORS
-    ) {
+    if (window.globalConfig && window.globalConfig.BRAND_COLORS) {
       this.applyBrandColors(window.globalConfig.BRAND_COLORS);
     }
   },
   beforeUnmount() {
-    this.unbindStealthHotkeys?.();
     window.removeEventListener('theme-changed', this.onThemeChanged);
   },
   methods: {
@@ -54,7 +33,12 @@ export default {
         : 'light';
     },
     onThemeChanged() {
-      this.applyTheme();
+      this.theme = document.documentElement.classList.contains('dark')
+        ? 'dark'
+        : 'light';
+      if (window.globalConfig?.BRAND_COLORS) {
+        this.applyBrandColors(window.globalConfig.BRAND_COLORS);
+      }
     },
     listenToThemeChanges() {
       const mql = window.matchMedia('(prefers-color-scheme: dark)');
@@ -72,7 +56,7 @@ export default {
       }
     },
     applyBrandColors(colors) {
-      if (!colors || isStealthMode.value) return;
+      if (!colors) return;
       const isDark = document.documentElement.classList.contains('dark');
       applyBrandColorVariables(colors, { structural: true, dark: isDark });
     },

@@ -6,9 +6,6 @@ import {
   hasFullThemePreset,
   isDarkBackground,
 } from './colorHelper';
-import { isStealthMode } from 'dashboard/composables/useStealthMode';
-
-const STEALTH_BRAND_COLORS = { theme_preset: 'sunset-horizon' };
 
 // layout / empty brand_name alone must not count as color branding
 const brandPalette = colors =>
@@ -26,9 +23,6 @@ const brandPalette = colors =>
 export const setColorTheme = (isOSOnDarkMode, brandColors) => {
   const selectedColorScheme =
     LocalStorage.get(LOCAL_STORAGE_KEYS.COLOR_SCHEME) || 'auto';
-  const resolvedBrandColors = isStealthMode.value
-    ? STEALTH_BRAND_COLORS
-    : brandColors;
 
   // If we are moving away from custom, ensure inline custom backgrounds are cleared.
   // But skip clearing if BRAND_COLORS are injected by the server (custom domain branding).
@@ -37,10 +31,8 @@ export const setColorTheme = (isOSOnDarkMode, brandColors) => {
   );
 
   const activeBrandColors =
-    brandPalette(resolvedBrandColors) ||
-    (hasDomainBranding && !isStealthMode.value
-      ? window.globalConfig.BRAND_COLORS
-      : null);
+    brandPalette(brandColors) ||
+    (hasDomainBranding ? window.globalConfig.BRAND_COLORS : null);
 
   const hasActiveColors = Boolean(activeBrandColors);
   const isStandardMode =

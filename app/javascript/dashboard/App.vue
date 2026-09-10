@@ -25,12 +25,6 @@ import {
 } from './helper/pushHelper';
 import ReconnectService from 'dashboard/helper/ReconnectService';
 import { useUISettings } from 'dashboard/composables/useUISettings';
-import { useAlert } from 'dashboard/composables';
-import {
-  bindStealthHotkeys,
-  isStealthMode,
-  syncStealthAppearance,
-} from 'dashboard/composables/useStealthMode';
 
 export default {
   name: 'App',
@@ -118,22 +112,8 @@ export default {
   mounted() {
     this.initializeColorTheme();
     this.listenToThemeChanges();
-    syncStealthAppearance();
-    this.unbindStealthHotkeys = bindStealthHotkeys({
-      onToggle: enabled => {
-        useAlert(
-          this.$t(
-            enabled ? 'SIDEBAR.STEALTH_MODE_ON' : 'SIDEBAR.STEALTH_MODE_OFF'
-          )
-        );
-      },
-    });
     // Eagerly apply global brand colors (e.g., for login page) before user logs in
-    if (
-      !isStealthMode.value &&
-      window.globalConfig &&
-      window.globalConfig.BRAND_COLORS
-    ) {
+    if (window.globalConfig && window.globalConfig.BRAND_COLORS) {
       this.applyBrandColors(window.globalConfig.BRAND_COLORS);
     }
     // If user locale is set, use it; otherwise use account locale
@@ -146,7 +126,6 @@ export default {
     if (this.reconnectService) {
       this.reconnectService.disconnect();
     }
-    this.unbindStealthHotkeys?.();
     window.removeEventListener('theme-changed', this.handleThemeChange);
   },
   methods: {
@@ -170,8 +149,6 @@ export default {
       mql.onchange = e => setColorTheme(e.matches, this.accountBrandColors);
     },
     applyBrandColors(colors) {
-      if (isStealthMode.value) return;
-
       const selectedColorScheme =
         window.localStorage.getItem('color_scheme') || 'auto';
       const brandPalette = palette =>

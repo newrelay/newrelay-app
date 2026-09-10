@@ -12,6 +12,8 @@ import { useAlert } from 'dashboard/composables';
 
 const emit = defineEmits(['showCreateAccountModal', 'openKeyShortcutModal']);
 
+const WHITE_RELAY_LOGO = '/white-relay-logo.svg';
+
 const { t } = useI18n();
 const store = useStore();
 const { accountId, currentAccount } = useAccount();
@@ -47,13 +49,10 @@ const canCreateWorkspace = computed(
     !isSubAccount.value
 );
 
-const brandInitial = computed(() => {
-  const name =
-    currentAccount.value?.name || globalConfig.value?.installationName || 'N';
-  return name.charAt(0).toUpperCase();
-});
-
 const brandSubtitle = computed(() => t('SIDEBAR.ENTERPRISE_EDITION'));
+const brandLogoAlt = computed(
+  () => currentAccount.value?.name || globalConfig.value?.installationName || ''
+);
 
 const availabilityLabel = computed(() => {
   if (currentUserAvailability.value === 'online')
@@ -171,9 +170,13 @@ const onLogout = () => {
         />
         <div
           v-else
-          class="flex size-8 shrink-0 items-center justify-center rounded-full bg-primary text-sm font-bold text-primary-foreground"
+          class="flex size-8 shrink-0 items-center justify-center overflow-hidden rounded-full bg-primary p-1.5 text-primary-foreground shadow-xs"
         >
-          {{ brandInitial }}
+          <img
+            :src="WHITE_RELAY_LOGO"
+            :alt="brandLogoAlt"
+            class="size-full object-contain"
+          />
         </div>
         <div
           class="absolute -bottom-0.5 -right-0.5 size-3 rounded-full border-2 border-background"
@@ -214,9 +217,13 @@ const onLogout = () => {
               />
               <div
                 v-else
-                class="flex size-8 shrink-0 items-center justify-center rounded-full bg-primary text-sm font-bold text-primary-foreground"
+                class="flex size-8 shrink-0 items-center justify-center overflow-hidden rounded-full bg-primary p-1.5 text-primary-foreground shadow-xs"
               >
-                {{ brandInitial }}
+                <img
+                  :src="WHITE_RELAY_LOGO"
+                  :alt="brandLogoAlt"
+                  class="size-full object-contain"
+                />
               </div>
               <div
                 class="absolute -bottom-0.5 -right-0.5 size-3 rounded-full border-2 border-background"

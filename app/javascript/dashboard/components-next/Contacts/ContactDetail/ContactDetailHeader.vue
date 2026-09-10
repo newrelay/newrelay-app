@@ -53,7 +53,11 @@ const avatarSrc = computed(
 const attrs = computed(() => props.contact?.additionalAttributes || {});
 
 const role = computed(() => attrs.value.description?.trim() || '');
-const companyName = computed(() => attrs.value.companyName?.trim() || '');
+// Prefer the real linked Company record; fall back to the legacy free-text
+// attribute for contacts that only have a typed-in company name.
+const companyName = computed(
+  () => props.contact?.company?.name || attrs.value.companyName?.trim() || ''
+);
 
 const companyRoute = computed(() => {
   const id = props.contact?.companyId;

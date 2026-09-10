@@ -503,6 +503,19 @@ RSpec.describe 'Contacts API', type: :request do
         expect(response).to conform_schema(200)
         expect(response.body).to include(contact.name)
       end
+
+      it 'includes the linked company' do
+        company = create(:company, account: account, name: 'Acme')
+        contact.update!(company: company)
+
+        get "/api/v1/accounts/#{account.id}/contacts/#{contact.id}",
+            headers: admin.create_new_auth_token,
+            as: :json
+
+        payload = response.parsed_body['payload']
+        expect(payload['company_id']).to eq(company.id)
+        expect(payload['company']).to eq('id' => company.id, 'name' => 'Acme')
+      end
     end
   end
 

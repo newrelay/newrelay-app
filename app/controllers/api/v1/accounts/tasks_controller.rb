@@ -49,7 +49,9 @@ class Api::V1::Accounts::TasksController < Api::V1::Accounts::BaseController
   end
 
   def apply_completed_and_assignee_filters
-    @tasks = @tasks.where(completed: ActiveModel::Type::Boolean.new.cast(permitted_params[:completed])) if permitted_params[:completed].present?
+    unless permitted_params[:completed].nil?
+      @tasks = @tasks.where(completed: ActiveModel::Type::Boolean.new.cast(permitted_params[:completed]))
+    end
     @tasks = @tasks.where(assignee_id: permitted_params[:assignee_id]) if permitted_params[:assignee_id].present?
   end
 
@@ -57,6 +59,11 @@ class Api::V1::Accounts::TasksController < Api::V1::Accounts::BaseController
     case permitted_params[:due_filter]
     when 'today'
       @tasks = @tasks.where(due_at: Time.zone.now.all_day)
+    when 'tomorrow'
+      @tasks = @tasks.where(due_at: Time.zone.tomorrow.all_day)
+    when 'week'
+      start_at = Time.zone.now.beginning_of_day
+      @tasks = @tasks.where(due_at: start_at..(start_at + 7.days).end_of_day)
     when 'overdue'
       @tasks = @tasks.where('due_at < ?', Time.zone.now).where(completed: [false, nil])
     when 'upcoming'

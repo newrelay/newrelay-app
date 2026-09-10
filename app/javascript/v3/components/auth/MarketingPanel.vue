@@ -12,10 +12,7 @@ const globalConfig = computed(() => store.getters['globalConfig/get']);
 const displayName = computed(() =>
   formatInstallationDisplayName(globalConfig.value.installationName)
 );
-
-const installationInitial = computed(() =>
-  displayName.value.charAt(0).toUpperCase()
-);
+const WHITE_RELAY_LOGO = '/white-relay-logo.svg';
 
 const features = computed(() => [
   {
@@ -46,9 +43,13 @@ const features = computed(() => [
 
     <div class="flex items-center gap-2 mb-10 relative z-10">
       <div
-        class="size-8 rounded-lg bg-primary text-primary-foreground flex items-center justify-center font-bold text-lg"
+        class="size-8 rounded-lg bg-primary text-primary-foreground flex items-center justify-center overflow-hidden p-1.5 shadow-sm"
       >
-        {{ installationInitial }}
+        <img
+          :src="WHITE_RELAY_LOGO"
+          :alt="displayName"
+          class="size-full object-contain"
+        />
       </div>
       <span class="text-xl font-bold text-foreground">{{ displayName }}</span>
     </div>

@@ -23,6 +23,7 @@ const props = defineProps({
 
 const emit = defineEmits(['update:collapsed', 'navigate']);
 const { t } = useI18n();
+const WHITE_RELAY_LOGO = '/white-relay-logo.svg';
 
 const openGroup = ref(null);
 
@@ -76,9 +77,13 @@ const widthClass = computed(() => (props.collapsed ? 'w-16' : 'w-60'));
         "
       >
         <span
-          class="flex size-8 shrink-0 items-center justify-center rounded-lg bg-sidebar-primary text-sm font-bold text-sidebar-primary-foreground"
+          class="flex size-8 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-sidebar-primary p-1.5 text-sidebar-primary-foreground shadow-xs"
         >
-          {{ brandName.slice(0, 1).toUpperCase() }}
+          <img
+            :src="WHITE_RELAY_LOGO"
+            :alt="brandName"
+            class="size-full object-contain"
+          />
         </span>
         <div
           v-if="!collapsed"

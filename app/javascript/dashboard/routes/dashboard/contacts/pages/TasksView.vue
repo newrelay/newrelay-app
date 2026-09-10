@@ -1,7 +1,6 @@
 <script setup>
 import { ref, computed, onMounted, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { vOnClickOutside } from '@vueuse/components';
 import {
   addMonths,
   eachDayOfInterval,
@@ -28,8 +27,19 @@ import {
   RelayDropdownMenuItem,
   RelayDropdownMenuTrigger,
   RelayInput,
+  RelayTextarea,
+  DROPDOWN_MENU_MODAL_CONTENT_CLASS,
+  RELAY_FORM_FIELD_CLASS,
+  RELAY_FORM_LABEL_CLASS,
 } from 'dashboard/components-next/relay';
 import TasksAPI from 'dashboard/api/tasks';
+
+const FILTER_DROPDOWN_TRIGGER_CLASS =
+  'h-9 gap-2 rounded-lg border-border bg-background px-3 text-[13px] font-medium text-foreground shadow-sm hover:border-border hover:bg-muted/50';
+const FORM_DROPDOWN_TRIGGER_CLASS =
+  'h-9 w-full justify-between rounded-md border-border/80 bg-background px-3 text-[14px] font-normal shadow-sm hover:bg-muted/50';
+const DUE_DATE_MENU_CONTENT_CLASS =
+  'z-[250] w-auto min-w-0 overflow-visible rounded-xl p-4 shadow-xl';
 
 const { t } = useI18n();
 const store = useStore();
@@ -38,14 +48,13 @@ const tasks = ref([]);
 const isFetching = ref(false);
 const searchQuery = ref('');
 const activeTab = ref('all');
-const openFilter = ref(null);
-const openTaskMenu = ref(null);
 
 const assigneeFilter = ref('any');
 const statusFilter = ref('all');
 const dueDateFilter = ref('any');
 
 const isTaskModalOpen = ref(false);
+const modalPanelRef = ref(null);
 const editingTask = ref(null);
 const duePickerMonth = ref(startOfMonth(new Date()));
 const taskForm = ref({
@@ -318,6 +327,19 @@ const displayedTasks = computed(() =>
     if (assigneeFilter.value === 'unassigned' && task.assignee_id) {
       return false;
     }
+    if (
+      assigneeFilter.value !== 'any' &&
+      assigneeFilter.value !== 'unassigned' &&
+      String(task.assignee_id || '') !== String(assigneeFilter.value)
+    ) {
+      return false;
+    }
+    if (statusFilter.value === 'completed' && !task.completed) {
+      return false;
+    }
+    if (statusFilter.value === 'pending' && task.completed) {
+      return false;
+    }
     return matchesClientDueDate(task);
   })
 );
@@ -361,21 +383,6 @@ const statusLabelFor = task =>
     ? t('CONTACTS_LAYOUT.TASKS_VIEW.FILTER.STATUS_COMPLETED')
     : t('CONTACTS_LAYOUT.TASKS_VIEW.FILTER.STATUS_PENDING');
 
-const closeMenus = () => {
-  openFilter.value = null;
-  openTaskMenu.value = null;
-};
-
-const toggleFilter = key => {
-  openFilter.value = openFilter.value === key ? null : key;
-  openTaskMenu.value = null;
-};
-
-const toggleTaskMenu = id => {
-  openTaskMenu.value = openTaskMenu.value === id ? null : id;
-  openFilter.value = null;
-};
-
 const fetchTasks = async () => {
   isFetching.value = true;
   try {
@@ -385,8 +392,8 @@ const fetchTasks = async () => {
 
     if (activeTab.value !== 'all') {
       params.due_filter = activeTab.value;
-    } else if (dueDateFilter.value === 'today') {
-      params.due_filter = 'today';
+    } else if (dueDateFilter.value !== 'any') {
+      params.due_filter = dueDateFilter.value;
     }
 
     if (
@@ -397,7 +404,7 @@ const fetchTasks = async () => {
     }
 
     if (statusFilter.value !== 'all') {
-      params.completed = statusFilter.value === 'completed';
+      params.completed = String(statusFilter.value === 'completed');
     }
 
     const response = await TasksAPI.get(params);
@@ -419,12 +426,10 @@ const setTab = tab => {
 
 const selectAssignee = value => {
   assigneeFilter.value = value;
-  closeMenus();
 };
 
 const selectStatus = value => {
   statusFilter.value = value;
-  closeMenus();
 };
 
 const selectDueDate = value => {
@@ -432,7 +437,6 @@ const selectDueDate = value => {
   if (value !== 'any') {
     activeTab.value = 'all';
   }
-  closeMenus();
   fetchTasks();
 };
 
@@ -450,7 +454,6 @@ const openAddTaskDialog = () => {
   editingTask.value = null;
   taskForm.value = emptyTaskForm();
   duePickerMonth.value = startOfMonth(new Date());
-  closeMenus();
   isTaskModalOpen.value = true;
 };
 
@@ -470,18 +473,15 @@ const openEditTaskDialog = task => {
   duePickerMonth.value = dueParts.dueDate
     ? startOfMonth(parse(dueParts.dueDate, 'dd-MM-yyyy', new Date()))
     : startOfMonth(new Date());
-  closeMenus();
   isTaskModalOpen.value = true;
 };
 
 const closeTaskModal = () => {
   isTaskModalOpen.value = false;
-  openFilter.value = null;
   editingTask.value = null;
 };
 
 const handleDeleteTask = async id => {
-  closeMenus();
   if (!window.confirm(t('CONTACTS_LAYOUT.TASKS_VIEW.DELETE_CONFIRM'))) return;
   try {
     await TasksAPI.delete(id);
@@ -536,7 +536,6 @@ onMounted(() => {
 
 <template>
   <div
-    v-on-click-outside="closeMenus"
     class="relative flex h-full min-h-0 flex-1 flex-col overflow-hidden bg-background"
   >
     <div class="flex min-h-0 flex-1 flex-col overflow-y-auto p-6">
@@ -588,7 +587,7 @@ onMounted(() => {
               {{ tab.label }}
               <span
                 v-if="activeTab === tab.value"
-                class="absolute inset-x-0 bottom-0 h-0.5 bg-primary"
+                class="absolute inset-x-0 bottom-0 h-px bg-primary"
                 aria-hidden="true"
               />
             </button>
@@ -596,24 +595,26 @@ onMounted(() => {
         </div>
 
         <!-- Filters -->
-        <div class="mb-6 flex items-center justify-between gap-4 py-3">
-          <div class="flex flex-wrap items-center gap-4">
+        <div class="mb-6 flex items-center justify-between gap-4 py-2">
+          <div class="flex flex-wrap items-center gap-3">
             <RelayDropdownMenu>
               <RelayDropdownMenuTrigger as-child>
-                <button
-                  type="button"
-                  class="reset-base flex cursor-pointer items-center gap-1 text-[13px] text-muted-foreground transition-colors hover:text-foreground"
+                <RelayButton
+                  variant="outline"
+                  :class="FILTER_DROPDOWN_TRIGGER_CLASS"
                 >
-                  <span>
+                  <span class="font-normal text-muted-foreground">
                     {{ t('CONTACTS_LAYOUT.TASKS_VIEW.FILTER.ASSIGNEE_LABEL') }}
-                    {{ assigneeFilterLabel }}
                   </span>
-                  <span class="i-lucide-chevron-down size-3.5 opacity-50" />
-                </button>
+                  {{ assigneeFilterLabel }}
+                  <span
+                    class="i-lucide-chevron-down size-3.5 text-muted-foreground opacity-50"
+                  />
+                </RelayButton>
               </RelayDropdownMenuTrigger>
               <RelayDropdownMenuContent
                 align="start"
-                class="max-h-64 min-w-48 overflow-y-auto"
+                class="max-h-64 w-[200px] overflow-y-auto"
               >
                 <RelayDropdownMenuItem
                   v-for="option in assigneeFilterOptions"
@@ -622,7 +623,7 @@ onMounted(() => {
                     'bg-accent font-medium text-accent-foreground':
                       assigneeFilter === option.value,
                   }"
-                  @click="selectAssignee(option.value)"
+                  @select="selectAssignee(option.value)"
                 >
                   {{ option.label }}
                 </RelayDropdownMenuItem>
@@ -631,18 +632,20 @@ onMounted(() => {
 
             <RelayDropdownMenu>
               <RelayDropdownMenuTrigger as-child>
-                <button
-                  type="button"
-                  class="reset-base flex cursor-pointer items-center gap-1 text-[13px] text-muted-foreground transition-colors hover:text-foreground"
+                <RelayButton
+                  variant="outline"
+                  :class="FILTER_DROPDOWN_TRIGGER_CLASS"
                 >
-                  <span>
+                  <span class="font-normal text-muted-foreground">
                     {{ t('CONTACTS_LAYOUT.TASKS_VIEW.FILTER.STATUS_LABEL') }}
-                    {{ statusFilterLabel }}
                   </span>
-                  <span class="i-lucide-chevron-down size-3.5 opacity-50" />
-                </button>
+                  {{ statusFilterLabel }}
+                  <span
+                    class="i-lucide-chevron-down size-3.5 text-muted-foreground opacity-50"
+                  />
+                </RelayButton>
               </RelayDropdownMenuTrigger>
-              <RelayDropdownMenuContent align="start" class="min-w-48">
+              <RelayDropdownMenuContent align="start" class="w-[200px]">
                 <RelayDropdownMenuItem
                   v-for="option in statusFilterOptions"
                   :key="option.value"
@@ -650,7 +653,7 @@ onMounted(() => {
                     'bg-accent font-medium text-accent-foreground':
                       statusFilter === option.value,
                   }"
-                  @click="selectStatus(option.value)"
+                  @select="selectStatus(option.value)"
                 >
                   {{ option.label }}
                 </RelayDropdownMenuItem>
@@ -659,18 +662,20 @@ onMounted(() => {
 
             <RelayDropdownMenu>
               <RelayDropdownMenuTrigger as-child>
-                <button
-                  type="button"
-                  class="reset-base flex cursor-pointer items-center gap-1 text-[13px] text-muted-foreground transition-colors hover:text-foreground"
+                <RelayButton
+                  variant="outline"
+                  :class="FILTER_DROPDOWN_TRIGGER_CLASS"
                 >
-                  <span>
+                  <span class="font-normal text-muted-foreground">
                     {{ t('CONTACTS_LAYOUT.TASKS_VIEW.FILTER.DUE_LABEL') }}
-                    {{ dueDateFilterLabel }}
                   </span>
-                  <span class="i-lucide-chevron-down size-3.5 opacity-50" />
-                </button>
+                  {{ dueDateFilterLabel }}
+                  <span
+                    class="i-lucide-chevron-down size-3.5 text-muted-foreground opacity-50"
+                  />
+                </RelayButton>
               </RelayDropdownMenuTrigger>
-              <RelayDropdownMenuContent align="start" class="min-w-48">
+              <RelayDropdownMenuContent align="start" class="w-[200px]">
                 <RelayDropdownMenuItem
                   v-for="option in dueDateFilterOptions"
                   :key="option.value"
@@ -678,7 +683,7 @@ onMounted(() => {
                     'bg-accent font-medium text-accent-foreground':
                       dueDateFilter === option.value,
                   }"
-                  @click="selectDueDate(option.value)"
+                  @select="selectDueDate(option.value)"
                 >
                   {{ option.label }}
                 </RelayDropdownMenuItem>
@@ -760,37 +765,34 @@ onMounted(() => {
                   >
                     {{ statusLabelFor(task) }}
                   </RelayBadge>
-                  <div class="relative">
-                    <RelayButton
-                      variant="ghost"
-                      size="icon"
-                      class="size-7 text-muted-foreground hover:text-foreground border border-border hover:border-transparent"
-                      @click="toggleTaskMenu(task.id)"
-                    >
-                      <span class="i-lucide-more-horizontal size-4" />
-                    </RelayButton>
-                    <div
-                      v-if="openTaskMenu === task.id"
-                      class="absolute right-0 top-full z-50 mt-1 w-[160px] overflow-hidden rounded-md border border-border bg-popover p-1 text-popover-foreground shadow-md"
-                    >
-                      <button
-                        type="button"
-                        class="flex w-full cursor-pointer items-center gap-2 rounded-sm px-3 py-2 text-left text-[13px] text-foreground hover:bg-muted"
-                        @click="openEditTaskDialog(task)"
+                  <RelayDropdownMenu>
+                    <RelayDropdownMenuTrigger as-child>
+                      <RelayButton
+                        variant="ghost"
+                        size="icon"
+                        class="size-7 text-muted-foreground hover:text-foreground border border-border hover:border-transparent"
+                      >
+                        <span class="i-lucide-more-horizontal size-4" />
+                      </RelayButton>
+                    </RelayDropdownMenuTrigger>
+                    <RelayDropdownMenuContent align="end" class="w-[160px]">
+                      <RelayDropdownMenuItem
+                        class="gap-2 text-[13px]"
+                        @select="openEditTaskDialog(task)"
                       >
                         <span class="i-lucide-pencil size-3.5" />
                         {{ t('CONTACTS_LAYOUT.TASKS_VIEW.EDIT_TASK') }}
-                      </button>
-                      <button
-                        type="button"
-                        class="flex w-full cursor-pointer items-center gap-2 rounded-sm px-3 py-2 text-left text-[13px] text-destructive hover:bg-destructive/10"
-                        @click="handleDeleteTask(task.id)"
+                      </RelayDropdownMenuItem>
+                      <RelayDropdownMenuItem
+                        destructive
+                        class="gap-2 text-[13px]"
+                        @select="handleDeleteTask(task.id)"
                       >
                         <span class="i-lucide-trash size-3.5" />
                         {{ t('CONTACTS_LAYOUT.TASKS_VIEW.DELETE_TASK') }}
-                      </button>
-                    </div>
-                  </div>
+                      </RelayDropdownMenuItem>
+                    </RelayDropdownMenuContent>
+                  </RelayDropdownMenu>
                 </div>
               </div>
 
@@ -851,6 +853,7 @@ onMounted(() => {
         @click.self="closeTaskModal"
       >
         <div
+          ref="modalPanelRef"
           class="flex w-full max-w-[480px] animate-in fade-in zoom-in-95 flex-col rounded-2xl border border-border bg-card shadow-xl duration-200"
         >
           <div class="border-b border-border px-6 py-5">
@@ -863,9 +866,9 @@ onMounted(() => {
             </h2>
           </div>
 
-          <div class="space-y-5 p-6" @click="closeMenus">
-            <div class="flex flex-col gap-1.5">
-              <label class="text-[13.5px] font-medium text-foreground">
+          <div class="space-y-5 p-6">
+            <div :class="RELAY_FORM_FIELD_CLASS">
+              <label :class="RELAY_FORM_LABEL_CLASS">
                 {{ t('CONTACTS_LAYOUT.TASKS_VIEW.FORM_TITLE') }}
               </label>
               <RelayInput
@@ -877,276 +880,285 @@ onMounted(() => {
               />
             </div>
 
-            <div class="flex flex-col gap-1.5">
-              <label class="text-[13.5px] font-medium text-foreground">
+            <div :class="RELAY_FORM_FIELD_CLASS">
+              <label :class="RELAY_FORM_LABEL_CLASS">
                 {{ t('CONTACTS_LAYOUT.TASKS_VIEW.FORM_DESCRIPTION') }}
               </label>
-              <textarea
+              <RelayTextarea
                 v-model="taskForm.description"
                 :placeholder="
                   t('CONTACTS_LAYOUT.TASKS_VIEW.FORM_DESCRIPTION_PLACEHOLDER')
                 "
-                class="reset-base no-margin min-h-[100px] w-full resize-none rounded-md border border-border/80 bg-background px-3 py-2.5 text-[14px] placeholder:text-muted-foreground/60 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary/30"
+                class-name="min-h-[100px] resize-y px-3 py-2.5 placeholder:text-muted-foreground/60"
               />
             </div>
 
             <div class="grid grid-cols-2 gap-4">
-              <div class="relative flex flex-col gap-1.5">
-                <label class="text-[13.5px] font-medium text-foreground">
+              <div :class="RELAY_FORM_FIELD_CLASS">
+                <label :class="RELAY_FORM_LABEL_CLASS">
                   {{ t('CONTACTS_LAYOUT.TASKS_VIEW.FORM_ASSIGNEE') }}
                 </label>
-                <RelayButton
-                  variant="outline"
-                  class="h-9 w-full justify-between rounded-md border-border bg-background px-3 text-[14px] font-normal text-foreground shadow-sm hover:bg-muted/50"
-                  @click.stop="toggleFilter('formAssignee')"
-                >
-                  <span class="truncate">
-                    {{ getAgentOptionLabel(taskForm.assigneeId) }}
-                  </span>
-                  <span class="i-lucide-chevron-down size-4 opacity-50" />
-                </RelayButton>
-                <div
-                  v-if="openFilter === 'formAssignee'"
-                  class="absolute left-0 right-0 top-full z-[70] mt-1 max-h-48 overflow-y-auto rounded-md border border-border bg-popover p-1 shadow-md [&::-webkit-scrollbar]:hidden"
-                  @click.stop
-                >
-                  <button
-                    v-for="option in agentOptions"
-                    :key="`assignee-${option.value || 'none'}`"
-                    type="button"
-                    class="reset-base flex w-full cursor-default items-center rounded-sm px-2 py-1.5 text-left text-sm text-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
-                    :class="{
-                      'bg-accent font-medium text-accent-foreground':
-                        taskForm.assigneeId === option.value,
-                    }"
-                    @click="
-                      taskForm.assigneeId = option.value;
-                      closeMenus();
-                    "
+                <RelayDropdownMenu :modal="false">
+                  <RelayDropdownMenuTrigger as-child>
+                    <RelayButton
+                      variant="outline"
+                      :class="FORM_DROPDOWN_TRIGGER_CLASS"
+                    >
+                      <span class="truncate">
+                        {{ getAgentOptionLabel(taskForm.assigneeId) }}
+                      </span>
+                      <span class="i-lucide-chevron-down size-3.5 opacity-50" />
+                    </RelayButton>
+                  </RelayDropdownMenuTrigger>
+                  <RelayDropdownMenuContent
+                    align="start"
+                    :portal-to="modalPanelRef"
+                    :collision-boundary="modalPanelRef"
+                    :collision-padding="12"
+                    :class="DROPDOWN_MENU_MODAL_CONTENT_CLASS"
                   >
-                    {{ option.label }}
-                  </button>
-                </div>
+                    <RelayDropdownMenuItem
+                      v-for="option in agentOptions"
+                      :key="`assignee-${option.value || 'none'}`"
+                      :class="{
+                        'bg-accent font-medium text-accent-foreground':
+                          taskForm.assigneeId === option.value,
+                      }"
+                      @select="taskForm.assigneeId = option.value"
+                    >
+                      {{ option.label }}
+                    </RelayDropdownMenuItem>
+                  </RelayDropdownMenuContent>
+                </RelayDropdownMenu>
               </div>
 
-              <div class="relative flex flex-col gap-1.5">
-                <label class="text-[13.5px] font-medium text-foreground">
+              <div :class="RELAY_FORM_FIELD_CLASS">
+                <label :class="RELAY_FORM_LABEL_CLASS">
                   {{ t('CONTACTS_LAYOUT.TASKS_VIEW.FORM_CONTACT') }}
                 </label>
-                <RelayButton
-                  variant="outline"
-                  class="h-9 w-full justify-between rounded-md border-border bg-background px-3 text-[14px] font-normal shadow-sm hover:bg-muted/50"
-                  :class="
-                    !taskForm.contactId
-                      ? 'text-muted-foreground'
-                      : 'text-foreground'
-                  "
-                  @click.stop="toggleFilter('formContact')"
-                >
-                  <span class="truncate">
-                    {{ getContactOptionLabel(taskForm.contactId) }}
-                  </span>
-                  <span class="i-lucide-chevron-down size-4 opacity-50" />
-                </RelayButton>
-                <div
-                  v-if="openFilter === 'formContact'"
-                  class="absolute left-0 right-0 top-full z-[70] mt-1 max-h-48 overflow-y-auto rounded-md border border-border bg-popover p-1 shadow-md [&::-webkit-scrollbar]:hidden"
-                  @click.stop
-                >
-                  <button
-                    v-for="option in contactOptions"
-                    :key="`contact-${option.value || 'none'}`"
-                    type="button"
-                    class="reset-base flex w-full cursor-default items-center rounded-sm px-2 py-1.5 text-left text-sm text-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
-                    :class="{
-                      'bg-accent font-medium text-accent-foreground':
-                        taskForm.contactId === option.value,
-                    }"
-                    @click="
-                      taskForm.contactId = option.value;
-                      closeMenus();
-                    "
+                <RelayDropdownMenu :modal="false">
+                  <RelayDropdownMenuTrigger as-child>
+                    <RelayButton
+                      variant="outline"
+                      :class="[
+                        FORM_DROPDOWN_TRIGGER_CLASS,
+                        !taskForm.contactId
+                          ? 'text-muted-foreground'
+                          : 'text-foreground',
+                      ]"
+                    >
+                      <span class="truncate">
+                        {{ getContactOptionLabel(taskForm.contactId) }}
+                      </span>
+                      <span class="i-lucide-chevron-down size-3.5 opacity-50" />
+                    </RelayButton>
+                  </RelayDropdownMenuTrigger>
+                  <RelayDropdownMenuContent
+                    align="start"
+                    :portal-to="modalPanelRef"
+                    :collision-boundary="modalPanelRef"
+                    :collision-padding="12"
+                    :class="DROPDOWN_MENU_MODAL_CONTENT_CLASS"
                   >
-                    {{ option.label }}
-                  </button>
-                </div>
+                    <RelayDropdownMenuItem
+                      v-for="option in contactOptions"
+                      :key="`contact-${option.value || 'none'}`"
+                      :class="{
+                        'bg-accent font-medium text-accent-foreground':
+                          taskForm.contactId === option.value,
+                      }"
+                      @select="taskForm.contactId = option.value"
+                    >
+                      {{ option.label }}
+                    </RelayDropdownMenuItem>
+                  </RelayDropdownMenuContent>
+                </RelayDropdownMenu>
               </div>
             </div>
 
-            <div class="relative flex flex-col gap-1.5">
-              <label class="text-[13.5px] font-medium text-foreground">
+            <div :class="RELAY_FORM_FIELD_CLASS">
+              <label :class="RELAY_FORM_LABEL_CLASS">
                 {{ t('CONTACTS_LAYOUT.TASKS_VIEW.FORM_DUE_DATE') }}
               </label>
-              <RelayButton
-                variant="outline"
-                class="h-9 w-full justify-between rounded-md border-border bg-background px-3 text-[14px] font-normal shadow-sm hover:bg-muted/50"
-                :class="
-                  !taskForm.dueDate
-                    ? 'text-muted-foreground'
-                    : 'text-foreground'
-                "
-                @click.stop="toggleFilter('formDueDate')"
-              >
-                <span class="truncate">{{ dueDateTriggerLabel }}</span>
-                <span
-                  class="i-lucide-calendar-days size-4 text-muted-foreground"
-                />
-              </RelayButton>
+              <RelayDropdownMenu :modal="false">
+                <RelayDropdownMenuTrigger as-child>
+                  <RelayButton
+                    variant="outline"
+                    :class="[
+                      FORM_DROPDOWN_TRIGGER_CLASS,
+                      !taskForm.dueDate
+                        ? 'text-muted-foreground'
+                        : 'text-foreground',
+                    ]"
+                  >
+                    <span class="truncate">{{ dueDateTriggerLabel }}</span>
+                    <span
+                      class="i-lucide-calendar-days size-4 opacity-50 text-foreground"
+                    />
+                  </RelayButton>
+                </RelayDropdownMenuTrigger>
+                <RelayDropdownMenuContent
+                  align="start"
+                  :portal-to="modalPanelRef"
+                  :collision-boundary="modalPanelRef"
+                  :collision-padding="12"
+                  :class="DUE_DATE_MENU_CONTENT_CLASS"
+                >
+                  <div class="flex gap-4">
+                    <div class="flex w-[220px] flex-col gap-3">
+                      <div class="mb-2 flex items-center justify-between">
+                        <div
+                          class="-ml-2 flex cursor-default items-center gap-1 rounded-md px-2 py-1"
+                        >
+                          <span
+                            class="text-[13px] font-semibold text-foreground"
+                          >
+                            {{ duePickerMonthLabel }}
+                          </span>
+                          <span
+                            class="i-lucide-chevron-down size-3.5 text-muted-foreground"
+                          />
+                        </div>
+                        <div class="flex items-center gap-1">
+                          <button
+                            type="button"
+                            class="flex size-7 cursor-pointer items-center justify-center rounded-md hover:bg-muted"
+                            @click="shiftDuePickerMonth('prev')"
+                          >
+                            <span
+                              class="i-lucide-arrow-up size-4 text-muted-foreground"
+                            />
+                          </button>
+                          <button
+                            type="button"
+                            class="flex size-7 cursor-pointer items-center justify-center rounded-md hover:bg-muted"
+                            @click="shiftDuePickerMonth('next')"
+                          >
+                            <span
+                              class="i-lucide-arrow-down size-4 text-muted-foreground"
+                            />
+                          </button>
+                        </div>
+                      </div>
 
-              <div
-                v-if="openFilter === 'formDueDate'"
-                class="absolute left-0 top-full z-[70] mt-1 w-auto rounded-xl border border-border bg-popover p-4 shadow-xl"
-                @click.stop
-              >
-                <div class="flex gap-4">
-                  <div class="flex w-[220px] flex-col gap-3">
-                    <div class="mb-2 flex items-center justify-between">
                       <div
-                        class="-ml-2 flex cursor-default items-center gap-1 rounded-md px-2 py-1"
+                        class="grid grid-cols-7 gap-1 text-center text-[11px] font-semibold text-muted-foreground"
                       >
-                        <span class="text-[13px] font-semibold text-foreground">
-                          {{ duePickerMonthLabel }}
-                        </span>
-                        <span
-                          class="i-lucide-chevron-down size-3.5 text-muted-foreground"
-                        />
+                        <div v-for="dayLabel in weekdayLabels" :key="dayLabel">
+                          {{ dayLabel }}
+                        </div>
                       </div>
-                      <div class="flex items-center gap-1">
+
+                      <div class="grid grid-cols-7 gap-y-1 text-[13px]">
+                        <button
+                          v-for="day in calendarDays"
+                          :key="day.toISOString()"
+                          type="button"
+                          class="flex size-8 items-center justify-center rounded-md p-0 font-medium outline-none"
+                          :class="
+                            !isSameMonth(day, duePickerMonth)
+                              ? 'cursor-default text-muted-foreground/30'
+                              : selectedDueDate &&
+                                  isSameDay(day, selectedDueDate)
+                                ? 'cursor-pointer bg-primary text-primary-foreground shadow-sm hover:bg-primary/90'
+                                : 'cursor-pointer text-foreground hover:bg-muted'
+                          "
+                          :disabled="!isSameMonth(day, duePickerMonth)"
+                          @click="selectDueCalendarDay(day)"
+                        >
+                          {{ format(day, 'd') }}
+                        </button>
+                      </div>
+
+                      <div
+                        class="mt-1 flex items-center justify-between border-t border-border pt-3"
+                      >
                         <button
                           type="button"
-                          class="flex size-7 cursor-pointer items-center justify-center rounded-md hover:bg-muted"
-                          @click="shiftDuePickerMonth('prev')"
+                          class="cursor-pointer text-[13px] font-medium text-primary hover:underline"
+                          @click="clearDueDate"
                         >
-                          <span
-                            class="i-lucide-arrow-up size-4 text-muted-foreground"
-                          />
+                          {{ t('CONTACTS_LAYOUT.TASKS_VIEW.FORM_CLEAR') }}
                         </button>
                         <button
                           type="button"
-                          class="flex size-7 cursor-pointer items-center justify-center rounded-md hover:bg-muted"
-                          @click="shiftDuePickerMonth('next')"
+                          class="cursor-pointer p-0 text-[13px] font-medium text-primary hover:underline focus:bg-transparent"
+                          @click="setDueDateToday"
                         >
-                          <span
-                            class="i-lucide-arrow-down size-4 text-muted-foreground"
-                          />
+                          {{ t('CONTACTS_LAYOUT.TASKS_VIEW.FORM_TODAY') }}
                         </button>
                       </div>
                     </div>
 
                     <div
-                      class="grid grid-cols-7 gap-1 text-center text-[11px] font-semibold text-muted-foreground"
+                      class="flex w-[120px] gap-1 border-l border-border pl-4"
                     >
-                      <div v-for="dayLabel in weekdayLabels" :key="dayLabel">
-                        {{ dayLabel }}
+                      <div
+                        class="flex h-[280px] flex-1 flex-col gap-1 overflow-y-auto pr-1 [scrollbar-width:none]"
+                      >
+                        <button
+                          v-for="hour in hourOptions"
+                          :key="`hour-${hour}`"
+                          type="button"
+                          class="w-full rounded py-1.5 text-center text-[13px] font-medium transition-colors"
+                          :class="
+                            taskForm.dueTimeHour === hour
+                              ? 'bg-primary text-primary-foreground shadow-sm'
+                              : 'text-foreground hover:bg-muted'
+                          "
+                          @click="taskForm.dueTimeHour = hour"
+                        >
+                          {{ hour }}
+                        </button>
+                      </div>
+                      <div
+                        class="flex h-[280px] flex-1 flex-col gap-1 overflow-y-auto pr-1 [scrollbar-width:none]"
+                      >
+                        <button
+                          v-for="minute in minuteOptions"
+                          :key="`minute-${minute}`"
+                          type="button"
+                          class="w-full rounded py-1.5 text-center text-[13px] font-medium transition-colors"
+                          :class="
+                            taskForm.dueTimeMinute === minute
+                              ? 'bg-primary font-medium text-primary-foreground shadow-sm'
+                              : 'text-foreground hover:bg-muted'
+                          "
+                          @click="taskForm.dueTimeMinute = minute"
+                        >
+                          {{ minute }}
+                        </button>
+                      </div>
+                      <div class="flex flex-1 flex-col gap-1">
+                        <button
+                          type="button"
+                          class="w-full rounded py-1.5 text-center text-[13px] font-medium transition-colors"
+                          :class="
+                            taskForm.dueTimePeriod === 'AM'
+                              ? 'bg-primary text-primary-foreground shadow-sm'
+                              : 'text-foreground hover:bg-muted'
+                          "
+                          @click="taskForm.dueTimePeriod = 'AM'"
+                        >
+                          {{ 'AM' }}
+                        </button>
+                        <button
+                          type="button"
+                          class="w-full rounded py-1.5 text-center text-[13px] font-medium transition-colors"
+                          :class="
+                            taskForm.dueTimePeriod === 'PM'
+                              ? 'bg-primary text-primary-foreground shadow-sm'
+                              : 'text-foreground hover:bg-muted'
+                          "
+                          @click="taskForm.dueTimePeriod = 'PM'"
+                        >
+                          {{ 'PM' }}
+                        </button>
                       </div>
                     </div>
-
-                    <div class="grid grid-cols-7 gap-y-1 text-[13px]">
-                      <button
-                        v-for="day in calendarDays"
-                        :key="day.toISOString()"
-                        type="button"
-                        class="flex size-8 items-center justify-center rounded-md p-0 font-medium outline-none"
-                        :class="
-                          !isSameMonth(day, duePickerMonth)
-                            ? 'cursor-default text-muted-foreground/30'
-                            : selectedDueDate && isSameDay(day, selectedDueDate)
-                              ? 'cursor-pointer bg-primary text-primary-foreground shadow-sm hover:bg-primary/90'
-                              : 'cursor-pointer text-foreground hover:bg-muted'
-                        "
-                        :disabled="!isSameMonth(day, duePickerMonth)"
-                        @click="selectDueCalendarDay(day)"
-                      >
-                        {{ format(day, 'd') }}
-                      </button>
-                    </div>
-
-                    <div
-                      class="mt-1 flex items-center justify-between border-t border-border pt-3"
-                    >
-                      <button
-                        type="button"
-                        class="cursor-pointer text-[13px] font-medium text-primary hover:underline"
-                        @click="clearDueDate"
-                      >
-                        {{ t('CONTACTS_LAYOUT.TASKS_VIEW.FORM_CLEAR') }}
-                      </button>
-                      <button
-                        type="button"
-                        class="cursor-pointer p-0 text-[13px] font-medium text-primary hover:underline focus:bg-transparent"
-                        @click="setDueDateToday"
-                      >
-                        {{ t('CONTACTS_LAYOUT.TASKS_VIEW.FORM_TODAY') }}
-                      </button>
-                    </div>
                   </div>
-
-                  <div class="flex w-[120px] gap-1 border-l border-border pl-4">
-                    <div
-                      class="flex h-[280px] flex-1 flex-col gap-1 overflow-y-auto pr-1 [scrollbar-width:none]"
-                    >
-                      <button
-                        v-for="hour in hourOptions"
-                        :key="`hour-${hour}`"
-                        type="button"
-                        class="w-full rounded py-1.5 text-center text-[13px] font-medium transition-colors"
-                        :class="
-                          taskForm.dueTimeHour === hour
-                            ? 'bg-primary text-primary-foreground shadow-sm'
-                            : 'text-foreground hover:bg-muted'
-                        "
-                        @click="taskForm.dueTimeHour = hour"
-                      >
-                        {{ hour }}
-                      </button>
-                    </div>
-                    <div
-                      class="flex h-[280px] flex-1 flex-col gap-1 overflow-y-auto pr-1 [scrollbar-width:none]"
-                    >
-                      <button
-                        v-for="minute in minuteOptions"
-                        :key="`minute-${minute}`"
-                        type="button"
-                        class="w-full rounded py-1.5 text-center text-[13px] font-medium transition-colors"
-                        :class="
-                          taskForm.dueTimeMinute === minute
-                            ? 'bg-primary font-medium text-primary-foreground shadow-sm'
-                            : 'text-foreground hover:bg-muted'
-                        "
-                        @click="taskForm.dueTimeMinute = minute"
-                      >
-                        {{ minute }}
-                      </button>
-                    </div>
-                    <div class="flex flex-1 flex-col gap-1">
-                      <button
-                        type="button"
-                        class="w-full rounded py-1.5 text-center text-[13px] font-medium transition-colors"
-                        :class="
-                          taskForm.dueTimePeriod === 'AM'
-                            ? 'bg-primary text-primary-foreground shadow-sm'
-                            : 'text-foreground hover:bg-muted'
-                        "
-                        @click="taskForm.dueTimePeriod = 'AM'"
-                      >
-                        {{ 'AM' }}
-                      </button>
-                      <button
-                        type="button"
-                        class="w-full rounded py-1.5 text-center text-[13px] font-medium transition-colors"
-                        :class="
-                          taskForm.dueTimePeriod === 'PM'
-                            ? 'bg-primary text-primary-foreground shadow-sm'
-                            : 'text-foreground hover:bg-muted'
-                        "
-                        @click="taskForm.dueTimePeriod = 'PM'"
-                      >
-                        {{ 'PM' }}
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </div>
+                </RelayDropdownMenuContent>
+              </RelayDropdownMenu>
             </div>
           </div>
 

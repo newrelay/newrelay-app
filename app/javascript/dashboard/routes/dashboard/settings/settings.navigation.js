@@ -160,7 +160,7 @@ export const SETTINGS_NAV_SECTIONS = [
       {
         key: 'reputation',
         labelKey: 'SIDEBAR.INTEGRATION',
-        routeName: 'reputation_integrations',
+        routeName: 'settings_integrations_platforms',
       },
       {
         key: 'apps',

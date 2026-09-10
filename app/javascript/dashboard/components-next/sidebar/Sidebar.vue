@@ -45,8 +45,8 @@ const isACustomBrandedInstance = useMapGetter(
 );
 const isRTL = useMapGetter('accounts/isRTL');
 const brandName = computed(() => t('SIDEBAR.BRAND_NAME'));
-const brandInitial = computed(() => brandName.value.charAt(0).toUpperCase());
 const brandSubtitle = computed(() => t('SIDEBAR.ENTERPRISE_EDITION'));
+const WHITE_RELAY_LOGO = '/white-relay-logo.svg';
 
 const { width: windowWidth } = useWindowSize();
 const isMobile = computed(() => windowWidth.value < 768);
@@ -775,10 +775,14 @@ const logoutMenuItem = computed(() => ({
         }"
       >
         <div
-          class="flex aspect-square size-8 shrink-0 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground"
+          class="flex aspect-square size-8 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-sidebar-primary p-1.5 text-sidebar-primary-foreground shadow-xs"
           :title="isEffectivelyCollapsed ? brandName : undefined"
         >
-          <span class="text-sm font-bold">{{ brandInitial }}</span>
+          <img
+            :src="WHITE_RELAY_LOGO"
+            :alt="brandName"
+            class="size-full object-contain"
+          />
         </div>
         <div
           v-if="!isEffectivelyCollapsed"

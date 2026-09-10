@@ -11,13 +11,13 @@ import CompaniesDetailsLayout from 'dashboard/components-next/Companies/Companie
 import CompanyProfileCard from 'dashboard/components-next/Companies/CompanyDetail/CompanyProfileCard.vue';
 import CompanyHistorySidebar from 'dashboard/components-next/Companies/CompanyDetail/CompanyHistorySidebar.vue';
 import CompanyNotesSidebar from 'dashboard/components-next/Companies/CompanyDetail/CompanyNotesSidebar.vue';
+import CompanyContactsSidebar from 'dashboard/components-next/Companies/CompanyDetail/CompanyContactsSidebar.vue';
 import ConfirmCompanyDeleteDialog from 'dashboard/components-next/Companies/CompanyDetail/ConfirmCompanyDeleteDialog.vue';
 import {
   RelayBadge,
   RelayButton,
   RelayInput,
 } from 'dashboard/components-next/relay';
-import { RELAY_MODAL_CLOSE_BUTTON_CLASS } from 'dashboard/components-next/relay/modal/constants';
 import { useCompaniesStore } from 'dashboard/stores/companies';
 
 const route = useRoute();
@@ -26,13 +26,13 @@ const companiesStore = useCompaniesStore();
 const { t } = useI18n();
 
 const confirmDeleteDialogRef = ref(null);
-const showAllContactsModal = ref(false);
-const allContactsSearch = ref('');
 const activeTab = ref('overview');
 const isEditingDetails = ref(false);
+const selectedCompanyContact = ref(null);
 
 const DETAIL_TABS = [
   { value: 'overview', labelKey: 'COMPANIES.DETAIL.TABS.OVERVIEW' },
+  { value: 'contacts', labelKey: 'COMPANIES.DETAIL.TABS.CONTACTS' },
   { value: 'history', labelKey: 'COMPANIES.DETAIL.TABS.HISTORY' },
   { value: 'notes', labelKey: 'COMPANIES.DETAIL.TABS.NOTES' },
 ];
@@ -54,6 +54,10 @@ const companyConversations = computed(
   () => companiesStore.companyConversations || []
 );
 const companyNotes = computed(() => companiesStore.companyNotes || []);
+const companyContactsMeta = computed(() => companiesStore.companyContactsMeta);
+const contactSearchResults = computed(
+  () => companiesStore.contactSearchResults || []
+);
 const uiFlags = computed(() => companiesStore.getUIFlags);
 
 const isFetchingCompany = computed(() => uiFlags.value.fetchingItem);
@@ -62,6 +66,10 @@ const isFetchingConversations = computed(
   () => uiFlags.value.fetchingConversations
 );
 const isFetchingNotes = computed(() => uiFlags.value.fetchingNotes);
+const isSearchingContacts = computed(() => uiFlags.value.searchingContacts);
+const isBusyLinkingContact = computed(
+  () => uiFlags.value.creatingContact || uiFlags.value.removingContact
+);
 const isDeletingCompany = computed(() => uiFlags.value.deletingItem);
 const isUpdating = computed(() => uiFlags.value.updatingItem);
 const hasCompany = computed(() => Boolean(company.value?.id));
@@ -87,16 +95,6 @@ const recentContacts = computed(() => companyContacts.value.slice(0, 3));
 const recentConversations = computed(() =>
   companyConversations.value.slice(0, 3)
 );
-
-const filteredAllContacts = computed(() => {
-  const query = allContactsSearch.value.trim().toLowerCase();
-  if (!query) return companyContacts.value;
-  return companyContacts.value.filter(contact => {
-    const name = (contact.name || '').toLowerCase();
-    const email = (contact.email || '').toLowerCase();
-    return name.includes(query) || email.includes(query);
-  });
-});
 
 const contactInitials = contact => {
   const name = contact.name || '';
@@ -143,12 +141,61 @@ const goToCompaniesList = () => {
 };
 
 const goToContacts = () => {
-  showAllContactsModal.value = true;
+  activeTab.value = 'contacts';
 };
 
-const closeAllContactsModal = () => {
-  showAllContactsModal.value = false;
-  allContactsSearch.value = '';
+const handleContactSearch = query => {
+  companiesStore.searchCompanyContactCandidates({
+    companyId: companyId.value,
+    search: query,
+  });
+};
+
+const handleSelectCompanyContact = contact => {
+  selectedCompanyContact.value = contact;
+};
+
+const handleCancelContactSelection = () => {
+  selectedCompanyContact.value = null;
+};
+
+const handleConfirmContactSelection = async () => {
+  const contact = selectedCompanyContact.value;
+  if (!contact) return;
+
+  const isReassigning = Boolean(contact.company);
+  try {
+    await companiesStore.attachContactToCompany(companyId.value, contact.id);
+    useAlert(
+      t(
+        isReassigning
+          ? 'COMPANIES.DETAIL.CONTACTS.MESSAGES.REASSIGN_SUCCESS'
+          : 'COMPANIES.DETAIL.CONTACTS.MESSAGES.ADD_SUCCESS'
+      )
+    );
+    selectedCompanyContact.value = null;
+  } catch {
+    useAlert(
+      t(
+        isReassigning
+          ? 'COMPANIES.DETAIL.CONTACTS.MESSAGES.REASSIGN_ERROR'
+          : 'COMPANIES.DETAIL.CONTACTS.MESSAGES.ADD_ERROR'
+      )
+    );
+  }
+};
+
+const handleRemoveCompanyContact = async contactId => {
+  try {
+    await companiesStore.removeContactFromCompany(companyId.value, contactId);
+    useAlert(t('COMPANIES.DETAIL.CONTACTS.MESSAGES.REMOVE_SUCCESS'));
+  } catch {
+    useAlert(t('COMPANIES.DETAIL.CONTACTS.MESSAGES.REMOVE_ERROR'));
+  }
+};
+
+const handleCompanyContactsPageChange = page => {
+  companiesStore.getCompanyContacts(companyId.value, page);
 };
 
 const openContact = contactId => {
@@ -222,7 +269,7 @@ watch(
   async id => {
     companiesStore.resetCompanyDetailState();
     activeTab.value = 'overview';
-    closeAllContactsModal();
+    selectedCompanyContact.value = null;
     if (!id) return;
     await Promise.allSettled([
       companiesStore.show(id),
@@ -234,6 +281,8 @@ watch(
 );
 
 watch(activeTab, tab => {
+  selectedCompanyContact.value = null;
+  companiesStore.clearContactSearchResults();
   if (!companyId.value) return;
   if (tab === 'notes') companiesStore.getCompanyNotes(companyId.value);
   if (tab === 'history') {
@@ -304,6 +353,9 @@ onBeforeUnmount(() => {
             {{
               {
                 overview: t('COMPANIES.DETAIL.TABS.OVERVIEW'),
+                contacts: t('COMPANIES.DETAIL.TABS.CONTACTS_WITH_COUNT', {
+                  count: Number(company.contactsCount || 0),
+                }),
                 history: t('COMPANIES.DETAIL.TABS.HISTORY'),
                 notes: t('COMPANIES.DETAIL.TABS.NOTES'),
               }[tab.value]
@@ -785,6 +837,28 @@ onBeforeUnmount(() => {
         </div>
 
         <div
+          v-else-if="activeTab === 'contacts'"
+          class="overflow-hidden rounded-xl border border-border bg-card outline-none"
+        >
+          <CompanyContactsSidebar
+            :company="company"
+            :contacts="companyContacts"
+            :meta="companyContactsMeta"
+            :is-loading="isFetchingContacts"
+            :is-busy="isBusyLinkingContact"
+            :search-results="contactSearchResults"
+            :is-searching="isSearchingContacts"
+            :selected-contact="selectedCompanyContact"
+            @search="handleContactSearch"
+            @select-contact="handleSelectCompanyContact"
+            @cancel-contact-selection="handleCancelContactSelection"
+            @confirm-contact-selection="handleConfirmContactSelection"
+            @remove-contact="handleRemoveCompanyContact"
+            @update:current-page="handleCompanyContactsPageChange"
+          />
+        </div>
+
+        <div
           v-else-if="activeTab === 'history'"
           class="overflow-hidden rounded-xl border border-border bg-card outline-none"
         >
@@ -812,109 +886,5 @@ onBeforeUnmount(() => {
       :is-loading="isDeletingCompany"
       @confirm="handleDeleteCompany"
     />
-
-    <div
-      v-if="showAllContactsModal"
-      class="fixed inset-0 z-[101] flex items-center justify-center p-4 sm:p-6 animate-in fade-in duration-200"
-    >
-      <div
-        class="absolute inset-0 bg-background/80 backdrop-blur-[8px]"
-        @click="closeAllContactsModal"
-      />
-      <div
-        class="relative z-10 flex max-h-[85vh] w-full max-w-4xl flex-col rounded-2xl border border-border/60 bg-card shadow-xl animate-in zoom-in-95 duration-200"
-      >
-        <div
-          class="flex shrink-0 items-center justify-between gap-4 border-b border-border/40 p-6"
-        >
-          <div class="shrink-0">
-            <h3 class="text-base font-medium tracking-tight text-foreground">
-              {{ t('COMPANIES.DETAIL.RECENT_CONTACTS.MODAL.TITLE') }}
-            </h3>
-            <p class="mt-1 text-[14px] font-normal text-muted-foreground">
-              {{
-                t('COMPANIES.DETAIL.RECENT_CONTACTS.MODAL.SUBTITLE', {
-                  count: companyContacts.length,
-                  company: company.name || t('COMPANIES.UNNAMED'),
-                })
-              }}
-            </p>
-          </div>
-          <div class="ml-auto flex w-full max-w-sm items-center gap-3">
-            <div class="relative w-full">
-              <span
-                class="i-lucide-search pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground"
-              />
-              <RelayInput
-                v-model="allContactsSearch"
-                class-name="h-9 w-full rounded-md border-border/80 bg-background pl-9 text-[13px] shadow-sm focus-visible:ring-1 focus-visible:ring-primary/30"
-                :placeholder="
-                  t('COMPANIES.DETAIL.RECENT_CONTACTS.MODAL.SEARCH_PLACEHOLDER')
-                "
-              />
-            </div>
-            <button
-              type="button"
-              :class="RELAY_MODAL_CLOSE_BUTTON_CLASS"
-              @click="closeAllContactsModal"
-            >
-              <span class="i-lucide-x size-4" />
-            </button>
-          </div>
-        </div>
-        <div class="flex-1 overflow-y-auto p-6">
-          <div
-            v-if="!filteredAllContacts.length"
-            class="flex h-full flex-col items-center justify-center py-12 text-center"
-          >
-            <span class="i-lucide-users mb-3 size-8 text-muted-foreground" />
-            <h4 class="text-sm font-medium text-foreground">
-              {{ t('COMPANIES.DETAIL.RECENT_CONTACTS.MODAL.EMPTY_TITLE') }}
-            </h4>
-            <p class="mt-1 text-xs text-muted-foreground">
-              {{ t('COMPANIES.DETAIL.RECENT_CONTACTS.MODAL.EMPTY_SUBTITLE') }}
-            </p>
-          </div>
-          <div
-            v-else
-            class="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3"
-          >
-            <button
-              v-for="contact in filteredAllContacts"
-              :key="contact.id"
-              type="button"
-              class="flex items-center justify-between rounded-xl border border-border/40 p-3 text-left transition-colors hover:border-primary/20 hover:bg-muted/30"
-              @click="openContact(contact.id)"
-            >
-              <div class="flex items-center gap-4">
-                <div
-                  class="flex size-10 shrink-0 items-center justify-center rounded-full bg-primary/10 font-semibold text-primary"
-                >
-                  {{ contactInitials(contact) }}
-                </div>
-                <div class="flex flex-col">
-                  <span class="text-[14px] font-medium text-foreground">
-                    {{
-                      contact.name ||
-                      t('COMPANIES.DETAIL.CONTACTS.UNNAMED_CONTACT')
-                    }}
-                  </span>
-                  <span class="text-[13px] text-muted-foreground">
-                    {{ contact.email || emptyValue }}
-                  </span>
-                </div>
-              </div>
-              <RelayBadge
-                v-if="contact.role === 'owner'"
-                variant="secondary"
-                class="rounded-full border-transparent bg-primary/10 px-2.5 font-medium text-primary hover:bg-primary/20"
-              >
-                {{ t('COMPANIES.DETAIL.RECENT_CONTACTS.OWNER') }}
-              </RelayBadge>
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
   </CompaniesDetailsLayout>
 </template>

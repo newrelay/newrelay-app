@@ -190,6 +190,11 @@ const handleColumnSort = sortKey => {
 };
 
 const emptyPlaceholderClass = 'text-muted-foreground/50 text-[13px]';
+
+// Prefer the real linked Company record; fall back to the legacy free-text
+// attribute for contacts that only have a typed-in company name.
+const companyDisplayName = contact =>
+  contact.company?.name || contact.additionalAttributes?.companyName || '';
 </script>
 
 <template>
@@ -418,12 +423,12 @@ const emptyPlaceholderClass = 'text-muted-foreground/50 text-[13px]';
               >
                 <span
                   :class="
-                    contact.additionalAttributes?.companyName
+                    companyDisplayName(contact)
                       ? 'text-sm text-foreground'
                       : emptyPlaceholderClass
                   "
                 >
-                  {{ contact.additionalAttributes?.companyName || '—' }}
+                  {{ companyDisplayName(contact) || '—' }}
                 </span>
               </td>
 

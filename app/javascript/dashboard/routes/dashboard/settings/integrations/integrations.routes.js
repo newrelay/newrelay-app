@@ -14,6 +14,23 @@ import Shopify from './Shopify.vue';
 export default {
   routes: [
     {
+      path: frontendURL('accounts/:accountId/settings/integration'),
+      component: SettingsWrapper,
+      props: { wide: true },
+      children: [
+        {
+          path: '',
+          name: 'settings_integrations_platforms',
+          component: () =>
+            import('../../reputation/pages/IntegrationsPage.vue'),
+          props: { embedded: true },
+          meta: {
+            permissions: ['administrator', 'reputation_manage'],
+          },
+        },
+      ],
+    },
+    {
       path: frontendURL('accounts/:accountId/settings/integrations'),
       component: SettingsWrapper,
       props: {},

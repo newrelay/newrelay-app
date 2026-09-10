@@ -532,11 +532,17 @@ input, select, textarea { font: inherit; color: inherit; }
   flex-shrink: 0;
   align-items: center;
   justify-content: center;
+  overflow: hidden;
+  padding: 6px;
   border-radius: 8px;
   background-color: var(--sidebar-primary);
   color: var(--sidebar-primary-foreground);
-  font-weight: 700;
-  font-size: 14px;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
 }
 
 .sidebar-brand-info {
@@ -1155,11 +1161,17 @@ input, select, textarea { font: inherit; color: inherit; }
   flex-shrink: 0;
   align-items: center;
   justify-content: center;
+  overflow: hidden;
+  padding: 6px;
   border-radius: 9999px;
   background-color: var(--primary);
   color: var(--primary-foreground);
-  font-size: 14px;
-  font-weight: 700;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
 }
 .header-user-status {
   position: absolute;

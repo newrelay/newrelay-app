@@ -17,7 +17,7 @@ defineProps({
     :class="
       filled
         ? 'text-amber-400 opacity-100'
-        : 'text-muted-foreground opacity-30 transition-opacity group-hover:opacity-100'
+        : 'text-muted-foreground opacity-30 transition-opacity group-hover:opacity-100 hover:text-amber-400'
     "
     aria-hidden="true"
   >

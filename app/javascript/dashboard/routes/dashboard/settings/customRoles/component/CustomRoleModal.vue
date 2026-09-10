@@ -182,6 +182,7 @@ const isSubmitDisabled = computed(
     :title="modalTitle"
     :description="modalDescription"
     size="lg"
+    flush
     @close="emit('close')"
   >
     <form @submit.prevent="handleCustomRole">

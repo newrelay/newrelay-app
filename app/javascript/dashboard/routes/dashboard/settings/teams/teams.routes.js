@@ -9,14 +9,26 @@ import EditTeam from './Edit/EditTeam.vue';
 import AddAgents from './Create/AddAgents.vue';
 import EditAgents from './Edit/EditAgents.vue';
 import FinishSetup from './FinishSetup.vue';
-import SettingsContent from '../Wrapper.vue';
 import SettingsWrapper from '../SettingsWrapper.vue';
+
+const TEAM_FLOW_ROUTES = [
+  'settings_teams_new',
+  'settings_teams_add_agents',
+  'settings_teams_finish',
+  'settings_teams_edit',
+  'settings_teams_edit_members',
+  'settings_teams_edit_finish',
+];
 
 export default {
   routes: [
     {
       path: frontendURL('accounts/:accountId/settings/teams'),
       component: SettingsWrapper,
+      props: route => ({
+        fullWidth: TEAM_FLOW_ROUTES.includes(route.name),
+        keepAlive: !TEAM_FLOW_ROUTES.includes(route.name),
+      }),
       children: [
         {
           path: '',
@@ -33,19 +45,6 @@ export default {
             permissions: ['administrator'],
           },
         },
-      ],
-    },
-    {
-      path: frontendURL('accounts/:accountId/settings/teams'),
-      component: SettingsContent,
-      props: () => {
-        return {
-          headerTitle: 'TEAMS_SETTINGS.HEADER',
-          icon: 'people-team',
-          showBackButton: true,
-        };
-      },
-      children: [
         {
           path: 'new',
           component: CreateStepWrap,

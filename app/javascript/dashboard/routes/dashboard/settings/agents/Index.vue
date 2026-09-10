@@ -336,6 +336,7 @@ const confirmDeletion = () => {
       :show="showAddPopup"
       :title="$t('AGENT_MGMT.ADD.TITLE')"
       :description="$t('AGENT_MGMT.ADD.DESC')"
+      flush
       @close="hideAddPopup"
     >
       <AddAgent @close="hideAddPopup" />
@@ -344,6 +345,7 @@ const confirmDeletion = () => {
     <RelayModal
       :show="showEditPopup"
       :title="`${$t('AGENT_MGMT.EDIT.TITLE')} - ${currentAgent.name}`"
+      flush
       @close="hideEditPopup"
     >
       <EditAgent

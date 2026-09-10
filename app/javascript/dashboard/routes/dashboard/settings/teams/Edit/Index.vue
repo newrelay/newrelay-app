@@ -1,44 +1,63 @@
-<script>
-import Wizard from 'dashboard/components/ui/Wizard.vue';
+<script setup>
+import { computed } from 'vue';
+import { useI18n } from 'vue-i18n';
+import { useRoute, useRouter } from 'vue-router';
+import { useAccount } from 'dashboard/composables/useAccount';
+import SettingsFlowShell from '../../components/SettingsFlowShell.vue';
 
-export default {
-  components: { Wizard },
-  computed: {
-    items() {
-      const routes = {
-        EDIT_WIZARD_DETAILS: 'settings_teams_edit',
-        EDIT_WIZARD_AGENTS: 'settings_teams_edit_members',
-        EDIT_WIZARD_FINISH: 'settings_teams_edit_finish',
-      };
+const { t } = useI18n();
+const route = useRoute();
+const router = useRouter();
+const { accountScopedRoute } = useAccount();
 
-      const steps = [
-        'EDIT_WIZARD_DETAILS',
-        'EDIT_WIZARD_AGENTS',
-        'EDIT_WIZARD_FINISH',
-      ];
-
-      return steps.map(step => {
-        return {
-          title: this.$t(`TEAMS_SETTINGS.EDIT_FLOW.${step}.TITLE`),
-          body: this.$t(`TEAMS_SETTINGS.EDIT_FLOW.${step}.BODY`),
-          route: routes[step],
-        };
-      });
-    },
+const steps = computed(() => [
+  {
+    title: t('TEAMS_SETTINGS.EDIT_FLOW.EDIT_WIZARD_DETAILS.TITLE'),
+    body: t('TEAMS_SETTINGS.EDIT_FLOW.EDIT_WIZARD_DETAILS.BODY'),
+    route: 'settings_teams_edit',
   },
+  {
+    title: t('TEAMS_SETTINGS.EDIT_FLOW.EDIT_WIZARD_AGENTS.TITLE'),
+    body: t('TEAMS_SETTINGS.EDIT_FLOW.EDIT_WIZARD_AGENTS.BODY'),
+    route: 'settings_teams_edit_members',
+  },
+  {
+    title: t('TEAMS_SETTINGS.EDIT_FLOW.EDIT_WIZARD_FINISH.TITLE'),
+    body: t('TEAMS_SETTINGS.EDIT_FLOW.EDIT_WIZARD_FINISH.BODY'),
+    route: 'settings_teams_edit_finish',
+  },
+]);
+
+const activeIndex = computed(() => {
+  const index = steps.value.findIndex(item => item.route === route.name);
+  return index === -1 ? 0 : index;
+});
+
+const stepLabel = computed(() =>
+  t('TEAMS_SETTINGS.FLOW.STEP', {
+    current: activeIndex.value + 1,
+    total: steps.value.length,
+  })
+);
+
+const goBack = () => {
+  if (activeIndex.value === 0) {
+    router.push(accountScopedRoute('settings_teams_list'));
+    return;
+  }
+  router.back();
 };
 </script>
 
 <template>
-  <div class="mx-auto mb-8 flex w-full max-w-7xl flex-col gap-6 !px-6">
-    <div
-      class="grid h-full min-h-[50dvh] w-full grid-cols-1 rounded-xl border border-border/60 bg-card shadow-xs lg:grid-cols-8 lg:divide-x lg:divide-border/40"
-    >
-      <Wizard
-        class="hidden h-fit px-6 py-8 lg:col-span-2 lg:block"
-        :items="items"
-      />
-      <router-view />
-    </div>
-  </div>
+  <SettingsFlowShell
+    :title="t('TEAMS_SETTINGS.HEADER')"
+    :steps="steps"
+    :active-index="activeIndex"
+    :back-label="t('GENERAL_SETTINGS.BACK')"
+    :step-label="stepLabel"
+    @back="goBack"
+  >
+    <router-view />
+  </SettingsFlowShell>
 </template>

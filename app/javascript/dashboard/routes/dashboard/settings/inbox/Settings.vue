@@ -1332,22 +1332,22 @@ export default {
                     </SettingsAccordion>
 
                     <div class="w-full flex justify-end items-center py-4 mt-2">
-                      <NextButton
+                      <RelayButton
                         v-if="isAPIInbox"
                         type="submit"
-                        :disabled="v$.webhookUrl.$invalid"
-                        :label="$t('INBOX_MGMT.SETTINGS_POPUP.UPDATE')"
-                        :is-loading="uiFlags.isUpdating"
+                        :disabled="v$.webhookUrl.$invalid || uiFlags.isUpdating"
                         @click="updateInbox"
-                      />
-                      <NextButton
+                      >
+                        {{ $t('INBOX_MGMT.SETTINGS_POPUP.UPDATE') }}
+                      </RelayButton>
+                      <RelayButton
                         v-else
                         type="submit"
-                        :disabled="v$.$invalid"
-                        :label="$t('INBOX_MGMT.SETTINGS_POPUP.UPDATE')"
-                        :is-loading="uiFlags.isUpdating"
+                        :disabled="v$.$invalid || uiFlags.isUpdating"
                         @click="updateInbox"
-                      />
+                      >
+                        {{ $t('INBOX_MGMT.SETTINGS_POPUP.UPDATE') }}
+                      </RelayButton>
                     </div>
                   </div>
 

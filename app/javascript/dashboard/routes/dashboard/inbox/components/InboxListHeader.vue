@@ -38,7 +38,7 @@ const onOptionClick = key => {
         <RelayDropdownMenuTrigger as-child>
           <RelayButton variant="outline" size="sm" class="h-8 gap-1 px-3">
             {{ t('INBOX.LIST.DISPLAY_DROPDOWN') }}
-            <span class="i-lucide-chevron-down size-3" />
+            <span class="i-lucide-chevron-down size-3.5" />
           </RelayButton>
         </RelayDropdownMenuTrigger>
         <RelayDropdownMenuContent align="start" class="w-56 p-2">
@@ -54,7 +54,7 @@ const onOptionClick = key => {
             :aria-label="t('INBOX.LIST.MORE_OPTIONS')"
           >
             <span
-              class="i-lucide-sliders-horizontal size-3.5 text-muted-foreground"
+              class="i-lucide-sliders-horizontal size-[18px] text-muted-foreground"
             />
           </RelayButton>
         </RelayDropdownMenuTrigger>

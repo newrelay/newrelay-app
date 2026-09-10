@@ -3,6 +3,7 @@ import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { dynamicTime, shortTimestamp } from 'shared/helpers/timeHelper';
 import Avatar from 'dashboard/components-next/avatar/Avatar.vue';
+import InboxStarIcon from 'dashboard/components-next/Inbox/InboxStarIcon.vue';
 import { useMapGetter } from 'dashboard/composables/store';
 import { getInboxIconByType } from 'dashboard/helper/inbox';
 
@@ -10,9 +11,10 @@ const props = defineProps({
   inboxItem: { type: Object, default: () => ({}) },
   isActive: { type: Boolean, default: false },
   isStarred: { type: Boolean, default: false },
+  isSelected: { type: Boolean, default: false },
 });
 
-const emit = defineEmits(['click', 'toggleStar']);
+const emit = defineEmits(['click', 'toggleStar', 'toggleSelect']);
 
 const { t } = useI18n();
 
@@ -94,11 +96,13 @@ const attachmentPillClass = name => {
     role="button"
     class="flex items-center gap-4 px-5 py-3 text-left transition-colors w-full group border-b border-border/60 hover:shadow-sm cursor-pointer"
     :class="[
-      isActive
-        ? 'bg-primary/5 hover:bg-primary/5'
-        : isUnread
-          ? 'bg-background hover:bg-muted/20'
-          : 'bg-muted/10 hover:bg-muted/30',
+      isSelected
+        ? 'bg-primary/10 hover:bg-primary/15'
+        : isActive
+          ? 'bg-primary/5 hover:bg-primary/5'
+          : isUnread
+            ? 'bg-background hover:bg-muted/20'
+            : 'bg-muted/10 hover:bg-muted/30',
     ]"
     @click="emit('click')"
   >
@@ -106,18 +110,29 @@ const attachmentPillClass = name => {
     <div class="flex items-center gap-3 shrink-0">
       <button
         type="button"
+        class="group/checkbox flex size-5 cursor-pointer items-center justify-center"
+        :aria-label="t('INBOX.LIST.SELECT_CONVERSATION')"
+        :aria-pressed="isSelected"
+        @click.stop="emit('toggleSelect', inboxItem)"
+      >
+        <span
+          class="flex size-[18px] items-center justify-center rounded-full border transition-colors"
+          :class="
+            isSelected
+              ? 'border-primary bg-primary text-primary-foreground opacity-100'
+              : 'border-input bg-background opacity-0 group-hover:opacity-100 group-hover/checkbox:border-primary/50'
+          "
+        >
+          <span v-if="isSelected" class="i-lucide-check size-3" />
+        </span>
+      </button>
+      <button
+        type="button"
         class="flex items-center justify-center"
         :aria-label="t('INBOX.VIEWS.STARRED')"
         @click.stop="emit('toggleStar', inboxItem)"
       >
-        <span
-          v-if="isStarred"
-          class="size-4 cursor-pointer i-ri-star-fill text-warning opacity-100"
-        />
-        <span
-          v-else
-          class="size-4 cursor-pointer i-lucide-star text-muted-foreground opacity-30 group-hover:opacity-100 transition-opacity hover:text-warning"
-        />
+        <InboxStarIcon :filled="isStarred" />
       </button>
       <div class="relative shrink-0 ml-1">
         <Avatar
@@ -143,9 +158,9 @@ const attachmentPillClass = name => {
       </span>
       <span
         v-if="channelIcon"
-        class="shrink-0 flex items-center justify-center size-3.5 rounded-full bg-primary/10 text-primary"
+        class="flex size-5 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary"
       >
-        <span :class="channelIcon" class="size-2.5" />
+        <span :class="channelIcon" class="size-3.5" />
       </span>
       <span
         v-if="contactStatus === 'online'"

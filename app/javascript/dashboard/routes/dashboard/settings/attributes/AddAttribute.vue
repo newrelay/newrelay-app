@@ -12,8 +12,6 @@ import { ATTRIBUTE_TYPES } from './constants';
 import TagInput from 'dashboard/components-next/taginput/TagInput.vue';
 import Icon from 'dashboard/components-next/icon/Icon.vue';
 import {
-  RelayButton,
-  RelayInput,
   RelayCheckbox,
   RelayLabel,
   RelayModal,
@@ -212,6 +210,7 @@ const addAttributes = async () => {
     :show="show"
     :title="t('ATTRIBUTES_MGMT.ADD.TITLE')"
     size="md"
+    flush
     @close="emit('close')"
   >
     <form @submit.prevent="addAttributes">

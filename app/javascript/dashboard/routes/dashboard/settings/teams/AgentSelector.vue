@@ -2,9 +2,6 @@
 import { computed } from 'vue';
 import { RelayButton, RelayCheckbox } from 'dashboard/components-next/relay';
 import Avatar from 'next/avatar/Avatar.vue';
-import BaseTable from 'dashboard/components-next/table/BaseTable.vue';
-import BaseTableRow from 'dashboard/components-next/table/BaseTableRow.vue';
-import BaseTableCell from 'dashboard/components-next/table/BaseTableCell.vue';
 import { useI18n } from 'vue-i18n';
 
 const props = defineProps({
@@ -71,83 +68,92 @@ const toggleSelectAll = () => {
     props.updateSelectedAgents(result);
   }
 };
-
-const headers = computed(() => [
-  '',
-  t('TEAMS_SETTINGS.AGENTS.AGENT'),
-  t('TEAMS_SETTINGS.AGENTS.EMAIL'),
-]);
 </script>
 
 <template>
-  <div class="space-y-4">
-    <BaseTable :headers="headers" :items="agentList">
-      <template #header-0>
-        <div class="flex items-center">
+  <div
+    class="overflow-hidden rounded-xl border border-border/70 bg-card shadow-xs"
+  >
+    <div
+      class="grid grid-cols-[1.5fr_1.5fr_1fr] gap-4 border-b border-border/50 bg-muted/25 px-5 py-3.5"
+    >
+      <div class="flex items-center gap-3">
+        <RelayCheckbox
+          :model-value="allAgentsSelected"
+          :indeterminate="someAgentsSelected"
+          :title="$t('TEAMS_SETTINGS.AGENTS.SELECT_ALL')"
+          @change="toggleSelectAll"
+        />
+        <span class="text-[14px] font-medium text-muted-foreground">
+          {{ t('TEAMS_SETTINGS.AGENTS.AGENT') }}
+        </span>
+      </div>
+      <div class="text-[14px] font-medium text-muted-foreground">
+        {{ t('TEAMS_SETTINGS.AGENTS.EMAIL') }}
+      </div>
+      <div class="text-[14px] font-medium text-muted-foreground">
+        {{ t('TEAMS_SETTINGS.AGENTS.ROLE') }}
+      </div>
+    </div>
+
+    <div class="max-h-[340px] divide-y divide-border/40 overflow-y-auto">
+      <button
+        v-for="agent in agentList"
+        :key="agent.id"
+        type="button"
+        class="grid w-full cursor-pointer grid-cols-[1.5fr_1.5fr_1fr] items-center gap-4 px-5 py-3 text-left transition-colors hover:bg-muted/15"
+        :class="isAgentSelected(agent.id) ? 'bg-primary/[0.02]' : ''"
+        @click="handleSelectAgent(agent.id)"
+      >
+        <div class="flex items-center gap-3">
           <RelayCheckbox
-            :model-value="allAgentsSelected"
-            :indeterminate="someAgentsSelected"
-            :title="$t('TEAMS_SETTINGS.AGENTS.SELECT_ALL')"
-            @change="toggleSelectAll"
+            class="pointer-events-none"
+            :model-value="isAgentSelected(agent.id)"
           />
+          <div class="flex min-w-0 items-center gap-2.5">
+            <Avatar
+              :src="agent.thumbnail"
+              :name="agent.name"
+              :status="agent.availability_status"
+              :size="28"
+              hide-offline-status
+              rounded-full
+              class="shrink-0"
+            />
+            <span class="truncate text-[13.5px] font-medium text-foreground">
+              {{ agent.name }}
+            </span>
+          </div>
         </div>
-      </template>
-
-      <template #row="{ items }">
-        <BaseTableRow v-for="agent in items" :key="agent.id" :item="agent">
-          <template #default>
-            <BaseTableCell class="w-5">
-              <div class="flex items-center">
-                <RelayCheckbox
-                  :model-value="isAgentSelected(agent.id)"
-                  @change="() => handleSelectAgent(agent.id)"
-                />
-              </div>
-            </BaseTableCell>
-
-            <BaseTableCell class="min-w-0 max-w-40">
-              <div class="flex min-w-0 items-center gap-2.5">
-                <Avatar
-                  :src="agent.thumbnail"
-                  :name="agent.name"
-                  :status="agent.availability_status"
-                  :size="24"
-                  hide-offline-status
-                  rounded-full
-                  class="flex-shrink-0"
-                />
-                <h4
-                  class="capitalize mb-0 truncate text-sm font-medium text-foreground"
-                >
-                  {{ agent.name }}
-                </h4>
-              </div>
-            </BaseTableCell>
-
-            <BaseTableCell class="min-w-0">
-              <span class="block truncate text-xs text-muted-foreground">
-                {{ agent.email || '---' }}
-              </span>
-            </BaseTableCell>
-          </template>
-        </BaseTableRow>
-      </template>
-    </BaseTable>
+        <div class="truncate text-[13.5px] text-muted-foreground">
+          {{ agent.email || '---' }}
+        </div>
+        <div>
+          <span
+            class="inline-flex rounded bg-muted px-2 py-0.5 text-[11.5px] font-medium capitalize text-muted-foreground"
+          >
+            {{ agent.role || '---' }}
+          </span>
+        </div>
+      </button>
+    </div>
 
     <div
-      class="sticky bottom-0 z-20 -mx-8 flex items-center justify-between border-t border-border/40 bg-card px-8 py-4 shadow-xs"
+      class="flex items-center justify-between border-t border-border/40 bg-muted/10 px-5 py-3.5"
     >
-      <p class="mb-0 text-sm font-medium text-muted-foreground">
+      <span class="text-[13px] text-muted-foreground">
+        <strong class="font-medium text-foreground">
+          {{ selectedAgentCount }}
+        </strong>
         {{
-          $t('TEAMS_SETTINGS.AGENTS.SELECTED_COUNT', {
-            selected: selectedAgents.length,
+          t('TEAMS_SETTINGS.AGENTS.SELECTED_COUNT_SHORT', {
             total: agentList.length,
           })
         }}
-      </p>
+      </span>
       <RelayButton
         type="submit"
-        class="h-10 px-6 font-semibold shadow-sm"
+        class="h-9 rounded-lg px-5 text-[13.5px] font-medium shadow-xs"
         :disabled="disableSubmitButton || isWorking"
       >
         {{ submitButtonText }}

@@ -26,6 +26,10 @@ const props = defineProps({
     default: 'md',
     validator: value => ['md', 'lg', 'xl'].includes(value),
   },
+  flush: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 const emit = defineEmits(['close']);
@@ -63,7 +67,13 @@ const maxWidthClass = computed(() => {
           :description="description"
           @close="emit('close')"
         />
-        <div :class="RELAY_MODAL_BODY_CLASS">
+        <div
+          :class="
+            flush
+              ? 'flex min-h-0 flex-1 flex-col overflow-y-auto'
+              : RELAY_MODAL_BODY_CLASS
+          "
+        >
           <slot />
         </div>
       </div>

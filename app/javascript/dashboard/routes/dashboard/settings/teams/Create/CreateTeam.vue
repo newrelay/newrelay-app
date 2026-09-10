@@ -2,17 +2,10 @@
 import { useAlert } from 'dashboard/composables';
 import TeamForm from '../TeamForm.vue';
 import router from '../../../../index';
-import PageHeader from '../../SettingsSubPageHeader.vue';
 
 export default {
   components: {
     TeamForm,
-    PageHeader,
-  },
-  data() {
-    return {
-      enabledFeatures: {},
-    };
   },
   methods: {
     async createTeam(data) {
@@ -37,17 +30,19 @@ export default {
 </script>
 
 <template>
-  <div class="h-full w-full p-6 col-span-6 overflow-y-auto">
-    <PageHeader
-      :header-title="$t('TEAMS_SETTINGS.CREATE_FLOW.CREATE.TITLE')"
-      :header-content="$t('TEAMS_SETTINGS.CREATE_FLOW.CREATE.DESC')"
-    />
-    <div class="flex flex-wrap">
-      <TeamForm
-        :on-submit="createTeam"
-        :submit-in-progress="false"
-        :submit-button-text="$t('TEAMS_SETTINGS.FORM.SUBMIT_CREATE')"
-      />
+  <div class="w-full max-w-2xl animate-in fade-in duration-300">
+    <div class="mb-6">
+      <h3 class="mb-1 text-[16px] font-medium text-foreground">
+        {{ $t('TEAMS_SETTINGS.CREATE_FLOW.CREATE.TITLE') }}
+      </h3>
+      <p class="text-[13.5px] text-muted-foreground">
+        {{ $t('TEAMS_SETTINGS.CREATE_FLOW.CREATE.DESC') }}
+      </p>
     </div>
+    <TeamForm
+      :on-submit="createTeam"
+      :submit-in-progress="false"
+      :submit-button-text="$t('TEAMS_SETTINGS.FORM.SUBMIT_CREATE')"
+    />
   </div>
 </template>

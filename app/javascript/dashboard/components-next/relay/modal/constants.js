@@ -14,13 +14,13 @@ export const RELAY_NATIVE_DIALOG_BACKDROP_CLASS =
 
 /** Modal header — title, description, bottom divider; form body starts below. */
 export const RELAY_MODAL_HEADER_CLASS =
-  'flex shrink-0 items-center justify-between border-b border-border/80 p-6';
+  'flex shrink-0 items-start justify-between border-b border-border/80 p-6';
 
 export const RELAY_MODAL_TITLE_CLASS =
   'text-base font-medium tracking-tight text-foreground';
 
 export const RELAY_MODAL_DESCRIPTION_CLASS =
-  'mb-0 mt-1 text-[14px] font-normal leading-normal text-muted-foreground';
+  'mb-0 mt-1 pr-6 text-[14px] font-normal leading-normal text-muted-foreground';
 
 export const RELAY_MODAL_BODY_CLASS = 'flex-1 overflow-y-auto p-6';
 

@@ -145,7 +145,13 @@ const handleSubmit = async () => {
 </script>
 
 <template>
-  <RelayModal :show="show" :title="modalTitle" size="md" @close="emit('close')">
+  <RelayModal
+    :show="show"
+    :title="modalTitle"
+    size="md"
+    flush
+    @close="emit('close')"
+  >
     <form @submit.prevent="handleSubmit">
       <div class="max-h-[60vh] space-y-5 overflow-y-auto px-7 pb-2">
         <p

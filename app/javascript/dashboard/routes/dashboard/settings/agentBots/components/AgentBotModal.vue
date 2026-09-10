@@ -283,6 +283,7 @@ watch(() => props.selectedBot, initializeForm, { deep: true });
     :title="formTitle"
     :description="t('AGENT_BOTS.FORM.SUBTITLE')"
     size="lg"
+    flush
     @close="handleFormClose"
   >
     <form @submit.prevent="handleSubmit">
@@ -446,6 +447,7 @@ watch(() => props.selectedBot, initializeForm, { deep: true });
     :show="showAccessTokenModal"
     :title="t('AGENT_BOTS.ACCESS_TOKEN.TITLE')"
     size="md"
+    flush
     @close="handleAccessTokenClose"
   >
     <div class="space-y-5 px-7 pb-2">

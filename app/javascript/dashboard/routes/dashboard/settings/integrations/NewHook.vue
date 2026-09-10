@@ -6,13 +6,12 @@ import { useIntegrationHook } from 'dashboard/composables/useIntegrationHook';
 import { FormKit } from '@formkit/vue';
 import { useBranding } from 'shared/composables/useBranding';
 
-import NextButton from 'dashboard/components-next/button/Button.vue';
-import { RelayModal } from 'dashboard/components-next/relay';
+import { RelayModal, RelayButton } from 'dashboard/components-next/relay';
 
 export default {
   components: {
     FormKit,
-    NextButton,
+    RelayButton,
     RelayModal,
   },
   props: {
@@ -133,6 +132,7 @@ export default {
     :show="show"
     :title="integration.name"
     :description="replaceInstallationName(integration.short_description)"
+    flush
     @close="onClose"
   >
     <FormKit
@@ -161,18 +161,12 @@ export default {
       <div
         class="-mx-7 mt-2 flex flex-row justify-end gap-3 border-t border-border/40 px-7 pt-6 pb-6"
       >
-        <NextButton
-          faded
-          slate
-          type="reset"
-          :label="$t('INTEGRATION_APPS.ADD.FORM.CANCEL')"
-          @click.prevent="onClose"
-        />
-        <NextButton
-          type="submit"
-          :label="submitButtonLabel"
-          :is-loading="uiFlags.isCreatingHook"
-        />
+        <RelayButton variant="outline" type="reset" @click.prevent="onClose">
+          {{ $t('INTEGRATION_APPS.ADD.FORM.CANCEL') }}
+        </RelayButton>
+        <RelayButton type="submit" :disabled="uiFlags.isCreatingHook">
+          {{ submitButtonLabel }}
+        </RelayButton>
       </div>
     </FormKit>
   </RelayModal>

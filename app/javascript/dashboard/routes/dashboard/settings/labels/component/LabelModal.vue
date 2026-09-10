@@ -152,6 +152,7 @@ const handleSubmit = async () => {
     :show="show"
     :title="modalTitle"
     :description="modalDescription"
+    flush
     @close="emit('close')"
   >
     <form @submit.prevent="handleSubmit">

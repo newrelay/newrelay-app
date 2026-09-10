@@ -10,12 +10,16 @@ import { useConfig } from 'dashboard/composables/useConfig';
 import SettingsFieldSection from 'dashboard/components-next/Settings/SettingsFieldSection.vue';
 import SettingsAccordion from 'dashboard/components-next/Settings/SettingsAccordion.vue';
 import NextButton from 'dashboard/components-next/button/Button.vue';
-import { RelayInput, RelayLabel } from 'dashboard/components-next/relay';
+import {
+  RelayInput,
+  RelayLabel,
+  RelayButton,
+  RelayModal,
+} from 'dashboard/components-next/relay';
 import SettingsToggleSection from 'dashboard/components-next/Settings/SettingsToggleSection.vue';
 import DropdownMenu from 'dashboard/components-next/dropdown-menu/DropdownMenu.vue';
 import Icon from 'dashboard/components-next/icon/Icon.vue';
 import TagInput from 'dashboard/components-next/taginput/TagInput.vue';
-import { RelayModal } from 'dashboard/components-next/relay';
 import assignmentPoliciesAPI from 'dashboard/api/assignmentPolicies';
 import { useI18n } from 'vue-i18n';
 
@@ -691,20 +695,20 @@ onMounted(() => {
       :show="showDeleteConfirmModal"
       :title="$t('INBOX_MGMT.ASSIGNMENT_POLICY.DELETE_CONFIRM_TITLE')"
       :description="$t('INBOX_MGMT.ASSIGNMENT_POLICY.DELETE_CONFIRM_MESSAGE')"
+      flush
       @close="cancelDeletePolicy"
     >
-      <div class="flex justify-end gap-2 px-7 pb-6">
-        <NextButton
-          color="slate"
-          :label="$t('INBOX_MGMT.ASSIGNMENT_POLICY.CANCEL')"
-          @click="cancelDeletePolicy"
-        />
-        <NextButton
-          color="ruby"
-          :label="$t('INBOX_MGMT.ASSIGNMENT_POLICY.CONFIRM_DELETE')"
-          :is-loading="isDeletingPolicy"
+      <div class="flex justify-end gap-3 px-7 py-6">
+        <RelayButton variant="outline" @click="cancelDeletePolicy">
+          {{ $t('INBOX_MGMT.ASSIGNMENT_POLICY.CANCEL') }}
+        </RelayButton>
+        <RelayButton
+          variant="destructive"
+          :disabled="isDeletingPolicy"
           @click="deleteAssignmentPolicy"
-        />
+        >
+          {{ $t('INBOX_MGMT.ASSIGNMENT_POLICY.CONFIRM_DELETE') }}
+        </RelayButton>
       </div>
     </RelayModal>
   </div>

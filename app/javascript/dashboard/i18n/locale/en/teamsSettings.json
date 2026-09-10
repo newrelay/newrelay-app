@@ -26,10 +26,13 @@
       "ACTIONS": "Actions",
       "NONE": "None"
     },
+    "FLOW": {
+      "STEP": "Step {current} of {total}"
+    },
     "CREATE_FLOW": {
       "CREATE": {
         "TITLE": "Create a new team",
-        "DESC": "Add a title and description to your new team."
+        "DESC": "Add a name and purpose to establish your team."
       },
       "AGENTS": {
         "BUTTON_TEXT": "Add agents to team",
@@ -38,15 +41,15 @@
       },
       "WIZARD_CREATE": {
         "TITLE": "Create",
-        "BODY": "Create a new team of agents."
+        "BODY": "Set team name & details."
       },
       "WIZARD_ADD_AGENTS": {
         "TITLE": "Add Agents",
-        "BODY": "Add agents to the team."
+        "BODY": "Add members to the team."
       },
       "WIZARD_FINISH": {
         "TITLE": "Finish",
-        "BODY": "You are all set to go!"
+        "BODY": "Review and activate team."
       }
     },
     "EDIT_FLOW": {
@@ -81,8 +84,10 @@
     },
     "AGENTS": {
       "AGENT": "Agent",
-      "EMAIL": "Email",
+      "EMAIL": "Email Address",
+      "ROLE": "Role",
       "BUTTON_TEXT": "Add agents",
+      "SELECTED_COUNT_SHORT": "of {total} agents selected",
       "ADD_AGENTS": "Adding Agents to your Team...",
       "SELECT": "select",
       "SELECT_ALL": "select all agents",
@@ -99,7 +104,7 @@
     },
     "FINISH": {
       "TITLE": "Your team is ready!",
-      "MESSAGE": "You can now collaborate as a team on conversations. Happy supporting ",
+      "MESSAGE": "You can now collaborate as a team on conversations. Happy supporting.",
       "BUTTON_TEXT": "Finish"
     },
     "DELETE": {

@@ -19,10 +19,15 @@
   - Checkboxes: wrapper `flex items-center gap-3` — strictly no manual top margins (e.g. `mt-0.5`).
   - Prefer `RelayInput`, `RelayTextarea`, and `relay/form/constants.js` tokens.
   - Validation: The primary submit action button MUST remain disabled unless all required fields are correctly filled.
-- **Tabs**: 
-  - Container uses `border-b border-border` or `border-b-n-weak`.
-  - Active tab: `border-b-2 border-primary text-primary`.
-  - Inactive tab: `text-muted-foreground hover:text-foreground`.
+- **Tabs**:
+  - Underline tabs (Inbox, list filters, entity details): container `border-b border-border`; inactive `text-muted-foreground hover:text-foreground`; active indicator is an absolute **1px** bar `h-px bg-primary` (never `border-b-2` on `<button>`, never `h-0.5`).
+  - Pill tabs (`RelayTabs`): muted track, active `bg-background shadow-sm`.
+- **Inbox / nested list chrome**:
+  - Section labels (Views, Channels): `text-xs font-bold uppercase tracking-wider text-muted-foreground`.
+  - Count badges: `text-[11px] font-semibold`.
+  - Website channel icon: `i-lucide-globe`.
+  - Tab-row bulk action is **Select All** text, not an icon cluster.
+  - Stars: `InboxStarIcon` (same SVG outline/fill). Display chevron `size-3.5`; sliders `size-[18px]`. Row channel well `size-5`, icon `size-3.5`.
 - **Dropdowns/Popovers**: 
   - Wrapper: `bg-popover text-popover-foreground shadow-md rounded-md border border-border`.
   - Items: `px-2 py-1.5 text-sm hover:bg-accent hover:text-accent-foreground`.

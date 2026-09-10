@@ -150,7 +150,25 @@ Both ship with **`p-0`** so legacy global `button { padding }` does not crush `s
 ### RelayBadge / Tabs
 
 - Badge: compact `text-xs`, variants `default | secondary | destructive | outline`.
-- Tabs list: `bg-muted … h-9 rounded-lg p-1`; active trigger: `bg-background shadow-sm`.
+- **Pill tabs** (`RelayTabs`): list `bg-muted … h-9 rounded-lg p-1`; active trigger `bg-background shadow-sm`.
+- **Underline tabs** (Inbox status, list filters, entity details): list `flex gap-6 border-b border-border`; inactive `text-muted-foreground hover:text-foreground`; active text `text-foreground`; indicator `absolute inset-x-0 bottom-0 h-px bg-primary` (**1px**, never `h-0.5` or `border-b-2` on `<button>`). See `.cursor/rules/relay-underline-tabs.mdc`.
+
+### Inbox / nested list chrome
+
+Locked Inbox QA (do not invent a second pattern):
+
+| Piece | Class / behavior |
+| --- | --- |
+| Section label (Views, Channels) | `text-xs font-bold uppercase tracking-wider text-muted-foreground` |
+| Count badge | `h-5 min-w-[20px] px-1.5 rounded-full text-[11px] font-semibold` |
+| Website channel | `i-lucide-globe` — not `message-circle` |
+| Tab-row bulk action | **Select All** / Deselect All text (`RelayButton` ghost `h-8 text-xs`). No icon-only cluster. Selected rows → Mark all as read + Delete |
+| Display chevron | `size-3.5` (match section chevrons) |
+| Filter / sliders icon | `size-[18px]` |
+| Star | `InboxStarIcon` — same SVG outlined and filled; starred `text-amber-400` |
+| Row channel glyph | Well `size-5 rounded-full bg-primary/10 text-primary`; icon `size-3.5` |
+
+Reference: `routes/dashboard/inbox/`, `components-next/Inbox/`. Agent rule: `.cursor/rules/relay-inbox-chrome.mdc`.
 
 ### Resetting legacy form chrome
 
@@ -228,6 +246,8 @@ Use existing `anim-pop` / `anim-overlay` classes from `_relay-theme.scss` for op
 | `shadow-xs` | Heavy glow / multi-shadow stacks |
 | Sharp empty titles | Default drop-shadow + blur + title tooltips |
 | `en.json` only for new copy | Editing every locale file |
+| Inbox section labels uppercase `font-bold` | `font-medium` title-case “Views” |
+| Select All text on Inbox tab row | Icon-only cluster next to New / In Progress |
 
 ---
 
@@ -253,3 +273,5 @@ Use existing `anim-pop` / `anim-overlay` classes from `_relay-theme.scss` for op
 | `tailwind.config.js` | Maps vars → Tailwind color keys |
 | `TOKENS.md` | Token ↔ class quick reference |
 | `.cursor/rules/relay-new-ui-design.mdc` | Agent enforcement |
+| `.cursor/rules/relay-underline-tabs.mdc` | 1px underline tab indicator |
+| `.cursor/rules/relay-inbox-chrome.mdc` | Inbox nested-list chrome |

@@ -9,7 +9,6 @@ import { getRegexp, normalizeRegexPattern } from 'shared/helpers/Validators';
 import { ATTRIBUTE_TYPES } from './constants';
 import TagInput from 'dashboard/components-next/taginput/TagInput.vue';
 import {
-  RelayButton,
   RelayInput,
   RelayCheckbox,
   RelayLabel,
@@ -176,7 +175,13 @@ watch(
 </script>
 
 <template>
-  <RelayModal :show="show" :title="pageTitle" size="md" @close="emit('close')">
+  <RelayModal
+    :show="show"
+    :title="pageTitle"
+    size="md"
+    flush
+    @close="emit('close')"
+  >
     <form @submit.prevent="editAttributes">
       <div class="max-h-[60vh] space-y-5 overflow-y-auto px-7 pb-2">
         <div class="flex flex-col gap-2.5">

@@ -77,7 +77,7 @@ const channelIcon = channel => {
   const type = channel.channelType || channel.channel_type;
   const medium = channel.medium;
 
-  if (type === INBOX_TYPES.WEB) return 'i-lucide-message-circle';
+  if (type === INBOX_TYPES.WEB) return 'i-lucide-globe';
   if (type === INBOX_TYPES.EMAIL) return 'i-lucide-mail';
   if (type === INBOX_TYPES.INSTAGRAM) return 'i-lucide-instagram';
   if (type === INBOX_TYPES.FB) return 'i-lucide-message-circle';
@@ -120,7 +120,7 @@ const navItemClass = active =>
 
 const navBadgeClass = active =>
   [
-    'shrink-0 h-5 min-w-[20px] px-1.5 rounded-full text-[11px] font-medium',
+    'shrink-0 h-5 min-w-[20px] px-1.5 rounded-full text-[11px] font-semibold',
     active
       ? 'bg-transparent text-primary'
       : 'bg-muted/50 text-muted-foreground',
@@ -137,7 +137,9 @@ const navBadgeClass = active =>
           class="flex items-center gap-2 p-0 outline-none transition-opacity hover:opacity-80"
           @click="isViewsOpen = !isViewsOpen"
         >
-          <span class="text-xs font-medium text-muted-foreground">
+          <span
+            class="text-xs font-bold uppercase tracking-wider text-muted-foreground"
+          >
             {{ t('INBOX.VIEWS.TITLE') }}
           </span>
           <span
@@ -177,7 +179,9 @@ const navBadgeClass = active =>
           class="flex items-center gap-2 p-0 outline-none transition-opacity hover:opacity-80"
           @click="isChannelsOpen = !isChannelsOpen"
         >
-          <span class="text-xs font-medium text-muted-foreground">
+          <span
+            class="text-xs font-bold uppercase tracking-wider text-muted-foreground"
+          >
             {{ t('INBOX.CHANNELS.TITLE') }}
           </span>
           <span

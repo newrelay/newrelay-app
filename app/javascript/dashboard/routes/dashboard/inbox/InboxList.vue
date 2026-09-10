@@ -25,6 +25,7 @@ import InboxEmptyState from './InboxEmptyState.vue';
 import IntersectionObserver from 'dashboard/components/IntersectionObserver.vue';
 import CmdBarConversationSnooze from 'dashboard/routes/dashboard/commands/CmdBarConversationSnooze.vue';
 import Spinner from 'dashboard/components-next/spinner/Spinner.vue';
+import { RelayButton } from 'dashboard/components-next/relay';
 
 const { t } = useI18n();
 const route = useRoute();
@@ -54,10 +55,14 @@ const navTotals = ref({
 });
 
 // Starred conversation ids are persisted in UI settings so favourites survive
-// reloads and stay in sync across the agent's sessions.
-const starredIds = computed(
-  () => new Set(uiSettings.value?.starred_conversation_ids || [])
-);
+// reloads and stay in sync across the agent's sessions. Always coerce to
+// Number — Conversations starring stores numbers, JSONB may round-trip strings.
+const starredIds = computed(() => {
+  const ids = (uiSettings.value?.starred_conversation_ids || []).map(Number);
+  return new Set(ids.filter(id => Number.isFinite(id) && id > 0));
+});
+
+const conversationIdOf = item => Number(item?.primaryActor?.id);
 
 const STATUS_TAB_MAP = {
   new: wootConstants.STATUS_TYPE.OPEN,
@@ -85,7 +90,9 @@ const sortByParam = computed(() =>
     : wootConstants.SORT_BY_TYPE.LAST_ACTIVITY_AT_DESC
 );
 
-const isAllLoaded = computed(() => items.value.length >= totalCount.value);
+const isAllLoaded = computed(
+  () => activeView.value === 'starred' || items.value.length >= totalCount.value
+);
 
 // Adapt an API conversation into the shape InboxCard expects (the conversation
 // is the notification's "primary actor" in the original notification-driven UI).
@@ -102,7 +109,62 @@ const adaptConversation = conversation => {
   };
 };
 
+const isGoneStarredError = error => {
+  const status = error?.response?.status;
+  return status === 404 || status === 403;
+};
+
+// Drop deleted/inaccessible ids so the sidebar badge matches the Starred list.
+const pruneStarredIds = missingIds => {
+  if (!missingIds.length) return;
+  const drop = new Set(missingIds.map(Number));
+  const next = [...starredIds.value].filter(id => !drop.has(id));
+  updateUISettings({ starred_conversation_ids: next });
+};
+
+const resolveStarredConversations = async () => {
+  const ids = [...starredIds.value];
+  if (!ids.length) return [];
+
+  const results = await Promise.all(
+    ids.map(id =>
+      ConversationApi.show(id)
+        .then(response => ({ id, conversation: response.data }))
+        .catch(error => ({
+          id,
+          conversation: null,
+          missing: isGoneStarredError(error),
+        }))
+    )
+  );
+
+  pruneStarredIds(
+    results.filter(result => result.missing).map(result => result.id)
+  );
+
+  return results.map(result => result.conversation).filter(Boolean);
+};
+
+const fetchStarredConversations = async () => {
+  isFetching.value = true;
+  try {
+    const conversations = await resolveStarredConversations();
+    items.value = conversations.map(adaptConversation);
+    totalCount.value = items.value.length;
+  } catch {
+    items.value = [];
+    totalCount.value = 0;
+  } finally {
+    isFetching.value = false;
+  }
+};
+
 const fetchConversations = async ({ append = false } = {}) => {
+  if (activeView.value === 'starred' && !append) {
+    await fetchStarredConversations();
+    return;
+  }
+
   isFetching.value = true;
   try {
     const {
@@ -196,16 +258,6 @@ const channelsForNav = computed(() =>
   )
 );
 
-const viewCounts = computed(() =>
-  viewCountsFromTotals({
-    all: navTotals.value.all,
-    unread: navTotals.value.unread,
-    starred: starredIds.value.size,
-    snoozed: navTotals.value.snoozed,
-    archived: navTotals.value.archived,
-  })
-);
-
 const activeChannelName = computed(() => {
   if (!activeView.value.startsWith('inbox:')) return '';
   const inboxId = Number(activeView.value.replace('inbox:', ''));
@@ -222,7 +274,7 @@ const filteredConversations = computed(() => {
   if (view === 'unread') {
     list = list.filter(n => !n.readAt);
   } else if (view === 'starred') {
-    list = list.filter(n => starredIds.value.has(n.primaryActor?.id));
+    list = list.filter(n => starredIds.value.has(conversationIdOf(n)));
   } else if (view === 'spam') {
     list = [];
   } else if (view.startsWith('inbox:')) {
@@ -235,6 +287,19 @@ const filteredConversations = computed(() => {
   return list;
 });
 
+const viewCounts = computed(() =>
+  viewCountsFromTotals({
+    all: navTotals.value.all,
+    unread: navTotals.value.unread,
+    starred:
+      activeView.value === 'starred' && !isFetching.value
+        ? filteredConversations.value.length
+        : starredIds.value.size,
+    snoozed: navTotals.value.snoozed,
+    archived: navTotals.value.archived,
+  })
+);
+
 const showEndOfList = computed(() => isAllLoaded.value && !isFetching.value);
 
 const statusTabs = computed(() => [
@@ -245,17 +310,93 @@ const statusTabs = computed(() => [
 ]);
 
 const isStarred = notificationItem =>
-  starredIds.value.has(notificationItem.primaryActor?.id);
+  starredIds.value.has(conversationIdOf(notificationItem));
 
 const toggleStar = notificationItem => {
-  const next = new Set(starredIds.value);
-  const conversationId = notificationItem.primaryActor?.id;
+  const conversationId = conversationIdOf(notificationItem);
   if (!conversationId) return;
 
+  const next = new Set(starredIds.value);
   if (next.has(conversationId)) next.delete(conversationId);
   else next.add(conversationId);
   updateUISettings({ starred_conversation_ids: [...next] });
 };
+
+const selectedIds = ref([]);
+
+const visibleConversationIds = computed(() =>
+  filteredConversations.value.map(conversationIdOf).filter(Boolean)
+);
+
+const allVisibleSelected = computed(
+  () =>
+    visibleConversationIds.value.length > 0 &&
+    visibleConversationIds.value.every(id => selectedIds.value.includes(id))
+);
+
+const isSelected = notificationItem =>
+  selectedIds.value.includes(conversationIdOf(notificationItem));
+
+const toggleSelection = notificationItem => {
+  const conversationId = conversationIdOf(notificationItem);
+  if (!conversationId) return;
+  selectedIds.value = selectedIds.value.includes(conversationId)
+    ? selectedIds.value.filter(id => id !== conversationId)
+    : [...selectedIds.value, conversationId];
+};
+
+const toggleSelectAll = () => {
+  selectedIds.value = allVisibleSelected.value
+    ? []
+    : [...visibleConversationIds.value];
+};
+
+const markSelectedAsRead = async () => {
+  const selected = filteredConversations.value.filter(item =>
+    selectedIds.value.includes(conversationIdOf(item))
+  );
+  if (!selected.length) return;
+
+  try {
+    await Promise.all(
+      selected.map(item =>
+        store.dispatch('markMessagesRead', { id: item.primaryActor.id })
+      )
+    );
+    const now = new Date().toISOString();
+    const selectedSet = new Set(selectedIds.value);
+    items.value = items.value.map(item =>
+      selectedSet.has(conversationIdOf(item))
+        ? { ...item, readAt: item.readAt || now }
+        : item
+    );
+    selectedIds.value = [];
+    useAlert(t('INBOX.ALERTS.MARK_ALL_READ'));
+  } catch {
+    useAlert(t('INBOX.ALERTS.MARK_AS_READ'));
+  }
+};
+
+const deleteSelected = async () => {
+  const ids = [...selectedIds.value];
+  if (!ids.length) return;
+
+  try {
+    await Promise.all(ids.map(id => store.dispatch('deleteConversation', id)));
+    const removed = new Set(ids);
+    items.value = items.value.filter(
+      item => !removed.has(conversationIdOf(item))
+    );
+    selectedIds.value = [];
+    useAlert(t('INBOX.ALERTS.DELETE'));
+  } catch {
+    useAlert(t('INBOX.ALERTS.DELETE'));
+  }
+};
+
+watch([activeView, activeStatusTab], () => {
+  selectedIds.value = [];
+});
 
 const scrollActiveIntoView = () => {
   const activeEl = notificationList.value?.querySelector('.inbox-card.active');
@@ -341,7 +482,14 @@ const openConversation = notificationItem => {
 };
 
 // Switching the status tab changes which conversation status we fetch.
-watch(activeStatusTab, () => reloadConversations());
+watch(activeStatusTab, () => {
+  if (activeView.value === 'starred') return;
+  reloadConversations();
+});
+
+watch(activeView, (view, previous) => {
+  if (view === 'starred' || previous === 'starred') reloadConversations();
+});
 
 watch(currentConversationId, () => {
   nextTick(scrollActiveIntoView);
@@ -354,6 +502,7 @@ onMounted(() => {
   setSavedFilter();
   reloadConversations();
   store.dispatch('inboxes/get');
+  resolveStarredConversations();
 });
 </script>
 
@@ -388,10 +537,10 @@ onMounted(() => {
         class="flex-1 flex flex-col bg-card overflow-hidden"
       >
         <div
-          class="flex items-center px-4 border-b border-border h-14 shrink-0"
+          class="flex h-14 shrink-0 items-center justify-between border-b border-border px-4"
         >
           <div
-            class="flex items-center justify-start gap-6 h-14 min-w-0 overflow-hidden"
+            class="flex h-14 min-w-0 flex-1 items-center justify-start gap-6 overflow-hidden"
             role="tablist"
           >
             <button
@@ -400,7 +549,7 @@ onMounted(() => {
               type="button"
               role="tab"
               :aria-selected="activeStatusTab === tab.value"
-              class="relative h-14 px-1 text-sm font-medium transition-colors shrink-0"
+              class="relative h-14 shrink-0 px-1 text-sm font-medium transition-colors"
               :class="
                 activeStatusTab === tab.value
                   ? 'text-foreground'
@@ -409,12 +558,46 @@ onMounted(() => {
               @click="activeStatusTab = tab.value"
             >
               {{ tab.label }}
-              <!-- Active Bottom Border Indicator -->
               <span
                 v-if="activeStatusTab === tab.value"
-                class="absolute bottom-0 left-0 right-0 h-0.5 rounded-t-full bg-primary"
+                class="absolute bottom-0 left-0 right-0 h-px rounded-t-full bg-primary"
               />
             </button>
+          </div>
+          <div class="flex shrink-0 items-center gap-2 pl-4">
+            <RelayButton
+              v-if="filteredConversations.length"
+              variant="ghost"
+              size="sm"
+              class="mr-1 h-8 text-xs text-muted-foreground hover:text-foreground"
+              @click="toggleSelectAll"
+            >
+              {{
+                allVisibleSelected
+                  ? t('INBOX.LIST.DESELECT_ALL')
+                  : t('INBOX.LIST.SELECT_ALL')
+              }}
+            </RelayButton>
+            <template v-if="selectedIds.length">
+              <RelayButton
+                variant="ghost"
+                size="sm"
+                class="h-8 text-xs text-muted-foreground hover:text-foreground"
+                @click="markSelectedAsRead"
+              >
+                <span class="i-lucide-check-check size-3.5" />
+                {{ t('INBOX.MENU_ITEM.MARK_ALL_READ') }}
+              </RelayButton>
+              <RelayButton
+                variant="ghost"
+                size="sm"
+                class="h-8 text-xs text-destructive hover:bg-destructive/10 hover:text-destructive"
+                @click="deleteSelected"
+              >
+                <span class="i-lucide-trash-2 size-3.5" />
+                {{ t('INBOX.LIST.DELETE') }}
+              </RelayButton>
+            </template>
           </div>
         </div>
 
@@ -430,12 +613,14 @@ onMounted(() => {
               currentConversationId === notificationItem.primaryActor?.id
             "
             :is-starred="isStarred(notificationItem)"
+            :is-selected="isSelected(notificationItem)"
             class="inbox-card"
             :class="{
               active:
                 currentConversationId === notificationItem.primaryActor?.id,
             }"
             @toggle-star="toggleStar"
+            @toggle-select="toggleSelection"
             @click="openConversation(notificationItem)"
           />
 

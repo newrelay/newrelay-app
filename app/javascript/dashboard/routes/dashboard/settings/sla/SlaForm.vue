@@ -165,11 +165,13 @@ export default {
 
 <template>
   <form
-    class="flex flex-col h-full max-h-[calc(90vh-140px)] -m-6 p-6 pb-0"
+    class="flex h-full max-h-[calc(90vh-140px)] flex-col pb-0"
     @submit.prevent="onSubmit"
   >
     <!-- Scrollable Body Content -->
-    <div class="flex-1 overflow-y-auto space-y-5 pr-1 custom-scrollbar">
+    <div
+      class="custom-scrollbar flex-1 space-y-5 overflow-y-auto px-7 pb-2 pr-1"
+    >
       <!-- SLA Name -->
       <div class="flex flex-col gap-1.5">
         <RelayLabel html-for="sla_name">
@@ -225,7 +227,7 @@ export default {
 
     <!-- Static Footer Buttons -->
     <div
-      class="shrink-0 py-4 border-t border-border/40 bg-background flex items-center justify-end gap-3 mt-4"
+      class="mt-4 flex shrink-0 items-center justify-end gap-3 border-t border-border/40 bg-background px-7 py-6"
     >
       <RelayButton
         type="button"

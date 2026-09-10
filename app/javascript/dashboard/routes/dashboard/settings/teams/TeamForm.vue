@@ -113,18 +113,18 @@ export default {
       </div>
 
       <label
-        class="flex cursor-pointer items-center gap-2.5 text-[13.5px] font-[500] text-foreground"
+        class="flex cursor-pointer items-center gap-3 pt-2 text-[13.5px] font-normal text-foreground"
       >
         <RelayCheckbox v-model="state.allowAutoAssign" />
-        <span class="text-sm text-foreground">
+        <span class="select-none text-[13.5px] font-normal text-foreground">
           {{ $t('TEAMS_SETTINGS.FORM.AUTO_ASSIGN.LABEL') }}
         </span>
       </label>
 
-      <div class="flex justify-end border-t border-border/40 pt-6">
+      <div class="flex items-center gap-3 pt-4">
         <RelayButton
           type="submit"
-          class="h-10 rounded-md px-6 text-[14px] font-semibold shadow-sm"
+          class="h-10 rounded-lg px-6 text-[13.5px] font-medium shadow-sm"
           :disabled="v$.title.$invalid || submitInProgress"
         >
           {{ submitButtonText }}

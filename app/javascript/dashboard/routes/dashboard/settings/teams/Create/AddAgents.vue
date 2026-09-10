@@ -3,13 +3,11 @@ import { mapGetters } from 'vuex';
 import { useAlert } from 'dashboard/composables';
 
 import router from '../../../../index';
-import PageHeader from '../../SettingsSubPageHeader.vue';
 import AgentSelector from '../AgentSelector.vue';
 import { useVuelidate } from '@vuelidate/core';
 
 export default {
   components: {
-    PageHeader,
     AgentSelector,
   },
   validations: {
@@ -88,27 +86,32 @@ export default {
 </script>
 
 <template>
-  <div class="h-full w-full px-8 pt-8 col-span-6 overflow-auto">
-    <form class="flex flex-col gap-4 mx-0" @submit.prevent="addAgents">
-      <PageHeader
-        :header-title="headerTitle"
-        :header-content="$t('TEAMS_SETTINGS.ADD.DESC')"
-      />
-
-      <div class="w-full h-full">
-        <div v-if="v$.selectedAgents.$error">
-          <p class="error-message pb-2">
-            {{ $t('TEAMS_SETTINGS.ADD.AGENT_VALIDATION_ERROR') }}
-          </p>
-        </div>
-        <AgentSelector
-          :agent-list="agentList"
-          :selected-agents="selectedAgents"
-          :update-selected-agents="updateSelectedAgents"
-          :is-working="isCreating"
-          :submit-button-text="$t('TEAMS_SETTINGS.ADD.BUTTON_TEXT')"
-        />
+  <div class="w-full animate-in fade-in duration-300">
+    <form class="flex flex-col" @submit.prevent="addAgents">
+      <div class="mb-6">
+        <h3 class="mb-1 text-[16px] font-medium text-foreground">
+          {{ headerTitle }}
+        </h3>
+        <p
+          class="max-w-3xl text-[13.5px] leading-relaxed text-muted-foreground"
+        >
+          {{ $t('TEAMS_SETTINGS.ADD.DESC') }}
+        </p>
       </div>
+
+      <p
+        v-if="v$.selectedAgents.$error"
+        class="mb-3 text-[12.5px] text-destructive"
+      >
+        {{ $t('TEAMS_SETTINGS.ADD.AGENT_VALIDATION_ERROR') }}
+      </p>
+      <AgentSelector
+        :agent-list="agentList"
+        :selected-agents="selectedAgents"
+        :update-selected-agents="updateSelectedAgents"
+        :is-working="isCreating"
+        :submit-button-text="$t('TEAMS_SETTINGS.ADD.BUTTON_TEXT')"
+      />
     </form>
   </div>
 </template>

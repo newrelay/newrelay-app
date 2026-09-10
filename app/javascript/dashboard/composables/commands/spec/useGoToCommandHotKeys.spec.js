@@ -78,7 +78,6 @@ describe('useGoToCommandHotKeys', () => {
         'open_settings_sla',
         'open_settings_roles',
         'open_settings_security',
-        'open_settings_audit_logs',
         'open_settings_webhooks',
         'open_settings_api_keys',
         'open_settings_reputation',

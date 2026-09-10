@@ -198,11 +198,6 @@ export const SETTINGS_NAV_SECTIONS = [
         labelKey: 'SIDEBAR.SECURITY',
         routeName: 'security_settings_index',
       },
-      {
-        key: 'audit_logs',
-        labelKey: 'SIDEBAR.AUDIT_LOGS',
-        routeName: 'auditlogs_list',
-      },
     ],
   },
 ];

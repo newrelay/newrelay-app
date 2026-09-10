@@ -30,7 +30,7 @@ const handleChange = event => {
       :indeterminate="indeterminate"
       type="checkbox"
       :disabled="disabled"
-      class="peer absolute inset-0 z-10 h-4 w-4 disabled:opacity-50 appearance-none rounded-full border border-input ring-transparent transition-all duration-200 checked:border-primary checked:bg-primary indeterminate:border-primary indeterminate:bg-primary hover:enabled:bg-accent cursor-pointer"
+      class="peer absolute inset-0 z-10 h-4 w-4 disabled:opacity-50 appearance-none rounded-sm border border-input shadow-sm ring-transparent transition-all duration-200 checked:border-primary checked:bg-primary indeterminate:border-primary indeterminate:bg-primary hover:enabled:bg-accent cursor-pointer"
       @change="handleChange"
     />
     <!-- Checkmark SVG -->

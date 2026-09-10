@@ -2,8 +2,11 @@
 import { ref, onMounted, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import Button from 'dashboard/components-next/button/Button.vue';
-import Checkbox from 'dashboard/components-next/checkbox/Checkbox.vue';
-import { RelayInput, RelayTextarea } from 'dashboard/components-next/relay';
+import {
+  RelayInput,
+  RelayTextarea,
+  RelayCheckbox,
+} from 'dashboard/components-next/relay';
 import Spinner from 'dashboard/components-next/spinner/Spinner.vue';
 import Avatar from 'dashboard/components-next/avatar/Avatar.vue';
 import PhoneNumberInput from 'dashboard/components-next/phonenumberinput/PhoneNumberInput.vue';
@@ -266,7 +269,7 @@ onMounted(() => {
               class="border-b border-muted bg-muted text-muted-foreground text-xs font-semibold uppercase tracking-wider"
             >
               <th class="p-3 w-10 text-center">
-                <Checkbox />
+                <RelayCheckbox />
               </th>
               <th class="p-3 text-sm font-semibold capitalize text-foreground">
                 {{ t('CONTACTS_LAYOUT.COMPANIES_VIEW.COL_COMPANY') }}
@@ -305,7 +308,7 @@ onMounted(() => {
               @click="openEditDrawer(company)"
             >
               <td class="p-3 text-center" @click.stop>
-                <Checkbox />
+                <RelayCheckbox />
               </td>
               <td class="p-3 font-medium flex items-center gap-2">
                 <Avatar :name="company.name" :size="24" hide-offline-status />

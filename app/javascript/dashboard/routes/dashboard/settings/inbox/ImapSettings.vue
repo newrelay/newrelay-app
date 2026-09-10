@@ -6,7 +6,11 @@ import { useVuelidate } from '@vuelidate/core';
 import { required, minLength } from '@vuelidate/validators';
 import NextButton from 'dashboard/components-next/button/Button.vue';
 import SingleSelectDropdown from './components/SingleSelectDropdown.vue';
-import { RelayInput, RelayLabel } from 'dashboard/components-next/relay';
+import {
+  RelayInput,
+  RelayLabel,
+  RelayCheckbox,
+} from 'dashboard/components-next/relay';
 
 export default {
   components: {
@@ -15,6 +19,7 @@ export default {
     SingleSelectDropdown,
     RelayInput,
     RelayLabel,
+    RelayCheckbox,
   },
   props: {
     inbox: {
@@ -118,14 +123,9 @@ export default {
     class="[&>div]:!items-start [&>div>label]:mt-1 mb-4"
   >
     <form @submit.prevent="updateInbox">
-      <label for="toggle-imap-enable">
-        <input
-          v-model="isIMAPEnabled"
-          type="checkbox"
-          class="ltr:mr-1 rtl:ml-1"
-          name="toggle-imap-enable"
-        />
-        {{ $t('INBOX_MGMT.IMAP.TOGGLE_AVAILABILITY') }}
+      <label class="flex items-center gap-2.5 cursor-pointer">
+        <RelayCheckbox v-model="isIMAPEnabled" />
+        <span>{{ $t('INBOX_MGMT.IMAP.TOGGLE_AVAILABILITY') }}</span>
       </label>
       <p>{{ $t('INBOX_MGMT.IMAP.TOGGLE_HELP') }}</p>
       <div v-if="isIMAPEnabled" class="mb-6 flex flex-col gap-4">
@@ -179,14 +179,9 @@ export default {
             @blur="v$.password.$touch"
           />
         </div>
-        <label for="toggle-enable-ssl">
-          <input
-            v-model="isSSLEnabled"
-            type="checkbox"
-            class="ltr:mr-2 rtl:ml-2"
-            name="toggle-enable-ssl"
-          />
-          {{ $t('INBOX_MGMT.IMAP.ENABLE_SSL') }}
+        <label class="flex items-center gap-2.5 cursor-pointer">
+          <RelayCheckbox v-model="isSSLEnabled" />
+          <span>{{ $t('INBOX_MGMT.IMAP.ENABLE_SSL') }}</span>
         </label>
         <SingleSelectDropdown
           class="w-full"

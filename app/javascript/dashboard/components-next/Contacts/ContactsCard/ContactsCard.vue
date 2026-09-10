@@ -8,7 +8,7 @@ import Button from 'dashboard/components-next/button/Button.vue';
 import Avatar from 'dashboard/components-next/avatar/Avatar.vue';
 import Flag from 'dashboard/components-next/flag/Flag.vue';
 import ContactDeleteSection from 'dashboard/components-next/Contacts/ContactsCard/ContactDeleteSection.vue';
-import Checkbox from 'dashboard/components-next/checkbox/Checkbox.vue';
+import { RelayCheckbox } from 'dashboard/components-next/relay';
 import countries from 'shared/constants/countries';
 
 const props = defineProps({
@@ -134,9 +134,9 @@ const handleAvatarHover = isHovered => {
                 :style="{ width: `${size}px`, height: `${size}px` }"
                 @click.stop
               >
-                <Checkbox
+                <RelayCheckbox
                   :model-value="isSelected"
-                  @change="event => toggleSelect(event.target.checked)"
+                  @update:model-value="toggleSelect"
                 />
               </label>
             </template>

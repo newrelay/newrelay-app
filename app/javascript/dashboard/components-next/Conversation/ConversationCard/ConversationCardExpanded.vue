@@ -26,13 +26,7 @@ const props = defineProps({
   isStarred: { type: Boolean, default: false },
 });
 
-const emit = defineEmits([
-  'selectConversation',
-  'deSelectConversation',
-  'click',
-  'contextmenu',
-  'toggleStar',
-]);
+const emit = defineEmits(['click', 'contextmenu', 'toggleStar']);
 
 const lastMessageInChat = computed(() => getLastMessage(props.chat));
 const showLabelsSection = computed(() => props.chat.labels?.length > 0);
@@ -55,17 +49,6 @@ const slaCardLabel = useTemplateRef('slaCardLabel');
 const hasSlaPolicyId = computed(
   () => props.chat?.sla_policy_id || slaCardLabel.value?.hasSlaThreshold
 );
-
-const selectedModel = computed({
-  get: () => props.selected,
-  set: value => {
-    if (value) {
-      emit('selectConversation', value);
-    } else {
-      emit('deSelectConversation', value);
-    }
-  },
-});
 </script>
 
 <template>
@@ -84,20 +67,6 @@ const selectedModel = computed({
   >
     <!-- LEFT SECTION -->
     <div class="flex items-center gap-2 min-w-0 flex-1">
-      <button
-        v-if="false"
-        type="button"
-        class="size-[18px] rounded-full border flex items-center justify-center transition-colors shrink-0"
-        :class="
-          selectedModel
-            ? 'bg-primary border-primary text-primary-foreground opacity-100'
-            : 'border-input opacity-0 group-hover:opacity-100 bg-background hover:border-primary/50'
-        "
-        @click.stop="selectedModel = !selectedModel"
-      >
-        <span v-if="selectedModel" class="i-lucide-check size-3" />
-      </button>
-
       <button
         type="button"
         class="size-4 flex items-center justify-center flex-shrink-0"

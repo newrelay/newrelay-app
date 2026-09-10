@@ -1,6 +1,7 @@
 <script setup>
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
+import { RELAY_RADIO_INPUT_CLASS } from 'dashboard/components-next/relay';
 
 defineProps({
   modelValue: {
@@ -37,7 +38,7 @@ const handleSelect = value => {
           type="radio"
           :value="option.value"
           :checked="modelValue === option.value"
-          class="size-4 accent-primary text-primary"
+          :class="RELAY_RADIO_INPUT_CLASS"
           @change="handleSelect(option.value)"
         />
         <span class="text-sm text-foreground">{{ option.label }}</span>

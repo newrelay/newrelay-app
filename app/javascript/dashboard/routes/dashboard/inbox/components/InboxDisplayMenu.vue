@@ -91,9 +91,10 @@ onMounted(() => {
 
 <template>
   <div>
-    <p class="px-1 py-1.5 text-xs text-muted-foreground">
+    <div class="flex items-center gap-2 px-1 py-1.5 text-sm text-foreground">
+      <span class="i-lucide-arrow-down-up size-4 shrink-0" />
       {{ t('INBOX.DISPLAY_MENU.SORT') }}
-    </p>
+    </div>
     <button
       v-for="option in sortOptions"
       :key="option.key"
@@ -124,6 +125,7 @@ onMounted(() => {
         <RelayCheckbox
           :id="option.id"
           v-model="option.selected"
+          circle
           :aria-label="option.name"
           @update:model-value="updateDisplayOption(option)"
         />

@@ -36,7 +36,11 @@ const onOptionClick = key => {
     <div class="relative flex items-center gap-2">
       <RelayDropdownMenu>
         <RelayDropdownMenuTrigger as-child>
-          <RelayButton variant="outline" size="sm" class="h-8 gap-1 px-3">
+          <RelayButton
+            variant="outline"
+            size="sm"
+            class="h-8 min-h-8 gap-1 px-3 leading-none"
+          >
             {{ t('INBOX.LIST.DISPLAY_DROPDOWN') }}
             <span class="i-lucide-chevron-down size-3.5" />
           </RelayButton>
@@ -49,8 +53,8 @@ const onOptionClick = key => {
         <RelayDropdownMenuTrigger as-child>
           <RelayButton
             variant="outline"
-            size="icon"
-            class="size-8"
+            size="sm"
+            class="h-8 w-8 min-h-8 min-w-8 !px-0"
             :aria-label="t('INBOX.LIST.MORE_OPTIONS')"
           >
             <span

@@ -31,7 +31,11 @@ import { FEATURE_FLAGS } from '../../../../featureFlags';
 import SenderNameExamplePreview from './components/SenderNameExamplePreview.vue';
 import LockToSingleConversationPreview from './components/LockToSingleConversationPreview.vue';
 import NextButton from 'dashboard/components-next/button/Button.vue';
-import { RelayInput, RelayButton } from 'dashboard/components-next/relay';
+import {
+  RelayInput,
+  RelayButton,
+  RelayCheckbox,
+} from 'dashboard/components-next/relay';
 import SpinnerLoader from 'dashboard/components-next/spinner/Spinner.vue';
 import { INBOX_TYPES } from 'dashboard/helper/inbox';
 import { getInboxIconByType } from 'dashboard/helper/inbox';
@@ -48,6 +52,7 @@ export default {
   components: {
     RelayInput,
     RelayButton,
+    RelayCheckbox,
     BotConfiguration,
     CollaboratorsPage,
     ConfigurationPage,
@@ -538,10 +543,12 @@ export default {
         this.isRegisteringWebhook = false;
       }
     },
-    handleFeatureFlag(e) {
+    setFeatureFlag(flag, checked) {
+      const has = this.selectedFeatureFlags.includes(flag);
+      if (checked === has) return;
       this.selectedFeatureFlags = this.toggleInput(
         this.selectedFeatureFlags,
-        e.target.value
+        flag
       );
     },
     toggleInput(selected, current) {
@@ -1189,61 +1196,88 @@ export default {
                         :label="$t('INBOX_MGMT.FEATURES.LABEL')"
                         class="[&>div]:!items-start [&>div>label]:mt-2"
                       >
-                        <div class="flex flex-col gap-1 items-start">
-                          <div class="flex gap-2 pt-2 py-0.5">
-                            <input
-                              v-model="selectedFeatureFlags"
-                              type="checkbox"
-                              value="attachments"
-                              @input="handleFeatureFlag"
+                        <div class="flex flex-col gap-1 items-start pt-2">
+                          <label
+                            class="flex items-center gap-2.5 py-0.5 cursor-pointer"
+                          >
+                            <RelayCheckbox
+                              :model-value="
+                                selectedFeatureFlags.includes('attachments')
+                              "
+                              @update:model-value="
+                                checked =>
+                                  setFeatureFlag('attachments', checked)
+                              "
                             />
-                            <label for="attachments">
+                            <span>
                               {{
                                 $t('INBOX_MGMT.FEATURES.DISPLAY_FILE_PICKER')
                               }}
-                            </label>
-                          </div>
-                          <div class="flex gap-2 py-0.5">
-                            <input
-                              v-model="selectedFeatureFlags"
-                              type="checkbox"
-                              value="emoji_picker"
-                              @input="handleFeatureFlag"
+                            </span>
+                          </label>
+                          <label
+                            class="flex items-center gap-2.5 py-0.5 cursor-pointer"
+                          >
+                            <RelayCheckbox
+                              :model-value="
+                                selectedFeatureFlags.includes('emoji_picker')
+                              "
+                              @update:model-value="
+                                checked =>
+                                  setFeatureFlag('emoji_picker', checked)
+                              "
                             />
-                            <label for="emoji_picker">
+                            <span>
                               {{
                                 $t('INBOX_MGMT.FEATURES.DISPLAY_EMOJI_PICKER')
                               }}
-                            </label>
-                          </div>
-                          <div class="flex gap-2 py-0.5">
-                            <input
-                              v-model="selectedFeatureFlags"
-                              type="checkbox"
-                              value="end_conversation"
-                              @input="handleFeatureFlag"
+                            </span>
+                          </label>
+                          <label
+                            class="flex items-center gap-2.5 py-0.5 cursor-pointer"
+                          >
+                            <RelayCheckbox
+                              :model-value="
+                                selectedFeatureFlags.includes(
+                                  'end_conversation'
+                                )
+                              "
+                              @update:model-value="
+                                checked =>
+                                  setFeatureFlag('end_conversation', checked)
+                              "
                             />
-                            <label for="end_conversation">
+                            <span>
                               {{
                                 $t('INBOX_MGMT.FEATURES.ALLOW_END_CONVERSATION')
                               }}
-                            </label>
-                          </div>
-                          <div class="flex gap-2 py-0.5">
-                            <input
-                              v-model="selectedFeatureFlags"
-                              type="checkbox"
-                              value="use_inbox_avatar_for_bot"
-                              @input="handleFeatureFlag"
+                            </span>
+                          </label>
+                          <label
+                            class="flex items-center gap-2.5 py-0.5 cursor-pointer"
+                          >
+                            <RelayCheckbox
+                              :model-value="
+                                selectedFeatureFlags.includes(
+                                  'use_inbox_avatar_for_bot'
+                                )
+                              "
+                              @update:model-value="
+                                checked =>
+                                  setFeatureFlag(
+                                    'use_inbox_avatar_for_bot',
+                                    checked
+                                  )
+                              "
                             />
-                            <label for="use_inbox_avatar_for_bot">
+                            <span>
                               {{
                                 $t(
                                   'INBOX_MGMT.FEATURES.USE_INBOX_AVATAR_FOR_BOT'
                                 )
                               }}
-                            </label>
-                          </div>
+                            </span>
+                          </label>
                         </div>
                       </SettingsFieldSection>
                     </SettingsAccordion>

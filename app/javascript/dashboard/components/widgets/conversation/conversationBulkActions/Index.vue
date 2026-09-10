@@ -13,13 +13,12 @@ import {
 } from 'dashboard/helper/commandbar/events';
 
 import NextButton from 'dashboard/components-next/button/Button.vue';
-import Checkbox from 'dashboard/components-next/checkbox/Checkbox.vue';
+import { RelayCheckbox, RelayModal } from 'dashboard/components-next/relay';
 import BulkAgentActions from './BulkAgentActions.vue';
 import BulkUpdateActions from './BulkUpdateActions.vue';
 import BulkLabelActions from './BulkLabelActions.vue';
 import BulkTeamActions from './BulkTeamActions.vue';
 import CustomSnoozeModal from 'dashboard/components/CustomSnoozeModal.vue';
-import { RelayModal } from 'dashboard/components-next/relay';
 
 const props = defineProps({
   conversations: {
@@ -155,7 +154,7 @@ onUnmounted(() => {
           <label
             class="cursor-pointer flex items-center gap-1.5 text-[13.5px] font-[500] text-foreground"
           >
-            <Checkbox
+            <RelayCheckbox
               v-model="allSelected"
               :indeterminate="!allConversationsSelected"
             />

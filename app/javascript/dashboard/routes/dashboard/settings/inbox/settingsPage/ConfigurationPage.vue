@@ -9,7 +9,7 @@ import SmtpSettings from '../SmtpSettings.vue';
 import { useVuelidate } from '@vuelidate/core';
 import { required } from '@vuelidate/validators';
 import NextButton from 'dashboard/components-next/button/Button.vue';
-import { RelayInput } from 'dashboard/components-next/relay';
+import { RelayInput, RelayCheckbox } from 'dashboard/components-next/relay';
 import TextArea from 'next/textarea/TextArea.vue';
 import WhatsappReauthorize from '../channels/whatsapp/Reauthorize.vue';
 import { sanitizeAllowedDomains } from 'dashboard/helper/URLHelper';
@@ -23,6 +23,7 @@ export default {
     SmtpSettings,
     NextButton,
     RelayInput,
+    RelayCheckbox,
     TextArea,
     WhatsappReauthorize,
   },
@@ -319,20 +320,12 @@ export default {
       :label="$t('INBOX_MGMT.SETTINGS_POPUP.HMAC_MANDATORY_VERIFICATION')"
       :help-text="$t('INBOX_MGMT.SETTINGS_POPUP.HMAC_MANDATORY_DESCRIPTION')"
     >
-      <div class="flex gap-2 items-center">
-        <input
-          id="hmacMandatory"
-          v-model="hmacMandatory"
-          type="checkbox"
-          @change="handleHmacFlag"
-        />
-        <label
-          for="hmacMandatory"
-          class="text-body-main text-foreground text-[13.5px] font-[500]"
-        >
+      <label class="flex items-center gap-2.5 cursor-pointer">
+        <RelayCheckbox v-model="hmacMandatory" />
+        <span class="text-body-main text-foreground text-[13.5px] font-[500]">
           {{ $t('INBOX_MGMT.EDIT.ENABLE_HMAC.LABEL') }}
-        </label>
-      </div>
+        </span>
+      </label>
     </SettingsFieldSection>
   </div>
   <div v-else-if="isAnEmailChannel">

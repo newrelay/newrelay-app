@@ -26,6 +26,16 @@ import IntersectionObserver from 'dashboard/components/IntersectionObserver.vue'
 import CmdBarConversationSnooze from 'dashboard/routes/dashboard/commands/CmdBarConversationSnooze.vue';
 import Spinner from 'dashboard/components-next/spinner/Spinner.vue';
 import { RelayButton } from 'dashboard/components-next/relay';
+import ContextMenu from 'dashboard/components/ui/ContextMenu.vue';
+import ConversationContextMenu from 'dashboard/components/widgets/conversation/contextMenu/Index.vue';
+
+const INBOX_CONTEXT_OPTIONS = [
+  'mark-as-read',
+  'mark-as-unread',
+  'status',
+  'snooze',
+  'delete',
+];
 
 const { t } = useI18n();
 const route = useRoute();
@@ -481,6 +491,78 @@ const openConversation = notificationItem => {
   });
 };
 
+const showContextMenu = ref(false);
+const contextMenu = ref({ x: null, y: null });
+const contextMenuItem = ref(null);
+
+const contextChat = computed(() => contextMenuItem.value?.primaryActor || {});
+const contextHasUnread = computed(() => !contextMenuItem.value?.readAt);
+
+const closeContextMenu = () => {
+  showContextMenu.value = false;
+  contextMenuItem.value = null;
+  contextMenu.value = { x: null, y: null };
+};
+
+const openContextMenu = (item, event) => {
+  contextMenu.value = {
+    x: event.pageX || event.clientX,
+    y: event.pageY || event.clientY,
+  };
+  contextMenuItem.value = item;
+  showContextMenu.value = true;
+};
+
+const dropFromList = id => {
+  items.value = items.value.filter(item => conversationIdOf(item) !== id);
+  selectedIds.value = selectedIds.value.filter(selectedId => selectedId !== id);
+};
+
+const onContextUpdateConversation = async (status, snoozedUntil) => {
+  const conversationId = contextChat.value.id;
+  closeContextMenu();
+  if (!conversationId) return;
+  await store.dispatch('toggleStatus', {
+    conversationId,
+    status,
+    snoozedUntil,
+  });
+  dropFromList(conversationId);
+  useAlert(t('CONVERSATION.CHANGE_STATUS'));
+};
+
+const onContextMarkAsUnread = async () => {
+  const conversationId = contextChat.value.id;
+  closeContextMenu();
+  if (!conversationId) return;
+  await store.dispatch('markMessagesUnread', { id: conversationId });
+  items.value = items.value.map(item =>
+    conversationIdOf(item) === conversationId ? { ...item, readAt: null } : item
+  );
+};
+
+const onContextMarkAsRead = async () => {
+  const conversationId = contextChat.value.id;
+  closeContextMenu();
+  if (!conversationId) return;
+  await store.dispatch('markMessagesRead', { id: conversationId });
+  const now = new Date().toISOString();
+  items.value = items.value.map(item =>
+    conversationIdOf(item) === conversationId
+      ? { ...item, readAt: item.readAt || now }
+      : item
+  );
+};
+
+const onContextDeleteConversation = async () => {
+  const conversationId = contextChat.value.id;
+  closeContextMenu();
+  if (!conversationId) return;
+  await store.dispatch('deleteConversation', conversationId);
+  dropFromList(conversationId);
+  useAlert(t('INBOX.ALERTS.DELETE'));
+};
+
 // Switching the status tab changes which conversation status we fetch.
 watch(activeStatusTab, () => {
   if (activeView.value === 'starred') return;
@@ -621,6 +703,7 @@ onMounted(() => {
             }"
             @toggle-star="toggleStar"
             @toggle-select="toggleSelection"
+            @contextmenu="openContextMenu(notificationItem, $event)"
             @click="openConversation(notificationItem)"
           />
 
@@ -662,5 +745,27 @@ onMounted(() => {
     </div>
 
     <CmdBarConversationSnooze />
+
+    <ContextMenu
+      v-if="showContextMenu && contextMenuItem"
+      :x="contextMenu.x"
+      :y="contextMenu.y"
+      @close="closeContextMenu"
+    >
+      <ConversationContextMenu
+        :chat-id="contextChat.id"
+        :status="contextChat.status"
+        :inbox-id="contextChat.inboxId"
+        :priority="contextChat.priority"
+        :has-unread-messages="contextHasUnread"
+        :conversation-labels="contextChat.labels || []"
+        :allowed-options="INBOX_CONTEXT_OPTIONS"
+        @update-conversation="onContextUpdateConversation"
+        @mark-as-unread="onContextMarkAsUnread"
+        @mark-as-read="onContextMarkAsRead"
+        @delete-conversation="onContextDeleteConversation"
+        @close="closeContextMenu"
+      />
+    </ContextMenu>
   </section>
 </template>

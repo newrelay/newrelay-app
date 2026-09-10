@@ -14,7 +14,12 @@ const props = defineProps({
   isSelected: { type: Boolean, default: false },
 });
 
-const emit = defineEmits(['click', 'toggleStar', 'toggleSelect']);
+const emit = defineEmits([
+  'click',
+  'toggleStar',
+  'toggleSelect',
+  'contextmenu',
+]);
 
 const { t } = useI18n();
 
@@ -105,14 +110,15 @@ const attachmentPillClass = name => {
             : 'bg-muted/10 hover:bg-muted/30',
     ]"
     @click="emit('click')"
+    @contextmenu.prevent="emit('contextmenu', $event)"
   >
     <!-- Star + Avatar -->
     <div class="flex items-center gap-3 shrink-0">
-      <button
-        type="button"
-        class="group/checkbox flex size-5 cursor-pointer items-center justify-center"
+      <div
+        role="checkbox"
+        class="group/checkbox flex size-5 shrink-0 cursor-pointer items-center justify-center p-0"
         :aria-label="t('INBOX.LIST.SELECT_CONVERSATION')"
-        :aria-pressed="isSelected"
+        :aria-checked="isSelected"
         @click.stop="emit('toggleSelect', inboxItem)"
       >
         <span
@@ -123,12 +129,24 @@ const attachmentPillClass = name => {
               : 'border-input bg-background opacity-0 group-hover:opacity-100 group-hover/checkbox:border-primary/50'
           "
         >
-          <span v-if="isSelected" class="i-lucide-check size-3" />
+          <svg
+            v-if="isSelected"
+            class="size-3"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="3"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+          >
+            <polyline points="20 6 9 17 4 12" />
+          </svg>
         </span>
-      </button>
+      </div>
       <button
         type="button"
-        class="flex items-center justify-center"
+        class="flex size-4 shrink-0 items-center justify-center p-0"
         :aria-label="t('INBOX.VIEWS.STARRED')"
         @click.stop="emit('toggleStar', inboxItem)"
       >

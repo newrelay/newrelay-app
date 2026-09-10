@@ -29,11 +29,12 @@ import {
   Image as ImageIcon,
 } from 'lucide-vue-next';
 import {
-  RelayInput as Input, RelaySwitch,
+  RelayInput as Input, RelaySwitch, RelayCheckbox,
   RelayDropdownMenu as DropdownMenu,
   RelayDropdownMenuTrigger as DropdownMenuTrigger,
   RelayDropdownMenuContent as DropdownMenuContent,
   RelayDropdownMenuItem as DropdownMenuItem,
+  RELAY_RADIO_INPUT_CLASS,
 } from 'dashboard/components-next/relay';
 import { RELAY_MODAL_CLOSE_BUTTON_CLASS } from 'dashboard/components-next/relay/modal/constants';
 
@@ -1024,7 +1025,7 @@ const closeAdd = () => {
 
           <div class="flex flex-col gap-3">
             <label v-for="opt in connectOptionsFor" :key="opt" class="flex items-center gap-3 p-4 border rounded-lg cursor-pointer transition-colors" :class="connectOption === opt ? 'bg-primary/5 border-primary ring-1 ring-primary/20' : 'border-border hover:bg-muted/50'">
-              <input type="radio" :value="opt" v-model="connectOption" class="size-4 accent-[color:var(--primary)]" />
+              <input type="radio" :value="opt" v-model="connectOption" :class="RELAY_RADIO_INPUT_CLASS" />
               <span class="text-[14px] font-semibold text-foreground">{{ opt }}</span>
             </label>
           </div>
@@ -1085,7 +1086,7 @@ const closeAdd = () => {
         <div class="px-6 py-5">
           <div v-if="!exportDone" class="grid grid-cols-2 gap-2.5">
             <label v-for="(label, key) in exportFieldLabels" :key="key" class="flex items-center gap-2 p-2.5 rounded-lg border border-border hover:bg-muted/40 cursor-pointer transition-colors">
-              <input type="checkbox" v-model="exportFields[key]" class="size-4 accent-[color:var(--primary)]" />
+              <RelayCheckbox v-model="exportFields[key]" />
               <span class="text-sm text-foreground">{{ label }}</span>
             </label>
           </div>

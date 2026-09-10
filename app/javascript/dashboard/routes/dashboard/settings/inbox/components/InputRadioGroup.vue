@@ -1,4 +1,6 @@
 <script>
+import { RELAY_RADIO_INPUT_CLASS } from 'dashboard/components-next/relay';
+
 export default {
   props: {
     name: {
@@ -18,6 +20,9 @@ export default {
       default: () => {},
     },
   },
+  setup() {
+    return { RELAY_RADIO_INPUT_CLASS };
+  },
 };
 </script>
 
@@ -30,10 +35,10 @@ export default {
       <label
         v-for="item in items"
         :key="item.id"
-        class="flex cursor-pointer items-center text-[13.5px] font-[500] text-foreground"
+        class="flex cursor-pointer items-center gap-2.5 text-[13.5px] font-[500] text-foreground"
       >
         <input
-          class="mr-2.5 text-[14px] border-border/80 bg-background focus-visible:ring-1 focus-visible:ring-primary/30 shadow-sm rounded-md"
+          :class="RELAY_RADIO_INPUT_CLASS"
           :name="`${name} -radio-input`"
           type="radio"
           :checked="item.checked"

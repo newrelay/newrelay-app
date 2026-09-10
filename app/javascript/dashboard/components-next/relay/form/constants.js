@@ -6,6 +6,10 @@ export const RELAY_FORM_LABEL_CLASS =
 
 export const RELAY_FORM_CHECKBOX_ROW_CLASS = 'flex items-center gap-3';
 
+/** Native radio — NewRelay `h-4 w-4 text-primary focus:ring-primary`. */
+export const RELAY_RADIO_INPUT_CLASS =
+  'size-4 shrink-0 cursor-pointer accent-primary text-primary focus:ring-1 focus:ring-primary';
+
 export const RELAY_FORM_INPUT_CLASS =
   'text-[14px] shadow-sm rounded-md border-border/80 bg-background focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary/30';
 

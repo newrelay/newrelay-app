@@ -1,7 +1,7 @@
 <script setup>
 import { ref, computed } from 'vue';
 import Avatar from 'next/avatar/Avatar.vue';
-import Checkbox from 'dashboard/components-next/checkbox/Checkbox.vue';
+import { RelayCheckbox } from 'dashboard/components-next/relay';
 
 const props = defineProps({
   contact: { type: Object, required: true },
@@ -50,7 +50,7 @@ const selectedModel = computed({
           class="flex items-center justify-center rounded-md cursor-pointer absolute inset-0 z-10 backdrop-blur-[2px] size-6"
           @click.stop
         >
-          <Checkbox v-model="selectedModel" />
+          <RelayCheckbox v-model="selectedModel" />
         </div>
       </template>
     </Avatar>

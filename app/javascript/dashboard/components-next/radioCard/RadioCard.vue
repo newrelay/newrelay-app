@@ -1,6 +1,7 @@
 <script setup>
 import { useI18n } from 'vue-i18n';
 import Label from 'dashboard/components-next/label/Label.vue';
+import { RELAY_RADIO_INPUT_CLASS } from 'dashboard/components-next/relay';
 
 const props = defineProps({
   id: {
@@ -51,11 +52,13 @@ const handleChange = () => {
 <template>
   <label
     :for="id"
-    class="rounded-xl outline outline-1 p-4 transition-all duration-200 bg-card py-4 ltr:pl-4 rtl:pr-4 ltr:pr-6 rtl:pl-6 focus-within:has-[:focus-visible]:ring-2 focus-within:has-[:focus-visible]:ring-border text-[13.5px] font-[500] text-foreground"
+    class="rounded-xl border p-4 transition-colors bg-card py-4 ltr:pl-4 rtl:pr-4 ltr:pr-6 rtl:pl-6 focus-within:has-[:focus-visible]:ring-1 focus-within:has-[:focus-visible]:ring-primary text-[13.5px] font-[500] text-foreground"
     :class="[
       disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer',
-      isActive ? 'outline-primary' : 'outline-border',
-      !disabled && !isActive ? 'hover:outline-border' : '',
+      isActive
+        ? 'bg-primary/5 border-primary ring-1 ring-primary/20'
+        : 'border-border',
+      !disabled && !isActive ? 'hover:bg-muted/50' : '',
     ]"
   >
     <div class="flex flex-col gap-2 items-start">
@@ -74,7 +77,7 @@ const handleChange = () => {
           :name="id"
           :disabled="disabled"
           type="radio"
-          class="shadow cursor-pointer grid place-items-center border-2 border-border appearance-none rounded-full w-5 h-5 checked:bg-primary before:content-[''] before:bg-primary before:border-4 before:rounded-full before:border-border checked:before:w-[18px] checked:before:h-[18px] checked:border checked:border-primary"
+          :class="RELAY_RADIO_INPUT_CLASS"
           @change="handleChange"
         />
       </div>

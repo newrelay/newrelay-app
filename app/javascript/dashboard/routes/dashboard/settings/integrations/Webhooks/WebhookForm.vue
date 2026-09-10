@@ -13,6 +13,8 @@ import {
   RelayButton,
   RelayInput,
   RelayCheckbox,
+  RELAY_MODAL_FORM_FOOTER_CLASS,
+  RELAY_MODAL_INPUT_CLASS,
 } from 'dashboard/components-next/relay';
 
 const props = defineProps({
@@ -102,113 +104,116 @@ const copySecret = async () => {
 </script>
 
 <template>
-  <form class="flex w-full flex-col gap-5" @submit.prevent="onSubmit">
-    <div class="flex flex-col gap-1.5">
-      <label class="text-[13.5px] text-foreground font-[500]">
-        {{ t('INTEGRATION_SETTINGS.WEBHOOK.FORM.END_POINT.LABEL') }}
-      </label>
-      <RelayInput
-        v-model="webhookUrl"
-        type="text"
-        :placeholder="webhookURLInputPlaceholder"
-        class-name="h-10 text-[14px] shadow-sm rounded-md border-border/80 bg-background focus-visible:ring-1 focus-visible:ring-primary/30"
-        @blur="v$.webhookUrl.$touch()"
-      />
-      <p v-if="v$.webhookUrl.$error" class="text-[12.5px] text-destructive">
-        {{ t('INTEGRATION_SETTINGS.WEBHOOK.FORM.END_POINT.ERROR') }}
-      </p>
-    </div>
+  <form class="flex w-full flex-col" @submit.prevent="onSubmit">
+    <div class="flex flex-col gap-5 px-6 pb-2">
+      <div class="flex flex-col gap-1.5">
+        <label class="text-[13.5px] font-[500] text-foreground">
+          {{ t('INTEGRATION_SETTINGS.WEBHOOK.FORM.END_POINT.LABEL') }}
+        </label>
+        <RelayInput
+          v-model="webhookUrl"
+          type="text"
+          :placeholder="webhookURLInputPlaceholder"
+          :class-name="RELAY_MODAL_INPUT_CLASS"
+          @blur="v$.webhookUrl.$touch()"
+        />
+        <p v-if="v$.webhookUrl.$error" class="text-[12.5px] text-destructive">
+          {{ t('INTEGRATION_SETTINGS.WEBHOOK.FORM.END_POINT.ERROR') }}
+        </p>
+      </div>
 
-    <div class="flex flex-col gap-1.5">
-      <label class="text-[13.5px] text-foreground font-[500]">
-        {{ t('INTEGRATION_SETTINGS.WEBHOOK.FORM.NAME.LABEL') }}
-      </label>
-      <RelayInput
-        v-model="name"
-        type="text"
-        :placeholder="t('INTEGRATION_SETTINGS.WEBHOOK.FORM.NAME.PLACEHOLDER')"
-        class-name="h-10 text-[14px] shadow-sm rounded-md border-border/80 bg-background focus-visible:ring-1 focus-visible:ring-primary/30"
-      />
-    </div>
+      <div class="flex flex-col gap-1.5">
+        <label class="text-[13.5px] font-[500] text-foreground">
+          {{ t('INTEGRATION_SETTINGS.WEBHOOK.FORM.NAME.LABEL') }}
+        </label>
+        <RelayInput
+          v-model="name"
+          type="text"
+          :placeholder="t('INTEGRATION_SETTINGS.WEBHOOK.FORM.NAME.PLACEHOLDER')"
+          :class-name="RELAY_MODAL_INPUT_CLASS"
+        />
+      </div>
 
-    <div v-if="hasSecret" class="flex flex-col gap-1.5">
-      <label class="text-[13.5px] text-foreground font-[500]">
-        {{ t('INTEGRATION_SETTINGS.WEBHOOK.SECRET.LABEL') }}
-      </label>
-      <div class="flex items-center gap-2">
-        <div class="relative min-w-0 flex-1">
-          <input
-            :value="
-              secretVisible ? value.secret : '••••••••••••••••••••••••••••••••'
-            "
-            type="text"
-            readonly
-            class="h-10 w-full border border-border/80 bg-background pl-3 pr-10 font-mono text-[14px] text-foreground focus:outline-none focus-visible:ring-1 focus-visible:ring-primary/30 shadow-sm rounded-md"
-          />
-          <button
-            type="button"
-            class="absolute top-1/2 -translate-y-1/2 p-1 text-muted-foreground transition-colors hover:text-foreground ltr:right-2.5 rtl:left-2.5"
-            @click="secretVisible = !secretVisible"
-          >
-            <Icon
-              :icon="secretVisible ? 'i-lucide-eye-off' : 'i-lucide-eye'"
-              class="size-4"
+      <div v-if="hasSecret" class="flex flex-col gap-1.5">
+        <label class="text-[13.5px] font-[500] text-foreground">
+          {{ t('INTEGRATION_SETTINGS.WEBHOOK.SECRET.LABEL') }}
+        </label>
+        <div class="flex items-center gap-2">
+          <div class="relative min-w-0 flex-1">
+            <input
+              :value="
+                secretVisible
+                  ? value.secret
+                  : '••••••••••••••••••••••••••••••••'
+              "
+              type="text"
+              readonly
+              class="h-10 w-full rounded-md border border-border/80 bg-background pl-3 pr-10 font-mono text-[14px] text-foreground shadow-sm focus:outline-none focus-visible:ring-1 focus-visible:ring-primary/30"
             />
-          </button>
+            <button
+              type="button"
+              class="absolute top-1/2 -translate-y-1/2 p-1 text-muted-foreground transition-colors hover:text-foreground ltr:right-2.5 rtl:left-2.5"
+              @click="secretVisible = !secretVisible"
+            >
+              <Icon
+                :icon="secretVisible ? 'i-lucide-eye-off' : 'i-lucide-eye'"
+                class="size-4"
+              />
+            </button>
+          </div>
+          <RelayButton
+            type="button"
+            variant="outline"
+            size="lg"
+            class="shrink-0 px-3"
+            @click="copySecret"
+          >
+            <Icon icon="i-lucide-copy" class="size-4" />
+          </RelayButton>
         </div>
-        <RelayButton
-          type="button"
-          variant="outline"
-          class="h-10 shrink-0 border-border/80 bg-card px-3 hover:bg-muted"
-          @click="copySecret"
-        >
-          <Icon icon="i-lucide-copy" class="size-4" />
-        </RelayButton>
+      </div>
+
+      <div class="flex flex-col gap-2">
+        <label class="text-[13.5px] font-[500] text-foreground">
+          {{ t('INTEGRATION_SETTINGS.WEBHOOK.FORM.SUBSCRIPTIONS.LABEL') }}
+        </label>
+        <div class="flex flex-col gap-2.5">
+          <div
+            v-for="event in supportedWebhookEvents"
+            :key="event"
+            class="flex items-center gap-3 text-[13.5px] text-foreground"
+          >
+            <RelayCheckbox
+              :model-value="isEventChecked(event)"
+              @update:model-value="checked => setEvent(event, checked)"
+            />
+            <span>
+              {{
+                `${t(
+                  getI18nKey(
+                    'INTEGRATION_SETTINGS.WEBHOOK.FORM.SUBSCRIPTIONS.EVENTS',
+                    event
+                  )
+                )} (${event})`
+              }}
+            </span>
+          </div>
+        </div>
       </div>
     </div>
 
-    <div class="flex flex-col gap-2">
-      <label class="text-[13.5px] text-foreground font-[500]">
-        {{ t('INTEGRATION_SETTINGS.WEBHOOK.FORM.SUBSCRIPTIONS.LABEL') }}
-      </label>
-      <div class="flex flex-col gap-2.5">
-        <div
-          v-for="event in supportedWebhookEvents"
-          :key="event"
-          class="flex items-center gap-3 text-[13.5px] text-foreground"
-        >
-          <RelayCheckbox
-            :model-value="isEventChecked(event)"
-            @update:model-value="checked => setEvent(event, checked)"
-          />
-          <span>
-            {{
-              `${t(
-                getI18nKey(
-                  'INTEGRATION_SETTINGS.WEBHOOK.FORM.SUBSCRIPTIONS.EVENTS',
-                  event
-                )
-              )} (${event})`
-            }}
-          </span>
-        </div>
-      </div>
-    </div>
-
-    <div
-      class="mt-2 flex items-center justify-end gap-3 border-t border-border/40 pt-4"
-    >
+    <div :class="RELAY_MODAL_FORM_FOOTER_CLASS">
       <RelayButton
         type="button"
-        variant="ghost"
-        class="h-10 border border-border/40 px-5 font-semibold text-muted-foreground hover:border-transparent hover:bg-muted"
+        variant="outline"
+        size="lg"
         @click="emit('cancel')"
       >
         {{ t('INTEGRATION_SETTINGS.WEBHOOK.FORM.CANCEL') }}
       </RelayButton>
       <RelayButton
         type="submit"
-        class="h-10 px-6 font-semibold"
+        size="lg"
         :disabled="v$.$invalid || isSubmitting"
       >
         {{ submitLabel }}

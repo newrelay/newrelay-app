@@ -1,5 +1,5 @@
 <script setup>
-import { computed, nextTick, onMounted, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useStore, useMapGetter } from 'dashboard/composables/store';
 import { useAlert } from 'dashboard/composables';
@@ -26,8 +26,6 @@ const selectedWebhook = ref({});
 const showAddPopup = ref(false);
 const showEditPopup = ref(false);
 const deleteDialogRef = ref(null);
-const addDialogRef = ref(null);
-const editDialogRef = ref(null);
 const loading = ref({});
 
 const filteredRecords = computed(() => {
@@ -49,33 +47,27 @@ onMounted(() => {
   store.dispatch('webhooks/get');
 });
 
-const openAddPopup = async () => {
+const openAddPopup = () => {
   showAddPopup.value = true;
-  await nextTick();
-  addDialogRef.value?.open();
 };
 
 const hideAddPopup = () => {
   showAddPopup.value = false;
-  addDialogRef.value?.close();
 };
 
-const openEditPopup = async webhook => {
+const openEditPopup = webhook => {
   selectedWebhook.value = webhook;
   showEditPopup.value = true;
-  await nextTick();
-  editDialogRef.value?.open();
 };
 
 const hideEditPopup = () => {
   showEditPopup.value = false;
   selectedWebhook.value = {};
-  editDialogRef.value?.close();
 };
 
 const openDeletePopup = async webhook => {
   selectedWebhook.value = webhook;
-  await nextTick();
+  await Promise.resolve();
   deleteDialogRef.value?.open();
 };
 
@@ -187,36 +179,15 @@ const confirmDeletion = () => {
       </div>
     </template>
 
-    <Dialog
-      ref="addDialogRef"
-      type="edit"
-      title=""
-      width="xl"
-      :show-cancel-button="false"
-      :show-confirm-button="false"
-      overflow-y-auto
-      @close="hideAddPopup"
-    >
-      <NewWebhook v-if="showAddPopup" :on-close="hideAddPopup" />
-    </Dialog>
+    <NewWebhook :show="showAddPopup" @close="hideAddPopup" />
 
-    <Dialog
-      ref="editDialogRef"
-      type="edit"
-      title=""
-      width="xl"
-      :show-cancel-button="false"
-      :show-confirm-button="false"
-      overflow-y-auto
+    <EditWebhook
+      v-if="showEditPopup"
+      :id="selectedWebhook.id"
+      :show="showEditPopup"
+      :value="selectedWebhook"
       @close="hideEditPopup"
-    >
-      <EditWebhook
-        v-if="showEditPopup"
-        :id="selectedWebhook.id"
-        :value="selectedWebhook"
-        :on-close="hideEditPopup"
-      />
-    </Dialog>
+    />
 
     <Dialog
       ref="deleteDialogRef"

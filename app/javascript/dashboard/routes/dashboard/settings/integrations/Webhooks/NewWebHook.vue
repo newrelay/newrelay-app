@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useStore } from 'vuex';
 import { useAlert } from 'dashboard/composables';
@@ -7,15 +7,20 @@ import { useBranding } from 'shared/composables/useBranding';
 import { copyTextToClipboard } from 'shared/helpers/clipboard';
 import WebhookForm from './WebhookForm.vue';
 import Icon from 'dashboard/components-next/icon/Icon.vue';
-import { RelayButton } from 'dashboard/components-next/relay';
-import { RELAY_MODAL_CLOSE_BUTTON_CLASS } from 'dashboard/components-next/relay/modal/constants';
+import {
+  RelayButton,
+  RelayModal,
+  RELAY_MODAL_FORM_FOOTER_CLASS,
+} from 'dashboard/components-next/relay';
 
 const props = defineProps({
-  onClose: {
-    type: Function,
-    required: true,
+  show: {
+    type: Boolean,
+    default: false,
   },
 });
+
+const emit = defineEmits(['close']);
 
 const { t } = useI18n();
 const store = useStore();
@@ -25,6 +30,31 @@ const createdWebhook = ref(null);
 const showSecret = ref(false);
 
 const uiFlags = computed(() => store.getters['webhooks/getUIFlags']);
+
+const modalTitle = computed(() =>
+  createdWebhook.value
+    ? t('INTEGRATION_SETTINGS.WEBHOOK.ADD.API.SUCCESS_MESSAGE')
+    : t('INTEGRATION_SETTINGS.WEBHOOK.ADD.TITLE')
+);
+
+const modalDescription = computed(() => {
+  if (createdWebhook.value) {
+    return t('INTEGRATION_SETTINGS.WEBHOOK.SECRET.CREATED_DESC');
+  }
+  return replaceInstallationName(t('INTEGRATION_SETTINGS.WEBHOOK.FORM.DESC'));
+});
+
+watch(
+  () => props.show,
+  visible => {
+    if (visible) {
+      createdWebhook.value = null;
+      showSecret.value = false;
+    }
+  }
+);
+
+const handleClose = () => emit('close');
 
 const onSubmit = async webhook => {
   try {
@@ -45,99 +75,69 @@ const handleCopySecret = async () => {
 </script>
 
 <template>
-  <div class="flex flex-col gap-6">
+  <RelayModal
+    :show="show"
+    :title="modalTitle"
+    :description="modalDescription"
+    size="lg"
+    flush
+    @close="handleClose"
+  >
     <template v-if="createdWebhook">
-      <div class="relative -mt-2 flex items-center justify-between">
-        <h3 class="text-base font-semibold text-foreground">
-          {{ t('INTEGRATION_SETTINGS.WEBHOOK.ADD.API.SUCCESS_MESSAGE') }}
-        </h3>
-        <button
-          type="button"
-          :class="RELAY_MODAL_CLOSE_BUTTON_CLASS"
-          @click="props.onClose()"
-        >
-          <Icon icon="i-lucide-x" class="size-4" />
-        </button>
-      </div>
-
-      <div>
-        <p class="mb-3 text-[13.5px] leading-relaxed text-muted-foreground">
-          {{ t('INTEGRATION_SETTINGS.WEBHOOK.SECRET.CREATED_DESC') }}
-        </p>
-        <p class="mb-2 text-[13.5px] font-medium text-foreground">
-          {{ t('INTEGRATION_SETTINGS.WEBHOOK.SECRET.LABEL') }}
-        </p>
-        <div class="flex items-center gap-2">
-          <div class="relative flex-1">
-            <input
-              :type="showSecret ? 'text' : 'password'"
-              :value="
-                showSecret
-                  ? createdWebhook.secret
-                  : '••••••••••••••••••••••••••••••••'
-              "
-              readonly
-              class="h-10 w-full border border-border/80 bg-background pl-3 pr-10 font-mono text-[14px] text-foreground focus:outline-none focus-visible:ring-1 focus-visible:ring-primary/30 shadow-sm rounded-md"
-            />
-            <button
-              type="button"
-              class="absolute top-1/2 -translate-y-1/2 p-1 text-muted-foreground transition-colors hover:text-foreground ltr:right-2.5 rtl:left-2.5"
-              @click="showSecret = !showSecret"
-            >
-              <Icon
-                :icon="showSecret ? 'i-lucide-eye-off' : 'i-lucide-eye'"
-                class="size-4"
+      <div class="space-y-5 px-6 pb-2">
+        <div>
+          <p class="mb-2 text-[13.5px] font-medium text-foreground">
+            {{ t('INTEGRATION_SETTINGS.WEBHOOK.SECRET.LABEL') }}
+          </p>
+          <div class="flex items-center gap-2">
+            <div class="relative flex-1">
+              <input
+                :type="showSecret ? 'text' : 'password'"
+                :value="
+                  showSecret
+                    ? createdWebhook.secret
+                    : '••••••••••••••••••••••••••••••••'
+                "
+                readonly
+                class="h-10 w-full rounded-md border border-border/80 bg-background pl-3 pr-10 font-mono text-[14px] text-foreground shadow-sm focus:outline-none focus-visible:ring-1 focus-visible:ring-primary/30"
               />
-            </button>
+              <button
+                type="button"
+                class="absolute top-1/2 -translate-y-1/2 p-1 text-muted-foreground transition-colors hover:text-foreground ltr:right-2.5 rtl:left-2.5"
+                @click="showSecret = !showSecret"
+              >
+                <Icon
+                  :icon="showSecret ? 'i-lucide-eye-off' : 'i-lucide-eye'"
+                  class="size-4"
+                />
+              </button>
+            </div>
+            <RelayButton
+              type="button"
+              variant="outline"
+              size="lg"
+              class="shrink-0 px-3"
+              @click="handleCopySecret"
+            >
+              <Icon icon="i-lucide-copy" class="size-4" />
+            </RelayButton>
           </div>
-          <RelayButton
-            type="button"
-            variant="outline"
-            class="h-10 shrink-0 border-border/80 bg-card px-3 hover:bg-muted"
-            @click="handleCopySecret"
-          >
-            <Icon icon="i-lucide-copy" class="size-4" />
-          </RelayButton>
         </div>
       </div>
 
-      <div class="flex justify-end border-t border-border/40 pt-4">
-        <RelayButton class="h-10 px-6" @click="props.onClose()">
+      <div :class="RELAY_MODAL_FORM_FOOTER_CLASS">
+        <RelayButton size="lg" @click="handleClose">
           {{ t('INTEGRATION_SETTINGS.WEBHOOK.SECRET.DONE') }}
         </RelayButton>
       </div>
     </template>
 
-    <template v-else>
-      <div class="relative -mt-2 flex items-start justify-between gap-4">
-        <div>
-          <h3 class="text-base font-semibold text-foreground">
-            {{ t('INTEGRATION_SETTINGS.WEBHOOK.ADD.TITLE') }}
-          </h3>
-          <p class="mt-1 text-[13.5px] leading-relaxed text-muted-foreground">
-            {{
-              replaceInstallationName(
-                t('INTEGRATION_SETTINGS.WEBHOOK.FORM.DESC')
-              )
-            }}
-          </p>
-        </div>
-        <button
-          type="button"
-          class="shrink-0"
-          :class="RELAY_MODAL_CLOSE_BUTTON_CLASS"
-          @click="props.onClose()"
-        >
-          <Icon icon="i-lucide-x" class="size-4" />
-        </button>
-      </div>
-
-      <WebhookForm
-        :is-submitting="uiFlags.creatingItem"
-        :submit-label="t('INTEGRATION_SETTINGS.WEBHOOK.FORM.ADD_SUBMIT')"
-        @submit="onSubmit"
-        @cancel="props.onClose()"
-      />
-    </template>
-  </div>
+    <WebhookForm
+      v-else
+      :is-submitting="uiFlags.creatingItem"
+      :submit-label="t('INTEGRATION_SETTINGS.WEBHOOK.FORM.ADD_SUBMIT')"
+      @submit="onSubmit"
+      @cancel="handleClose"
+    />
+  </RelayModal>
 </template>

@@ -4,10 +4,13 @@ import { useI18n } from 'vue-i18n';
 import { useStore } from 'vuex';
 import { useAlert } from 'dashboard/composables';
 import WebhookForm from './WebhookForm.vue';
-import Icon from 'dashboard/components-next/icon/Icon.vue';
-import { RELAY_MODAL_CLOSE_BUTTON_CLASS } from 'dashboard/components-next/relay/modal/constants';
+import { RelayModal } from 'dashboard/components-next/relay';
 
 const props = defineProps({
+  show: {
+    type: Boolean,
+    default: false,
+  },
   value: {
     type: Object,
     required: true,
@@ -16,16 +19,16 @@ const props = defineProps({
     type: [Number, String],
     required: true,
   },
-  onClose: {
-    type: Function,
-    required: true,
-  },
 });
+
+const emit = defineEmits(['close']);
 
 const { t } = useI18n();
 const store = useStore();
 
 const uiFlags = computed(() => store.getters['webhooks/getUIFlags']);
+
+const handleClose = () => emit('close');
 
 const onSubmit = async webhook => {
   try {
@@ -34,7 +37,7 @@ const onSubmit = async webhook => {
       id: props.id,
     });
     useAlert(t('INTEGRATION_SETTINGS.WEBHOOK.EDIT.API.SUCCESS_MESSAGE'));
-    props.onClose();
+    handleClose();
   } catch (error) {
     const alertMessage =
       error?.response?.data?.message ||
@@ -45,26 +48,19 @@ const onSubmit = async webhook => {
 </script>
 
 <template>
-  <div class="flex flex-col gap-6">
-    <div class="relative -mt-2 flex items-center justify-between">
-      <h3 class="text-base font-semibold text-foreground">
-        {{ t('INTEGRATION_SETTINGS.WEBHOOK.EDIT.TITLE') }}
-      </h3>
-      <button
-        type="button"
-        :class="RELAY_MODAL_CLOSE_BUTTON_CLASS"
-        @click="props.onClose()"
-      >
-        <Icon icon="i-lucide-x" class="size-4" />
-      </button>
-    </div>
-
+  <RelayModal
+    :show="show"
+    :title="t('INTEGRATION_SETTINGS.WEBHOOK.EDIT.TITLE')"
+    size="lg"
+    flush
+    @close="handleClose"
+  >
     <WebhookForm
       :value="value"
       :is-submitting="uiFlags.updatingItem"
       :submit-label="t('INTEGRATION_SETTINGS.WEBHOOK.FORM.EDIT_SUBMIT')"
       @submit="onSubmit"
-      @cancel="props.onClose()"
+      @cancel="handleClose"
     />
-  </div>
+  </RelayModal>
 </template>

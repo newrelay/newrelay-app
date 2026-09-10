@@ -3,9 +3,9 @@
     "LIST": {
       "TITLE": "Inbox",
       "DISPLAY_DROPDOWN": "Display",
-      "LOADING": "Fetching notifications",
-      "404": "There are no active notifications in this group.",
-      "NO_NOTIFICATIONS": "No notifications",
+      "LOADING": "Fetching conversations",
+      "404": "There are currently no messages in this view. Take a breather, you're all caught up for now!",
+      "NO_NOTIFICATIONS": "No messages found",
       "NOTE": "Notifications from all subscribed inboxes",
       "NO_MESSAGES_AVAILABLE": "Oops! Not able to fetch messages",
       "SNOOZED_UNTIL": "Snoozed until",
@@ -22,7 +22,7 @@
       "DELETE": "Delete",
       "EMPTY_STATE": {
         "TITLE": "No messages found",
-        "DESCRIPTION": "No messages here. Not even a \"hey.\"\nEnjoy the rare moment of inbox peace."
+        "DESCRIPTION": "There are currently no messages in this view. Take a breather, you're all caught up for now!"
       }
     },
     "VIEWS": {

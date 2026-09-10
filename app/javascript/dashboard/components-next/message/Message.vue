@@ -565,10 +565,7 @@ provideMessageContext({
     ]"
     :data-message-id="props.id"
   >
-    <div
-      v-if="variant === MESSAGE_VARIANTS.ACTIVITY"
-      class="w-full min-w-0 -my-1.5"
-    >
+    <div v-if="variant === MESSAGE_VARIANTS.ACTIVITY" class="w-full min-w-0">
       <ActivityBubble :content="content" />
     </div>
     <div

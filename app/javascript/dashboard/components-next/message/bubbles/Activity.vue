@@ -59,7 +59,7 @@ const activityIconClass = computed(() => {
 <template>
   <RelayTooltip :content="readableTime" side="top">
     <div
-      class="-my-1 flex w-full items-center justify-center"
+      class="my-1 flex w-full items-center justify-center"
       data-bubble-name="activity"
     >
       <div

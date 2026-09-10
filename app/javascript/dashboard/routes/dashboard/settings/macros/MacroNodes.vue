@@ -43,18 +43,18 @@ export default {
 
 <template>
   <div
-    class="macros__nodes flex flex-col items-center w-full max-w-[600px] mx-auto relative select-none"
+    class="macros__nodes relative mx-auto flex w-full max-w-[620px] select-none flex-col items-center"
   >
     <!-- Start Flow Node -->
     <div
-      class="flex items-center gap-3 px-6 h-[48px] bg-card border border-border/60 rounded-full shadow-sm z-10 mb-2"
+      class="z-10 mb-2 flex items-center gap-3 rounded-full border border-border/70 bg-card px-5 py-2.5 shadow-sm"
     >
       <div
-        class="size-7 rounded-full bg-primary flex items-center justify-center text-primary-foreground shrink-0"
+        class="flex size-7 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground"
       >
-        <span class="i-lucide-play size-3.5 fill-current block" />
+        <span class="i-lucide-play size-3.5 block fill-current" />
       </div>
-      <span class="text-[14px] font-semibold text-primary tracking-tight">
+      <span class="text-[13px] font-medium text-foreground">
         {{ $t('MACROS.EDITOR.START_FLOW') }}
       </span>
     </div>
@@ -98,10 +98,10 @@ export default {
     <div class="w-px h-8 border-l border-dashed border-primary/40 z-0" />
 
     <!-- Add Action Node -->
-    <div class="w-full max-w-[600px] relative z-30 flex justify-center">
+    <div class="relative z-30 flex w-full max-w-[620px] justify-center">
       <button
         type="button"
-        class="flex items-center justify-center gap-2 px-6 h-[48px] min-w-[140px] bg-primary hover:bg-primary/90 text-primary-foreground rounded-full shadow-sm transition-all group border-0 text-[14px] font-semibold cursor-pointer"
+        class="group flex h-[44px] min-w-[160px] cursor-pointer items-center justify-center gap-2 rounded-full border-0 bg-primary px-6 text-[13.5px] font-medium text-primary-foreground shadow-sm transition-all hover:bg-primary/90"
         :title="$t('MACROS.EDITOR.ADD_BTN_TOOLTIP')"
         @click="$emit('addNewNode')"
       >
@@ -112,19 +112,17 @@ export default {
       </button>
     </div>
 
-    <!-- Line to End -->
-    <div class="w-px h-8 border-l border-dashed border-primary/40 z-0" />
+    <div class="z-0 h-8 w-px border-l border-dashed border-primary/40" />
 
-    <!-- End Flow Node -->
     <div
-      class="flex items-center gap-3 px-6 h-[48px] bg-card border border-border/60 rounded-full shadow-sm z-10 mt-2"
+      class="z-10 mt-2 flex items-center gap-3 rounded-full border border-border/70 bg-card px-5 py-2 shadow-sm"
     >
       <div
-        class="size-7 rounded-full bg-primary flex items-center justify-center text-primary-foreground shrink-0"
+        class="flex size-7 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground"
       >
-        <span class="i-lucide-square size-3 fill-current block" />
+        <span class="i-lucide-square size-3 block fill-current" />
       </div>
-      <span class="text-[14px] font-semibold text-primary tracking-tight">
+      <span class="text-[13.5px] font-medium tracking-tight text-primary">
         {{ $t('MACROS.EDITOR.END_FLOW') }}
       </span>
     </div>

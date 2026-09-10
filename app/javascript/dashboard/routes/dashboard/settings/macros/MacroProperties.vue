@@ -1,7 +1,19 @@
 <script>
-import { RELAY_MODAL_CLOSE_BUTTON_CLASS } from 'dashboard/components-next/relay/modal/constants';
+import {
+  RelayButton,
+  RelayInput,
+  RelayLabel,
+  RELAY_FORM_FIELD_CLASS,
+  RELAY_MODAL_CLOSE_BUTTON_CLASS,
+  RELAY_MODAL_INPUT_CLASS,
+} from 'dashboard/components-next/relay';
 
 export default {
+  components: {
+    RelayButton,
+    RelayInput,
+    RelayLabel,
+  },
   inject: ['v$'],
   props: {
     macroName: {
@@ -22,10 +34,13 @@ export default {
     },
   },
   emits: ['update:name', 'update:visibility', 'submit', 'close'],
+  setup() {
+    return {
+      RELAY_FORM_FIELD_CLASS,
+      RELAY_MODAL_CLOSE_BUTTON_CLASS,
+    };
+  },
   computed: {
-    closeButtonClass() {
-      return RELAY_MODAL_CLOSE_BUTTON_CLASS;
-    },
     isPublicVisibilityDisabled() {
       return !this.canManagePublicMacros;
     },
@@ -44,8 +59,22 @@ export default {
 
       return this.$t('MACROS.EDITOR.VISIBILITY.GLOBAL.DESCRIPTION');
     },
+    nameInputClass() {
+      if (this.v$.macro.name.$error) {
+        return `${RELAY_MODAL_INPUT_CLASS} border-destructive/80 focus-visible:ring-destructive/30`;
+      }
+      return RELAY_MODAL_INPUT_CLASS;
+    },
   },
   methods: {
+    visibilityCardClass(isActive) {
+      return [
+        'flex flex-col text-left p-3 rounded-xl border transition-all text-[13px] relative overflow-hidden outline-none cursor-pointer disabled:cursor-not-allowed disabled:opacity-60',
+        isActive
+          ? 'border-primary ring-1 ring-primary/30 shadow-xs bg-primary/5'
+          : 'border-border/60 bg-background hover:border-primary/40',
+      ];
+    },
     onUpdateName(value) {
       if (this.readOnly) return;
 
@@ -62,148 +91,117 @@ export default {
 </script>
 
 <template>
-  <div class="p-6 bg-card flex flex-col h-full justify-between select-none">
-    <div class="space-y-6">
-      <div
-        class="flex items-center justify-between pb-4 border-b border-border/40 mb-6"
-      >
+  <div class="flex h-full select-none flex-col bg-card">
+    <div
+      class="flex items-center justify-between border-b border-border/40 p-5"
+    >
+      <div>
         <h3 class="text-base font-medium text-foreground">
           {{ $t('MACROS.EDITOR.DETAILS_TITLE') }}
         </h3>
-        <button type="button" :class="closeButtonClass" @click="$emit('close')">
-          <span class="i-lucide-x size-4.5 block" />
-        </button>
+        <p class="text-[12.5px] text-muted-foreground">
+          {{ $t('MACROS.EDITOR.DETAILS_DESCRIPTION') }}
+        </p>
       </div>
+      <button
+        type="button"
+        :class="RELAY_MODAL_CLOSE_BUTTON_CLASS"
+        @click="$emit('close')"
+      >
+        <span class="i-lucide-x size-4.5 block" />
+      </button>
+    </div>
 
-      <!-- Name Field -->
-      <div class="flex flex-col gap-2">
-        <label class="text-[14px] text-foreground text-[13.5px] font-[500]">
+    <div class="custom-scrollbar flex-1 space-y-6 overflow-y-auto p-5">
+      <div :class="RELAY_FORM_FIELD_CLASS">
+        <RelayLabel>
           {{ $t('MACROS.ADD.FORM.NAME.LABEL') }}
-        </label>
-        <input
-          :value="macroName"
+        </RelayLabel>
+        <RelayInput
+          :model-value="macroName"
           type="text"
           :placeholder="$t('MACROS.ADD.FORM.NAME.PLACEHOLDER')"
-          class="h-10 px-3 text-[14px] bg-background border border-border/60 focus:border-border/80 focus-visible:ring-1 focus-visible:ring-primary/20 outline-none w-full focus-visible:ring-primary/30 shadow-sm rounded-md"
-          :class="
-            v$.macro.name.$error
-              ? 'border-destructive/80 focus-visible:ring-destructive/30'
-              : ''
-          "
-          :readonly="readOnly"
-          @input="onUpdateName($event.target.value)"
+          :class-name="nameInputClass"
+          :disabled="readOnly"
+          @update:model-value="onUpdateName"
         />
         <p
           v-if="v$.macro.name.$error"
-          class="text-[12.5px] font-medium text-destructive mt-0.5"
+          class="mt-0.5 text-[12px] font-medium text-destructive"
         >
           {{ $t('MACROS.ADD.FORM.NAME.ERROR') }}
         </p>
       </div>
 
-      <!-- Visibility Selection -->
       <div class="flex flex-col gap-2">
-        <label class="text-[14px] text-foreground text-[13.5px] font-[500]">
+        <RelayLabel>
           {{ $t('MACROS.EDITOR.VISIBILITY.LABEL') }}
-        </label>
-        <div class="grid grid-cols-2 gap-3">
-          <!-- Global/Public Button -->
+        </RelayLabel>
+        <div class="grid grid-cols-2 gap-2.5">
           <button
             type="button"
-            class="flex flex-col text-left p-4 rounded-xl border transition-all text-[13px] relative overflow-hidden outline-none cursor-pointer"
-            :class="
-              macroVisibility === 'global'
-                ? 'border-primary ring-1 ring-primary/30 shadow-sm bg-primary/5'
-                : 'border-border/60 bg-background hover:border-primary/40 shadow-sm'
-            "
+            :class="visibilityCardClass(macroVisibility === 'global')"
             :disabled="isPublicVisibilityDisabled || readOnly"
             @click="onUpdateVisibility('global')"
           >
-            <div class="flex items-center gap-3 mb-2">
-              <div
-                class="size-7 rounded-full flex items-center justify-center bg-primary/10 text-primary shrink-0"
-              >
-                <span class="i-lucide-globe size-4 block" />
-              </div>
-              <div
+            <div class="mb-1 flex items-center gap-2">
+              <span class="i-lucide-globe size-4 text-primary" />
+              <span class="text-[13.5px] font-medium text-foreground">
+                {{ $t('MACROS.EDITOR.VISIBILITY.GLOBAL.LABEL') }}
+              </span>
+              <span
                 v-if="macroVisibility === 'global'"
-                class="absolute top-3 right-3 flex items-center justify-center size-5 rounded-full bg-primary text-primary-foreground"
-              >
-                <span class="i-lucide-check size-3 block" />
-              </div>
+                class="i-lucide-check ml-auto size-3.5 text-primary"
+              />
             </div>
-            <span
-              class="font-semibold text-[14.5px] text-foreground mb-1 block"
-            >
-              {{ $t('MACROS.EDITOR.VISIBILITY.GLOBAL.LABEL') }}
-            </span>
-            <span class="text-[12px] text-muted-foreground leading-relaxed">
+            <span class="text-[11.5px] leading-relaxed text-muted-foreground">
               {{ publicVisibilityDescription }}
             </span>
           </button>
 
-          <!-- Personal/Private Button -->
           <button
             type="button"
-            class="flex flex-col text-left p-4 rounded-xl border transition-all text-[13px] relative overflow-hidden outline-none cursor-pointer"
-            :class="
-              macroVisibility === 'personal'
-                ? 'border-primary ring-1 ring-primary/30 shadow-sm bg-primary/5'
-                : 'border-border/60 bg-background hover:border-primary/40 shadow-sm'
-            "
+            :class="visibilityCardClass(macroVisibility === 'personal')"
             :disabled="readOnly"
             @click="onUpdateVisibility('personal')"
           >
-            <div class="flex items-center gap-3 mb-2">
-              <div
-                class="size-7 rounded-full flex items-center justify-center bg-muted border border-border/40 text-foreground shrink-0"
-              >
-                <span class="i-lucide-lock size-4 block" />
-              </div>
-              <div
+            <div class="mb-1 flex items-center gap-2">
+              <span class="i-lucide-lock size-4 text-muted-foreground" />
+              <span class="text-[13.5px] font-medium text-foreground">
+                {{ $t('MACROS.EDITOR.VISIBILITY.PERSONAL.LABEL') }}
+              </span>
+              <span
                 v-if="macroVisibility === 'personal'"
-                class="absolute top-3 right-3 flex items-center justify-center size-5 rounded-full bg-primary text-primary-foreground"
-              >
-                <span class="i-lucide-check size-3 block" />
-              </div>
+                class="i-lucide-check ml-auto size-3.5 text-primary"
+              />
             </div>
-            <span
-              class="font-semibold text-[14.5px] text-foreground mb-1 block"
-            >
-              {{ $t('MACROS.EDITOR.VISIBILITY.PERSONAL.LABEL') }}
-            </span>
-            <span class="text-[12px] text-muted-foreground leading-relaxed">
+            <span class="text-[11.5px] leading-relaxed text-muted-foreground">
               {{ $t('MACROS.EDITOR.VISIBILITY.PERSONAL.DESCRIPTION') }}
             </span>
           </button>
         </div>
       </div>
 
-      <!-- Info Box -->
       <div
-        class="p-4 rounded-xl bg-background dark:bg-slate-900 border border-slate-100 dark:border-slate-800 flex items-start gap-3"
+        class="flex items-start gap-2.5 rounded-lg border border-border/60 bg-muted/40 p-3.5"
       >
-        <span
-          class="i-lucide-info size-4.5 text-primary shrink-0 mt-0.5 block"
-        />
-        <p
-          class="text-[13px] text-muted-foreground dark:text-muted-foreground leading-relaxed mb-0"
-        >
+        <span class="i-lucide-info mt-0.5 block size-4 shrink-0 text-primary" />
+        <p class="mb-0 text-[12.5px] leading-relaxed text-muted-foreground">
           {{ $t('MACROS.ORDER_INFO') }}
         </p>
       </div>
     </div>
 
-    <!-- Submit Section -->
-    <div class="pt-6 border-t border-border/40">
-      <button
+    <div class="border-t border-border/40 p-5">
+      <RelayButton
         type="button"
-        class="w-full h-11 text-[14.5px] font-medium shadow-sm bg-primary hover:bg-primary/90 text-primary-foreground rounded-lg border-0 cursor-pointer transition-colors"
+        size="lg"
+        class="w-full"
         :disabled="readOnly"
         @click="$emit('submit')"
       >
         {{ $t('MACROS.HEADER_BTN_TXT_SAVE') }}
-      </button>
+      </RelayButton>
     </div>
   </div>
 </template>

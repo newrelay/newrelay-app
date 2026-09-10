@@ -63,7 +63,10 @@
     "EDITOR": {
       "START_FLOW": "Start Flow",
       "END_FLOW": "End Flow",
+      "FLOW_CANVAS": "Flow Canvas",
+      "STEPS": "{n} Step | {n} Steps",
       "DETAILS_TITLE": "Macro Details",
+      "DETAILS_DESCRIPTION": "Name and visibility for this macro",
       "LOADING": "Fetching macro",
       "ADD_BTN_TOOLTIP": "Add new action",
       "DELETE_BTN_TOOLTIP": "Delete Action",

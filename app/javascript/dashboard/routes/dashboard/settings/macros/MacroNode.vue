@@ -54,9 +54,9 @@ const dropdownValues = () => {
 
 <template>
   <div
-    class="w-full max-w-[600px] bg-background/40 dark:bg-slate-900/40 border border-border/60 rounded-xl py-2.5 px-4 shadow-sm relative group transition-colors hover:border-primary/25 flex items-center justify-between gap-3 mx-auto"
+    class="group relative mx-auto flex w-full max-w-[620px] items-center justify-between gap-2.5 rounded-xl border border-border/70 bg-card p-3 shadow-xs transition-all hover:border-primary/40"
     :class="
-      errorKey ? 'animate-shake bg-destructive/10 border-destructive/40' : ''
+      errorKey ? 'animate-shake border-destructive/40 bg-destructive/10' : ''
     "
   >
     <!-- Drag Handle -->

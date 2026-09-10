@@ -17,6 +17,7 @@ import {
   RelayButton,
   RelayConfirmModal,
   RelayInput,
+  RELAY_MODAL_OVERLAY_BLUR_CLASS,
 } from 'dashboard/components-next/relay';
 import Spinner from 'dashboard/components-next/spinner/Spinner.vue';
 
@@ -349,14 +350,15 @@ const saveMacro = async macroData => {
       =============================================== -->
       <div
         v-if="isBuilderOpen"
-        class="fixed inset-0 z-[101] flex items-center justify-center p-4 sm:p-6 sm:p-8 animate-in fade-in duration-200"
+        class="fixed inset-0 z-[101] flex items-center justify-center p-4 sm:p-6 animate-in fade-in duration-200"
       >
         <div
-          class="absolute inset-0 bg-background/80 backdrop-blur-[8px]"
+          class="absolute inset-0 bg-background/80"
+          :class="RELAY_MODAL_OVERLAY_BLUR_CLASS"
           @click="closeBuilder"
         />
         <div
-          class="relative w-full h-full bg-background border border-border/60 rounded-2xl shadow-2xl flex overflow-hidden animate-in zoom-in-95 duration-200"
+          class="relative flex h-[92vh] w-full max-w-7xl overflow-hidden rounded-2xl border border-border/60 bg-background shadow-2xl animate-in zoom-in-95 duration-200"
         >
           <MacroForm
             v-if="macro && !uiFlags.isFetchingItem"

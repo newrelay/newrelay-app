@@ -132,52 +132,70 @@ export default {
 </script>
 
 <template>
-  <div
-    class="flex flex-col w-full h-full lg:flex-row border border-border/60 bg-card rounded-2xl shadow-2xl overflow-hidden"
-  >
+  <div class="flex h-full w-full flex-col overflow-hidden lg:flex-row">
     <div
-      class="flex-1 w-full h-full max-h-full ltr:pl-12 ltr:pr-6 rtl:pl-6 rtl:pr-12 py-12 overflow-y-auto lg:w-auto relative bg-[radial-gradient(#cbd5e1_1.25px,transparent_1.25px)] dark:bg-[radial-gradient(#334155_1.25px,transparent_1.25px)] [background-size:24px_24px]"
+      class="relative flex min-h-0 flex-1 flex-col overflow-hidden bg-muted/10 bg-[radial-gradient(var(--border)_1.25px,transparent_1.25px)] [background-size:24px_24px]"
     >
       <div
-        :inert="readOnly"
-        :class="{ 'opacity-75': readOnly }"
-        class="transition-transform duration-200"
-        :style="zoomStyle"
+        class="z-20 flex shrink-0 items-center justify-between border-b border-border/40 bg-card/80 px-6 py-3 backdrop-blur-sm"
       >
-        <MacroNodes
-          v-model="macro.actions"
-          :files="files"
-          :errors="errors"
-          @add-new-node="appendNode"
-          @delete-node="deleteNode"
-          @reset-action="resetNode"
-        />
+        <div class="flex items-center gap-3">
+          <span class="text-[13px] font-medium text-foreground">
+            {{ $t('MACROS.EDITOR.FLOW_CANVAS') }}
+          </span>
+          <span
+            class="rounded-full border border-primary/20 bg-primary/10 px-2 py-0.5 text-[11.5px] font-medium text-primary"
+          >
+            {{ $t('MACROS.EDITOR.STEPS', { n: macro.actions.length }) }}
+          </span>
+        </div>
       </div>
-      <!-- Zoom Controls -->
+
+      <div class="custom-scrollbar flex-1 overflow-y-auto p-12">
+        <div
+          :inert="readOnly"
+          :class="{ 'opacity-75': readOnly }"
+          class="flex flex-col items-center transition-transform duration-200"
+          :style="zoomStyle"
+        >
+          <MacroNodes
+            v-model="macro.actions"
+            :files="files"
+            :errors="errors"
+            @add-new-node="appendNode"
+            @delete-node="deleteNode"
+            @reset-action="resetNode"
+          />
+        </div>
+      </div>
+
       <div
-        class="absolute bottom-6 right-6 flex flex-col bg-card border border-border/60 rounded-xl shadow-sm overflow-hidden z-20"
+        class="absolute bottom-6 right-6 z-20 flex flex-col overflow-hidden rounded-lg border border-border/60 bg-card shadow-sm"
       >
         <button
-          class="p-2.5 text-muted-foreground hover:text-foreground hover:bg-muted transition-colors border-b border-border/40"
+          type="button"
+          class="border-b border-border/40 p-2 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
           @click="zoomIn"
         >
           <span class="i-lucide-plus size-4 block" />
         </button>
         <button
-          class="p-2.5 text-muted-foreground hover:text-foreground hover:bg-muted transition-colors border-b border-border/40"
+          type="button"
+          class="border-b border-border/40 p-2 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
           @click="zoomOut"
         >
           <span class="i-lucide-minus size-4 block" />
         </button>
         <button
-          class="p-2.5 text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+          type="button"
+          class="p-2 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
           @click="resetZoom"
         >
           <span class="i-lucide-maximize size-4 block" />
         </button>
       </div>
     </div>
-    <div class="w-full lg:w-[380px] h-full shrink-0 border-l border-border/40">
+    <div class="h-full w-full shrink-0 border-l border-border/40 lg:w-[420px]">
       <MacroProperties
         :macro-name="macro.name"
         :macro-visibility="macro.visibility"

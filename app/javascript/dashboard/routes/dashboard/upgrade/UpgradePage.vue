@@ -52,14 +52,14 @@ const LIMIT_KEYS = [
 ];
 
 const isTrialAccount = computed(() => {
-  // check if account is less than 15 days old
+  // Signup advertises a free trial. Honor it even before plan_name exists.
   const account = currentAccount.value;
-  if (!account) return false;
+  if (!account?.id || !account.created_at) return false;
 
   const createdAt = new Date(account.created_at);
-  const diffDays = differenceInDays(new Date(), createdAt);
+  if (Number.isNaN(createdAt.getTime())) return false;
 
-  return diffDays <= 15;
+  return differenceInDays(new Date(), createdAt) <= 15;
 });
 
 const exceededLimitKey = computed(() => {
@@ -96,11 +96,11 @@ const isSubscriptionInactive = computed(() => {
 const shouldShowUpgradePage = computed(() => {
   // Skip upgrade page in Billing, Inbox, and Agent pages
   if (props.bypassUpgradePage) return false;
+  if (isTrialAccount.value) return false;
   if (hasNoPlan.value) return true;
   if (isSubscriptionInactive.value) return true;
 
   if (!isOnChatwootCloud.value) return false;
-  if (isTrialAccount.value) return false;
   return isLimitExceeded.value;
 });
 
@@ -152,6 +152,7 @@ const shouldRedirectToBilling = computed(() => {
   if (props.bypassUpgradePage) return false;
   if (!isAdmin.value) return false;
   if (!isOnChatwootCloud.value) return false;
+  if (isTrialAccount.value) return false;
   return hasNoPlan.value || isSubscriptionInactive.value;
 });
 

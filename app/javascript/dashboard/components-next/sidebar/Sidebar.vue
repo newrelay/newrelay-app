@@ -20,6 +20,7 @@ import SidebarChangelogCard from './SidebarChangelogCard.vue';
 import SidebarChangelogButton from './SidebarChangelogButton.vue';
 import SidebarGroup from './SidebarGroup.vue';
 import { SETTINGS_ROUTE_NAMES } from 'dashboard/routes/dashboard/settings/settings.navigation';
+import { useBranding } from 'shared/composables/useBranding';
 
 const props = defineProps({
   isMobileSidebarOpen: {
@@ -39,12 +40,15 @@ const currentRole = useMapGetter('getCurrentRole');
 const currentCustomRoleId = useMapGetter('getCurrentCustomRoleId');
 const store = useStore();
 const { t } = useI18n();
+const { replaceInstallationName } = useBranding();
 
 const isACustomBrandedInstance = useMapGetter(
   'globalConfig/isACustomBrandedInstance'
 );
 const isRTL = useMapGetter('accounts/isRTL');
-const brandName = computed(() => t('SIDEBAR.BRAND_NAME'));
+const brandName = computed(() =>
+  replaceInstallationName(t('SIDEBAR.BRAND_NAME'))
+);
 const brandSubtitle = computed(() => t('SIDEBAR.ENTERPRISE_EDITION'));
 const WHITE_RELAY_LOGO = '/white-relay-logo.svg';
 

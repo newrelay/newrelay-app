@@ -2,14 +2,13 @@
 # Webhooks cover failed payment attempts; this covers cancel/back and unpaid returns.
 class Enterprise::Billing::RecordCheckoutAbandonmentService
   CHECKOUT_ACTIONS = %w[plan_checkout topup_checkout marketplace_checkout].freeze
-  PENDING_SUBSCRIPTION_STATUSES = %w[created authenticated pending incomplete].freeze
 
   pattr_initialize [:account!, :return_type!, :checkout_type!, { user: nil, checkout_ref: nil, payment_provider: nil }]
 
   def perform
     return false unless CHECKOUT_ACTIONS.include?(checkout_type)
-    return false unless return_type.in?(%w[cancel success])
-    return false unless should_log?
+    # success is often "paid, webhook still in flight" — never treat that as abandonment.
+    return false unless return_type == 'cancel'
     return false if duplicate_log?
 
     Enterprise::Billing::RecordBillingActivityService.new(
@@ -27,24 +26,6 @@ class Enterprise::Billing::RecordCheckoutAbandonmentService
 
   private
 
-  def should_log?
-    return true if return_type == 'cancel'
-
-    case checkout_type
-    when 'plan_checkout', 'marketplace_checkout'
-      incomplete_subscription_checkout?
-    else
-      false
-    end
-  end
-
-  def incomplete_subscription_checkout?
-    subscription = account.subscription
-    return false if subscription.blank? || subscription.active?
-
-    PENDING_SUBSCRIPTION_STATUSES.include?(subscription.status)
-  end
-
   def duplicate_log?
     return false if checkout_ref.blank?
 
@@ -53,11 +34,7 @@ class Enterprise::Billing::RecordCheckoutAbandonmentService
   end
 
   def abandonment_message
-    if return_type == 'cancel'
-      "Checkout abandoned (#{checkout_type.tr('_', ' ')})"
-    else
-      "Returned from checkout without completing payment (#{checkout_type.tr('_', ' ')})"
-    end
+    "Checkout abandoned (#{checkout_type.tr('_', ' ')})"
   end
 
   def abandonment_metadata

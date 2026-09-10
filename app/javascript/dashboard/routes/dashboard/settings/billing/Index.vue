@@ -1,5 +1,5 @@
 <script setup>
-import { computed, onMounted, ref } from 'vue';
+import { computed, onActivated, onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { useMapGetter, useStore } from 'dashboard/composables/store.js';
 import { useAccount } from 'dashboard/composables/useAccount';
@@ -528,7 +528,7 @@ const openEnterpriseInquiryModal = () => {
 const isCancelingEnterpriseInquiry = ref(false);
 
 const handleEnterpriseInquirySuccess = async () => {
-  await store.dispatch('accounts/get', currentAccount.value.id);
+  await store.dispatch('accounts/get');
 };
 
 const onCancelEnterpriseInquiry = async () => {
@@ -536,7 +536,7 @@ const onCancelEnterpriseInquiry = async () => {
   try {
     await EnterpriseAccountAPI.cancelEnterpriseInquiry();
     useAlert(t('BILLING_SETTINGS.ENTERPRISE_INQUIRY.CANCEL_SUCCESS'));
-    await store.dispatch('accounts/get', currentAccount.value.id);
+    await store.dispatch('accounts/get');
   } catch (error) {
     useAlert(
       error.response?.data?.error ||
@@ -548,7 +548,7 @@ const onCancelEnterpriseInquiry = async () => {
 };
 
 const fetchAccountDetails = async () => {
-  await store.dispatch('accounts/get', currentAccount.value.id);
+  await store.dispatch('accounts/get');
   fetchLimits();
 };
 
@@ -566,8 +566,8 @@ const handleBillingPageLogic = async () => {
     await fetchPlanCatalog();
   }
 
-  await fetchAccountDetails();
   await processCheckoutReturn();
+  await fetchAccountDetails();
 };
 
 const onClickBillingPortal = () => {
@@ -592,7 +592,7 @@ const onCancelRazorpaySubscription = async () => {
   try {
     await EnterpriseAccountAPI.cancelSubscription({ cancelAtCycleEnd: true });
     useAlert(t('BILLING_SETTINGS.SELECT_PLAN.CANCEL_SUBSCRIPTION_SUCCESS'));
-    await store.dispatch('accounts/get', currentAccount.value.id);
+    await store.dispatch('accounts/get');
   } catch (error) {
     useAlert(
       error.response?.data?.error ||
@@ -732,6 +732,15 @@ const formatPlanPrice = planKey => {
 onMounted(() => {
   handleBillingPageLogic();
   fetchTransactions();
+});
+
+const skipNextActivationFetch = ref(true);
+onActivated(() => {
+  if (skipNextActivationFetch.value) {
+    skipNextActivationFetch.value = false;
+    return;
+  }
+  fetchAccountDetails();
 });
 </script>
 

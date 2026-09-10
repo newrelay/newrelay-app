@@ -55,7 +55,8 @@ export const getters = {
 };
 
 export const actions = {
-  get: async ({ commit }, { silent } = {}) => {
+  get: async ({ commit }, payload = {}) => {
+    const silent = typeof payload === 'object' && payload?.silent;
     if (!silent) {
       commit(types.default.SET_ACCOUNT_UI_FLAG, { isFetchingItem: true });
     }

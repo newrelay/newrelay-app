@@ -142,7 +142,7 @@ const submitLogin = () => {
         loginApi.showLoading = false;
         router.push({
           name: 'auth_verify_email',
-          state: { email: loginCredentials.email },
+          query: { email: loginCredentials.email },
         });
         return;
       }

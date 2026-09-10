@@ -384,4 +384,26 @@ describe Enterprise::Billing::HandleStripeEventService do
       end
     end
   end
+
+  describe 'checkout.session.completed for a plan purchase' do
+    let(:session) { double }
+
+    before do
+      allow(event).to receive(:type).and_return('checkout.session.completed')
+      allow(data).to receive(:object).and_return(session)
+      allow(session).to receive(:metadata).and_return({ 'account_id' => account.id.to_s, 'plan_name' => 'Business' })
+      allow(session).to receive(:[]).with('subscription').and_return('sub_paid')
+      allow(session).to receive(:subscription).and_return('sub_paid')
+      allow(Stripe::Subscription).to receive(:retrieve).with('sub_paid').and_return(subscription)
+      allow(subscription).to receive(:[]).with('plan')
+                                         .and_return({ 'id' => 'price_business', 'product' => 'plan_id_business', 'name' => 'Business' })
+    end
+
+    it 'loads the Stripe subscription and unlocks the account' do
+      stripe_event_service.new.perform(event: event)
+
+      expect(account.reload.custom_attributes['plan_name']).to eq('Business')
+      expect(account.subscription).to have_attributes(status: 'active', stripe_subscription_id: 'sub_123')
+    end
+  end
 end

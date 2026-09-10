@@ -46,7 +46,7 @@ const requirements = computed(() => {
 
 <template>
   <div
-    class="absolute top-full start-0 z-50 w-full mt-2 text-xs rounded-lg px-4 py-3 bg-popover text-popover-foreground border border-border shadow-lg"
+    class="w-full mt-2 text-xs rounded-lg px-4 py-3 bg-popover text-popover-foreground border border-border shadow-sm"
   >
     <ul role="list" class="space-y-1.5">
       <li

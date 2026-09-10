@@ -122,6 +122,13 @@ class Enterprise::Api::V1::AccountsController < Api::BaseController
   end
 
   def checkout_return
+    Enterprise::Billing::SyncCheckoutReturnService.new(
+      account: @account,
+      return_type: params[:return_type],
+      checkout_type: params[:checkout_type],
+      checkout_session_id: params[:checkout_session_id]
+    ).perform
+
     Enterprise::Billing::RecordCheckoutAbandonmentService.new(
       account: @account,
       user: current_user,

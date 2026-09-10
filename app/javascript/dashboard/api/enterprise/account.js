@@ -62,11 +62,17 @@ class EnterpriseAccountAPI extends ApiClient {
     });
   }
 
-  recordCheckoutReturn({ returnType, checkoutType, checkoutRef } = {}) {
+  recordCheckoutReturn({
+    returnType,
+    checkoutType,
+    checkoutRef,
+    checkoutSessionId,
+  } = {}) {
     return axios.post(`${this.url}checkout_return`, {
       return_type: returnType,
       checkout_type: checkoutType,
       checkout_ref: checkoutRef,
+      checkout_session_id: checkoutSessionId,
     });
   }
 

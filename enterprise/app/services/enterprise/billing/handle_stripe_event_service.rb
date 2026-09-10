@@ -44,7 +44,7 @@ class Enterprise::Billing::HandleStripeEventService
 
   def process_checkout_session_completed
     session = @event.data.object
-    return unless session.metadata['source'] == 'captain_topup'
+    return process_plan_checkout_session(session) unless session.metadata&.[]('source') == 'captain_topup'
 
     payer_account = Account.find_by(id: session.metadata['account_id'])
     return if payer_account.blank?
@@ -62,6 +62,20 @@ class Enterprise::Billing::HandleStripeEventService
     )
 
     record_topup_payment_transaction(payer_account, session, credits, amount, currency)
+  end
+
+  def process_plan_checkout_session(session)
+    stripe_sub_id = session.try(:subscription) || session['subscription']
+    return if stripe_sub_id.blank?
+
+    @subscription = if stripe_sub_id.respond_to?(:to_hash) && !stripe_sub_id.is_a?(String)
+                      stripe_sub_id
+                    else
+                      Stripe::Subscription.retrieve(stripe_sub_id)
+                    end
+    process_subscription_updated
+  rescue Stripe::StripeError => e
+    Rails.logger.warn("[stripe_webhook] checkout.session.completed could not load subscription: #{e.message}")
   end
 
   def record_topup_payment_transaction(payer_account, session, credits, amount, currency)

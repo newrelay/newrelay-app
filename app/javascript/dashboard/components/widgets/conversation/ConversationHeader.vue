@@ -117,7 +117,7 @@ const toggleSidebar = () => {
 
 <template>
   <div
-    class="relative flex h-16 min-w-0 shrink-0 items-center gap-2 overflow-hidden border-b border-border bg-card px-6"
+    class="relative flex h-14 min-w-0 shrink-0 items-center gap-2 overflow-hidden border-b border-border bg-card px-6"
   >
     <div class="relative min-h-0 min-w-0 flex-1 self-stretch">
       <div class="flex h-full min-w-0 items-center">

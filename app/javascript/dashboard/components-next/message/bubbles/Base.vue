@@ -127,7 +127,7 @@ const replyToPreview = computed(() => {
 
 <template>
   <div v-if="isPrivateNote" class="my-2 flex w-full min-w-0 flex-col">
-    <div class="flex w-full gap-4 rounded-xl bg-warning/10 p-4">
+    <div class="flex w-full gap-4 rounded-xl bg-private-note p-4">
       <span class="i-lucide-sticky-note size-5 shrink-0 text-warning" />
       <div class="flex min-w-0 flex-1 flex-col gap-1 text-sm">
         <div

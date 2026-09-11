@@ -499,7 +499,7 @@ export default {
 }
 
 .ProseMirror-relay-style {
-  min-height: 5rem;
+  min-height: 3.5rem;
   max-height: 7.5rem;
   overflow: auto;
 }

@@ -58,8 +58,8 @@ const statusIcon = computed(() => {
 const statusColor = computed(() => {
   const statusIconMap = {
     // Meta sits outside the bubble (muted); read checks use primary like NewRelay
-    [MESSAGE_STATUS.SENT]: 'text-current',
-    [MESSAGE_STATUS.DELIVERED]: 'text-current',
+    [MESSAGE_STATUS.SENT]: 'text-primary',
+    [MESSAGE_STATUS.DELIVERED]: 'text-primary',
     [MESSAGE_STATUS.READ]: 'text-primary',
   };
 

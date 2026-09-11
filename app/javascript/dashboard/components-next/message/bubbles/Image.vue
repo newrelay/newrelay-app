@@ -8,13 +8,13 @@ import { useSnakeCase } from 'dashboard/composables/useTransformKeys';
 import { useMessageContext } from '../provider.js';
 import { downloadFile, getFileInfo } from '@chatwoot/utils';
 import { formatBytes } from 'shared/helpers/FileHelper';
-import { MESSAGE_VARIANTS } from '../constants';
+import { MESSAGE_TYPES } from '../constants';
 
 import GalleryView from 'dashboard/components/widgets/conversation/components/GalleryView.vue';
 
 const { t } = useI18n();
 
-const { filteredCurrentChatAttachments, attachments, variant } =
+const { filteredCurrentChatAttachments, attachments, messageType } =
   useMessageContext();
 
 const attachment = computed(() => {
@@ -26,13 +26,11 @@ const { isLoaded, hasError, loadWithRetry } = useLoadWithRetry();
 const showGallery = ref(false);
 const isDownloading = ref(false);
 
-const isOutgoing = computed(() =>
-  [MESSAGE_VARIANTS.AGENT, MESSAGE_VARIANTS.BOT].includes(variant.value)
-);
+const isOutgoing = computed(() => messageType.value === MESSAGE_TYPES.OUTGOING);
 
 const cardClass = computed(() =>
   isOutgoing.value
-    ? 'flex !w-[240px] max-w-[260px] cursor-pointer flex-col gap-1.5 overflow-hidden !rounded-2xl !border !border-primary/20 !bg-primary/5 !p-1.5 !text-foreground shadow-xs dark:!border-border dark:!bg-card'
+    ? 'flex !w-[240px] max-w-[260px] cursor-pointer flex-col gap-1.5 overflow-hidden !rounded-2xl !border !border-outgoing-attachment-border !bg-outgoing-attachment !p-1.5 !text-foreground shadow-xs dark:!border-border dark:!bg-card'
     : 'flex !w-[240px] max-w-[260px] cursor-pointer flex-col gap-1.5 overflow-hidden !rounded-2xl !border !border-border !bg-card !p-1.5 !text-foreground shadow-xs'
 );
 

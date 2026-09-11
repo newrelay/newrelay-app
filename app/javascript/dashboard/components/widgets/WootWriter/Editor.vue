@@ -984,20 +984,20 @@ useEmitter(BUS_EVENTS.INSERT_INTO_RICH_EDITOR, insertContentIntoEditor);
 .ProseMirror-relay-style:not(
     :where(.resizable-editor-wrapper .ProseMirror-relay-style)
   ) {
-  @apply min-h-[5rem] max-h-[7.5rem];
+  @apply min-h-[3.5rem] max-h-[7.5rem];
 }
 
 // Resizable editor wrapper styles
 .resizable-editor-wrapper {
   .ProseMirror-relay-style {
     min-height: clamp(
-      var(--editor-min-allowed, var(--editor-min-height, 5rem)),
-      var(--editor-height, var(--editor-min-height, 5rem)),
+      var(--editor-min-allowed, var(--editor-min-height, 3.5rem)),
+      var(--editor-height, var(--editor-min-height, 3.5rem)),
       var(--editor-max-allowed, var(--editor-max-height, 7.5rem))
     );
     max-height: clamp(
-      var(--editor-min-allowed, var(--editor-min-height, 5rem)),
-      var(--editor-height, var(--editor-min-height, 5rem)),
+      var(--editor-min-allowed, var(--editor-min-height, 3.5rem)),
+      var(--editor-height, var(--editor-min-height, 3.5rem)),
       var(--editor-max-allowed, var(--editor-max-height, 7.5rem))
     );
     transition:

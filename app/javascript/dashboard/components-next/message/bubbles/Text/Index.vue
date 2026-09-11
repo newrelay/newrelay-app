@@ -42,7 +42,16 @@ const handleSeeOriginal = () => {
 </script>
 
 <template>
-  <BaseBubble :class="isPrivate ? '' : 'px-4 py-2.5'" data-bubble-name="text">
+  <BaseBubble
+    :class="
+      isPrivate
+        ? ''
+        : renderContent
+          ? 'px-4 py-2.5'
+          : '!border-transparent !bg-transparent !p-0 !shadow-none'
+    "
+    data-bubble-name="text"
+  >
     <div class="gap-3 flex flex-col">
       <span v-if="isEmpty" class="opacity-70">
         {{ $t('CONVERSATION.NO_CONTENT') }}

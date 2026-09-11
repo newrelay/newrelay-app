@@ -45,11 +45,11 @@ const priorityBadge = computed(() => {
     },
     [CONVERSATION_PRIORITY.MEDIUM]: {
       text: t('CONVERSATION.PRIORITY.OPTIONS.MEDIUM'),
-      className: 'border-transparent bg-warning/10 text-warning',
+      className: 'border-transparent bg-warning text-primary-foreground',
     },
     [CONVERSATION_PRIORITY.LOW]: {
       text: t('CONVERSATION.PRIORITY.OPTIONS.LOW'),
-      className: 'border-transparent bg-success/10 text-success',
+      className: 'border-transparent bg-success text-primary-foreground',
     },
   };
 
@@ -57,7 +57,7 @@ const priorityBadge = computed(() => {
 });
 
 const priorityBadgeBaseClass =
-  'inline-flex h-5 shrink-0 items-center rounded-sm border px-1.5 py-0 text-[10px] font-medium transition-colors focus:outline-hidden focus:ring-1 focus:ring-ring';
+  'inline-flex h-4 shrink-0 items-center rounded-sm border px-1.5 py-0 text-[10px] font-medium transition-colors focus:outline-hidden focus:ring-1 focus:ring-ring';
 
 const statusDotClass = computed(() => {
   const priority = props.chat.priority;
@@ -92,7 +92,9 @@ const channelSubtext = computed(() => {
     type="button"
     class="conversation relative flex w-full gap-3 rounded-lg p-3 text-left transition-colors"
     :class="[
-      isActiveChat ? 'active bg-primary/5' : 'hover:bg-accent/50',
+      isActiveChat
+        ? 'active bg-conversation-list-highlight'
+        : 'hover:bg-accent/50',
       compact ? 'mx-0' : '',
     ]"
     @click="$emit('click', $event)"

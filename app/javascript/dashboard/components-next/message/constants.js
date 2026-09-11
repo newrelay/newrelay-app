@@ -55,6 +55,15 @@ export const ATTACHMENT_TYPES = {
   IG_STORY_REPLY: 'ig_story_reply',
 };
 
+export const isSvgAttachment = attachment => {
+  if (!attachment) return false;
+  const ext = String(attachment.extension || '').toLowerCase();
+  const url = String(attachment.dataUrl || attachment.data_url || '')
+    .split('?')[0]
+    .toLowerCase();
+  return ext === 'svg' || url.endsWith('.svg');
+};
+
 export const CONTENT_TYPES = {
   TEXT: 'text',
   INPUT_TEXT: 'input_text',

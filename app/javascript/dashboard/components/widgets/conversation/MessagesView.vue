@@ -548,7 +548,7 @@ export default {
       </div>
       <div
         v-else
-        class="p-4 bg-muted/10 dark:bg-background shrink-0 border-t border-border"
+        class="p-3 bg-muted/10 dark:bg-background shrink-0 border-t border-border"
       >
         <ResizableEditorWrapper
           ref="resizableEditorWrapperRef"

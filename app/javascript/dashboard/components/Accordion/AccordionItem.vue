@@ -35,7 +35,7 @@ const onToggle = () => {
     <button
       type="button"
       class="drag-handle group flex min-h-0 w-full cursor-grab select-none items-center justify-between border-0 bg-transparent px-0 py-0 shadow-none focus-visible:outline-none"
-      :class="isOpen ? 'mb-3' : ''"
+      :class="isOpen ? 'mb-4' : ''"
       @click.stop="onToggle"
     >
       <div class="flex min-w-0 items-center gap-2">
@@ -51,7 +51,7 @@ const onToggle = () => {
           :emoji="emoji"
         />
         <h3
-          class="mb-0 truncate text-[14px] font-medium leading-none text-foreground"
+          class="mb-0 truncate text-[14px] font-medium leading-5 text-foreground"
         >
           {{ title }}
         </h3>

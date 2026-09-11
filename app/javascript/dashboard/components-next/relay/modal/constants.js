@@ -12,21 +12,21 @@ export const RELAY_DIALOG_OVERLAY_CLASS = [
 export const RELAY_NATIVE_DIALOG_BACKDROP_CLASS =
   'backdrop:bg-background/80 backdrop:backdrop-blur-[8px]';
 
-/** Modal header — title + description; spacing only, no underline. */
+/** Modal header — title + description with a light bottom rule. */
 export const RELAY_MODAL_HEADER_CLASS =
-  'flex shrink-0 items-start justify-between p-6';
+  'flex shrink-0 items-start justify-between border-b border-border/40 px-6 pt-6 pb-4';
 
 /** Wide / undivided header (Add Bot): extra padding + light divider. */
 export const RELAY_MODAL_HEADER_PLAIN_CLASS =
   'flex shrink-0 items-start justify-between border-b border-border/40 px-8 py-6';
 
 export const RELAY_MODAL_TITLE_CLASS =
-  'text-base font-medium tracking-tight text-foreground';
+  'text-lg font-semibold tracking-tight text-foreground';
 
 export const RELAY_MODAL_DESCRIPTION_CLASS =
-  'mb-0 mt-1 pr-6 text-[14px] font-normal leading-normal text-muted-foreground';
+  'mb-0 mt-1.5 pr-6 text-[14px] font-normal leading-normal text-muted-foreground';
 
-export const RELAY_MODAL_BODY_CLASS = 'flex-1 overflow-y-auto p-6';
+export const RELAY_MODAL_BODY_CLASS = 'flex-1 overflow-y-auto px-6 pb-6 pt-4';
 
 /** Flush form body — header already padded; fields start below the divider. */
 export const RELAY_MODAL_FORM_BODY_CLASS = 'space-y-5 px-6 pb-2';

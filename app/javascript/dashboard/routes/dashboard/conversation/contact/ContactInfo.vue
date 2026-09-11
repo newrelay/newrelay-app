@@ -231,7 +231,7 @@ export default {
     </div>
 
     <div
-      class="mb-4 h-px w-full shrink-0 bg-border/60"
+      class="mb-4 h-[1.5px] w-full shrink-0 bg-border"
       role="separator"
       aria-hidden="true"
     />

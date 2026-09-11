@@ -9,7 +9,7 @@ import {
   DROPDOWN_MENU_MODAL_SEARCHABLE_CONTENT_CLASS,
   DROPDOWN_MENU_MODAL_SEARCHABLE_LIST_CLASS,
 } from 'dashboard/components-next/relay/dropdown-menu/constants';
-import { RELAY_MODAL_CLOSE_BUTTON_CLASS } from 'dashboard/components-next/relay/modal/constants';
+import { removeEmoji } from 'shared/helpers/emoji';
 import Avatar from 'next/avatar/Avatar.vue';
 import MultiselectDropdownItems from 'shared/components/ui/MultiselectDropdownItems.vue';
 
@@ -64,13 +64,22 @@ const hasIcon = computed(() => {
   return props.selectedItem?.icon || false;
 });
 
+const selectedFallbackIcon = computed(() => {
+  const name = props.selectedItem?.name || '';
+  const stripped = removeEmoji(name);
+  if (stripped && stripped !== name.trim() && !props.selectedItem?.icon) {
+    return 'i-lucide-users';
+  }
+  return '';
+});
+
 const selectedIconClass = computed(() => {
   return props.selectedItem?.iconClass || 'text-muted-foreground';
 });
 
 const displayLabel = computed(() => {
   if (hasValue.value) {
-    return props.selectedItem.name;
+    return removeEmoji(props.selectedItem.name) || props.selectedItem.name;
   }
   return props.multiselectorPlaceholder;
 });
@@ -83,20 +92,26 @@ const displayLabel = computed(() => {
         <button
           type="button"
           class="box-border flex w-full min-w-0 items-center justify-between rounded-lg border border-border/60 bg-transparent px-2.5 py-1.5 text-left transition-colors hover:bg-muted/40 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary"
+          :aria-label="multiselectorTitle || undefined"
         >
           <div class="flex min-w-0 flex-1 items-center gap-2">
             <Avatar
-              v-if="hasValue && hasThumbnail && !hasIcon"
+              v-if="
+                hasValue && hasThumbnail && !hasIcon && !selectedFallbackIcon
+              "
               :src="selectedItem.thumbnail"
               :status="selectedItem.availability_status"
-              :name="selectedItem.name"
+              :name="displayLabel"
               :size="16"
               rounded-full
             />
             <span
-              v-if="hasValue && hasIcon"
+              v-if="hasValue && (hasIcon || selectedFallbackIcon)"
               class="size-3.5 shrink-0"
-              :class="[selectedItem.icon, selectedIconClass]"
+              :class="[
+                selectedItem.icon || selectedFallbackIcon,
+                selectedIconClass,
+              ]"
             />
             <span
               class="truncate text-[13px]"
@@ -117,23 +132,6 @@ const displayLabel = computed(() => {
         :side-offset="4"
         :class="DROPDOWN_MENU_MODAL_SEARCHABLE_CONTENT_CLASS"
       >
-        <div
-          v-if="multiselectorTitle"
-          class="flex items-center justify-between gap-1 border-b border-border px-2 py-1.5"
-        >
-          <h4
-            class="m-0 overflow-hidden text-ellipsis whitespace-nowrap text-xs text-muted-foreground"
-          >
-            {{ multiselectorTitle }}
-          </h4>
-          <button
-            type="button"
-            :class="RELAY_MODAL_CLOSE_BUTTON_CLASS"
-            @click="isOpen = false"
-          >
-            <span class="i-lucide-x size-4" />
-          </button>
-        </div>
         <div :class="DROPDOWN_MENU_MODAL_SEARCHABLE_LIST_CLASS">
           <MultiselectDropdownItems
             :options="options"

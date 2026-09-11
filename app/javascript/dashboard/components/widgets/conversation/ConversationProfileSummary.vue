@@ -108,18 +108,18 @@ const scoreValue = computed(() => props.chat.id);
       rounded-full
       class="size-10 shrink-0 rounded-full border border-border/50 object-cover"
     />
-    <div class="flex min-w-0 flex-col gap-0.5">
+    <div class="flex min-w-0 flex-col gap-1.5">
       <div class="flex min-w-0 items-center gap-2">
         <a
           v-if="contactProfileLink"
           :href="contactProfileLink"
-          class="cursor-pointer truncate text-[16px] font-semibold leading-none text-foreground transition-colors hover:text-primary"
+          class="cursor-pointer truncate text-[16px] font-semibold leading-5 text-foreground transition-colors hover:text-primary"
         >
           {{ currentContact.name }}
         </a>
         <span
           v-else
-          class="truncate text-[16px] font-semibold leading-none text-foreground"
+          class="truncate text-[16px] font-semibold leading-5 text-foreground"
         >
           {{ currentContact.name }}
         </span>
@@ -136,7 +136,7 @@ const scoreValue = computed(() => props.chat.id);
       </div>
       <div
         v-if="customerSinceLabel"
-        class="flex items-center gap-2 text-[13px] font-normal leading-none text-muted-foreground"
+        class="flex items-center gap-2 text-[13px] font-normal leading-5 text-muted-foreground"
       >
         <span class="truncate">{{ customerSinceLabel }}</span>
       </div>

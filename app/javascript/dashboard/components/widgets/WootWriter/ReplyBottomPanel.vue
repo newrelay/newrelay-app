@@ -343,7 +343,7 @@ export default {
 
 <template>
   <div
-    class="px-3 py-2 flex items-center justify-between border-t border-border bg-muted/20 overflow-visible"
+    class="px-3 py-1.5 flex items-center justify-between border-t border-border bg-muted/20 overflow-visible"
   >
     <div class="flex items-center gap-1 flex-wrap">
       <!-- Attach -->
@@ -608,7 +608,8 @@ export default {
       <RelayButton
         type="submit"
         variant="default"
-        class="px-4 h-8 gap-2 font-semibold shadow-xs"
+        size="sm"
+        class="px-4 h-8 min-h-8 gap-2 font-semibold shadow-xs"
         :class="isNote ? 'bg-warning text-foreground hover:bg-warning/90' : ''"
         :disabled="isSendDisabled"
         @click="onSend"

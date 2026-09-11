@@ -13,6 +13,7 @@ import { downloadFile } from '@chatwoot/utils';
 import {
   ATTACHMENT_TYPES,
   MEDIA_TYPES,
+  isSvgAttachment,
 } from 'dashboard/components-next/message/constants';
 
 import GalleryView from 'dashboard/components/widgets/conversation/components/GalleryView.vue';
@@ -21,7 +22,7 @@ import FileIcon from 'next/icon/FileIcon.vue';
 import NextButton from 'dashboard/components-next/button/Button.vue';
 import Spinner from 'dashboard/components-next/spinner/Spinner.vue';
 
-defineProps({
+const props = defineProps({
   compact: {
     type: Boolean,
     default: false,
@@ -30,6 +31,7 @@ defineProps({
 
 const MEDIA_PEEK_LIMIT = 6;
 const FILES_PEEK_LIMIT = 3;
+const COMPACT_PEEK_LIMIT = 3;
 
 const { t } = useI18n();
 
@@ -43,28 +45,38 @@ const sortedAttachments = computed(() =>
 );
 
 const mediaAttachments = computed(() =>
-  sortedAttachments.value.filter(a => MEDIA_TYPES.includes(a.file_type))
+  sortedAttachments.value.filter(
+    a => MEDIA_TYPES.includes(a.file_type) && !isSvgAttachment(a)
+  )
 );
 
 const fileAttachments = computed(() =>
   sortedAttachments.value.filter(
-    a => !MEDIA_TYPES.includes(a.file_type) && a.data_url
+    a =>
+      a.data_url && (!MEDIA_TYPES.includes(a.file_type) || isSvgAttachment(a))
   )
 );
 
 const showAllMedia = ref(false);
 const showAllFiles = ref(false);
 
+const mediaPeekLimit = computed(() =>
+  props.compact ? COMPACT_PEEK_LIMIT : MEDIA_PEEK_LIMIT
+);
+const filesPeekLimit = computed(() =>
+  props.compact ? COMPACT_PEEK_LIMIT : FILES_PEEK_LIMIT
+);
+
 const visibleMedia = computed(() =>
   showAllMedia.value
     ? mediaAttachments.value
-    : mediaAttachments.value.slice(0, MEDIA_PEEK_LIMIT)
+    : mediaAttachments.value.slice(0, mediaPeekLimit.value)
 );
 
 const visibleFiles = computed(() =>
   showAllFiles.value
     ? fileAttachments.value
-    : fileAttachments.value.slice(0, FILES_PEEK_LIMIT)
+    : fileAttachments.value.slice(0, filesPeekLimit.value)
 );
 
 const mediaOverflow = computed(() => {
@@ -215,7 +227,10 @@ const isPdfFile = attachment => attachment.extension?.toLowerCase() === 'pdf';
     </div>
 
     <template v-else-if="compact">
-      <div v-if="fileAttachments.length" class="mt-1 flex flex-col gap-2">
+      <div
+        v-if="fileAttachments.length"
+        class="mt-1 flex max-h-52 flex-col gap-1.5 overflow-y-auto"
+      >
         <div
           v-for="attachment in visibleFiles"
           :key="attachment.id"
@@ -257,9 +272,24 @@ const isPdfFile = attachment => attachment.extension?.toLowerCase() === 'pdf';
             </div>
           </div>
         </div>
+        <button
+          v-if="fileAttachments.length > filesPeekLimit"
+          type="button"
+          class="self-start text-[12px] font-medium text-primary"
+          @click="showAllFiles = !showAllFiles"
+        >
+          {{
+            showAllFiles
+              ? t('CONVERSATION_SIDEBAR.SHARED_FILES.SHOW_LESS')
+              : t('CONVERSATION_SIDEBAR.SHARED_FILES.VIEW_ALL')
+          }}
+        </button>
       </div>
 
-      <div v-if="mediaAttachments.length" class="mt-1 flex flex-col gap-2">
+      <div
+        v-if="mediaAttachments.length"
+        class="mt-1 flex max-h-52 flex-col gap-1.5 overflow-y-auto"
+      >
         <div
           v-for="(attachment, index) in visibleMedia"
           :key="attachment.id"
@@ -293,6 +323,18 @@ const isPdfFile = attachment => attachment.extension?.toLowerCase() === 'pdf';
             </div>
           </div>
         </div>
+        <button
+          v-if="mediaAttachments.length > mediaPeekLimit"
+          type="button"
+          class="self-start text-[12px] font-medium text-primary"
+          @click="showAllMedia = !showAllMedia"
+        >
+          {{
+            showAllMedia
+              ? t('CONVERSATION_SIDEBAR.SHARED_FILES.SHOW_LESS')
+              : t('CONVERSATION_SIDEBAR.SHARED_FILES.VIEW_ALL')
+          }}
+        </button>
       </div>
     </template>
 

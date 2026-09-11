@@ -8,7 +8,7 @@ import FileChip from 'next/message/chips/File.vue';
 import MediaAlbum from 'next/message/chips/MediaAlbum.vue';
 import { useMessageContext } from '../provider.js';
 
-import { ATTACHMENT_TYPES } from '../constants';
+import { ATTACHMENT_TYPES, isSvgAttachment } from '../constants';
 
 /**
  * @typedef {Object} Attachment
@@ -57,8 +57,9 @@ const mediaAttachments = computed(() => {
     ATTACHMENT_TYPES.VIDEO,
     ATTACHMENT_TYPES.IG_REEL,
   ];
-  const mediaTypes = allAttachments.value.filter(attachment =>
-    allowedTypes.includes(attachment.fileType)
+  const mediaTypes = allAttachments.value.filter(
+    attachment =>
+      allowedTypes.includes(attachment.fileType) && !isSvgAttachment(attachment)
   );
 
   return mediaTypes.sort(
@@ -75,7 +76,9 @@ const recordings = computed(() => {
 
 const files = computed(() => {
   return allAttachments.value.filter(
-    attachment => attachment.fileType === ATTACHMENT_TYPES.FILE
+    attachment =>
+      attachment.fileType === ATTACHMENT_TYPES.FILE ||
+      isSvgAttachment(attachment)
   );
 });
 </script>

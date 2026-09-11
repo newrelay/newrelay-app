@@ -20,6 +20,7 @@ import {
   ORIENTATION,
   MESSAGE_STATUS,
   CONTENT_TYPES,
+  isSvgAttachment,
 } from './constants';
 
 import TextBubble from './bubbles/Text/Index.vue';
@@ -176,18 +177,19 @@ const MEDIA_ALBUM_TYPES = [
 const isMediaAlbumMessage = computed(() => {
   const list = props.attachments;
   if (!Array.isArray(list) || list.length < 2 || props.content) return false;
-  return list.every(attachment =>
-    MEDIA_ALBUM_TYPES.includes(attachment.fileType)
+  return list.every(
+    attachment =>
+      MEDIA_ALBUM_TYPES.includes(attachment.fileType) &&
+      !isSvgAttachment(attachment)
   );
 });
 
 const isStandaloneCardMessage = computed(() => {
   if (isMediaAlbumMessage.value) return true;
-  return (
-    Array.isArray(props.attachments) &&
-    props.attachments.length === 1 &&
-    STANDALONE_CARD_TYPES.includes(props.attachments[0].fileType) &&
-    !props.content
+  const list = props.attachments;
+  if (!Array.isArray(list) || !list.length || props.content) return false;
+  return list.every(attachment =>
+    STANDALONE_CARD_TYPES.includes(attachment.fileType)
   );
 });
 
@@ -362,7 +364,9 @@ const componentToRender = computed(() => {
     if (fileType === ATTACHMENT_TYPES.FALLBACK) return FallbackBubble;
 
     if (!props.content) {
-      if (fileType === ATTACHMENT_TYPES.IMAGE) return ImageBubble;
+      if (fileType === ATTACHMENT_TYPES.IMAGE) {
+        return isSvgAttachment(props.attachments[0]) ? FileBubble : ImageBubble;
+      }
       if (fileType === ATTACHMENT_TYPES.FILE) return FileBubble;
       if (fileType === ATTACHMENT_TYPES.AUDIO) return AudioBubble;
       if (fileType === ATTACHMENT_TYPES.VIDEO) return VideoBubble;

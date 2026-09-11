@@ -45,6 +45,7 @@
 ## General Guidelines
 
 - MVP focus: Least code change, happy-path only
+- **One fix at a time**: implement only the change named in this request. Do not revert or restyle other landed work. If the user says stop/undo, do not re-apply it later. List extra issues as follow-ups and wait.
 - No unnecessary defensive programming
 - Ship the happy path first: limit guards/fallbacks to what production has proven necessary, then iterate
 - Prefer minimal, readable code over elaborate abstractions; clarity beats cleverness

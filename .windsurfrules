@@ -4,6 +4,7 @@
 1. **Tailwind Only**: Strictly use Tailwind CSS utility classes. Custom CSS, scoped CSS, and inline styles are explicitly forbidden.
 2. **Dynamic Theme Colors**: NEVER use hardcoded Tailwind colors (e.g., `bg-blue-100`, `text-[#3B82F6]`). Always map colors to semantic variables (`bg-background`, `bg-card`, `bg-primary`, `text-muted-foreground`, `border-border`) to ensure dark mode compatibility.
 3. **AI Naming**: Always use "Relay AI" to refer to the AI system. Translate references to "Captain" to "Relay AI".
+4. **One fix at a time**: Do only the change the user asked for. Do not revert, restyle, or rewrite neighboring screens/commits. If they say stop, do not re-apply that change later as a bonus.
 
 ## Component Styling Rules
 - **Headings**: Section/Page Headings use `text-base font-medium` (16px, 500w). Empty State Headings strictly use `text-[20px] font-[600]`.

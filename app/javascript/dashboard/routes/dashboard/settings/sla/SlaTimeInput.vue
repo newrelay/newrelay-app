@@ -96,7 +96,7 @@ export default {
 
 <template>
   <div class="flex w-full items-start gap-3">
-    <div class="flex flex-grow flex-col gap-2">
+    <div class="flex flex-grow flex-col gap-1.5">
       <RelayLabel>{{ label }}</RelayLabel>
       <RelayInput
         v-model="thresholdTime"

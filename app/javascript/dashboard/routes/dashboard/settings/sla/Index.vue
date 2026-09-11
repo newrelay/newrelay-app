@@ -376,7 +376,6 @@ export default {
         :show="showAddPopup"
         :title="slaToEdit ? $t('SLA.EDIT.TITLE') : $t('SLA.ADD.TITLE')"
         :description="$t('SLA.ADD.DESC')"
-        size="lg"
         flush
         @close="hideAddPopup"
       >

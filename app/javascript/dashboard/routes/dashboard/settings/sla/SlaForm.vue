@@ -9,6 +9,7 @@ import {
   RelayLabel,
   RelaySwitch,
   RelayButton,
+  RELAY_MODAL_FORM_BODY_CLASS,
   RELAY_MODAL_FORM_FOOTER_CLASS,
   RELAY_MODAL_INPUT_CLASS,
 } from 'dashboard/components-next/relay';
@@ -35,6 +36,7 @@ export default {
   setup() {
     return {
       v$: useVuelidate(),
+      RELAY_MODAL_FORM_BODY_CLASS,
       RELAY_MODAL_FORM_FOOTER_CLASS,
       RELAY_MODAL_INPUT_CLASS,
     };
@@ -170,13 +172,10 @@ export default {
 </script>
 
 <template>
-  <form
-    class="flex h-full max-h-[calc(90vh-140px)] flex-col pb-0"
-    @submit.prevent="onSubmit"
-  >
-    <!-- Scrollable Body Content -->
+  <form @submit.prevent="onSubmit">
     <div
-      class="custom-scrollbar flex-1 space-y-5 overflow-y-auto px-6 pb-2 pr-1"
+      class="max-h-[60vh] overflow-y-auto"
+      :class="[RELAY_MODAL_FORM_BODY_CLASS]"
     >
       <!-- SLA Name -->
       <div class="flex flex-col gap-1.5">

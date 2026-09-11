@@ -59,7 +59,7 @@ const togglePortalSwitcher = () => {
 
 <template>
   <section
-    class="relative flex h-full w-full flex-col overflow-hidden bg-muted/10 animate-in fade-in duration-300"
+    class="relative flex h-full w-full flex-col overflow-hidden bg-background animate-in fade-in duration-300"
   >
     <div
       class="mx-auto flex h-full w-full max-w-7xl flex-col overflow-hidden p-6 lg:px-10"

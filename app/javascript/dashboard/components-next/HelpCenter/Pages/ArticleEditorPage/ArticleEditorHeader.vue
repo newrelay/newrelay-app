@@ -62,11 +62,15 @@ const articleMenuItems = computed(() => {
   });
 });
 
-const statusText = computed(() =>
-  t(
-    `HELP_CENTER.EDIT_ARTICLE_PAGE.HEADER.STATUS.${props.isUpdating ? 'SAVING' : 'SAVED'}`
-  )
-);
+const statusText = computed(() => {
+  if (props.isUpdating) {
+    return t('HELP_CENTER.EDIT_ARTICLE_PAGE.HEADER.STATUS.SAVING');
+  }
+  if (props.isSaved) {
+    return t('HELP_CENTER.EDIT_ARTICLE_PAGE.HEADER.STATUS.SAVED');
+  }
+  return t('HELP_CENTER.EDIT_ARTICLE_PAGE.HEADER.STATUS.SAVED');
+});
 
 const onClickGoBack = () => emit('goBack');
 
@@ -120,7 +124,7 @@ const updateArticleStatus = async ({ value }) => {
     <RelayButton
       variant="ghost"
       size="sm"
-      class="pl-2 text-[13px] text-muted-foreground hover:text-foreground border border-border hover:border-transparent"
+      class="pl-2 text-[13px] text-muted-foreground hover:text-foreground"
       @click="onClickGoBack"
     >
       <span class="i-lucide-chevron-left size-4" aria-hidden="true" />
@@ -128,7 +132,6 @@ const updateArticleStatus = async ({ value }) => {
     </RelayButton>
     <div class="flex items-center gap-4">
       <span
-        v-if="isUpdating || isSaved"
         class="hidden text-[13px] text-muted-foreground transition-all duration-300 sm:inline-block"
       >
         {{ statusText }}

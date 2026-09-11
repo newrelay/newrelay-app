@@ -5,7 +5,6 @@ import { useI18n } from 'vue-i18n';
 import { ARTICLE_EDITOR_MENU_OPTIONS } from 'dashboard/constants/editor';
 
 import HelpCenterLayout from 'dashboard/components-next/HelpCenter/HelpCenterLayout.vue';
-import TextArea from 'dashboard/components-next/textarea/TextArea.vue';
 import FullEditor from 'dashboard/components/widgets/WootWriter/FullEditor.vue';
 import ArticleEditorHeader from 'dashboard/components-next/HelpCenter/Pages/ArticleEditorPage/ArticleEditorHeader.vue';
 import ArticleEditorControls from 'dashboard/components-next/HelpCenter/Pages/ArticleEditorPage/ArticleEditorControls.vue';
@@ -114,16 +113,14 @@ const handleCreateArticle = event => {
     </template>
     <template #content>
       <div class="mx-auto flex w-full max-w-4xl flex-col pb-20">
-        <TextArea
+        <input
           v-model="articleTitle"
-          auto-height
-          min-height="3rem"
-          custom-text-area-class="!text-4xl !leading-tight !font-semibold !text-foreground placeholder:!text-muted-foreground"
-          custom-text-area-wrapper-class="mb-6 border-0 !bg-transparent dark:!bg-transparent !py-0 !px-0"
+          type="text"
+          :autofocus="isNewArticle"
+          class="reset-base mb-6 w-full border-none bg-transparent text-4xl font-semibold text-foreground outline-none placeholder:text-muted-foreground/50 focus:outline-none focus:ring-0"
           :placeholder="
             t('HELP_CENTER.EDIT_ARTICLE_PAGE.EDIT_ARTICLE.TITLE_PLACEHOLDER')
           "
-          :autofocus="isNewArticle"
           @blur="handleCreateArticle"
         />
         <ArticleEditorControls
@@ -134,7 +131,7 @@ const handleCreateArticle = event => {
         />
         <FullEditor
           v-model="articleContent"
-          class="h-fit min-h-[150px] py-0 text-[15px] leading-relaxed"
+          class="h-fit min-h-[150px] py-0 text-[15px] leading-relaxed text-foreground"
           :placeholder="
             t('HELP_CENTER.EDIT_ARTICLE_PAGE.EDIT_ARTICLE.EDITOR_PLACEHOLDER')
           "
@@ -147,9 +144,12 @@ const handleCreateArticle = event => {
 </template>
 
 <style lang="scss" scoped>
+:deep(.ProseMirror) {
+  @apply text-[15px] leading-relaxed text-foreground;
+}
+
 :deep(.ProseMirror .empty-node::before) {
-  @apply text-[15px] text-muted-foreground;
-  opacity: 0.6;
+  @apply text-[15px] text-foreground;
 }
 
 :deep(.ProseMirror-menubar-wrapper) {

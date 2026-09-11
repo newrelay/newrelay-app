@@ -70,13 +70,16 @@ export default {
       handle=".macros__node-drag-handle"
     >
       <template #item="{ index: i }">
-        <div :key="i" class="flex flex-col items-center w-full">
+        <div
+          :key="i"
+          class="relative z-10 flex w-full flex-col items-center has-[[data-dropdown-open]]:z-50"
+        >
           <!-- Vertical Line -->
           <div class="w-px h-8 border-l border-dashed border-primary/40 z-0" />
 
           <MacroNode
             v-model="actionData[i]"
-            class="macros__node-action z-10 w-full"
+            class="macros__node-action w-full"
             :index="i"
             :error-key="errors[`action_${i}`]"
             :file-name="
@@ -98,7 +101,7 @@ export default {
     <div class="w-px h-8 border-l border-dashed border-primary/40 z-0" />
 
     <!-- Add Action Node -->
-    <div class="relative z-30 flex w-full max-w-[620px] justify-center">
+    <div class="relative z-10 flex w-full max-w-[620px] justify-center">
       <button
         type="button"
         class="group flex h-[44px] min-w-[160px] cursor-pointer items-center justify-center gap-2 rounded-full border-0 bg-primary px-6 text-[13.5px] font-medium text-primary-foreground shadow-sm transition-all hover:bg-primary/90"

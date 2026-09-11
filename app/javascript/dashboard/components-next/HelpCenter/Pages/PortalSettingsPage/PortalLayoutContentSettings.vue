@@ -170,11 +170,7 @@ defineExpose({
   <div
     class="flex w-full flex-col gap-6 rounded-2xl border border-border/40 bg-card p-6 shadow-sm"
   >
-    <h2 class="flex items-center gap-2 text-base font-medium text-foreground">
-      <span
-        class="i-lucide-paintbrush size-4 text-primary"
-        aria-hidden="true"
-      />
+    <h2 class="text-base font-medium text-foreground">
       {{ t('HELP_CENTER.PORTAL_SETTINGS.FORM.SECTION_EXPERIENCE') }}
     </h2>
 
@@ -216,7 +212,7 @@ defineExpose({
             />
           </label>
           <div
-            class="flex h-9 items-center rounded-md border border-border/80 bg-muted/30 px-3 text-[14px] font-medium uppercase shadow-sm"
+            class="flex h-10 items-center rounded-md border border-border/80 bg-muted/30 px-3 text-[14px] font-medium uppercase shadow-sm"
           >
             {{ state.widgetColor || '—' }}
           </div>

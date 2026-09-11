@@ -11,7 +11,6 @@ import { required, minLength, helpers, url } from '@vuelidate/validators';
 import { isValidSlug } from 'shared/helpers/Validators';
 
 import { RelayInput, RelayLabel } from 'dashboard/components-next/relay';
-import Avatar from 'dashboard/components-next/avatar/Avatar.vue';
 
 const props = defineProps({
   activePortal: {
@@ -145,8 +144,9 @@ async function deleteLogo() {
 }
 
 const handleAvatarUpload = file => {
+  if (!file) return;
   if (checkFileSizeLimit(file, MAXIMUM_FILE_UPLOAD_SIZE)) {
-    uploadLogoToStorage(file);
+    uploadLogoToStorage({ file });
   } else {
     const errorKey =
       'HELP_CENTER.PORTAL_SETTINGS.FORM.AVATAR.IMAGE_UPLOAD_SIZE_ERROR';
@@ -168,13 +168,11 @@ defineExpose({
 </script>
 
 <template>
-  <div class="flex flex-col gap-8">
-    <!-- Portal Identity -->
+  <div class="grid grid-cols-1 items-start gap-8 xl:grid-cols-2">
     <div
-      class="relative flex flex-col gap-6 overflow-hidden rounded-2xl border border-border/40 bg-card p-6 shadow-sm"
+      class="relative flex h-full flex-col gap-6 overflow-hidden rounded-2xl border border-border/40 bg-card p-6 shadow-sm"
     >
-      <h2 class="flex items-center gap-2 text-base font-medium text-foreground">
-        <span class="i-lucide-monitor size-4 text-primary" aria-hidden="true" />
+      <h2 class="text-base font-medium text-foreground">
         {{ t('HELP_CENTER.PORTAL_SETTINGS.FORM.SECTION_IDENTITY') }}
       </h2>
 
@@ -183,15 +181,38 @@ defineExpose({
           <RelayLabel class="text-[13.5px]">
             {{ t('HELP_CENTER.PORTAL_SETTINGS.FORM.AVATAR.LABEL') }}
           </RelayLabel>
-          <Avatar
-            :src="state.logoUrl"
-            :name="state.name"
-            :size="96"
-            allow-upload
-            icon-name="i-lucide-layout-grid"
-            @upload="handleAvatarUpload"
-            @delete="handleAvatarDelete"
-          />
+          <div class="relative size-24">
+            <label
+              class="flex size-24 cursor-pointer flex-col items-center justify-center overflow-hidden rounded-2xl border-2 border-dashed border-border/60 bg-muted/20 transition-colors hover:bg-muted/50"
+            >
+              <img
+                v-if="state.logoUrl"
+                :src="state.logoUrl"
+                :alt="state.name"
+                class="size-full object-cover"
+              />
+              <span
+                v-else
+                class="flex size-10 items-center justify-center rounded-xl bg-primary/10 text-primary"
+              >
+                <span class="i-lucide-layout-grid size-5" aria-hidden="true" />
+              </span>
+              <input
+                type="file"
+                accept="image/png, image/jpeg, image/jpg, image/gif, image/webp"
+                class="hidden"
+                @change="handleAvatarUpload($event.target.files?.[0])"
+              />
+            </label>
+            <button
+              v-if="state.logoUrl"
+              type="button"
+              class="absolute -right-2 -top-2 flex size-6 items-center justify-center rounded-xl bg-accent text-muted-foreground outline outline-1 outline-card"
+              @click="handleAvatarDelete"
+            >
+              <span class="i-lucide-x size-4" aria-hidden="true" />
+            </button>
+          </div>
           <span
             class="max-w-[96px] text-center text-[11px] leading-tight text-muted-foreground"
           >
@@ -209,7 +230,7 @@ defineExpose({
               :placeholder="
                 t('HELP_CENTER.PORTAL_SETTINGS.FORM.NAME.PLACEHOLDER')
               "
-              class-name="h-9 text-[14px]"
+              class-name="!h-10 text-[14px]"
               @blur="v$.name.$touch()"
             />
             <p v-if="nameError" class="text-[12px] text-destructive">
@@ -225,7 +246,7 @@ defineExpose({
               :placeholder="
                 t('HELP_CENTER.PORTAL_SETTINGS.FORM.HEADER_TEXT.PLACEHOLDER')
               "
-              class-name="h-9 text-[14px]"
+              class-name="!h-10 text-[14px]"
             />
           </div>
           <div class="flex flex-col gap-1.5">
@@ -237,22 +258,17 @@ defineExpose({
               :placeholder="
                 t('HELP_CENTER.PORTAL_SETTINGS.FORM.PAGE_TITLE.PLACEHOLDER')
               "
-              class-name="h-9 text-[14px]"
+              class-name="!h-10 text-[14px]"
             />
           </div>
         </div>
       </div>
     </div>
 
-    <!-- Domain & Routing -->
     <div
-      class="flex flex-col gap-6 rounded-2xl border border-border/40 bg-card p-6 shadow-sm"
+      class="flex h-full flex-col gap-6 rounded-2xl border border-border/40 bg-card p-6 shadow-sm"
     >
-      <h2 class="flex items-center gap-2 text-base font-medium text-foreground">
-        <span
-          class="i-lucide-layout-grid size-4 text-primary"
-          aria-hidden="true"
-        />
+      <h2 class="text-base font-medium text-foreground">
         {{ t('HELP_CENTER.PORTAL_SETTINGS.FORM.SECTION_ROUTING') }}
       </h2>
 
@@ -266,7 +282,7 @@ defineExpose({
             :placeholder="
               t('HELP_CENTER.PORTAL_SETTINGS.FORM.HOME_PAGE_LINK.PLACEHOLDER')
             "
-            class-name="h-9 text-[14px]"
+            class-name="!h-10 text-[14px]"
             @blur="v$.homePageLink.$touch()"
           />
           <p v-if="homePageLinkError" class="text-[12px] text-destructive">
@@ -283,7 +299,7 @@ defineExpose({
             :placeholder="
               t('HELP_CENTER.PORTAL_SETTINGS.FORM.SLUG.PLACEHOLDER')
             "
-            class-name="h-9 text-[14px]"
+            class-name="!h-10 text-[14px]"
             @blur="v$.slug.$touch()"
           />
           <p

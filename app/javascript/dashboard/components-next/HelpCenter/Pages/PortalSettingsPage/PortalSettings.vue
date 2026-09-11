@@ -143,7 +143,7 @@ const handleDeletePortal = () => {
         </div>
 
         <div
-          class="mt-2 flex w-full flex-col items-start justify-between gap-6 rounded-2xl border border-border/40 bg-card p-6 shadow-sm sm:flex-row sm:items-center"
+          class="mt-8 flex w-full flex-col items-start justify-between gap-6 rounded-2xl border border-border/40 bg-card p-6 shadow-sm sm:flex-row sm:items-center"
         >
           <div class="space-y-1.5">
             <h3 class="text-base font-medium text-foreground">

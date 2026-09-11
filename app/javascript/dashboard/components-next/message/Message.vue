@@ -449,12 +449,7 @@ const shouldRenderMessage = computed(() => {
   );
 });
 
-const showInboxAvatar = computed(
-  () =>
-    props.isInboxView &&
-    variant.value !== MESSAGE_VARIANTS.ACTIVITY &&
-    variant.value !== MESSAGE_VARIANTS.PRIVATE
-);
+const showInboxAvatar = computed(() => false);
 
 const inboxAvatarSrc = computed(() => {
   if (props.sender?.thumbnail) return props.sender.thumbnail;

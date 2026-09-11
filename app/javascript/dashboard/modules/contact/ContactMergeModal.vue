@@ -10,6 +10,8 @@ import {
   DialogPortal,
   DialogOverlay,
   DialogContent,
+  DialogTitle,
+  DialogDescription,
 } from 'reka-ui';
 import ContactAPI from 'dashboard/api/contacts';
 import { CONTACTS_EVENTS } from '../../helper/AnalyticsHelper/events';
@@ -163,8 +165,8 @@ const initials = name => {
           class="fixed left-[50%] top-[50%] z-[200] flex w-full max-w-[600px] translate-x-[-50%] translate-y-[-50%] flex-col overflow-hidden border border-border/80 bg-background p-0 shadow-xl duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 sm:rounded-xl"
         >
           <RelayModalHeader
-            title-tag="DialogTitle"
-            description-tag="DialogDescription"
+            :title-tag="DialogTitle"
+            :description-tag="DialogDescription"
             :title="
               isPreviewOpen
                 ? t('CONTACTS_LAYOUT.SIDEBAR.MERGE.PREVIEW_TITLE')

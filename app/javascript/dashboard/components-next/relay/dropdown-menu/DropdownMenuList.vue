@@ -167,7 +167,8 @@ onMounted(() => {
       <input
         ref="searchInput"
         v-model="searchQuery"
-        type="search"
+        type="text"
+        data-slot="input"
         :placeholder="
           searchPlaceholder || t('DROPDOWN_MENU.SEARCH_PLACEHOLDER')
         "

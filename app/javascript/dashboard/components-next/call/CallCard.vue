@@ -99,7 +99,7 @@ onBeforeUnmount(onDragEnd);
         <div
           class="flex size-8 items-center justify-center rounded-full bg-emerald-100 text-emerald-600 dark:bg-emerald-900/40 dark:text-emerald-400"
         >
-          <span class="i-lucide-phone size-4 fill-current" />
+          <span class="i-ri-phone-fill size-4" />
         </div>
         <span
           class="text-[10px] font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400"
@@ -122,15 +122,17 @@ onBeforeUnmount(onDragEnd);
     </div>
 
     <div class="mb-4 flex items-center gap-3">
-      <Avatar :src="callInfo.avatar" :name="callInfo.contactName" :size="40" />
+      <Avatar
+        :src="callInfo.avatar"
+        :name="callInfo.contactName"
+        :size="40"
+        rounded-full
+      />
       <div class="min-w-0 flex-1">
         <p class="truncate text-[14px] font-semibold text-foreground">
           {{ callInfo.contactName }}
         </p>
-        <p
-          v-if="callInfo.phoneNumber"
-          class="truncate text-[12px] text-muted-foreground"
-        >
+        <p class="truncate text-[12px] text-muted-foreground">
           {{ callInfo.phoneNumber }}
         </p>
       </div>

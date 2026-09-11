@@ -324,7 +324,9 @@ const tailwindConfig = {
       'outgoing-attachment': withAlpha('--outgoing-attachment'),
       'outgoing-attachment-border': withAlpha('--outgoing-attachment-border'),
       'private-note': withAlpha('--private-note'),
+      'private-note-editor': withAlpha('--private-note-editor'),
       success: withAlpha('--success'),
+      online: withAlpha('--online'),
       'conversation-score': withAlpha('--conversation-score'),
       warning: withAlpha('--warning'),
       priority: {

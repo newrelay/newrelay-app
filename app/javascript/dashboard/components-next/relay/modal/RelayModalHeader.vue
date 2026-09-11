@@ -17,12 +17,12 @@ defineProps({
     default: '',
   },
   titleTag: {
-    type: String,
+    type: [String, Object],
     default: 'h2',
   },
   descriptionTag: {
-    type: String,
-    default: 'p',
+    type: [String, Object],
+    default: 'div',
   },
   showClose: {
     type: Boolean,

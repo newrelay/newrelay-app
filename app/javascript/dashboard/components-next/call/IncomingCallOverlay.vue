@@ -53,10 +53,7 @@ defineEmits(['accept', 'reject', 'minimize']);
                 {{ $t('CONVERSATION.VOICE_WIDGET.INCOMING_CALL_RINGING') }}
               </span>
             </div>
-            <p
-              v-if="callInfo.phoneNumber"
-              class="mt-1 text-[15px] text-muted-foreground"
-            >
+            <p class="mt-1 text-[15px] text-muted-foreground">
               {{ callInfo.phoneNumber }}
             </p>
           </div>

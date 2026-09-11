@@ -63,7 +63,7 @@ const availabilityLabel = computed(() => {
 });
 
 const statusDotClass = computed(() => {
-  if (currentUserAvailability.value === 'online') return 'bg-success';
+  if (currentUserAvailability.value === 'online') return 'bg-online';
   if (currentUserAvailability.value === 'busy') return 'bg-warning';
   return 'bg-muted-foreground';
 });
@@ -279,7 +279,7 @@ const onLogout = () => {
               class="flex w-full cursor-pointer items-center gap-2 rounded-md px-2 py-1.5 text-sm transition-colors hover:bg-accent"
               @click="changeAvailabilityStatus('online')"
             >
-              <span class="size-2.5 rounded-full bg-success" />
+              <span class="size-2.5 rounded-full bg-online" />
               <span>{{
                 t('PROFILE_SETTINGS.FORM.AVAILABILITY.STATUS.ONLINE')
               }}</span>

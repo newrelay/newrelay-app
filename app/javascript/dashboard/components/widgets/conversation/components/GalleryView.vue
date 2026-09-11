@@ -38,6 +38,7 @@ const ALLOWED_FILE_TYPES = {
   VIDEO: 'video',
   IG_REEL: 'ig_reel',
   AUDIO: 'audio',
+  FILE: 'file',
 };
 
 const isDownloading = ref(false);
@@ -75,6 +76,16 @@ const isVideo = computed(() =>
 const isAudio = computed(
   () => activeFileType.value === ALLOWED_FILE_TYPES.AUDIO
 );
+const isFile = computed(() => activeFileType.value === ALLOWED_FILE_TYPES.FILE);
+const isPdf = computed(() => {
+  const name = (
+    activeAttachment.value.data_url ||
+    activeAttachment.value.dataUrl ||
+    ''
+  ).toLowerCase();
+  const ext = (activeAttachment.value.extension || '').toString().toLowerCase();
+  return isFile.value && (ext.includes('pdf') || name.includes('.pdf'));
+});
 
 const fileNameFromDataUrl = computed(() => {
   const { data_url: dataUrl } = activeAttachment.value;
@@ -269,6 +280,14 @@ watch(
             <source :src="`${activeAttachment.data_url}?t=${Date.now()}`" />
           </audio>
 
+          <iframe
+            v-else-if="isPdf"
+            :key="activeAttachment.id || activeAttachment.data_url"
+            :src="activeAttachment.data_url"
+            :title="fileNameFromDataUrl"
+            class="h-[70vh] w-full max-w-5xl rounded-lg border border-border/40 bg-background"
+          />
+
           <button
             v-if="hasMoreThanOneAttachment"
             type="button"
@@ -281,7 +300,7 @@ watch(
 
           <div
             v-if="showDots"
-            class="absolute bottom-3 left-1/2 flex -translate-x-1/2 items-center gap-1.5 rounded-full border border-border bg-background/90 px-3 py-1.5 shadow-md backdrop-blur-sm"
+            class="absolute bottom-3 left-1/2 flex -translate-x-1/2 items-center gap-1.5"
           >
             <button
               v-for="(item, idx) in allAttachments"

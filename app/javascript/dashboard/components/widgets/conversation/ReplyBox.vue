@@ -1440,7 +1440,8 @@ export default {
         <div
           v-else-if="!showAudioRecorderEditor"
           :class="{
-            'inbox-note-editor bg-warning/10 text-warning': isOnPrivateNote,
+            'inbox-note-editor bg-private-note-editor text-warning':
+              isOnPrivateNote,
           }"
         >
           <WootMessageEditor
@@ -1660,7 +1661,7 @@ export default {
   @apply bg-transparent text-warning;
 
   p.empty-node:first-child::before {
-    @apply text-warning/60;
+    @apply text-warning;
   }
 }
 

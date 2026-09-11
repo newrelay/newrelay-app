@@ -344,7 +344,7 @@ const learnMore = () => {
         class="w-full max-w-sm mx-auto flex flex-col items-center text-center"
       >
         <div
-          class="size-[72px] rounded-2xl bg-primary/10 ring-1 ring-inset ring-primary/5 shadow-sm flex items-center justify-center mb-6"
+          class="mb-6 flex size-[72px] items-center justify-center rounded-2xl bg-accent ring-1 ring-inset ring-primary/5 shadow-sm"
         >
           <span class="i-lucide-archive size-8 text-primary" />
         </div>

@@ -24,7 +24,7 @@ export const DROPDOWN_MENU_SEARCH_ICON_CLASS =
   'i-lucide-search pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground';
 
 export const DROPDOWN_MENU_SEARCH_INPUT_CLASS =
-  'reset-base no-margin box-border h-9 w-full rounded-md border border-border/80 bg-background pl-9 pr-3 text-[14px] text-foreground shadow-sm placeholder:text-muted-foreground/70 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary/30';
+  'reset-base no-margin box-border h-9 w-full appearance-none rounded-md border border-border/80 bg-background pl-9 pr-3 text-[14px] text-foreground shadow-sm placeholder:text-muted-foreground/70 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary/30';
 
 /** Searchable dropdown inside modals — clamp to trigger width and available panel height. */
 export const DROPDOWN_MENU_MODAL_SEARCHABLE_CONTENT_CLASS =

@@ -55,7 +55,9 @@ const receiveCall = () => {
     inboxId: props.chat.inbox_id,
     caller: {
       name: sender.name,
-      phone: sender.phone_number,
+      phone:
+        sender.phone_number ||
+        store.getters['contacts/getContact'](sender.id)?.phone_number,
       avatar: sender.avatar || sender.thumbnail,
     },
   });
@@ -139,7 +141,7 @@ const toggleSidebar = () => {
             v-model="messageSearchQuery"
             type="text"
             :placeholder="t('CONVERSATION.HEADER.SEARCH_PLACEHOLDER')"
-            class="reset-base no-margin box-border h-8.5 w-[180px] rounded-lg border border-border/80 bg-background pl-8 pr-16 text-[13px] text-foreground shadow-xs placeholder:text-muted-foreground/70 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary/40 sm:w-[220px] md:w-[240px]"
+            class="reset-base no-margin box-border h-9 w-[140px] rounded-md border border-border/80 bg-background pl-8 pr-16 text-[14px] text-foreground shadow-sm placeholder:text-muted-foreground/70 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary/30 sm:w-[160px]"
             @keydown="onSearchKeydown"
           />
           <div

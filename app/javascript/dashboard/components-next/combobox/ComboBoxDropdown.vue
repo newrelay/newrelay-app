@@ -1,6 +1,12 @@
 <script setup>
 import { ref } from 'vue';
 import { useI18n } from 'vue-i18n';
+import {
+  DROPDOWN_MENU_SEARCH_HEADER_CLASS,
+  DROPDOWN_MENU_SEARCH_ICON_CLASS,
+  DROPDOWN_MENU_SEARCH_INPUT_CLASS,
+  DROPDOWN_MENU_SEARCH_WRAPPER_CLASS,
+} from 'dashboard/components-next/relay/dropdown-menu/constants';
 
 const props = defineProps({
   open: {
@@ -60,18 +66,20 @@ defineExpose({
 <template>
   <div
     v-show="open"
-    class="absolute z-50 w-full mt-1 transition-opacity duration-200 border rounded-md shadow-lg bg-card border-border"
+    class="absolute z-50 mt-1 w-full overflow-hidden rounded-md border border-border bg-popover text-popover-foreground shadow-md"
   >
-    <div class="relative border-b border-border">
-      <span class="absolute i-lucide-search top-2.5 size-4 left-3" />
-      <input
-        ref="searchInput"
-        :value="searchValue"
-        type="search"
-        :placeholder="searchPlaceholder || t('COMBOBOX.SEARCH_PLACEHOLDER')"
-        class="reset-base w-full py-2 pl-10 pr-2 focus:outline-none border-none rounded-t-md bg-card text-foreground text-[14px] shadow-sm rounded-md border-border/80 bg-background focus-visible:ring-1 focus-visible:ring-primary/30"
-        @input="onInputSearch"
-      />
+    <div :class="DROPDOWN_MENU_SEARCH_HEADER_CLASS">
+      <div :class="DROPDOWN_MENU_SEARCH_WRAPPER_CLASS">
+        <span :class="DROPDOWN_MENU_SEARCH_ICON_CLASS" />
+        <input
+          ref="searchInput"
+          :value="searchValue"
+          type="search"
+          :placeholder="searchPlaceholder || t('COMBOBOX.SEARCH_PLACEHOLDER')"
+          :class="DROPDOWN_MENU_SEARCH_INPUT_CLASS"
+          @input="onInputSearch"
+        />
+      </div>
     </div>
     <ul
       class="py-1 mb-0 overflow-auto max-h-60"
@@ -81,7 +89,7 @@ defineExpose({
       <li
         v-for="(option, index) in options"
         :key="`${option.value}-${index}`"
-        class="flex items-center justify-between w-full gap-2 px-3 py-2 text-sm transition-colors duration-150 cursor-pointer hover:bg-accent"
+        class="flex w-full cursor-pointer items-center justify-between gap-2 px-3 py-2 text-[14px] transition-colors duration-150 hover:bg-accent"
         :class="{
           'bg-accent': isSelected(option),
         }"
@@ -104,7 +112,7 @@ defineExpose({
       </li>
       <li
         v-if="options.length === 0"
-        class="px-3 py-2 text-sm text-muted-foreground"
+        class="px-3 py-2 text-[14px] text-muted-foreground"
       >
         {{ emptyState || t('COMBOBOX.EMPTY_STATE') }}
       </li>

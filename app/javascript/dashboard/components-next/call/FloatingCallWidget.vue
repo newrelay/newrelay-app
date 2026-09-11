@@ -123,7 +123,11 @@ const getCallInfo = call => {
       caller?.phone ||
       sender?.phone_number ||
       'Unknown caller',
-    phoneNumber: caller?.phone || sender?.phone_number || '',
+    phoneNumber:
+      caller?.phone ||
+      sender?.phone_number ||
+      store.getters['contacts/getContact'](sender?.id)?.phone_number ||
+      '',
     inboxName: inbox?.name || 'Customer support',
     location,
     countryFlag: countryCodeToFlag(countryCode),

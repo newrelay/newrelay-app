@@ -20,6 +20,8 @@ import {
   DROPDOWN_MENU_SEARCH_ICON_CLASS,
   DROPDOWN_MENU_SEARCH_INPUT_CLASS,
   DROPDOWN_MENU_MODAL_SEARCHABLE_CONTENT_CLASS,
+  DROPDOWN_MENU_MODAL_SEARCHABLE_LIST_CLASS,
+  DROPDOWN_MENU_MODAL_CONTENT_CLASS,
 } from 'dashboard/components-next/relay';
 import RelayModalHeader from 'dashboard/components-next/relay/modal/RelayModalHeader.vue';
 import { RELAY_MODAL_BODY_CLASS } from 'dashboard/components-next/relay/modal/constants';
@@ -33,7 +35,6 @@ const DROPDOWN_TRIGGER_CLASS =
   'h-9 w-full justify-between rounded-md border border-border/80 bg-background px-4 text-[14px] font-normal text-foreground shadow-sm hover:bg-background focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary/30';
 const MODAL_DROPDOWN_ITEM_CLASS =
   'flex cursor-default items-center justify-between rounded-sm px-3 py-2 text-[14px] text-foreground transition-colors hover:bg-accent hover:text-accent-foreground data-[highlighted]:bg-accent data-[highlighted]:text-accent-foreground';
-const MODAL_DROPDOWN_LIST_CLASS = 'min-h-0 flex-1 overflow-y-auto p-1';
 const REMOVE_FIELD_BUTTON_CLASS =
   'flex size-10 shrink-0 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-destructive/10 hover:text-destructive';
 const ADD_FIELD_BUTTON_CLASS =
@@ -631,6 +632,7 @@ defineExpose({ open, close });
                     <input
                       :value="companySearch"
                       type="text"
+                      data-slot="input"
                       :placeholder="
                         t(
                           'CONTACTS_LAYOUT.ADD_CONTACT_DRAWER.COMPANY_SEARCH_PLACEHOLDER'
@@ -641,7 +643,7 @@ defineExpose({ open, close });
                     />
                   </div>
                 </div>
-                <div :class="MODAL_DROPDOWN_LIST_CLASS">
+                <div :class="DROPDOWN_MENU_MODAL_SEARCHABLE_LIST_CLASS">
                   <div
                     v-if="!companySearch.trim()"
                     class="px-3 py-2 text-sm text-muted-foreground"
@@ -724,6 +726,7 @@ defineExpose({ open, close });
                         <input
                           v-model="contactTypeSearch"
                           type="text"
+                          data-slot="input"
                           :placeholder="
                             t(
                               'CONTACTS_LAYOUT.ADD_CONTACT_DRAWER.SEARCH_PLACEHOLDER'
@@ -733,7 +736,7 @@ defineExpose({ open, close });
                         />
                       </div>
                     </div>
-                    <div :class="MODAL_DROPDOWN_LIST_CLASS">
+                    <div :class="DROPDOWN_MENU_MODAL_SEARCHABLE_LIST_CLASS">
                       <RelayDropdownMenuItem
                         v-for="opt in filteredContactTypes"
                         :key="opt.value"
@@ -784,6 +787,7 @@ defineExpose({ open, close });
                         <input
                           v-model="timeZoneSearch"
                           type="text"
+                          data-slot="input"
                           :placeholder="
                             t(
                               'CONTACTS_LAYOUT.ADD_CONTACT_DRAWER.SEARCH_PLACEHOLDER'
@@ -793,7 +797,7 @@ defineExpose({ open, close });
                         />
                       </div>
                     </div>
-                    <div :class="MODAL_DROPDOWN_LIST_CLASS">
+                    <div :class="DROPDOWN_MENU_MODAL_SEARCHABLE_LIST_CLASS">
                       <RelayDropdownMenuItem
                         v-for="opt in filteredTimezones"
                         :key="opt.value"

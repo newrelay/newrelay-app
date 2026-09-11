@@ -1,11 +1,13 @@
 <script setup>
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { getFileInfo } from '@chatwoot/utils';
 
 import { useMessageContext } from '../provider.js';
 import BaseBubble from './Base.vue';
 import { formatBytes } from 'shared/helpers/FileHelper';
+import { useSnakeCase } from 'dashboard/composables/useTransformKeys';
+import GalleryView from 'dashboard/components/widgets/conversation/components/GalleryView.vue';
 
 const { attachments } = useMessageContext();
 const { t } = useI18n();
@@ -68,18 +70,27 @@ const iconWrapClass = computed(() =>
     ? 'bg-destructive/10 text-destructive'
     : 'bg-primary/10 text-primary'
 );
+
+const showPreview = ref(false);
+
+const openPreview = event => {
+  if (!isPdf.value) return;
+  event.preventDefault();
+  showPreview.value = true;
+};
 </script>
 
 <template>
   <BaseBubble
-    class="min-w-[280px] cursor-pointer overflow-hidden !rounded-xl !border !border-border !bg-card !p-3 !text-foreground shadow-xs hover:!bg-muted/50"
+    class="min-w-[280px] cursor-pointer overflow-hidden !rounded-xl !border !border-border !bg-card !p-3 !text-foreground shadow-xs transition-colors hover:!bg-background/80 hover:!backdrop-blur-xs"
     data-bubble-name="file"
   >
     <a
       :href="url"
       rel="noreferrer noopener nofollow"
-      target="_blank"
+      :target="isPdf ? undefined : '_blank'"
       class="flex min-w-0 items-center gap-4 text-inherit no-underline"
+      @click="openPreview"
     >
       <div
         class="flex size-10 shrink-0 items-center justify-center rounded-lg"
@@ -97,4 +108,11 @@ const iconWrapClass = computed(() =>
       </div>
     </a>
   </BaseBubble>
+  <GalleryView
+    v-if="showPreview"
+    v-model:show="showPreview"
+    :attachment="{ ...useSnakeCase(attachment), file_type: 'file' }"
+    :all-attachments="[{ ...useSnakeCase(attachment), file_type: 'file' }]"
+    @close="() => (showPreview = false)"
+  />
 </template>

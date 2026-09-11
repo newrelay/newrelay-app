@@ -34,7 +34,7 @@ const statusList = computed(() => {
   ];
 });
 
-const statusColors = ['bg-success', 'bg-warning', 'bg-muted-foreground'];
+const statusColors = ['bg-online', 'bg-warning', 'bg-muted-foreground'];
 
 const availabilityStatuses = computed(() => {
   return statusList.value.map((statusLabel, index) => ({

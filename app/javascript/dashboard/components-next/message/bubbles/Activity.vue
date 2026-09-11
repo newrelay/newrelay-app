@@ -52,7 +52,10 @@ const activityIconClass = computed(() => {
   if (text.includes('resolv')) return 'text-success';
   if (text.includes('pending') || text.includes('snooze'))
     return 'text-warning';
-  return 'text-muted-foreground';
+  if (text.includes('block') || text.includes('ban')) return 'text-destructive';
+  if (text.includes('assign') || text.includes('label') || text.includes('tag'))
+    return 'text-primary';
+  return 'text-primary';
 });
 </script>
 

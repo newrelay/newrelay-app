@@ -1039,12 +1039,20 @@ useEmitter(BUS_EVENTS.INSERT_INTO_RICH_EDITOR, insertContentIntoEditor);
 
   .ProseMirror-menubar-wrapper {
     > .ProseMirror {
-      @apply text-foreground;
+      @apply bg-private-note-editor text-warning;
 
       p {
-        @apply text-foreground;
+        @apply text-warning;
       }
     }
+  }
+
+  .ProseMirror-relay-style {
+    @apply bg-private-note-editor text-warning;
+  }
+
+  p.empty-node:first-child::before {
+    @apply text-warning;
   }
 }
 

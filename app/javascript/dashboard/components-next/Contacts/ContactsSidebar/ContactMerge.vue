@@ -239,16 +239,11 @@ const initials = name => {
       >
         <RelayModalHeader
           :title="t('CONTACTS_LAYOUT.SIDEBAR.MERGE.PREVIEW_TITLE')"
+          :description="t('CONTACTS_LAYOUT.SIDEBAR.MERGE.PREVIEW_SUBTITLE')"
           @close="isPreviewOpen = false"
-        >
-          <template #description>
-            <p :class="RELAY_MODAL_DESCRIPTION_CLASS">
-              {{ t('CONTACTS_LAYOUT.SIDEBAR.MERGE.PREVIEW_SUBTITLE') }}
-            </p>
-          </template>
-        </RelayModalHeader>
+        />
 
-        <div class="pt-4" :class="[RELAY_MODAL_BODY_CLASS]">
+        <div :class="[RELAY_MODAL_BODY_CLASS]">
           <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div
               class="flex flex-col gap-4 rounded-lg border border-border bg-card p-4"

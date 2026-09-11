@@ -76,7 +76,7 @@ export default {
     },
     noteTabClass() {
       return this.isNoteActive
-        ? 'relative -mb-px px-4 py-2.5 text-sm font-semibold text-amber-600 bg-amber-500/10'
+        ? 'relative -mb-px px-4 py-2.5 text-sm font-semibold text-warning bg-warning/10'
         : 'relative -mb-px px-4 py-2.5 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors';
     },
   },
@@ -105,7 +105,7 @@ export default {
         }}
         <span
           v-if="isReplyActive"
-          class="absolute inset-x-0 bottom-0 h-0.5 bg-primary"
+          class="absolute inset-x-0 bottom-0 h-px bg-primary"
           aria-hidden="true"
         />
       </button>
@@ -121,7 +121,7 @@ export default {
         {{ $t('CONVERSATION.REPLYBOX.INTERNAL_COMMENT') }}
         <span
           v-if="isNoteActive"
-          class="absolute inset-x-0 bottom-0 h-0.5 bg-amber-500"
+          class="absolute inset-x-0 bottom-0 h-px bg-warning"
           aria-hidden="true"
         />
       </button>

@@ -427,7 +427,9 @@ export default {
         type="submit"
         variant="default"
         class="h-8 gap-1.5 px-4 text-sm font-semibold shadow-xs"
-        :class="isNote ? 'bg-amber-500 text-white hover:bg-amber-600' : ''"
+        :class="
+          isNote ? 'bg-warning text-primary-foreground hover:bg-warning/90' : ''
+        "
         :disabled="isSendDisabled"
         @click="onSend"
       >

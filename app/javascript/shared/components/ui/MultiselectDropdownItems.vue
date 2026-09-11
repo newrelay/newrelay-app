@@ -1,5 +1,11 @@
 <script>
 import { removeEmoji } from 'shared/helpers/emoji';
+import {
+  DROPDOWN_MENU_SEARCH_HEADER_CLASS,
+  DROPDOWN_MENU_SEARCH_WRAPPER_CLASS,
+  DROPDOWN_MENU_SEARCH_ICON_CLASS,
+  DROPDOWN_MENU_SEARCH_INPUT_CLASS,
+} from 'dashboard/components-next/relay/dropdown-menu/constants';
 
 export default {
   props: {
@@ -20,6 +26,14 @@ export default {
     },
   },
   emits: ['select'],
+  setup() {
+    return {
+      DROPDOWN_MENU_SEARCH_HEADER_CLASS,
+      DROPDOWN_MENU_SEARCH_WRAPPER_CLASS,
+      DROPDOWN_MENU_SEARCH_ICON_CLASS,
+      DROPDOWN_MENU_SEARCH_INPUT_CLASS,
+    };
+  },
 
   data() {
     return {
@@ -69,15 +83,19 @@ export default {
 
 <template>
   <div class="w-full flex flex-col max-h-[12.5rem]">
-    <div class="mb-1 px-0.5">
-      <input
-        ref="searchbar"
-        v-model="search"
-        type="search"
-        class="reset-base no-margin m-0 box-border h-8 w-full max-w-full rounded-md border border-border/80 bg-background px-2.5 py-0 text-[13px] leading-none text-foreground shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary/30"
-        autofocus="true"
-        :placeholder="inputPlaceholder"
-      />
+    <div :class="DROPDOWN_MENU_SEARCH_HEADER_CLASS">
+      <div :class="DROPDOWN_MENU_SEARCH_WRAPPER_CLASS">
+        <span :class="DROPDOWN_MENU_SEARCH_ICON_CLASS" />
+        <input
+          ref="searchbar"
+          v-model="search"
+          type="text"
+          data-slot="input"
+          :class="DROPDOWN_MENU_SEARCH_INPUT_CLASS"
+          autofocus="true"
+          :placeholder="inputPlaceholder"
+        />
+      </div>
     </div>
     <div class="flex items-start justify-start flex-auto overflow-auto">
       <div class="w-full max-h-[10rem]">

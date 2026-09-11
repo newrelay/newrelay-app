@@ -76,7 +76,7 @@ const AVATAR_COLORS = {
 };
 
 const STATUS_CLASSES = computed(() => ({
-  online: 'bg-success',
+  online: 'bg-online',
   busy: 'bg-warning',
   ...(props.hideOfflineStatus ? {} : { offline: 'bg-muted-foreground' }),
 }));

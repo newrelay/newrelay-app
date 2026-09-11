@@ -9,20 +9,30 @@ import DropdownSection from 'next/dropdown-menu/base/DropdownSection.vue';
 import DropdownBody from 'next/dropdown-menu/base/DropdownBody.vue';
 import DropdownItem from 'next/dropdown-menu/base/DropdownItem.vue';
 
-const { options, maxChips, dropdownMaxHeight } = defineProps({
-  options: {
-    type: Array,
-    required: true,
-  },
-  maxChips: {
-    type: Number,
-    default: 3,
-  },
-  dropdownMaxHeight: {
-    type: String,
-    default: 'max-h-80',
-  },
-});
+const { options, maxChips, dropdownMaxHeight, appearance, placeholder } =
+  defineProps({
+    options: {
+      type: Array,
+      required: true,
+    },
+    maxChips: {
+      type: Number,
+      default: 3,
+    },
+    dropdownMaxHeight: {
+      type: String,
+      default: 'max-h-80',
+    },
+    appearance: {
+      type: String,
+      default: 'default',
+      validator: value => ['default', 'field', 'fieldMuted'].includes(value),
+    },
+    placeholder: {
+      type: String,
+      default: '',
+    },
+  });
 
 const { t } = useI18n();
 const selected = defineModel({
@@ -68,6 +78,21 @@ const remainingTooltip = computed(() => {
   return remainingItems.value.map(item => item.name).join(', ');
 });
 
+const isFieldAppearance = computed(() =>
+  ['field', 'fieldMuted'].includes(appearance)
+);
+
+const fieldTriggerClass = computed(() =>
+  appearance === 'fieldMuted'
+    ? 'flex h-9 w-full items-center justify-between rounded-lg border border-border/50 bg-muted/40 px-3 text-[13.5px] outline-none transition-all hover:border-border hover:bg-muted/70 focus:ring-1 focus:ring-primary/30'
+    : 'flex h-9 w-full items-center justify-between rounded-lg border border-border/70 bg-background px-3 text-[13.5px] font-medium text-foreground shadow-xs outline-none transition-colors hover:bg-muted/60 focus:ring-1 focus:ring-primary/30'
+);
+
+const fieldSelectedLabel = computed(() => {
+  if (!hasItems.value) return '';
+  return selectedItems.value.map(item => item.name).join(', ');
+});
+
 const toggleOption = option => {
   // Ensure that the `icon` prop is not included, icon is a VNode which has circular references
   // This causes an error when creating a clone using JSON.parse(JSON.stringify())
@@ -95,7 +120,23 @@ const toggleOption = option => {
   <DropdownContainer>
     <template #trigger="{ toggle }">
       <button
-        v-if="hasItems"
+        v-if="isFieldAppearance"
+        type="button"
+        :class="fieldTriggerClass"
+        @click="toggle"
+      >
+        <span
+          class="truncate"
+          :class="hasItems ? 'text-foreground' : 'text-muted-foreground'"
+        >
+          {{ fieldSelectedLabel || placeholder || t('COMBOBOX.PLACEHOLDER') }}
+        </span>
+        <span
+          class="i-lucide-chevron-down ml-1 size-3.5 shrink-0 text-muted-foreground opacity-50"
+        />
+      </button>
+      <button
+        v-else-if="hasItems"
         class="bg-accent py-2 rounded-lg h-8 flex items-center px-0"
         @click="toggle"
       >
@@ -130,7 +171,16 @@ const toggleOption = option => {
         }}</span>
       </Button>
     </template>
-    <DropdownBody class="top-0 min-w-48 z-50" strong>
+    <DropdownBody
+      class="z-50"
+      :class="
+        isFieldAppearance ? 'top-0 w-full min-w-[220px]' : 'top-0 min-w-48'
+      "
+      :content-class="
+        isFieldAppearance ? 'rounded-xl border-border/80 p-1.5 shadow-xl' : ''
+      "
+      strong
+    >
       <DropdownSection :height="dropdownMaxHeight">
         <DropdownItem
           v-for="option in options"

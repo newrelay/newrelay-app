@@ -229,10 +229,12 @@ const saveMacro = async macroData => {
           class="flex flex-col justify-between gap-4 border-b border-border/40 p-4 sm:flex-row sm:items-center sm:p-6"
         >
           <div>
-            <h3 class="text-base font-medium text-foreground">
+            <h3 class="text-base font-semibold text-foreground">
               {{ $t('MACROS.HEADER') }}
             </h3>
-            <p class="mt-1 max-w-3xl text-sm text-muted-foreground">
+            <p
+              class="mt-1 max-w-3xl text-[13.5px] leading-relaxed text-muted-foreground"
+            >
               {{ $t('MACROS.DESCRIPTION') }}
             </p>
           </div>
@@ -240,15 +242,14 @@ const saveMacro = async macroData => {
             class="h-9 shrink-0 px-4 text-[13px] font-medium shadow-sm"
             @click="openNewMacroBuilder"
           >
+            <span class="i-lucide-plus mr-1.5 size-4 block" />
             {{ $t('MACROS.HEADER_BTN_TXT') }}
           </RelayButton>
         </div>
 
-        <div class="space-y-6 p-4 sm:p-6">
-          <div
-            class="flex items-center justify-between rounded-xl border border-border/60 bg-card p-2 shadow-xs"
-          >
-            <div class="relative w-full max-w-md">
+        <div class="space-y-5 p-4 sm:p-6">
+          <div class="flex items-center justify-between gap-3">
+            <div class="relative w-full max-w-sm">
               <Icon
                 icon="i-lucide-search"
                 class="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground"
@@ -257,11 +258,11 @@ const saveMacro = async macroData => {
                 v-model="searchQuery"
                 type="search"
                 :placeholder="$t('MACROS.SEARCH_PLACEHOLDER')"
-                class-name="h-9 w-full border-border/40 bg-background/50 pl-9 text-[13.5px] shadow-none focus-visible:bg-background focus-visible:ring-1 focus-visible:ring-primary/20"
+                class-name="h-9 w-full rounded-lg border-border/70 bg-background/80 pl-9 text-[13.5px] shadow-none focus-visible:ring-1 focus-visible:ring-primary/20"
               />
             </div>
             <div
-              class="shrink-0 border-l border-border/40 px-4 text-[13px] font-medium text-muted-foreground"
+              class="shrink-0 border-l border-border/40 pl-2 text-[13px] font-medium text-muted-foreground"
             >
               {{ $t('MACROS.COUNT', { n: filteredRecords.length }) }}
             </div>
@@ -284,7 +285,7 @@ const saveMacro = async macroData => {
               class="flex flex-col items-center justify-center p-16 text-center"
             >
               <div
-                class="mb-5 flex size-14 items-center justify-center rounded-full bg-muted"
+                class="mb-4 flex size-14 items-center justify-center rounded-full bg-muted"
               >
                 <Icon
                   icon="i-lucide-wand-2"
@@ -294,11 +295,23 @@ const saveMacro = async macroData => {
               <h3 class="text-[20px] font-[600] text-foreground">
                 {{ $t('MACROS.LIST.404') }}
               </h3>
+              <p
+                class="mt-1.5 max-w-md text-[13.5px] leading-relaxed text-muted-foreground"
+              >
+                {{ $t('MACROS.LIST.404_DESCRIPTION') }}
+              </p>
+              <RelayButton
+                class="mt-6 h-9 px-4 text-[13.5px] font-medium"
+                @click="openNewMacroBuilder"
+              >
+                <span class="i-lucide-plus mr-1.5 size-4 block" />
+                {{ $t('MACROS.LIST.CREATE_CTA') }}
+              </RelayButton>
             </div>
 
             <div v-else class="min-w-full">
               <div
-                class="grid grid-cols-[1.5fr_1fr_1fr_1fr_100px] items-center border-b border-border/40 bg-muted/30 px-6 py-3.5"
+                class="grid grid-cols-[1.5fr_1fr_1fr_1fr_80px] items-center border-b border-border/40 bg-muted/30 px-6 py-3.5"
               >
                 <div class="text-[14px] font-medium text-muted-foreground">
                   {{ $t('MACROS.LIST.TABLE_HEADER.NAME') }}

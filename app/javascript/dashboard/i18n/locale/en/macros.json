@@ -4,7 +4,7 @@
     "DESCRIPTION": "A macro is a set of saved actions that help customer service agents easily complete tasks. The agents can define a set of actions like tagging a conversation with a label, sending an email transcript, updating a custom attribute, etc., and they can run these actions in a single click.",
     "LEARN_MORE": "Learn more about macros",
     "COUNT": "{n} macro | {n} macros",
-    "HEADER_BTN_TXT": "Add a new macro",
+    "HEADER_BTN_TXT": "Add macro",
     "HEADER_BTN_TXT_SAVE": "Save macro",
     "LOADING": "Fetching macros",
     "SEARCH_PLACEHOLDER": "Search macros...",
@@ -14,7 +14,7 @@
     "ADD": {
       "FORM": {
         "NAME": {
-          "LABEL": "Macro name",
+          "LABEL": "Macro Name",
           "PLACEHOLDER": "Enter a name for your macro",
           "ERROR": "Name is required for creating a macro"
         },
@@ -35,7 +35,9 @@
         "VISIBILITY": "Visibility",
         "ACTIONS": "Actions"
       },
-      "404": "No macros found"
+      "404": "No macros found",
+      "404_DESCRIPTION": "Create a set of saved actions so agents can complete tasks in one click.",
+      "CREATE_CTA": "Create New Macro"
     },
     "DELETE": {
       "TOOLTIP": "Delete macro",
@@ -65,8 +67,11 @@
       "END_FLOW": "End Flow",
       "FLOW_CANVAS": "Flow Canvas",
       "STEPS": "{n} Step | {n} Steps",
-      "DETAILS_TITLE": "Macro Details",
+      "DETAILS_TITLE": "Macro Configuration",
       "DETAILS_DESCRIPTION": "Name and visibility for this macro",
+      "SELECT_OPTION": "+ Select an option...",
+      "SEARCH_ACTIONS": "Search actions...",
+      "NO_PARAMS": "Executes automatically",
       "LOADING": "Fetching macro",
       "ADD_BTN_TOOLTIP": "Add new action",
       "DELETE_BTN_TOOLTIP": "Delete Action",
@@ -75,13 +80,13 @@
         "LABEL": "Macro Visibility",
         "GLOBAL": {
           "LABEL": "Public",
-          "DESCRIPTION": "This macro is available publicly for all agents in this account.",
+          "DESCRIPTION": "Available to all agents",
           "CREATE_DISABLED_DESCRIPTION": "Only administrators can create public macros.",
           "EDIT_DISABLED_DESCRIPTION": "Only administrators can edit public macros."
         },
         "PERSONAL": {
           "LABEL": "Private",
-          "DESCRIPTION": "This macro will be private to you and not be available to others."
+          "DESCRIPTION": "Only visible to you"
         }
       }
     },

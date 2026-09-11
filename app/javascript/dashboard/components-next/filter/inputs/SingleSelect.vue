@@ -18,6 +18,7 @@ const {
   placeholderTrailingIcon,
   searchPlaceholder,
   dropdownMaxHeight,
+  appearance,
 } = defineProps({
   options: {
     type: Array,
@@ -51,7 +52,22 @@ const {
     type: Boolean,
     default: false,
   },
+  appearance: {
+    type: String,
+    default: 'default',
+    validator: value => ['default', 'field', 'fieldMuted'].includes(value),
+  },
 });
+
+const isFieldAppearance = computed(() =>
+  ['field', 'fieldMuted'].includes(appearance)
+);
+
+const fieldTriggerClass = computed(() =>
+  appearance === 'fieldMuted'
+    ? 'flex h-9 w-full items-center justify-between rounded-lg border border-border/50 bg-muted/40 px-3 text-[13.5px] outline-none transition-all hover:border-border hover:bg-muted/70 focus:ring-1 focus:ring-primary/30'
+    : 'flex h-9 w-full items-center justify-between rounded-lg border border-border/70 bg-background px-3 text-[13.5px] font-medium text-foreground shadow-xs outline-none transition-colors hover:bg-muted/60 focus:ring-1 focus:ring-primary/30'
+);
 
 const { t } = useI18n();
 const selected = defineModel({
@@ -99,8 +115,25 @@ const toggleSelected = option => {
 <template>
   <DropdownContainer>
     <template #trigger="{ toggle }">
+      <button
+        v-if="isFieldAppearance"
+        type="button"
+        :class="fieldTriggerClass"
+        @click="toggle"
+      >
+        <span
+          class="truncate"
+          :class="selectedItem ? 'text-foreground' : 'text-muted-foreground'"
+        >
+          {{ selectedItem?.name || placeholder || t('COMBOBOX.PLACEHOLDER') }}
+        </span>
+        <span
+          class="i-lucide-chevron-down ml-2 size-3.5 shrink-0 text-muted-foreground"
+          :class="appearance === 'fieldMuted' ? 'opacity-50' : 'opacity-60'"
+        />
+      </button>
       <Button
-        v-if="selectedItem"
+        v-else-if="selectedItem"
         sm
         slate
         faded
@@ -126,45 +159,75 @@ const toggleSelected = option => {
         }}</span>
       </Button>
     </template>
-    <DropdownBody class="top-0 min-w-56 z-50" strong>
-      <div v-if="!disableSearch" class="relative">
-        <Icon class="absolute size-4 left-2 top-2" icon="i-lucide-search" />
+    <DropdownBody
+      class="z-50"
+      :class="isFieldAppearance ? 'top-0 min-w-[320px]' : 'top-0 min-w-56'"
+      :content-class="
+        isFieldAppearance
+          ? 'min-w-[320px] rounded-xl border-border/80 p-0 shadow-xl'
+          : ''
+      "
+      strong
+    >
+      <div
+        v-if="!disableSearch"
+        class="relative"
+        :class="
+          isFieldAppearance ? 'border-b border-border/40 bg-muted/20 p-2' : ''
+        "
+      >
+        <Icon
+          :class="
+            isFieldAppearance
+              ? 'absolute left-4 top-1/2 size-3.5 -translate-y-1/2 text-muted-foreground'
+              : 'absolute left-2 top-2 size-4'
+          "
+          icon="i-lucide-search"
+        />
         <input
           v-model="searchTerm"
           autofocus
-          class="p-1.5 pl-8 text-muted-foreground bg-muted w-full text-[14px] shadow-sm rounded-md border-border/80 bg-background focus-visible:ring-1 focus-visible:ring-primary/30"
+          :class="
+            isFieldAppearance
+              ? 'h-8 w-full border-none bg-transparent pl-8 pr-3 text-[13px] text-foreground outline-none placeholder:text-muted-foreground'
+              : 'w-full rounded-md border-border/80 bg-muted bg-background p-1.5 pl-8 text-[14px] text-muted-foreground shadow-sm focus-visible:ring-1 focus-visible:ring-primary/30'
+          "
           :placeholder="searchPlaceholder || t('COMBOBOX.SEARCH_PLACEHOLDER')"
         />
       </div>
-      <DropdownSection :height="dropdownMaxHeight">
-        <template v-if="searchResults.length">
-          <DropdownItem
-            v-for="option in searchResults"
-            :key="option.id"
-            :icon="option.icon"
-            @click="toggleSelected(option)"
-          >
-            <template #label>
-              {{ option.name }}
-              <Icon
-                v-if="selectedItem && selectedItem.id === option.id"
-                icon="i-lucide-check"
-                class="bg-primary pointer-events-none"
-              />
-            </template>
-          </DropdownItem>
-        </template>
-        <template v-else-if="searchTerm">
-          <DropdownItem disabled>
-            {{ t('COMBOBOX.EMPTY_SEARCH_RESULTS', { searchTerm: searchTerm }) }}
-          </DropdownItem>
-        </template>
-        <template v-else>
-          <DropdownItem disabled>
-            {{ t('COMBOBOX.EMPTY_STATE') }}
-          </DropdownItem>
-        </template>
-      </DropdownSection>
+      <div :class="isFieldAppearance ? 'p-1.5' : ''">
+        <DropdownSection :height="dropdownMaxHeight">
+          <template v-if="searchResults.length">
+            <DropdownItem
+              v-for="option in searchResults"
+              :key="option.id"
+              :icon="option.icon"
+              @click="toggleSelected(option)"
+            >
+              <template #label>
+                {{ option.name }}
+                <Icon
+                  v-if="selectedItem && selectedItem.id === option.id"
+                  icon="i-lucide-check"
+                  class="bg-primary pointer-events-none"
+                />
+              </template>
+            </DropdownItem>
+          </template>
+          <template v-else-if="searchTerm">
+            <DropdownItem disabled>
+              {{
+                t('COMBOBOX.EMPTY_SEARCH_RESULTS', { searchTerm: searchTerm })
+              }}
+            </DropdownItem>
+          </template>
+          <template v-else>
+            <DropdownItem disabled>
+              {{ t('COMBOBOX.EMPTY_STATE') }}
+            </DropdownItem>
+          </template>
+        </DropdownSection>
+      </div>
     </DropdownBody>
   </DropdownContainer>
 </template>

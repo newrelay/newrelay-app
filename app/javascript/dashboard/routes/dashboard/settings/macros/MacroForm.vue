@@ -151,11 +151,13 @@ export default {
         </div>
       </div>
 
-      <div class="custom-scrollbar flex-1 overflow-y-auto p-12">
+      <div
+        class="custom-scrollbar flex flex-1 flex-col items-center overflow-y-auto p-12"
+      >
         <div
           :inert="readOnly"
           :class="{ 'opacity-75': readOnly }"
-          class="flex flex-col items-center transition-transform duration-200"
+          class="relative flex w-full flex-col items-center transition-transform duration-200"
           :style="zoomStyle"
         >
           <MacroNodes

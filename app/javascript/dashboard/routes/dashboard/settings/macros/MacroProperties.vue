@@ -4,8 +4,6 @@ import {
   RelayInput,
   RelayLabel,
   RELAY_FORM_FIELD_CLASS,
-  RELAY_MODAL_CLOSE_BUTTON_CLASS,
-  RELAY_MODAL_INPUT_CLASS,
 } from 'dashboard/components-next/relay';
 
 export default {
@@ -37,7 +35,6 @@ export default {
   setup() {
     return {
       RELAY_FORM_FIELD_CLASS,
-      RELAY_MODAL_CLOSE_BUTTON_CLASS,
     };
   },
   computed: {
@@ -60,10 +57,12 @@ export default {
       return this.$t('MACROS.EDITOR.VISIBILITY.GLOBAL.DESCRIPTION');
     },
     nameInputClass() {
+      const base =
+        'h-9 rounded-lg border-border/80 bg-background text-[14px] shadow-sm focus-visible:ring-1 focus-visible:ring-primary/30';
       if (this.v$.macro.name.$error) {
-        return `${RELAY_MODAL_INPUT_CLASS} border-destructive/80 focus-visible:ring-destructive/30`;
+        return `${base} border-destructive/80 focus-visible:ring-destructive/30`;
       }
-      return RELAY_MODAL_INPUT_CLASS;
+      return base;
     },
   },
   methods: {
@@ -105,7 +104,7 @@ export default {
       </div>
       <button
         type="button"
-        :class="RELAY_MODAL_CLOSE_BUTTON_CLASS"
+        class="rounded-lg p-1.5 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
         @click="$emit('close')"
       >
         <span class="i-lucide-x size-4.5 block" />
@@ -195,8 +194,7 @@ export default {
     <div class="border-t border-border/40 p-5">
       <RelayButton
         type="button"
-        size="lg"
-        class="w-full"
+        class="h-10 w-full text-[14px] font-medium shadow-sm"
         :disabled="readOnly"
         @click="$emit('submit')"
       >

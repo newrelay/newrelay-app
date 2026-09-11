@@ -3,7 +3,6 @@ import { RelayTooltip } from 'dashboard/components-next/relay';
 import { computed } from 'vue';
 import Avatar from 'next/avatar/Avatar.vue';
 import Icon from 'dashboard/components-next/icon/Icon.vue';
-import { RelayButton } from 'dashboard/components-next/relay';
 import { useI18n } from 'vue-i18n';
 
 const props = defineProps({
@@ -48,10 +47,12 @@ const editTooltip = computed(() =>
 
 <template>
   <div
-    class="group grid grid-cols-[1.5fr_1fr_1fr_1fr_100px] items-center px-6 py-4 transition-colors hover:bg-muted/20"
+    class="group grid grid-cols-[1.5fr_1fr_1fr_1fr_80px] items-center px-6 py-3.5 transition-colors hover:bg-muted/20"
   >
-    <!-- Name -->
-    <div class="truncate pr-4 text-[14px] font-medium text-foreground">
+    <div
+      class="min-w-0 cursor-pointer truncate pr-4 text-[14px] font-medium text-foreground transition-colors hover:text-primary"
+      @click="$emit('edit', macro.id)"
+    >
       {{ macro.name }}
     </div>
 
@@ -86,12 +87,8 @@ const editTooltip = computed(() =>
     </div>
 
     <!-- Visibility -->
-    <div>
-      <span
-        class="inline-flex items-center rounded-full border border-border/60 bg-muted px-2 py-0.5 text-[11px] font-medium capitalize text-muted-foreground"
-      >
-        {{ visibilityLabel }}
-      </span>
+    <div class="text-[13px] text-muted-foreground">
+      {{ visibilityLabel }}
     </div>
 
     <!-- Actions -->
@@ -99,25 +96,23 @@ const editTooltip = computed(() =>
       class="flex items-center justify-end gap-1 opacity-0 transition-opacity group-hover:opacity-100"
     >
       <RelayTooltip :content="editTooltip" side="top">
-        <RelayButton
-          variant="ghost"
-          size="icon"
-          class="size-8 border border-transparent text-muted-foreground shadow-xs hover:border-border hover:bg-background hover:text-foreground border border-border hover:border-transparent"
+        <button
+          type="button"
+          class="rounded-md p-1.5 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
           @click="$emit('edit', macro.id)"
         >
-          <Icon icon="i-lucide-pencil" class="size-3.5" />
-        </RelayButton>
+          <Icon icon="i-lucide-pencil" class="size-4" />
+        </button>
       </RelayTooltip>
       <RelayTooltip :content="$t('MACROS.DELETE.TOOLTIP')" side="top">
-        <RelayButton
+        <button
           v-if="canManageMacro"
-          variant="ghost"
-          size="icon"
-          class="size-8 border border-transparent text-muted-foreground shadow-xs hover:border-destructive/20 hover:bg-destructive/10 hover:text-destructive border border-border hover:border-transparent"
+          type="button"
+          class="rounded-md p-1.5 text-muted-foreground transition-colors hover:bg-destructive/10 hover:text-destructive"
           @click="$emit('delete')"
         >
-          <Icon icon="i-lucide-trash-2" class="size-3.5" />
-        </RelayButton>
+          <Icon icon="i-lucide-trash-2" class="size-4" />
+        </button>
       </RelayTooltip>
     </div>
   </div>

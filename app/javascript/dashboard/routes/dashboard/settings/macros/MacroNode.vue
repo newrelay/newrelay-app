@@ -87,7 +87,7 @@ const dropdownValues = () => {
     <button
       v-if="!singleNode"
       type="button"
-      class="size-8 rounded-md bg-destructive/10 text-destructive/85 hover:text-destructive hover:bg-destructive/20 flex items-center justify-center transition-colors shrink-0 cursor-pointer border-0 outline-none"
+      class="ml-1 flex size-8 shrink-0 cursor-pointer items-center justify-center rounded-lg border-0 bg-destructive/10 text-destructive outline-none transition-colors hover:bg-destructive/20"
       :title="$t('MACROS.EDITOR.DELETE_BTN_TOOLTIP')"
       @click="$emit('deleteNode')"
     >

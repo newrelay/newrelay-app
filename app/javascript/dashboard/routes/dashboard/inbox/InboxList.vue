@@ -1,5 +1,5 @@
 <script setup>
-import { computed, ref, watch, onMounted, nextTick } from 'vue';
+import { computed, provide, ref, watch, onMounted, nextTick } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRoute, useRouter } from 'vue-router';
 import { useStore, useMapGetter } from 'dashboard/composables/store';
@@ -481,6 +481,9 @@ const openConversation = notificationItem => {
     params: { inboxId, type: 'conversation', id: conversationId },
   });
 };
+
+provide('inboxListItems', filteredConversations);
+provide('inboxOpenConversation', openConversation);
 
 const showContextMenu = ref(false);
 const contextMenu = ref({ x: null, y: null });

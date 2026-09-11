@@ -47,6 +47,37 @@ const mountTable = async contacts => {
   });
 };
 
+describe('ContactsTable select all checkbox', () => {
+  it('emits toggleAll false when the header checkbox is clicked while every row is selected', async () => {
+    const router = await buildRouter();
+    const wrapper = mount(ContactsTable, {
+      props: {
+        contacts: [
+          { id: 1, name: 'Ada' },
+          { id: 2, name: 'Grace' },
+        ],
+        selectedContactIds: [1, 2],
+        visibleColumns: ['company'],
+      },
+      global: {
+        plugins: [router],
+        mocks: { $store: { getters: storeGettersStub } },
+        stubs: {
+          Avatar: true,
+          RelayButton: true,
+          ComposeConversation: true,
+        },
+      },
+    });
+
+    const headerCheckbox = wrapper.get('thead [role="checkbox"]');
+    expect(headerCheckbox.attributes('aria-checked')).toBe('true');
+    await headerCheckbox.trigger('click');
+
+    expect(wrapper.emitted('toggleAll')).toEqual([[false]]);
+  });
+});
+
 describe('ContactsTable company column', () => {
   it('shows the real linked company name when present', async () => {
     const wrapper = await mountTable([

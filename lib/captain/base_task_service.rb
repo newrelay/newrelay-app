@@ -32,9 +32,22 @@ class Captain::BaseTaskService
   end
 
   def api_base
-    endpoint = InstallationConfig.find_by(name: 'CAPTAIN_OPEN_AI_ENDPOINT')&.value.presence || 'https://api.openai.com/'
-    endpoint = endpoint.chomp('/')
-    "#{endpoint}/v1"
+    Llm::Config.resolve_api_base(
+      api_key.to_s,
+      InstallationConfig.find_by(name: 'CAPTAIN_OPEN_AI_ENDPOINT')&.value
+    )
+  end
+
+  def llm_model
+    InstallationConfig.find_by(name: 'CAPTAIN_OPEN_AI_MODEL')&.value.to_s.strip.presence || GPT_MODEL
+  end
+
+  def chat_options(model)
+    if api_base.include?('openrouter.ai')
+      { model: model, provider: :openrouter, assume_model_exists: true }
+    else
+      { model: model, provider: :openai, assume_model_exists: true }
+    end
   end
 
   def make_api_call(model:, messages:, schema: nil, tools: [])
@@ -73,7 +86,7 @@ class Captain::BaseTaskService
   end
 
   def build_chat(context, model:, messages:, schema: nil, tools: [])
-    chat = context.chat(model: model)
+    chat = context.chat(**chat_options(model))
     system_msg = messages.find { |m| m[:role] == 'system' }
     chat.with_instructions(system_msg[:content]) if system_msg
     chat.with_schema(schema) if schema

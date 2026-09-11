@@ -4,7 +4,7 @@ defineEmits(['toggleMark']);
 
 <template>
   <div
-    class="flex w-full items-center gap-0.5 border-b border-border bg-muted/5 px-3 py-2"
+    class="flex w-full items-center gap-0.5 border-solid border-b border-border bg-muted/5 px-3 py-2"
   >
     <button
       type="button"

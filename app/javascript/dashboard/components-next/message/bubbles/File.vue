@@ -82,7 +82,7 @@ const openPreview = event => {
 
 <template>
   <BaseBubble
-    class="min-w-[280px] cursor-pointer overflow-hidden !rounded-xl !border !border-border !bg-card !p-3 !text-foreground shadow-xs transition-colors hover:!bg-background/80 hover:!backdrop-blur-xs"
+    class="min-w-[280px] cursor-pointer overflow-hidden !rounded-xl !border !border-border !bg-background/70 !p-3 !text-foreground shadow-none backdrop-blur-sm transition-[background,backdrop-filter] hover:!bg-background/40 hover:!backdrop-blur-md"
     data-bubble-name="file"
   >
     <a

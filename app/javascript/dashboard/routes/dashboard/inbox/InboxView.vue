@@ -1,11 +1,9 @@
 <script setup>
-import { computed, ref, watch, onMounted } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
+import { computed, inject, ref, watch, onMounted } from 'vue';
+import { useRoute } from 'vue-router';
 import { useStore, useMapGetter } from 'dashboard/composables/store';
-import { useTrack } from 'dashboard/composables';
 import { useUISettings } from 'dashboard/composables/useUISettings';
 import { BUS_EVENTS } from 'shared/constants/busEvents';
-import { INBOX_EVENTS } from 'dashboard/helper/AnalyticsHelper/events';
 import { emitter } from 'shared/helpers/mitt';
 
 import InboxItemHeader from './components/InboxItemHeader.vue';
@@ -15,7 +13,6 @@ import Spinner from 'dashboard/components-next/spinner/Spinner.vue';
 import ConversationSidebar from 'dashboard/components/widgets/conversation/ConversationSidebar.vue';
 
 const route = useRoute();
-const router = useRouter();
 const store = useStore();
 const { uiSettings, isContactSidebarOpen } = useUISettings();
 
@@ -24,8 +21,11 @@ const isConversationLoading = ref(false);
 const notification = useMapGetter('notifications/getFilteredNotifications');
 const currentChat = useMapGetter('getSelectedChat');
 const conversationById = useMapGetter('getConversationById');
-const uiFlags = useMapGetter('notifications/getUIFlags');
-const meta = useMapGetter('notifications/getMeta');
+const inboxListItems = inject(
+  'inboxListItems',
+  computed(() => [])
+);
+const inboxOpenConversation = inject('inboxOpenConversation', () => {});
 
 const inboxId = computed(() => Number(route.params.inboxId));
 const conversationId = computed(() => Number(route.params.id));
@@ -48,22 +48,15 @@ const activeNotification = computed(() => {
   );
 });
 
-const totalNotificationCount = computed(() => {
-  return meta.value.count;
-});
+const totalInboxCount = computed(() => inboxListItems.value.length);
 
-const showEmptyState = computed(() => {
-  return (
-    !conversationId.value ||
-    (!notifications.value?.length && uiFlags.value.isFetching)
-  );
-});
+const showEmptyState = computed(() => !conversationId.value);
 
-const activeNotificationIndex = computed(() => {
-  return notifications.value?.findIndex(
-    n => n.primary_actor?.id === conversationId.value
-  );
-});
+const activeInboxIndex = computed(() =>
+  inboxListItems.value.findIndex(
+    item => Number(item?.primaryActor?.id) === conversationId.value
+  )
+);
 
 const isContactPanelOpen = computed(() => {
   if (currentChat.value.id) {
@@ -74,39 +67,6 @@ const isContactPanelOpen = computed(() => {
 
 const findConversation = () => {
   return conversationById.value(conversationId.value);
-};
-
-const openNotification = async notificationItem => {
-  const {
-    id,
-    primary_actor_id: primaryActorId,
-    primary_actor_type: primaryActorType,
-    primary_actor: {
-      meta: { unreadCount } = {},
-      id: conversationIdFromNotification,
-    },
-    notification_type: notificationType,
-  } = notificationItem;
-
-  useTrack(INBOX_EVENTS.OPEN_CONVERSATION_VIA_INBOX, {
-    notificationType,
-  });
-
-  try {
-    await store.dispatch('notifications/read', {
-      id,
-      primaryActorId,
-      primaryActorType,
-      unreadCount,
-    });
-
-    router.push({
-      name: 'inbox_view_conversation',
-      params: { type: 'conversation', id: conversationIdFromNotification },
-    });
-  } catch {
-    // error
-  }
 };
 
 const setActiveChat = async () => {
@@ -147,24 +107,24 @@ const fetchConversationById = async () => {
 const navigateToConversation = (activeIndex, direction) => {
   const isValidPrev = direction === 'prev' && activeIndex > 0;
   const isValidNext =
-    direction === 'next' && activeIndex < totalNotificationCount.value - 1;
+    direction === 'next' && activeIndex < totalInboxCount.value - 1;
 
   if (!isValidPrev && !isValidNext) return;
 
   const updatedIndex = direction === 'prev' ? activeIndex - 1 : activeIndex + 1;
-  const targetNotification = notifications.value[updatedIndex];
+  const target = inboxListItems.value[updatedIndex];
 
-  if (targetNotification) {
-    openNotification(targetNotification);
+  if (target) {
+    inboxOpenConversation(target);
   }
 };
 
 const onClickNext = () => {
-  navigateToConversation(activeNotificationIndex.value, 'next');
+  navigateToConversation(activeInboxIndex.value, 'next');
 };
 
 const onClickPrev = () => {
-  navigateToConversation(activeNotificationIndex.value, 'prev');
+  navigateToConversation(activeInboxIndex.value, 'prev');
 };
 
 watch(
@@ -194,8 +154,8 @@ onMounted(async () => {
     <div v-else class="flex flex-row w-full h-full min-w-0">
       <div class="flex flex-col flex-1 min-w-0 h-full">
         <InboxItemHeader
-          :total-length="totalNotificationCount"
-          :current-index="activeNotificationIndex"
+          :total-length="totalInboxCount"
+          :current-index="activeInboxIndex"
           :active-notification="activeNotification"
           @next="onClickNext"
           @prev="onClickPrev"

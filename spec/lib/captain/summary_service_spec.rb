@@ -29,6 +29,16 @@ RSpec.describe Captain::SummaryService do
       service.perform
     end
 
+    it 'uses the Super Admin Captain model when configured' do
+      create(:installation_config, name: 'CAPTAIN_OPEN_AI_MODEL', value: 'google/gemini-3-flash-preview')
+
+      expect(service).to receive(:make_api_call).with(
+        hash_including(model: 'google/gemini-3-flash-preview')
+      ).and_call_original
+
+      service.perform
+    end
+
     it 'passes system prompt and conversation text as messages' do
       allow(service).to receive(:prompt_from_file).with('summary').and_return('Summarize this')
 

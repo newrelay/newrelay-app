@@ -70,8 +70,8 @@ const generateSummary = async () => {
     if (result?.message) {
       summaryText.value = result.message;
       lastUpdatedAt.value = new Date();
-    } else if (result?.errorType) {
-      errorMessage.value = t('CONVERSATION.AI_SUMMARY.ERROR');
+    } else if (result?.errorType || result?.error) {
+      errorMessage.value = result.error || t('CONVERSATION.AI_SUMMARY.ERROR');
     }
   } catch {
     errorMessage.value = t('CONVERSATION.AI_SUMMARY.ERROR');

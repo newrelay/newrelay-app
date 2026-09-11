@@ -3,7 +3,6 @@ import { onMounted, computed, ref, toRefs } from 'vue';
 import { useTimeoutFn } from '@vueuse/core';
 import { provideMessageContext } from './provider.js';
 import { useTrack } from 'dashboard/composables';
-import { useMapGetter } from 'dashboard/composables/store';
 import { emitter } from 'shared/helpers/mitt';
 import { useRoute } from 'vue-router';
 import { useI18n } from 'vue-i18n';
@@ -146,7 +145,6 @@ const contextMenuPosition = ref({});
 const showBackgroundHighlight = ref(false);
 const showContextMenu = ref(false);
 const route = useRoute();
-const currentUser = useMapGetter('getCurrentUser');
 
 const isSearchHit = computed(() =>
   matchIds.value.some(id => Number(id) === Number(props.id))
@@ -449,27 +447,6 @@ const shouldRenderMessage = computed(() => {
   );
 });
 
-const showInboxAvatar = computed(() => false);
-
-const inboxAvatarSrc = computed(() => {
-  if (props.sender?.thumbnail) return props.sender.thumbnail;
-  if (
-    orientation.value === ORIENTATION.RIGHT &&
-    currentUser.value?.avatar_url
-  ) {
-    return currentUser.value.avatar_url;
-  }
-  return '';
-});
-
-const inboxAvatarName = computed(
-  () => props.sender?.name || currentUser.value?.name || ''
-);
-
-const inboxAvatarInitial = computed(() =>
-  inboxAvatarName.value ? inboxAvatarName.value.charAt(0).toUpperCase() : '?'
-);
-
 const inboxRowClass = computed(() => {
   if (
     !props.isInboxView ||
@@ -582,18 +559,6 @@ provideMessageContext({
       "
       @contextmenu="openContextMenu($event)"
     >
-      <img
-        v-if="showInboxAvatar && inboxAvatarSrc"
-        :src="inboxAvatarSrc"
-        :alt="inboxAvatarName"
-        class="mt-auto size-8 shrink-0 rounded-full border border-border/50 object-cover"
-      />
-      <div
-        v-else-if="showInboxAvatar"
-        class="mt-auto flex size-8 shrink-0 items-center justify-center rounded-full border border-border/50 bg-muted text-[11px] font-medium text-muted-foreground"
-      >
-        {{ inboxAvatarInitial }}
-      </div>
       <div
         class="min-w-0"
         :class="[

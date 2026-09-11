@@ -1650,7 +1650,7 @@ export default {
 }
 
 .reply-box__top--inbox {
-  @apply px-0;
+  @apply mt-0 px-0;
 
   :deep(.ProseMirror) {
     @apply min-h-[100px] bg-transparent px-4 py-3 text-sm;
@@ -1658,7 +1658,7 @@ export default {
 }
 
 .inbox-note-editor :deep(.ProseMirror) {
-  @apply bg-transparent text-warning;
+  @apply bg-private-note-editor text-warning;
 
   p.empty-node:first-child::before {
     @apply text-warning;

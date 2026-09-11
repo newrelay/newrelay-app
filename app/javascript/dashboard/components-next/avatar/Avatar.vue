@@ -249,6 +249,8 @@ watch(
         v-if="src && isImageValid"
         :src="src"
         :alt="name"
+        class="h-full w-full object-cover"
+        :class="borderRadiusClass"
         @error="invalidateCurrentImage"
       />
 

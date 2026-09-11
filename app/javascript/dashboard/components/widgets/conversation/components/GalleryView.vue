@@ -88,7 +88,8 @@ const isPdf = computed(() => {
 });
 
 const fileNameFromDataUrl = computed(() => {
-  const { data_url: dataUrl } = activeAttachment.value;
+  const dataUrl =
+    activeAttachment.value.data_url || activeAttachment.value.dataUrl;
   if (!dataUrl) return t('GALLERY_VIEW.SHARED_IMAGE');
 
   const fileName = dataUrl.split('/').pop();
@@ -283,7 +284,7 @@ watch(
           <iframe
             v-else-if="isPdf"
             :key="activeAttachment.id || activeAttachment.data_url"
-            :src="activeAttachment.data_url"
+            :src="activeAttachment.data_url || activeAttachment.dataUrl"
             :title="fileNameFromDataUrl"
             class="h-[70vh] w-full max-w-5xl rounded-lg border border-border/40 bg-background"
           />

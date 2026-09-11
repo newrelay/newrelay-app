@@ -869,6 +869,7 @@ useEmitter(BUS_EVENTS.INSERT_INTO_RICH_EDITOR, insertContentIntoEditor);
     ref="editorRoot"
     class="relative w-full"
     :class="{
+      'is-private': isPrivate,
       'opacity-50 cursor-not-allowed pointer-events-none': disabled,
     }"
   >

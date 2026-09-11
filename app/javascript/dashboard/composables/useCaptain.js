@@ -147,7 +147,11 @@ export function useCaptain() {
       return { message: generatedMessage, followUpContext };
     } catch (error) {
       handleAPIError(error);
-      return { message: '', errorType: getErrorType(error) };
+      return {
+        message: '',
+        errorType: getErrorType(error),
+        error: error.response?.data?.error,
+      };
     }
   };
 

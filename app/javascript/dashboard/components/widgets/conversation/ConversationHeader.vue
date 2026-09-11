@@ -140,8 +140,9 @@ const toggleSidebar = () => {
             ref="messageSearchInput"
             v-model="messageSearchQuery"
             type="text"
+            data-slot="input"
             :placeholder="t('CONVERSATION.HEADER.SEARCH_PLACEHOLDER')"
-            class="reset-base no-margin box-border h-9 w-[140px] rounded-md border border-border/80 bg-background pl-8 pr-16 text-[14px] text-foreground shadow-sm placeholder:text-muted-foreground/70 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary/30 sm:w-[160px]"
+            class="reset-base no-margin box-border h-9 min-h-9 w-[140px] rounded-md border border-border/80 bg-background pl-8 pr-16 text-[14px] leading-none text-foreground shadow-sm placeholder:text-muted-foreground/70 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary/30 sm:w-[160px]"
             @keydown="onSearchKeydown"
           />
           <div

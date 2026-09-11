@@ -83,22 +83,20 @@ const handleRemoveLabels = labels => {
     class="flex shrink-0 items-center justify-between gap-4 border-b border-border bg-accent/50 px-4 py-2.5"
   >
     <div class="flex min-w-0 items-center gap-4">
-      <button
-        type="button"
-        class="flex items-center gap-2.5 transition-opacity hover:opacity-80"
-        @click="toggleSelectAll"
-      >
+      <div class="flex items-center gap-2.5">
         <RelayCheckbox
           :model-value="allSelected"
           :indeterminate="isIndeterminate"
-          @click.stop
+          @update:model-value="checked => emit('toggleAll', checked)"
         />
-        <span
-          class="truncate text-[13px] font-medium text-foreground tabular-nums"
+        <button
+          type="button"
+          class="truncate text-[13px] font-medium text-foreground tabular-nums transition-opacity hover:opacity-80"
+          @click="toggleSelectAll"
         >
           {{ selectAllLabel }}
-        </span>
-      </button>
+        </button>
+      </div>
       <span class="truncate text-[13px] tabular-nums text-muted-foreground">
         {{ selectedCountLabel }}
       </span>

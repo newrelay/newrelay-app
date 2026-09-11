@@ -125,7 +125,10 @@ const getCallInfo = call => {
       'Unknown caller',
     phoneNumber:
       caller?.phone ||
+      caller?.phone_number ||
       sender?.phone_number ||
+      sender?.phone ||
+      additional.phone_number ||
       store.getters['contacts/getContact'](sender?.id)?.phone_number ||
       '',
     inboxName: inbox?.name || 'Customer support',

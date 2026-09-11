@@ -25,7 +25,7 @@ const mountComponent = props =>
     global: {
       stubs: {
         Avatar: true,
-        RelayTooltip: {
+        Tooltip: {
           template: '<div><slot /></div>',
         },
         Icon: true,

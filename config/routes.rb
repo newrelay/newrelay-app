@@ -115,7 +115,9 @@ Rails.application.routes.draw do
           end
           resources :canned_responses, only: [:index, :create, :update, :destroy]
           resources :automation_rules, only: [:index, :create, :show, :update, :destroy] do
-            post :clone
+            member do
+              post :clone
+            end
           end
           namespace :comment_automation do
             resources :campaigns, only: [:index, :create, :update, :destroy]

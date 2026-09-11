@@ -610,7 +610,9 @@ export default {
         variant="default"
         size="sm"
         class="px-4 h-8 min-h-8 gap-2 font-semibold shadow-xs"
-        :class="isNote ? 'bg-warning text-foreground hover:bg-warning/90' : ''"
+        :class="
+          isNote ? 'bg-warning text-primary-foreground hover:bg-warning/90' : ''
+        "
         :disabled="isSendDisabled"
         @click="onSend"
       >

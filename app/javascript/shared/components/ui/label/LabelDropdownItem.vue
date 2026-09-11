@@ -1,4 +1,6 @@
 <script>
+import { removeEmoji } from 'shared/helpers/emoji';
+
 export default {
   props: {
     title: {
@@ -15,6 +17,12 @@ export default {
     },
   },
   emits: ['selectLabel'],
+
+  computed: {
+    displayTitle() {
+      return removeEmoji(this.title) || this.title;
+    },
+  },
 
   methods: {
     onClick() {
@@ -43,9 +51,9 @@ export default {
       />
       <span
         class="overflow-hidden text-ellipsis whitespace-nowrap leading-4"
-        :title="title"
+        :title="displayTitle"
       >
-        {{ title }}
+        {{ displayTitle }}
       </span>
     </span>
     <span

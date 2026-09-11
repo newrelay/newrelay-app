@@ -56,6 +56,7 @@ defineExpose({ getPromptContent });
 
 <template>
   <Transition
+    class="block w-full"
     mode="out-in"
     enter-active-class="transition-all duration-300 ease-out"
     enter-from-class="opacity-0 translate-y-2 scale-[0.98]"

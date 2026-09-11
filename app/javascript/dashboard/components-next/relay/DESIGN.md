@@ -1,6 +1,6 @@
 # Relay / new-ui Design System
 
-Source of truth for **new dashboard UI** work. Visual reference: `/Users/deependrasankhala/Documents/chandresh/NewRelay-UI` (Geist + shadcn tokens). Runtime tokens live in `app/javascript/dashboard/assets/scss/_relay-theme.scss`. Color mapping: [TOKENS.md](./TOKENS.md).
+Source of truth for **new dashboard UI** work. Visual reference: `/Users/deependrasankhala/Downloads/NewRelay-UI-main` (Geist + shadcn tokens). Runtime tokens live in `app/javascript/dashboard/assets/scss/_relay-theme.scss`. Color mapping: [TOKENS.md](./TOKENS.md).
 
 When building or migrating a Vue page/component under the Relay shell (`[data-relay]`), follow this guide. Prefer Relay primitives over legacy dashboard widgets.
 

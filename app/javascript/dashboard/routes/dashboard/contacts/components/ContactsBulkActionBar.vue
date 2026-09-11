@@ -85,6 +85,7 @@ const handleRemoveLabels = labels => {
     <div class="flex min-w-0 items-center gap-4">
       <div class="flex items-center gap-2.5">
         <RelayCheckbox
+          circle
           :model-value="allSelected"
           :indeterminate="isIndeterminate"
           @update:model-value="checked => emit('toggleAll', checked)"

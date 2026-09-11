@@ -13,6 +13,7 @@ import {
   DROPDOWN_MENU_MODAL_SEARCHABLE_CONTENT_CLASS,
 } from 'dashboard/components-next/relay';
 import { RELAY_SIDEBAR_TEXT_ACTION_CLASS } from 'dashboard/components-next/relay/sidebar/constants';
+import { removeEmoji } from 'shared/helpers/emoji';
 
 export default {
   components: {
@@ -70,6 +71,7 @@ export default {
       showSearchDropdownLabel,
       closeDropdownLabel,
       toggleLabels,
+      removeEmoji,
       sidebarTextActionClass: RELAY_SIDEBAR_TEXT_ACTION_CLASS,
       dropdownContentClass: DROPDOWN_MENU_MODAL_SEARCHABLE_CONTENT_CLASS,
     };
@@ -133,7 +135,7 @@ export default {
           :title="label.description"
           @click="removeLabelFromConversation(label.title)"
         >
-          {{ label.title }}
+          {{ removeEmoji(label.title) || label.title }}
           <span class="i-lucide-x size-3 shrink-0 opacity-60" />
         </button>
       </div>

@@ -209,6 +209,7 @@ const companyDisplayName = contact =>
               class="w-12 px-4 py-3 align-middle font-medium text-muted-foreground"
             >
               <RelayCheckbox
+                circle
                 :model-value="isAllSelected"
                 :indeterminate="isSomeSelected"
                 @update:model-value="handleSelectAll"
@@ -352,6 +353,7 @@ const companyDisplayName = contact =>
             >
               <td class="px-4 py-4 align-middle" @click.stop>
                 <RelayCheckbox
+                  circle
                   :model-value="isSelected(contact.id)"
                   @update:model-value="
                     checked => handleSelectRow(contact.id, checked)

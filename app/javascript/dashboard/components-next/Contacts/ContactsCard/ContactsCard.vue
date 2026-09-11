@@ -135,6 +135,7 @@ const handleAvatarHover = isHovered => {
                 @click.stop
               >
                 <RelayCheckbox
+                  circle
                   :model-value="isSelected"
                   @update:model-value="toggleSelect"
                 />

@@ -210,7 +210,7 @@ onMounted(() => {
         class="text-foreground text-sm prose-sm font-normal"
       />
     </div>
-    <div class="editor-root relative editor--copilot">
+    <div class="editor-root relative editor--copilot w-full">
       <div ref="editor" />
     </div>
   </div>
@@ -220,13 +220,17 @@ onMounted(() => {
 @import '@chatwoot/prosemirror-schema/src/styles/base.scss';
 
 .editor--copilot {
-  @apply bg-primary/5 dark:bg-primary/10 rounded-md;
+  @apply block w-full bg-primary/5 dark:bg-primary/10 rounded-md;
+
+  .ProseMirror-menubar-wrapper {
+    @apply block w-full !important;
+  }
 
   .ProseMirror-relay-style {
     min-height: 5rem;
     max-height: 7.5rem !important;
     overflow: auto;
-    @apply px-4 py-3 !important;
+    @apply w-full box-border px-4 py-3 !important;
 
     .empty-node {
       &::before {

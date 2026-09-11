@@ -18,7 +18,8 @@ import {
   DROPDOWN_MENU_SEARCH_HEADER_CLASS,
   DROPDOWN_MENU_SEARCH_WRAPPER_CLASS,
   DROPDOWN_MENU_SEARCH_ICON_CLASS,
-  DROPDOWN_MENU_MODAL_CONTENT_CLASS,
+  DROPDOWN_MENU_SEARCH_INPUT_CLASS,
+  DROPDOWN_MENU_MODAL_SEARCHABLE_CONTENT_CLASS,
 } from 'dashboard/components-next/relay';
 import RelayModalHeader from 'dashboard/components-next/relay/modal/RelayModalHeader.vue';
 import { RELAY_MODAL_BODY_CLASS } from 'dashboard/components-next/relay/modal/constants';
@@ -30,12 +31,8 @@ const FORM_INPUT_CLASS =
 const FORM_INPUT_ERROR_CLASS = 'border-destructive';
 const DROPDOWN_TRIGGER_CLASS =
   'h-9 w-full justify-between rounded-md border border-border/80 bg-background px-4 text-[14px] font-normal text-foreground shadow-sm hover:bg-background focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary/30';
-const MODAL_DROPDOWN_SEARCH_INPUT_CLASS =
-  'h-9 w-full pl-9 text-[13px] rounded-md border border-border/80 bg-background placeholder:text-muted-foreground/60 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary/30';
 const MODAL_DROPDOWN_ITEM_CLASS =
-  'flex cursor-default items-center justify-between rounded-sm px-3 py-2 text-[13px] text-foreground transition-colors hover:bg-accent hover:text-accent-foreground data-[highlighted]:bg-accent data-[highlighted]:text-accent-foreground';
-const MODAL_DROPDOWN_CONTENT_CLASS =
-  'z-[250] flex max-h-[var(--reka-dropdown-menu-content-available-height)] w-[var(--reka-dropdown-menu-trigger-width)] max-w-[var(--reka-dropdown-menu-trigger-width)] flex-col overflow-hidden rounded-md border border-border bg-popover shadow-md';
+  'flex cursor-default items-center justify-between rounded-sm px-3 py-2 text-[14px] text-foreground transition-colors hover:bg-accent hover:text-accent-foreground data-[highlighted]:bg-accent data-[highlighted]:text-accent-foreground';
 const MODAL_DROPDOWN_LIST_CLASS = 'min-h-0 flex-1 overflow-y-auto p-1';
 const REMOVE_FIELD_BUTTON_CLASS =
   'flex size-10 shrink-0 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-destructive/10 hover:text-destructive';
@@ -626,7 +623,7 @@ defineExpose({ open, close });
                 :portal-to="modalPanelRef"
                 :collision-boundary="modalPanelRef"
                 :collision-padding="12"
-                :class="MODAL_DROPDOWN_CONTENT_CLASS"
+                :class="DROPDOWN_MENU_MODAL_SEARCHABLE_CONTENT_CLASS"
               >
                 <div :class="DROPDOWN_MENU_SEARCH_HEADER_CLASS">
                   <div :class="DROPDOWN_MENU_SEARCH_WRAPPER_CLASS">
@@ -639,7 +636,7 @@ defineExpose({ open, close });
                           'CONTACTS_LAYOUT.ADD_CONTACT_DRAWER.COMPANY_SEARCH_PLACEHOLDER'
                         )
                       "
-                      :class="MODAL_DROPDOWN_SEARCH_INPUT_CLASS"
+                      :class="DROPDOWN_MENU_SEARCH_INPUT_CLASS"
                       @input="handleCompanySearchInput($event.target.value)"
                     />
                   </div>
@@ -647,7 +644,7 @@ defineExpose({ open, close });
                 <div :class="MODAL_DROPDOWN_LIST_CLASS">
                   <div
                     v-if="!companySearch.trim()"
-                    class="px-3 py-2 text-[13px] text-muted-foreground"
+                    class="px-3 py-2 text-sm text-muted-foreground"
                   >
                     {{
                       t('CONTACTS_LAYOUT.ADD_CONTACT_DRAWER.COMPANY_INITIAL')
@@ -655,13 +652,13 @@ defineExpose({ open, close });
                   </div>
                   <div
                     v-else-if="isSearchingCompanies"
-                    class="px-3 py-2 text-[13px] text-muted-foreground"
+                    class="px-3 py-2 text-sm text-muted-foreground"
                   >
                     {{ t('CONTACTS_LAYOUT.ADD_CONTACT_DRAWER.SEARCHING') }}
                   </div>
                   <div
                     v-else-if="!companyOptions.length"
-                    class="px-3 py-2 text-[13px] text-muted-foreground"
+                    class="px-3 py-2 text-sm text-muted-foreground"
                   >
                     {{
                       t('CONTACTS_LAYOUT.ADD_CONTACT_DRAWER.COMPANY_NOT_FOUND')
@@ -719,7 +716,7 @@ defineExpose({ open, close });
                     :portal-to="modalPanelRef"
                     :collision-boundary="modalPanelRef"
                     :collision-padding="12"
-                    :class="MODAL_DROPDOWN_CONTENT_CLASS"
+                    :class="DROPDOWN_MENU_MODAL_SEARCHABLE_CONTENT_CLASS"
                   >
                     <div :class="DROPDOWN_MENU_SEARCH_HEADER_CLASS">
                       <div :class="DROPDOWN_MENU_SEARCH_WRAPPER_CLASS">
@@ -732,7 +729,7 @@ defineExpose({ open, close });
                               'CONTACTS_LAYOUT.ADD_CONTACT_DRAWER.SEARCH_PLACEHOLDER'
                             )
                           "
-                          :class="MODAL_DROPDOWN_SEARCH_INPUT_CLASS"
+                          :class="DROPDOWN_MENU_SEARCH_INPUT_CLASS"
                         />
                       </div>
                     </div>
@@ -779,7 +776,7 @@ defineExpose({ open, close });
                     :portal-to="modalPanelRef"
                     :collision-boundary="modalPanelRef"
                     :collision-padding="12"
-                    :class="MODAL_DROPDOWN_CONTENT_CLASS"
+                    :class="DROPDOWN_MENU_MODAL_SEARCHABLE_CONTENT_CLASS"
                   >
                     <div :class="DROPDOWN_MENU_SEARCH_HEADER_CLASS">
                       <div :class="DROPDOWN_MENU_SEARCH_WRAPPER_CLASS">
@@ -792,7 +789,7 @@ defineExpose({ open, close });
                               'CONTACTS_LAYOUT.ADD_CONTACT_DRAWER.SEARCH_PLACEHOLDER'
                             )
                           "
-                          :class="MODAL_DROPDOWN_SEARCH_INPUT_CLASS"
+                          :class="DROPDOWN_MENU_SEARCH_INPUT_CLASS"
                         />
                       </div>
                     </div>

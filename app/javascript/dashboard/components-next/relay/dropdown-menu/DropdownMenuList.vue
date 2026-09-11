@@ -8,6 +8,10 @@ import {
   DROPDOWN_MENU_ITEM_BASE_CLASS,
   DROPDOWN_MENU_LABEL_CLASS,
   DROPDOWN_MENU_SEPARATOR_CLASS,
+  DROPDOWN_MENU_SEARCH_HEADER_CLASS,
+  DROPDOWN_MENU_SEARCH_WRAPPER_CLASS,
+  DROPDOWN_MENU_SEARCH_ICON_CLASS,
+  DROPDOWN_MENU_SEARCH_INPUT_CLASS,
   getDropdownItemInteractionClass,
   isDestructiveDropdownItem,
 } from './constants';
@@ -157,18 +161,20 @@ onMounted(() => {
 </script>
 
 <template>
-  <div v-if="showSearch" class="relative mb-1 px-1">
-    <span
-      class="pointer-events-none absolute i-lucide-search size-3.5 top-1/2 -translate-y-1/2 ltr:left-3 rtl:right-3 text-muted-foreground"
-    />
-    <input
-      ref="searchInput"
-      v-model="searchQuery"
-      type="search"
-      :placeholder="searchPlaceholder || t('DROPDOWN_MENU.SEARCH_PLACEHOLDER')"
-      class="reset-base h-8 w-full rounded-md border border-border/80 bg-background py-2 text-sm text-foreground shadow-sm ltr:pl-8 ltr:pr-2 rtl:pl-2 rtl:pr-8 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary/30"
-      @input="handleSearchInput"
-    />
+  <div v-if="showSearch" :class="DROPDOWN_MENU_SEARCH_HEADER_CLASS">
+    <div :class="DROPDOWN_MENU_SEARCH_WRAPPER_CLASS">
+      <span :class="DROPDOWN_MENU_SEARCH_ICON_CLASS" />
+      <input
+        ref="searchInput"
+        v-model="searchQuery"
+        type="search"
+        :placeholder="
+          searchPlaceholder || t('DROPDOWN_MENU.SEARCH_PLACEHOLDER')
+        "
+        :class="DROPDOWN_MENU_SEARCH_INPUT_CLASS"
+        @input="handleSearchInput"
+      />
+    </div>
   </div>
 
   <template v-if="hasSections">

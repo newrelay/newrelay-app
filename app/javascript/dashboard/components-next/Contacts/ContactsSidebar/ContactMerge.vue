@@ -242,7 +242,7 @@ const initials = name => {
           @close="isPreviewOpen = false"
         >
           <template #description>
-            <p class="mt-0.5 text-[13px] text-muted-foreground">
+            <p :class="RELAY_MODAL_DESCRIPTION_CLASS">
               {{ t('CONTACTS_LAYOUT.SIDEBAR.MERGE.PREVIEW_SUBTITLE') }}
             </p>
           </template>

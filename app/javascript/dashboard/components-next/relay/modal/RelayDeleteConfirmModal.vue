@@ -104,7 +104,7 @@ const handleConfirm = () => {
           <RelayButton
             type="button"
             variant="ghost"
-            class="h-11 flex-1 rounded-xl border border-border bg-background text-[14px] font-medium text-foreground shadow-sm transition-all hover:border-transparent hover:bg-muted/50 hover:text-foreground"
+            class="h-9 flex-1 rounded-md border border-border bg-background text-[14px] font-medium text-foreground shadow-sm hover:border-transparent hover:bg-muted/50 hover:text-foreground"
             :disabled="isLoading"
             @click="handleClose"
           >
@@ -113,7 +113,7 @@ const handleConfirm = () => {
           <RelayButton
             type="button"
             variant="destructive"
-            class="h-11 flex-1 rounded-xl text-[14px] font-medium shadow-sm"
+            class="h-9 flex-1 rounded-md text-[14px] font-medium shadow-sm"
             :disabled="isLoading"
             @click="handleConfirm"
           >

@@ -59,8 +59,8 @@ const getStatusText = computed(() => {
     </div>
     <div
       v-else
-      class="flex items-center h-10 bg-white rounded-md dark:!bg-muted"
-      :class="{ 'ring-2 ring-primary dark:ring-primary': isInputFocused }"
+      class="flex h-12 items-center overflow-hidden rounded-xl border border-border bg-background shadow-sm transition-shadow"
+      :class="{ 'ring-1 ring-primary/30': isInputFocused }"
     >
       <ResizableTextArea
         id="chat-input"
@@ -68,13 +68,17 @@ const getStatusText = computed(() => {
         :placeholder="
           $t('INBOX_MGMT.WIDGET_BUILDER.FOOTER.CHAT_INPUT_PLACEHOLDER')
         "
-        class="flex-grow !bg-white border-0 outline-none !outline-0 border-none h-8 text-sm dark:!bg-muted pb-0 !pt-1.5 resize-none px-3 !mb-0 focus:outline-none rounded-md"
+        class="reset-base !mb-0 h-8 min-w-0 flex-1 resize-none border-0 bg-transparent px-3 py-1.5 text-sm text-foreground outline-none placeholder:text-muted-foreground focus:outline-none"
         @focus="isInputFocused = true"
         @blur="isInputFocused = false"
       />
-      <div class="flex items-center gap-2 px-2">
-        <FluentIcon icon="emoji" />
-        <FluentIcon class="icon-send" icon="send" />
+      <div class="flex shrink-0 items-center gap-1 pr-2">
+        <span class="flex size-8 items-center justify-center text-foreground">
+          <FluentIcon icon="emoji" size="20" />
+        </span>
+        <span class="flex size-8 items-center justify-center text-foreground">
+          <FluentIcon icon="send" size="20" />
+        </span>
       </div>
     </div>
   </div>

@@ -1387,10 +1387,10 @@ export default {
 
                   <div
                     v-if="isAWebWidgetInbox"
-                    class="flex-1 sticky top-4 self-start max-w-lg flex-shrink-0 w-full min-w-0"
+                    class="sticky top-4 w-full max-w-md min-w-0 flex-1 flex-shrink-0 self-start"
                   >
                     <div
-                      class="flex flex-col outline -outline-offset-1 outline-1 outline-border w-full px-3 pt-3 pb-8 bg-muted rounded-2xl min-h-[45rem] overflow-hidden"
+                      class="flex w-full flex-col overflow-hidden rounded-xl border border-border bg-card p-5 shadow-sm"
                     >
                       <Widget
                         :welcome-heading="channelWelcomeTitle"

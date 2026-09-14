@@ -151,7 +151,9 @@ const handleToggleWidget = () => {
 
 <template>
   <div class="flex flex-col h-full min-h-0 flex-1">
-    <div class="flex items-center justify-between mb-6 flex-shrink-0">
+    <div
+      class="mb-5 flex flex-shrink-0 items-center justify-between border-b border-border pb-4"
+    >
       <TabBar
         :tabs="tabs"
         :initial-active-tab="activeTabIndex"
@@ -159,7 +161,7 @@ const handleToggleWidget = () => {
       />
 
       <div v-if="isPreviewTab" class="flex items-center gap-2">
-        <span class="text-heading-3 text-muted-foreground">
+        <span class="text-[13px] font-normal text-muted-foreground">
           {{ $t('INBOX_MGMT.WIDGET_BUILDER.WIDGET_SCREEN.CHAT') }}
         </span>
         <Switch v-model="isChatMode" />
@@ -167,13 +169,10 @@ const handleToggleWidget = () => {
     </div>
 
     <div class="flex-1 min-h-0 flex flex-col">
-      <div
-        v-if="isPreviewTab"
-        class="flex-1 flex flex-col items-center justify-end pb-4"
-      >
+      <div v-if="isPreviewTab" class="flex flex-col items-center gap-4">
         <div
           v-if="isWidgetVisible"
-          class="widget-wrapper flex flex-1 flex-shrink-0 flex-col justify-between rounded-lg shadow-md bg-muted dark:bg-card h-[31.25rem] w-80 mb-4"
+          class="widget-wrapper flex h-[26rem] w-72 flex-shrink-0 flex-col justify-between rounded-xl border border-border bg-muted shadow-sm dark:bg-card"
         >
           <WidgetHead :config="getWidgetConfig" />
           <div>
@@ -202,14 +201,14 @@ const handleToggleWidget = () => {
           </div>
         </div>
 
-        <div class="flex w-[320px]" :style="getBubblePositionStyle">
+        <div class="flex w-72" :style="getBubblePositionStyle">
           <button
             class="relative flex items-center justify-center rounded-full cursor-pointer"
             :style="{ background: props.color }"
             :class="
               isBubbleExpanded
                 ? 'w-auto font-medium text-base text-white dark:text-white h-12 px-4'
-                : 'w-16 h-16'
+                : 'h-12 w-12'
             "
             @click="handleToggleWidget"
           >
@@ -225,10 +224,10 @@ const handleToggleWidget = () => {
             </div>
             <div v-if="isWidgetVisible" class="relative">
               <div
-                class="absolute w-0.5 h-8 rotate-45 -translate-y-1/2 bg-white"
+                class="absolute h-6 w-0.5 -translate-y-1/2 rotate-45 bg-white"
               />
               <div
-                class="absolute w-0.5 h-8 -rotate-45 -translate-y-1/2 bg-white"
+                class="absolute h-6 w-0.5 -translate-y-1/2 -rotate-45 bg-white"
               />
             </div>
           </button>

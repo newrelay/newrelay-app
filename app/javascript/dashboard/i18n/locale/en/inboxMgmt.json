@@ -1173,7 +1173,7 @@
         "AGENT_MESSAGE": "Hello"
       },
       "BRANDING_TEXT": "Powered by newrelay",
-      "SCRIPT_SETTINGS": "\n      window.chatwootSettings = {options};"
+      "SCRIPT_SETTINGS": "\n      window.newrelaySettings = {options};"
     },
     "EMAIL_PROVIDERS": {
       "MICROSOFT": {

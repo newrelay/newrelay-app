@@ -65,6 +65,22 @@ const galleryList = computed(() => {
 
 <template>
   <div class="flex w-full flex-col gap-1.5 overflow-hidden" v-bind="$attrs">
+    <div class="flex items-center justify-between gap-2 px-0.5">
+      <span class="text-[12px] font-medium text-current">
+        {{
+          t('CONVERSATION_SIDEBAR.SHARED_FILES.IMAGES_ATTACHED', {
+            count: count,
+          })
+        }}
+      </span>
+      <button
+        type="button"
+        class="reset-base shrink-0 text-[11px] font-medium text-current underline-offset-2 hover:underline"
+        @click="openGallery(attachments[0])"
+      >
+        {{ t('CONVERSATION_SIDEBAR.SHARED_FILES.VIEW_ALL') }}
+      </button>
+    </div>
     <div class="grid grid-cols-2 gap-1 overflow-hidden rounded-lg">
       <button
         v-for="(attachment, index) in visibleAttachments"
@@ -133,25 +149,6 @@ const galleryList = computed(() => {
             <span class="i-lucide-maximize-2 size-3" />
           </span>
         </div>
-      </button>
-    </div>
-    <div
-      class="flex items-center justify-between border-t border-border/40 px-1 pt-1 text-[10.5px] text-muted-foreground"
-    >
-      <span class="flex items-center gap-1 font-medium">
-        <span class="i-lucide-image size-3 text-primary" />
-        {{
-          t('CONVERSATION_SIDEBAR.SHARED_FILES.IMAGES_ATTACHED', {
-            count: count,
-          })
-        }}
-      </span>
-      <button
-        type="button"
-        class="reset-base text-[11px] font-medium text-primary hover:underline"
-        @click="openGallery(attachments[0])"
-      >
-        {{ t('CONVERSATION_SIDEBAR.SHARED_FILES.VIEW_ALL') }}
       </button>
     </div>
   </div>

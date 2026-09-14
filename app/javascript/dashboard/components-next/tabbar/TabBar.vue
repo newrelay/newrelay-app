@@ -84,7 +84,7 @@ const showDivider = index => {
         class="relative z-10 px-4 truncate py-1.5 text-sm border-0 outline-1 outline-transparent rounded-lg transition-all duration-200 ease-out hover:text-primary active:scale-[1.02]"
         :class="[
           activeTab === index
-            ? 'text-primary scale-100'
+            ? 'text-primary-foreground scale-100'
             : 'text-muted-foreground scale-[0.98]',
         ]"
         @click="selectTab(index)"

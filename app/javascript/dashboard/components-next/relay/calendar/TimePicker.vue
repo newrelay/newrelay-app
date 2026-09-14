@@ -33,6 +33,10 @@ const props = defineProps({
     type: String,
     default: '',
   },
+  portalTo: {
+    type: [Object, String],
+    default: 'body',
+  },
 });
 
 const emit = defineEmits(['update:modelValue']);
@@ -117,7 +121,7 @@ const columnItemClass = (isSelected, extraClass = '') =>
       </slot>
     </RelayDropdownMenuTrigger>
     <RelayDropdownMenuContent
-      portal-to="body"
+      :portal-to="portalTo"
       :align="align"
       :side="side"
       :side-offset="8"

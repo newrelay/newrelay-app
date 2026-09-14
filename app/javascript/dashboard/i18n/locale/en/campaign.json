@@ -150,6 +150,8 @@
           "SCHEDULED_AT": {
             "LABEL": "Scheduled time",
             "PLACEHOLDER": "Please select the time",
+            "DATE_PLACEHOLDER": "Date",
+            "TIME_PLACEHOLDER": "Time",
             "ERROR": "Scheduled time is required"
           },
           "BUTTONS": {
@@ -230,6 +232,8 @@
           "SCHEDULED_AT": {
             "LABEL": "Scheduled time",
             "PLACEHOLDER": "Please select the time",
+            "DATE_PLACEHOLDER": "Date",
+            "TIME_PLACEHOLDER": "Time",
             "ERROR": "Scheduled time is required"
           },
           "BUTTONS": {

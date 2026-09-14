@@ -86,7 +86,7 @@ const pageTokens = computed(() => {
 
 <template>
   <div
-    class="mx-auto flex w-full items-center justify-between border-t border-border bg-background px-4 py-3 text-[13px] text-muted-foreground"
+    class="mx-auto flex w-full items-center justify-between border-t border-border bg-background px-4 py-3 text-[14px] text-muted-foreground"
   >
     <span class="min-w-0 truncate">
       {{ currentPageInformation }}
@@ -95,7 +95,7 @@ const pageTokens = computed(() => {
       <RelayButton
         variant="outline"
         size="icon"
-        class="size-8 shadow-none transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+        class="!size-8 shadow-none transition-colors disabled:cursor-not-allowed disabled:opacity-40"
         :disabled="isFirstPage"
         @click="changePage(currentPage - 1)"
       >
@@ -105,7 +105,7 @@ const pageTokens = computed(() => {
       <template v-for="(token, index) in pageTokens" :key="index">
         <span
           v-if="token === ELLIPSIS"
-          class="flex size-8 items-center justify-center text-[13px] text-muted-foreground"
+          class="flex size-8 items-center justify-center text-[14px] text-muted-foreground"
         >
           {{ ELLIPSIS }}
         </span>
@@ -113,7 +113,7 @@ const pageTokens = computed(() => {
           v-else
           variant="outline"
           size="icon"
-          class="size-8 shadow-none transition-colors"
+          class="!size-8 shadow-none transition-colors"
           :class="
             token === currentPage
               ? 'bg-primary text-primary-foreground border-primary hover:bg-primary/90'
@@ -128,7 +128,7 @@ const pageTokens = computed(() => {
       <RelayButton
         variant="outline"
         size="icon"
-        class="size-8 shadow-none transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+        class="!size-8 shadow-none transition-colors disabled:cursor-not-allowed disabled:opacity-40"
         :disabled="isLastPage"
         @click="changePage(currentPage + 1)"
       >

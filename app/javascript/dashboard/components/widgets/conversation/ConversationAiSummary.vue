@@ -125,7 +125,7 @@ watch(
     </p>
 
     <div
-      class="mt-1 flex flex-col gap-1.5 overflow-hidden rounded-xl border border-primary/20 bg-primary/5 p-0.5"
+      class="mt-1 flex flex-col gap-1.5 overflow-hidden rounded-xl bg-primary/5"
     >
       <div v-if="hasSummary" class="flex items-center gap-3 rounded-lg p-2.5">
         <div
@@ -146,7 +146,7 @@ watch(
         />
       </div>
 
-      <div :class="hasSummary ? 'px-2 pb-2' : 'p-2'">
+      <div>
         <button
           type="button"
           class="flex min-h-10 w-full items-center justify-center gap-2 rounded-xl border border-primary/20 bg-background px-4 py-2.5 text-[13px] font-medium text-primary transition-colors hover:bg-primary/5 disabled:pointer-events-none disabled:opacity-60"

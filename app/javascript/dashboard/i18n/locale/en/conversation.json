@@ -316,6 +316,7 @@
         "NOTES_PLACEHOLDER": "Summarize the call...",
         "CANCEL": "Cancel",
         "SAVE": "Save Log",
+        "NOTE_TEMPLATE": "[Call Logged: {outcome}]\n{notes}",
         "GAP_MESSAGE": "Call logging is not connected yet. Your log was not saved.",
         "OUTCOMES": {
           "ANSWERED": "Answered",

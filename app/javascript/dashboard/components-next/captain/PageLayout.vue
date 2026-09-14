@@ -165,7 +165,7 @@ const handleCreateAssistant = () => {
 
                   <AssistantSwitcher
                     v-if="showAssistantSwitcherDropdown"
-                    class="absolute ltr:left-0 rtl:right-0 top-9"
+                    class="absolute ltr:left-0 rtl:right-0 top-12"
                     @close="showAssistantSwitcherDropdown = false"
                     @create-assistant="handleCreateAssistant"
                   />

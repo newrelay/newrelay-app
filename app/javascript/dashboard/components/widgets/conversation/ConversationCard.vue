@@ -3,7 +3,7 @@ import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { getLastMessage } from 'dashboard/helper/conversationHelper';
 import { dynamicTime, shortTimestamp } from 'shared/helpers/timeHelper';
-import { useMapGetter } from 'dashboard/composables/store';
+import { useMapGetter, useStore } from 'dashboard/composables/store';
 import Avatar from 'next/avatar/Avatar.vue';
 import MessagePreview from './MessagePreview.vue';
 import { CONVERSATION_PRIORITY } from 'shared/constants/messages';
@@ -21,6 +21,7 @@ const props = defineProps({
 defineEmits(['click', 'contextmenu']);
 
 const { t } = useI18n();
+const store = useStore();
 const accountLabels = useMapGetter('labels/getLabels');
 
 const unreadCount = computed(() => props.chat.unread_count);
@@ -61,8 +62,16 @@ const priorityBadge = computed(() => {
 const priorityBadgeBaseClass =
   'inline-flex h-4 shrink-0 items-center rounded-sm border px-1.5 py-0 text-[10px] font-medium transition-colors focus:outline-hidden focus:ring-1 focus:ring-ring';
 
+const conversationLabelTitles = computed(() => {
+  const records = store.state.conversationLabels.records;
+  const id = props.chat.id;
+  const cached = records[id] ?? records[Number(id)];
+  if (cached !== undefined) return cached || [];
+  return props.chat.labels || [];
+});
+
 const listBadge = computed(() => {
-  const titles = props.chat.labels || [];
+  const titles = conversationLabelTitles.value;
   if (titles.length) {
     const label = accountLabels.value.find(
       item => item.title === titles[0]

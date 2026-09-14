@@ -985,8 +985,25 @@ export default {
     clearEditorSelection() {
       this.updateEditorSelectionWith = '';
     },
-    onLogCallSave() {
-      useAlert(this.$t('CONVERSATION.REPLYBOX.LOG_CALL.GAP_MESSAGE'));
+    async onLogCallSave({ outcome = 'answered', notes = '' } = {}) {
+      if (!this.currentChat?.id) return;
+
+      try {
+        await this.$store.dispatch('createPendingMessageAndSend', {
+          conversationId: this.currentChat.id,
+          message: this.$t('CONVERSATION.REPLYBOX.LOG_CALL.NOTE_TEMPLATE', {
+            outcome: String(outcome).toUpperCase(),
+            notes,
+          }),
+          private: true,
+          sender: this.sender,
+        });
+        emitter.emit(BUS_EVENTS.SCROLL_TO_MESSAGE);
+      } catch (error) {
+        const errorMessage =
+          error?.response?.data?.error || this.$t('CONVERSATION.MESSAGE_ERROR');
+        useAlert(errorMessage);
+      }
     },
     onMeetingInsert(content) {
       this.addIntoEditor(content);

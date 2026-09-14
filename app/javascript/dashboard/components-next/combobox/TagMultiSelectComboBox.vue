@@ -123,12 +123,10 @@ defineExpose({
   >
     <OnClickOutside @trigger="open = false">
       <div
-        class="flex flex-wrap w-full gap-2 px-3 py-2.5 border rounded-lg cursor-pointer bg-black/10 min-h-[42px] transition-all duration-500 ease-in-out"
+        class="flex min-h-9 w-full cursor-pointer flex-wrap gap-2 rounded-md border border-border/80 bg-background px-3 py-2 shadow-sm transition-colors hover:bg-background"
         :class="{
           'border-destructive': hasError,
-          'border-border dark:border-border hover:border-border dark:hover:border-border':
-            !hasError && !open,
-          'border-primary': open,
+          'ring-1 ring-primary/30': open && !hasError,
           'cursor-not-allowed pointer-events-none opacity-50': disabled,
         }"
         @click="toggleDropdown"
@@ -136,7 +134,7 @@ defineExpose({
         <div
           v-for="tag in selectedTags"
           :key="tag.value"
-          class="flex items-center justify-center max-w-full gap-1 px-2 py-0.5 rounded-lg bg-black/5"
+          class="flex max-w-full items-center justify-center gap-1 rounded-md bg-muted px-2 py-0.5"
           @click.stop
         >
           <span class="flex-grow min-w-0 text-sm truncate text-foreground">

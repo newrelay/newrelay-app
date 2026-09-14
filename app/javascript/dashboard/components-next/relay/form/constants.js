@@ -11,7 +11,15 @@ export const RELAY_RADIO_INPUT_CLASS =
   'size-4 shrink-0 cursor-pointer accent-primary text-primary focus:ring-1 focus:ring-primary';
 
 export const RELAY_FORM_INPUT_CLASS =
-  'text-[14px] shadow-sm rounded-md border-border/80 bg-background focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary/30';
+  'text-[14px] shadow-sm rounded-md border-border/80 bg-background hover:bg-background focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary/30';
+
+/** Select/combobox trigger — same chrome as RelayInput, no gray hover fill. */
+export const RELAY_FORM_SELECT_TRIGGER_CLASS = [
+  'reset-base inline-flex h-9 w-full items-center justify-between gap-2 rounded-md border border-border/80 bg-background px-3 text-left text-[14px] font-normal text-foreground shadow-sm',
+  'hover:bg-background hover:text-foreground hover:border-border/80',
+  'focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary/30',
+  'disabled:cursor-not-allowed disabled:opacity-50',
+].join(' ');
 
 export const RELAY_FORM_INPUT_FULL_CLASS = [
   'flex h-9 w-full border px-3 py-1 text-foreground transition-colors',

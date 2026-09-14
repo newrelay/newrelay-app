@@ -10,7 +10,6 @@ import {
   widgetHolder,
   createBubbleHolder,
   createBubbleIcon,
-  bubbleSVG,
   chatBubble,
   closeBubble,
   bubbleHolder,
@@ -322,7 +321,6 @@ export const IFrameHelper = {
 
     const chatIcon = createBubbleIcon({
       className,
-      path: bubbleSVG,
       target: chatBubble,
     });
 

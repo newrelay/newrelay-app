@@ -58,6 +58,8 @@ const props = defineProps({
   },
 });
 
+const WHITE_RELAY_LOGO = '/white-relay-logo.svg';
+
 const { t } = useI18n();
 const { replaceInstallationName } = useBranding();
 const globalConfig = useMapGetter('globalConfig/get');
@@ -214,10 +216,10 @@ const handleToggleWidget = () => {
           >
             <img
               v-if="!isWidgetVisible"
-              src="~dashboard/assets/images/bubble-logo.svg"
+              :src="WHITE_RELAY_LOGO"
               alt=""
               draggable="false"
-              class="w-6 h-6 mx-auto"
+              class="mx-auto size-6 object-contain"
             />
             <div v-if="isBubbleExpanded" class="ltr:pl-2.5 rtl:pr-2.5">
               {{ getWidgetBubbleLauncherTitle }}

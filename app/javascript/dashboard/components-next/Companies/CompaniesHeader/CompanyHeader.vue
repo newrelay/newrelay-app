@@ -72,7 +72,9 @@ const operatorShowsValue = operator =>
 
 <template>
   <div class="flex flex-col gap-6">
-    <div class="flex items-center justify-between">
+    <div
+      class="flex flex-col items-start gap-4 sm:flex-row sm:items-center sm:justify-between"
+    >
       <div>
         <h1 class="text-base font-medium tracking-tight text-foreground">
           {{ headerTitle }}

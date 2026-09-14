@@ -6,7 +6,7 @@ import { useMapGetter, useStore } from 'dashboard/composables/store.js';
 
 import { RelayButton } from 'dashboard/components-next/relay';
 
-const emit = defineEmits(['close', 'createAssistant']);
+const emit = defineEmits(['close']);
 
 const { t } = useI18n();
 const route = useRoute();
@@ -78,39 +78,21 @@ const handleAssistantChange = async assistant => {
 
   emit('close');
 };
-
-const openCreateAssistantDialog = () => {
-  emit('createAssistant');
-  emit('close');
-};
 </script>
 
 <template>
   <div
-    class="absolute z-50 flex w-[14.375rem] flex-col gap-1 rounded-xl border border-border bg-background py-2 shadow-xl"
+    class="absolute z-50 flex w-[14.375rem] flex-col rounded-xl border border-border bg-background py-2 shadow-xl"
   >
-    <div
-      class="mb-1 flex items-start justify-between gap-2 border-b border-border/40 px-3 pb-2"
-    >
-      <div class="min-w-0 flex-1">
-        <p class="text-[13px] font-semibold text-foreground">
-          {{ t('CAPTAIN.ASSISTANT_SWITCHER.ASSISTANTS') }}
-        </p>
-        <p class="mt-0.5 text-[12.5px] leading-snug text-muted-foreground">
-          {{ t('CAPTAIN.ASSISTANT_SWITCHER.SWITCH_ASSISTANT') }}
-        </p>
-      </div>
-      <RelayButton
-        variant="outline"
-        size="sm"
-        class="h-7 shrink-0 rounded-full border-border px-3 text-[12px] hover:bg-muted"
-        @click="openCreateAssistantDialog"
-      >
-        <span class="i-lucide-plus mr-1 size-3" />
-        {{ t('CAPTAIN.ASSISTANT_SWITCHER.NEW_ASSISTANT') }}
-      </RelayButton>
+    <div class="border-b border-border/40 px-3 pb-3">
+      <p class="text-[13px] font-semibold text-foreground">
+        {{ t('CAPTAIN.ASSISTANT_SWITCHER.ASSISTANTS') }}
+      </p>
+      <p class="mt-1 text-[12.5px] leading-snug text-muted-foreground">
+        {{ t('CAPTAIN.ASSISTANT_SWITCHER.SWITCH_ASSISTANT') }}
+      </p>
     </div>
-    <div v-if="assistants.length > 0" class="flex flex-col gap-0.5 px-1.5">
+    <div v-if="assistants.length > 0" class="flex flex-col gap-1 px-2 pt-2">
       <RelayButton
         v-for="assistant in assistants"
         :key="assistant.id"

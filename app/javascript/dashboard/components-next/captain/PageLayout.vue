@@ -10,7 +10,6 @@ import PaginationFooter from 'dashboard/components-next/pagination/PaginationFoo
 import Spinner from 'dashboard/components-next/spinner/Spinner.vue';
 import Policy from 'dashboard/components/policy.vue';
 import AssistantSwitcher from 'dashboard/components-next/captain/pageComponents/switcher/AssistantSwitcher.vue';
-import CreateAssistantDialog from 'dashboard/components-next/captain/pageComponents/assistant/CreateAssistantDialog.vue';
 
 const props = defineProps({
   currentPage: {
@@ -77,7 +76,6 @@ const route = useRoute();
 const { shouldShowPaywall } = usePolicy();
 
 const showAssistantSwitcherDropdown = ref(false);
-const createAssistantDialogRef = ref(null);
 
 const store = useStore();
 const assistants = useMapGetter('captainAssistants/getRecords');
@@ -117,11 +115,6 @@ const handlePageChange = event => {
 
 const toggleAssistantSwitcher = () => {
   showAssistantSwitcherDropdown.value = !showAssistantSwitcherDropdown.value;
-};
-
-const handleCreateAssistant = () => {
-  showAssistantSwitcherDropdown.value = false;
-  createAssistantDialogRef.value.dialogRef.open();
 };
 </script>
 
@@ -167,7 +160,6 @@ const handleCreateAssistant = () => {
                     v-if="showAssistantSwitcherDropdown"
                     class="absolute ltr:left-0 rtl:right-0 top-9"
                     @close="showAssistantSwitcherDropdown = false"
-                    @create-assistant="handleCreateAssistant"
                   />
                 </OnClickOutside>
               </div>
@@ -244,6 +236,5 @@ const handleCreateAssistant = () => {
         />
       </footer>
     </div>
-    <CreateAssistantDialog ref="createAssistantDialogRef" type="create" />
   </section>
 </template>

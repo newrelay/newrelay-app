@@ -3,8 +3,8 @@ import { ref, computed, watch, nextTick } from 'vue';
 import { OnClickOutside } from '@vueuse/components';
 import { useI18n } from 'vue-i18n';
 
-import Button from 'dashboard/components-next/button/Button.vue';
 import ComboBoxDropdown from 'dashboard/components-next/combobox/ComboBoxDropdown.vue';
+import { RELAY_FORM_SELECT_TRIGGER_CLASS } from 'dashboard/components-next/relay/form/constants';
 
 const props = defineProps({
   options: {
@@ -95,23 +95,25 @@ watch(
     @click.prevent
   >
     <OnClickOutside @trigger="open = false">
-      <Button
+      <button
         type="button"
-        variant="outline"
-        :color="hasError && !open ? 'ruby' : open ? 'blue' : 'slate'"
-        :label="selectedLabel"
-        trailing-icon
         :disabled="disabled"
-        no-animation
-        class="justify-between w-full h-10 !px-3 !py-0 text-[14px] text-foreground font-normal group-hover/combobox:border-border focus:outline-primary"
-        :class="{
-          focused: open,
-          '[&:not(.focused)]:dark:outline-border [&:not(.focused)]:hover:enabled:outline-border [&:not(.focused)]:dark:hover:enabled:outline-border':
-            !hasError,
-        }"
-        :icon="open ? 'i-lucide-chevron-up' : 'i-lucide-chevron-down'"
+        :class="[
+          RELAY_FORM_SELECT_TRIGGER_CLASS,
+          {
+            focused: open,
+            'ring-1 ring-primary/30': open && !hasError,
+            'border-destructive hover:border-destructive': hasError && !open,
+          },
+        ]"
         @click="toggleDropdown"
-      />
+      >
+        <span class="min-w-0 truncate">{{ selectedLabel }}</span>
+        <span
+          class="size-4 shrink-0 text-muted-foreground"
+          :class="open ? 'i-lucide-chevron-up' : 'i-lucide-chevron-down'"
+        />
+      </button>
 
       <ComboBoxDropdown
         ref="dropdownRef"

@@ -1,5 +1,6 @@
 <script setup>
 import { computed, ref, onMounted, nextTick, getCurrentInstance } from 'vue';
+import { RELAY_FORM_INPUT_FULL_CLASS } from 'dashboard/components-next/relay/form/constants';
 const props = defineProps({
   modelValue: { type: [String, Number], default: '' },
   type: { type: String, default: 'text' },
@@ -51,12 +52,10 @@ const messageClass = computed(() => {
 });
 
 const inputOutlineClass = computed(() => {
-  switch (props.messageType) {
-    case 'error':
-      return 'outline-destructive dark:outline-destructive hover:outline-destructive dark:hover:outline-destructive disabled:outline-destructive dark:disabled:outline-destructive';
-    default:
-      return 'outline-border dark:outline-border hover:outline-border dark:hover:outline-border disabled:outline-border dark:disabled:outline-border focus:outline-primary dark:focus:outline-primary';
+  if (props.messageType === 'error') {
+    return 'border-destructive focus-visible:ring-destructive/30';
   }
+  return '';
 });
 
 const handleInput = event => {
@@ -118,8 +117,10 @@ onMounted(() => {
       :id="uniqueId"
       v-bind="$attrs"
       ref="inputRef"
+      data-slot="input"
       :value="modelValue"
       :class="[
+        RELAY_FORM_INPUT_FULL_CLASS,
         customInputClass,
         inputOutlineClass,
         sizeClass,
@@ -134,7 +135,7 @@ onMounted(() => {
           ? max
           : undefined
       "
-      class="block w-full reset-base text-sm !mb-0 outline outline-1 border-none border-0 outline-offset-[-1px] rounded-lg bg-black/10 file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground dark:placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50 text-foreground transition-all duration-500 ease-in-out [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+      class="reset-base !mb-0 file:border-0 file:bg-transparent file:text-sm file:font-medium [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
       @input="handleInput"
       @focus="handleFocus"
       @blur="handleBlur"

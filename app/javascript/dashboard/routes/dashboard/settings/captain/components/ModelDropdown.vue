@@ -96,7 +96,7 @@ const selectModel = model => {
   <div v-on-clickaway="closeDropdown" class="relative flex-shrink-0">
     <button
       type="button"
-      class="flex items-center gap-2 px-3 py-2 text-sm border rounded-lg border-border dark:bg-secondary dark:hover:bg-accent bg-accent hover:bg-muted min-w-[180px] justify-between"
+      class="flex items-center gap-2 px-3 py-2 text-sm border rounded-lg border-border dark:bg-secondary hover:bg-muted bg-accent hover:bg-accent min-w-[180px] justify-between"
       @click="toggleDropdown"
     >
       <span v-if="selectedModelDetails" class="text-foreground">
@@ -119,7 +119,7 @@ const selectModel = model => {
         v-for="model in availableModels"
         :key="model.id"
         :click="() => selectModel(model)"
-        class="rounded-lg dark:hover:bg-accent hover:bg-muted"
+        class="rounded-lg hover:bg-muted hover:bg-accent"
         :class="{
           'dark:bg-accent bg-muted': selectedModelId === model.id,
           'pointer-events-none opacity-60': model.coming_soon,

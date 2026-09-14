@@ -12,6 +12,7 @@ import MessageList from 'next/message/MessageList.vue';
 import ConversationLabelSuggestion from './conversation/LabelSuggestion.vue';
 import Banner from 'dashboard/components/ui/Banner.vue';
 import Spinner from 'dashboard/components-next/spinner/Spinner.vue';
+import { RelayButton, RelayModal } from 'dashboard/components-next/relay';
 import ResizableEditorWrapper from './ResizableEditorWrapper.vue';
 
 // stores and apis
@@ -46,6 +47,8 @@ export default {
     Banner,
     ConversationLabelSuggestion,
     Spinner,
+    RelayButton,
+    RelayModal,
     ResizableEditorWrapper,
   },
   mixins: [inboxMixin],
@@ -92,6 +95,7 @@ export default {
       isProgrammaticScroll: false,
       messageSentSinceOpened: false,
       labelSuggestions: [],
+      showRestrictionInfoModal: false,
     };
   },
 
@@ -161,6 +165,13 @@ export default {
       return (
         (this.currentChat && this.currentChat.dataFetched === undefined) ||
         (!this.listLoadingStatus && this.isLoadingPrevious)
+      );
+    },
+    showWhatsappWindowBanner() {
+      return Boolean(
+        this.currentChat &&
+          !this.currentChat.can_reply &&
+          this.isAWhatsAppChannel
       );
     },
     // Check there is a instagram inbox exists with the same instagram_id
@@ -262,6 +273,7 @@ export default {
       this.fetchAllAttachmentsFromCurrentChat();
       this.fetchSuggestions();
       this.messageSentSinceOpened = false;
+      this.showRestrictionInfoModal = false;
       this.resetReplyEditorHeight();
     },
   },
@@ -449,6 +461,16 @@ export default {
     toggleReplyEditorSize() {
       this.resizableEditorWrapperRef?.toggleEditorExpand?.();
     },
+    openRestrictionInfoModal() {
+      this.showRestrictionInfoModal = true;
+    },
+    closeRestrictionInfoModal() {
+      this.showRestrictionInfoModal = false;
+    },
+    selectTemplateFromPolicy() {
+      this.showRestrictionInfoModal = false;
+      this.$refs.replyComposer?.openWhatsappTemplateModal?.();
+    },
     resetReplyEditorHeight() {
       this.resizableEditorWrapperRef?.resetEditorHeight?.();
     },
@@ -463,7 +485,7 @@ export default {
   >
     <div ref="topBannerRef">
       <Banner
-        v-if="!currentChat.can_reply"
+        v-if="!currentChat.can_reply && !showWhatsappWindowBanner"
         color-scheme="alert"
         class="mx-2 mt-2 overflow-hidden rounded-lg"
         :banner-message="replyWindowBannerMessage"
@@ -537,26 +559,114 @@ export default {
         </div>
       </div>
       <div v-if="isInboxView" class="shrink-0 px-8 py-6 bg-background">
-        <div class="max-w-4xl mx-auto w-full">
+        <div class="mx-auto flex w-full max-w-4xl flex-col gap-3">
+          <div
+            v-if="showWhatsappWindowBanner"
+            class="flex items-center justify-between gap-3 rounded-lg border border-destructive/25 bg-destructive/10 px-3.5 py-2.5 text-[12.5px] text-destructive shadow-2xs animate-in fade-in duration-200 dark:border-destructive/35 dark:bg-destructive/15 dark:text-destructive-foreground"
+          >
+            <div class="flex min-w-0 flex-1 items-center gap-2.5">
+              <div
+                class="flex size-5 shrink-0 items-center justify-center rounded-full bg-destructive/15"
+              >
+                <span class="i-lucide-clock size-3 shrink-0 text-destructive" />
+              </div>
+              <p class="leading-snug">
+                {{ replyWindowBannerMessage }}
+              </p>
+            </div>
+            <button
+              type="button"
+              class="inline-flex shrink-0 cursor-pointer items-center gap-1 text-[12px] font-medium text-destructive hover:underline"
+              @click="openRestrictionInfoModal"
+            >
+              <span>{{
+                $t('CONVERSATION.REPLY_WINDOW_POLICY.LEARN_MORE')
+              }}</span>
+              <span class="i-lucide-arrow-up-right size-3" />
+            </button>
+          </div>
           <ResizableEditorWrapper
             ref="resizableEditorWrapperRef"
             :container-height="Math.max(0, containerHeight - topBannerHeight)"
           >
-            <InboxReplyComposer @toggle-editor-size="toggleReplyEditorSize" />
+            <InboxReplyComposer
+              ref="replyComposer"
+              @toggle-editor-size="toggleReplyEditorSize"
+            />
           </ResizableEditorWrapper>
         </div>
       </div>
       <div
         v-else
-        class="p-3 bg-muted/10 dark:bg-background shrink-0 border-t border-border"
+        class="flex shrink-0 flex-col gap-3 border-t border-border bg-muted/10 p-3 dark:bg-background"
       >
+        <div
+          v-if="showWhatsappWindowBanner"
+          class="flex items-center justify-between gap-3 rounded-lg border border-destructive/25 bg-destructive/10 px-3.5 py-2.5 text-[12.5px] text-destructive shadow-2xs animate-in fade-in duration-200 dark:border-destructive/35 dark:bg-destructive/15 dark:text-destructive-foreground"
+        >
+          <div class="flex min-w-0 flex-1 items-center gap-2.5">
+            <div
+              class="flex size-5 shrink-0 items-center justify-center rounded-full bg-destructive/15"
+            >
+              <span class="i-lucide-clock size-3 shrink-0 text-destructive" />
+            </div>
+            <p class="leading-snug">
+              {{ replyWindowBannerMessage }}
+            </p>
+          </div>
+          <button
+            type="button"
+            class="inline-flex shrink-0 cursor-pointer items-center gap-1 text-[12px] font-medium text-destructive hover:underline"
+            @click="openRestrictionInfoModal"
+          >
+            <span>{{ $t('CONVERSATION.REPLY_WINDOW_POLICY.LEARN_MORE') }}</span>
+            <span class="i-lucide-arrow-up-right size-3" />
+          </button>
+        </div>
         <ResizableEditorWrapper
           ref="resizableEditorWrapperRef"
           :container-height="Math.max(0, containerHeight - topBannerHeight)"
         >
-          <ReplyBox @toggle-editor-size="toggleReplyEditorSize" />
+          <ReplyBox
+            ref="replyComposer"
+            @toggle-editor-size="toggleReplyEditorSize"
+          />
         </ResizableEditorWrapper>
       </div>
     </div>
+    <RelayModal
+      :show="showRestrictionInfoModal"
+      :title="$t('CONVERSATION.REPLY_WINDOW_POLICY.TITLE')"
+      :description="$t('CONVERSATION.REPLY_WINDOW_POLICY.DESCRIPTION')"
+      @close="closeRestrictionInfoModal"
+    >
+      <div class="flex flex-col gap-4">
+        <div
+          class="flex flex-col gap-2 rounded-xl border border-border/80 bg-muted/40 p-4 text-[13.5px] leading-relaxed text-foreground"
+        >
+          <p>
+            {{ $t('CONVERSATION.REPLY_WINDOW_POLICY.BODY') }}
+          </p>
+          <p class="text-[13px] text-muted-foreground">
+            {{ $t('CONVERSATION.REPLY_WINDOW_POLICY.BODY_TEMPLATES') }}
+          </p>
+        </div>
+        <div class="flex items-center justify-end gap-2.5 pt-2">
+          <RelayButton
+            variant="ghost"
+            class="h-9 border border-border px-4 text-[13px] font-medium hover:border-transparent"
+            @click="closeRestrictionInfoModal"
+          >
+            {{ $t('CONVERSATION.REPLY_WINDOW_POLICY.CLOSE') }}
+          </RelayButton>
+          <RelayButton
+            class="h-9 px-4 text-[13px] font-medium shadow-sm"
+            @click="selectTemplateFromPolicy"
+          >
+            {{ $t('CONVERSATION.REPLY_WINDOW_POLICY.SELECT_TEMPLATE') }}
+          </RelayButton>
+        </div>
+      </div>
+    </RelayModal>
   </div>
 </template>

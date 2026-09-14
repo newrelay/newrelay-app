@@ -69,11 +69,13 @@ POST-only, no SSE transport in v1 (see §8 — `fast-mcp`'s SSE mode holds a Pum
 
 ## 5. Frontend
 
-**Vue components:** None new. The `mcp_integration` toggle surfaces automatically in the existing account Features settings screen, which is driven by `config/features.yml`.
+**Vue components:** None new in v1. The `mcp_integration` toggle surfaces automatically in the existing account Features settings screen, which is driven by `config/features.yml`.
 
 **Store module(s):** None new.
 
-**States handled:** N/A — no new UI surface. (MCP client-side errors are handled by the connecting agent, not this app's frontend.)
+**States handled:** N/A in v1 — no new UI surface. (MCP client-side errors are handled by the connecting agent, not this app's frontend.)
+
+**Future direction (Phase 3+, not v1):** MCP access managed by the individual user, not just an account-admin on/off switch — a dedicated MCP settings page where a user reviews and controls what their own MCP connection is allowed to do, backed by the `access_tokens.scopes` column already added in Phase 1 for exactly this purpose. See §9 Phase 3 and §11.
 
 ---
 
@@ -137,7 +139,7 @@ Each phase ships independently — Phase 2 does not start until Phase 1 is deplo
 | Item | Detail |
 |---|---|
 | Tools | `send_reply` (customer-visible), status changes (resolve/open/pending/snooze) |
-| Also deferred | OAuth 2.1 (needed for Claude.ai web "Connectors") — the Phase 1 `scopes`/`last_used_at` columns mean this issues new token rows against the existing table rather than forking auth; `AgentBot`-owned tokens; centrally hosted multi-tenant endpoint; `prepend_mod_with` seam on the tool catalog for Enterprise per-plan tool filtering |
+| Also deferred | OAuth 2.1 (needed for Claude.ai web "Connectors") — the Phase 1 `scopes`/`last_used_at` columns mean this issues new token rows against the existing table rather than forking auth; `AgentBot`-owned tokens; centrally hosted multi-tenant endpoint; `prepend_mod_with` seam on the tool catalog for Enterprise per-plan tool filtering; a dedicated user-facing MCP settings page (self-service management of a user's own MCP access, with permissions/scopes configured there instead of the account-wide Features toggle being the only control) |
 | Trigger to revisit | Phase 1+2 usage data shows real demand and no safety issues from the safe-write tools |
 
 ---
@@ -171,5 +173,6 @@ Also corrected: the initial spec's claim that `fast-mcp` carries "no version-con
 - Bearer-token auth does not satisfy Claude.ai web's "Connectors" flow, which requires OAuth 2.1 — known limitation, deferred to Phase 3, no longer blocked on the token model (see above).
 - `send_reply` and conversation status-change tools are deliberately deferred pending Phase 1+2 usage data (see §9, Phase 3).
 - No Enterprise extension seam on the tool catalog yet (e.g. per-plan tool limits) — deferred to Phase 3; OSS-only mount is otherwise the right call for v1.
+- MCP access today is account-wide and admin-controlled only (the Features-screen toggle). Intended direction: MCP managed by the individual user, with a dedicated settings page for reviewing/controlling their own MCP permissions — not built in v1, tracked in §9 Phase 3.
 - This FRD documents a **planned** feature ahead of build, which is an exception to this folder's normal as-built scope (see `docs/frd/README.md` — new features are otherwise meant to use `docs/templates/feature-bible-template.md`). Superseded by an as-built rewrite once shipped.
 - Full architecture/rationale: [`docs/superpowers/specs/2026-09-08-chatwoot-mcp-server-design.md`](../superpowers/specs/2026-09-08-chatwoot-mcp-server-design.md).

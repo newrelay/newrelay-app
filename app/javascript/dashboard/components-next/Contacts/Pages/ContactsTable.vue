@@ -369,7 +369,6 @@ const companyDisplayName = contact =>
                     :size="36"
                     rounded-full
                     hide-offline-status
-                    class="shadow-sm ring-1 ring-border/50"
                   />
                   <button
                     type="button"

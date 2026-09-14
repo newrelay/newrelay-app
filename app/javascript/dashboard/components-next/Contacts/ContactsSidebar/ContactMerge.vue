@@ -199,7 +199,7 @@ const initials = name => {
       </div>
 
       <div
-        class="mb-6 flex items-start gap-3 rounded-lg border border-destructive/20 bg-destructive/10 p-3.5"
+        class="mt-6 mb-4 flex items-start gap-3 rounded-lg border border-destructive/20 bg-destructive/10 p-3.5"
       >
         <span
           class="i-lucide-lightbulb mt-0.5 size-4 shrink-0 text-destructive"

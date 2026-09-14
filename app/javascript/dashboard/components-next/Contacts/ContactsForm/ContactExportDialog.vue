@@ -74,10 +74,10 @@ defineExpose({ dialogRef });
         @click.stop
       >
         <div class="flex flex-col">
-          <h2 class="text-[16px] font-medium text-foreground">
+          <h2 class="text-base font-medium tracking-tight text-foreground">
             {{ t('CONTACTS_LAYOUT.HEADER.ACTIONS.EXPORT_CONTACT.TITLE') }}
           </h2>
-          <p class="mb-5 mt-1 text-[14px] text-muted-foreground">
+          <p class="mb-5 mt-1 text-[14px] font-normal text-muted-foreground">
             {{ t('CONTACTS_LAYOUT.HEADER.ACTIONS.EXPORT_CONTACT.DESCRIPTION') }}
           </p>
         </div>
@@ -86,14 +86,14 @@ defineExpose({ dialogRef });
           <RelayButton
             type="button"
             variant="outline"
-            class="h-10 flex-1 rounded-xl border border-border bg-background text-[14px] font-medium shadow-sm hover:border-transparent"
+            class="h-10 flex-1 rounded-[10px] border border-border bg-background text-[14px] font-medium shadow-sm hover:border-transparent"
             @click="dialogRef.close()"
           >
             {{ t('DIALOG.BUTTONS.CANCEL') }}
           </RelayButton>
           <RelayButton
             type="button"
-            class="h-10 flex-1 rounded-xl bg-primary text-[14px] font-medium text-primary-foreground shadow-sm hover:bg-primary/90"
+            class="h-10 flex-1 rounded-[10px] bg-primary text-[14px] font-medium text-primary-foreground shadow-sm hover:bg-primary/90"
             :disabled="isExportingContact"
             @click="handleExport"
           >

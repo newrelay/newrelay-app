@@ -280,7 +280,7 @@ onMounted(() => {
 
         <!-- Filters card -->
         <div
-          class="mb-10 space-y-6 rounded-xl border border-border bg-card p-6 shadow-sm"
+          class="mb-6 space-y-6 rounded-xl border border-border bg-card p-6 shadow-sm"
         >
           <div
             v-on-click-outside="closeFilterMenus"
@@ -289,7 +289,7 @@ onMounted(() => {
             <div class="relative">
               <RelayButton
                 variant="outline"
-                class="h-11 w-full justify-between rounded-md border-border bg-background px-4 text-[14px] font-medium text-foreground hover:bg-muted/50"
+                class="h-11 w-full justify-between rounded-md border-border bg-background px-4 text-[14px] !font-normal text-foreground hover:bg-muted/50"
                 :class="{ 'bg-muted/50': openFilter === 'status' }"
                 @click="toggleFilter('status')"
               >
@@ -324,7 +324,7 @@ onMounted(() => {
             <div class="relative">
               <RelayButton
                 variant="outline"
-                class="h-11 w-full justify-between rounded-md border-border bg-background px-4 text-[14px] font-medium text-foreground hover:bg-muted/50"
+                class="h-11 w-full justify-between rounded-md border-border bg-background px-4 text-[14px] !font-normal text-foreground hover:bg-muted/50"
                 :class="{ 'bg-muted/50': openFilter === 'operation' }"
                 @click="toggleFilter('operation')"
               >
@@ -367,7 +367,7 @@ onMounted(() => {
                 value-format="yyyy-MM-dd"
                 display-format="dd-MM-yyyy"
                 :placeholder="t('CONTACTS_BULK_ACTIONS.AUDIT.FILTER.DATE_FROM')"
-                trigger-class="h-9 w-full cursor-pointer px-3 text-[13px] rounded-md border border-border/80 bg-background text-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary/30"
+                trigger-class="h-9 w-full cursor-pointer px-3 text-[14px] rounded-md border border-border/80 bg-background text-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary/30"
               />
             </div>
 
@@ -385,7 +385,7 @@ onMounted(() => {
                 value-format="yyyy-MM-dd"
                 display-format="dd-MM-yyyy"
                 :placeholder="t('CONTACTS_BULK_ACTIONS.AUDIT.FILTER.DATE_TO')"
-                trigger-class="h-9 w-full cursor-pointer px-3 text-[13px] rounded-md border border-border/80 bg-background text-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary/30"
+                trigger-class="h-9 w-full cursor-pointer px-3 text-[14px] rounded-md border border-border/80 bg-background text-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary/30"
               />
             </div>
 
@@ -426,39 +426,39 @@ onMounted(() => {
         <!-- Logs table -->
         <div
           v-else
-          class="mt-8 w-full overflow-hidden rounded-xl border border-border bg-card shadow-sm"
+          class="mt-4 w-full overflow-hidden rounded-xl border border-border bg-card shadow-sm"
         >
           <div class="w-full overflow-x-auto">
             <table class="w-full border-collapse text-left">
               <thead>
                 <tr class="border-b border-border bg-muted/20">
                   <th
-                    class="w-[25%] px-6 py-3 text-[13px] font-medium text-muted-foreground"
+                    class="w-[25%] px-6 py-3 text-[14px] font-semibold text-muted-foreground"
                   >
                     {{ t('CONTACTS_BULK_ACTIONS.AUDIT.TABLE.ACTION_NAME') }}
                   </th>
                   <th
-                    class="w-[15%] px-6 py-3 text-[13px] font-medium text-muted-foreground"
+                    class="w-[15%] px-6 py-3 text-[14px] font-semibold text-muted-foreground"
                   >
                     {{ t('CONTACTS_BULK_ACTIONS.AUDIT.TABLE.OPERATION') }}
                   </th>
                   <th
-                    class="w-[15%] px-6 py-3 text-[13px] font-medium text-muted-foreground"
+                    class="w-[15%] px-6 py-3 text-[14px] font-semibold text-muted-foreground"
                   >
                     {{ t('CONTACTS_BULK_ACTIONS.AUDIT.TABLE.CREATED_AT') }}
                   </th>
                   <th
-                    class="w-[15%] px-6 py-3 text-[13px] font-medium text-muted-foreground"
+                    class="w-[15%] px-6 py-3 text-[14px] font-semibold text-muted-foreground"
                   >
                     {{ t('CONTACTS_BULK_ACTIONS.AUDIT.TABLE.COMPLETED_AT') }}
                   </th>
                   <th
-                    class="w-[15%] px-6 py-3 text-[13px] font-medium text-muted-foreground"
+                    class="w-[15%] px-6 py-3 text-[14px] font-semibold text-muted-foreground"
                   >
                     {{ t('CONTACTS_BULK_ACTIONS.AUDIT.TABLE.STATUS') }}
                   </th>
                   <th
-                    class="w-[15%] px-6 py-3 text-[13px] font-medium text-muted-foreground"
+                    class="w-[15%] px-6 py-3 text-[14px] font-semibold text-muted-foreground"
                   >
                     {{ t('CONTACTS_BULK_ACTIONS.AUDIT.TABLE.STATISTICS') }}
                   </th>
@@ -491,7 +491,7 @@ onMounted(() => {
                   <td class="px-6 py-4">
                     <RelayBadge
                       variant="outline"
-                      class="border-border/60 font-medium text-muted-foreground"
+                      class="border-border/60 !font-medium text-muted-foreground"
                     >
                       {{ getOperationLabel(audit.operation_type) }}
                     </RelayBadge>

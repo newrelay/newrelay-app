@@ -605,7 +605,7 @@ onMounted(async () => {
             variant="outline"
             class="flex h-9 items-center gap-2 rounded-lg border border-border px-3 text-[13px] font-medium shadow-sm transition-all hover:border-transparent hover:bg-muted"
           >
-            <span class="i-lucide-columns-3 size-4" />
+            <span class="i-lucide-columns size-4" />
             {{ t('CONTACTS_LAYOUT.HEADER.COLUMNS_BUTTON') }}
             <span class="i-lucide-chevron-down size-3 opacity-50" />
           </RelayButton>

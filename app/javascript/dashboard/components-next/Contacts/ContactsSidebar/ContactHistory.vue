@@ -8,7 +8,7 @@ import { frontendURL, conversationUrl } from 'dashboard/helper/URLHelper.js';
 import { useMessageFormatter } from 'shared/composables/useMessageFormatter';
 
 import Spinner from 'dashboard/components-next/spinner/Spinner.vue';
-import { RelayButton, RelayBadge } from 'dashboard/components-next/relay';
+import { RelayButton } from 'dashboard/components-next/relay';
 
 const { t } = useI18n();
 const route = useRoute();
@@ -134,7 +134,7 @@ const openConversation = conversation => {
           class="mb-3 flex items-center justify-between gap-2 border-b border-border/40 pb-3"
         >
           <div
-            class="flex min-w-0 flex-wrap items-center gap-2 text-sm text-muted-foreground"
+            class="flex min-w-0 flex-wrap items-center gap-2 text-sm text-foreground"
           >
             <span>
               {{
@@ -164,15 +164,6 @@ const openConversation = conversation => {
         <h4 class="mb-1 line-clamp-2 text-sm font-semibold text-foreground">
           {{ subjectOrPreview(conversation) }}
         </h4>
-        <div class="mt-2 flex items-center gap-2">
-          <RelayBadge
-            v-if="conversation.status"
-            variant="outline"
-            class="text-[10px] font-medium capitalize"
-          >
-            {{ conversation.status }}
-          </RelayBadge>
-        </div>
       </button>
     </div>
   </div>

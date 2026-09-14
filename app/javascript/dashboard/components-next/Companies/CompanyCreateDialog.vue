@@ -3,7 +3,11 @@ import { computed, reactive, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { vOnClickOutside } from '@vueuse/components';
 import { useMapGetter } from 'dashboard/composables/store';
-import { RelayButton, RelayInput } from 'dashboard/components-next/relay';
+import {
+  RelayButton,
+  RelayInput,
+  RelayTextarea,
+} from 'dashboard/components-next/relay';
 import {
   RELAY_DIALOG_OVERLAY_CLASS,
   RELAY_MODAL_BODY_CLASS,
@@ -400,19 +404,19 @@ defineExpose({ dialogRef, open, close, onSuccess });
                 {{ t('COMPANIES.CREATE.OPTIONAL') }}
               </span>
             </label>
-            <textarea
+            <RelayTextarea
               v-model="form.description"
               :placeholder="
                 t('COMPANIES.CREATE.FIELDS.DESCRIPTION_PLACEHOLDER')
               "
               :disabled="isLoading"
-              class="min-h-[80px] w-full resize-y border border-border bg-background p-3 text-[14px] text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary/30 disabled:opacity-50 shadow-sm rounded-md border-border/80"
+              class-name="min-h-[80px] resize-y"
             />
           </div>
         </div>
 
         <div
-          class="mt-auto flex shrink-0 items-center justify-between border-t border-border bg-muted/10 px-8 pb-8 pt-4"
+          class="mt-auto flex shrink-0 items-center justify-center gap-3 border-t border-border bg-muted/10 px-8 pb-8 pt-4"
         >
           <RelayButton
             variant="ghost"

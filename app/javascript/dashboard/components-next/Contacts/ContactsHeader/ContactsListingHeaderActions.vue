@@ -90,7 +90,7 @@ const onCreate = async ({ companyId, ...contact }) => {
 </script>
 
 <template>
-  <div class="flex min-w-0 flex-wrap items-center justify-end gap-2">
+  <div class="flex min-w-0 flex-wrap items-center justify-end gap-4">
     <ComposeConversation>
       <template #trigger>
         <RelayButton

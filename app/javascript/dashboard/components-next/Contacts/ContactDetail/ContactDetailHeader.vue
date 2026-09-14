@@ -180,9 +180,16 @@ const handleAvatarDelete = () => {
               </router-link>
               <span v-else>{{ companyName }}</span>
             </template>
-            <span v-else-if="companyName || role">
-              {{ companyName || role }}
-            </span>
+            <template v-else-if="companyName || role">
+              <router-link
+                v-if="companyName && companyRoute"
+                :to="companyRoute"
+                class="font-medium text-primary transition-colors hover:underline"
+              >
+                {{ companyName }}
+              </router-link>
+              <span v-else>{{ companyName || role }}</span>
+            </template>
             <span
               v-if="(role || companyName) && lastActiveLabel"
               class="mx-1.5 text-muted-foreground/50"

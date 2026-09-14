@@ -8,7 +8,10 @@ import { useContactFilterContext } from './contactProvider.js';
 import { useSnakeCase } from 'dashboard/composables/useTransformKeys';
 
 import { RelayButton, RelayInput } from 'dashboard/components-next/relay';
-import { RELAY_MODAL_CLOSE_BUTTON_CLASS } from 'dashboard/components-next/relay/modal/constants';
+import {
+  RELAY_DIALOG_OVERLAY_CLASS,
+  RELAY_MODAL_CLOSE_BUTTON_CLASS,
+} from 'dashboard/components-next/relay/modal/constants';
 import ConditionRow from './ConditionRow.vue';
 
 const props = defineProps({
@@ -103,7 +106,8 @@ onBeforeUnmount(() => emit('close'));
   <Teleport to="body">
     <div
       data-relay
-      class="fixed inset-0 z-[60] bg-background/80 backdrop-blur-[8px] transition-all duration-300"
+      :class="RELAY_DIALOG_OVERLAY_CLASS"
+      class="z-[60]"
       @click.self="close"
     >
       <div
@@ -177,7 +181,7 @@ onBeforeUnmount(() => emit('close'));
 
           <button
             type="button"
-            class="flex w-full cursor-pointer items-center justify-center gap-2 rounded-lg py-2.5 text-[13px] font-medium text-primary transition-colors hover:bg-accent hover:text-accent-foreground"
+            class="flex w-full cursor-pointer items-center justify-start gap-2 rounded-lg my-4 px-[19px] py-2.5 text-[13px] font-medium text-primary transition-colors hover:bg-accent hover:text-accent-foreground"
             @click="addFilter"
           >
             <span class="i-lucide-plus size-4" />
@@ -188,7 +192,7 @@ onBeforeUnmount(() => emit('close'));
         <div class="mt-6 flex shrink-0 gap-3 border-t border-border pt-6">
           <RelayButton
             variant="outline"
-            class="h-9 flex-1 text-sm font-medium"
+            class="h-9 flex-1 text-base font-normal"
             @click="resetFilter"
           >
             {{ $t('CONTACTS_LAYOUT.FILTER.BUTTONS.CLEAR_FILTERS') }}
@@ -196,7 +200,7 @@ onBeforeUnmount(() => emit('close'));
           <div class="flex-1">
             <RelayButton
               v-if="isSegmentView"
-              class="h-10 w-full rounded-xl bg-primary px-6 text-[13px] font-medium text-primary-foreground shadow-sm transition-colors hover:bg-primary/90"
+              class="h-10 w-full rounded-[10px] bg-primary px-6 text-base font-medium text-primary-foreground shadow-sm transition-colors hover:bg-primary/90"
               :disabled="!segmentNameLocal"
               @click="updateSavedSegment"
             >
@@ -204,7 +208,7 @@ onBeforeUnmount(() => emit('close'));
             </RelayButton>
             <RelayButton
               v-else
-              class="h-10 w-full rounded-xl bg-primary px-6 text-[13px] font-medium text-primary-foreground shadow-sm transition-colors hover:bg-primary/90"
+              class="h-10 w-full rounded-[10px] bg-primary px-6 text-base font-medium text-primary-foreground shadow-sm transition-colors hover:bg-primary/90"
               @click="validateAndSubmit"
             >
               {{ $t('CONTACTS_LAYOUT.FILTER.BUTTONS.APPLY_FILTERS') }}

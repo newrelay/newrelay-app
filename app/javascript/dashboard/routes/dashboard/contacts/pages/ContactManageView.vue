@@ -200,26 +200,28 @@ onMounted(() => {
       <div
         class="flex min-h-0 min-w-0 flex-1 flex-col bg-background lg:overflow-hidden"
       >
-        <div class="shrink-0 border-b border-border/40 bg-card px-6 py-4">
-          <div
-            class="inline-flex h-10 items-center justify-center rounded-lg bg-muted/60 p-1 text-muted-foreground"
-            role="tablist"
-          >
+        <div class="shrink-0 bg-card px-6">
+          <div class="flex gap-6 border-b border-border" role="tablist">
             <button
               v-for="tab in DETAIL_TABS"
               :key="tab.value"
               type="button"
               role="tab"
               :aria-selected="activeTab === tab.value"
-              class="reset-base inline-flex items-center justify-center whitespace-nowrap rounded-md px-4 py-1.5 text-sm font-medium transition-all"
+              class="relative -mb-px pb-2.5 pt-4 text-sm font-medium transition-colors"
               :class="
                 activeTab === tab.value
-                  ? 'bg-background text-primary shadow-sm'
-                  : 'hover:text-foreground'
+                  ? 'text-foreground'
+                  : 'text-muted-foreground hover:text-foreground'
               "
               @click="activeTab = tab.value"
             >
               {{ t(tab.labelKey) }}
+              <span
+                v-if="activeTab === tab.value"
+                class="absolute inset-x-0 bottom-0 h-px bg-primary"
+                aria-hidden="true"
+              />
             </button>
           </div>
         </div>

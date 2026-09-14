@@ -67,7 +67,11 @@ const currentOperator = computed(() =>
 );
 
 const FILTER_DROPDOWN_TRIGGER_CLASS =
-  'flex h-9 w-full items-center justify-between rounded-md border border-border/80 bg-background px-3 text-[13px] text-foreground transition-colors hover:bg-muted/30';
+  'flex h-9 w-full items-center justify-between rounded-md border border-border/80 bg-background px-3 text-[14px] font-medium text-foreground transition-colors hover:bg-muted/30';
+
+// Operator trigger uses primary color per design annotation
+const FILTER_OPERATOR_TRIGGER_CLASS =
+  'flex h-9 w-full items-center justify-between rounded-md border border-border/80 bg-background px-3 text-[14px] font-medium text-primary transition-colors hover:bg-muted/30';
 
 const stackedOperatorLabel = computed(() => {
   const label = currentOperator.value?.label;
@@ -218,7 +222,7 @@ defineExpose({ validate, resetValidation });
         <RelayButton
           variant="ghost"
           size="icon"
-          class="size-9 shrink-0 rounded-md border border-border/50 bg-background text-muted-foreground hover:border-border/50 hover:text-destructive"
+          class="size-9 shrink-0 rounded-md border border-border/50 bg-background text-muted-foreground hover:border-border/50 hover:bg-destructive/15 hover:text-destructive"
           @click.stop="emit('remove')"
         >
           <span class="i-lucide-trash-2 size-4" />
@@ -232,7 +236,7 @@ defineExpose({ validate, resetValidation });
         <template #trigger="{ toggle }">
           <button
             type="button"
-            :class="FILTER_DROPDOWN_TRIGGER_CLASS"
+            :class="FILTER_OPERATOR_TRIGGER_CLASS"
             @click="toggle"
           >
             <span class="truncate">{{ stackedOperatorLabel }}</span>

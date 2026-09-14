@@ -272,7 +272,7 @@ const stats = [
         </div>
       </div>
 
-      <div class="h-[320px] w-full px-4 pt-4 pb-2">
+      <div class="h-[320px] w-full px-4 pt-6 pb-4">
         <LineChart class="h-full w-full" :collection="chartData" />
       </div>
     </div>

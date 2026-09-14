@@ -689,23 +689,6 @@ onMounted(() => {
                 </RelayDropdownMenuItem>
               </RelayDropdownMenuContent>
             </RelayDropdownMenu>
-
-            <div class="flex items-center gap-1">
-              <RelayButton
-                variant="ghost"
-                size="icon"
-                class="size-8 rounded-md text-muted-foreground hover:text-foreground border border-border hover:border-transparent"
-              >
-                <span class="i-lucide-list-filter size-4" />
-              </RelayButton>
-              <RelayButton
-                variant="ghost"
-                size="icon"
-                class="size-8 rounded-md text-muted-foreground hover:text-foreground border border-border hover:border-transparent"
-              >
-                <span class="i-lucide-arrow-up-down size-4" />
-              </RelayButton>
-            </div>
           </div>
 
           <div class="relative w-64 shrink-0">
@@ -736,6 +719,7 @@ onMounted(() => {
             class="flex items-start gap-4 rounded-xl border border-border/60 bg-card p-4 shadow-sm transition-shadow hover:shadow-md"
           >
             <RelayCheckbox
+              circle
               :model-value="!!task.completed"
               class="mt-1 border-muted-foreground/30"
               @update:model-value="value => setTaskCompleted(task, value)"
@@ -769,15 +753,14 @@ onMounted(() => {
                     <RelayDropdownMenuTrigger as-child>
                       <RelayButton
                         variant="ghost"
-                        size="icon"
-                        class="size-7 text-muted-foreground hover:text-foreground border border-border hover:border-transparent"
+                        class="size-7 p-0 text-muted-foreground hover:text-foreground border border-border hover:border-transparent"
                       >
                         <span class="i-lucide-more-horizontal size-4" />
                       </RelayButton>
                     </RelayDropdownMenuTrigger>
                     <RelayDropdownMenuContent align="end" class="w-[160px]">
                       <RelayDropdownMenuItem
-                        class="gap-2 text-[13px]"
+                        class="gap-2 text-sm"
                         @select="openEditTaskDialog(task)"
                       >
                         <span class="i-lucide-pencil size-3.5" />
@@ -785,7 +768,7 @@ onMounted(() => {
                       </RelayDropdownMenuItem>
                       <RelayDropdownMenuItem
                         destructive
-                        class="gap-2 text-[13px]"
+                        class="gap-2 text-sm"
                         @select="handleDeleteTask(task.id)"
                       >
                         <span class="i-lucide-trash size-3.5" />
@@ -799,7 +782,7 @@ onMounted(() => {
               <div class="mt-2 flex flex-wrap items-center gap-4">
                 <div
                   v-if="task.due_at"
-                  class="flex items-center gap-1.5 rounded-md px-2 py-0.5 text-[12px] font-medium"
+                  class="flex items-center gap-1.5 rounded-md px-2 py-0.5 text-[12px] font-normal"
                   :class="
                     isOverdue(task)
                       ? 'bg-destructive/10 text-destructive'

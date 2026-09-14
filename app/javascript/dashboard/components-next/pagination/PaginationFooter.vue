@@ -26,6 +26,7 @@ const props = defineProps({
 const emit = defineEmits(['update:currentPage']);
 const { t } = useI18n();
 const { formatCompactNumber, formatFullNumber } = useNumberFormatter();
+const ELLIPSIS = '…';
 
 const totalPages = computed(() =>
   Math.ceil(props.totalItems / props.itemsPerPage)
@@ -38,6 +39,7 @@ const endItem = computed(() =>
 );
 const isFirstPage = computed(() => props.currentPage === 1);
 const isLastPage = computed(() => props.currentPage === totalPages.value);
+
 const changePage = newPage => {
   if (newPage >= 1 && newPage <= totalPages.value) {
     emit('update:currentPage', newPage);
@@ -57,19 +59,29 @@ const currentPageInformation = computed(() => {
   );
 });
 
-const pageInfo = computed(() => {
-  return t(
-    'PAGINATION_FOOTER.CURRENT_PAGE_INFO',
-    {
-      currentPage: formatFullNumber(props.currentPage),
-      totalPages: formatCompactNumber(totalPages.value),
-    },
-    Number(totalPages.value)
-  );
-});
+// Build the list of page-number tokens to render.
+// Returns numbers and '...' ellipsis strings.
+// ponytail: simple O(totalPages) scan; fine for ≤ a few thousand pages.
+const pageTokens = computed(() => {
+  const total = totalPages.value;
+  const current = props.currentPage;
+  if (total <= 7) return Array.from({ length: total }, (_, i) => i + 1);
 
-const paginationButtonClass =
-  'size-7 rounded-md border border-border hover:border-transparent hover:bg-muted transition-colors disabled:opacity-40 disabled:cursor-not-allowed';
+  // Always show first, last, and a window of ±1 around current.
+  const visible = new Set(
+    [1, total, current - 1, current, current + 1].filter(
+      p => p >= 1 && p <= total
+    )
+  );
+  const sorted = [...visible].sort((a, b) => a - b);
+
+  const tokens = [];
+  for (let i = 0; i < sorted.length; i += 1) {
+    if (i > 0 && sorted[i] - sorted[i - 1] > 1) tokens.push(ELLIPSIS);
+    tokens.push(sorted[i]);
+  }
+  return tokens;
+});
 </script>
 
 <template>
@@ -79,43 +91,48 @@ const paginationButtonClass =
     <span class="min-w-0 truncate">
       {{ currentPageInformation }}
     </span>
-    <div class="flex items-center gap-2">
+    <div class="flex items-center gap-1.5">
       <RelayButton
         variant="outline"
         size="icon"
-        :class="paginationButtonClass"
-        :disabled="isFirstPage"
-        @click="changePage(1)"
-      >
-        <span class="i-lucide-chevrons-left size-3.5" />
-      </RelayButton>
-      <RelayButton
-        variant="outline"
-        size="icon"
-        :class="paginationButtonClass"
+        class="size-8 shadow-none transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
         :disabled="isFirstPage"
         @click="changePage(currentPage - 1)"
       >
-        <span class="i-lucide-chevron-left size-3.5" />
+        <span class="i-lucide-chevron-left size-4" />
       </RelayButton>
-      <span class="truncate tabular-nums">{{ pageInfo }}</span>
+
+      <template v-for="(token, index) in pageTokens" :key="index">
+        <span
+          v-if="token === ELLIPSIS"
+          class="flex size-8 items-center justify-center text-[13px] text-muted-foreground"
+        >
+          {{ ELLIPSIS }}
+        </span>
+        <RelayButton
+          v-else
+          variant="outline"
+          size="icon"
+          class="size-8 shadow-none transition-colors"
+          :class="
+            token === currentPage
+              ? 'bg-primary text-primary-foreground border-primary hover:bg-primary/90'
+              : 'hover:bg-muted'
+          "
+          @click="changePage(token)"
+        >
+          {{ token }}
+        </RelayButton>
+      </template>
+
       <RelayButton
         variant="outline"
         size="icon"
-        :class="paginationButtonClass"
+        class="size-8 shadow-none transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
         :disabled="isLastPage"
         @click="changePage(currentPage + 1)"
       >
-        <span class="i-lucide-chevron-right size-3.5" />
-      </RelayButton>
-      <RelayButton
-        variant="outline"
-        size="icon"
-        :class="paginationButtonClass"
-        :disabled="isLastPage"
-        @click="changePage(totalPages)"
-      >
-        <span class="i-lucide-chevrons-right size-3.5" />
+        <span class="i-lucide-chevron-right size-4" />
       </RelayButton>
     </div>
   </div>

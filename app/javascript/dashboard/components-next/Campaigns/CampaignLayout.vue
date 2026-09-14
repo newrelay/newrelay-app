@@ -32,7 +32,7 @@ const handleButtonClick = () => {
         <div
           class="flex flex-col sm:flex-row sm:items-center justify-between gap-4"
         >
-          <h1 class="text-[20px] font-medium tracking-tight text-foreground">
+          <h1 class="text-base font-medium tracking-tight text-foreground">
             {{ headerTitle }}
           </h1>
           <div

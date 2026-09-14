@@ -1630,13 +1630,13 @@ h1.page-title,
   border: 1px solid var(--border);
   background-color: var(--card);
   box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
-  overflow-x: auto;
-  padding: 12px;
+  overflow: hidden;
+  padding: 0;
   width: 100%;
 }
-.table-card-inner {
-  width: 100%;
+.table-overflow-wrap {
   overflow-x: auto;
+  width: 100%;
 }
 table {
   width: 100%;
@@ -1652,8 +1652,8 @@ thead tr {
   background-color: var(--table-header-bg, #edecfc8f);
 }
 thead th {
-  padding: 20px 32px;
-  font-size: 14px;
+  padding: 14px 20px;
+  font-size: 13.5px;
   font-weight: 500;
   color: var(--foreground);
   white-space: nowrap;
@@ -1662,12 +1662,10 @@ thead th {
   border-bottom: none;
 }
 thead th:first-child {
-  border-radius: 12px 0 0 12px;
-  padding: 20px 32px;
+  padding-left: 24px;
 }
 thead th:last-child {
-  border-radius: 0 12px 12px 0;
-  padding: 20px 32px;
+  padding-right: 24px;
 }
 /* Id is always the first collection column (see COLLECTION_ATTRIBUTES in
    app/dashboards/*.rb) and its content is short — without a width hint,
@@ -1708,10 +1706,12 @@ tbody tr {
 }
 tbody tr:last-child { border-bottom: none; }
 tbody tr:hover { background-color: color-mix(in srgb, var(--muted) 30%, transparent); }
-tbody td { padding: 16px 32px; color: var(--foreground); vertical-align: middle; }
-tbody td:first-child,
+tbody td { padding: 14px 20px; color: var(--foreground); vertical-align: middle; }
+tbody td:first-child {
+  padding-left: 24px;
+}
 tbody td:last-child {
-  padding: 16px 32px;
+  padding-right: 24px;
 }
 tbody td strong,
 .table-card tbody td strong {
@@ -2057,6 +2057,46 @@ main[role="main"] textarea::placeholder {
   height: auto;
   min-height: 80px;
   padding: 8px 12px;
+}
+
+/* Ensure italic hint/help paragraphs always render in muted color [#38, #52] */
+main[role="main"] p.italic,
+main[role="main"] .field-unit p.italic,
+.form-card p.italic {
+  color: var(--muted-foreground);
+  font-style: italic;
+}
+
+/* Top-align label when field contains stacked items (e.g. limits grid) */
+.field-unit:has(.limits-form-stack),
+.field-unit:has(.feature-flags-grid) {
+  align-items: start;
+}
+.field-unit:has(.limits-form-stack) .field-unit__label label,
+.field-unit:has(.feature-flags-grid) .field-unit__label label {
+  padding-top: 4px;
+}
+
+/* Style native date/time inputs to match Relay design [#56] */
+main[role="main"] input[type="date"],
+main[role="main"] input[type="datetime-local"],
+main[role="main"] input[type="time"] {
+  height: 36px;
+  padding: 0 10px;
+  border-radius: 8px;
+  border: 1px solid var(--input);
+  background-color: var(--background);
+  color: var(--foreground);
+  font-size: 14px;
+  font-family: var(--font-sans);
+  color-scheme: light;
+  cursor: pointer;
+  min-width: 180px;
+}
+.dark main[role="main"] input[type="date"],
+.dark main[role="main"] input[type="datetime-local"],
+.dark main[role="main"] input[type="time"] {
+  color-scheme: dark;
 }
 
 .form-actions {
@@ -2942,8 +2982,8 @@ fieldset.attribute--nested {
 .show-row {
   display: grid;
   grid-template-columns: 200px minmax(0, 1fr);
-  gap: 12px 16px;
-  padding: 12px 0;
+  gap: 8px 12px;
+  padding: 10px 0;
   border-bottom: 1px solid var(--border);
   align-items: start;
 }
@@ -2953,7 +2993,7 @@ fieldset.attribute--nested {
 .show-label {
   font-size: 13.5px;
   font-weight: 500;
-  color: var(--foreground);
+  color: var(--muted-foreground);
   text-align: left;
 }
 .show-value {

@@ -131,20 +131,6 @@ watch(
         @delete="onDelete"
       />
     </div>
-    <div
-      v-else
-      class="flex flex-col items-center justify-center py-2 text-muted-foreground"
-    >
-      <span class="i-lucide-file-text mb-2 size-4 opacity-40" />
-      <span class="text-[11px]">
-        {{
-          t(
-            'CONTACTS_LAYOUT.SIDEBAR.NOTES.CONVERSATION_EMPTY_STATE',
-            'No notes yet'
-          )
-        }}
-      </span>
-    </div>
 
     <RelayModal
       :show="shouldShowCreateModal"

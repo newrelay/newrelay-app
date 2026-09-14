@@ -698,7 +698,7 @@
         "COLLAPSE": "Collapse",
         "NO_NOTES": "No notes, you can add notes from the contact details page.",
         "EMPTY_STATE": "There are no notes associated to this contact. You can add a note by typing in the box above.",
-        "EMPTY_TITLE": "No notes yet",
+        "EMPTY_TITLE": "No Notes Yet",
         "EMPTY_HINT": "Click 'Add Note' to leave a private internal note about this contact.",
         "CONVERSATION_EMPTY_STATE": "There are no notes yet. Use the Add note button to create one."
       }

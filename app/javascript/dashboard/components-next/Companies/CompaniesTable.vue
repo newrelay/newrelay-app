@@ -2,7 +2,7 @@
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import Avatar from 'dashboard/components-next/avatar/Avatar.vue';
-import { RelayButton } from 'dashboard/components-next/relay';
+import PaginationFooter from 'dashboard/components-next/pagination/PaginationFooter.vue';
 
 const props = defineProps({
   companies: { type: Array, required: true },
@@ -30,29 +30,35 @@ const { t } = useI18n();
 
 const emptyValue = computed(() => t('COMPANIES.EMPTY_VALUE'));
 
-const startItem = computed(() =>
-  props.totalItems === 0 ? 0 : (props.currentPage - 1) * props.itemsPerPage + 1
-);
-const endItem = computed(() =>
-  Math.min(startItem.value + props.itemsPerPage - 1, props.totalItems)
-);
-const isFirstPage = computed(() => props.currentPage <= 1);
-const isLastPage = computed(
-  () => endItem.value >= props.totalItems || props.totalItems === 0
-);
-
 const attrsOf = company => company.additionalAttributes || {};
 
 const displayName = company => company.name || t('COMPANIES.UNNAMED');
-const industryOf = company => attrsOf(company).industry || emptyValue.value;
-const phoneOf = company => attrsOf(company).phone || emptyValue.value;
-const ownerOf = company => attrsOf(company).owner || emptyValue.value;
-const websiteOf = company =>
-  attrsOf(company).website || company.domain || emptyValue.value;
+const industryOf = company => attrsOf(company).industry || null;
+const phoneOf = company => attrsOf(company).phone || null;
+const ownerOf = company => attrsOf(company).owner || null;
+const websiteOf = company => attrsOf(company).website || company.domain || null;
 const websiteHref = company => {
   const value = attrsOf(company).website || company.domain;
   if (!value) return null;
   return value.startsWith('http') ? value : `https://${value}`;
+};
+
+// Inline phone formatter — groups raw digit strings for readability
+const formatPhone = raw => {
+  if (!raw) return raw;
+  // Already has formatting chars — show as-is
+  if (/[-().+ ]/.test(raw.trim())) return raw.trim();
+  const digits = raw.replace(/\D/g, '');
+  // 10-digit (US): (XXX) XXX-XXXX
+  if (digits.length === 10) {
+    return `(${digits.slice(0, 3)}) ${digits.slice(3, 6)}-${digits.slice(6)}`;
+  }
+  // 11-digit US with country code: +1 (XXX) XXX-XXXX
+  if (digits.length === 11 && digits[0] === '1') {
+    return `+1 (${digits.slice(1, 4)}) ${digits.slice(4, 7)}-${digits.slice(7)}`;
+  }
+  // Generic: space-separate every 3 digits
+  return digits.replace(/(\d{3})(?=\d)/g, '$1 ');
 };
 
 const openCompany = id => {
@@ -71,25 +77,31 @@ const openCompany = id => {
           class="border-b border-border/60 bg-muted/30 text-[14px] text-muted-foreground"
         >
           <tr>
-            <th v-if="visibleColumns.company" class="px-5 py-3.5 font-medium">
+            <th v-if="visibleColumns.company" class="px-4 py-2.5 font-medium">
               {{ t('COMPANIES.COLUMNS.COMPANY') }}
             </th>
-            <th v-if="visibleColumns.industry" class="px-5 py-3.5 font-medium">
+            <th
+              v-if="visibleColumns.industry"
+              class="py-2.5 pl-3 pr-4 font-medium"
+            >
               {{ t('COMPANIES.COLUMNS.INDUSTRY') }}
             </th>
-            <th v-if="visibleColumns.contacts" class="px-5 py-3.5 font-medium">
+            <th v-if="visibleColumns.contacts" class="px-4 py-2.5 font-medium">
               {{ t('COMPANIES.COLUMNS.CONTACTS') }}
             </th>
-            <th v-if="visibleColumns.phone" class="px-5 py-3.5 font-medium">
+            <th v-if="visibleColumns.phone" class="px-4 py-2.5 font-medium">
               {{ t('COMPANIES.COLUMNS.PHONE') }}
             </th>
-            <th v-if="visibleColumns.email" class="px-5 py-3.5 font-medium">
+            <th v-if="visibleColumns.email" class="px-4 py-2.5 font-medium">
               {{ t('COMPANIES.COLUMNS.EMAIL') }}
             </th>
-            <th v-if="visibleColumns.website" class="px-5 py-3.5 font-medium">
+            <th v-if="visibleColumns.website" class="px-4 py-2.5 font-medium">
               {{ t('COMPANIES.COLUMNS.WEBSITE') }}
             </th>
-            <th v-if="visibleColumns.owner" class="px-5 py-3.5 font-medium">
+            <th
+              v-if="visibleColumns.owner"
+              class="py-2.5 pl-3 pr-4 font-medium"
+            >
               {{ t('COMPANIES.COLUMNS.OWNER') }}
             </th>
           </tr>
@@ -101,7 +113,7 @@ const openCompany = id => {
             class="group cursor-pointer transition-colors hover:bg-muted/20"
             @click="openCompany(company.id)"
           >
-            <td v-if="visibleColumns.company" class="px-5 py-4">
+            <td v-if="visibleColumns.company" class="px-4 py-3">
               <div class="flex items-center gap-3">
                 <div
                   class="flex size-9 shrink-0 items-center justify-center overflow-hidden rounded-xl border border-border/50 bg-background shadow-xs"
@@ -122,23 +134,27 @@ const openCompany = id => {
             </td>
             <td
               v-if="visibleColumns.industry"
-              class="px-5 py-4 text-muted-foreground"
+              class="py-3 pl-3 pr-4 text-muted-foreground"
             >
-              {{ industryOf(company) }}
+              <span v-if="industryOf(company)">{{ industryOf(company) }}</span>
+              <span v-else class="text-[11px]">{{ emptyValue }}</span>
             </td>
             <td
               v-if="visibleColumns.contacts"
-              class="px-5 py-4 text-muted-foreground"
+              class="px-4 py-3 text-muted-foreground"
             >
               {{ Number(company.contactsCount || 0) }}
             </td>
             <td
               v-if="visibleColumns.phone"
-              class="px-5 py-4 text-muted-foreground"
+              class="px-4 py-3 text-muted-foreground"
             >
-              {{ phoneOf(company) }}
+              <span v-if="phoneOf(company)" class="tabular-nums">{{
+                formatPhone(phoneOf(company))
+              }}</span>
+              <span v-else class="text-[11px]">{{ emptyValue }}</span>
             </td>
-            <td v-if="visibleColumns.email" class="px-5 py-4">
+            <td v-if="visibleColumns.email" class="px-4 py-3">
               <a
                 v-if="attrsOf(company).email"
                 :href="`mailto:${attrsOf(company).email}`"
@@ -147,9 +163,11 @@ const openCompany = id => {
               >
                 {{ attrsOf(company).email }}
               </a>
-              <span v-else class="text-muted-foreground">{{ emptyValue }}</span>
+              <span v-else class="text-[11px] text-muted-foreground">{{
+                emptyValue
+              }}</span>
             </td>
-            <td v-if="visibleColumns.website" class="px-5 py-4">
+            <td v-if="visibleColumns.website" class="px-4 py-3">
               <a
                 v-if="websiteHref(company)"
                 :href="websiteHref(company)"
@@ -160,52 +178,30 @@ const openCompany = id => {
               >
                 {{ websiteOf(company) }}
               </a>
-              <span v-else class="text-muted-foreground">{{ emptyValue }}</span>
+              <span v-else class="text-[11px] text-muted-foreground">{{
+                emptyValue
+              }}</span>
             </td>
-            <td v-if="visibleColumns.owner" class="px-5 py-4 text-foreground">
-              {{ ownerOf(company) }}
+            <td
+              v-if="visibleColumns.owner"
+              class="py-3 pl-3 pr-4 text-foreground"
+            >
+              <span v-if="ownerOf(company)">{{ ownerOf(company) }}</span>
+              <span v-else class="text-[11px] text-muted-foreground">{{
+                emptyValue
+              }}</span>
             </td>
           </tr>
         </tbody>
       </table>
     </div>
 
-    <div
-      class="flex items-center justify-between border-t border-border/60 bg-muted/10 p-3 text-xs text-muted-foreground"
-    >
-      <span class="pl-2">
-        {{
-          t(
-            'COMPANIES_LAYOUT.PAGINATION_FOOTER.SHOWING',
-            {
-              startItem,
-              endItem,
-              totalItems,
-            },
-            Number(totalItems)
-          )
-        }}
-      </span>
-      <div class="flex items-center gap-1.5">
-        <RelayButton
-          variant="ghost"
-          size="sm"
-          class="h-7 px-3 text-xs"
-          :disabled="isFirstPage"
-          @click="emit('update:currentPage', currentPage - 1)"
-        >
-          {{ t('COMPANIES_LAYOUT.PAGINATION_FOOTER.PREVIOUS') }}
-        </RelayButton>
-        <RelayButton
-          variant="ghost"
-          size="sm"
-          class="h-7 px-3 text-xs"
-          :disabled="isLastPage"
-          @click="emit('update:currentPage', currentPage + 1)"
-        >
-          {{ t('COMPANIES_LAYOUT.PAGINATION_FOOTER.NEXT') }}
-        </RelayButton>
-      </div>
-    </div>
+    <PaginationFooter
+      current-page-info="COMPANIES_LAYOUT.PAGINATION_FOOTER.SHOWING"
+      :current-page="currentPage"
+      :total-items="totalItems"
+      :items-per-page="itemsPerPage"
+      @update:current-page="emit('update:currentPage', $event)"
+    />
   </div>
 </template>

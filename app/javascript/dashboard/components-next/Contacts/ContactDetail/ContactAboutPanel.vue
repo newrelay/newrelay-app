@@ -177,7 +177,7 @@ const saveAbout = async () => {
     <div
       class="flex flex-col rounded-xl border border-border/30 bg-card shadow-sm"
     >
-      <div class="border-b border-border/30 p-6">
+      <div class="border-b border-border/30 px-6 py-[18px]">
         <h3
           class="mb-6 flex items-center justify-between text-[15px] font-semibold text-foreground"
         >

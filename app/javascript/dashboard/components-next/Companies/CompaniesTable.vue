@@ -74,34 +74,28 @@ const openCompany = id => {
     <div class="overflow-x-auto">
       <table class="w-full whitespace-nowrap text-left text-sm">
         <thead
-          class="border-b border-border/60 bg-muted/30 text-[14px] text-muted-foreground"
+          class="border-b border-border/60 bg-muted/30 text-[14px] font-semibold capitalize text-muted-foreground"
         >
           <tr>
-            <th v-if="visibleColumns.company" class="px-4 py-2.5 font-medium">
+            <th v-if="visibleColumns.company" class="px-4 py-2.5">
               {{ t('COMPANIES.COLUMNS.COMPANY') }}
             </th>
-            <th
-              v-if="visibleColumns.industry"
-              class="py-2.5 pl-3 pr-4 font-medium"
-            >
+            <th v-if="visibleColumns.industry" class="py-2.5 pl-3 pr-4">
               {{ t('COMPANIES.COLUMNS.INDUSTRY') }}
             </th>
-            <th v-if="visibleColumns.contacts" class="px-4 py-2.5 font-medium">
+            <th v-if="visibleColumns.contacts" class="px-4 py-2.5">
               {{ t('COMPANIES.COLUMNS.CONTACTS') }}
             </th>
-            <th v-if="visibleColumns.phone" class="px-4 py-2.5 font-medium">
+            <th v-if="visibleColumns.phone" class="px-4 py-2.5">
               {{ t('COMPANIES.COLUMNS.PHONE') }}
             </th>
-            <th v-if="visibleColumns.email" class="px-4 py-2.5 font-medium">
+            <th v-if="visibleColumns.email" class="px-4 py-2.5">
               {{ t('COMPANIES.COLUMNS.EMAIL') }}
             </th>
-            <th v-if="visibleColumns.website" class="px-4 py-2.5 font-medium">
+            <th v-if="visibleColumns.website" class="px-4 py-2.5">
               {{ t('COMPANIES.COLUMNS.WEBSITE') }}
             </th>
-            <th
-              v-if="visibleColumns.owner"
-              class="py-2.5 pl-3 pr-4 font-medium"
-            >
+            <th v-if="visibleColumns.owner" class="py-2.5 pl-3 pr-4">
               {{ t('COMPANIES.COLUMNS.OWNER') }}
             </th>
           </tr>

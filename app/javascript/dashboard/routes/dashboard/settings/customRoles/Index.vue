@@ -216,7 +216,7 @@ const confirmDeletion = () => {
               <table class="w-full text-left">
                 <thead>
                   <tr
-                    class="border-b border-border/40 text-[12px] font-medium text-foreground"
+                    class="border-b border-border/40 text-[14px] font-semibold capitalize text-muted-foreground"
                   >
                     <th class="py-4 pr-4 align-bottom font-semibold">
                       {{ $t('CUSTOM_ROLE.LIST.TABLE_HEADER.NAME') }}

@@ -239,25 +239,23 @@ onMounted(() => {
           <div class="min-w-[600px]">
             <!-- Header Row -->
             <div
-              class="grid grid-cols-[1fr_auto_auto_auto] gap-4 p-4 border-b border-border/40 bg-muted/20"
+              class="grid grid-cols-[1fr_auto_auto_auto] gap-4 p-4 border-b border-border/40 bg-muted/20 capitalize"
             >
-              <div
-                class="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider pl-2"
-              >
+              <div class="text-[14px] font-semibold text-muted-foreground pl-2">
                 {{ $t('PROFILE_SETTINGS.FORM.NOTIFICATIONS.EVENT') }}
               </div>
               <div
-                class="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider w-16 text-center"
+                class="text-[14px] font-semibold text-muted-foreground w-16 text-center"
               >
                 {{ $t('PROFILE_SETTINGS.FORM.NOTIFICATIONS.IN_APP') }}
               </div>
               <div
-                class="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider w-16 text-center"
+                class="text-[14px] font-semibold text-muted-foreground w-16 text-center"
               >
                 {{ $t('PROFILE_SETTINGS.FORM.NOTIFICATIONS.EMAIL') }}
               </div>
               <div
-                class="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider w-16 text-center"
+                class="text-[14px] font-semibold text-muted-foreground w-16 text-center"
               >
                 {{ $t('PROFILE_SETTINGS.FORM.NOTIFICATIONS.PUSH') }}
               </div>

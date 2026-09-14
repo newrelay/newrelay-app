@@ -75,7 +75,7 @@ const toggleSelectAll = () => {
     class="overflow-hidden rounded-xl border border-border/70 bg-card shadow-xs"
   >
     <div
-      class="grid grid-cols-[1.5fr_1.5fr_1fr] gap-4 border-b border-border/50 bg-muted/25 px-5 py-3.5"
+      class="grid grid-cols-[1.5fr_1.5fr_1fr] gap-4 border-b border-border/50 bg-muted/25 px-5 py-3.5 capitalize"
     >
       <div class="flex items-center gap-3">
         <RelayCheckbox
@@ -84,14 +84,14 @@ const toggleSelectAll = () => {
           :title="$t('TEAMS_SETTINGS.AGENTS.SELECT_ALL')"
           @change="toggleSelectAll"
         />
-        <span class="text-[14px] font-medium text-muted-foreground">
+        <span class="text-[14px] font-semibold text-muted-foreground">
           {{ t('TEAMS_SETTINGS.AGENTS.AGENT') }}
         </span>
       </div>
-      <div class="text-[14px] font-medium text-muted-foreground">
+      <div class="text-[14px] font-semibold text-muted-foreground">
         {{ t('TEAMS_SETTINGS.AGENTS.EMAIL') }}
       </div>
-      <div class="text-[14px] font-medium text-muted-foreground">
+      <div class="text-[14px] font-semibold text-muted-foreground">
         {{ t('TEAMS_SETTINGS.AGENTS.ROLE') }}
       </div>
     </div>

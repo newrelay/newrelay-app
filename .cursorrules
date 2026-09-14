@@ -8,10 +8,13 @@
 
 ## Component Styling Rules
 - **Headings**: Section/Page Headings use `text-base font-medium` (16px, 500w). Empty State Headings strictly use `text-[20px] font-[600]`.
+- **Filters**: `text-[13px] font-normal` (13px, 400w).
+- **Table heads**: `text-[14px] font-semibold` (14px, 600w). Title Case, never uppercase. Autoresponder automations/AR notifications tables stay `text-[12px] font-medium` (shipped).
 - **Ghost Buttons**: Always add a subtle gray border to define boundaries (e.g., `border border-border`). On hover, remove it (`hover:border-transparent`).
 - **Modals/Popups**: 
+  - Every modal has a heading **and** a description.
   - Backdrop: `bg-background/80 backdrop-blur-[8px]` (prefer `RELAY_DIALOG_OVERLAY_CLASS` from `relay/modal/constants.js`).
-  - Header: `RELAY_MODAL_HEADER_CLASS` — title `text-base font-medium tracking-tight`, description `text-[14px] font-normal text-muted-foreground`. No `border-b` under the title (spacing only), except Add Bot (`RELAY_MODAL_HEADER_PLAIN_CLASS`: `border-b border-border/40`). Footer may use `border-t border-border/40`.
+  - Header: `RELAY_MODAL_HEADER_CLASS`. Title `text-[18px] font-semibold tracking-tight` (`RELAY_MODAL_TITLE_CLASS`). Description `text-[14px] font-normal text-muted-foreground` (`RELAY_MODAL_DESCRIPTION_CLASS`). Add Bot uses `RELAY_MODAL_HEADER_PLAIN_CLASS` (`border-b border-border/40 px-8 py-6`). Footer may use `border-t border-border/40`.
   - Content body: `p-6` (or `pt-4 pb-8 px-8` for legacy woot-modal-content migration).
 - **Forms (in Modals)**:
   - Field wrapper: `flex flex-col gap-1.5` between label and input/textarea.
@@ -32,5 +35,6 @@
 - **Dropdowns/Popovers**: 
   - Wrapper: `bg-popover text-popover-foreground shadow-md rounded-md border border-border`.
   - Items: `px-2 py-1.5 text-sm hover:bg-accent hover:text-accent-foreground`.
+  - **Items only:** selectable options and action links (`DropdownMenuItem` / `DropdownMenuRadioItem`). Never `DropdownMenuLabel` or all-caps category headers inside the popup.
 - **Empty States**: Include a temporary "developer button" at the very bottom to toggle mock data.
 - **Native vs Custom**: NEVER rely on unstyled native HTML elements that trigger browser-default popups (like `<select>`, native date pickers). Build or style them to match the UI system.

@@ -126,19 +126,19 @@ watch(routerPage, (newPage, oldPage) => {
             <div class="overflow-x-auto">
               <table class="w-full border-collapse text-left">
                 <thead>
-                  <tr class="border-b border-border/40">
+                  <tr class="border-b border-border/40 capitalize">
                     <th
-                      class="bg-transparent px-6 py-4 text-sm font-medium text-foreground"
+                      class="bg-transparent px-6 py-4 text-[14px] font-semibold text-muted-foreground"
                     >
                       {{ $t('AUDIT_LOGS.LIST.TABLE_HEADER.ACTIVITY') }}
                     </th>
                     <th
-                      class="w-48 bg-transparent px-6 py-4 text-sm font-medium text-foreground"
+                      class="w-48 bg-transparent px-6 py-4 text-[14px] font-semibold text-muted-foreground"
                     >
                       {{ $t('AUDIT_LOGS.LIST.TABLE_HEADER.TIME') }}
                     </th>
                     <th
-                      class="w-48 bg-transparent px-6 py-4 text-sm font-medium text-foreground"
+                      class="w-48 bg-transparent px-6 py-4 text-[14px] font-semibold text-muted-foreground"
                     >
                       {{ $t('AUDIT_LOGS.LIST.TABLE_HEADER.IP_ADDRESS') }}
                     </th>

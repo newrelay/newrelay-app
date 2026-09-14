@@ -311,22 +311,22 @@ const saveMacro = async macroData => {
 
             <div v-else class="min-w-full">
               <div
-                class="grid grid-cols-[1.5fr_1fr_1fr_1fr_80px] items-center border-b border-border/40 bg-muted/30 px-6 py-3.5"
+                class="grid grid-cols-[1.5fr_1fr_1fr_1fr_80px] items-center border-b border-border/40 bg-muted/30 px-6 py-3.5 capitalize"
               >
-                <div class="text-[14px] font-medium text-muted-foreground">
+                <div class="text-[14px] font-semibold text-muted-foreground">
                   {{ $t('MACROS.LIST.TABLE_HEADER.NAME') }}
                 </div>
-                <div class="text-[14px] font-medium text-muted-foreground">
+                <div class="text-[14px] font-semibold text-muted-foreground">
                   {{ $t('MACROS.LIST.TABLE_HEADER.CREATED BY') }}
                 </div>
-                <div class="text-[14px] font-medium text-muted-foreground">
+                <div class="text-[14px] font-semibold text-muted-foreground">
                   {{ $t('MACROS.LIST.TABLE_HEADER.LAST_UPDATED_BY') }}
                 </div>
-                <div class="text-[14px] font-medium text-muted-foreground">
+                <div class="text-[14px] font-semibold text-muted-foreground">
                   {{ $t('MACROS.LIST.TABLE_HEADER.VISIBILITY') }}
                 </div>
                 <div
-                  class="text-right text-[14px] font-medium text-muted-foreground"
+                  class="text-right text-[14px] font-semibold text-muted-foreground"
                 >
                   {{ $t('MACROS.LIST.TABLE_HEADER.ACTIONS') }}
                 </div>

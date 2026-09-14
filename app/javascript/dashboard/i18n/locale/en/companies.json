@@ -94,6 +94,7 @@
     },
     "FILTERS": {
       "TITLE": "Filter companies",
+      "DESCRIPTION": "Choose conditions to narrow the companies shown in this list.",
       "AND": "AND",
       "OR": "OR",
       "ADD_CONDITION": "Add filter condition",

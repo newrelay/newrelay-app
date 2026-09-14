@@ -35,7 +35,7 @@ import {
 import TasksAPI from 'dashboard/api/tasks';
 
 const FILTER_DROPDOWN_TRIGGER_CLASS =
-  'h-9 gap-2 rounded-lg border-border bg-background px-3 text-[13px] font-medium text-foreground shadow-sm hover:border-border hover:bg-muted/50';
+  'h-9 gap-2 rounded-lg border-border bg-background px-3 text-[13px] font-normal text-foreground shadow-sm hover:border-border hover:bg-muted/50';
 const FORM_DROPDOWN_TRIGGER_CLASS =
   'h-9 w-full justify-between rounded-md border-border/80 bg-background px-3 text-[14px] font-normal shadow-sm hover:bg-muted/50';
 const DUE_DATE_MENU_CONTENT_CLASS =

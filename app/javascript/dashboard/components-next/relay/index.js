@@ -66,6 +66,7 @@ export {
   TooltipContent,
   TooltipPortal,
 } from 'reka-ui';
+export { RELAY_FILTER_CLASS, RELAY_TABLE_HEAD_CLASS } from './chrome/constants';
 export {
   RELAY_FORM_FIELD_CLASS,
   RELAY_FORM_LABEL_CLASS,

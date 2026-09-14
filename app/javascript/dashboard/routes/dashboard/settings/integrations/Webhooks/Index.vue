@@ -150,16 +150,16 @@ const confirmDeletion = () => {
           class="overflow-hidden rounded-xl border border-border/60 bg-card shadow-xs"
         >
           <div
-            class="grid grid-cols-[2fr_2fr_1fr] gap-4 border-b border-border/40 bg-background/50 p-4"
+            class="grid grid-cols-[2fr_2fr_1fr] gap-4 border-b border-border/40 bg-background/50 p-4 capitalize"
           >
-            <div class="text-[13px] font-semibold text-foreground">
+            <div class="text-[14px] font-semibold text-muted-foreground">
               {{ t('INTEGRATION_SETTINGS.WEBHOOK.LIST.TABLE_HEADER.DETAILS') }}
             </div>
-            <div class="text-[13px] font-semibold text-foreground">
+            <div class="text-[14px] font-semibold text-muted-foreground">
               {{ t('INTEGRATION_SETTINGS.WEBHOOK.LIST.TABLE_HEADER.URL') }}
             </div>
             <div
-              class="pr-2 text-right text-[13px] font-semibold text-foreground"
+              class="pr-2 text-right text-[14px] font-semibold text-muted-foreground"
             >
               {{ t('INTEGRATION_SETTINGS.WEBHOOK.LIST.TABLE_HEADER.ACTIONS') }}
             </div>

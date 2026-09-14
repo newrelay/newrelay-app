@@ -1,4 +1,6 @@
 <script setup>
+import { RELAY_TABLE_HEAD_CLASS } from 'dashboard/components-next/relay/chrome/constants';
+
 defineProps({
   detailsLabel: {
     type: String,
@@ -30,12 +32,10 @@ defineProps({
       v-if="showColumnHeaders && (detailsLabel || actionsLabel)"
       class="grid grid-cols-[1fr_auto] gap-4 border-b border-border/50 bg-muted/20 px-6 py-3.5"
     >
-      <div class="text-[14px] font-medium text-muted-foreground">
+      <div :class="RELAY_TABLE_HEAD_CLASS">
         {{ detailsLabel }}
       </div>
-      <div
-        class="pr-2 text-right text-[14px] font-medium text-muted-foreground"
-      >
+      <div class="pr-2 text-right" :class="RELAY_TABLE_HEAD_CLASS">
         {{ actionsLabel }}
       </div>
     </div>

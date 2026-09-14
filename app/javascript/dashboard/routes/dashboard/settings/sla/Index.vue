@@ -211,20 +211,20 @@ export default {
                     <div v-else class="min-w-full overflow-x-auto">
                       <!-- Header row -->
                       <div
-                        class="grid grid-cols-[1.5fr_1fr_0.7fr_0.7fr_0.7fr_100px] items-center border-b border-border/40 px-4 py-3 bg-muted/20"
+                        class="grid grid-cols-[1.5fr_1fr_0.7fr_0.7fr_0.7fr_100px] items-center border-b border-border/40 px-4 py-3 bg-muted/20 capitalize"
                       >
                         <div
-                          class="text-[14px] font-medium text-muted-foreground"
+                          class="text-[14px] font-semibold text-muted-foreground"
                         >
                           {{ $t('SLA.LIST.TABLE_HEADER.SLA') }}
                         </div>
                         <div
-                          class="text-[14px] font-medium text-muted-foreground"
+                          class="text-[14px] font-semibold text-muted-foreground"
                         >
                           {{ $t('SLA.LIST.TABLE_HEADER.BUSINESS_HOURS') }}
                         </div>
                         <div
-                          class="flex items-center gap-1 text-[14px] font-medium text-muted-foreground"
+                          class="flex items-center gap-1 text-[14px] font-semibold text-muted-foreground"
                         >
                           {{ $t('SLA.LIST.RESPONSE_TYPES.SHORT_HAND.FRT') }}
                           <RelayTooltip
@@ -238,7 +238,7 @@ export default {
                           </RelayTooltip>
                         </div>
                         <div
-                          class="flex items-center gap-1 text-[14px] font-medium text-muted-foreground"
+                          class="flex items-center gap-1 text-[14px] font-semibold text-muted-foreground"
                         >
                           {{ $t('SLA.LIST.RESPONSE_TYPES.SHORT_HAND.NRT') }}
                           <RelayTooltip
@@ -252,7 +252,7 @@ export default {
                           </RelayTooltip>
                         </div>
                         <div
-                          class="flex items-center gap-1 text-[14px] font-medium text-muted-foreground"
+                          class="flex items-center gap-1 text-[14px] font-semibold text-muted-foreground"
                         >
                           {{ $t('SLA.LIST.RESPONSE_TYPES.SHORT_HAND.RT') }}
                           <RelayTooltip
@@ -266,7 +266,7 @@ export default {
                           </RelayTooltip>
                         </div>
                         <div
-                          class="text-right text-[14px] font-medium text-muted-foreground"
+                          class="text-right text-[14px] font-semibold text-muted-foreground"
                         >
                           {{ $t('INTEGRATION_APPS.LIST.ACTIONS') }}
                         </div>

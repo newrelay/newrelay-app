@@ -98,7 +98,7 @@ onMounted(() => {
       />
     </div>
     <div class="flex items-center">
-      <span class="mx-2 text-sm whitespace-nowrap">
+      <span class="mx-2 whitespace-nowrap text-[13px] font-normal">
         {{ $t('REPORT.BUSINESS_HOURS') }}
       </span>
       <span>

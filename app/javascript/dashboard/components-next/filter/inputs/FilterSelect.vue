@@ -7,6 +7,7 @@ import DropdownBody from 'next/dropdown-menu/base/DropdownBody.vue';
 import DropdownItem from 'next/dropdown-menu/base/DropdownItem.vue';
 
 import Button from 'next/button/Button.vue';
+import { RELAY_FILTER_CLASS } from 'dashboard/components-next/relay/chrome/constants';
 
 // [{label, icon, value}]
 const props = defineProps({
@@ -52,6 +53,10 @@ const selectedOption = computed(() => {
   return props.options?.find(o => o.value === selected.value) || {};
 });
 
+const selectableOptions = computed(() =>
+  (props.options || []).filter(option => !option.disabled)
+);
+
 const iconToRender = computed(() => {
   if (props.hideIcon) return null;
   return selectedOption.value.icon || 'i-lucide-chevron-down';
@@ -85,6 +90,7 @@ const updateSelected = newValue => {
           :icon="iconToRender"
           :trailing-icon="selectedOption.icon ? false : true"
           :label="label || (hideLabel ? null : selectedOption.label)"
+          :class="RELAY_FILTER_CLASS"
           @click="toggle"
         />
       </slot>
@@ -99,15 +105,8 @@ const updateSelected = newValue => {
       <DropdownSection
         class="[&>ul]:max-h-72 [&>ul]:no-scrollbar [&>ul]:[&::-webkit-scrollbar]:hidden"
       >
-        <template v-for="option in options" :key="option.value">
-          <li
-            v-if="option.disabled"
-            class="px-2 py-1.5 text-xs font-medium text-muted-foreground select-none"
-          >
-            {{ option.label }}
-          </li>
+        <template v-for="option in selectableOptions" :key="option.value">
           <DropdownItem
-            v-else
             :label="option.label"
             :icon="option.icon"
             @click="updateSelected(option.value)"

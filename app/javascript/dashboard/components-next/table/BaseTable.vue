@@ -1,5 +1,6 @@
 <script setup>
 import { computed } from 'vue';
+import { RELAY_TABLE_HEAD_CLASS } from 'dashboard/components-next/relay/chrome/constants';
 
 const props = defineProps({
   headers: {
@@ -34,7 +35,8 @@ const showHeaders = computed(
           <th
             v-for="(header, index) in headers"
             :key="index"
-            class="py-4 ltr:pr-4 rtl:pl-4 text-start text-heading-3 text-foreground capitalize"
+            class="py-4 text-start ltr:pr-4 rtl:pl-4"
+            :class="RELAY_TABLE_HEAD_CLASS"
           >
             <slot :name="`header-${index}`" :header="header">
               {{ header }}

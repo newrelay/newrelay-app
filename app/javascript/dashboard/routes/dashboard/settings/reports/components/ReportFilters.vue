@@ -372,7 +372,7 @@ onMounted(() => {
         class="flex items-center flex-shrink-0 ltr:ml-auto rtl:mr-auto"
       >
         <span
-          class="mx-2 text-[14px] font-medium text-muted-foreground whitespace-nowrap"
+          class="mx-2 whitespace-nowrap text-[13px] font-normal text-muted-foreground"
         >
           {{ $t('REPORT.BUSINESS_HOURS') }}
         </span>

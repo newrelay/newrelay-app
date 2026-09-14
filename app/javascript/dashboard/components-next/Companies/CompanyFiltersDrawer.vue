@@ -174,6 +174,7 @@ const applyFilters = () => {
       >
         <RelayModalHeader
           :title="t('COMPANIES.FILTERS.TITLE')"
+          :description="t('COMPANIES.FILTERS.DESCRIPTION')"
           @close="close"
         />
 
@@ -187,7 +188,7 @@ const applyFilters = () => {
               <button
                 v-if="index > 0"
                 type="button"
-                class="absolute -top-2.5 left-4 bg-card px-2 text-xs font-bold uppercase text-muted-foreground hover:text-foreground"
+                class="absolute -top-2.5 left-4 bg-card px-2 text-[13px] font-normal text-muted-foreground hover:text-foreground"
                 @click="toggleQueryOperator(index)"
               >
                 {{
@@ -204,7 +205,7 @@ const applyFilters = () => {
                 >
                   <RelayButton
                     variant="outline"
-                    class="h-9 w-full justify-between border-border bg-background px-3 text-sm font-medium shadow-sm hover:bg-muted/50"
+                    class="h-9 w-full justify-between border-border bg-background px-3 text-[13px] font-normal shadow-sm hover:bg-muted/50"
                     @click="
                       openPropertyMenu =
                         openPropertyMenu === draft.id ? null : draft.id
@@ -247,7 +248,7 @@ const applyFilters = () => {
               >
                 <RelayButton
                   variant="outline"
-                  class="h-9 w-full justify-between border-border bg-background px-3 text-sm font-medium text-primary shadow-sm hover:bg-muted/50"
+                  class="h-9 w-full justify-between border-border bg-background px-3 text-[13px] font-normal text-primary shadow-sm hover:bg-muted/50"
                   @click="
                     openOperatorMenu =
                       openOperatorMenu === draft.id ? null : draft.id
@@ -303,7 +304,7 @@ const applyFilters = () => {
 
           <RelayButton
             variant="ghost"
-            class="h-9 w-full justify-start rounded-lg border border-transparent px-4 text-sm font-medium text-primary hover:border-primary/20 hover:bg-primary/10 hover:text-primary border border-border hover:border-transparent"
+            class="h-9 w-full justify-start rounded-lg border border-border px-4 text-[13px] font-normal text-primary hover:border-transparent hover:bg-primary/10 hover:text-primary"
             @click="addFilterDraft"
           >
             <span class="i-lucide-plus mr-2 size-4" />

@@ -203,10 +203,10 @@ const companyDisplayName = contact =>
   >
     <div class="w-full overflow-x-auto">
       <table class="w-full text-left text-sm">
-        <thead class="border-b border-border/50 bg-muted/30">
+        <thead class="border-b border-border/50 bg-muted/30 capitalize">
           <tr>
             <th
-              class="w-12 px-4 py-3 align-middle font-medium text-muted-foreground"
+              class="w-12 px-4 py-3 align-middle text-[14px] font-semibold text-muted-foreground"
             >
               <RelayCheckbox
                 circle
@@ -216,7 +216,7 @@ const companyDisplayName = contact =>
               />
             </th>
             <th
-              class="group cursor-pointer whitespace-nowrap px-4 py-3 font-medium text-muted-foreground transition-colors hover:text-foreground"
+              class="group cursor-pointer whitespace-nowrap px-4 py-3 text-[14px] font-semibold text-muted-foreground transition-colors hover:text-foreground"
               :aria-sort="sortAriaValue(SORTABLE_COLUMNS.name)"
               @click="handleColumnSort(SORTABLE_COLUMNS.name)"
             >
@@ -227,7 +227,7 @@ const companyDisplayName = contact =>
             </th>
             <th
               v-if="visibleColumns.includes('email')"
-              class="group cursor-pointer whitespace-nowrap px-4 py-3 font-medium text-muted-foreground transition-colors hover:text-foreground"
+              class="group cursor-pointer whitespace-nowrap px-4 py-3 text-[14px] font-semibold text-muted-foreground transition-colors hover:text-foreground"
               :aria-sort="sortAriaValue(SORTABLE_COLUMNS.email)"
               @click="handleColumnSort(SORTABLE_COLUMNS.email)"
             >
@@ -238,7 +238,7 @@ const companyDisplayName = contact =>
             </th>
             <th
               v-if="visibleColumns.includes('phoneNumber')"
-              class="group cursor-pointer whitespace-nowrap px-4 py-3 font-medium text-muted-foreground transition-colors hover:text-foreground"
+              class="group cursor-pointer whitespace-nowrap px-4 py-3 text-[14px] font-semibold text-muted-foreground transition-colors hover:text-foreground"
               :aria-sort="sortAriaValue(SORTABLE_COLUMNS.phoneNumber)"
               @click="handleColumnSort(SORTABLE_COLUMNS.phoneNumber)"
             >
@@ -249,7 +249,7 @@ const companyDisplayName = contact =>
             </th>
             <th
               v-if="visibleColumns.includes('company')"
-              class="group cursor-pointer whitespace-nowrap px-4 py-3 font-medium text-muted-foreground transition-colors hover:text-foreground"
+              class="group cursor-pointer whitespace-nowrap px-4 py-3 text-[14px] font-semibold text-muted-foreground transition-colors hover:text-foreground"
               :aria-sort="sortAriaValue(SORTABLE_COLUMNS.company)"
               @click="handleColumnSort(SORTABLE_COLUMNS.company)"
             >
@@ -260,7 +260,7 @@ const companyDisplayName = contact =>
             </th>
             <th
               v-if="visibleColumns.includes('createdAt')"
-              class="group hidden cursor-pointer whitespace-nowrap px-4 py-3 font-medium text-muted-foreground transition-colors hover:text-foreground lg:table-cell"
+              class="group hidden cursor-pointer whitespace-nowrap px-4 py-3 text-[14px] font-semibold text-muted-foreground transition-colors hover:text-foreground lg:table-cell"
               :aria-sort="sortAriaValue(SORTABLE_COLUMNS.createdAt)"
               @click="handleColumnSort(SORTABLE_COLUMNS.createdAt)"
             >
@@ -271,7 +271,7 @@ const companyDisplayName = contact =>
             </th>
             <th
               v-if="visibleColumns.includes('lastActivity')"
-              class="group hidden cursor-pointer whitespace-nowrap px-4 py-3 font-medium text-muted-foreground transition-colors hover:text-foreground lg:table-cell"
+              class="group hidden cursor-pointer whitespace-nowrap px-4 py-3 text-[14px] font-semibold text-muted-foreground transition-colors hover:text-foreground lg:table-cell"
               :aria-sort="sortAriaValue(SORTABLE_COLUMNS.lastActivity)"
               @click="handleColumnSort(SORTABLE_COLUMNS.lastActivity)"
             >
@@ -282,14 +282,14 @@ const companyDisplayName = contact =>
             </th>
             <th
               v-if="visibleColumns.includes('tags')"
-              class="whitespace-nowrap px-4 py-3 font-medium text-muted-foreground"
+              class="whitespace-nowrap px-4 py-3 text-[14px] font-semibold text-muted-foreground"
             >
               {{ t('CONTACTS_LAYOUT.FILTER.TAGS') }}
             </th>
             <th
               v-for="col in visibleCustomColumns"
               :key="col.key"
-              class="whitespace-nowrap px-4 py-3 font-medium text-muted-foreground"
+              class="whitespace-nowrap px-4 py-3 text-[14px] font-semibold text-muted-foreground"
             >
               {{ col.label }}
             </th>

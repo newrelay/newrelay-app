@@ -410,7 +410,7 @@ async function resendRequest(req) {
                   <DropdownMenuTrigger as-child>
                     <Button
                       variant="outline"
-                      class="h-9 gap-1.5 border border-border hover:border-transparent text-[13px] font-medium bg-card px-3 rounded-lg shadow-xs"
+                      class="h-9 gap-1.5 border border-border hover:border-transparent text-[13px] font-normal bg-card px-3 rounded-lg shadow-xs"
                     >
                       <span>{{ selectedChannel }}</span>
                       <ChevronDown class="size-3.5 opacity-60 ml-0.5" />
@@ -428,7 +428,7 @@ async function resendRequest(req) {
                   <DropdownMenuTrigger as-child>
                     <Button
                       variant="outline"
-                      class="h-9 gap-1.5 border border-border hover:border-transparent text-[13px] font-medium bg-card px-3 rounded-lg shadow-xs"
+                      class="h-9 gap-1.5 border border-border hover:border-transparent text-[13px] font-normal bg-card px-3 rounded-lg shadow-xs"
                     >
                       <span>{{ selectedStatus }}</span>
                       <ChevronDown class="size-3.5 opacity-60 ml-0.5" />
@@ -448,7 +448,7 @@ async function resendRequest(req) {
                   <DropdownMenuTrigger as-child>
                     <Button
                       variant="outline"
-                      class="h-9 gap-1.5 border border-border hover:border-transparent text-[13px] font-medium bg-card px-3 rounded-lg shadow-xs"
+                      class="h-9 gap-1.5 border border-border hover:border-transparent text-[13px] font-normal bg-card px-3 rounded-lg shadow-xs"
                     >
                       <Calendar class="size-3.5 text-muted-foreground" />
                       <span>{{ selectedTimeframe }}</span>
@@ -467,12 +467,12 @@ async function resendRequest(req) {
 
             <div class="rounded-xl border border-border/50 bg-card shadow-sm overflow-hidden">
               <table class="w-full text-sm text-left border-collapse">
-                <thead class="bg-muted/30 border-b border-border/50">
+                <thead class="bg-muted/30 border-b border-border/50 capitalize">
                   <tr>
-                    <th class="px-6 py-3.5 text-[14px] font-medium text-muted-foreground whitespace-nowrap">Recipient & Customer</th>
-                    <th class="px-6 py-3.5 text-[14px] font-medium text-muted-foreground whitespace-nowrap">Channel & Trigger</th>
-                    <th class="px-6 py-3.5 text-[14px] font-medium text-muted-foreground whitespace-nowrap">Status</th>
-                    <th class="px-6 py-3.5 text-[14px] font-medium text-muted-foreground whitespace-nowrap text-right">Sent Timestamp</th>
+                    <th class="px-6 py-3.5 text-[14px] font-semibold text-muted-foreground whitespace-nowrap">Recipient & Customer</th>
+                    <th class="px-6 py-3.5 text-[14px] font-semibold text-muted-foreground whitespace-nowrap">Channel & Trigger</th>
+                    <th class="px-6 py-3.5 text-[14px] font-semibold text-muted-foreground whitespace-nowrap">Status</th>
+                    <th class="px-6 py-3.5 text-[14px] font-semibold text-muted-foreground whitespace-nowrap text-right">Sent Timestamp</th>
                   </tr>
                 </thead>
                 <tbody class="divide-y divide-border/40">

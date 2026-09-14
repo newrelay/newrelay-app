@@ -1257,30 +1257,30 @@ onActivated(() => {
               <table v-else class="w-full text-sm">
                 <thead>
                   <tr
-                    class="border-b border-border/40 text-left text-muted-foreground"
+                    class="border-b border-border/40 text-left capitalize text-muted-foreground"
                   >
                     <th
-                      class="py-2 pr-4 text-[14px] font-medium text-muted-foreground"
+                      class="py-2 pr-4 text-[14px] font-semibold text-muted-foreground"
                     >
                       {{ $t('BILLING_SETTINGS.TRANSACTIONS.DATE') }}
                     </th>
                     <th
-                      class="py-2 pr-4 text-[14px] font-medium text-muted-foreground"
+                      class="py-2 pr-4 text-[14px] font-semibold text-muted-foreground"
                     >
                       {{ $t('BILLING_SETTINGS.TRANSACTIONS.DESCRIPTION_COL') }}
                     </th>
                     <th
-                      class="py-2 pr-4 text-[14px] font-medium text-muted-foreground"
+                      class="py-2 pr-4 text-[14px] font-semibold text-muted-foreground"
                     >
                       {{ $t('BILLING_SETTINGS.TRANSACTIONS.AMOUNT') }}
                     </th>
                     <th
-                      class="py-2 pr-4 text-[14px] font-medium text-muted-foreground"
+                      class="py-2 pr-4 text-[14px] font-semibold text-muted-foreground"
                     >
                       {{ $t('BILLING_SETTINGS.TRANSACTIONS.STATUS') }}
                     </th>
                     <th
-                      class="py-2 text-[14px] font-medium text-muted-foreground"
+                      class="py-2 text-[14px] font-semibold text-muted-foreground"
                     >
                       {{ $t('BILLING_SETTINGS.TRANSACTIONS.RECEIPT') }}
                     </th>

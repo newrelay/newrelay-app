@@ -8,10 +8,8 @@ import { useContactFilterContext } from './contactProvider.js';
 import { useSnakeCase } from 'dashboard/composables/useTransformKeys';
 
 import { RelayButton, RelayInput } from 'dashboard/components-next/relay';
-import {
-  RELAY_DIALOG_OVERLAY_CLASS,
-  RELAY_MODAL_CLOSE_BUTTON_CLASS,
-} from 'dashboard/components-next/relay/modal/constants';
+import { RELAY_DIALOG_OVERLAY_CLASS } from 'dashboard/components-next/relay/modal/constants';
+import RelayModalHeader from 'dashboard/components-next/relay/modal/RelayModalHeader.vue';
 import ConditionRow from './ConditionRow.vue';
 
 const props = defineProps({
@@ -111,29 +109,20 @@ onBeforeUnmount(() => emit('close'));
       @click.self="close"
     >
       <div
-        class="fixed inset-y-0 right-0 z-[60] flex w-full max-w-[450px] translate-x-0 animate-in slide-in-from-right flex-col border-l border-border bg-card p-6 shadow-2xl duration-300"
+        class="fixed inset-y-0 right-0 z-[60] flex w-full max-w-[450px] translate-x-0 animate-in slide-in-from-right flex-col border-l border-border bg-card p-0 shadow-2xl duration-300"
       >
-        <div class="mb-6 flex shrink-0 items-center justify-between">
-          <h2
-            class="capitalize text-base font-medium tracking-tight text-foreground"
-          >
-            {{ filterModalHeaderTitle }}
-          </h2>
-          <button
-            type="button"
-            :class="RELAY_MODAL_CLOSE_BUTTON_CLASS"
-            @click="close"
-          >
-            <span class="i-lucide-x size-4" />
-          </button>
-        </div>
+        <RelayModalHeader
+          :title="filterModalHeaderTitle"
+          :description="t('CONTACTS_LAYOUT.FILTER.DESCRIPTION')"
+          @close="close"
+        />
 
-        <div class="no-scrollbar flex-1 overflow-y-auto pr-2">
+        <div class="no-scrollbar flex-1 overflow-y-auto px-6 pt-6">
           <div
             v-if="props.isSegmentView"
             class="mb-6 flex flex-col gap-1.5 border-b border-border pb-6"
           >
-            <label class="text-[13.5px] text-foreground font-[500]">
+            <label class="text-[13.5px] font-medium text-foreground">
               {{ t('CONTACTS_LAYOUT.FILTER.SEGMENT.LABEL') }}
             </label>
             <RelayInput
@@ -181,7 +170,7 @@ onBeforeUnmount(() => emit('close'));
 
           <button
             type="button"
-            class="flex w-full cursor-pointer items-center justify-start gap-2 rounded-lg my-4 px-[19px] py-2.5 text-[13px] font-medium text-primary transition-colors hover:bg-accent hover:text-accent-foreground"
+            class="my-4 flex w-full cursor-pointer items-center justify-start gap-2 rounded-lg px-[19px] py-2.5 text-[13px] font-normal text-primary transition-colors hover:bg-accent hover:text-accent-foreground"
             @click="addFilter"
           >
             <span class="i-lucide-plus size-4" />
@@ -189,7 +178,9 @@ onBeforeUnmount(() => emit('close'));
           </button>
         </div>
 
-        <div class="mt-6 flex shrink-0 gap-3 border-t border-border pt-6">
+        <div
+          class="mt-6 flex shrink-0 gap-3 border-t border-border px-6 pb-6 pt-6"
+        >
           <RelayButton
             variant="outline"
             class="h-9 flex-1 text-base font-normal"

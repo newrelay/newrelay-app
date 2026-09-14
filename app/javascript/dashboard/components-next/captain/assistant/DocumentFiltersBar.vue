@@ -113,7 +113,7 @@ const handleMenuAction = ({ action, value }) => {
         <RelayButton
           variant="outline"
           size="sm"
-          class="h-8 border-border/60 text-[13px] text-foreground"
+          class="h-8 border-border/60 text-[13px] font-normal text-foreground"
         >
           <span
             class="size-3.5 shrink-0 opacity-70"

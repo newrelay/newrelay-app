@@ -7,6 +7,7 @@ import {
   RelayDropdownMenuContent,
   RelayDropdownMenuItem,
 } from 'dashboard/components-next/relay';
+import { RELAY_FILTER_CLASS } from 'dashboard/components-next/relay/chrome/constants';
 
 const props = defineProps({
   options: {
@@ -55,6 +56,7 @@ const handleSelect = value => {
         color="slate"
         variant="faded"
         class="!w-fit max-w-40"
+        :class="RELAY_FILTER_CLASS"
         :label="labelValue"
       />
     </RelayDropdownMenuTrigger>

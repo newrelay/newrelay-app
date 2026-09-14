@@ -8,11 +8,14 @@
 
 ## Component Styling Rules
 - **Headings**: Section/Page Headings use `text-base font-medium` (16px, 500w). Empty State Headings strictly use `text-[20px] font-[600]`.
+- **Filters**: `text-[13px] font-normal` (13px, 400w).
+- **Table heads**: `text-[14px] font-semibold` (14px, 600w). Title Case, never uppercase.
 - **Ghost Buttons**: Always add a subtle gray border to define boundaries (e.g., `border border-border`). On hover, remove it (`hover:border-transparent`).
 - **Modals/Popups**: 
-  - Backdrop: `bg-n-alpha-black2 backdrop-blur-[4px]`.
-  - Header (`woot-modal-header`): `px-8 pt-8 pb-0`. Title is `text-base font-semibold leading-6 text-foreground`.
-  - Content Wrapper (`.modal-content`): `pt-4 pb-8 px-8`.
+  - Every modal has a heading **and** a description.
+  - Backdrop: `bg-background/80 backdrop-blur-[8px]`.
+  - Header: title `text-[18px] font-semibold tracking-tight`; description `text-[14px] font-normal text-muted-foreground`.
+  - Content Wrapper: `p-6`.
 - **Forms (in Modals)**:
   - Spacing: `flex flex-col gap-1.5` between Label and Input.
   - Labels: `text-[13.5px] font-medium text-foreground`.
@@ -26,5 +29,6 @@
 - **Dropdowns/Popovers**: 
   - Wrapper: `bg-popover text-popover-foreground shadow-md rounded-md border border-border`.
   - Items: `px-2 py-1.5 text-sm hover:bg-accent hover:text-accent-foreground`.
+  - **Items only:** selectable options and action links (`DropdownMenuItem` / `DropdownMenuRadioItem`). Never `DropdownMenuLabel` or all-caps category headers inside the popup.
 - **Empty States**: Include a temporary "developer button" at the very bottom to toggle mock data.
 - **Native vs Custom**: NEVER rely on unstyled native HTML elements that trigger browser-default popups (like `<select>`, native date pickers). Build or style them to match the UI system.

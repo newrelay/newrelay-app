@@ -128,22 +128,22 @@ onBeforeMount(() => {
             <thead>
               <tr class="border-b border-border/50 bg-muted/20">
                 <th
-                  class="w-64 px-6 py-3.5 text-[14px] font-medium text-muted-foreground"
+                  class="w-64 px-6 py-3.5 text-[14px] font-semibold text-muted-foreground"
                 >
                   {{ $t('LABEL_MGMT.LIST.TABLE_HEADER.NAME') }}
                 </th>
                 <th
-                  class="px-6 py-3.5 text-[14px] font-medium text-muted-foreground"
+                  class="px-6 py-3.5 text-[14px] font-semibold text-muted-foreground"
                 >
                   {{ $t('LABEL_MGMT.LIST.TABLE_HEADER.DESCRIPTION') }}
                 </th>
                 <th
-                  class="w-48 px-6 py-3.5 text-[14px] font-medium text-muted-foreground"
+                  class="w-48 px-6 py-3.5 text-[14px] font-semibold text-muted-foreground"
                 >
                   {{ $t('LABEL_MGMT.LIST.TABLE_HEADER.COLOR') }}
                 </th>
                 <th
-                  class="w-32 px-6 py-3.5 text-[14px] font-medium text-muted-foreground"
+                  class="w-32 px-6 py-3.5 text-[14px] font-semibold text-muted-foreground"
                 >
                   {{ $t('LABEL_MGMT.LIST.TABLE_HEADER.ACTION') }}
                 </th>

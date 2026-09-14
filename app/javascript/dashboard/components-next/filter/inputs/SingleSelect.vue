@@ -8,6 +8,7 @@ import DropdownContainer from 'next/dropdown-menu/base/DropdownContainer.vue';
 import DropdownSection from 'next/dropdown-menu/base/DropdownSection.vue';
 import DropdownBody from 'next/dropdown-menu/base/DropdownBody.vue';
 import DropdownItem from 'next/dropdown-menu/base/DropdownItem.vue';
+import { RELAY_FILTER_CLASS } from 'dashboard/components-next/relay/chrome/constants';
 
 const {
   options,
@@ -65,8 +66,8 @@ const isFieldAppearance = computed(() =>
 
 const fieldTriggerClass = computed(() =>
   appearance === 'fieldMuted'
-    ? 'flex h-9 w-full items-center justify-between rounded-lg border border-border/50 bg-muted/40 px-3 text-[13.5px] outline-none transition-all hover:border-border hover:bg-muted/70 focus:ring-1 focus:ring-primary/30'
-    : 'flex h-9 w-full items-center justify-between rounded-lg border border-border/70 bg-background px-3 text-[13.5px] font-medium text-foreground shadow-xs outline-none transition-colors hover:bg-muted/60 focus:ring-1 focus:ring-primary/30'
+    ? 'flex h-9 w-full items-center justify-between rounded-lg border border-border/50 bg-muted/40 px-3 text-[13px] font-normal outline-none transition-all hover:border-border hover:bg-muted/70 focus:ring-1 focus:ring-primary/30'
+    : 'flex h-9 w-full items-center justify-between rounded-lg border border-border/70 bg-background px-3 text-[13px] font-normal text-foreground shadow-xs outline-none transition-colors hover:bg-muted/60 focus:ring-1 focus:ring-primary/30'
 );
 
 const { t } = useI18n();
@@ -138,6 +139,7 @@ const toggleSelected = option => {
         slate
         faded
         type="button"
+        :class="RELAY_FILTER_CLASS"
         :icon="selectedItem.icon"
         :label="selectedItem.name"
         @click="toggle"
@@ -148,6 +150,7 @@ const toggleSelected = option => {
         slate
         faded
         type="button"
+        :class="RELAY_FILTER_CLASS"
         :trailing-icon="placeholderTrailingIcon"
         @click="toggle"
       >

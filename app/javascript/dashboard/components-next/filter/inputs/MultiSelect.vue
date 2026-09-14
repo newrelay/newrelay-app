@@ -8,6 +8,7 @@ import DropdownContainer from 'next/dropdown-menu/base/DropdownContainer.vue';
 import DropdownSection from 'next/dropdown-menu/base/DropdownSection.vue';
 import DropdownBody from 'next/dropdown-menu/base/DropdownBody.vue';
 import DropdownItem from 'next/dropdown-menu/base/DropdownItem.vue';
+import { RELAY_FILTER_CLASS } from 'dashboard/components-next/relay/chrome/constants';
 
 const { options, maxChips, dropdownMaxHeight, appearance, placeholder } =
   defineProps({
@@ -84,8 +85,8 @@ const isFieldAppearance = computed(() =>
 
 const fieldTriggerClass = computed(() =>
   appearance === 'fieldMuted'
-    ? 'flex h-9 w-full items-center justify-between rounded-lg border border-border/50 bg-muted/40 px-3 text-[13.5px] outline-none transition-all hover:border-border hover:bg-muted/70 focus:ring-1 focus:ring-primary/30'
-    : 'flex h-9 w-full items-center justify-between rounded-lg border border-border/70 bg-background px-3 text-[13.5px] font-medium text-foreground shadow-xs outline-none transition-colors hover:bg-muted/60 focus:ring-1 focus:ring-primary/30'
+    ? 'flex h-9 w-full items-center justify-between rounded-lg border border-border/50 bg-muted/40 px-3 text-[13px] font-normal outline-none transition-all hover:border-border hover:bg-muted/70 focus:ring-1 focus:ring-primary/30'
+    : 'flex h-9 w-full items-center justify-between rounded-lg border border-border/70 bg-background px-3 text-[13px] font-normal text-foreground shadow-xs outline-none transition-colors hover:bg-muted/60 focus:ring-1 focus:ring-primary/30'
 );
 
 const fieldSelectedLabel = computed(() => {
@@ -143,7 +144,7 @@ const toggleOption = option => {
         <div
           v-for="item in selectedVisibleItems"
           :key="item.name"
-          class="px-3 border-r rtl:border-l rtl:border-r-0 border-border text-foreground text-sm flex gap-2 items-center max-w-[100px]"
+          class="px-3 border-r rtl:border-l rtl:border-r-0 border-border text-foreground text-[13px] font-normal flex gap-2 items-center max-w-[100px]"
         >
           <Icon v-if="item.icon" :icon="item.icon" class="flex-shrink-0" />
           <span class="truncate">{{ item.name }}</span>
@@ -151,7 +152,7 @@ const toggleOption = option => {
         <RelayTooltip :content="remainingTooltip" side="top">
           <div
             v-if="remainingItems.length > 0"
-            class="px-3 border-r rtl:border-l rtl:border-r-0 border-border text-foreground text-sm flex gap-2 items-center max-w-[100px]"
+            class="px-3 border-r rtl:border-l rtl:border-r-0 border-border text-foreground text-[13px] font-normal flex gap-2 items-center max-w-[100px]"
           >
             <span class="truncate">{{
               t('COMBOBOX.MORE', { count: remainingItems.length })
@@ -162,7 +163,7 @@ const toggleOption = option => {
           <Icon icon="i-lucide-plus" />
         </div>
       </button>
-      <Button v-else sm slate faded @click="toggle">
+      <Button v-else sm slate faded :class="RELAY_FILTER_CLASS" @click="toggle">
         <template #icon>
           <Icon icon="i-lucide-plus" class="text-muted-foreground" />
         </template>

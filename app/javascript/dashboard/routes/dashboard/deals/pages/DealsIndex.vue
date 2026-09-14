@@ -205,28 +205,28 @@ onMounted(load);
         <div class="overflow-x-auto">
           <table class="w-full text-left text-sm">
             <thead
-              class="border-b border-border/60 bg-muted/30 text-muted-foreground"
+              class="border-b border-border/60 bg-muted/30 text-[14px] font-semibold capitalize text-muted-foreground"
             >
               <tr>
-                <th class="px-5 py-3.5 font-medium">
+                <th class="px-5 py-3.5">
                   {{ $t('DEALS.TABLE.NAME') }}
                 </th>
-                <th class="px-5 py-3.5 font-medium">
+                <th class="px-5 py-3.5">
                   {{ $t('DEALS.TABLE.COMPANY') }}
                 </th>
-                <th class="px-5 py-3.5 font-medium">
+                <th class="px-5 py-3.5">
                   {{ $t('DEALS.TABLE.STAGE') }}
                 </th>
-                <th class="px-5 py-3.5 font-medium">
+                <th class="px-5 py-3.5">
                   {{ $t('DEALS.TABLE.AMOUNT') }}
                 </th>
-                <th class="px-5 py-3.5 font-medium">
+                <th class="px-5 py-3.5">
                   {{ $t('DEALS.TABLE.CLOSE_ON') }}
                 </th>
-                <th class="px-5 py-3.5 font-medium">
+                <th class="px-5 py-3.5">
                   {{ $t('DEALS.TABLE.OWNER') }}
                 </th>
-                <th class="px-5 py-3.5 font-medium">
+                <th class="px-5 py-3.5">
                   {{ $t('DEALS.TABLE.UPDATED') }}
                 </th>
                 <th class="px-5 py-3.5" />

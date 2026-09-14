@@ -156,7 +156,7 @@ const table = useVueTable({
               :style="{
                 width: header.getSize() ? `${header.getSize()}px` : 'auto',
               }"
-              class="text-left py-3 px-5 font-medium text-sm text-foreground"
+              class="px-5 py-3 text-left text-[14px] font-semibold capitalize text-muted-foreground"
             >
               {{ header.column.columnDef.header }}
             </th>

@@ -181,39 +181,39 @@ onMounted(load);
       >
         <table class="min-w-full table-auto">
           <thead>
-            <tr class="border-b border-border text-left">
+            <tr class="border-b border-border text-left capitalize">
               <th
-                class="px-4 py-3 text-[14px] font-medium text-muted-foreground"
+                class="px-4 py-3 text-[14px] font-semibold text-muted-foreground"
               >
                 {{ $t('CAMPAIGN_ANALYTICS.TABLE.TITLE') }}
               </th>
               <th
-                class="px-4 py-3 text-[14px] font-medium text-muted-foreground"
+                class="px-4 py-3 text-[14px] font-semibold text-muted-foreground"
               >
                 {{ $t('CAMPAIGN_ANALYTICS.TABLE.STATUS') }}
               </th>
               <th
-                class="px-4 py-3 text-[14px] font-medium text-muted-foreground"
+                class="px-4 py-3 text-[14px] font-semibold text-muted-foreground"
               >
                 {{ $t('CAMPAIGN_ANALYTICS.TABLE.TYPE') }}
               </th>
               <th
-                class="px-4 py-3 text-[14px] font-medium text-muted-foreground"
+                class="px-4 py-3 text-[14px] font-semibold text-muted-foreground"
               >
                 {{ $t('CAMPAIGN_ANALYTICS.TABLE.CHANNEL') }}
               </th>
               <th
-                class="px-4 py-3 text-[14px] font-medium text-muted-foreground"
+                class="px-4 py-3 text-[14px] font-semibold text-muted-foreground"
               >
                 {{ $t('CAMPAIGN_ANALYTICS.TABLE.AUDIENCE') }}
               </th>
               <th
-                class="px-4 py-3 text-[14px] font-medium text-muted-foreground"
+                class="px-4 py-3 text-[14px] font-semibold text-muted-foreground"
               >
                 {{ $t('CAMPAIGN_ANALYTICS.TABLE.CONVERSATIONS') }}
               </th>
               <th
-                class="px-4 py-3 text-[14px] font-medium text-muted-foreground"
+                class="px-4 py-3 text-[14px] font-semibold text-muted-foreground"
               >
                 {{ $t('CAMPAIGN_ANALYTICS.TABLE.CREATED') }}
               </th>

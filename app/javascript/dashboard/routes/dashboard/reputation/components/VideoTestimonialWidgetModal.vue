@@ -486,7 +486,7 @@ const isDark = computed(() => widgetConfig.value.theme === 'dark' || previewBg.v
     </div>
 
     <!-- Compact video player popup -->
-    <div v-if="activePlayingVideo" class="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-in fade-in" @click.self="activePlayingVideo = null">
+    <div v-if="activePlayingVideo" class="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-background/80 backdrop-blur-md animate-in fade-in" @click.self="activePlayingVideo = null">
       <div class="relative w-full max-w-md bg-slate-950 text-white rounded-2xl overflow-hidden border border-slate-800 shadow-2xl flex flex-col">
         <div class="relative w-full aspect-[9/16] max-h-[70vh] bg-slate-900 flex items-center justify-center" :class="thumbGradient(activePlayingVideo.id)">
           <span class="text-7xl font-bold text-white/20 select-none">{{ activePlayingVideo.author.charAt(0) }}</span>

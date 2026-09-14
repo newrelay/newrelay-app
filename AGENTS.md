@@ -41,11 +41,15 @@
   - Always use Tailwind utility classes  
 - **Colors**: Use semantic tokens (`bg-primary`, `text-foreground`, `border-input`, `text-muted-foreground`, etc.) — never hardcode hex or invent one-off colors. Full mapping: `app/javascript/dashboard/components-next/relay/TOKENS.md`.
 - **New/redesigned dashboard UI**: Follow the Relay design system — `app/javascript/dashboard/components-next/relay/DESIGN.md`. Use `RelayButton`, `RelayInput`, `RelayLabel`, `RelaySwitch`, `RelayCheckbox`, `RelayBadge`, `RelayTabs*` from `dashboard/components-next/relay` instead of legacy `woot-*` / `WootButton` / `WootModal` widgets.
+- **Filters**: `text-[13px] font-normal`. **Table heads**: `text-[14px] font-semibold`. **Modals**: heading `text-[18px] font-semibold` plus description `text-[14px] font-normal`. **Dropdowns**: items/actions only — no `DropdownMenuLabel` or all-caps headers in the popup.
+- **Reference screenshots**: treat as a layout/content guide only — never copy hardcoded colors or foreign UI patterns (e.g. a different dropdown/input style) from a reference image. Translate everything into Relay's existing tokens and components; match this app's established pages over mimicking the reference verbatim.
+- **New/custom components** (dropdown, calendar, date picker, etc.): never leave an unstyled native element that pops a browser-default UI if it breaks visual harmony — style it to match the Relay system.
 
 ## General Guidelines
 
 - MVP focus: Least code change, happy-path only
 - **One fix at a time**: implement only the change named in this request. Do not revert or restyle other landed work. If the user says stop/undo, do not re-apply it later. List extra issues as follow-ups and wait.
+- **UI consistency across pages**: once a functional or visual UI pattern is implemented on one page and approved, proactively ask whether to apply the same pattern to other relevant pages — don't leave sibling pages visually out of sync, but don't silently propagate it either.
 - No unnecessary defensive programming
 - Ship the happy path first: limit guards/fallbacks to what production has proven necessary, then iterate
 - Prefer minimal, readable code over elaborate abstractions; clarity beats cleverness

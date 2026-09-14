@@ -176,7 +176,7 @@ const handleSortChange = value => {
         class="flex w-72 flex-col gap-4 rounded-xl border border-border bg-accent p-4 shadow-md backdrop-blur-[100px]"
       >
         <div class="flex items-center justify-between gap-2">
-          <span class="truncate text-sm text-foreground">
+          <span class="truncate text-[13px] font-normal text-foreground">
             {{ $t('CHAT_LIST.CHAT_SORT.STATUS') }}
           </span>
           <SelectMenu
@@ -188,7 +188,7 @@ const handleSortChange = value => {
           />
         </div>
         <div class="flex items-center justify-between gap-2">
-          <span class="truncate text-sm text-foreground">
+          <span class="truncate text-[13px] font-normal text-foreground">
             {{ $t('CHAT_LIST.CHAT_SORT.ORDER_BY') }}
           </span>
           <SelectMenu

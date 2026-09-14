@@ -135,7 +135,7 @@ const operatorShowsValue = operator =>
 
           <RelayButton
             variant="outline"
-            class="h-9 gap-2 rounded-lg border-border/60 bg-card text-sm font-medium shadow-sm"
+            class="h-9 gap-2 rounded-lg border-border/60 bg-card text-[13px] font-normal shadow-sm"
             @click="emit('filter')"
           >
             <span class="i-lucide-list-filter size-4" />

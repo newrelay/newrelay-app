@@ -3,11 +3,25 @@ import { computed } from 'vue';
 import { useRoute } from 'vue-router';
 import { useI18n } from 'vue-i18n';
 import { useAccount } from 'dashboard/composables/useAccount';
+import { useMapGetter } from 'dashboard/composables/store';
 import ContactsListingHeaderActions from 'dashboard/components-next/Contacts/ContactsHeader/ContactsListingHeaderActions.vue';
 
 const route = useRoute();
 const { t } = useI18n();
 const { accountScopedRoute } = useAccount();
+
+const contacts = useMapGetter('contacts/getContactsList');
+const uiFlags = useMapGetter('contacts/getUIFlags');
+const appliedFilters = useMapGetter('contacts/getAppliedContactFilters');
+
+const isFirstLandingEmpty = computed(() => {
+  if (route.name !== 'contacts_dashboard_index') return false;
+  if (route.query?.search) return false;
+  if (Number(route.query?.page || 1) > 1) return false;
+  if (appliedFilters.value?.length) return false;
+  if (uiFlags.value?.isFetching) return false;
+  return (contacts.value?.length ?? 0) === 0;
+});
 
 const tabs = computed(() => [
   {
@@ -42,7 +56,10 @@ const isActive = tab => {
 
 <template>
   <div class="m-0 flex h-full flex-1 flex-col overflow-hidden bg-background">
-    <header class="flex shrink-0 flex-col border-b border-border/40 px-6 pt-6">
+    <header
+      v-if="!isFirstLandingEmpty"
+      class="flex shrink-0 flex-col border-b border-border/40 px-6 pt-6"
+    >
       <div class="flex items-start justify-between gap-3">
         <div>
           <h1 class="text-base font-medium tracking-tight text-foreground">

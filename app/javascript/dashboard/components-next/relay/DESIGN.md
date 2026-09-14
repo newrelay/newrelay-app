@@ -15,7 +15,7 @@ When building or migrating a Vue page/component under the Relay shell (`[data-re
 5. **i18n** — no bare strings in templates; update **EN only** (`en.json` / `en.yml`).
 6. **Icons** — Lucide via Uno/iconify classes (`i-lucide-*`) or existing icon patterns. Size with `size-4` / `size-5`; inherit `currentColor`.
 7. **Dark mode** — class-based (`.dark` on `<html>`). Prefer token colors that auto-flip; avoid `dark:` color overrides unless a one-off is required.
-8. **AI product name** — user-facing copy: **Relay AI** (not “Captain” in new UI strings).
+8. **AI product name** — user-facing copy: **Relay AI** (not “Captain” in new UI strings). Scope: UI copy only (labels, tooltips, empty states, suggestions). **Never rename** `Captain::*` classes, routes, API params, or other code identifiers — that's a real backend/Enterprise feature name, not display copy.
 
 ---
 
@@ -28,10 +28,21 @@ When building or migrating a Vue page/component under the Relay shell (`[data-re
 | App header title | `text-base font-medium` |
 | Page H1 (in-page title) | `text-base font-medium tracking-tight text-foreground` (`text-[16px] font-medium`) |
 | Card / block title | `text-base font-semibold text-foreground` |
-| Body / help | `text-[13.5px]` or `text-sm` + `text-muted-foreground` |
-| Form label | `text-[13.5px] font-medium` (`RELAY_FORM_LABEL_CLASS`) |
-| Table header (settings lists) | `text-[14px] font-medium text-muted-foreground` — not uppercase |
-| Table header (autoresponder automations / AR notifications) | `text-[12px] font-medium text-muted-foreground` |
+| Body / help | `text-[13.5px]` or `text-[14px]` + `text-muted-foreground` + `leading-relaxed` |
+| Form label | `text-[13.5px] font-medium text-foreground` (`RELAY_FORM_LABEL_CLASS`) |
+| Form input / textarea | `text-[14px] font-normal text-foreground` |
+| Helper / hint / error text | `text-[12px]` or `text-[12.5px] text-muted-foreground` (`text-destructive` for errors) |
+| Standard button label | `text-[13.5px]` or `text-[14px]` + `font-medium`/`font-semibold` |
+| Compact / mini button label | `text-[12px]` or `text-[13px] font-medium` |
+| Table header (default) | `text-[14px] font-semibold text-muted-foreground` (`RELAY_TABLE_HEAD_CLASS`) — **Title Case, never uppercase/`tracking-wider`, never below 14px.** Locked exception: autoresponder automations/AR notifications tables stay `text-[12px] font-medium text-muted-foreground` (shipped, don't "fix" to 14px). |
+| Filter / list filter control | `text-[13px] font-normal` (`RELAY_FILTER_CLASS`) |
+| Modal title | `text-[18px] font-semibold tracking-tight text-foreground` (`RELAY_MODAL_TITLE_CLASS`) |
+| Modal description | `text-[14px] font-normal text-muted-foreground` (`RELAY_MODAL_DESCRIPTION_CLASS`) — required on every modal |
+| Badge / timestamp / metadata | `text-[11px]`–`text-[12px] font-medium text-muted-foreground`. Locked exception: Inbox count badge (`InboxSidebarNav.vue`) stays `text-[11px] font-semibold` — don't change to `font-medium`. |
+| Category tag / pill chip | `text-[11.5px]` or `text-[12px] font-medium` |
+| Tabs (active vs inactive) | Both **identical** `font-medium` — never toggle weight between states (causes layout shift/width jump). Distinguish active state via `text-primary` + indicator only. |
+| Metric / KPI value | `text-[24px]`–`text-[28px] font-medium`/`font-semibold tracking-tight text-foreground` |
+| Trend badge (+12%, -4%) | `text-[12px]`–`text-[13px] font-medium` |
 | Empty-state title | `text-[20px] font-[600] text-foreground` — **sharp**, no `drop-shadow`, blur, or hover tooltip on the title unless product explicitly asks |
 
 Antialiasing is applied on `[data-relay]` via `_relay-theme.scss`.
@@ -153,6 +164,14 @@ Both ship with **`p-0`** so legacy global `button { padding }` does not crush `s
 - **Pill tabs** (`RelayTabs`): list `bg-muted … h-9 rounded-lg p-1`; active trigger `bg-background shadow-sm`.
 - **Underline tabs** (Inbox status, list filters, entity details): list `flex gap-6 border-b border-border`; inactive `text-muted-foreground hover:text-foreground`; active text `text-foreground`; indicator `absolute inset-x-0 bottom-0 h-px bg-primary` (**1px**, never `h-0.5` or `border-b-2` on `<button>`). See `.cursor/rules/relay-underline-tabs.mdc`.
 
+### Dropdown menus (strict)
+
+Dropdown popups (`DropdownMenuItem` / `DropdownMenuRadioItem`) contain **selectable options and action links only**. Never add `DropdownMenuLabel` section headings or all-caps category text inside a dropdown.
+
+### Search bars & filter controls (border radius)
+
+Search inputs, filter dropdown triggers, and toolbar controls use standard `rounded-lg`/`rounded-md` (8–12px) — **not** `rounded-full` — except status indicators, avatar circles, or metadata pill tags. Locked exception: the `RelayHeader` center search trigger stays `rounded-full` (shipped chrome pattern, not a data-list search bar).
+
 ### Inbox / nested list chrome
 
 Locked Inbox QA (do not invent a second pattern):
@@ -212,12 +231,14 @@ Prefer sharp, calm empty states (`PremiumEmptyState` pattern):
 - Description `text-sm text-muted-foreground max-w-md`.
 - Primary + outline secondary (`border-input shadow-xs`).
 
-Dev-only “show working state” toggles are fine in prototypes; do not ship them to production.
+Include a dev-only "show working state" toggle at the bottom of the empty state while building it, so it's easy to preview both states — but strip it before shipping to production. Never leave it in a merged/production build.
 
 ### Modals / header
 
-- Header wrapper: `RELAY_MODAL_HEADER_CLASS` — `flex shrink-0 items-start justify-between p-6` (no `border-b`; NewRelay Agent/Label/Role use spacing, not a rule). **Add Bot** is the exception: `RELAY_MODAL_HEADER_PLAIN_CLASS` uses `border-b border-border/40` with `px-8 py-6`.
-- Title: `text-base font-medium tracking-tight text-foreground` (`RELAY_MODAL_TITLE_CLASS`).
+Every modal has a heading **and** a description.
+
+- Header wrapper: `RELAY_MODAL_HEADER_CLASS`. **Add Bot** uses `RELAY_MODAL_HEADER_PLAIN_CLASS` (`border-b border-border/40` with `px-8 py-6`).
+- Title: `text-[18px] font-semibold tracking-tight text-foreground` (`RELAY_MODAL_TITLE_CLASS`).
 - Description under title: `text-[14px] font-normal leading-normal text-muted-foreground` (`RELAY_MODAL_DESCRIPTION_CLASS`).
 - Form body follows the header (`p-6` or flush `px-6`/`px-7`). Footer uses `border-t border-border/40` when actions sit on a bar.
 
@@ -232,6 +253,8 @@ Dev-only “show working state” toggles are fine in prototypes; do not ship th
 ### Overlays
 
 Use existing `anim-pop` / `anim-overlay` classes from `_relay-theme.scss` for open/close (match new-ui reka-ui motion).
+
+**Backdrop (strict):** modal/dialog/fullscreen-preview backdrops are always `bg-background/80 backdrop-blur-sm` (`backdrop-blur-md` for media previews) with `animate-in fade-in duration-200` (or the `data-[state=open]:animate-in ... fade-in-0` pair). Never a flat dark overlay (`bg-black/50`, `bg-gray-900/50`).
 
 ---
 

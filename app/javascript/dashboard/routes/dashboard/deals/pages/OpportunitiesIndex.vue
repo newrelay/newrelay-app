@@ -188,37 +188,37 @@ onMounted(load);
         class="w-full min-w-max whitespace-nowrap text-left text-sm"
       >
         <thead
-          class="sticky top-0 z-10 border-b border-border/60 bg-card text-[14px] font-medium text-muted-foreground shadow-sm"
+          class="sticky top-0 z-10 border-b border-border/60 bg-card text-[14px] font-semibold capitalize text-muted-foreground shadow-sm"
         >
           <tr>
-            <th class="px-4 py-3 font-medium">
+            <th class="px-4 py-3">
               {{ $t('DEALS.TABLE.NAME') }}
             </th>
-            <th class="px-4 py-3 font-medium">
+            <th class="px-4 py-3">
               {{ $t('DEALS.TABLE.COMPANY') }}
             </th>
-            <th class="px-4 py-3 font-medium">
+            <th class="px-4 py-3">
               {{ $t('DEALS.TABLE.STAGE') }}
             </th>
-            <th class="px-4 py-3 font-medium">
+            <th class="px-4 py-3">
               {{ $t('DEALS.TABLE.AMOUNT') }}
             </th>
-            <th class="px-4 py-3 font-medium">
+            <th class="px-4 py-3">
               {{ $t('DEALS.TABLE.CLOSE_ON') }}
             </th>
-            <th class="px-4 py-3 font-medium">
+            <th class="px-4 py-3">
               {{ $t('DEALS.TABLE.OWNER') }}
             </th>
-            <th class="px-4 py-3 font-medium">
+            <th class="px-4 py-3">
               {{ $t('DEALS.TABLE.PRIORITY') }}
             </th>
-            <th class="px-4 py-3 font-medium">
+            <th class="px-4 py-3">
               {{ $t('DEALS.TABLE.PROBABILITY') }}
             </th>
-            <th class="px-4 py-3 font-medium">
+            <th class="px-4 py-3">
               {{ $t('DEALS.TABLE.UPDATED') }}
             </th>
-            <th class="px-6 py-3 text-center font-medium" />
+            <th class="px-6 py-3 text-center" />
           </tr>
         </thead>
         <tbody class="divide-y divide-border/40">

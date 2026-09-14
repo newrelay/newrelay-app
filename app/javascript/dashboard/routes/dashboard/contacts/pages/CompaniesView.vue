@@ -16,6 +16,7 @@ import {
   RELAY_DIALOG_OVERLAY_CLASS,
   RELAY_MODAL_BODY_CLASS,
 } from 'dashboard/components-next/relay/modal/constants';
+import { RELAY_TABLE_HEAD_CLASS } from 'dashboard/components-next/relay/chrome/constants';
 
 const { t } = useI18n();
 
@@ -265,34 +266,32 @@ onMounted(() => {
       <div v-else class="w-full border rounded-lg border-muted bg-muted">
         <table class="w-full text-left border-collapse table-auto">
           <thead>
-            <tr
-              class="border-b border-muted bg-muted text-muted-foreground text-xs font-semibold uppercase tracking-wider"
-            >
+            <tr class="border-b border-muted bg-muted">
               <th class="p-3 w-10 text-center">
                 <RelayCheckbox />
               </th>
-              <th class="p-3 text-sm font-semibold capitalize text-foreground">
+              <th :class="RELAY_TABLE_HEAD_CLASS" class="p-3">
                 {{ t('CONTACTS_LAYOUT.COMPANIES_VIEW.COL_COMPANY') }}
               </th>
-              <th class="p-3 text-sm font-semibold capitalize text-foreground">
+              <th :class="RELAY_TABLE_HEAD_CLASS" class="p-3">
                 {{ t('CONTACTS_LAYOUT.COMPANIES_VIEW.COL_PHONE') }}
               </th>
-              <th class="p-3 text-sm font-semibold capitalize text-foreground">
+              <th :class="RELAY_TABLE_HEAD_CLASS" class="p-3">
                 {{ t('CONTACTS_LAYOUT.COMPANIES_VIEW.COL_EMAIL') }}
               </th>
-              <th class="p-3 text-sm font-semibold capitalize text-foreground">
+              <th :class="RELAY_TABLE_HEAD_CLASS" class="p-3">
                 {{ t('CONTACTS_LAYOUT.COMPANIES_VIEW.COL_WEBSITE') }}
               </th>
-              <th class="p-3 text-sm font-semibold capitalize text-foreground">
+              <th :class="RELAY_TABLE_HEAD_CLASS" class="p-3">
                 {{ t('CONTACTS_LAYOUT.COMPANIES_VIEW.COL_ADDRESS') }}
               </th>
-              <th class="p-3 text-sm font-semibold capitalize text-foreground">
+              <th :class="RELAY_TABLE_HEAD_CLASS" class="p-3">
                 {{ t('CONTACTS_LAYOUT.COMPANIES_VIEW.COL_STATE') }}
               </th>
-              <th class="p-3 text-sm font-semibold capitalize text-foreground">
+              <th :class="RELAY_TABLE_HEAD_CLASS" class="p-3">
                 {{ t('CONTACTS_LAYOUT.COMPANIES_VIEW.COL_CITY') }}
               </th>
-              <th class="p-3 text-sm font-semibold capitalize text-foreground">
+              <th :class="RELAY_TABLE_HEAD_CLASS" class="p-3">
                 {{ t('CONTACTS_LAYOUT.COMPANIES_VIEW.COL_DESCRIPTION') }}
               </th>
               <th class="p-3 w-24 text-center">

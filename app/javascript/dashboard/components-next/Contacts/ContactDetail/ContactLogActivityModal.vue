@@ -1,17 +1,20 @@
 <script setup>
-import { reactive, computed } from 'vue';
+import { computed, reactive, ref } from 'vue';
+import { format, isValid, parse, startOfDay } from 'date-fns';
 import { useI18n } from 'vue-i18n';
 import { useAlert } from 'dashboard/composables';
 import {
   RelayButton,
-  RelayDatePicker,
+  RelayCalendar,
   RelayTextarea,
+  DATE_PICKER_TRIGGER_CLASS,
 } from 'dashboard/components-next/relay';
 import {
   RELAY_DIALOG_OVERLAY_CLASS,
   RELAY_MODAL_BODY_CLASS,
 } from 'dashboard/components-next/relay/modal/constants';
 import RelayModalHeader from 'dashboard/components-next/relay/modal/RelayModalHeader.vue';
+import TeleportWithDirection from 'dashboard/components-next/TeleportWithDirection.vue';
 
 const props = defineProps({
   contactName: {
@@ -38,6 +41,26 @@ const form = reactive({
   date: '',
   notes: '',
 });
+
+const showDateCalendar = ref(false);
+
+const selectedDate = computed(() => {
+  if (!form.date) return null;
+  const parsed = parse(form.date, 'dd-MM-yyyy', new Date());
+  return isValid(parsed) ? startOfDay(parsed) : null;
+});
+
+const dateLabel = computed(() => {
+  if (!selectedDate.value) {
+    return t('CONTACTS_LAYOUT.DETAIL.LOG_ACTIVITY.DATE');
+  }
+  return format(selectedDate.value, 'MMM d, yyyy');
+});
+
+const selectDate = date => {
+  form.date = date ? format(date, 'dd-MM-yyyy') : '';
+  showDateCalendar.value = false;
+};
 
 const ACTIVITY_TYPES = [
   {
@@ -163,91 +186,110 @@ const submit = () => {
       </div>
     </div>
   </div>
-  <div
-    v-else
-    class="flex items-center justify-center p-4"
-    :class="[RELAY_DIALOG_OVERLAY_CLASS]"
-    @click.self="emit('close')"
-  >
+  <TeleportWithDirection v-else to="body">
     <div
-      class="flex max-h-[90vh] w-full max-w-lg flex-col overflow-hidden rounded-xl border border-border bg-card shadow-2xl animate-in fade-in zoom-in-95 duration-200"
+      class="flex items-center justify-center p-4"
+      :class="[RELAY_DIALOG_OVERLAY_CLASS]"
+      @click.self="emit('close')"
     >
-      <RelayModalHeader
-        :title="t('CONTACTS_LAYOUT.DETAIL.LOG_ACTIVITY.TITLE')"
-        :description="
-          t('CONTACTS_LAYOUT.DETAIL.LOG_ACTIVITY.SUBTITLE', {
-            name: contactName,
-          })
-        "
-        @close="emit('close')"
-      />
+      <div
+        class="flex max-h-[90vh] w-full max-w-lg flex-col overflow-y-auto rounded-xl border border-border bg-card shadow-2xl animate-in fade-in zoom-in-95 duration-200"
+      >
+        <RelayModalHeader
+          :title="t('CONTACTS_LAYOUT.DETAIL.LOG_ACTIVITY.TITLE')"
+          :description="
+            t('CONTACTS_LAYOUT.DETAIL.LOG_ACTIVITY.SUBTITLE', {
+              name: contactName,
+            })
+          "
+          @close="emit('close')"
+        />
 
-      <div class="space-y-6" :class="[RELAY_MODAL_BODY_CLASS]">
-        <div class="flex flex-col gap-1.5">
-          <label class="text-[13.5px] text-foreground font-[500]">
-            {{ t('CONTACTS_LAYOUT.DETAIL.LOG_ACTIVITY.TYPE') }}
-          </label>
-          <div class="flex gap-3">
-            <RelayButton
-              v-for="activityType in ACTIVITY_TYPES"
-              :key="activityType.value"
-              :variant="
-                form.type === activityType.value ? 'default' : 'outline'
-              "
-              class="h-9 flex-1 text-sm font-medium"
-              @click="form.type = activityType.value"
+        <div class="space-y-6" :class="[RELAY_MODAL_BODY_CLASS]">
+          <div class="flex flex-col gap-1.5">
+            <label class="text-[13.5px] text-foreground font-[500]">
+              {{ t('CONTACTS_LAYOUT.DETAIL.LOG_ACTIVITY.TYPE') }}
+            </label>
+            <div class="flex gap-3">
+              <RelayButton
+                v-for="activityType in ACTIVITY_TYPES"
+                :key="activityType.value"
+                :variant="
+                  form.type === activityType.value ? 'default' : 'outline'
+                "
+                class="h-9 flex-1 text-sm font-medium"
+                @click="form.type = activityType.value"
+              >
+                <span class="size-4" :class="activityType.icon" />
+                {{ t(activityType.labelKey) }}
+              </RelayButton>
+            </div>
+          </div>
+
+          <div class="flex flex-col gap-1.5">
+            <label class="text-[13.5px] font-[500] text-foreground">
+              {{ t('CONTACTS_LAYOUT.DETAIL.LOG_ACTIVITY.DATE') }}
+            </label>
+            <button
+              type="button"
+              :class="DATE_PICKER_TRIGGER_CLASS"
+              @click="showDateCalendar = !showDateCalendar"
             >
-              <span class="size-4" :class="activityType.icon" />
-              {{ t(activityType.labelKey) }}
-            </RelayButton>
+              <span
+                :class="
+                  selectedDate ? 'text-foreground' : 'text-muted-foreground/60'
+                "
+              >
+                {{ dateLabel }}
+              </span>
+              <span class="i-lucide-calendar size-4 text-muted-foreground" />
+            </button>
+          </div>
+
+          <div
+            v-if="showDateCalendar"
+            class="flex justify-center rounded-md border border-border p-4"
+          >
+            <RelayCalendar
+              :model-value="selectedDate"
+              @select="selectDate"
+              @clear="() => selectDate(null)"
+            />
+          </div>
+
+          <div class="flex flex-col gap-1.5">
+            <label class="text-[13.5px] text-foreground font-[500]">
+              {{ t('CONTACTS_LAYOUT.DETAIL.LOG_ACTIVITY.NOTES') }}
+            </label>
+            <RelayTextarea
+              v-model="form.notes"
+              :placeholder="
+                t('CONTACTS_LAYOUT.DETAIL.LOG_ACTIVITY.NOTES_PLACEHOLDER')
+              "
+              class-name="min-h-[100px] resize-none"
+            />
           </div>
         </div>
 
-        <div class="flex flex-col gap-1.5">
-          <label class="text-[13.5px] font-[500] text-foreground">
-            {{ t('CONTACTS_LAYOUT.DETAIL.LOG_ACTIVITY.DATE') }}
-          </label>
-          <RelayDatePicker
-            v-model="form.date"
-            value-format="dd-MM-yyyy"
-            display-format="MMM d, yyyy"
-            :placeholder="t('CONTACTS_LAYOUT.DETAIL.LOG_ACTIVITY.DATE')"
-            trigger-class="h-9 w-full cursor-pointer px-3 text-[14px] rounded-md border border-border/80 bg-background shadow-sm placeholder:text-muted-foreground/60 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary/30"
-          />
-        </div>
-
-        <div class="flex flex-col gap-1.5">
-          <label class="text-[13.5px] text-foreground font-[500]">
-            {{ t('CONTACTS_LAYOUT.DETAIL.LOG_ACTIVITY.NOTES') }}
-          </label>
-          <RelayTextarea
-            v-model="form.notes"
-            :placeholder="
-              t('CONTACTS_LAYOUT.DETAIL.LOG_ACTIVITY.NOTES_PLACEHOLDER')
-            "
-            class-name="min-h-[100px] resize-none"
-          />
-        </div>
-      </div>
-
-      <div
-        class="mt-auto flex shrink-0 gap-3 border-t border-border bg-muted/10 p-6"
-      >
-        <RelayButton
-          variant="outline"
-          class="w-full border border-border text-sm font-medium hover:border-transparent"
-          @click="emit('close')"
+        <div
+          class="mt-auto flex shrink-0 gap-3 border-t border-border bg-muted/10 p-6"
         >
-          {{ t('CONTACTS_LAYOUT.DETAIL.LOG_ACTIVITY.CANCEL') }}
-        </RelayButton>
-        <RelayButton
-          class="w-full text-sm font-medium"
-          :disabled="!canSubmit"
-          @click="submit"
-        >
-          {{ t('CONTACTS_LAYOUT.DETAIL.LOG_ACTIVITY.SUBMIT') }}
-        </RelayButton>
+          <RelayButton
+            variant="outline"
+            class="w-full border border-border text-sm font-medium hover:border-transparent"
+            @click="emit('close')"
+          >
+            {{ t('CONTACTS_LAYOUT.DETAIL.LOG_ACTIVITY.CANCEL') }}
+          </RelayButton>
+          <RelayButton
+            class="w-full text-sm font-medium"
+            :disabled="!canSubmit"
+            @click="submit"
+          >
+            {{ t('CONTACTS_LAYOUT.DETAIL.LOG_ACTIVITY.SUBMIT') }}
+          </RelayButton>
+        </div>
       </div>
     </div>
-  </div>
+  </TeleportWithDirection>
 </template>

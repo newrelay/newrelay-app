@@ -569,6 +569,7 @@
         "SAVE": "Save",
         "STATUS_PROPERTIES": "Status & Properties",
         "TAGS": "Tags",
+        "TAG_PLACEHOLDER": "Add tag...",
         "EMPTY": "Not provided",
         "EMAIL_NOT_PROVIDED": "Email not provided",
         "PHONE_NOT_PROVIDED": "Phone not provided",

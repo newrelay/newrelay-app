@@ -170,9 +170,7 @@ const handleAvatarDelete = () => {
       </RelayButton>
 
       <div class="flex min-w-0 items-center gap-3">
-        <span
-          class="inline-flex shrink-0 overflow-hidden rounded-full shadow-sm ring-1 ring-border/50"
-        >
+        <span class="inline-flex shrink-0 rounded-full">
           <Avatar
             :src="avatarSrc"
             :name="contact?.name || ''"

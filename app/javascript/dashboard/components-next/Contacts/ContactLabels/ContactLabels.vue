@@ -11,6 +11,10 @@ const props = defineProps({
     type: [String, Number],
     default: null,
   },
+  sectionLabel: {
+    type: String,
+    default: '',
+  },
 });
 
 const store = useStore();
@@ -119,18 +123,36 @@ const handleLabelHover = labelId => {
 </script>
 
 <template>
-  <div class="flex flex-wrap items-center gap-2" @mouseleave="handleMouseLeave">
-    <LabelItem
-      v-for="label in savedLabels"
-      :key="label.id"
-      :label="label"
-      :is-hovered="hoveredLabel === label.id"
-      @remove="handleRemoveLabel"
-      @hover="handleLabelHover(label.id)"
-    />
-    <AddLabel
-      :label-menu-items="labelMenuItems"
-      @update-label="handleLabelAction"
-    />
+  <div @mouseleave="handleMouseLeave">
+    <div
+      v-if="sectionLabel"
+      class="flex flex-wrap items-center justify-between text-[14px] text-muted-foreground"
+    >
+      <span>{{ sectionLabel }}</span>
+      <AddLabel
+        inline
+        :label-menu-items="labelMenuItems"
+        @update-label="handleLabelAction"
+      />
+    </div>
+    <div
+      v-if="savedLabels.length || !sectionLabel"
+      class="flex flex-wrap items-center gap-2"
+      :class="{ 'mt-3': sectionLabel }"
+    >
+      <LabelItem
+        v-for="label in savedLabels"
+        :key="label.id"
+        :label="label"
+        :is-hovered="hoveredLabel === label.id"
+        @remove="handleRemoveLabel"
+        @hover="handleLabelHover(label.id)"
+      />
+      <AddLabel
+        v-if="!sectionLabel"
+        :label-menu-items="labelMenuItems"
+        @update-label="handleLabelAction"
+      />
+    </div>
   </div>
 </template>

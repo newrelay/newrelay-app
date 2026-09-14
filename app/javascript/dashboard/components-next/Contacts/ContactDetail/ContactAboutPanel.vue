@@ -440,12 +440,10 @@ const saveAbout = async () => {
         <h3 class="mb-4 text-[15px] font-semibold text-foreground">
           {{ t('CONTACTS_LAYOUT.DETAIL.ABOUT.STATUS_PROPERTIES') }}
         </h3>
-        <div class="flex flex-col gap-3">
-          <span class="text-[14px] text-muted-foreground">
-            {{ t('CONTACTS_LAYOUT.DETAIL.ABOUT.TAGS') }}
-          </span>
-          <ContactLabels :contact-id="contact?.id" />
-        </div>
+        <ContactLabels
+          :contact-id="contact?.id"
+          :section-label="t('CONTACTS_LAYOUT.DETAIL.ABOUT.TAGS')"
+        />
       </div>
     </div>
   </aside>

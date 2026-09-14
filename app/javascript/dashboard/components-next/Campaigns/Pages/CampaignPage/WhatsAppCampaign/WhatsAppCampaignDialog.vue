@@ -6,7 +6,11 @@ import { useAlert, useTrack } from 'dashboard/composables';
 import { CAMPAIGN_TYPES } from 'shared/constants/campaign.js';
 import { CAMPAIGNS_EVENTS } from 'dashboard/helper/AnalyticsHelper/events.js';
 
-import { RelayButton } from 'dashboard/components-next/relay';
+import {
+  RelayButton,
+  RelayModal,
+  RELAY_MODAL_FORM_FOOTER_CLASS,
+} from 'dashboard/components-next/relay';
 import WhatsAppCampaignForm from 'dashboard/components-next/Campaigns/Pages/CampaignPage/WhatsAppCampaign/WhatsAppCampaignForm.vue';
 
 const emit = defineEmits(['close']);
@@ -42,37 +46,35 @@ const submitForm = () => formRef.value?.submit();
 </script>
 
 <template>
-  <div
-    class="w-[420px] z-50 min-w-0 absolute top-12 ltr:right-0 rtl:left-0 bg-card border border-border shadow-xl rounded-xl flex flex-col max-h-[80vh] animate-in fade-in slide-in-from-top-2 duration-200"
+  <RelayModal
+    show
+    flush
+    size="lg"
+    :title="t('CAMPAIGN.WHATSAPP.CREATE.TITLE')"
+    :description="t('CAMPAIGN.WHATSAPP.CREATE.DESCRIPTION')"
+    @close="handleClose"
   >
-    <div class="p-6 overflow-y-auto flex-1">
-      <h2 class="text-[16px] font-medium text-foreground mb-6">
-        {{ t('CAMPAIGN.WHATSAPP.CREATE.TITLE') }}
-      </h2>
-      <WhatsAppCampaignForm
-        ref="formRef"
-        :show-action-buttons="false"
-        @submit="handleSubmit"
-        @cancel="handleClose"
-      />
+    <div class="flex min-h-0 flex-1 flex-col">
+      <div class="flex-1 overflow-y-auto px-6 pb-6 pt-4">
+        <WhatsAppCampaignForm
+          ref="formRef"
+          :show-action-buttons="false"
+          @submit="handleSubmit"
+          @cancel="handleClose"
+        />
+      </div>
+      <div :class="RELAY_MODAL_FORM_FOOTER_CLASS">
+        <RelayButton variant="outline" size="lg" @click="handleClose">
+          {{ t('CAMPAIGN.WHATSAPP.CREATE.FORM.BUTTONS.CANCEL') }}
+        </RelayButton>
+        <RelayButton
+          size="lg"
+          :disabled="formRef?.isSubmitDisabled !== false"
+          @click="submitForm"
+        >
+          {{ t('CAMPAIGN.WHATSAPP.CREATE.FORM.BUTTONS.CREATE') }}
+        </RelayButton>
+      </div>
     </div>
-    <div
-      class="p-6 pt-4 border-t border-border/60 flex items-center gap-3 bg-card rounded-b-xl shrink-0"
-    >
-      <RelayButton
-        variant="outline"
-        class="flex-1 h-9 bg-muted/30 text-foreground border-border/80 shadow-sm"
-        @click="handleClose"
-      >
-        {{ t('CAMPAIGN.WHATSAPP.CREATE.FORM.BUTTONS.CANCEL') }}
-      </RelayButton>
-      <RelayButton
-        class="flex-1 h-9 shadow-sm"
-        :disabled="formRef?.isSubmitDisabled !== false"
-        @click="submitForm"
-      >
-        {{ t('CAMPAIGN.WHATSAPP.CREATE.FORM.BUTTONS.CREATE') }}
-      </RelayButton>
-    </div>
-  </div>
+  </RelayModal>
 </template>

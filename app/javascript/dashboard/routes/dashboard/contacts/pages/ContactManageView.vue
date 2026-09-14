@@ -198,7 +198,7 @@ onMounted(() => {
       class="flex flex-1 flex-col overflow-y-auto bg-muted/10 lg:flex-row lg:overflow-hidden"
     >
       <div
-        class="flex min-h-0 min-w-0 flex-1 flex-col bg-background lg:overflow-hidden"
+        class="flex min-w-0 flex-col bg-background lg:min-h-0 lg:flex-1 lg:overflow-hidden"
       >
         <div class="shrink-0 bg-card px-6">
           <div class="flex gap-6 border-b border-border" role="tablist">

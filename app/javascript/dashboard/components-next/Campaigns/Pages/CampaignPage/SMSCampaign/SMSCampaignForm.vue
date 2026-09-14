@@ -1,5 +1,5 @@
 <script setup>
-import { reactive, computed } from 'vue';
+import { reactive, computed, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useVuelidate } from '@vuelidate/core';
 import { required, minLength } from '@vuelidate/validators';
@@ -16,7 +16,16 @@ import {
 import ComboBox from 'dashboard/components-next/combobox/ComboBox.vue';
 import TagMultiSelectComboBox from 'dashboard/components-next/combobox/TagMultiSelectComboBox.vue';
 
-defineProps({
+const props = defineProps({
+  mode: {
+    type: String,
+    default: 'create',
+    validator: value => ['create', 'edit'].includes(value),
+  },
+  selectedCampaign: {
+    type: Object,
+    default: null,
+  },
   showActionButtons: {
     type: Boolean,
     default: true,
@@ -94,6 +103,14 @@ const isSubmitDisabled = computed(() => v$.value.$invalid);
 const formatToUTCString = localDateTime =>
   localDateTime ? new Date(localDateTime).toISOString() : null;
 
+const formatToLocalDateTime = timestamp => {
+  if (!timestamp) return null;
+  const date = new Date(timestamp * 1000);
+  return new Date(date.getTime() - date.getTimezoneOffset() * 60000)
+    .toISOString()
+    .slice(0, 16);
+};
+
 const resetState = () => {
   Object.assign(state, initialState);
 };
@@ -116,9 +133,26 @@ const handleSubmit = async () => {
   if (!isFormValid) return;
 
   emit('submit', prepareCampaignDetails());
-  resetState();
-  handleCancel();
+  if (props.mode === 'create') {
+    resetState();
+    handleCancel();
+  }
 };
+
+watch(
+  () => props.selectedCampaign,
+  campaign => {
+    if (props.mode !== 'edit' || !campaign) return;
+    Object.assign(state, {
+      title: campaign.title || '',
+      message: campaign.message || '',
+      inboxId: campaign.inbox?.id || null,
+      scheduledAt: formatToLocalDateTime(campaign.scheduled_at),
+      selectedAudience: (campaign.audience || []).map(item => item.id),
+    });
+  },
+  { immediate: true }
+);
 
 defineExpose({
   submit: handleSubmit,

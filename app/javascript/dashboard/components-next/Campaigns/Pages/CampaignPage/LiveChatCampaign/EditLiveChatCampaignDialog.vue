@@ -58,6 +58,9 @@ defineExpose({ dialogRef });
     ref="dialogRef"
     type="edit"
     :title="t('CAMPAIGN.LIVE_CHAT.EDIT.TITLE')"
+    :description="t('CAMPAIGN.LIVE_CHAT.EDIT.DESCRIPTION')"
+    :cancel-button-label="t('CAMPAIGN.LIVE_CHAT.EDIT.FORM.BUTTONS.CANCEL')"
+    :confirm-button-label="t('CAMPAIGN.LIVE_CHAT.EDIT.FORM.BUTTONS.UPDATE')"
     :is-loading="isUpdatingCampaign"
     :disable-confirm-button="isUpdatingCampaign || isInvalidForm"
     overflow-y-auto

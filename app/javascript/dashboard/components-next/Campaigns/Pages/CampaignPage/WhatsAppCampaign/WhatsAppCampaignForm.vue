@@ -16,7 +16,16 @@ import ComboBox from 'dashboard/components-next/combobox/ComboBox.vue';
 import TagMultiSelectComboBox from 'dashboard/components-next/combobox/TagMultiSelectComboBox.vue';
 import WhatsAppTemplateParser from 'dashboard/components-next/whatsapp/WhatsAppTemplateParser.vue';
 
-defineProps({
+const props = defineProps({
+  mode: {
+    type: String,
+    default: 'create',
+    validator: value => ['create', 'edit'].includes(value),
+  },
+  selectedCampaign: {
+    type: Object,
+    default: null,
+  },
   showActionButtons: {
     type: Boolean,
     default: true,
@@ -46,6 +55,7 @@ const initialState = {
 
 const state = reactive({ ...initialState });
 const templateParserRef = ref(null);
+const campaignTemplateName = ref('');
 
 const rules = {
   title: { required, minLength: minLength(1) },
@@ -127,6 +137,14 @@ const isSubmitDisabled = computed(
 const formatToUTCString = localDateTime =>
   localDateTime ? new Date(localDateTime).toISOString() : null;
 
+const formatToLocalDateTime = timestamp => {
+  if (!timestamp) return null;
+  const date = new Date(timestamp * 1000);
+  return new Date(date.getTime() - date.getTimezoneOffset() * 60000)
+    .toISOString()
+    .slice(0, 16);
+};
+
 const resetState = () => {
   Object.assign(state, initialState);
   v$.value.$reset();
@@ -169,8 +187,10 @@ const handleSubmit = async () => {
   if (!isFormValid) return;
 
   emit('submit', prepareCampaignDetails());
-  resetState();
-  handleCancel();
+  if (props.mode === 'create') {
+    resetState();
+    handleCancel();
+  }
 };
 
 // Reset template selection when inbox changes
@@ -179,6 +199,32 @@ watch(
   () => {
     state.templateId = null;
   }
+);
+
+watch(
+  () => props.selectedCampaign,
+  campaign => {
+    if (props.mode !== 'edit' || !campaign) return;
+    campaignTemplateName.value = campaign.template_params?.name || '';
+    Object.assign(state, {
+      title: campaign.title || '',
+      inboxId: campaign.inbox?.id || null,
+      scheduledAt: formatToLocalDateTime(campaign.scheduled_at),
+      selectedAudience: (campaign.audience || []).map(item => item.id),
+    });
+  },
+  { immediate: true }
+);
+
+watch(
+  templateOptions,
+  options => {
+    if (props.mode !== 'edit' || !campaignTemplateName.value) return;
+    state.templateId =
+      options.find(item => item.template.name === campaignTemplateName.value)
+        ?.value || null;
+  },
+  { immediate: true }
 );
 
 defineExpose({
@@ -245,6 +291,11 @@ defineExpose({
       v-if="selectedTemplate"
       ref="templateParserRef"
       :template="selectedTemplate"
+      :initial-processed-params="
+        selectedTemplate.name === campaignTemplateName
+          ? selectedCampaign?.template_params?.processed_params
+          : null
+      "
     />
 
     <!-- Audience -->

@@ -8,6 +8,7 @@ import Spinner from 'dashboard/components-next/spinner/Spinner.vue';
 import CampaignLayout from 'dashboard/components-next/Campaigns/CampaignLayout.vue';
 import CampaignList from 'dashboard/components-next/Campaigns/Pages/CampaignPage/CampaignList.vue';
 import SMSCampaignDialog from 'dashboard/components-next/Campaigns/Pages/CampaignPage/SMSCampaign/SMSCampaignDialog.vue';
+import EditSMSCampaignDialog from 'dashboard/components-next/Campaigns/Pages/CampaignPage/SMSCampaign/EditSMSCampaignDialog.vue';
 import ConfirmDeleteCampaignDialog from 'dashboard/components-next/Campaigns/Pages/CampaignPage/ConfirmDeleteCampaignDialog.vue';
 import SMSCampaignEmptyState from 'dashboard/components-next/Campaigns/EmptyState/SMSCampaignEmptyState.vue';
 
@@ -21,12 +22,18 @@ const uiFlags = useMapGetter('campaigns/getUIFlags');
 const isFetchingCampaigns = computed(() => uiFlags.value.isFetching);
 
 const confirmDeleteCampaignDialogRef = ref(null);
+const editSMSCampaignDialogRef = ref(null);
 
 const SMSCampaigns = computed(() => getters['campaigns/getSMSCampaigns'].value);
 
 const hasNoSMSCampaigns = computed(
   () => SMSCampaigns.value?.length === 0 && !isFetchingCampaigns.value
 );
+
+const handleEdit = campaign => {
+  selectedCampaign.value = campaign;
+  editSMSCampaignDialogRef.value.dialogRef.open();
+};
 
 const handleDelete = campaign => {
   selectedCampaign.value = campaign;
@@ -39,7 +46,6 @@ const handleDelete = campaign => {
     :header-title="t('CAMPAIGN.SMS.HEADER_TITLE')"
     :button-label="t('CAMPAIGN.SMS.NEW_CAMPAIGN')"
     @click="toggleSMSCampaignDialog()"
-    @close="toggleSMSCampaignDialog(false)"
   >
     <template #action>
       <SMSCampaignDialog
@@ -56,6 +62,7 @@ const handleDelete = campaign => {
     <CampaignList
       v-else-if="!hasNoSMSCampaigns"
       :campaigns="SMSCampaigns"
+      @edit="handleEdit"
       @delete="handleDelete"
     />
     <SMSCampaignEmptyState
@@ -65,6 +72,10 @@ const handleDelete = campaign => {
     />
     <ConfirmDeleteCampaignDialog
       ref="confirmDeleteCampaignDialogRef"
+      :selected-campaign="selectedCampaign"
+    />
+    <EditSMSCampaignDialog
+      ref="editSMSCampaignDialogRef"
       :selected-campaign="selectedCampaign"
     />
   </CampaignLayout>

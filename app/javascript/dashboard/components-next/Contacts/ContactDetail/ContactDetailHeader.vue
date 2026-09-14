@@ -98,17 +98,15 @@ const callPhoneNumbers = computed(() => {
   ];
 });
 
-const callMenuItems = computed(() =>
-  callPhoneNumbers.value.map(phone => ({
-    label: phone,
-    action: 'call',
-    value: phone,
-    icon: 'i-lucide-phone',
-  }))
-);
-
 const moreMenuItems = computed(() => {
   const items = [
+    {
+      label: t('CONTACTS_LAYOUT.DETAIL.ACTIONS.CALL'),
+      action: 'call',
+      value: 'call',
+      icon: 'i-lucide-phone',
+      disabled: !callPhoneNumbers.value.length,
+    },
     {
       label: isBlocked.value
         ? t('CONTACTS_LAYOUT.HEADER.UNBLOCK_CONTACT')
@@ -136,9 +134,8 @@ const callContact = phone => {
   window.open(`tel:${phone}`, '_self');
 };
 
-const handleCallAction = ({ value }) => callContact(value);
-
 const handleMoreAction = ({ action }) => {
+  if (action === 'call') callContact(callPhoneNumbers.value[0]);
   if (action === 'block') emit('block', isBlocked.value);
   if (action === 'delete') emit('delete');
 };
@@ -156,7 +153,7 @@ const handleAvatarDelete = () => {
 
 <template>
   <header
-    class="flex shrink-0 items-center justify-between gap-4 border-b border-border/40 bg-card px-6 py-4"
+    class="flex shrink-0 flex-col gap-3 border-b border-border/40 bg-card px-6 py-4 lg:flex-row lg:items-center lg:justify-between"
   >
     <div class="flex min-w-0 items-center gap-4">
       <RelayButton
@@ -219,10 +216,10 @@ const handleAvatarDelete = () => {
       </div>
     </div>
 
-    <div class="flex shrink-0 items-center gap-2">
+    <div class="flex flex-wrap items-center gap-2 lg:shrink-0 lg:flex-nowrap">
       <RelayButton
         variant="outline"
-        class="hidden h-9 rounded-lg px-4 text-sm font-medium shadow-sm sm:inline-flex"
+        class="h-9 rounded-lg px-4 text-sm font-medium shadow-sm"
         @click="emit('scheduleMeeting')"
       >
         <span class="i-lucide-calendar size-4" />
@@ -230,7 +227,7 @@ const handleAvatarDelete = () => {
       </RelayButton>
       <RelayButton
         variant="outline"
-        class="hidden h-9 rounded-lg px-4 text-sm font-medium shadow-sm sm:inline-flex"
+        class="h-9 rounded-lg px-4 text-sm font-medium shadow-sm"
         @click="emit('logActivity')"
       >
         <span class="i-lucide-activity size-4" />
@@ -247,25 +244,6 @@ const handleAvatarDelete = () => {
           </RelayButton>
         </template>
       </ComposeConversation>
-
-      <RelayActionDropdown
-        :menu-items="callMenuItems"
-        align="end"
-        content-class="min-w-48"
-        @action="handleCallAction"
-      >
-        <template #trigger>
-          <RelayButton
-            variant="outline"
-            class="h-9 rounded-lg px-4 text-sm font-medium shadow-sm"
-            :disabled="!callPhoneNumbers.length"
-          >
-            <span class="i-lucide-phone size-4" />
-            {{ t('CONTACTS_LAYOUT.DETAIL.ACTIONS.CALL') }}
-            <span class="i-lucide-chevron-down size-3.5 opacity-70" />
-          </RelayButton>
-        </template>
-      </RelayActionDropdown>
 
       <RelayActionDropdown
         :menu-items="moreMenuItems"

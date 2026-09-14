@@ -5,7 +5,6 @@ import { useRoute, useRouter } from 'vue-router';
 import { useAlert } from 'dashboard/composables';
 import { dynamicTime } from 'shared/helpers/timeHelper';
 
-import Policy from 'dashboard/components/policy.vue';
 import Spinner from 'dashboard/components-next/spinner/Spinner.vue';
 import CompaniesDetailsLayout from 'dashboard/components-next/Companies/CompaniesDetailsLayout.vue';
 import CompanyProfileCard from 'dashboard/components-next/Companies/CompanyDetail/CompanyProfileCard.vue';
@@ -29,13 +28,6 @@ const confirmDeleteDialogRef = ref(null);
 const activeTab = ref('overview');
 const isEditingDetails = ref(false);
 const selectedCompanyContact = ref(null);
-
-const DETAIL_TABS = [
-  { value: 'overview', labelKey: 'COMPANIES.DETAIL.TABS.OVERVIEW' },
-  { value: 'contacts', labelKey: 'COMPANIES.DETAIL.TABS.CONTACTS' },
-  { value: 'history', labelKey: 'COMPANIES.DETAIL.TABS.HISTORY' },
-  { value: 'notes', labelKey: 'COMPANIES.DETAIL.TABS.NOTES' },
-];
 
 const detailsForm = reactive({
   phone: '',
@@ -303,6 +295,7 @@ onBeforeUnmount(() => {
         :company="company"
         :is-loading="isFetchingCompany"
         @back="goToCompaniesList"
+        @delete="openDeleteCompanyDialog"
       />
     </template>
 
@@ -330,45 +323,6 @@ onBeforeUnmount(() => {
     </div>
 
     <div v-else class="flex h-full w-full flex-col">
-      <!-- Detail tabs: absolute bar — global button { border-0 } kills border-b-2 -->
-      <div class="border-b border-border bg-card px-8">
-        <div
-          class="flex h-14 w-full items-center justify-start gap-6"
-          role="tablist"
-        >
-          <button
-            v-for="tab in DETAIL_TABS"
-            :key="tab.value"
-            type="button"
-            role="tab"
-            :aria-selected="activeTab === tab.value"
-            class="relative -mb-px h-full px-1 text-[14px] font-medium transition-colors"
-            :class="
-              activeTab === tab.value
-                ? 'text-primary'
-                : 'text-muted-foreground hover:text-foreground'
-            "
-            @click="activeTab = tab.value"
-          >
-            {{
-              {
-                overview: t('COMPANIES.DETAIL.TABS.OVERVIEW'),
-                contacts: t('COMPANIES.DETAIL.TABS.CONTACTS_WITH_COUNT', {
-                  count: Number(company.contactsCount || 0),
-                }),
-                history: t('COMPANIES.DETAIL.TABS.HISTORY'),
-                notes: t('COMPANIES.DETAIL.TABS.NOTES'),
-              }[tab.value]
-            }}
-            <span
-              v-if="activeTab === tab.value"
-              class="absolute inset-x-0 bottom-0 h-0.5 bg-primary"
-              aria-hidden="true"
-            />
-          </button>
-        </div>
-      </div>
-
       <div class="mx-auto w-full max-w-7xl p-6 lg:px-10">
         <div v-if="activeTab === 'overview'" class="outline-none">
           <div class="grid grid-cols-1 gap-6 lg:grid-cols-3">
@@ -414,7 +368,7 @@ onBeforeUnmount(() => {
                   <RelayButton
                     variant="secondary"
                     size="sm"
-                    class="flex h-8 items-center rounded-md border border-transparent bg-muted/50 px-3 text-[12px] font-medium text-foreground hover:border-transparent hover:bg-muted"
+                    class="flex h-8 items-center rounded-md border border-transparent bg-muted/50 px-3 text-[12px] font-medium text-foreground hover:border-transparent hover:bg-accent hover:text-accent-foreground"
                     :disabled="isUpdating"
                     @click="toggleEditDetails"
                   >
@@ -634,28 +588,6 @@ onBeforeUnmount(() => {
                   }}
                 </p>
               </div>
-
-              <Policy :permissions="['administrator']">
-                <section
-                  class="flex flex-col items-start gap-4 rounded-xl border border-border bg-card p-6 shadow-sm"
-                >
-                  <div class="flex flex-col gap-2">
-                    <h6 class="text-base font-medium text-foreground">
-                      {{ t('COMPANIES.DETAIL.DELETE.SECTION_TITLE') }}
-                    </h6>
-                    <span class="text-sm text-muted-foreground">
-                      {{ t('COMPANIES.DETAIL.DELETE.SECTION_DESCRIPTION') }}
-                    </span>
-                  </div>
-                  <RelayButton
-                    variant="destructive"
-                    :disabled="isDeletingCompany"
-                    @click="openDeleteCompanyDialog"
-                  >
-                    {{ t('COMPANIES.DETAIL.DELETE.BUTTON') }}
-                  </RelayButton>
-                </section>
-              </Policy>
             </div>
 
             <div class="flex flex-col gap-6">
@@ -715,7 +647,7 @@ onBeforeUnmount(() => {
                   <RelayButton
                     variant="secondary"
                     size="sm"
-                    class="h-8 rounded-md border border-transparent bg-muted/50 px-3 text-[12px] font-medium text-foreground hover:bg-muted"
+                    class="h-8 rounded-md border border-transparent bg-muted/50 px-3 text-[12px] font-medium text-foreground hover:bg-accent hover:text-accent-foreground"
                     @click="goToContacts"
                   >
                     {{ t('COMPANIES.DETAIL.RECENT_CONTACTS.VIEW_ALL') }}
@@ -780,7 +712,7 @@ onBeforeUnmount(() => {
                   <RelayButton
                     variant="secondary"
                     size="sm"
-                    class="h-8 rounded-md border border-transparent bg-muted/50 px-3 text-[12px] font-medium text-foreground hover:bg-muted"
+                    class="h-8 rounded-md border border-transparent bg-muted/50 px-3 text-[12px] font-medium text-foreground hover:bg-accent hover:text-accent-foreground"
                     @click="activeTab = 'history'"
                   >
                     {{ t('COMPANIES.DETAIL.ACTIVITY.VIEW_ALL') }}

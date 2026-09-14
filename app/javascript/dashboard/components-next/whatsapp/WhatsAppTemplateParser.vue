@@ -35,6 +35,10 @@ const props = defineProps({
       return true;
     },
   },
+  initialProcessedParams: {
+    type: Object,
+    default: null,
+  },
 });
 
 const emit = defineEmits(['sendMessage', 'resetTemplate', 'back']);
@@ -119,10 +123,9 @@ const v$ = useVuelidate(
 );
 
 const initializeTemplateParameters = () => {
-  processedParams.value = buildTemplateParameters(
-    props.template,
-    hasMediaHeader.value
-  );
+  processedParams.value = props.initialProcessedParams
+    ? structuredClone(props.initialProcessedParams)
+    : buildTemplateParameters(props.template, hasMediaHeader.value);
 };
 
 const updateMediaUrl = value => {

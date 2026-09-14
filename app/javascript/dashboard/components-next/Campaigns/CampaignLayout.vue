@@ -1,5 +1,4 @@
 <script setup>
-import { vOnClickOutside } from '@vueuse/components';
 import { RelayButton } from 'dashboard/components-next/relay';
 
 defineProps({
@@ -13,7 +12,7 @@ defineProps({
   },
 });
 
-const emit = defineEmits(['click', 'close']);
+const emit = defineEmits(['click']);
 
 const handleButtonClick = () => {
   emit('click');
@@ -35,13 +34,7 @@ const handleButtonClick = () => {
           <h1 class="text-base font-medium tracking-tight text-foreground">
             {{ headerTitle }}
           </h1>
-          <div
-            v-on-click-outside="[
-              () => emit('close'),
-              { ignore: ['dialog.ProseMirror-prompt-backdrop'] },
-            ]"
-            class="relative group/campaign-button"
-          >
+          <div class="relative group/campaign-button">
             <RelayButton
               variant="default"
               class="h-10 px-4 text-[13.5px] font-medium gap-2 shadow-sm"

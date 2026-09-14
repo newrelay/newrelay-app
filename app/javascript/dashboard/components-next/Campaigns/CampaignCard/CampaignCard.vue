@@ -21,6 +21,10 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  isEditable: {
+    type: Boolean,
+    default: false,
+  },
   isEnabled: {
     type: Boolean,
     default: false,
@@ -130,10 +134,10 @@ const inboxIcon = computed(() => {
       class="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity"
     >
       <RelayButton
-        v-if="isLiveChatType"
+        v-if="isEditable"
         variant="ghost"
         class="size-8 p-0 bg-muted/50 text-muted-foreground hover:text-foreground border border-input hover:border-transparent"
-        :title="t('CAMPAIGN.LIVE_CHAT.EDIT.TITLE')"
+        :title="t('CAMPAIGN.EDIT')"
         @click="emit('edit')"
       >
         <span class="i-lucide-sliders-horizontal size-4" />

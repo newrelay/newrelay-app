@@ -1,5 +1,6 @@
 {
   "CAMPAIGN": {
+    "EDIT": "Edit campaign",
     "HEADER": {
       "VS_LAST_7D": "vs last 7d"
     },
@@ -24,6 +25,7 @@
       },
       "CREATE": {
         "TITLE": "Create a live chat campaign",
+        "DESCRIPTION": "Configure the message and trigger rules for this live chat campaign.",
         "CANCEL_BUTTON_TEXT": "Cancel",
         "CREATE_BUTTON_TEXT": "Create",
         "FORM": {
@@ -74,9 +76,28 @@
       },
       "EDIT": {
         "TITLE": "Edit live chat campaign",
+        "DESCRIPTION": "Update this campaign's message and trigger settings.",
         "FORM": {
+          "BUTTONS": {
+            "UPDATE": "Save changes",
+            "CANCEL": "Cancel"
+          },
           "API": {
             "SUCCESS_MESSAGE": "Live chat campaign updated successfully",
+            "ERROR_MESSAGE": "There was an error. Please try again."
+          }
+        }
+      },
+      "EDIT": {
+        "TITLE": "Edit SMS campaign",
+        "DESCRIPTION": "Update this scheduled campaign's message, audience, and delivery time.",
+        "FORM": {
+          "BUTTONS": {
+            "UPDATE": "Save changes",
+            "CANCEL": "Cancel"
+          },
+          "API": {
+            "SUCCESS_MESSAGE": "SMS campaign updated successfully",
             "ERROR_MESSAGE": "There was an error. Please try again."
           }
         }
@@ -102,6 +123,7 @@
       },
       "CREATE": {
         "TITLE": "Create SMS campaign",
+        "DESCRIPTION": "Compose your message, choose an audience, and schedule delivery.",
         "CANCEL_BUTTON_TEXT": "Cancel",
         "CREATE_BUTTON_TEXT": "Create",
         "FORM": {
@@ -139,6 +161,20 @@
             "ERROR_MESSAGE": "There was an error. Please try again."
           }
         }
+      },
+      "EDIT": {
+        "TITLE": "Edit WhatsApp campaign",
+        "DESCRIPTION": "Update this scheduled campaign's template, audience, and delivery time.",
+        "FORM": {
+          "BUTTONS": {
+            "UPDATE": "Save changes",
+            "CANCEL": "Cancel"
+          },
+          "API": {
+            "SUCCESS_MESSAGE": "WhatsApp campaign updated successfully",
+            "ERROR_MESSAGE": "There was an error. Please try again."
+          }
+        }
       }
     },
     "WHATSAPP": {
@@ -161,6 +197,7 @@
       },
       "CREATE": {
         "TITLE": "Create WhatsApp campaign",
+        "DESCRIPTION": "Choose a template, audience, and delivery time for this campaign.",
         "CANCEL_BUTTON_TEXT": "Cancel",
         "CREATE_BUTTON_TEXT": "Create",
         "FORM": {

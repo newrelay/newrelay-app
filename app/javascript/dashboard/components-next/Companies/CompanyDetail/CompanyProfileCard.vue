@@ -3,8 +3,8 @@ import { computed, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useAlert } from 'dashboard/composables';
 import Avatar from 'dashboard/components-next/avatar/Avatar.vue';
-import { RelayBadge } from 'dashboard/components-next/relay';
-import { RELAY_MODAL_CLOSE_BUTTON_CLASS } from 'dashboard/components-next/relay/modal/constants';
+import Policy from 'dashboard/components/policy.vue';
+import { RelayBadge, RelayButton } from 'dashboard/components-next/relay';
 import { useCompaniesStore } from 'dashboard/stores/companies';
 
 const props = defineProps({
@@ -12,7 +12,7 @@ const props = defineProps({
   isLoading: { type: Boolean, default: false },
 });
 
-const emit = defineEmits(['back']);
+const emit = defineEmits(['back', 'delete']);
 
 const { t } = useI18n();
 const companiesStore = useCompaniesStore();
@@ -107,15 +107,15 @@ const commitNameEdit = async () => {
     class="flex shrink-0 flex-col border-b border-border/50 bg-card px-8 py-6"
   >
     <div class="mb-4">
-      <button
-        type="button"
-        class="-ml-2"
-        :class="RELAY_MODAL_CLOSE_BUTTON_CLASS"
-        :aria-label="t('COMPANIES.DETAIL.BACK')"
+      <RelayButton
+        variant="ghost"
+        size="sm"
+        class="-ml-2 h-8 px-2 text-[13px] font-medium text-muted-foreground hover:bg-accent hover:text-foreground"
         @click="emit('back')"
       >
         <span class="i-lucide-arrow-left size-4" />
-      </button>
+        {{ t('COMPANIES.DETAIL.BACK') }}
+      </RelayButton>
     </div>
 
     <div class="flex items-start justify-between">
@@ -170,6 +170,17 @@ const commitNameEdit = async () => {
           </p>
         </div>
       </div>
+      <Policy :permissions="['administrator']">
+        <RelayButton
+          variant="ghost"
+          size="icon"
+          class="size-8 text-muted-foreground hover:bg-accent hover:text-destructive"
+          :aria-label="t('COMPANIES.DETAIL.DELETE.BUTTON')"
+          @click="emit('delete')"
+        >
+          <span class="i-lucide-trash-2 size-4" />
+        </RelayButton>
+      </Policy>
     </div>
   </header>
 </template>

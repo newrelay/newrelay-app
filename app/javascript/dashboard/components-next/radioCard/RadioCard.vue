@@ -58,7 +58,7 @@ const handleChange = () => {
       isActive
         ? 'bg-primary/5 border-primary ring-1 ring-primary/20'
         : 'border-border',
-      !disabled && !isActive ? 'hover:bg-muted/50' : '',
+      !disabled && !isActive ? 'hover:bg-accent' : '',
     ]"
   >
     <div class="flex flex-col gap-2 items-start">

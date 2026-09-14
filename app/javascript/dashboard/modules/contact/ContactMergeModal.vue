@@ -267,7 +267,7 @@ const initials = name => {
                   <RelayButton
                     type="button"
                     variant="ghost"
-                    class="h-9 rounded-lg border border-border bg-background px-4 text-[13px] font-medium text-foreground shadow-sm transition-all hover:border-transparent hover:bg-muted/50"
+                    class="h-9 rounded-lg border border-border bg-background px-4 text-[13px] font-medium text-foreground shadow-sm transition-all hover:border-transparent hover:bg-accent"
                     :disabled="isMergingContact"
                     @click="closeMergeModal"
                   >
@@ -433,7 +433,7 @@ const initials = name => {
                 <RelayButton
                   type="button"
                   variant="ghost"
-                  class="h-9 rounded-lg border border-border bg-background px-4 text-[13px] font-medium text-foreground shadow-sm transition-all hover:border-transparent hover:bg-muted/50"
+                  class="h-9 rounded-lg border border-border bg-background px-4 text-[13px] font-medium text-foreground shadow-sm transition-all hover:border-transparent hover:bg-accent"
                   :disabled="isMergingContact"
                   @click="isPreviewOpen = false"
                 >

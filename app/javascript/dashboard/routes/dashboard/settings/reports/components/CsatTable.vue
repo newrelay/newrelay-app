@@ -165,7 +165,7 @@ const table = useVueTable({
         <tbody class="divide-y divide-card">
           <template v-for="row in tableData" :key="row.id">
             <tr
-              class="group hover:bg-muted dark:hover:bg-accent transition-colors"
+              class="group hover:bg-accent dark:hover:bg-accent transition-colors"
               :class="{
                 'bg-muted dark:bg-accent': isRowExpanded(row.id),
                 'cursor-pointer': showExpandableRows,

@@ -116,7 +116,7 @@ async function handleConnect(platform) {
 
 <template>
   <div
-    class="flex-1 overflow-y-auto w-full bg-background p-4 sm:p-6 lg:p-8 space-y-8 relative"
+    class="flex-1 overflow-y-auto w-full bg-background p-4 sm:p-6 space-y-8 relative"
   >
     <div
       class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-border/40"

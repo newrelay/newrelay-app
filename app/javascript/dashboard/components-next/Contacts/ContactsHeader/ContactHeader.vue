@@ -57,7 +57,7 @@ const emit = defineEmits([
             v-if="!isLabelView && !isActiveView"
             id="toggleContactsFilterButton"
             variant="outline"
-            class="flex h-9 items-center gap-2 rounded-lg border border-border bg-background px-3 text-[13px] font-normal shadow-sm transition-all hover:border-transparent hover:bg-muted"
+            class="flex h-9 items-center gap-2 rounded-lg border border-border bg-background px-3 text-[13px] font-normal shadow-sm transition-all hover:border-transparent hover:bg-accent"
             @click="emit('filter')"
           >
             <span class="i-lucide-list-filter size-4" />

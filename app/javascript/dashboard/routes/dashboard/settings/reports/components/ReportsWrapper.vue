@@ -45,7 +45,7 @@ const isTabActive = tab =>
 
 <template>
   <div class="flex flex-col h-full w-full overflow-hidden bg-background">
-    <div class="px-8 pt-6 shrink-0">
+    <div class="px-6 pt-6 shrink-0">
       <h1 class="text-base font-medium tracking-tight text-foreground mb-1">
         {{ $t('REPORT.REPORTS_TITLE') }}
       </h1>
@@ -71,7 +71,7 @@ const isTabActive = tab =>
       </div>
     </div>
     <div class="flex-1 overflow-auto">
-      <div class="px-8 pt-6 pb-12">
+      <div class="px-6 pt-6 pb-12">
         <router-view />
       </div>
     </div>

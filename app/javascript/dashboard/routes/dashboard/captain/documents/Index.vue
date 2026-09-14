@@ -49,7 +49,6 @@ const handleDelete = () => {
 
 const showRelatedResponses = ref(false);
 const showCreateDialog = ref(false);
-const createDocumentDialog = ref(null);
 const relationQuestionDialog = ref(null);
 
 const handleShowRelatedDocument = () => {
@@ -58,7 +57,6 @@ const handleShowRelatedDocument = () => {
 };
 const handleCreateDocument = () => {
   showCreateDialog.value = true;
-  nextTick(() => createDocumentDialog.value.dialogRef.open());
 };
 
 const handleRelatedResponseClose = () => {
@@ -416,7 +414,6 @@ onUnmounted(() => {
     />
     <CreateDocumentDialog
       v-if="showCreateDialog"
-      ref="createDocumentDialog"
       :assistant-id="selectedAssistantId"
       @create-success="onCreateSuccess"
       @close="handleCreateDialogClose"

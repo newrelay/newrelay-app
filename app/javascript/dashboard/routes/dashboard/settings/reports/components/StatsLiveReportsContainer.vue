@@ -122,7 +122,7 @@ onMounted(() => {
         >
           <RelayButton
             variant="outline"
-            class="h-8 px-3 text-[14px] bg-card hover:bg-muted font-medium border-border/80 shadow-sm"
+            class="h-8 px-3 text-[14px] bg-card hover:bg-accent font-medium border-border/80 shadow-sm"
             @click="toggleDropdown()"
           >
             {{ selectedTeamLabel }}
@@ -197,7 +197,7 @@ onMounted(() => {
         <div
           v-for="row in agentStatusRows"
           :key="row.key"
-          class="flex items-center justify-between px-3 py-2.5 rounded-lg transition-colors hover:bg-muted"
+          class="flex items-center justify-between px-3 py-2.5 rounded-lg transition-colors hover:bg-accent"
         >
           <div class="flex items-center gap-3">
             <span :class="row.dotClass" class="size-2 rounded-full shrink-0" />

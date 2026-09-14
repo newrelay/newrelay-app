@@ -534,7 +534,7 @@ const closeAdd = () => {
     <!-- Main Content Area -->
     <div class="flex flex-col h-full w-full overflow-y-auto transition-all duration-300 custom-scrollbar">
       <!-- Header -->
-      <div class="px-6 lg:px-10 py-6 bg-card shrink-0">
+      <div class="px-6 py-6 bg-card shrink-0">
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
             <h1 class="text-base font-medium text-foreground">
@@ -556,11 +556,11 @@ const closeAdd = () => {
                 v-if="openMenu === 'export'"
                 class="absolute right-0 mt-1 w-48 rounded-lg border border-border bg-card shadow-lg py-1 z-40"
               >
-                <button class="w-full text-left px-3 py-2 text-sm text-foreground hover:bg-muted transition-colors" @click="handleExport('CSV')">CSV</button>
-                <button class="w-full text-left px-3 py-2 text-sm text-foreground hover:bg-muted transition-colors" @click="handleExport('Excel')">Excel</button>
-                <button class="w-full text-left px-3 py-2 text-sm text-foreground hover:bg-muted transition-colors" @click="handleExport('PDF Report')">PDF Report</button>
+                <button class="w-full text-left px-3 py-2 text-sm text-foreground hover:bg-accent transition-colors" @click="handleExport('CSV')">CSV</button>
+                <button class="w-full text-left px-3 py-2 text-sm text-foreground hover:bg-accent transition-colors" @click="handleExport('Excel')">Excel</button>
+                <button class="w-full text-left px-3 py-2 text-sm text-foreground hover:bg-accent transition-colors" @click="handleExport('PDF Report')">PDF Report</button>
                 <div class="my-1 border-t border-border"></div>
-                <button class="w-full text-left px-3 py-2 text-sm text-foreground hover:bg-muted transition-colors" @click="handleExport('advanced')">Advanced Export...</button>
+                <button class="w-full text-left px-3 py-2 text-sm text-foreground hover:bg-accent transition-colors" @click="handleExport('advanced')">Advanced Export...</button>
               </div>
             </div>
 
@@ -577,10 +577,10 @@ const closeAdd = () => {
                 v-if="openMenu === 'add'"
                 class="absolute right-0 mt-1 w-56 rounded-lg border border-border bg-card shadow-lg py-1 z-40"
               >
-                <button class="w-full text-left px-3 py-2 text-sm font-medium text-primary hover:bg-muted transition-colors" @click="openAdd('connect')">
+                <button class="w-full text-left px-3 py-2 text-sm font-medium text-primary hover:bg-accent transition-colors" @click="openAdd('connect')">
                   Connect Existing Business
                 </button>
-                <button class="w-full text-left px-3 py-2 text-sm text-foreground hover:bg-muted transition-colors" @click="openAdd('manual')">
+                <button class="w-full text-left px-3 py-2 text-sm text-foreground hover:bg-accent transition-colors" @click="openAdd('manual')">
                   Create Manually
                 </button>
               </div>
@@ -603,7 +603,7 @@ const closeAdd = () => {
       </div>
 
       <!-- Filters & Toolbar -->
-      <div class="px-6 lg:px-10 py-5 border-b border-border bg-background shrink-0 sticky top-0 z-40 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div class="px-6 py-5 border-b border-border bg-background shrink-0 sticky top-0 z-40 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div class="flex flex-wrap items-center gap-2">
           <div class="relative w-48 mr-2">
             <Search class="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground z-10" />
@@ -618,7 +618,7 @@ const closeAdd = () => {
           <!-- Platform Dropdown -->
           <div class="relative">
             <button
-              class="inline-flex items-center h-9 gap-1.5 rounded-lg text-xs font-medium bg-card border border-border shadow-xs px-3 hover:bg-muted transition-colors text-foreground"
+              class="inline-flex items-center h-9 gap-1.5 rounded-lg text-xs font-medium bg-card border border-border shadow-xs px-3 hover:bg-accent transition-colors text-foreground"
               :class="platformFilter !== 'All' ? 'text-primary border-primary/40' : ''"
               @click.stop="toggleMenu('platform')"
             >
@@ -628,7 +628,7 @@ const closeAdd = () => {
               <button
                 v-for="opt in platformOptions"
                 :key="opt"
-                class="w-full flex items-center justify-between px-3 py-2 text-sm text-foreground hover:bg-muted transition-colors"
+                class="w-full flex items-center justify-between px-3 py-2 text-sm text-foreground hover:bg-accent transition-colors"
                 @click="platformFilter = opt; closeMenus()"
               >
                 {{ opt }}
@@ -640,7 +640,7 @@ const closeAdd = () => {
           <!-- Status Dropdown -->
           <div class="relative">
             <button
-              class="inline-flex items-center h-9 gap-1.5 rounded-lg text-xs font-medium bg-card border border-border shadow-xs px-3 hover:bg-muted transition-colors text-foreground"
+              class="inline-flex items-center h-9 gap-1.5 rounded-lg text-xs font-medium bg-card border border-border shadow-xs px-3 hover:bg-accent transition-colors text-foreground"
               :class="statusFilter !== 'All' ? 'text-primary border-primary/40' : ''"
               @click.stop="toggleMenu('status')"
             >
@@ -650,7 +650,7 @@ const closeAdd = () => {
               <button
                 v-for="opt in statusOptions"
                 :key="opt"
-                class="w-full flex items-center justify-between px-3 py-2 text-sm text-foreground hover:bg-muted transition-colors"
+                class="w-full flex items-center justify-between px-3 py-2 text-sm text-foreground hover:bg-accent transition-colors"
                 @click="statusFilter = opt; closeMenus()"
               >
                 {{ opt }}
@@ -662,7 +662,7 @@ const closeAdd = () => {
           <!-- Location Dropdown -->
           <div class="relative">
             <button
-              class="inline-flex items-center h-9 gap-1.5 rounded-lg text-xs font-medium bg-card border border-border shadow-xs px-3 hover:bg-muted transition-colors text-foreground"
+              class="inline-flex items-center h-9 gap-1.5 rounded-lg text-xs font-medium bg-card border border-border shadow-xs px-3 hover:bg-accent transition-colors text-foreground"
               :class="locationFilter !== 'All' ? 'text-primary border-primary/40' : ''"
               @click.stop="toggleMenu('location')"
             >
@@ -672,7 +672,7 @@ const closeAdd = () => {
               <button
                 v-for="opt in locationOptions"
                 :key="opt"
-                class="w-full flex items-center justify-between px-3 py-2 text-sm text-foreground hover:bg-muted transition-colors"
+                class="w-full flex items-center justify-between px-3 py-2 text-sm text-foreground hover:bg-accent transition-colors"
                 @click="locationFilter = opt; closeMenus()"
               >
                 {{ opt }}
@@ -684,7 +684,7 @@ const closeAdd = () => {
           <!-- Score Dropdown -->
           <div class="relative">
             <button
-              class="inline-flex items-center h-9 gap-1.5 rounded-lg text-xs font-medium bg-card border border-border shadow-xs px-3 hover:bg-muted transition-colors text-foreground"
+              class="inline-flex items-center h-9 gap-1.5 rounded-lg text-xs font-medium bg-card border border-border shadow-xs px-3 hover:bg-accent transition-colors text-foreground"
               :class="scoreFilter !== 'All' ? 'text-primary border-primary/40' : ''"
               @click.stop="toggleMenu('score')"
             >
@@ -694,7 +694,7 @@ const closeAdd = () => {
               <button
                 v-for="opt in scoreOptions"
                 :key="opt"
-                class="w-full flex items-center justify-between px-3 py-2 text-sm text-foreground hover:bg-muted transition-colors"
+                class="w-full flex items-center justify-between px-3 py-2 text-sm text-foreground hover:bg-accent transition-colors"
                 @click="scoreFilter = opt; closeMenus()"
               >
                 {{ opt }}
@@ -705,14 +705,14 @@ const closeAdd = () => {
         </div>
 
         <div class="flex items-center gap-3">
-          <button class="inline-flex items-center h-9 gap-2 rounded-lg text-xs font-medium bg-card border border-border shadow-xs px-3 hover:bg-muted transition-colors text-foreground">
+          <button class="inline-flex items-center h-9 gap-2 rounded-lg text-xs font-medium bg-card border border-border shadow-xs px-3 hover:bg-accent transition-colors text-foreground">
             <Funnel class="size-3.5" /> Filters
           </button>
         </div>
       </div>
 
       <!-- List Area -->
-      <div class="px-6 lg:px-10 pb-10 pt-6">
+      <div class="px-6 pb-10 pt-6">
         <div v-if="filtered.length === 0" class="py-16 flex flex-col items-center text-center">
           <div class="size-16 rounded-full bg-primary/10 ring-8 ring-primary/5 flex items-center justify-center mb-4">
             <Building2 class="size-7 text-primary" />
@@ -723,7 +723,7 @@ const closeAdd = () => {
             <button v-if="listings.length === 0" class="inline-flex items-center gap-2 h-9 px-4 rounded-lg bg-primary text-primary-foreground text-[13px] font-semibold hover:bg-primary/90 shadow-xs cursor-pointer" @click="openAdd('connect')">
               <Plus class="size-4" /> Add Your First Listing
             </button>
-            <button v-else class="inline-flex items-center gap-2 h-9 px-4 rounded-lg border border-border bg-card text-[13px] font-medium text-foreground hover:bg-muted shadow-xs cursor-pointer" @click="query = ''; platformFilter = 'All'; statusFilter = 'All'; locationFilter = 'All'; scoreFilter = 'All'">
+            <button v-else class="inline-flex items-center gap-2 h-9 px-4 rounded-lg border border-border bg-card text-[13px] font-medium text-foreground hover:bg-accent shadow-xs cursor-pointer" @click="query = ''; platformFilter = 'All'; statusFilter = 'All'; locationFilter = 'All'; scoreFilter = 'All'">
               Reset Filters
             </button>
           </div>
@@ -823,13 +823,13 @@ const closeAdd = () => {
                   </router-link>
                   <router-link
                     :to="{ name: 'reputation_reviews' }"
-                    class="inline-flex items-center h-8 gap-2 text-xs font-medium bg-card border border-border hover:bg-muted rounded-md px-3 shadow-xs transition-colors text-foreground"
+                    class="inline-flex items-center h-8 gap-2 text-xs font-medium bg-card border border-border hover:bg-accent rounded-md px-3 shadow-xs transition-colors text-foreground"
                     @click.stop
                   >
                     View Reviews
                   </router-link>
                   <button
-                    class="inline-flex items-center h-8 gap-2 text-xs font-medium bg-card border border-border hover:bg-muted rounded-md px-3 shadow-xs transition-colors text-foreground"
+                    class="inline-flex items-center h-8 gap-2 text-xs font-medium bg-card border border-border hover:bg-accent rounded-md px-3 shadow-xs transition-colors text-foreground"
                     @click.stop="showToast(`Syncing ${listing.title}...`)"
                   >
                     <RotateCw class="size-3.5" /> Sync Now
@@ -837,7 +837,7 @@ const closeAdd = () => {
                 </div>
                 <div class="relative">
                   <button
-                    class="inline-flex items-center justify-center size-8 bg-card border border-border hover:bg-muted rounded-md shadow-xs transition-colors"
+                    class="inline-flex items-center justify-center size-8 bg-card border border-border hover:bg-accent rounded-md shadow-xs transition-colors"
                     @click.stop="toggleActionsMenu(listing, $event)"
                   >
                     <MoreHorizontal class="size-4 text-muted-foreground" />
@@ -847,15 +847,15 @@ const closeAdd = () => {
                     class="absolute right-0 w-48 rounded-lg border border-border bg-card shadow-lg py-1 z-40"
                     :class="actionsMenuUp ? 'bottom-full mb-1' : 'top-full mt-1'"
                   >
-                    <button class="w-full text-left px-3 py-2 text-sm text-foreground hover:bg-muted transition-colors" @click.stop="renameListing(listing)">Rename</button>
-                    <button class="w-full text-left px-3 py-2 text-sm text-foreground hover:bg-muted transition-colors" @click.stop="duplicateListing(listing)">Duplicate</button>
-                    <button v-if="isListingDisconnected(listing)" class="w-full text-left px-3 py-2 text-sm text-primary hover:bg-muted transition-colors" @click.stop="connectListing(listing)">Connect</button>
-                    <button v-else class="w-full text-left px-3 py-2 text-sm text-foreground hover:bg-muted transition-colors" @click.stop="disconnectListing(listing)">Disconnect</button>
+                    <button class="w-full text-left px-3 py-2 text-sm text-foreground hover:bg-accent transition-colors" @click.stop="renameListing(listing)">Rename</button>
+                    <button class="w-full text-left px-3 py-2 text-sm text-foreground hover:bg-accent transition-colors" @click.stop="duplicateListing(listing)">Duplicate</button>
+                    <button v-if="isListingDisconnected(listing)" class="w-full text-left px-3 py-2 text-sm text-primary hover:bg-accent transition-colors" @click.stop="connectListing(listing)">Connect</button>
+                    <button v-else class="w-full text-left px-3 py-2 text-sm text-foreground hover:bg-accent transition-colors" @click.stop="disconnectListing(listing)">Disconnect</button>
                     <button class="w-full text-left px-3 py-2 text-sm text-destructive hover:bg-destructive/10 transition-colors" @click.stop="deleteListing(listing)">Delete</button>
                     <div class="my-1 border-t border-border"></div>
-                    <button class="w-full text-left px-3 py-2 text-sm text-foreground hover:bg-muted transition-colors" @click.stop="viewHistory(listing)">View History</button>
-                    <button class="w-full text-left px-3 py-2 text-sm text-foreground hover:bg-muted transition-colors" @click.stop="exportListing(listing)">Export</button>
-                    <button class="w-full text-left px-3 py-2 text-sm text-foreground hover:bg-muted transition-colors" @click.stop="copyReviewLink()">Copy Review Link</button>
+                    <button class="w-full text-left px-3 py-2 text-sm text-foreground hover:bg-accent transition-colors" @click.stop="viewHistory(listing)">View History</button>
+                    <button class="w-full text-left px-3 py-2 text-sm text-foreground hover:bg-accent transition-colors" @click.stop="exportListing(listing)">Export</button>
+                    <button class="w-full text-left px-3 py-2 text-sm text-foreground hover:bg-accent transition-colors" @click.stop="copyReviewLink()">Copy Review Link</button>
                   </div>
                 </div>
               </div>
@@ -1024,7 +1024,7 @@ const closeAdd = () => {
           </div>
 
           <div class="flex flex-col gap-3">
-            <label v-for="opt in connectOptionsFor" :key="opt" class="flex items-center gap-3 p-4 border rounded-lg cursor-pointer transition-colors" :class="connectOption === opt ? 'bg-primary/5 border-primary ring-1 ring-primary/20' : 'border-border hover:bg-muted/50'">
+            <label v-for="opt in connectOptionsFor" :key="opt" class="flex items-center gap-3 p-4 border rounded-lg cursor-pointer transition-colors" :class="connectOption === opt ? 'bg-primary/5 border-primary ring-1 ring-primary/20' : 'border-border hover:bg-accent'">
               <input type="radio" :value="opt" v-model="connectOption" :class="RELAY_RADIO_INPUT_CLASS" />
               <span class="text-[14px] font-semibold text-foreground">{{ opt }}</span>
             </label>
@@ -1043,9 +1043,9 @@ const closeAdd = () => {
           <div class="w-full mt-2 flex flex-col items-center gap-4">
             <p class="text-[13px] text-muted-foreground font-semibold">What would you like to do?</p>
             <div class="flex flex-col w-full max-w-xs gap-3">
-              <button class="w-full h-10 rounded-lg font-semibold border border-border bg-card shadow-sm text-[14px] text-foreground hover:bg-muted transition-colors" @click="closeAdd">Connect Platform</button>
-              <button class="w-full h-10 rounded-lg font-semibold border border-border bg-card shadow-sm text-[14px] text-foreground hover:bg-muted transition-colors" @click="closeAdd">Add Business Hours</button>
-              <button class="w-full h-10 rounded-lg font-semibold border border-border bg-card shadow-sm text-[14px] text-foreground hover:bg-muted transition-colors" @click="closeAdd">Open Listing</button>
+              <button class="w-full h-10 rounded-lg font-semibold border border-border bg-card shadow-sm text-[14px] text-foreground hover:bg-accent transition-colors" @click="closeAdd">Connect Platform</button>
+              <button class="w-full h-10 rounded-lg font-semibold border border-border bg-card shadow-sm text-[14px] text-foreground hover:bg-accent transition-colors" @click="closeAdd">Add Business Hours</button>
+              <button class="w-full h-10 rounded-lg font-semibold border border-border bg-card shadow-sm text-[14px] text-foreground hover:bg-accent transition-colors" @click="closeAdd">Open Listing</button>
               <button class="w-full h-10 rounded-lg font-semibold bg-primary hover:bg-primary/90 text-primary-foreground shadow-sm text-[14px] transition-colors" @click="closeAdd">Done</button>
             </div>
           </div>
@@ -1085,7 +1085,7 @@ const closeAdd = () => {
 
         <div class="px-6 py-5">
           <div v-if="!exportDone" class="grid grid-cols-2 gap-2.5">
-            <label v-for="(label, key) in exportFieldLabels" :key="key" class="flex items-center gap-2 p-2.5 rounded-lg border border-border hover:bg-muted/40 cursor-pointer transition-colors">
+            <label v-for="(label, key) in exportFieldLabels" :key="key" class="flex items-center gap-2 p-2.5 rounded-lg border border-border hover:bg-accent cursor-pointer transition-colors">
               <RelayCheckbox v-model="exportFields[key]" />
               <span class="text-sm text-foreground">{{ label }}</span>
             </label>
@@ -1100,7 +1100,7 @@ const closeAdd = () => {
         </div>
 
         <div class="px-6 py-4 border-t border-border flex justify-end gap-2 bg-muted/20">
-          <button class="rounded-lg border border-border px-4 py-2 text-sm font-medium text-muted-foreground hover:bg-muted/50 transition-colors" @click="closeExport">
+          <button class="rounded-lg border border-border px-4 py-2 text-sm font-medium text-muted-foreground hover:bg-accent transition-colors" @click="closeExport">
             {{ exportDone ? 'Close' : 'Cancel' }}
           </button>
           <button v-if="!exportDone" class="inline-flex items-center gap-1.5 rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow-xs hover:bg-primary/90 transition-colors" @click="runExport">

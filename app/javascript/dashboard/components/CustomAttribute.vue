@@ -286,13 +286,13 @@ export default {
           :href="hrefURL"
           target="_blank"
           rel="noopener noreferrer"
-          class="group-hover:bg-muted group-hover:dark:bg-accent inline-block rounded-sm mb-0 break-all py-0.5 px-1"
+          class="group-hover:bg-accent group-hover:dark:bg-accent inline-block rounded-sm mb-0 break-all py-0.5 px-1"
         >
           {{ urlValue }}
         </a>
         <p
           v-else
-          class="group-hover:bg-muted group-hover:dark:bg-accent inline-block rounded-sm mb-0 break-all py-0.5 px-1"
+          class="group-hover:bg-accent group-hover:dark:bg-accent inline-block rounded-sm mb-0 break-all py-0.5 px-1"
         >
           {{ displayValue }}
         </p>

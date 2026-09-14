@@ -596,7 +596,7 @@ onMounted(async () => {
         <Popover align="end" :show-content-border="false">
           <RelayButton
             variant="outline"
-            class="flex h-9 items-center gap-2 rounded-lg border border-border px-3 text-[13px] font-medium shadow-sm transition-all hover:border-transparent hover:bg-muted"
+            class="flex h-9 items-center gap-2 rounded-lg border border-border px-3 text-[13px] font-medium shadow-sm transition-all hover:border-transparent hover:bg-accent"
           >
             <span class="i-lucide-columns size-4" />
             {{ t('CONTACTS_LAYOUT.HEADER.COLUMNS_BUTTON') }}

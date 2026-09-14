@@ -89,7 +89,7 @@ const formattedLocation = computed(() => {
   <router-link :to="navigateTo">
     <CardLayout
       layout="row"
-      class="[&>div]:justify-start [&>div]:px-4 [&>div]:py-3 [&>div]:items-start hover:bg-muted dark:hover:bg-accent"
+      class="[&>div]:justify-start [&>div]:px-4 [&>div]:py-3 [&>div]:items-start hover:bg-accent dark:hover:bg-accent"
     >
       <Avatar
         :name="name"

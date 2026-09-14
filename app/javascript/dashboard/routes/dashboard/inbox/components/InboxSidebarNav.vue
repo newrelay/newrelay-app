@@ -116,7 +116,7 @@ const NAV_ITEM_BASE_CLASS =
 const navItemClass = active =>
   active
     ? 'bg-primary/10 text-primary'
-    : 'bg-transparent text-muted-foreground hover:bg-muted/50 hover:text-foreground';
+    : 'bg-transparent text-muted-foreground hover:bg-accent hover:text-foreground';
 
 const navBadgeClass = active =>
   [
@@ -191,7 +191,7 @@ const navBadgeClass = active =>
         </button>
         <button
           type="button"
-          class="rounded-md p-1 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+          class="rounded-md p-1 text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
           :aria-label="t('INBOX.CHANNELS.ADD')"
           @click="addChannel"
         >

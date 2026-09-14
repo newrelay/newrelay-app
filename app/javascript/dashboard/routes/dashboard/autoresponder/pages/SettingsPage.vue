@@ -67,7 +67,7 @@ const activeComponent = computed(() => tabComponents[activeTab.value]);
 </script>
 
 <template>
-  <div class="min-h-screen min-w-0 bg-background p-4 md:p-8">
+  <div class="min-h-screen min-w-0 bg-background p-4 md:p-6">
     <div
       class="mb-8 mt-2 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between"
     >

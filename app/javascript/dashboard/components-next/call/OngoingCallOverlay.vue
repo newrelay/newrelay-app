@@ -139,7 +139,7 @@ const statusLabel = computed(() => {
               :class="
                 isMuted
                   ? 'border-amber-500/20 bg-amber-500/10 text-amber-500'
-                  : 'border-border/50 bg-muted/60 text-foreground/80 group-hover:border-border group-hover:bg-muted group-hover:text-foreground'
+                  : 'border-border/50 bg-muted/60 text-foreground/80 group-hover:border-border group-hover:bg-accent group-hover:text-foreground'
               "
             >
               <span
@@ -169,7 +169,7 @@ const statusLabel = computed(() => {
             @click="emit('triggerNote')"
           >
             <div
-              class="flex size-14 items-center justify-center rounded-full border border-border/50 bg-muted/60 text-foreground/80 transition-all group-hover:scale-105 group-hover:border-border group-hover:bg-muted group-hover:text-foreground"
+              class="flex size-14 items-center justify-center rounded-full border border-border/50 bg-muted/60 text-foreground/80 transition-all group-hover:scale-105 group-hover:border-border group-hover:bg-accent group-hover:text-foreground"
             >
               <span class="i-lucide-sticky-note size-6" />
             </div>
@@ -190,7 +190,7 @@ const statusLabel = computed(() => {
               :class="
                 isSpeakerOn
                   ? 'border-primary/20 bg-primary/10 text-primary'
-                  : 'border-border/50 bg-muted/60 text-foreground/80 group-hover:border-border group-hover:bg-muted group-hover:text-foreground'
+                  : 'border-border/50 bg-muted/60 text-foreground/80 group-hover:border-border group-hover:bg-accent group-hover:text-foreground'
               "
             >
               <span class="i-lucide-volume-2 size-6" />
@@ -209,7 +209,7 @@ const statusLabel = computed(() => {
 
           <button type="button" class="group flex flex-col items-center gap-3">
             <div
-              class="flex size-14 items-center justify-center rounded-full border border-border/50 bg-muted/60 text-foreground/80 transition-all group-hover:scale-105 group-hover:border-border group-hover:bg-muted group-hover:text-foreground"
+              class="flex size-14 items-center justify-center rounded-full border border-border/50 bg-muted/60 text-foreground/80 transition-all group-hover:scale-105 group-hover:border-border group-hover:bg-accent group-hover:text-foreground"
             >
               <span
                 class="i-lucide-user-plus size-6 text-foreground/80 group-hover:text-foreground"

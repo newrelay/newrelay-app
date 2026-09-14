@@ -236,7 +236,7 @@ const isPdfFile = attachment => attachment.extension?.toLowerCase() === 'pdf';
           :key="attachment.id"
           role="button"
           tabindex="0"
-          class="flex cursor-pointer items-center gap-3 rounded-lg border border-border/50 bg-muted/30 p-2 transition-colors hover:bg-muted/50"
+          class="flex cursor-pointer items-center gap-3 rounded-lg border border-border/50 bg-muted/30 p-2 transition-colors hover:bg-accent"
           @click="onDownloadFile(attachment)"
           @keydown.enter="onDownloadFile(attachment)"
         >
@@ -295,7 +295,7 @@ const isPdfFile = attachment => attachment.extension?.toLowerCase() === 'pdf';
           :key="attachment.id"
           role="button"
           tabindex="0"
-          class="flex cursor-pointer items-center gap-3 rounded-lg border border-border/50 bg-muted/30 p-2 transition-colors hover:bg-muted/50"
+          class="flex cursor-pointer items-center gap-3 rounded-lg border border-border/50 bg-muted/30 p-2 transition-colors hover:bg-accent"
           @click="onTileActivate(attachment, index)"
           @keydown.enter="onTileActivate(attachment, index)"
         >
@@ -513,7 +513,7 @@ const isPdfFile = attachment => attachment.extension?.toLowerCase() === 'pdf';
           <li
             v-for="attachment in visibleFiles"
             :key="attachment.id"
-            class="group flex items-center gap-3 rounded-lg border border-border/50 bg-muted/30 p-2 transition-colors hover:bg-muted/50"
+            class="group flex items-center gap-3 rounded-lg border border-border/50 bg-muted/30 p-2 transition-colors hover:bg-accent"
           >
             <div
               class="flex size-8 shrink-0 items-center justify-center rounded-lg"

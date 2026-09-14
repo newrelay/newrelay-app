@@ -153,7 +153,7 @@ onBeforeMount(() => {
               <tr
                 v-for="label in filteredRecords"
                 :key="label.title"
-                class="group bg-card transition-colors hover:bg-muted/10"
+                class="group bg-card transition-colors hover:bg-accent"
               >
                 <td class="px-6 py-4 text-[14px] font-medium text-foreground">
                   {{ label.title }}

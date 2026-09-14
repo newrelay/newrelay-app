@@ -30,7 +30,7 @@ const getGoogleAuthUrl = () => {
 <template>
   <a
     :href="getGoogleAuthUrl()"
-    class="w-full h-11 bg-background border border-border rounded-lg shadow-sm flex items-center justify-center gap-3 hover:bg-muted/50 transition-colors text-[14px] font-medium text-foreground"
+    class="w-full h-11 bg-background border border-border rounded-lg shadow-sm flex items-center justify-center gap-3 hover:bg-accent transition-colors text-[14px] font-medium text-foreground"
   >
     <span class="i-logos-google-icon size-5" />
     <slot>{{ t('LOGIN.OAUTH.GOOGLE_LOGIN') }}</slot>

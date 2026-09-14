@@ -105,7 +105,7 @@ const handleCopyLink = () => {
         <button 
           v-if="currentState !== 'progress'"
           @click="resetAndClose"
-          class="size-8 rounded-full flex items-center justify-center text-muted-foreground hover:bg-muted transition-colors cursor-pointer"
+          class="size-8 rounded-full flex items-center justify-center text-muted-foreground hover:bg-accent transition-colors cursor-pointer"
         >
           <X class="size-5" />
         </button>
@@ -120,7 +120,7 @@ const handleCopyLink = () => {
           <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
             <label 
               class="flex items-center gap-3 p-3 rounded-xl border cursor-pointer transition-all duration-200"
-              :class="exportScope === 'Selected Videos' ? 'border-primary bg-primary/5 ring-1 ring-primary/20' : 'border-border bg-card hover:bg-muted/50'"
+              :class="exportScope === 'Selected Videos' ? 'border-primary bg-primary/5 ring-1 ring-primary/20' : 'border-border bg-card hover:bg-accent'"
             >
               <div class="size-4 rounded-full border flex items-center justify-center shrink-0 transition-colors"
                    :class="exportScope === 'Selected Videos' ? 'border-primary border-[4px]' : 'border-input'"></div>
@@ -129,7 +129,7 @@ const handleCopyLink = () => {
             </label>
             <label 
               class="flex items-center gap-3 p-3 rounded-xl border cursor-pointer transition-all duration-200"
-              :class="exportScope === 'Filtered Results' ? 'border-primary bg-primary/5 ring-1 ring-primary/20' : 'border-border bg-card hover:bg-muted/50'"
+              :class="exportScope === 'Filtered Results' ? 'border-primary bg-primary/5 ring-1 ring-primary/20' : 'border-border bg-card hover:bg-accent'"
             >
               <div class="size-4 rounded-full border flex items-center justify-center shrink-0 transition-colors"
                    :class="exportScope === 'Filtered Results' ? 'border-primary border-[4px]' : 'border-input'"></div>
@@ -138,7 +138,7 @@ const handleCopyLink = () => {
             </label>
             <label 
               class="flex items-center gap-3 p-3 rounded-xl border cursor-pointer transition-all duration-200"
-              :class="exportScope === 'Entire Library' ? 'border-primary bg-primary/5 ring-1 ring-primary/20' : 'border-border bg-card hover:bg-muted/50'"
+              :class="exportScope === 'Entire Library' ? 'border-primary bg-primary/5 ring-1 ring-primary/20' : 'border-border bg-card hover:bg-accent'"
             >
               <div class="size-4 rounded-full border flex items-center justify-center shrink-0 transition-colors"
                    :class="exportScope === 'Entire Library' ? 'border-primary border-[4px]' : 'border-input'"></div>
@@ -155,7 +155,7 @@ const handleCopyLink = () => {
             <span class="text-xs text-muted-foreground font-medium">Select multiple</span>
           </label>
           <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
-            <label v-for="(val, key) in includeOptions" :key="key" class="flex items-center gap-3 p-3 border border-border rounded-xl bg-card cursor-pointer hover:bg-muted/50 transition-colors">
+            <label v-for="(val, key) in includeOptions" :key="key" class="flex items-center gap-3 p-3 border border-border rounded-xl bg-card cursor-pointer hover:bg-accent transition-colors">
               <Checkbox :model-value="val" @update:model-value="includeOptions[key] = $event" class="rounded-sm" />
               <div class="flex flex-col">
                 <span class="text-[13px] font-bold text-foreground capitalize">{{ key.replace(/([A-Z])/g, ' $1').trim() }}</span>
@@ -183,7 +183,7 @@ const handleCopyLink = () => {
                 v-for="res in ['Original', '1080p', '720p']"
                 :key="res"
                 @click="resolution = res; showResolutionDropdown = false"
-                class="w-full text-left px-3 py-2 text-xs rounded-md font-medium hover:bg-muted text-foreground cursor-pointer"
+                class="w-full text-left px-3 py-2 text-xs rounded-md font-medium hover:bg-accent text-foreground cursor-pointer"
               >
                 {{ res }}
               </button>
@@ -255,7 +255,7 @@ const handleCopyLink = () => {
           <button class="font-semibold bg-primary hover:bg-primary/90 text-primary-foreground h-11 gap-2 shadow-sm rounded-lg flex items-center justify-center cursor-pointer">
             <Download class="size-4" /> Download ZIP
           </button>
-          <button @click="handleCopyLink" class="font-semibold bg-card border border-border hover:bg-muted h-11 gap-2 shadow-sm rounded-lg flex items-center justify-center cursor-pointer">
+          <button @click="handleCopyLink" class="font-semibold bg-card border border-border hover:bg-accent h-11 gap-2 shadow-sm rounded-lg flex items-center justify-center cursor-pointer">
             <Check v-if="copied" class="size-4 text-emerald-500" />
             <Copy v-else class="size-4" />
             {{ copied ? 'Copied!' : 'Copy Link' }}

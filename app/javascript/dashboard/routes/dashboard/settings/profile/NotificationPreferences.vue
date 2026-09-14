@@ -266,7 +266,7 @@ onMounted(() => {
               <div
                 v-for="notification in visibleNotificationTypes"
                 :key="notification.value"
-                class="grid grid-cols-[1fr_auto_auto_auto] gap-4 p-4 items-center hover:bg-muted/10 transition-colors"
+                class="grid grid-cols-[1fr_auto_auto_auto] gap-4 p-4 items-center hover:bg-accent transition-colors"
               >
                 <div class="flex items-start gap-4">
                   <div

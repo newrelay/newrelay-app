@@ -100,7 +100,7 @@ const emit = defineEmits([
     <button
       v-else
       type="button"
-      class="inline-flex size-8 shrink-0 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-muted/50 hover:text-foreground"
+      class="inline-flex size-8 shrink-0 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
       :aria-label="$t('CHAT_LIST.SEARCH.INPUT')"
       @click="emit('openSearch')"
     >

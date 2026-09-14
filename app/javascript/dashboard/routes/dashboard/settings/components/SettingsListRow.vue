@@ -1,6 +1,6 @@
 <template>
   <div
-    class="group flex flex-col justify-between gap-4 p-4 transition-colors hover:bg-muted/10 sm:flex-row sm:items-center"
+    class="group flex flex-col justify-between gap-4 p-4 transition-colors hover:bg-accent sm:flex-row sm:items-center"
   >
     <div class="flex min-w-0 flex-1 items-center gap-4">
       <slot name="leading" />

@@ -104,7 +104,7 @@ const handleConfirm = () => {
           <RelayButton
             type="button"
             variant="ghost"
-            class="h-9 flex-1 rounded-lg border border-border bg-background text-[14px] font-medium text-foreground shadow-sm hover:border-transparent hover:bg-muted/50 hover:text-foreground"
+            class="h-9 flex-1 rounded-lg border border-border bg-background text-[14px] font-medium text-foreground shadow-sm hover:border-transparent hover:bg-accent hover:text-foreground"
             :disabled="isLoading"
             @click="handleClose"
           >

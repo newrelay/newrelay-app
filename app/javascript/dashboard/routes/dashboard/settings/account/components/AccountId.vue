@@ -45,8 +45,8 @@ const copyAccountId = async () => {
           class="h-10 shrink-0 rounded-l-none border-l-0 text-sm font-medium shadow-xs"
           :class="
             isCopied
-              ? 'bg-muted/80 text-foreground'
-              : 'bg-background hover:bg-muted'
+              ? 'bg-accent text-foreground'
+              : 'bg-background hover:bg-accent'
           "
           @click="copyAccountId"
         >

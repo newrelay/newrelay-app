@@ -302,7 +302,7 @@ async function resendRequest(req) {
       class="flex-1 overflow-y-auto w-full flex flex-col transition-all duration-300 hide-scrollbar"
       :class="selectedRequest ? 'mr-[420px]' : ''"
     >
-      <div class="px-8 pt-8 pb-4 shrink-0 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div class="px-6 pt-6 pb-4 shrink-0 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <div class="flex items-center gap-2.5">
             <h1 class="text-base font-medium tracking-tight text-foreground">Review Requests</h1>
@@ -328,7 +328,7 @@ async function resendRequest(req) {
       </div>
 
       <template v-else-if="showPopulated">
-        <div class="px-8 pb-12 space-y-7">
+        <div class="px-6 pb-12 space-y-7">
           <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
             <div class="bg-card rounded-xl border border-border shadow-sm p-5 relative overflow-hidden">
               <div class="flex justify-between items-start mb-4">
@@ -486,7 +486,7 @@ async function resendRequest(req) {
                     :key="req.id"
                     role="button"
                     tabindex="0"
-                    class="group hover:bg-muted/30 transition-colors cursor-pointer"
+                    class="group hover:bg-accent transition-colors cursor-pointer"
                     :class="selectedRequest?.id === req.id ? 'bg-primary/5 dark:bg-primary/10' : ''"
                     @click="selectedRequest = req"
                     @keydown.enter.prevent="selectedRequest = req"
@@ -602,7 +602,7 @@ async function resendRequest(req) {
           <p class="text-[12px] text-muted-foreground mt-0.5">Full delivery and interaction timeline</p>
         </div>
         <button
-          class="p-1.5 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+          class="p-1.5 rounded-lg text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
           @click="selectedRequest = null"
         >
           <X class="size-4" />

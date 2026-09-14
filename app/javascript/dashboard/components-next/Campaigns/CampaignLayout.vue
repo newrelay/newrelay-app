@@ -23,7 +23,7 @@ const handleButtonClick = () => {
   <section
     class="flex flex-col w-full h-full overflow-hidden bg-background/50 animate-in fade-in duration-300"
   >
-    <div class="flex min-h-0 flex-1 flex-col overflow-y-auto px-8 py-8">
+    <div class="flex min-h-0 flex-1 flex-col overflow-y-auto p-6">
       <div
         class="relative z-10 mx-auto flex min-h-0 w-full max-w-7xl flex-1 flex-col gap-8"
       >

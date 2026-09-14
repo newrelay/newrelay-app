@@ -101,7 +101,7 @@ const toggleSelectAll = () => {
         v-for="agent in agentList"
         :key="agent.id"
         type="button"
-        class="grid w-full cursor-pointer grid-cols-[1.5fr_1.5fr_1fr] items-center gap-4 px-5 py-3 text-left transition-colors hover:bg-muted/15"
+        class="grid w-full cursor-pointer grid-cols-[1.5fr_1.5fr_1fr] items-center gap-4 px-5 py-3 text-left transition-colors hover:bg-accent"
         :class="isAgentSelected(agent.id) ? 'bg-primary/[0.02]' : ''"
         @click="handleSelectAgent(agent.id)"
       >

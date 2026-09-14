@@ -76,7 +76,7 @@ const selectYear = year => {
         :class="{
           'bg-primary text-primary-foreground hover:bg-primary/90':
             year === activeYear,
-          'hover:bg-muted/80': year !== activeYear,
+          'hover:bg-accent': year !== activeYear,
         }"
         @click.stop="selectYear(year)"
       >

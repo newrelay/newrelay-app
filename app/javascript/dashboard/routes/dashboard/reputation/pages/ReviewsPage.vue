@@ -356,7 +356,7 @@ async function sendReply() {
     <div class="flex-1 overflow-y-auto w-full hide-scrollbar flex flex-col transition-all duration-300" :class="selectedReview ? 'mr-[400px]' : ''">
       
       <!-- Page Header -->
-      <div class="px-6 lg:px-10 py-6 bg-card shrink-0 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div class="px-6 py-6 bg-card shrink-0 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <div class="flex items-center gap-2.5">
             <h1 class="text-base font-medium tracking-tight text-foreground">Reviews</h1>
@@ -370,7 +370,7 @@ async function sendReply() {
         <div class="flex items-center gap-3 shrink-0">
           <button
             @click="isWidgetModalOpen = true"
-            class="inline-flex items-center gap-2 h-9 px-3.5 rounded-lg border border-border bg-card text-[13.5px] font-medium text-foreground hover:bg-muted shadow-xs cursor-pointer"
+            class="inline-flex items-center gap-2 h-9 px-3.5 rounded-lg border border-border bg-card text-[13.5px] font-medium text-foreground hover:bg-accent shadow-xs cursor-pointer"
           >
             <LayoutGrid class="size-4" /> Widget
           </button>
@@ -384,7 +384,7 @@ async function sendReply() {
       </div>
 
       <!-- Unified toolbar: select + search | sort / platform / filters / view / pagination -->
-      <div class="px-6 lg:px-10 py-2.5 border-b border-border/80 bg-card/70 shrink-0 flex items-center justify-between gap-4 flex-wrap">
+      <div class="px-6 py-2.5 border-b border-border/80 bg-card/70 shrink-0 flex items-center justify-between gap-4 flex-wrap">
         <!-- Left: select-all + search (bulk actions replace search when rows are selected) -->
         <div class="flex items-center gap-3 min-w-0 flex-1">
           <Checkbox
@@ -401,7 +401,7 @@ async function sendReply() {
             <div class="relative shrink-0">
               <button
                 type="button"
-                class="inline-flex items-center gap-1.5 rounded-md h-7 px-2 hover:bg-muted text-[12.5px] font-medium text-foreground transition-colors cursor-pointer disabled:opacity-50"
+                class="inline-flex items-center gap-1.5 rounded-md h-7 px-2 hover:bg-accent text-[12.5px] font-medium text-foreground transition-colors cursor-pointer disabled:opacity-50"
                 :disabled="bulkBusy"
                 @click="showBulkAssign = !showBulkAssign"
               >
@@ -413,7 +413,7 @@ async function sendReply() {
               >
                 <button
                   type="button"
-                  class="w-full text-left px-3 py-1.5 text-xs rounded-md hover:bg-muted font-medium text-foreground cursor-pointer"
+                  class="w-full text-left px-3 py-1.5 text-xs rounded-md hover:bg-accent font-medium text-foreground cursor-pointer"
                   @click="assignSelected(null)"
                 >
                   Unassigned
@@ -422,7 +422,7 @@ async function sendReply() {
                   v-for="person in assigneeOptions"
                   :key="person"
                   type="button"
-                  class="w-full text-left px-3 py-1.5 text-xs rounded-md hover:bg-muted font-medium text-foreground cursor-pointer"
+                  class="w-full text-left px-3 py-1.5 text-xs rounded-md hover:bg-accent font-medium text-foreground cursor-pointer"
                   @click="assignSelected(person)"
                 >
                   {{ person }}
@@ -448,7 +448,7 @@ async function sendReply() {
             </button>
             <button
               type="button"
-              class="inline-flex items-center gap-1.5 rounded-md h-7 px-2 hover:bg-muted text-[12.5px] font-medium text-foreground transition-colors cursor-pointer disabled:opacity-50 shrink-0"
+              class="inline-flex items-center gap-1.5 rounded-md h-7 px-2 hover:bg-accent text-[12.5px] font-medium text-foreground transition-colors cursor-pointer disabled:opacity-50 shrink-0"
               :disabled="bulkBusy"
               @click="exportSelected"
             >
@@ -479,7 +479,7 @@ async function sendReply() {
           <div class="relative">
             <button
               @click="showSortDropdown = !showSortDropdown"
-              class="inline-flex items-center gap-1.5 h-9 px-3 rounded-lg border border-border bg-card text-[13px] font-medium text-foreground hover:bg-muted shadow-xs cursor-pointer whitespace-nowrap"
+              class="inline-flex items-center gap-1.5 h-9 px-3 rounded-lg border border-border bg-card text-[13px] font-medium text-foreground hover:bg-accent shadow-xs cursor-pointer whitespace-nowrap"
             >
               <span>{{ sortOption }}</span>
               <ChevronDown class="size-3 opacity-50" />
@@ -489,7 +489,7 @@ async function sendReply() {
                 v-for="opt in ['Newest First', 'Oldest First', 'Highest Rating', 'Lowest Rating']"
                 :key="opt"
                 @click="sortOption = opt; showSortDropdown = false"
-                class="w-full text-left px-3 py-1.5 text-xs rounded hover:bg-muted cursor-pointer"
+                class="w-full text-left px-3 py-1.5 text-xs rounded hover:bg-accent cursor-pointer"
                 :class="sortOption === opt ? 'text-primary font-semibold' : 'text-foreground'"
               >
                 {{ opt }}
@@ -501,7 +501,7 @@ async function sendReply() {
           <div class="relative">
             <button
               @click="showPlatformDropdown = !showPlatformDropdown"
-              class="inline-flex items-center gap-1.5 h-9 px-3 rounded-lg border border-border bg-card text-[13px] font-medium text-foreground hover:bg-muted shadow-xs cursor-pointer whitespace-nowrap"
+              class="inline-flex items-center gap-1.5 h-9 px-3 rounded-lg border border-border bg-card text-[13px] font-medium text-foreground hover:bg-accent shadow-xs cursor-pointer whitespace-nowrap"
             >
               <span>{{ selectedPlatform }}</span>
               <ChevronDown class="size-3 opacity-50" />
@@ -509,7 +509,7 @@ async function sendReply() {
             <div v-if="showPlatformDropdown" class="absolute right-0 mt-1 w-44 rounded-xl border border-border bg-card p-1.5 shadow-xl z-30 space-y-0.5">
               <button
                 @click="selectedPlatform = 'All Platforms'; showPlatformDropdown = false"
-                class="w-full text-left px-3 py-1.5 text-xs rounded-md hover:bg-muted font-medium text-foreground cursor-pointer flex items-center gap-2"
+                class="w-full text-left px-3 py-1.5 text-xs rounded-md hover:bg-accent font-medium text-foreground cursor-pointer flex items-center gap-2"
               >
                 All Platforms
               </button>
@@ -517,7 +517,7 @@ async function sendReply() {
                 v-for="p in ['Google', 'Yelp', 'Facebook', 'Trustpilot']"
                 :key="p"
                 @click="selectedPlatform = p; showPlatformDropdown = false"
-                class="w-full text-left px-3 py-1.5 text-xs rounded-md hover:bg-muted font-medium text-foreground cursor-pointer flex items-center gap-2"
+                class="w-full text-left px-3 py-1.5 text-xs rounded-md hover:bg-accent font-medium text-foreground cursor-pointer flex items-center gap-2"
               >
                 <div v-html="platformIcons[p]" class="size-4 shrink-0 flex items-center justify-center"></div> {{ p }}
               </button>
@@ -529,7 +529,7 @@ async function sendReply() {
             <button
               @click="showFilterDropdown = !showFilterDropdown"
               class="inline-flex items-center gap-1.5 h-9 px-3 rounded-lg border text-[13px] font-medium shadow-xs cursor-pointer"
-              :class="(activeStatusFilter || activeRatingFilter || activeDateRangeFilter) ? 'border-primary/40 text-primary bg-primary/5' : 'border-border bg-card text-foreground hover:bg-muted'"
+              :class="(activeStatusFilter || activeRatingFilter || activeDateRangeFilter) ? 'border-primary/40 text-primary bg-primary/5' : 'border-border bg-card text-foreground hover:bg-accent'"
             >
               <Filter class="size-3.5" />
               <span>Filters</span>
@@ -544,14 +544,14 @@ async function sendReply() {
               <div class="max-h-[300px] overflow-y-auto space-y-1">
                 <div class="px-2 py-1 text-[12px] font-medium text-muted-foreground">Status</div>
                 <button
-                  class="w-full text-left px-2 py-1.5 text-xs rounded-md hover:bg-muted font-medium cursor-pointer flex items-center justify-between"
+                  class="w-full text-left px-2 py-1.5 text-xs rounded-md hover:bg-accent font-medium cursor-pointer flex items-center justify-between"
                   :class="activeStatusFilter === 'Needs Reply' ? 'text-primary' : 'text-foreground'"
                   @click="activeStatusFilter = activeStatusFilter === 'Needs Reply' ? '' : 'Needs Reply'; showFilterDropdown = false"
                 >
                   Needs Reply <Check v-if="activeStatusFilter === 'Needs Reply'" class="size-3.5" />
                 </button>
                 <button
-                  class="w-full text-left px-2 py-1.5 text-xs rounded-md hover:bg-muted font-medium cursor-pointer flex items-center justify-between"
+                  class="w-full text-left px-2 py-1.5 text-xs rounded-md hover:bg-accent font-medium cursor-pointer flex items-center justify-between"
                   :class="activeStatusFilter === 'Replied' ? 'text-primary' : 'text-foreground'"
                   @click="activeStatusFilter = activeStatusFilter === 'Replied' ? '' : 'Replied'; showFilterDropdown = false"
                 >
@@ -563,7 +563,7 @@ async function sendReply() {
                 <button
                   v-for="opt in RATING_OPTIONS"
                   :key="opt.value"
-                  class="w-full text-left px-2 py-1.5 text-xs rounded-md hover:bg-muted font-medium cursor-pointer flex items-center justify-between gap-2"
+                  class="w-full text-left px-2 py-1.5 text-xs rounded-md hover:bg-accent font-medium cursor-pointer flex items-center justify-between gap-2"
                   :class="activeRatingFilter === opt.value ? 'text-primary' : 'text-foreground'"
                   @click="activeRatingFilter = activeRatingFilter === opt.value ? 0 : opt.value; showFilterDropdown = false"
                 >
@@ -576,7 +576,7 @@ async function sendReply() {
                 <button
                   v-for="opt in DATE_RANGE_OPTIONS"
                   :key="opt.value"
-                  class="w-full text-left px-2 py-1.5 text-xs rounded-md hover:bg-muted font-medium cursor-pointer flex items-center justify-between gap-2"
+                  class="w-full text-left px-2 py-1.5 text-xs rounded-md hover:bg-accent font-medium cursor-pointer flex items-center justify-between gap-2"
                   :class="activeDateRangeFilter === opt.value ? 'text-primary' : 'text-foreground'"
                   @click="activeDateRangeFilter = activeDateRangeFilter === opt.value ? '' : opt.value; showFilterDropdown = false"
                 >
@@ -602,8 +602,8 @@ async function sendReply() {
           <div class="flex items-center gap-2">
             <span class="text-xs font-semibold text-foreground whitespace-nowrap">1-{{ filteredReviews.length }} of {{ reviews.length }}</span>
             <div class="flex items-center gap-1">
-              <button class="inline-flex items-center justify-center size-8 rounded-lg bg-card border border-border/80 hover:bg-muted shadow-xs cursor-pointer text-muted-foreground"><ChevronDown class="size-3.5 rotate-90" /></button>
-              <button class="inline-flex items-center justify-center size-8 rounded-lg bg-card border border-border/80 hover:bg-muted shadow-xs cursor-pointer text-muted-foreground"><ChevronDown class="size-3.5 -rotate-90" /></button>
+              <button class="inline-flex items-center justify-center size-8 rounded-lg bg-card border border-border/80 hover:bg-accent shadow-xs cursor-pointer text-muted-foreground"><ChevronDown class="size-3.5 rotate-90" /></button>
+              <button class="inline-flex items-center justify-center size-8 rounded-lg bg-card border border-border/80 hover:bg-accent shadow-xs cursor-pointer text-muted-foreground"><ChevronDown class="size-3.5 -rotate-90" /></button>
             </div>
           </div>
         </div>
@@ -616,8 +616,8 @@ async function sendReply() {
           :class="[
             viewMode === 'list' ? 'flex flex-col gap-0 bg-card divide-y divide-border/50 border-y border-border/50' : '',
             viewMode === 'timeline' ? 'flex flex-col gap-6 ml-[130px] border-l-2 border-primary/10 pl-8 pt-8 pr-8' : '',
-            viewMode === 'grid' && selectedReview ? 'grid grid-cols-1 xl:grid-cols-2 gap-6 p-6 lg:px-10' : '',
-            viewMode === 'grid' && !selectedReview ? 'grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6 p-6 lg:px-10' : ''
+            viewMode === 'grid' && selectedReview ? 'grid grid-cols-1 xl:grid-cols-2 gap-6 p-6' : '',
+            viewMode === 'grid' && !selectedReview ? 'grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6 p-6' : ''
           ]"
         >
           <div 
@@ -640,7 +640,7 @@ async function sendReply() {
               class="transition-all duration-300 cursor-pointer relative"
               :class="[
                 activeReviewMenuId === review.id ? 'z-30 overflow-visible' : 'overflow-hidden',
-                viewMode === 'list' ? 'px-6 lg:px-10 py-5 flex items-center gap-6 hover:bg-muted/30' : 'bg-card border rounded-xl hover:shadow-md p-6 flex flex-col h-full',
+                viewMode === 'list' ? 'px-6 py-5 flex items-center gap-6 hover:bg-accent' : 'bg-card border rounded-xl hover:shadow-md p-6 flex flex-col h-full',
                 selectedReview?.id === review.id && viewMode === 'list' ? 'bg-primary/10/30 dark:bg-primary/10/10 border-l-[3px] border-l-primary' : viewMode === 'list' ? 'border-l-[3px] border-l-transparent' : '',
                 selectedReview?.id === review.id && viewMode !== 'list' ? 'border-primary ring-1 ring-primary shadow-md scale-[1.02]' : viewMode !== 'list' ? 'border-border shadow-sm scale-100' : ''
               ]"
@@ -800,7 +800,7 @@ async function sendReply() {
                   <!-- 3-Dots Action Menu -->
                   <div class="relative shrink-0" @click.stop>
                     <button 
-                      class="p-1.5 text-muted-foreground hover:text-foreground rounded-lg hover:bg-muted shrink-0 cursor-pointer" 
+                      class="p-1.5 text-muted-foreground hover:text-foreground rounded-lg hover:bg-accent shrink-0 cursor-pointer" 
                       @click="activeReviewMenuId = activeReviewMenuId === review.id ? null : review.id"
                     >
                       <MoreHorizontal class="size-5" />
@@ -812,26 +812,26 @@ async function sendReply() {
                     >
                       <button 
                         @click="openReviewDetail(review); activeReviewMenuId = null" 
-                        class="w-full text-left px-3 py-1.5 text-xs rounded-md hover:bg-muted font-medium text-foreground flex items-center gap-2 cursor-pointer"
+                        class="w-full text-left px-3 py-1.5 text-xs rounded-md hover:bg-accent font-medium text-foreground flex items-center gap-2 cursor-pointer"
                       >
                         <MessageSquare class="size-4" /> View Details
                       </button>
                       <button 
                         @click="openReviewDetail(review); showAssigneeDropdown = true; activeReviewMenuId = null" 
-                        class="w-full text-left px-3 py-1.5 text-xs rounded-md hover:bg-muted font-medium text-foreground flex items-center gap-2 cursor-pointer"
+                        class="w-full text-left px-3 py-1.5 text-xs rounded-md hover:bg-accent font-medium text-foreground flex items-center gap-2 cursor-pointer"
                       >
                         <UserPlus class="size-4" /> Assign
                       </button>
                       <div class="my-1 border-t border-border/80"></div>
                       <button 
                         @click="sendAiReplies([review.id]); activeReviewMenuId = null" 
-                        class="w-full text-left px-3 py-1.5 text-xs rounded-md hover:bg-muted font-medium text-foreground flex items-center gap-2 cursor-pointer"
+                        class="w-full text-left px-3 py-1.5 text-xs rounded-md hover:bg-accent font-medium text-foreground flex items-center gap-2 cursor-pointer"
                       >
                         <Sparkles class="size-4" /> Relay AI Reply
                       </button>
                       <button 
                         @click="markResolved([review.id]); activeReviewMenuId = null" 
-                        class="w-full text-left px-3 py-1.5 text-xs rounded-md hover:bg-muted font-medium text-foreground flex items-center gap-2 cursor-pointer"
+                        class="w-full text-left px-3 py-1.5 text-xs rounded-md hover:bg-accent font-medium text-foreground flex items-center gap-2 cursor-pointer"
                       >
                         <CheckSquare class="size-4 text-success" /> Mark Resolved
                       </button>
@@ -854,7 +854,7 @@ async function sendReply() {
           <MessageSquare class="size-10 opacity-20 mb-3" />
           <h3 class="text-[20px] font-[600] text-foreground mb-1">No reviews found</h3>
           <p class="text-[13.5px] text-muted-foreground leading-relaxed mb-4">No customer reviews match your search filter.</p>
-          <button @click="searchQuery = ''; selectedPlatform = 'All Platforms'; activeStatusFilter = ''; activeRatingFilter = 0; activeDateRangeFilter = ''" class="px-4 py-2 rounded-lg border border-border bg-card text-[13.5px] font-medium text-foreground hover:bg-muted transition-colors border-input hover:border-transparent cursor-pointer">
+          <button @click="searchQuery = ''; selectedPlatform = 'All Platforms'; activeStatusFilter = ''; activeRatingFilter = 0; activeDateRangeFilter = ''" class="px-4 py-2 rounded-lg border border-border bg-card text-[13.5px] font-medium text-foreground hover:bg-accent transition-colors border-input hover:border-transparent cursor-pointer">
             Reset Filters
           </button>
         </div>
@@ -905,7 +905,7 @@ async function sendReply() {
               <label class="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider mb-1 block">ASSIGNEE</label>
               <button 
                 @click="showAssigneeDropdown = !showAssigneeDropdown"
-                class="w-full h-9 bg-card border border-border rounded-lg px-3 py-1.5 text-xs font-medium text-foreground flex items-center justify-between shadow-xs hover:bg-muted/50 transition-colors cursor-pointer"
+                class="w-full h-9 bg-card border border-border rounded-lg px-3 py-1.5 text-xs font-medium text-foreground flex items-center justify-between shadow-xs hover:bg-accent transition-colors cursor-pointer"
               >
                 <span class="truncate">{{ selectedReview.assignee || 'Unassigned' }}</span>
                 <ChevronDown class="size-3.5 text-muted-foreground shrink-0 ml-1.5" />
@@ -917,7 +917,7 @@ async function sendReply() {
               >
                 <button
                   class="w-full text-left px-3 py-1.5 text-xs rounded-md font-medium flex items-center justify-between cursor-pointer"
-                  :class="!selectedReview.assignee ? 'bg-primary/10 text-primary font-semibold' : 'hover:bg-muted text-foreground'"
+                  :class="!selectedReview.assignee ? 'bg-primary/10 text-primary font-semibold' : 'hover:bg-accent text-foreground'"
                   @click="assignOne(selectedReview, null)"
                 >
                   <span>Unassigned</span>
@@ -927,7 +927,7 @@ async function sendReply() {
                   v-for="person in assigneeOptions"
                   :key="person"
                   class="w-full text-left px-3 py-1.5 text-xs rounded-md font-medium flex items-center justify-between cursor-pointer"
-                  :class="selectedReview.assignee === person ? 'bg-primary/10 text-primary font-semibold' : 'hover:bg-muted text-foreground'"
+                  :class="selectedReview.assignee === person ? 'bg-primary/10 text-primary font-semibold' : 'hover:bg-accent text-foreground'"
                   @click="assignOne(selectedReview, person)"
                 >
                   <span>{{ person }}</span>
@@ -942,7 +942,7 @@ async function sendReply() {
               <label class="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider mb-1 block">STATUS</label>
               <button 
                 @click="showStatusDropdown = !showStatusDropdown"
-                class="w-full h-9 bg-card border border-border rounded-lg px-3 py-1.5 text-xs font-medium text-foreground flex items-center justify-between shadow-xs hover:bg-muted/50 transition-colors cursor-pointer"
+                class="w-full h-9 bg-card border border-border rounded-lg px-3 py-1.5 text-xs font-medium text-foreground flex items-center justify-between shadow-xs hover:bg-accent transition-colors cursor-pointer"
               >
                 <span class="truncate">{{ selectedReview.status }}</span>
                 <ChevronDown class="size-3.5 text-muted-foreground shrink-0 ml-1.5" />
@@ -957,7 +957,7 @@ async function sendReply() {
                   :key="st"
                   @click="st === 'Replied' ? markResolved([selectedReview.id]) : (selectedReview.status = st); showStatusDropdown = false"
                   class="w-full text-left px-3 py-1.5 text-xs rounded-md font-medium flex items-center justify-between cursor-pointer"
-                  :class="selectedReview.status === st ? 'bg-primary/10 text-primary font-semibold' : 'hover:bg-muted text-foreground'"
+                  :class="selectedReview.status === st ? 'bg-primary/10 text-primary font-semibold' : 'hover:bg-accent text-foreground'"
                 >
                   <span>{{ st }}</span>
                   <Check v-if="selectedReview.status === st" class="size-3.5" />
@@ -996,7 +996,7 @@ async function sendReply() {
               />
               <div class="absolute bottom-2.5 left-3 right-3 flex justify-between items-center bg-background/80 backdrop-blur-xs pt-1">
                 <div class="flex items-center gap-1">
-                  <button class="p-1.5 text-muted-foreground hover:text-foreground rounded-lg hover:bg-muted cursor-pointer"><ImageIcon class="size-4" /></button>
+                  <button class="p-1.5 text-muted-foreground hover:text-foreground rounded-lg hover:bg-accent cursor-pointer"><ImageIcon class="size-4" /></button>
                   <button class="p-1.5 text-primary hover:bg-primary/10 rounded-lg cursor-pointer" @click="useAiSuggestion(aiSuggestions[0])"><Sparkles class="size-4" /></button>
                 </div>
                 <button class="inline-flex items-center gap-1.5 bg-primary text-primary-foreground px-3.5 py-1.5 rounded-lg text-xs font-semibold hover:bg-primary/90 transition-colors shadow-sm cursor-pointer disabled:opacity-50" :disabled="isSendingReply || !replyText.trim() || replyText === selectedReview.reply" @click="sendReply">

@@ -118,7 +118,7 @@ const closeDropdown = () => {
           v-for="option in unitOptions"
           :key="option.value"
           type="button"
-          class="hover:bg-muted text-foreground w-full px-3 py-1.5 text-left text-[13.5px] transition-colors"
+          class="hover:bg-accent text-foreground w-full px-3 py-1.5 text-left text-[13.5px] transition-colors"
           @click="selectUnit(option.value)"
         >
           {{ option.label }}

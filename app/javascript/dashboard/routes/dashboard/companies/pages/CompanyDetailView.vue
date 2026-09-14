@@ -323,7 +323,7 @@ onBeforeUnmount(() => {
     </div>
 
     <div v-else class="flex h-full w-full flex-col">
-      <div class="mx-auto w-full max-w-7xl p-6 lg:px-10">
+      <div class="mx-auto w-full max-w-7xl p-6">
         <div v-if="activeTab === 'overview'" class="outline-none">
           <div class="grid grid-cols-1 gap-6 lg:grid-cols-3">
             <div class="flex flex-col gap-6 lg:col-span-2">

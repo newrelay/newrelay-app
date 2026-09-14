@@ -423,7 +423,7 @@ const accountLabels = computed(() => [
           :contact="contactForConversationWithoutMeta"
           :state-inbox="webWidgetInbox"
           :account-labels="accountLabels"
-          class="hover:bg-muted"
+          class="hover:bg-accent"
         />
       </div>
     </Variant>
@@ -438,7 +438,7 @@ const accountLabels = computed(() => [
           :contact="contactForConversationWithMeta"
           :state-inbox="webWidgetInbox"
           :account-labels="accountLabels"
-          class="hover:bg-muted"
+          class="hover:bg-accent"
         />
       </div>
     </Variant>
@@ -454,7 +454,7 @@ const accountLabels = computed(() => [
           :contact="contactForConversationWithoutMeta"
           :state-inbox="webWidgetInbox"
           :account-labels="accountLabels"
-          class="hover:bg-muted"
+          class="hover:bg-accent"
         />
       </div>
     </Variant>
@@ -469,7 +469,7 @@ const accountLabels = computed(() => [
           :contact="contactForConversationWithMeta"
           :state-inbox="webWidgetInbox"
           :account-labels="accountLabels"
-          class="hover:bg-muted"
+          class="hover:bg-accent"
         />
       </div>
     </Variant>

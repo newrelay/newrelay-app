@@ -54,7 +54,7 @@ const conversationInbox = conversation =>
       :contact="conversationContact(conversation)"
       :state-inbox="conversationInbox(conversation)"
       :account-labels="accountLabelsValue"
-      class="rounded-none hover:rounded-xl hover:bg-muted dark:hover:bg-accent"
+      class="rounded-none hover:rounded-xl hover:bg-accent dark:hover:bg-accent"
     />
   </div>
 

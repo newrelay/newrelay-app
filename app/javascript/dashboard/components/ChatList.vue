@@ -954,7 +954,7 @@ watch(conversationFilters, (newVal, oldVal) => {
         />
         <button
           type="button"
-          class="absolute right-1 top-1/2 -translate-y-1/2 rounded-sm p-1.5 text-muted-foreground transition-colors hover:bg-muted/50 hover:text-foreground"
+          class="absolute right-1 top-1/2 -translate-y-1/2 rounded-sm p-1.5 text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
           :aria-label="t('CHAT_LIST.SEARCH.CLOSE')"
           @click="closeSearchInput"
         >

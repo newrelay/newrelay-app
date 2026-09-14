@@ -47,7 +47,7 @@ const formatAmount = (amount, currency) => {
     :class="
       isSelected
         ? 'border-primary bg-primary/5 ring-1 ring-primary'
-        : 'border-border bg-card hover:border-border/80 hover:bg-muted/30'
+        : 'border-border bg-card hover:border-border/80 hover:bg-accent'
     "
   >
     <input

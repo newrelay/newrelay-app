@@ -67,11 +67,11 @@ const currentOperator = computed(() =>
 );
 
 const FILTER_DROPDOWN_TRIGGER_CLASS =
-  'flex h-9 w-full items-center justify-between rounded-md border border-border/80 bg-background px-3 text-[13px] font-normal text-foreground transition-colors hover:bg-muted/30';
+  'flex h-9 w-full items-center justify-between rounded-md border border-border/80 bg-background px-3 text-[13px] font-normal text-foreground transition-colors hover:bg-accent';
 
 // Operator trigger uses primary color per design annotation
 const FILTER_OPERATOR_TRIGGER_CLASS =
-  'flex h-9 w-full items-center justify-between rounded-md border border-border/80 bg-background px-3 text-[13px] font-normal text-primary transition-colors hover:bg-muted/30';
+  'flex h-9 w-full items-center justify-between rounded-md border border-border/80 bg-background px-3 text-[13px] font-normal text-primary transition-colors hover:bg-accent';
 
 const stackedOperatorLabel = computed(() => {
   const label = currentOperator.value?.label;

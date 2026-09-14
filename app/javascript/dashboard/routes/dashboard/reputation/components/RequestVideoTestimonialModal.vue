@@ -561,7 +561,7 @@ function close() {
                 <button
                   v-for="filter in filters" :key="filter"
                   class="w-full text-left px-3 py-2 rounded-md text-sm cursor-pointer transition-colors"
-                  :class="activeFilter === filter ? 'bg-primary/10 text-primary font-medium' : 'text-muted-foreground hover:bg-muted/50 hover:text-foreground'"
+                  :class="activeFilter === filter ? 'bg-primary/10 text-primary font-medium' : 'text-muted-foreground hover:bg-accent hover:text-foreground'"
                   @click="activeFilter = filter"
                 >
                   {{ filter }}
@@ -778,7 +778,7 @@ function close() {
                   <ChevronDown class="size-3.5 opacity-50 ml-2 shrink-0 transition-transform" :class="showVideoTemplateMenu ? 'rotate-180' : ''" />
                 </button>
                 <div v-if="showVideoTemplateMenu" class="absolute left-0 right-0 top-full mt-1 z-50 w-[360px] max-h-[320px] overflow-y-auto rounded-lg border border-border bg-popover shadow-lg p-1.5">
-                  <button v-for="t in prebuiltVideoTemplates" :key="t.id" type="button" class="w-full flex items-center justify-between py-2 px-3 rounded-md cursor-pointer hover:bg-muted/80 transition-colors" @click="selectVideoTemplate(t)">
+                  <button v-for="t in prebuiltVideoTemplates" :key="t.id" type="button" class="w-full flex items-center justify-between py-2 px-3 rounded-md cursor-pointer hover:bg-accent transition-colors" @click="selectVideoTemplate(t)">
                     <div class="flex flex-col gap-0.5 min-w-0 pr-2"><span class="text-[13px] font-medium text-foreground truncate">{{ t.name }}</span><span class="text-[11px] text-muted-foreground truncate">{{ t.maxDuration }}</span></div>
                     <Check v-if="selectedVideoTemplateId === t.id" class="size-4 text-primary shrink-0" />
                   </button>
@@ -810,7 +810,7 @@ function close() {
                   <div class="relative">
                     <button type="button" class="h-9 px-3 text-[13.5px] bg-background border border-border/80 rounded-md text-foreground flex items-center justify-between shadow-xs hover:border-border outline-none w-full text-left cursor-pointer" @click="showDurationMenu = !showDurationMenu"><span class="truncate">{{ videoMaxDuration }}</span><ChevronDown class="size-3.5 opacity-50 ml-2 shrink-0 transition-transform" :class="showDurationMenu ? 'rotate-180' : ''" /></button>
                     <div v-if="showDurationMenu" class="absolute left-0 right-0 top-full mt-1 z-50 w-[220px] rounded-lg border border-border bg-popover shadow-lg p-1.5">
-                      <button v-for="d in durationOptions" :key="d" type="button" class="w-full text-left px-3 py-1.5 text-[13.5px] rounded-md cursor-pointer hover:bg-muted/80 transition-colors" @click="videoMaxDuration = d; showDurationMenu = false">{{ d }}</button>
+                      <button v-for="d in durationOptions" :key="d" type="button" class="w-full text-left px-3 py-1.5 text-[13.5px] rounded-md cursor-pointer hover:bg-accent transition-colors" @click="videoMaxDuration = d; showDurationMenu = false">{{ d }}</button>
                     </div>
                     <div v-if="showDurationMenu" class="fixed inset-0 z-10" @click="showDurationMenu = false"></div>
                   </div>
@@ -823,7 +823,7 @@ function close() {
               <div class="flex items-center justify-between gap-3">
                 <span class="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Invite Message</span>
                 <div v-if="form.channels.length > 1" class="flex items-center gap-1.5">
-                  <button v-for="ch in form.channels" :key="ch" type="button" class="px-3 py-1.5 rounded-lg border text-xs font-medium cursor-pointer transition-colors flex items-center gap-1.5" :class="activeEditingChannel === ch ? 'bg-primary/10 border-primary text-primary font-semibold' : 'bg-card border-border hover:bg-muted text-muted-foreground'" @click="activeEditingChannel = ch; previewChannel = ch"><component :is="getChannelIcon(ch)" class="size-3.5" /><span>{{ ch }}</span></button>
+                  <button v-for="ch in form.channels" :key="ch" type="button" class="px-3 py-1.5 rounded-lg border text-xs font-medium cursor-pointer transition-colors flex items-center gap-1.5" :class="activeEditingChannel === ch ? 'bg-primary/10 border-primary text-primary font-semibold' : 'bg-card border-border hover:bg-accent text-muted-foreground'" @click="activeEditingChannel = ch; previewChannel = ch"><component :is="getChannelIcon(ch)" class="size-3.5" /><span>{{ ch }}</span></button>
                 </div>
               </div>
 
@@ -1029,7 +1029,7 @@ function close() {
             <button @click="close" class="h-11 px-8 text-sm font-semibold bg-primary hover:bg-primary/90 text-primary-foreground rounded-lg shadow-xs cursor-pointer inline-flex items-center gap-2">
               <BarChart3 class="size-4" /> View Campaign
             </button>
-            <button @click="close" class="h-11 px-8 text-sm font-semibold bg-card border border-border hover:bg-muted text-foreground rounded-lg shadow-xs cursor-pointer">
+            <button @click="close" class="h-11 px-8 text-sm font-semibold bg-card border border-border hover:bg-accent text-foreground rounded-lg shadow-xs cursor-pointer">
               Done
             </button>
           </div>

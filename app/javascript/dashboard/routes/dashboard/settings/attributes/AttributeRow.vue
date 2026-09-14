@@ -44,7 +44,7 @@ const metaLine = computed(() => {
 
 <template>
   <div
-    class="group flex items-center justify-between gap-4 p-4 transition-colors hover:bg-muted/20"
+    class="group flex items-center justify-between gap-4 p-4 transition-colors hover:bg-accent"
   >
     <div class="flex min-w-0 items-center gap-4">
       <div
@@ -82,7 +82,7 @@ const metaLine = computed(() => {
       <RelayButton
         variant="outline"
         size="sm"
-        class="h-8 border-border/80 bg-background px-3 text-xs font-medium shadow-sm hover:bg-muted"
+        class="h-8 border-border/80 bg-background px-3 text-xs font-medium shadow-sm hover:bg-accent"
         :disabled="loading"
         @click="emit('edit', attribute)"
       >

@@ -72,7 +72,7 @@ const thresholdOptions = [
 </script>
 
 <template>
-  <div class="flex-1 overflow-y-auto w-full bg-background p-6 lg:px-10">
+  <div class="flex-1 overflow-y-auto w-full bg-background p-6">
     <div class="max-w-5xl mx-auto space-y-6">
       <!-- Header -->
       <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2">

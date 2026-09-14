@@ -620,7 +620,7 @@ watch(() => route.params.listingId, async () => {
     </div>
 
     <template v-else-if="listing">
-      <div class="px-8 pt-4 bg-card shrink-0 shadow-xs z-10 relative border-b border-border">
+      <div class="px-6 pt-4 bg-card shrink-0 shadow-xs z-10 relative border-b border-border">
         <div class="flex items-center text-sm font-semibold text-muted-foreground mb-4">
           <button type="button" class="hover:text-foreground flex items-center gap-1.5 transition-colors" @click="goBack">
             <ArrowLeft class="size-4" /> Back to Listings
@@ -1095,7 +1095,7 @@ watch(() => route.params.listingId, async () => {
           <div class="bg-card border border-border rounded-xl shadow-xs p-6 flex flex-col gap-5">
             <div class="flex items-center justify-between border-b border-border/60 pb-4">
               <h3 class="text-[15px] font-semibold text-foreground">Photos Gallery</h3>
-              <label class="inline-flex items-center gap-2 h-8 px-3 rounded-md border border-border text-[12px] font-semibold text-foreground hover:bg-muted cursor-pointer">
+              <label class="inline-flex items-center gap-2 h-8 px-3 rounded-md border border-border text-[12px] font-semibold text-foreground hover:bg-accent cursor-pointer">
                 <Camera class="size-3.5" /> {{ uploadingPhotos ? 'Uploading…' : 'Upload Photos' }}
                 <input type="file" accept="image/*" multiple class="hidden" :disabled="uploadingPhotos" @change="uploadPhotos" />
               </label>

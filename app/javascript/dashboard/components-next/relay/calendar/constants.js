@@ -21,7 +21,7 @@ export const CALENDAR_CELL_CLASS =
 export const CALENDAR_DAY_BUTTON_BASE_CLASS =
   'relative z-10 flex size-8 items-center justify-center rounded-full text-[13px] transition-colors';
 
-export const CALENDAR_DAY_DEFAULT_CLASS = 'text-foreground hover:bg-muted/80';
+export const CALENDAR_DAY_DEFAULT_CLASS = 'text-foreground hover:bg-accent';
 
 export const CALENDAR_DAY_OUTSIDE_CLASS =
   'pointer-events-none text-muted-foreground/30';

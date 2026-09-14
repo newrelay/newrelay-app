@@ -75,7 +75,7 @@ const onUploadClick = () => {
 
           <button
             type="button"
-            class="flex w-full cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-muted-foreground/20 p-10 text-center transition-colors hover:bg-muted/50"
+            class="flex w-full cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-muted-foreground/20 p-10 text-center transition-colors hover:bg-accent"
             @click="onDropzoneClick"
             @dragover.prevent
             @drop.prevent="onFileDrop"

@@ -47,7 +47,7 @@ const editTooltip = computed(() =>
 
 <template>
   <div
-    class="group grid grid-cols-[1.5fr_1fr_1fr_1fr_80px] items-center px-6 py-3.5 transition-colors hover:bg-muted/20"
+    class="group grid grid-cols-[1.5fr_1fr_1fr_1fr_80px] items-center px-6 py-3.5 transition-colors hover:bg-accent"
   >
     <div
       class="min-w-0 cursor-pointer truncate pr-4 text-[14px] font-medium text-foreground transition-colors hover:text-primary"
@@ -98,7 +98,7 @@ const editTooltip = computed(() =>
       <RelayTooltip :content="editTooltip" side="top">
         <button
           type="button"
-          class="rounded-md p-1.5 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+          class="rounded-md p-1.5 text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
           @click="$emit('edit', macro.id)"
         >
           <Icon icon="i-lucide-pencil" class="size-4" />

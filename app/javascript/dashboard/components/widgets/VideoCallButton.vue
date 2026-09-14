@@ -64,7 +64,7 @@ export default {
     <button
       type="button"
       :disabled="isLoading"
-      class="size-8 flex items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-none disabled:opacity-50"
+      class="size-8 flex items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-accent hover:text-foreground focus-visible:outline-none disabled:opacity-50"
       @click="onClick"
     >
       <span class="i-lucide-video size-4 shrink-0" />

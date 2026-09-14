@@ -145,7 +145,7 @@ const onCaptchaError = () => {
       <router-link
         v-if="showSamlLogin"
         to="/app/login/sso"
-        class="w-full h-11 bg-background border border-border rounded-lg shadow-sm flex items-center justify-center gap-3 hover:bg-muted/50 transition-colors text-[14px] font-medium text-foreground outline-none"
+        class="w-full h-11 bg-background border border-border rounded-lg shadow-sm flex items-center justify-center gap-3 hover:bg-accent transition-colors text-[14px] font-medium text-foreground outline-none"
       >
         <span class="i-lucide-lock size-[18px] text-muted-foreground" />
         {{ t('REGISTER.OAUTH.SSO_SIGNUP') }}

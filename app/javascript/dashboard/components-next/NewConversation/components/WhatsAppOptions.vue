@@ -99,7 +99,7 @@ const handleSendMessage = (template, hide) => {
         <div
           v-for="template in filteredTemplates"
           :key="template.id"
-          class="flex flex-col gap-2 p-2 w-full rounded-lg cursor-pointer hover:bg-muted hover:bg-accent"
+          class="flex flex-col gap-2 p-2 w-full rounded-lg cursor-pointer hover:bg-accent"
           @click="handleTemplateClick(template)"
         >
           <span class="text-sm text-foreground">{{ template.name }}</span>

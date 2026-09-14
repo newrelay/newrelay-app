@@ -165,7 +165,7 @@ defineExpose({ dialogRef, open, close, onSuccess });
             <div class="mb-2 flex items-center gap-4">
               <button
                 type="button"
-                class="flex size-16 shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-xl border border-dashed border-border bg-muted/30 transition-colors hover:bg-muted/50"
+                class="flex size-16 shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-xl border border-dashed border-border bg-muted/30 transition-colors hover:bg-accent"
                 @click="logoInput?.click()"
               >
                 <img

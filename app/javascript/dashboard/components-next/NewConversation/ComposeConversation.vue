@@ -359,7 +359,7 @@ onBeforeUnmount(() => {
       <div
         class="flex items-center justify-between border-b border-border/60 bg-muted/30 px-4 py-2 transition-colors"
         :class="{
-          'cursor-pointer hover:bg-muted/40': isMinimized,
+          'cursor-pointer hover:bg-accent': isMinimized,
         }"
         @click="isMinimized && (isMinimized = false)"
       >

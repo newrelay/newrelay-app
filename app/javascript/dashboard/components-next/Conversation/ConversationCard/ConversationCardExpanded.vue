@@ -58,7 +58,7 @@ const hasSlaPolicyId = computed(
       'active animate-card-select bg-muted dark:bg-accent !border-muted':
         isActiveChat,
       'selected bg-muted dark:bg-muted !border-muted': selected,
-      'hover:bg-muted': !isActiveChat && !selected,
+      'hover:bg-accent': !isActiveChat && !selected,
       'grid-cols-[minmax(0,2fr)_minmax(0,1fr)]': showLabelsSection,
       'grid-cols-[minmax(0,2fr)_max-content]': !showLabelsSection,
     }"

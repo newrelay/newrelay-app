@@ -381,7 +381,7 @@ defineExpose({ open, close });
             <div class="flex items-center gap-4">
               <button
                 type="button"
-                class="flex size-16 shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-xl border border-dashed border-border/80 bg-muted/30 transition-colors hover:bg-muted/50"
+                class="flex size-16 shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-xl border border-dashed border-border/80 bg-muted/30 transition-colors hover:bg-accent"
                 @click="avatarInput?.click()"
               >
                 <img
@@ -948,7 +948,7 @@ defineExpose({ open, close });
           <RelayButton
             type="button"
             variant="ghost"
-            class="h-10 flex-1 rounded-xl border border-border bg-background text-[14px] font-medium shadow-sm transition-all hover:border-transparent hover:bg-muted"
+            class="h-10 flex-1 rounded-xl border border-border bg-background text-[14px] font-medium shadow-sm transition-all hover:border-transparent hover:bg-accent"
             @click="close"
           >
             {{ t('CONTACTS_LAYOUT.ADD_CONTACT_DRAWER.CANCEL') }}

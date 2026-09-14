@@ -210,7 +210,7 @@ const previewReviewsList = computed(() => {
 </script>
 
 <template>
-  <div class="p-6 lg:px-10 max-w-7xl mx-auto space-y-6">
+  <div class="p-6 max-w-7xl mx-auto space-y-6">
     <!-- eslint-disable -->
     <!-- Header (List Mode) -->
     <div v-if="!isEditing" class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -267,7 +267,7 @@ const previewReviewsList = computed(() => {
       <p class="text-[13.5px] text-muted-foreground mt-1 max-w-sm text-center leading-relaxed mb-4">
         Generate an embeddable badge or review list to showcase your positive reviews.
       </p>
-      <button @click="createWidget" class="px-4 py-2 rounded-lg border border-border bg-card text-[13.5px] font-medium text-foreground hover:bg-muted transition-colors border-input hover:border-transparent cursor-pointer">
+      <button @click="createWidget" class="px-4 py-2 rounded-lg border border-border bg-card text-[13.5px] font-medium text-foreground hover:bg-accent transition-colors border-input hover:border-transparent cursor-pointer">
         + Create First Widget
       </button>
     </div>
@@ -307,7 +307,7 @@ const previewReviewsList = computed(() => {
       <!-- Edit Mode Header -->
       <div class="flex items-center gap-4 border-b border-border/60 pb-4">
         <button 
-          class="p-2 -ml-2 rounded-xl hover:bg-muted text-muted-foreground transition-colors"
+          class="p-2 -ml-2 rounded-xl hover:bg-accent text-muted-foreground transition-colors"
           @click="isEditing = false; activeWidget = null;"
         >
           <svg class="size-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -420,7 +420,7 @@ const previewReviewsList = computed(() => {
             </button>
 
             <button
-              class="px-4 py-2 bg-card hover:bg-muted text-white rounded-xl text-xs font-bold transition-all"
+              class="px-4 py-2 bg-card hover:bg-accent text-white rounded-xl text-xs font-bold transition-all"
               :disabled="saving"
               @click="saveWidget"
             >
@@ -520,7 +520,7 @@ const previewReviewsList = computed(() => {
                 </div>
                 <div class="flex gap-1.5">
                   <button
-                    class="p-1 rounded-lg border border-border hover:bg-muted text-muted-foreground dark:text-muted-foreground shrink-0 shadow-sm"
+                    class="p-1 rounded-lg border border-border hover:bg-accent text-muted-foreground dark:text-muted-foreground shrink-0 shadow-sm"
                     @click="prevSlide(previewReviewsList.length)"
                   >
                     <svg
@@ -538,7 +538,7 @@ const previewReviewsList = computed(() => {
                     </svg>
                   </button>
                   <button
-                    class="p-1 rounded-lg border border-border hover:bg-muted text-muted-foreground dark:text-muted-foreground shrink-0 shadow-sm"
+                    class="p-1 rounded-lg border border-border hover:bg-accent text-muted-foreground dark:text-muted-foreground shrink-0 shadow-sm"
                     @click="nextSlide(previewReviewsList.length)"
                   >
                     <svg

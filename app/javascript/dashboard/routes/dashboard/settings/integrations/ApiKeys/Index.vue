@@ -105,8 +105,8 @@ const resetAccessToken = async () => {
                 class="inline-flex h-10 shrink-0 items-center justify-center gap-1.5 rounded-r-md border border-l-0 border-border px-4 text-sm font-medium shadow-xs transition-all"
                 :class="
                   isAccountIdCopied
-                    ? 'bg-muted/80 text-foreground'
-                    : 'bg-background text-foreground hover:bg-muted'
+                    ? 'bg-accent text-foreground'
+                    : 'bg-background text-foreground hover:bg-accent'
                 "
                 @click="copyAccountId"
               >
@@ -170,7 +170,7 @@ const resetAccessToken = async () => {
                 <RelayButton
                   type="button"
                   variant="outline"
-                  class="h-10 border-border/80 bg-card px-4 hover:bg-muted"
+                  class="h-10 border-border/80 bg-card px-4 hover:bg-accent"
                   @click="copyAccessToken"
                 >
                   <Icon icon="i-lucide-copy" class="size-4" />
@@ -179,7 +179,7 @@ const resetAccessToken = async () => {
                 <RelayButton
                   type="button"
                   variant="outline"
-                  class="h-10 border-border/80 bg-card px-4 hover:bg-muted"
+                  class="h-10 border-border/80 bg-card px-4 hover:bg-accent"
                   :class="
                     isResetConfirm
                       ? 'border-destructive/40 text-destructive hover:bg-destructive/10'

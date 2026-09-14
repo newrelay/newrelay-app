@@ -63,7 +63,7 @@ defineEmits(['close']);
       :class="
         divided
           ? RELAY_MODAL_CLOSE_BUTTON_CLASS
-          : `${RELAY_MODAL_CLOSE_BUTTON_CLASS} rounded-full bg-muted/40 hover:bg-muted hover:text-foreground`
+          : `${RELAY_MODAL_CLOSE_BUTTON_CLASS} rounded-full bg-muted/40 hover:bg-accent hover:text-foreground`
       "
       @click="$emit('close')"
     >

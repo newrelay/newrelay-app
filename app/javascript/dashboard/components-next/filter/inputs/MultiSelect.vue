@@ -85,8 +85,8 @@ const isFieldAppearance = computed(() =>
 
 const fieldTriggerClass = computed(() =>
   appearance === 'fieldMuted'
-    ? 'flex h-9 w-full items-center justify-between rounded-lg border border-border/50 bg-muted/40 px-3 text-[13px] font-normal outline-none transition-all hover:border-border hover:bg-muted/70 focus:ring-1 focus:ring-primary/30'
-    : 'flex h-9 w-full items-center justify-between rounded-lg border border-border/70 bg-background px-3 text-[13px] font-normal text-foreground shadow-xs outline-none transition-colors hover:bg-muted/60 focus:ring-1 focus:ring-primary/30'
+    ? 'flex h-9 w-full items-center justify-between rounded-lg border border-border/50 bg-muted/40 px-3 text-[13px] font-normal outline-none transition-all hover:border-border hover:bg-accent focus:ring-1 focus:ring-primary/30'
+    : 'flex h-9 w-full items-center justify-between rounded-lg border border-border/70 bg-background px-3 text-[13px] font-normal text-foreground shadow-xs outline-none transition-colors hover:bg-accent focus:ring-1 focus:ring-primary/30'
 );
 
 const fieldSelectedLabel = computed(() => {

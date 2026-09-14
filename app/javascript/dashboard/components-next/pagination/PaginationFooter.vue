@@ -117,7 +117,7 @@ const pageTokens = computed(() => {
           :class="
             token === currentPage
               ? 'bg-primary text-primary-foreground border-primary hover:bg-primary/90'
-              : 'hover:bg-muted'
+              : 'hover:bg-accent'
           "
           @click="changePage(token)"
         >

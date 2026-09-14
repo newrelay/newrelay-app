@@ -17,7 +17,7 @@ import EmojiInput from 'shared/components/emoji/EmojiInput.vue';
 import { vOnClickOutside } from '@vueuse/components';
 
 const TOOLBAR_BUTTON_CLASS =
-  'size-8 flex items-center justify-center rounded-md hover:bg-muted text-muted-foreground hover:text-foreground transition-colors focus-visible:outline-none';
+  'size-8 flex items-center justify-center rounded-md hover:bg-accent text-muted-foreground hover:text-foreground transition-colors focus-visible:outline-none';
 
 export default {
   name: 'InboxReplyBottomPanel',
@@ -293,7 +293,7 @@ export default {
       <button
         v-if="showAudioPlayStopButton"
         type="button"
-        class="flex h-8 items-center gap-1 rounded-md px-2 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+        class="flex h-8 items-center gap-1 rounded-md px-2 text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
         @click="toggleAudioRecorderPlayPause"
       >
         <span :class="audioRecorderPlayStopIcon" class="size-4" />

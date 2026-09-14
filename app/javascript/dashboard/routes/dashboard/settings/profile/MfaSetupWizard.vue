@@ -189,7 +189,7 @@ defineExpose({
 
         <details class="border border-muted rounded-lg">
           <summary
-            class="px-4 py-3 cursor-pointer hover:bg-muted dark:hover:bg-muted text-sm font-medium text-muted-foreground"
+            class="px-4 py-3 cursor-pointer hover:bg-accent dark:hover:bg-accent text-sm font-medium text-muted-foreground"
           >
             {{ $t('MFA_SETTINGS.SETUP.MANUAL_ENTRY') }}
           </summary>

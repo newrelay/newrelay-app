@@ -27,7 +27,7 @@ const setDateRange = range => {
         <div v-if="range.separator" class="w-full border-t border-border/40" />
         <button
           type="button"
-          class="w-full truncate px-5 py-2.5 text-left text-[13px] font-medium transition-colors hover:bg-muted/40 hover:text-foreground"
+          class="w-full truncate px-5 py-2.5 text-left text-[13px] font-medium transition-colors hover:bg-accent hover:text-foreground"
           :class="
             range.value === selectedRange
               ? 'bg-muted/60 font-semibold text-foreground'

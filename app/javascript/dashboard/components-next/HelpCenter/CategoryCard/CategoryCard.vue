@@ -128,7 +128,7 @@ const handleAction = ({ action, value }) => {
           <RelayButton
             variant="ghost"
             size="icon"
-            class="size-7 border border-border text-muted-foreground hover:border-transparent hover:bg-muted hover:text-foreground"
+            class="size-7 border border-border text-muted-foreground hover:border-transparent hover:bg-accent hover:text-foreground"
           >
             <span class="i-lucide-ellipsis-vertical size-3.5" />
           </RelayButton>

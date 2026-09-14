@@ -39,7 +39,7 @@ export const actions = {
       });
     }
   },
-  update: async ({ commit }, { conversationId, labels }) => {
+  update: async ({ commit, dispatch }, { conversationId, labels }) => {
     commit(types.default.SET_CONVERSATION_LABELS_UI_FLAG, {
       isUpdating: true,
     });
@@ -48,10 +48,18 @@ export const actions = {
         conversationId,
         labels
       );
+      const labelTitles = Array.isArray(response.data.payload)
+        ? response.data.payload
+        : labels;
       commit(types.default.SET_CONVERSATION_LABELS, {
         id: conversationId,
-        data: response.data.payload,
+        data: labelTitles,
       });
+      dispatch(
+        'updateConversation',
+        { id: Number(conversationId), labels: labelTitles },
+        { root: true }
+      );
       commit(types.default.SET_CONVERSATION_LABELS_UI_FLAG, {
         isUpdating: false,
         isError: false,

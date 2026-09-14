@@ -212,7 +212,7 @@ const whyCards = computed(() =>
           <div class="grid grid-cols-1 gap-3">
             <RelayButton
               variant="outline"
-              class="h-11 w-full justify-start gap-3 rounded-xl border-border/60 text-muted-foreground hover:bg-muted/30 hover:text-foreground"
+              class="h-11 w-full justify-start gap-3 rounded-xl border-border/60 text-muted-foreground hover:bg-accent hover:text-foreground"
               @click="emit('loadMock')"
             >
               <span class="i-lucide-upload size-4 text-foreground/70" />
@@ -220,7 +220,7 @@ const whyCards = computed(() =>
             </RelayButton>
             <RelayButton
               variant="outline"
-              class="h-11 w-full justify-start gap-3 rounded-xl border-border/60 text-muted-foreground hover:bg-muted/30 hover:text-foreground"
+              class="h-11 w-full justify-start gap-3 rounded-xl border-border/60 text-muted-foreground hover:bg-accent hover:text-foreground"
               @click="emit('loadMock')"
             >
               <span class="i-lucide-import size-4 text-foreground/70" />
@@ -229,7 +229,7 @@ const whyCards = computed(() =>
             <RelayButton
               v-if="!isOpportunities"
               variant="outline"
-              class="h-11 w-full justify-start gap-3 rounded-xl border-border/60 text-muted-foreground hover:bg-muted/30 hover:text-foreground"
+              class="h-11 w-full justify-start gap-3 rounded-xl border-border/60 text-muted-foreground hover:bg-accent hover:text-foreground"
               @click="emit('loadMock')"
             >
               <span class="i-lucide-import size-4 text-foreground/70" />

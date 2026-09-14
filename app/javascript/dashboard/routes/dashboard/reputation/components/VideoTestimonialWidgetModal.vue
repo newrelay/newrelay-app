@@ -186,10 +186,10 @@ const isDark = computed(() => widgetConfig.value.theme === 'dark' || previewBg.v
         <div class="w-full lg:w-[420px] xl:w-[450px] border-b lg:border-b-0 lg:border-r border-border bg-card flex flex-col shrink-0 overflow-hidden" :class="mobileViewMode === 'editor' ? 'flex flex-1' : 'hidden lg:flex'">
           <!-- Tabs -->
           <div class="grid grid-cols-4 p-2 border-b border-border/70 bg-muted/20 text-xs font-medium shrink-0">
-            <button @click="activeTab = 'layout'" class="py-2 px-1 rounded-lg transition-all text-center flex flex-col items-center gap-1 cursor-pointer" :class="activeTab === 'layout' ? 'bg-background text-foreground shadow-xs font-semibold' : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'"><Layers class="size-3.5" /><span>Layout</span></button>
-            <button @click="activeTab = 'filters'" class="py-2 px-1 rounded-lg transition-all text-center flex flex-col items-center gap-1 cursor-pointer" :class="activeTab === 'filters' ? 'bg-background text-foreground shadow-xs font-semibold' : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'"><Filter class="size-3.5" /><span>Sources</span></button>
-            <button @click="activeTab = 'appearance'" class="py-2 px-1 rounded-lg transition-all text-center flex flex-col items-center gap-1 cursor-pointer" :class="activeTab === 'appearance' ? 'bg-background text-foreground shadow-xs font-semibold' : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'"><Palette class="size-3.5" /><span>Style</span></button>
-            <button @click="activeTab = 'embed'" class="py-2 px-1 rounded-lg transition-all text-center flex flex-col items-center gap-1 cursor-pointer" :class="activeTab === 'embed' ? 'bg-background text-foreground shadow-xs font-semibold' : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'"><Code2 class="size-3.5" /><span>Embed</span></button>
+            <button @click="activeTab = 'layout'" class="py-2 px-1 rounded-lg transition-all text-center flex flex-col items-center gap-1 cursor-pointer" :class="activeTab === 'layout' ? 'bg-background text-foreground shadow-xs font-semibold' : 'text-muted-foreground hover:text-foreground hover:bg-accent'"><Layers class="size-3.5" /><span>Layout</span></button>
+            <button @click="activeTab = 'filters'" class="py-2 px-1 rounded-lg transition-all text-center flex flex-col items-center gap-1 cursor-pointer" :class="activeTab === 'filters' ? 'bg-background text-foreground shadow-xs font-semibold' : 'text-muted-foreground hover:text-foreground hover:bg-accent'"><Filter class="size-3.5" /><span>Sources</span></button>
+            <button @click="activeTab = 'appearance'" class="py-2 px-1 rounded-lg transition-all text-center flex flex-col items-center gap-1 cursor-pointer" :class="activeTab === 'appearance' ? 'bg-background text-foreground shadow-xs font-semibold' : 'text-muted-foreground hover:text-foreground hover:bg-accent'"><Palette class="size-3.5" /><span>Style</span></button>
+            <button @click="activeTab = 'embed'" class="py-2 px-1 rounded-lg transition-all text-center flex flex-col items-center gap-1 cursor-pointer" :class="activeTab === 'embed' ? 'bg-background text-foreground shadow-xs font-semibold' : 'text-muted-foreground hover:text-foreground hover:bg-accent'"><Code2 class="size-3.5" /><span>Embed</span></button>
           </div>
 
           <div class="flex-1 overflow-y-auto p-4 sm:p-5 space-y-6 hide-scrollbar">
@@ -200,7 +200,7 @@ const isDark = computed(() => widgetConfig.value.theme === 'dark' || previewBg.v
                 <label class="text-[13.5px] font-medium text-foreground block mb-1">Video Display Template</label>
                 <p class="text-[12px] text-muted-foreground mb-3">Select how customer video testimonials are showcased on your site.</p>
                 <div class="grid grid-cols-2 gap-2.5">
-                  <div v-for="opt in layoutOptions" :key="opt.id" @click="widgetConfig.layout = opt.id" class="p-3 rounded-xl border cursor-pointer transition-all flex flex-col gap-2" :class="widgetConfig.layout === opt.id ? 'border-primary bg-primary/5 ring-1 ring-primary/30 shadow-2xs' : 'border-border hover:border-border/80 hover:bg-muted/30'">
+                  <div v-for="opt in layoutOptions" :key="opt.id" @click="widgetConfig.layout = opt.id" class="p-3 rounded-xl border cursor-pointer transition-all flex flex-col gap-2" :class="widgetConfig.layout === opt.id ? 'border-primary bg-primary/5 ring-1 ring-primary/30 shadow-2xs' : 'border-border hover:border-border/80 hover:bg-accent'">
                     <div class="flex items-center justify-between">
                       <div class="p-1.5 rounded-lg bg-primary/10 text-primary"><component :is="opt.icon" class="size-4" /></div>
                       <CheckCircle2 v-if="widgetConfig.layout === opt.id" class="size-4 text-primary shrink-0" />
@@ -247,23 +247,23 @@ const isDark = computed(() => widgetConfig.value.theme === 'dark' || previewBg.v
                 <label class="text-[13.5px] font-medium text-foreground block mb-1">Source Platforms</label>
                 <p class="text-[12px] text-muted-foreground mb-3">Select which channels feed videos into this widget.</p>
                 <div class="space-y-2">
-                  <label class="flex items-center justify-between p-2.5 rounded-xl border border-border bg-card hover:bg-muted/20 cursor-pointer">
+                  <label class="flex items-center justify-between p-2.5 rounded-xl border border-border bg-card hover:bg-accent cursor-pointer">
                     <div class="flex items-center gap-2.5"><span class="size-6 rounded-full bg-muted flex items-center justify-center text-[11px] font-bold text-foreground">G</span><span class="text-[13px] font-medium text-foreground">Google Reviews</span></div>
                     <RelayCheckbox v-model="widgetConfig.platforms.google" />
                   </label>
-                  <label class="flex items-center justify-between p-2.5 rounded-xl border border-border bg-card hover:bg-muted/20 cursor-pointer">
+                  <label class="flex items-center justify-between p-2.5 rounded-xl border border-border bg-card hover:bg-accent cursor-pointer">
                     <div class="flex items-center gap-2.5"><span class="size-6 rounded-full bg-blue-500/10 text-blue-600 dark:text-blue-400 flex items-center justify-center text-[11px] font-bold">f</span><span class="text-[13px] font-medium text-foreground">Facebook Testimonials</span></div>
                     <RelayCheckbox v-model="widgetConfig.platforms.facebook" />
                   </label>
-                  <label class="flex items-center justify-between p-2.5 rounded-xl border border-border bg-card hover:bg-muted/20 cursor-pointer">
+                  <label class="flex items-center justify-between p-2.5 rounded-xl border border-border bg-card hover:bg-accent cursor-pointer">
                     <div class="flex items-center gap-2.5"><span class="size-6 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-[11px] font-bold">★</span><span class="text-[13px] font-medium text-foreground">Trustpilot Verified</span></div>
                     <RelayCheckbox v-model="widgetConfig.platforms.trustpilot" />
                   </label>
-                  <label class="flex items-center justify-between p-2.5 rounded-xl border border-border bg-card hover:bg-muted/20 cursor-pointer">
+                  <label class="flex items-center justify-between p-2.5 rounded-xl border border-border bg-card hover:bg-accent cursor-pointer">
                     <div class="flex items-center gap-2.5"><span class="size-6 rounded-full bg-rose-500/10 text-rose-600 dark:text-rose-400 flex items-center justify-center text-[11px] font-bold">Y</span><span class="text-[13px] font-medium text-foreground">Yelp Video Reviews</span></div>
                     <RelayCheckbox v-model="widgetConfig.platforms.yelp" />
                   </label>
-                  <label class="flex items-center justify-between p-2.5 rounded-xl border border-border bg-card hover:bg-muted/20 cursor-pointer">
+                  <label class="flex items-center justify-between p-2.5 rounded-xl border border-border bg-card hover:bg-accent cursor-pointer">
                     <div class="flex items-center gap-2.5"><span class="size-6 rounded-full bg-primary/10 text-primary flex items-center justify-center text-[11px] font-bold">NR</span><span class="text-[13px] font-medium text-foreground">Direct Video Form Submissions</span></div>
                     <RelayCheckbox v-model="widgetConfig.platforms.direct" />
                   </label>
@@ -273,7 +273,7 @@ const isDark = computed(() => widgetConfig.value.theme === 'dark' || previewBg.v
               <div>
                 <label class="text-[13.5px] font-medium text-foreground block mb-1">Minimum Star Rating</label>
                 <div class="grid grid-cols-3 gap-2">
-                  <button v-for="r in [{ id: 'all', label: 'All (1-5★)' }, { id: '4', label: '4★ & Above' }, { id: '5', label: '5★ Only' }]" :key="r.id" @click="widgetConfig.minRating = r.id" class="py-2 px-2 text-xs rounded-lg border font-medium text-center transition-colors cursor-pointer" :class="widgetConfig.minRating === r.id ? 'border-primary bg-primary/10 text-primary font-semibold' : 'border-border text-muted-foreground hover:bg-muted/30'">{{ r.label }}</button>
+                  <button v-for="r in [{ id: 'all', label: 'All (1-5★)' }, { id: '4', label: '4★ & Above' }, { id: '5', label: '5★ Only' }]" :key="r.id" @click="widgetConfig.minRating = r.id" class="py-2 px-2 text-xs rounded-lg border font-medium text-center transition-colors cursor-pointer" :class="widgetConfig.minRating === r.id ? 'border-primary bg-primary/10 text-primary font-semibold' : 'border-border text-muted-foreground hover:bg-accent'">{{ r.label }}</button>
                 </div>
               </div>
 
@@ -294,13 +294,13 @@ const isDark = computed(() => widgetConfig.value.theme === 'dark' || previewBg.v
               <div>
                 <label class="text-[13.5px] font-medium text-foreground block mb-2">Widget Theme</label>
                 <div class="grid grid-cols-3 gap-2">
-                  <button v-for="t in [{ id: 'light', label: 'Light', icon: Sun }, { id: 'dark', label: 'Dark', icon: Moon }, { id: 'system', label: 'Adaptive', icon: Globe }]" :key="t.id" type="button" @click="widgetConfig.theme = t.id" class="py-2.5 px-3 rounded-xl border text-xs text-center cursor-pointer transition-colors flex items-center justify-center gap-1.5" :class="widgetConfig.theme === t.id ? 'bg-primary/10 border-primary text-primary font-semibold' : 'bg-card border-border hover:bg-muted text-muted-foreground'"><component :is="t.icon" class="size-3.5" /><span>{{ t.label }}</span></button>
+                  <button v-for="t in [{ id: 'light', label: 'Light', icon: Sun }, { id: 'dark', label: 'Dark', icon: Moon }, { id: 'system', label: 'Adaptive', icon: Globe }]" :key="t.id" type="button" @click="widgetConfig.theme = t.id" class="py-2.5 px-3 rounded-xl border text-xs text-center cursor-pointer transition-colors flex items-center justify-center gap-1.5" :class="widgetConfig.theme === t.id ? 'bg-primary/10 border-primary text-primary font-semibold' : 'bg-card border-border hover:bg-accent text-muted-foreground'"><component :is="t.icon" class="size-3.5" /><span>{{ t.label }}</span></button>
                 </div>
               </div>
               <div>
                 <label class="text-[13.5px] font-medium text-foreground block mb-2">Card Corner Radius</label>
                 <div class="grid grid-cols-4 gap-2">
-                  <button v-for="rad in [{ id: 'rounded-none', label: 'Square' }, { id: 'rounded-lg', label: 'Medium' }, { id: 'rounded-2xl', label: 'Large' }, { id: 'rounded-[28px]', label: 'Pill' }]" :key="rad.id" type="button" @click="widgetConfig.cardRadius = rad.id" class="py-2 px-2 rounded-lg border text-xs text-center cursor-pointer transition-colors" :class="widgetConfig.cardRadius === rad.id ? 'bg-primary/10 border-primary text-primary font-semibold' : 'bg-card border-border hover:bg-muted text-muted-foreground'">{{ rad.label }}</button>
+                  <button v-for="rad in [{ id: 'rounded-none', label: 'Square' }, { id: 'rounded-lg', label: 'Medium' }, { id: 'rounded-2xl', label: 'Large' }, { id: 'rounded-[28px]', label: 'Pill' }]" :key="rad.id" type="button" @click="widgetConfig.cardRadius = rad.id" class="py-2 px-2 rounded-lg border text-xs text-center cursor-pointer transition-colors" :class="widgetConfig.cardRadius === rad.id ? 'bg-primary/10 border-primary text-primary font-semibold' : 'bg-card border-border hover:bg-accent text-muted-foreground'">{{ rad.label }}</button>
                 </div>
               </div>
               <div class="space-y-3 pt-3 border-t border-border">
@@ -340,7 +340,7 @@ const isDark = computed(() => widgetConfig.value.theme === 'dark' || previewBg.v
 
           <!-- Customizer footer -->
           <div class="p-4 border-t border-border bg-muted/20 flex items-center justify-between shrink-0">
-            <button class="inline-flex items-center gap-1.5 h-9 px-3.5 rounded-lg border border-border hover:border-transparent hover:bg-muted text-xs font-medium text-foreground cursor-pointer" @click="copyEmbedCode"><Code2 class="size-3.5" /> {{ isCopied ? 'Code Copied!' : 'Get Code' }}</button>
+            <button class="inline-flex items-center gap-1.5 h-9 px-3.5 rounded-lg border border-border hover:border-transparent hover:bg-accent text-xs font-medium text-foreground cursor-pointer" @click="copyEmbedCode"><Code2 class="size-3.5" /> {{ isCopied ? 'Code Copied!' : 'Get Code' }}</button>
             <button class="inline-flex items-center gap-1.5 h-9 px-3.5 rounded-lg bg-primary text-primary-foreground text-xs font-medium hover:bg-primary/90 shadow-xs cursor-pointer" @click="handleSaveWidget"><Check v-if="isSaved" class="size-3.5 text-emerald-300" /><span>{{ isSaved ? 'Saved!' : 'Save Widget' }}</span></button>
           </div>
         </div>
@@ -437,8 +437,8 @@ const isDark = computed(() => widgetConfig.value.theme === 'dark' || previewBg.v
                         </div>
                       </div>
                     </div>
-                    <button @click="prevSlide" class="absolute -left-3 top-1/2 -translate-y-1/2 size-8 rounded-full border shadow-md flex items-center justify-center z-10 cursor-pointer transition-colors" :class="isDark ? 'bg-slate-800 border-slate-700 text-white hover:bg-slate-700' : 'bg-white border-border text-foreground hover:bg-muted'"><ChevronLeft class="size-4" /></button>
-                    <button @click="nextSlide" class="absolute -right-3 top-1/2 -translate-y-1/2 size-8 rounded-full border shadow-md flex items-center justify-center z-10 cursor-pointer transition-colors" :class="isDark ? 'bg-slate-800 border-slate-700 text-white hover:bg-slate-700' : 'bg-white border-border text-foreground hover:bg-muted'"><ChevronRight class="size-4" /></button>
+                    <button @click="prevSlide" class="absolute -left-3 top-1/2 -translate-y-1/2 size-8 rounded-full border shadow-md flex items-center justify-center z-10 cursor-pointer transition-colors" :class="isDark ? 'bg-slate-800 border-slate-700 text-white hover:bg-slate-700' : 'bg-white border-border text-foreground hover:bg-accent'"><ChevronLeft class="size-4" /></button>
+                    <button @click="nextSlide" class="absolute -right-3 top-1/2 -translate-y-1/2 size-8 rounded-full border shadow-md flex items-center justify-center z-10 cursor-pointer transition-colors" :class="isDark ? 'bg-slate-800 border-slate-700 text-white hover:bg-slate-700' : 'bg-white border-border text-foreground hover:bg-accent'"><ChevronRight class="size-4" /></button>
                   </div>
 
                   <!-- BUBBLE -->
@@ -479,7 +479,7 @@ const isDark = computed(() => widgetConfig.value.theme === 'dark' || previewBg.v
       <div class="px-4 sm:px-6 py-3 border-t border-border bg-card flex flex-col sm:flex-row sm:items-center justify-between gap-3 shrink-0">
         <div class="flex items-center gap-2 text-xs text-muted-foreground"><CheckCircle2 class="size-4 text-emerald-500 shrink-0" /><span class="truncate">Real-time preview synchronized · Instant HTML &amp; JS CDN delivery</span></div>
         <div class="flex items-center gap-2 sm:gap-3 self-end sm:self-auto">
-          <button class="inline-flex items-center justify-center border border-border hover:border-transparent hover:bg-muted text-xs sm:text-sm h-8 sm:h-9 px-3.5 rounded-lg text-foreground cursor-pointer" @click="close">Close</button>
+          <button class="inline-flex items-center justify-center border border-border hover:border-transparent hover:bg-accent text-xs sm:text-sm h-8 sm:h-9 px-3.5 rounded-lg text-foreground cursor-pointer" @click="close">Close</button>
           <button class="inline-flex items-center gap-1.5 text-xs sm:text-sm h-8 sm:h-9 px-3.5 rounded-lg bg-primary text-primary-foreground font-medium hover:bg-primary/90 shadow-xs cursor-pointer" @click="handleSaveWidget"><Check v-if="isSaved" class="size-3.5 sm:size-4 text-emerald-400" /><Sparkles v-else class="size-3.5 sm:size-4" />{{ isSaved ? 'Widget Saved & Live!' : 'Save & Publish Widget' }}</button>
         </div>
       </div>

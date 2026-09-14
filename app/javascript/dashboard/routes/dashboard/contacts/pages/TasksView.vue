@@ -35,9 +35,9 @@ import {
 import TasksAPI from 'dashboard/api/tasks';
 
 const FILTER_DROPDOWN_TRIGGER_CLASS =
-  'h-9 gap-2 rounded-lg border-border bg-background px-3 text-[13px] font-normal text-foreground shadow-sm hover:border-border hover:bg-muted/50';
+  'h-9 gap-2 rounded-lg border-border bg-background px-3 text-[13px] font-normal text-foreground shadow-sm hover:border-border hover:bg-accent';
 const FORM_DROPDOWN_TRIGGER_CLASS =
-  'h-9 w-full justify-between rounded-md border-border/80 bg-background px-3 text-[14px] font-normal shadow-sm hover:bg-muted/50';
+  'h-9 w-full justify-between rounded-md border-border/80 bg-background px-3 text-[14px] font-normal shadow-sm hover:bg-accent';
 const DUE_DATE_MENU_CONTENT_CLASS =
   'z-[250] w-auto min-w-0 overflow-visible rounded-xl p-4 shadow-xl';
 
@@ -1005,7 +1005,7 @@ onMounted(() => {
                         <div class="flex items-center gap-1">
                           <button
                             type="button"
-                            class="flex size-7 cursor-pointer items-center justify-center rounded-md hover:bg-muted"
+                            class="flex size-7 cursor-pointer items-center justify-center rounded-md hover:bg-accent"
                             @click="shiftDuePickerMonth('prev')"
                           >
                             <span
@@ -1014,7 +1014,7 @@ onMounted(() => {
                           </button>
                           <button
                             type="button"
-                            class="flex size-7 cursor-pointer items-center justify-center rounded-md hover:bg-muted"
+                            class="flex size-7 cursor-pointer items-center justify-center rounded-md hover:bg-accent"
                             @click="shiftDuePickerMonth('next')"
                           >
                             <span
@@ -1044,7 +1044,7 @@ onMounted(() => {
                               : selectedDueDate &&
                                   isSameDay(day, selectedDueDate)
                                 ? 'cursor-pointer bg-primary text-primary-foreground shadow-sm hover:bg-primary/90'
-                                : 'cursor-pointer text-foreground hover:bg-muted'
+                                : 'cursor-pointer text-foreground hover:bg-accent'
                           "
                           :disabled="!isSameMonth(day, duePickerMonth)"
                           @click="selectDueCalendarDay(day)"
@@ -1087,7 +1087,7 @@ onMounted(() => {
                           :class="
                             taskForm.dueTimeHour === hour
                               ? 'bg-primary text-primary-foreground shadow-sm'
-                              : 'text-foreground hover:bg-muted'
+                              : 'text-foreground hover:bg-accent'
                           "
                           @click="taskForm.dueTimeHour = hour"
                         >
@@ -1105,7 +1105,7 @@ onMounted(() => {
                           :class="
                             taskForm.dueTimeMinute === minute
                               ? 'bg-primary font-medium text-primary-foreground shadow-sm'
-                              : 'text-foreground hover:bg-muted'
+                              : 'text-foreground hover:bg-accent'
                           "
                           @click="taskForm.dueTimeMinute = minute"
                         >
@@ -1119,7 +1119,7 @@ onMounted(() => {
                           :class="
                             taskForm.dueTimePeriod === 'AM'
                               ? 'bg-primary text-primary-foreground shadow-sm'
-                              : 'text-foreground hover:bg-muted'
+                              : 'text-foreground hover:bg-accent'
                           "
                           @click="taskForm.dueTimePeriod = 'AM'"
                         >
@@ -1131,7 +1131,7 @@ onMounted(() => {
                           :class="
                             taskForm.dueTimePeriod === 'PM'
                               ? 'bg-primary text-primary-foreground shadow-sm'
-                              : 'text-foreground hover:bg-muted'
+                              : 'text-foreground hover:bg-accent'
                           "
                           @click="taskForm.dueTimePeriod = 'PM'"
                         >
@@ -1148,7 +1148,7 @@ onMounted(() => {
           <div class="mt-auto flex gap-4 border-t border-border px-6 py-4">
             <RelayButton
               variant="outline"
-              class="h-9 flex-1 border-border bg-background text-sm font-medium shadow-sm hover:bg-muted"
+              class="h-9 flex-1 border-border bg-background text-sm font-medium shadow-sm hover:bg-accent"
               @click="closeTaskModal"
             >
               {{ t('CONTACTS_LAYOUT.TASKS_VIEW.FORM_CANCEL') }}

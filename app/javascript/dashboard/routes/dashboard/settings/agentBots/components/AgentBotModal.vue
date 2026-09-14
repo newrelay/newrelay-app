@@ -406,7 +406,7 @@ watch(() => props.selectedBot, initializeForm, { deep: true });
             <RelayButton
               type="button"
               variant="outline"
-              class="h-10 shrink-0 border-border/80 bg-card px-3 hover:bg-muted"
+              class="h-10 shrink-0 border-border/80 bg-card px-3 hover:bg-accent"
               @click="onCopyToken"
             >
               <Icon icon="i-lucide-copy" class="size-4" />
@@ -415,7 +415,7 @@ watch(() => props.selectedBot, initializeForm, { deep: true });
             <RelayButton
               type="button"
               variant="outline"
-              class="h-10 shrink-0 border-border/80 bg-card px-3 text-muted-foreground hover:bg-muted"
+              class="h-10 shrink-0 border-border/80 bg-card px-3 text-muted-foreground hover:bg-accent"
               @click="onResetToken"
             >
               <Icon icon="i-lucide-key" class="size-4" />
@@ -429,7 +429,7 @@ watch(() => props.selectedBot, initializeForm, { deep: true });
         <RelayButton
           type="button"
           variant="outline"
-          class="h-10 border-border/80 bg-card px-6 text-[13px] font-medium text-foreground hover:bg-muted"
+          class="h-10 border-border/80 bg-card px-6 text-[13px] font-medium text-foreground hover:bg-accent"
           @click="handleFormClose"
         >
           {{ t('AGENT_BOTS.FORM.CANCEL') }}
@@ -477,7 +477,7 @@ watch(() => props.selectedBot, initializeForm, { deep: true });
         <RelayButton
           type="button"
           variant="outline"
-          class="h-10 shrink-0 border-border/80 bg-card px-3 hover:bg-muted"
+          class="h-10 shrink-0 border-border/80 bg-card px-3 hover:bg-accent"
           @click="onCopyToken"
         >
           <Icon icon="i-lucide-copy" class="size-4" />
@@ -514,7 +514,7 @@ watch(() => props.selectedBot, initializeForm, { deep: true });
           <RelayButton
             type="button"
             variant="outline"
-            class="h-10 shrink-0 border-border/80 bg-card px-3 hover:bg-muted"
+            class="h-10 shrink-0 border-border/80 bg-card px-3 hover:bg-accent"
             @click="onCopySecret"
           >
             <Icon icon="i-lucide-copy" class="size-4" />

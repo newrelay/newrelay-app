@@ -75,7 +75,7 @@ const selectMonth = index => {
         :class="{
           'bg-primary text-primary-foreground hover:bg-primary/90':
             index === activeMonthIndex,
-          'hover:bg-muted/80': index !== activeMonthIndex,
+          'hover:bg-accent': index !== activeMonthIndex,
         }"
         @click.stop="selectMonth(index)"
       >

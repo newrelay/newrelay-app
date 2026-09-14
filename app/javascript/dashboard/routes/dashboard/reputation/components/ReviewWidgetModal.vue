@@ -213,16 +213,16 @@ const isDark = computed(() => widgetConfig.value.theme === 'dark' || previewBg.v
         >
           <!-- Tabs -->
           <div class="grid grid-cols-4 p-2 border-b border-border/70 bg-muted/20 text-xs font-medium shrink-0">
-            <button @click="activeTab = 'layout'" class="py-2 px-1 rounded-lg transition-all text-center flex flex-col items-center gap-1 cursor-pointer" :class="activeTab === 'layout' ? 'bg-background text-foreground shadow-xs font-semibold' : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'">
+            <button @click="activeTab = 'layout'" class="py-2 px-1 rounded-lg transition-all text-center flex flex-col items-center gap-1 cursor-pointer" :class="activeTab === 'layout' ? 'bg-background text-foreground shadow-xs font-semibold' : 'text-muted-foreground hover:text-foreground hover:bg-accent'">
               <Layers class="size-3.5" /><span>Layout</span>
             </button>
-            <button @click="activeTab = 'filters'" class="py-2 px-1 rounded-lg transition-all text-center flex flex-col items-center gap-1 cursor-pointer" :class="activeTab === 'filters' ? 'bg-background text-foreground shadow-xs font-semibold' : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'">
+            <button @click="activeTab = 'filters'" class="py-2 px-1 rounded-lg transition-all text-center flex flex-col items-center gap-1 cursor-pointer" :class="activeTab === 'filters' ? 'bg-background text-foreground shadow-xs font-semibold' : 'text-muted-foreground hover:text-foreground hover:bg-accent'">
               <Filter class="size-3.5" /><span>Sources</span>
             </button>
-            <button @click="activeTab = 'appearance'" class="py-2 px-1 rounded-lg transition-all text-center flex flex-col items-center gap-1 cursor-pointer" :class="activeTab === 'appearance' ? 'bg-background text-foreground shadow-xs font-semibold' : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'">
+            <button @click="activeTab = 'appearance'" class="py-2 px-1 rounded-lg transition-all text-center flex flex-col items-center gap-1 cursor-pointer" :class="activeTab === 'appearance' ? 'bg-background text-foreground shadow-xs font-semibold' : 'text-muted-foreground hover:text-foreground hover:bg-accent'">
               <Palette class="size-3.5" /><span>Style</span>
             </button>
-            <button @click="activeTab = 'embed'" class="py-2 px-1 rounded-lg transition-all text-center flex flex-col items-center gap-1 cursor-pointer" :class="activeTab === 'embed' ? 'bg-background text-foreground shadow-xs font-semibold' : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'">
+            <button @click="activeTab = 'embed'" class="py-2 px-1 rounded-lg transition-all text-center flex flex-col items-center gap-1 cursor-pointer" :class="activeTab === 'embed' ? 'bg-background text-foreground shadow-xs font-semibold' : 'text-muted-foreground hover:text-foreground hover:bg-accent'">
               <Code2 class="size-3.5" /><span>Embed</span>
             </button>
           </div>
@@ -240,7 +240,7 @@ const isDark = computed(() => widgetConfig.value.theme === 'dark' || previewBg.v
                     v-for="opt in layoutOptions" :key="opt.id"
                     @click="widgetConfig.layout = opt.id"
                     class="p-3.5 rounded-xl border transition-all cursor-pointer flex items-start gap-3.5"
-                    :class="widgetConfig.layout === opt.id ? 'border-primary bg-primary/5 ring-1 ring-primary/30' : 'border-border bg-card hover:bg-muted/30 hover:border-border/80'"
+                    :class="widgetConfig.layout === opt.id ? 'border-primary bg-primary/5 ring-1 ring-primary/30' : 'border-border bg-card hover:bg-accent hover:border-border/80'"
                   >
                     <div class="p-2 rounded-lg shrink-0 mt-0.5" :class="widgetConfig.layout === opt.id ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground'">
                       <component :is="opt.icon" class="size-4" />
@@ -282,28 +282,28 @@ const isDark = computed(() => widgetConfig.value.theme === 'dark' || previewBg.v
                 <label class="text-[13.5px] font-medium text-foreground block mb-1">Source Platforms</label>
                 <p class="text-[12px] text-muted-foreground mb-3">Select which connected platforms sync to this widget.</p>
                 <div class="space-y-2">
-                  <label class="flex items-center justify-between p-2.5 rounded-lg border border-border bg-card hover:bg-muted/20 cursor-pointer">
+                  <label class="flex items-center justify-between p-2.5 rounded-lg border border-border bg-card hover:bg-accent cursor-pointer">
                     <div class="flex items-center gap-2.5">
                       <RelayCheckbox v-model="widgetConfig.platforms.google" />
                       <span class="text-sm font-medium text-foreground">Google Business Profile</span>
                     </div>
                     <span class="inline-flex items-center rounded-md border border-border px-2 py-0.5 text-[11px] text-muted-foreground">452 reviews</span>
                   </label>
-                  <label class="flex items-center justify-between p-2.5 rounded-lg border border-border bg-card hover:bg-muted/20 cursor-pointer">
+                  <label class="flex items-center justify-between p-2.5 rounded-lg border border-border bg-card hover:bg-accent cursor-pointer">
                     <div class="flex items-center gap-2.5">
                       <RelayCheckbox v-model="widgetConfig.platforms.facebook" />
                       <span class="text-sm font-medium text-foreground">Facebook Recommendations</span>
                     </div>
                     <span class="inline-flex items-center rounded-md border border-border px-2 py-0.5 text-[11px] text-muted-foreground">312 reviews</span>
                   </label>
-                  <label class="flex items-center justify-between p-2.5 rounded-lg border border-border bg-card hover:bg-muted/20 cursor-pointer">
+                  <label class="flex items-center justify-between p-2.5 rounded-lg border border-border bg-card hover:bg-accent cursor-pointer">
                     <div class="flex items-center gap-2.5">
                       <RelayCheckbox v-model="widgetConfig.platforms.trustpilot" />
                       <span class="text-sm font-medium text-foreground">Trustpilot Verified</span>
                     </div>
                     <span class="inline-flex items-center rounded-md border border-border px-2 py-0.5 text-[11px] text-muted-foreground">204 reviews</span>
                   </label>
-                  <label class="flex items-center justify-between p-2.5 rounded-lg border border-border bg-card hover:bg-muted/20 cursor-pointer">
+                  <label class="flex items-center justify-between p-2.5 rounded-lg border border-border bg-card hover:bg-accent cursor-pointer">
                     <div class="flex items-center gap-2.5">
                       <RelayCheckbox v-model="widgetConfig.platforms.yelp" />
                       <span class="text-sm font-medium text-foreground">Yelp for Business</span>
@@ -317,7 +317,7 @@ const isDark = computed(() => widgetConfig.value.theme === 'dark' || previewBg.v
                 <label class="text-[13.5px] font-medium text-foreground block mb-1">Minimum Star Rating</label>
                 <p class="text-[12px] text-muted-foreground mb-2">Only display reviews matching or exceeding this threshold.</p>
                 <div class="grid grid-cols-3 gap-2">
-                  <button v-for="r in [{ id: 'all', label: 'All (1-5★)' }, { id: '4', label: '4★ & Above' }, { id: '5', label: '5★ Only' }]" :key="r.id" @click="widgetConfig.minRating = r.id" class="py-2 px-2 text-xs rounded-lg border font-medium text-center transition-colors cursor-pointer" :class="widgetConfig.minRating === r.id ? 'border-primary bg-primary/10 text-primary font-semibold' : 'border-border text-muted-foreground hover:bg-muted/30'">
+                  <button v-for="r in [{ id: 'all', label: 'All (1-5★)' }, { id: '4', label: '4★ & Above' }, { id: '5', label: '5★ Only' }]" :key="r.id" @click="widgetConfig.minRating = r.id" class="py-2 px-2 text-xs rounded-lg border font-medium text-center transition-colors cursor-pointer" :class="widgetConfig.minRating === r.id ? 'border-primary bg-primary/10 text-primary font-semibold' : 'border-border text-muted-foreground hover:bg-accent'">
                     {{ r.label }}
                   </button>
                 </div>
@@ -351,7 +351,7 @@ const isDark = computed(() => widgetConfig.value.theme === 'dark' || previewBg.v
               <div>
                 <label class="text-[13.5px] font-medium text-foreground block mb-1">Color Theme</label>
                 <div class="grid grid-cols-3 gap-2">
-                  <button v-for="t in [{ id: 'light', label: 'Clean Light', icon: Sun }, { id: 'dark', label: 'Sleek Dark', icon: Moon }, { id: 'system', label: 'Adaptive', icon: Monitor }]" :key="t.id" @click="widgetConfig.theme = t.id" class="py-2 px-2 text-xs rounded-lg border font-medium text-center flex items-center justify-center gap-1.5 transition-colors cursor-pointer" :class="widgetConfig.theme === t.id ? 'border-primary bg-primary/10 text-primary font-semibold' : 'border-border text-muted-foreground hover:bg-muted/30'">
+                  <button v-for="t in [{ id: 'light', label: 'Clean Light', icon: Sun }, { id: 'dark', label: 'Sleek Dark', icon: Moon }, { id: 'system', label: 'Adaptive', icon: Monitor }]" :key="t.id" @click="widgetConfig.theme = t.id" class="py-2 px-2 text-xs rounded-lg border font-medium text-center flex items-center justify-center gap-1.5 transition-colors cursor-pointer" :class="widgetConfig.theme === t.id ? 'border-primary bg-primary/10 text-primary font-semibold' : 'border-border text-muted-foreground hover:bg-accent'">
                     <component :is="t.icon" class="size-3.5" /> {{ t.label }}
                   </button>
                 </div>
@@ -360,7 +360,7 @@ const isDark = computed(() => widgetConfig.value.theme === 'dark' || previewBg.v
               <div>
                 <label class="text-[13.5px] font-medium text-foreground block mb-1">Corner Radius</label>
                 <div class="grid grid-cols-4 gap-1.5 text-xs">
-                  <button v-for="rad in [{ id: 'rounded-none', label: 'Square' }, { id: 'rounded-lg', label: 'Medium' }, { id: 'rounded-2xl', label: 'Large' }, { id: 'rounded-[28px]', label: 'Pill' }]" :key="rad.id" @click="widgetConfig.cardRadius = rad.id" class="py-1.5 px-2 rounded-lg border font-medium text-center transition-colors cursor-pointer" :class="widgetConfig.cardRadius === rad.id ? 'border-primary bg-primary/10 text-primary font-semibold' : 'border-border text-muted-foreground hover:bg-muted/30'">
+                  <button v-for="rad in [{ id: 'rounded-none', label: 'Square' }, { id: 'rounded-lg', label: 'Medium' }, { id: 'rounded-2xl', label: 'Large' }, { id: 'rounded-[28px]', label: 'Pill' }]" :key="rad.id" @click="widgetConfig.cardRadius = rad.id" class="py-1.5 px-2 rounded-lg border font-medium text-center transition-colors cursor-pointer" :class="widgetConfig.cardRadius === rad.id ? 'border-primary bg-primary/10 text-primary font-semibold' : 'border-border text-muted-foreground hover:bg-accent'">
                     {{ rad.label }}
                   </button>
                 </div>
@@ -523,8 +523,8 @@ const isDark = computed(() => widgetConfig.value.theme === 'dark' || previewBg.v
                         <span v-for="(_, i) in previewReviews.slice(0, 6)" :key="i" @click="carouselIndex = i" class="h-1 rounded-full transition-all cursor-pointer" :class="carouselIndex === i ? 'w-4 bg-primary' : 'w-1 bg-muted-foreground/30 hover:bg-muted-foreground/50'"></span>
                       </div>
                       <div class="flex items-center gap-1">
-                        <button @click="prevSlide" class="size-8 rounded-full border border-border/80 flex items-center justify-center hover:bg-muted transition-colors cursor-pointer"><ChevronLeft class="size-4" /></button>
-                        <button @click="nextSlide" class="size-8 rounded-full border border-border/80 flex items-center justify-center hover:bg-muted transition-colors cursor-pointer"><ChevronRight class="size-4" /></button>
+                        <button @click="prevSlide" class="size-8 rounded-full border border-border/80 flex items-center justify-center hover:bg-accent transition-colors cursor-pointer"><ChevronLeft class="size-4" /></button>
+                        <button @click="nextSlide" class="size-8 rounded-full border border-border/80 flex items-center justify-center hover:bg-accent transition-colors cursor-pointer"><ChevronRight class="size-4" /></button>
                       </div>
                     </div>
                   </div>
@@ -646,8 +646,8 @@ const isDark = computed(() => widgetConfig.value.theme === 'dark' || previewBg.v
                         <span v-for="(_, i) in previewReviews.slice(0, 6)" :key="i" @click="carouselIndex = i" class="h-1.5 rounded-full transition-all cursor-pointer" :class="carouselIndex === i ? 'w-5 bg-primary' : 'w-1.5 bg-muted-foreground/30 hover:bg-muted-foreground/50'"></span>
                       </div>
                       <div class="flex items-center gap-1.5">
-                        <button @click="prevSlide" class="size-9 sm:size-10 rounded-full border border-border/80 flex items-center justify-center hover:bg-muted transition-colors cursor-pointer"><ChevronLeft class="size-4 sm:size-5" /></button>
-                        <button @click="nextSlide" class="size-9 sm:size-10 rounded-full border border-border/80 flex items-center justify-center hover:bg-muted transition-colors cursor-pointer"><ChevronRight class="size-4 sm:size-5" /></button>
+                        <button @click="prevSlide" class="size-9 sm:size-10 rounded-full border border-border/80 flex items-center justify-center hover:bg-accent transition-colors cursor-pointer"><ChevronLeft class="size-4 sm:size-5" /></button>
+                        <button @click="nextSlide" class="size-9 sm:size-10 rounded-full border border-border/80 flex items-center justify-center hover:bg-accent transition-colors cursor-pointer"><ChevronRight class="size-4 sm:size-5" /></button>
                       </div>
                     </div>
                   </div>
@@ -707,7 +707,7 @@ const isDark = computed(() => widgetConfig.value.theme === 'dark' || previewBg.v
           <span class="truncate">Real-time preview synchronized · Instant HTML &amp; JS CDN delivery</span>
         </div>
         <div class="flex items-center gap-2 sm:gap-3 self-end sm:self-auto">
-          <button class="inline-flex items-center justify-center border border-border hover:border-transparent hover:bg-muted text-xs sm:text-sm h-8 sm:h-9 px-3.5 rounded-lg text-foreground cursor-pointer" @click="close">Close</button>
+          <button class="inline-flex items-center justify-center border border-border hover:border-transparent hover:bg-accent text-xs sm:text-sm h-8 sm:h-9 px-3.5 rounded-lg text-foreground cursor-pointer" @click="close">Close</button>
           <button class="inline-flex items-center gap-1.5 text-xs sm:text-sm h-8 sm:h-9 px-3.5 rounded-lg bg-primary text-primary-foreground font-medium hover:bg-primary/90 shadow-xs cursor-pointer" @click="handleSaveWidget">
             <Check v-if="isSaved" class="size-3.5 sm:size-4 text-emerald-400" />
             <Sparkles v-else class="size-3.5 sm:size-4" />

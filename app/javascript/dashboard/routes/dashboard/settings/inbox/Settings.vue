@@ -741,7 +741,7 @@ export default {
                 :class="
                   selectedTabIndex === index
                     ? 'bg-primary/10 text-primary'
-                    : 'text-muted-foreground hover:bg-muted/50 hover:text-foreground'
+                    : 'text-muted-foreground hover:bg-accent hover:text-foreground'
                 "
                 @click="onTabChange(index)"
               >

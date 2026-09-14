@@ -604,7 +604,7 @@ const autoFlagLabel = computed(() => autoFlagOptions.find(o => o.value === spamS
 </script>
 
 <template>
-  <div class="flex-1 overflow-y-auto w-full bg-background p-6 lg:px-10">
+  <div class="flex-1 overflow-y-auto w-full bg-background p-6">
     <div class="max-w-7xl mx-auto space-y-7">
       <!-- Header -->
       <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -633,7 +633,7 @@ const autoFlagLabel = computed(() => autoFlagOptions.find(o => o.value === spamS
                 <p class="text-[12.5px] text-muted-foreground mt-0.5">{{ selectedChannel === 'video' ? 'Customize the video testimonial prompt and recording interface.' : 'Customize the automated message sent to your customers.' }}</p>
               </div>
               <div class="flex items-center gap-1.5 shrink-0 flex-wrap">
-                <button v-for="ch in CHANNELS" :key="ch.id" type="button" class="px-3 py-1.5 rounded-lg border text-xs text-center cursor-pointer transition-colors flex items-center justify-center gap-1.5" :class="selectedChannel === ch.id ? 'bg-primary/10 border-primary text-primary font-semibold' : 'bg-card border-border hover:bg-muted text-muted-foreground'" @click="selectedChannel = ch.id">
+                <button v-for="ch in CHANNELS" :key="ch.id" type="button" class="px-3 py-1.5 rounded-lg border text-xs text-center cursor-pointer transition-colors flex items-center justify-center gap-1.5" :class="selectedChannel === ch.id ? 'bg-primary/10 border-primary text-primary font-semibold' : 'bg-card border-border hover:bg-accent text-muted-foreground'" @click="selectedChannel = ch.id">
                   <component :is="ch.icon" class="size-3.5" /> {{ ch.label }}
                 </button>
               </div>
@@ -655,7 +655,7 @@ const autoFlagLabel = computed(() => autoFlagOptions.find(o => o.value === spamS
                 </DropdownMenu>
               </div>
               <div class="sm:col-span-4">
-                <button type="button" class="h-9 w-full px-3 rounded-md border border-border hover:border-transparent bg-background hover:bg-muted text-[13px] font-medium inline-flex items-center justify-center gap-1.5 shadow-xs cursor-pointer" @click="openNewTemplate"><Plus class="size-3.5" /> New Template</button>
+                <button type="button" class="h-9 w-full px-3 rounded-md border border-border hover:border-transparent bg-background hover:bg-accent text-[13px] font-medium inline-flex items-center justify-center gap-1.5 shadow-xs cursor-pointer" @click="openNewTemplate"><Plus class="size-3.5" /> New Template</button>
               </div>
             </div>
 
@@ -677,7 +677,7 @@ const autoFlagLabel = computed(() => autoFlagOptions.find(o => o.value === spamS
               <div class="flex items-center gap-2 flex-wrap pt-1">
                 <span class="text-[12.5px] text-muted-foreground font-medium">Insert tag:</span>
                 <div class="flex items-center gap-1.5 flex-wrap">
-                  <button v-for="tag in TAGS" :key="tag" type="button" class="px-2.5 py-1 bg-muted/60 hover:bg-muted text-[11.5px] font-mono rounded-md text-foreground transition-colors border border-border/50 cursor-pointer" @click="insertTag(tag)">{{ tag }}</button>
+                  <button v-for="tag in TAGS" :key="tag" type="button" class="px-2.5 py-1 bg-muted/60 hover:bg-accent text-[11.5px] font-mono rounded-md text-foreground transition-colors border border-border/50 cursor-pointer" @click="insertTag(tag)">{{ tag }}</button>
                 </div>
               </div>
             </div>
@@ -822,7 +822,7 @@ const autoFlagLabel = computed(() => autoFlagOptions.find(o => o.value === spamS
               <label class="text-[13.5px] font-medium text-foreground">Permanent Review Link</label>
               <div class="flex items-center">
                 <span class="h-10 flex-1 min-w-0 flex items-center px-3 text-[13px] font-mono border border-r-0 border-border rounded-l-md bg-background text-foreground truncate">{{ reviewLinkShort }}</span>
-                <button class="h-10 px-3.5 rounded-r-md border border-border bg-background hover:bg-muted text-[13px] inline-flex items-center gap-1.5 shrink-0 cursor-pointer" @click="copyReviewLink">
+                <button class="h-10 px-3.5 rounded-r-md border border-border bg-background hover:bg-accent text-[13px] inline-flex items-center gap-1.5 shrink-0 cursor-pointer" @click="copyReviewLink">
                   <Check v-if="isLinkCopied" class="size-3.5 text-success" /><Copy v-else class="size-3.5 text-muted-foreground" /> {{ isLinkCopied ? 'Copied' : 'Copy' }}
                 </button>
               </div>
@@ -831,7 +831,7 @@ const autoFlagLabel = computed(() => autoFlagOptions.find(o => o.value === spamS
               <label class="text-[13.5px] font-medium text-foreground">Review Destination</label>
               <DropdownMenu>
                 <DropdownMenuTrigger as-child>
-                  <button type="button" class="h-10 px-3 text-[13.5px] bg-background border border-border/80 rounded-md text-foreground flex items-center justify-between hover:bg-muted w-full text-left cursor-pointer">
+                  <button type="button" class="h-10 px-3 text-[13.5px] bg-background border border-border/80 rounded-md text-foreground flex items-center justify-between hover:bg-accent w-full text-left cursor-pointer">
                     <span class="truncate">{{ destinationLabels[selectedDestination] }}</span>
                     <ChevronDown class="size-3.5 opacity-50 ml-2 shrink-0" />
                   </button>
@@ -854,17 +854,17 @@ const autoFlagLabel = computed(() => autoFlagOptions.find(o => o.value === spamS
             <div class="flex flex-col gap-2">
               <label class="text-[13.5px] font-medium text-foreground">Frame Style</label>
               <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                <button type="button" class="flex flex-col items-center justify-center p-3.5 rounded-xl border transition-all text-center cursor-pointer" :class="qrFrame === 'badge' ? 'border-primary bg-primary/5 ring-1 ring-primary/30' : 'border-border/80 bg-background hover:border-border hover:bg-muted/30'" @click="selectQrFrame('badge')">
+                <button type="button" class="flex flex-col items-center justify-center p-3.5 rounded-xl border transition-all text-center cursor-pointer" :class="qrFrame === 'badge' ? 'border-primary bg-primary/5 ring-1 ring-primary/30' : 'border-border/80 bg-background hover:border-border hover:bg-accent'" @click="selectQrFrame('badge')">
                   <div class="h-8 w-full flex items-center justify-center mb-1.5"><div class="px-2 py-0.5 rounded-full bg-muted/80 border border-border/80 flex items-center gap-1"><Star class="size-2.5 text-warning fill-warning" /><span class="text-[9.5px] font-semibold text-foreground">Google 5.0</span></div></div>
                   <span class="text-[13px] font-medium text-foreground">Google Badge</span>
                   <span class="text-[11px] text-muted-foreground mt-0.5">Verified review pill</span>
                 </button>
-                <button type="button" class="flex flex-col items-center justify-center p-3.5 rounded-xl border transition-all text-center cursor-pointer" :class="qrFrame === 'stars' ? 'border-primary bg-primary/5 ring-1 ring-primary/30' : 'border-border/80 bg-background hover:border-border hover:bg-muted/30'" @click="selectQrFrame('stars')">
+                <button type="button" class="flex flex-col items-center justify-center p-3.5 rounded-xl border transition-all text-center cursor-pointer" :class="qrFrame === 'stars' ? 'border-primary bg-primary/5 ring-1 ring-primary/30' : 'border-border/80 bg-background hover:border-border hover:bg-accent'" @click="selectQrFrame('stars')">
                   <div class="h-8 w-full flex items-center justify-center mb-1.5"><div class="flex items-center gap-0.5 text-warning"><Star v-for="s in 5" :key="s" class="size-3 fill-warning" /></div></div>
                   <span class="text-[13px] font-medium text-foreground">5-Star Header</span>
                   <span class="text-[11px] text-muted-foreground mt-0.5">Classic gold stars</span>
                 </button>
-                <button type="button" class="flex flex-col items-center justify-center p-3.5 rounded-xl border transition-all text-center cursor-pointer" :class="qrFrame === 'simple' ? 'border-primary bg-primary/5 ring-1 ring-primary/30' : 'border-border/80 bg-background hover:border-border hover:bg-muted/30'" @click="selectQrFrame('simple')">
+                <button type="button" class="flex flex-col items-center justify-center p-3.5 rounded-xl border transition-all text-center cursor-pointer" :class="qrFrame === 'simple' ? 'border-primary bg-primary/5 ring-1 ring-primary/30' : 'border-border/80 bg-background hover:border-border hover:bg-accent'" @click="selectQrFrame('simple')">
                   <div class="h-8 w-full flex items-center justify-center mb-1.5"><QrCode class="size-5 text-muted-foreground" /></div>
                   <span class="text-[13px] font-medium text-foreground">Minimalist QR</span>
                   <span class="text-[11px] text-muted-foreground mt-0.5">Clean stand with URL</span>
@@ -912,8 +912,8 @@ const autoFlagLabel = computed(() => autoFlagOptions.find(o => o.value === spamS
             </div>
             <div class="w-full space-y-2 pt-1 z-10">
               <div class="grid grid-cols-2 gap-2">
-                <button type="button" :disabled="qrBusy" class="h-9 rounded-md border border-border bg-background hover:bg-muted text-[12px] font-medium inline-flex items-center justify-center gap-1.5 cursor-pointer disabled:opacity-50" @click="downloadQrCode('png')"><Download class="size-3.5 text-primary" /> PNG</button>
-                <button type="button" :disabled="qrBusy" class="h-9 rounded-md border border-border bg-background hover:bg-muted text-[12px] font-medium inline-flex items-center justify-center gap-1.5 cursor-pointer disabled:opacity-50" @click="downloadQrCode('svg')"><Download class="size-3.5 text-primary" /> SVG</button>
+                <button type="button" :disabled="qrBusy" class="h-9 rounded-md border border-border bg-background hover:bg-accent text-[12px] font-medium inline-flex items-center justify-center gap-1.5 cursor-pointer disabled:opacity-50" @click="downloadQrCode('png')"><Download class="size-3.5 text-primary" /> PNG</button>
+                <button type="button" :disabled="qrBusy" class="h-9 rounded-md border border-border bg-background hover:bg-accent text-[12px] font-medium inline-flex items-center justify-center gap-1.5 cursor-pointer disabled:opacity-50" @click="downloadQrCode('svg')"><Download class="size-3.5 text-primary" /> SVG</button>
               </div>
               <button type="button" :disabled="qrBusy" class="w-full h-9 rounded-md bg-primary text-primary-foreground text-[12.5px] font-medium inline-flex items-center justify-center gap-1.5 cursor-pointer hover:bg-primary/90 disabled:opacity-50" @click="downloadQrCode('pdf')">
                 <Check v-if="isQrDownloaded" class="size-3.5" /><Printer v-else class="size-3.5" /> {{ isQrDownloaded ? 'Downloaded' : 'Print Signage (PDF)' }}
@@ -940,7 +940,7 @@ const autoFlagLabel = computed(() => autoFlagOptions.find(o => o.value === spamS
             <label class="text-[11.5px] font-semibold text-muted-foreground uppercase tracking-wider">Minimum Rating to Auto-Reply</label>
             <DropdownMenu>
               <DropdownMenuTrigger as-child>
-                <button type="button" class="h-10 px-3 text-sm bg-background border border-border rounded-md text-foreground flex items-center justify-between hover:bg-muted focus-visible:ring-1 focus-visible:ring-primary/30 outline-none w-full text-left cursor-pointer">
+                <button type="button" class="h-10 px-3 text-sm bg-background border border-border rounded-md text-foreground flex items-center justify-between hover:bg-accent focus-visible:ring-1 focus-visible:ring-primary/30 outline-none w-full text-left cursor-pointer">
                   <span class="truncate">{{ minRatingLabel }}</span>
                   <ChevronDown class="size-3.5 opacity-50 ml-2 shrink-0" />
                 </button>
@@ -971,7 +971,7 @@ const autoFlagLabel = computed(() => autoFlagOptions.find(o => o.value === spamS
             <label class="text-[11.5px] font-semibold text-muted-foreground uppercase tracking-wider">Auto-Flag Ratings Under</label>
             <DropdownMenu>
               <DropdownMenuTrigger as-child>
-                <button type="button" class="h-10 px-3 text-sm bg-background border border-border rounded-md text-foreground flex items-center justify-between hover:bg-muted focus-visible:ring-1 focus-visible:ring-primary/30 outline-none w-full text-left cursor-pointer">
+                <button type="button" class="h-10 px-3 text-sm bg-background border border-border rounded-md text-foreground flex items-center justify-between hover:bg-accent focus-visible:ring-1 focus-visible:ring-primary/30 outline-none w-full text-left cursor-pointer">
                   <span class="truncate">{{ autoFlagLabel }}</span>
                   <ChevronDown class="size-3.5 opacity-50 ml-2 shrink-0" />
                 </button>
@@ -1003,7 +1003,7 @@ const autoFlagLabel = computed(() => autoFlagOptions.find(o => o.value === spamS
             <h3 class="text-[16px] font-semibold text-foreground">Create New Outreach Template</h3>
             <p class="text-[12.5px] text-muted-foreground mt-0.5">Design a custom message template for review outreach.</p>
           </div>
-          <button type="button" class="h-8 w-8 p-0 rounded-full border border-border hover:border-transparent hover:bg-muted inline-flex items-center justify-center text-muted-foreground cursor-pointer" @click="showNewTemplate = false"><X class="size-4" /></button>
+          <button type="button" class="h-8 w-8 p-0 rounded-full border border-border hover:border-transparent hover:bg-accent inline-flex items-center justify-center text-muted-foreground cursor-pointer" @click="showNewTemplate = false"><X class="size-4" /></button>
         </div>
 
         <!-- Body -->
@@ -1012,7 +1012,7 @@ const autoFlagLabel = computed(() => autoFlagOptions.find(o => o.value === spamS
           <div class="flex flex-col gap-1.5">
             <label class="text-[13.5px] font-medium text-foreground">Target Channel</label>
             <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
-              <button v-for="ch in CHANNELS" :key="ch.id" type="button" class="px-2.5 py-2 rounded-lg border text-xs text-center cursor-pointer transition-colors flex items-center justify-center gap-1.5" :class="newTemplateForm.channel === ch.id ? 'bg-primary/10 border-primary text-primary font-semibold' : 'bg-card border-border hover:bg-muted text-muted-foreground'" @click="newTemplateForm.channel = ch.id">
+              <button v-for="ch in CHANNELS" :key="ch.id" type="button" class="px-2.5 py-2 rounded-lg border text-xs text-center cursor-pointer transition-colors flex items-center justify-center gap-1.5" :class="newTemplateForm.channel === ch.id ? 'bg-primary/10 border-primary text-primary font-semibold' : 'bg-card border-border hover:bg-accent text-muted-foreground'" @click="newTemplateForm.channel = ch.id">
                 <component :is="ch.icon" class="size-3.5" /> {{ ch.id === 'video' ? 'Video' : ch.label }}
               </button>
             </div>
@@ -1034,7 +1034,7 @@ const autoFlagLabel = computed(() => autoFlagOptions.find(o => o.value === spamS
               <RelayTextarea v-model="newTemplateForm.smsMessage" :rows="4" placeholder="Type your SMS message here..." class-name="resize-none" />
               <div class="flex items-center gap-2 flex-wrap pt-0.5">
                 <span class="text-[12px] text-muted-foreground font-medium">Insert tag:</span>
-                <button v-for="tag in TAGS" :key="tag" type="button" class="px-2 py-0.5 bg-muted/60 hover:bg-muted text-[11px] font-mono rounded text-foreground border border-border/50 cursor-pointer" @click="insertTagIntoModal(tag)">{{ tag }}</button>
+                <button v-for="tag in TAGS" :key="tag" type="button" class="px-2 py-0.5 bg-muted/60 hover:bg-accent text-[11px] font-mono rounded text-foreground border border-border/50 cursor-pointer" @click="insertTagIntoModal(tag)">{{ tag }}</button>
               </div>
             </div>
           </template>
@@ -1055,7 +1055,7 @@ const autoFlagLabel = computed(() => autoFlagOptions.find(o => o.value === spamS
                 <RelayTextarea v-model="newTemplateForm.emailBody" :rows="3" placeholder="Write your email body copy..." class-name="resize-none" />
                 <div class="flex items-center gap-2 flex-wrap pt-0.5">
                   <span class="text-[12px] text-muted-foreground font-medium">Insert tag:</span>
-                  <button v-for="tag in TAGS" :key="tag" type="button" class="px-2 py-0.5 bg-muted/60 hover:bg-muted text-[11px] font-mono rounded text-foreground border border-border/50 cursor-pointer" @click="insertTagIntoModal(tag)">{{ tag }}</button>
+                  <button v-for="tag in TAGS" :key="tag" type="button" class="px-2 py-0.5 bg-muted/60 hover:bg-accent text-[11px] font-mono rounded text-foreground border border-border/50 cursor-pointer" @click="insertTagIntoModal(tag)">{{ tag }}</button>
                 </div>
               </div>
               <div class="flex flex-col gap-1.5">
@@ -1077,7 +1077,7 @@ const autoFlagLabel = computed(() => autoFlagOptions.find(o => o.value === spamS
                 <RelayTextarea v-model="newTemplateForm.waBody" :rows="3" placeholder="Write your WhatsApp message body..." class-name="resize-none" />
                 <div class="flex items-center gap-2 flex-wrap pt-0.5">
                   <span class="text-[12px] text-muted-foreground font-medium">Insert tag:</span>
-                  <button v-for="tag in TAGS" :key="tag" type="button" class="px-2 py-0.5 bg-muted/60 hover:bg-muted text-[11px] font-mono rounded text-foreground border border-border/50 cursor-pointer" @click="insertTagIntoModal(tag)">{{ tag }}</button>
+                  <button v-for="tag in TAGS" :key="tag" type="button" class="px-2 py-0.5 bg-muted/60 hover:bg-accent text-[11px] font-mono rounded text-foreground border border-border/50 cursor-pointer" @click="insertTagIntoModal(tag)">{{ tag }}</button>
                 </div>
               </div>
               <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
@@ -1105,7 +1105,7 @@ const autoFlagLabel = computed(() => autoFlagOptions.find(o => o.value === spamS
                 <RelayTextarea v-model="newTemplateForm.videoMessage" :rows="3" placeholder="Hi {{FirstName}}, could you record a quick video review sharing your experience?" class-name="resize-none" />
                 <div class="flex items-center gap-2 flex-wrap pt-0.5">
                   <span class="text-[12px] text-muted-foreground font-medium">Insert tag:</span>
-                  <button v-for="tag in TAGS" :key="tag" type="button" class="px-2 py-0.5 bg-muted/60 hover:bg-muted text-[11px] font-mono rounded text-foreground border border-border/50 cursor-pointer" @click="insertTagIntoModal(tag)">{{ tag }}</button>
+                  <button v-for="tag in TAGS" :key="tag" type="button" class="px-2 py-0.5 bg-muted/60 hover:bg-accent text-[11px] font-mono rounded text-foreground border border-border/50 cursor-pointer" @click="insertTagIntoModal(tag)">{{ tag }}</button>
                 </div>
               </div>
               <div class="flex flex-col gap-1.5">
@@ -1138,7 +1138,7 @@ const autoFlagLabel = computed(() => autoFlagOptions.find(o => o.value === spamS
 
         <!-- Footer -->
         <div class="px-6 py-3.5 border-t border-border bg-muted/20 flex items-center justify-end gap-2 shrink-0">
-          <button type="button" class="rounded-lg border border-border px-4 py-2 text-[13px] font-medium text-muted-foreground hover:bg-muted/50 cursor-pointer" @click="showNewTemplate = false">Cancel</button>
+          <button type="button" class="rounded-lg border border-border px-4 py-2 text-[13px] font-medium text-muted-foreground hover:bg-accent cursor-pointer" @click="showNewTemplate = false">Cancel</button>
           <button type="button" class="rounded-lg bg-primary px-4 py-2 text-[13px] font-semibold text-primary-foreground shadow-sm hover:bg-primary/90 cursor-pointer disabled:opacity-50 inline-flex items-center gap-1.5" :disabled="!isNewTemplateValid" @click="saveNewTemplate">
             <Check class="size-3.5" /> Create Template
           </button>

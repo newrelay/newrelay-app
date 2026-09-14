@@ -270,7 +270,7 @@ defineExpose({
           <RelayButton
             type="button"
             variant="outline"
-            class="h-9 w-full justify-start border-border/80 bg-background text-[13px] font-medium text-muted-foreground shadow-sm hover:bg-muted/50"
+            class="h-9 w-full justify-start border-border/80 bg-background text-[13px] font-medium text-muted-foreground shadow-sm hover:bg-accent"
             @click="showAgentDropdown = !showAgentDropdown"
           >
             <Icon icon="i-lucide-plus" class="size-3.5" />

@@ -198,7 +198,7 @@ const onImport = async file => {
     >
       <button
         type="button"
-        class="inline-flex h-14 items-center justify-start rounded-md border border-input bg-background px-4 shadow-xs transition-colors hover:border-transparent hover:bg-muted/50"
+        class="inline-flex h-14 items-center justify-start rounded-md border border-input bg-background px-4 shadow-xs transition-colors hover:border-transparent hover:bg-accent"
         @click="openImport"
       >
         <span
@@ -216,7 +216,7 @@ const onImport = async file => {
 
       <button
         type="button"
-        class="inline-flex h-14 items-center justify-start rounded-md border border-input bg-background px-4 shadow-xs transition-colors hover:border-transparent hover:bg-muted/50"
+        class="inline-flex h-14 items-center justify-start rounded-md border border-input bg-background px-4 shadow-xs transition-colors hover:border-transparent hover:bg-accent"
         @click="openCreate"
       >
         <span

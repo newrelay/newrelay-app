@@ -128,7 +128,7 @@ export default {
     </div>
     <button
       type="button"
-      class="mr-1 flex size-8 items-center justify-center rounded-md border-0 bg-transparent text-muted-foreground shadow-none transition-colors hover:bg-muted hover:text-foreground"
+      class="mr-1 flex size-8 items-center justify-center rounded-md border-0 bg-transparent text-muted-foreground shadow-none transition-colors hover:bg-accent hover:text-foreground"
       :title="
         isEditorExpanded
           ? $t('CONVERSATION.REPLYBOX.COLLAPSE_EDITOR')

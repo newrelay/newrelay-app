@@ -35,11 +35,12 @@ describe('#actions', () => {
 
   describe('#update', () => {
     it('updates correct actions if API is success', async () => {
+      const dispatch = vi.fn();
       axios.post.mockResolvedValue({
-        data: { payload: { conversationId: '1', labels: ['on-hold'] } },
+        data: { payload: ['on-hold'] },
       });
       await actions.update(
-        { commit },
+        { commit, dispatch },
         { conversationId: '1', labels: ['on-hold'] }
       );
 
@@ -49,7 +50,7 @@ describe('#actions', () => {
           types.default.SET_CONVERSATION_LABELS,
           {
             id: '1',
-            data: { conversationId: '1', labels: ['on-hold'] },
+            data: ['on-hold'],
           },
         ],
         [
@@ -57,12 +58,17 @@ describe('#actions', () => {
           { isUpdating: false, isError: false },
         ],
       ]);
+      expect(dispatch).toHaveBeenCalledWith(
+        'updateConversation',
+        { id: 1, labels: ['on-hold'] },
+        { root: true }
+      );
     });
 
     it('sends correct actions if API is error', async () => {
       axios.post.mockRejectedValue({ message: 'Incorrect header' });
       await actions.update(
-        { commit },
+        { commit, dispatch: vi.fn() },
         { conversationId: '1', labels: ['on-hold'] }
       );
       expect(commit.mock.calls).toEqual([

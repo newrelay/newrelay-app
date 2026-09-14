@@ -56,7 +56,7 @@ export default {
     <RelayDropdownMenuTrigger as-child>
       <button
         type="button"
-        class="w-32 h-9 mx-1 flex items-center justify-between rounded-md border border-input bg-background px-3 text-xs text-foreground shadow-sm transition-colors hover:bg-muted/50 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary/30"
+        class="w-32 h-9 mx-1 flex items-center justify-between rounded-md border border-input bg-background px-3 text-xs text-foreground shadow-sm transition-colors hover:bg-accent focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary/30"
       >
         <span class="truncate">{{
           $t(`${pathPrefix}.${activeValue}.TEXT`)

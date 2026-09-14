@@ -203,7 +203,7 @@ const changePlaybackSpeed = () => {
         </button>
         <button
           type="button"
-          class="reset-base flex size-7 items-center justify-center rounded border-0 bg-transparent p-0 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground disabled:cursor-not-allowed disabled:opacity-50"
+          class="reset-base flex size-7 items-center justify-center rounded border-0 bg-transparent p-0 text-muted-foreground transition-colors hover:bg-accent hover:text-foreground disabled:cursor-not-allowed disabled:opacity-50"
           :disabled="!hasRecording"
           @click="toggleMute"
         >

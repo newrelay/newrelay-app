@@ -65,7 +65,7 @@ watch(open, isOpen => {
     <RelayDropdownMenuTrigger as-child>
       <button
         type="button"
-        class="w-full h-9 rounded-md border border-input bg-background px-3 text-[14px] shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary/30 text-left flex items-center justify-between transition-colors hover:bg-muted/50 cursor-pointer text-foreground"
+        class="w-full h-9 rounded-md border border-input bg-background px-3 text-[14px] shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary/30 text-left flex items-center justify-between transition-colors hover:bg-accent cursor-pointer text-foreground"
       >
         <span class="truncate">{{ selectedLabel }}</span>
         <span

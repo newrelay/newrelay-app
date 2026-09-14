@@ -177,8 +177,8 @@ watch(
           class="flex-1 flex items-center justify-center gap-2 py-1.5 text-xs font-medium rounded-md transition-colors"
           :class="[
             activeTab === tab.id
-              ? 'bg-muted text-foreground shadow-sm border border-border'
-              : 'text-muted-foreground hover:bg-muted hover:text-foreground',
+              ? 'bg-accent text-foreground shadow-sm border border-border'
+              : 'text-muted-foreground hover:bg-accent hover:text-foreground',
           ]"
           @click="activeTab = tab.id"
         >

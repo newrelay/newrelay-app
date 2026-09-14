@@ -289,7 +289,7 @@ onMounted(() => {
             <div class="relative">
               <RelayButton
                 variant="outline"
-                class="h-11 w-full justify-between rounded-md border-border bg-background px-4 text-[14px] !font-normal text-foreground hover:bg-muted/50"
+                class="h-11 w-full justify-between rounded-md border-border bg-background px-4 text-[14px] !font-normal text-foreground hover:bg-accent"
                 :class="{ 'bg-muted/50': openFilter === 'status' }"
                 @click="toggleFilter('status')"
               >
@@ -324,7 +324,7 @@ onMounted(() => {
             <div class="relative">
               <RelayButton
                 variant="outline"
-                class="h-11 w-full justify-between rounded-md border-border bg-background px-4 text-[14px] !font-normal text-foreground hover:bg-muted/50"
+                class="h-11 w-full justify-between rounded-md border-border bg-background px-4 text-[14px] !font-normal text-foreground hover:bg-accent"
                 :class="{ 'bg-muted/50': openFilter === 'operation' }"
                 @click="toggleFilter('operation')"
               >
@@ -468,7 +468,7 @@ onMounted(() => {
                 <tr
                   v-for="audit in audits"
                   :key="audit.id"
-                  class="border-b border-border/40 transition-colors hover:bg-muted/20"
+                  class="border-b border-border/40 transition-colors hover:bg-accent"
                 >
                   <td class="px-6 py-4">
                     <div class="flex items-center gap-3">

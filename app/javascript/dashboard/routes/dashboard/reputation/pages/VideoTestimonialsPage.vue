@@ -419,7 +419,7 @@ const stats = computed(() => {
       class="flex flex-col h-full overflow-y-auto transition-all duration-300 hide-scrollbar"
       :class="selectedVideo ? 'w-full lg:w-[65%] xl:w-[70%]' : 'w-full'"
     >
-      <div class="px-6 lg:px-10 py-6 bg-card shrink-0">
+      <div class="px-6 py-6 bg-card shrink-0">
         <div class="flex items-center text-sm text-muted-foreground mb-2">
           <span>Reputation</span>
           <span class="mx-2">/</span>
@@ -434,7 +434,7 @@ const stats = computed(() => {
             <!-- Widget Button -->
             <button
               @click="isWidgetModalOpen = true"
-              class="inline-flex items-center gap-2 h-9 px-3.5 rounded-lg border border-border bg-card text-[13.5px] font-medium text-foreground hover:bg-muted shadow-xs cursor-pointer"
+              class="inline-flex items-center gap-2 h-9 px-3.5 rounded-lg border border-border bg-card text-[13.5px] font-medium text-foreground hover:bg-accent shadow-xs cursor-pointer"
             >
               <LayoutGrid class="size-4" /> Widget
             </button>
@@ -505,7 +505,7 @@ const stats = computed(() => {
       </div>
 
       <!-- Filters & Toolbar -->
-      <div class="px-6 lg:px-10 py-5 border-b border-border bg-background shrink-0 sticky top-0 z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div class="px-6 py-5 border-b border-border bg-background shrink-0 sticky top-0 z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div class="flex flex-wrap items-center gap-2">
           <div class="relative w-48 mr-2">
             <Search class="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -521,12 +521,12 @@ const stats = computed(() => {
           <div class="relative">
             <button 
               @click="showPlatformDropdown = !showPlatformDropdown"
-              class="h-9 gap-1.5 rounded-lg text-xs font-medium bg-card border border-border shadow-xs px-3 hover:bg-muted inline-flex items-center cursor-pointer text-foreground"
+              class="h-9 gap-1.5 rounded-lg text-xs font-medium bg-card border border-border shadow-xs px-3 hover:bg-accent inline-flex items-center cursor-pointer text-foreground"
             >
               Platform <ChevronDown class="size-3.5 text-muted-foreground shrink-0" />
             </button>
             <div v-if="showPlatformDropdown" class="absolute left-0 mt-1.5 w-40 bg-card border border-border rounded-xl p-1 shadow-xl z-50 space-y-0.5">
-              <button v-for="p in ['All Platforms', 'Google', 'Facebook', 'Yelp', 'Trustpilot']" :key="p" @click="setPlatformFilter(p)" class="w-full text-left px-3 py-1.5 text-xs rounded-md font-medium hover:bg-muted text-foreground cursor-pointer">{{ p }}</button>
+              <button v-for="p in ['All Platforms', 'Google', 'Facebook', 'Yelp', 'Trustpilot']" :key="p" @click="setPlatformFilter(p)" class="w-full text-left px-3 py-1.5 text-xs rounded-md font-medium hover:bg-accent text-foreground cursor-pointer">{{ p }}</button>
             </div>
           </div>
 
@@ -534,12 +534,12 @@ const stats = computed(() => {
           <div class="relative">
             <button 
               @click="showRatingDropdown = !showRatingDropdown"
-              class="h-9 gap-1.5 rounded-lg text-xs font-medium bg-card border border-border shadow-xs px-3 hover:bg-muted inline-flex items-center cursor-pointer text-foreground"
+              class="h-9 gap-1.5 rounded-lg text-xs font-medium bg-card border border-border shadow-xs px-3 hover:bg-accent inline-flex items-center cursor-pointer text-foreground"
             >
               Rating <ChevronDown class="size-3.5 text-muted-foreground shrink-0" />
             </button>
             <div v-if="showRatingDropdown" class="absolute left-0 mt-1.5 w-44 bg-card border border-border rounded-xl p-1 shadow-xl z-50 space-y-0.5">
-              <button v-for="r in ['5 Stars', '4 Stars & Up', '3 Stars & Up', '2 Stars & Below']" :key="r" @click="setRatingFilter(r)" class="w-full text-left px-3 py-1.5 text-xs rounded-md font-medium hover:bg-muted text-foreground cursor-pointer">{{ r }}</button>
+              <button v-for="r in ['5 Stars', '4 Stars & Up', '3 Stars & Up', '2 Stars & Below']" :key="r" @click="setRatingFilter(r)" class="w-full text-left px-3 py-1.5 text-xs rounded-md font-medium hover:bg-accent text-foreground cursor-pointer">{{ r }}</button>
             </div>
           </div>
 
@@ -547,12 +547,12 @@ const stats = computed(() => {
           <div class="relative">
             <button 
               @click="showDurationDropdown = !showDurationDropdown"
-              class="h-9 gap-1.5 rounded-lg text-xs font-medium bg-card border border-border shadow-xs px-3 hover:bg-muted inline-flex items-center cursor-pointer text-foreground"
+              class="h-9 gap-1.5 rounded-lg text-xs font-medium bg-card border border-border shadow-xs px-3 hover:bg-accent inline-flex items-center cursor-pointer text-foreground"
             >
               Duration <ChevronDown class="size-3.5 text-muted-foreground shrink-0" />
             </button>
             <div v-if="showDurationDropdown" class="absolute left-0 mt-1.5 w-36 bg-card border border-border rounded-xl p-1 shadow-xl z-50 space-y-0.5">
-              <button v-for="d in ['< 30s', '30s - 1m', '> 1m']" :key="d" @click="showDurationDropdown = false" class="w-full text-left px-3 py-1.5 text-xs rounded-md font-medium hover:bg-muted text-foreground cursor-pointer">{{ d }}</button>
+              <button v-for="d in ['< 30s', '30s - 1m', '> 1m']" :key="d" @click="showDurationDropdown = false" class="w-full text-left px-3 py-1.5 text-xs rounded-md font-medium hover:bg-accent text-foreground cursor-pointer">{{ d }}</button>
             </div>
           </div>
 
@@ -560,12 +560,12 @@ const stats = computed(() => {
           <div class="relative">
             <button 
               @click="showStatusDropdown = !showStatusDropdown"
-              class="h-9 gap-1.5 rounded-lg text-xs font-medium bg-card border border-border shadow-xs px-3 hover:bg-muted inline-flex items-center cursor-pointer text-foreground"
+              class="h-9 gap-1.5 rounded-lg text-xs font-medium bg-card border border-border shadow-xs px-3 hover:bg-accent inline-flex items-center cursor-pointer text-foreground"
             >
               Status <ChevronDown class="size-3.5 text-muted-foreground shrink-0" />
             </button>
             <div v-if="showStatusDropdown" class="absolute left-0 mt-1.5 w-40 bg-card border border-border rounded-xl p-1 shadow-xl z-50 space-y-0.5">
-              <button v-for="s in ['Approved', 'Pending Approval', 'Published', 'Rejected']" :key="s" @click="setStatusFilter(s)" class="w-full text-left px-3 py-1.5 text-xs rounded-md font-medium hover:bg-muted text-foreground cursor-pointer">{{ s }}</button>
+              <button v-for="s in ['Approved', 'Pending Approval', 'Published', 'Rejected']" :key="s" @click="setStatusFilter(s)" class="w-full text-left px-3 py-1.5 text-xs rounded-md font-medium hover:bg-accent text-foreground cursor-pointer">{{ s }}</button>
             </div>
           </div>
 
@@ -574,14 +574,14 @@ const stats = computed(() => {
             <button
               @click="showAiTagsDropdown = !showAiTagsDropdown"
               class="h-9 gap-1.5 rounded-lg text-xs font-medium shadow-xs px-3 inline-flex items-center cursor-pointer"
-              :class="activeTag ? 'bg-primary/10 border border-primary/20 text-primary' : 'bg-card border border-border hover:bg-muted text-foreground'"
+              :class="activeTag ? 'bg-primary/10 border border-primary/20 text-primary' : 'bg-card border border-border hover:bg-accent text-foreground'"
             >
               {{ activeTag || 'Relay AI Tags' }} <ChevronDown class="size-3.5 shrink-0" :class="activeTag ? 'text-primary' : 'text-muted-foreground'" />
             </button>
             <div v-if="showAiTagsDropdown" class="absolute left-0 mt-1.5 w-44 max-h-64 overflow-y-auto bg-card border border-border rounded-xl p-1 shadow-xl z-50 space-y-0.5">
-              <button @click="setTagFilter('All Tags')" class="w-full text-left px-3 py-1.5 text-xs rounded-md font-medium hover:bg-muted text-foreground cursor-pointer">All Tags</button>
+              <button @click="setTagFilter('All Tags')" class="w-full text-left px-3 py-1.5 text-xs rounded-md font-medium hover:bg-accent text-foreground cursor-pointer">All Tags</button>
               <p v-if="!availableTags.length" class="px-3 py-1.5 text-xs text-muted-foreground">No AI tags yet — analyze a video.</p>
-              <button v-for="tag in availableTags" :key="tag" @click="setTagFilter(tag)" class="w-full text-left px-3 py-1.5 text-xs rounded-md font-medium hover:bg-muted text-foreground cursor-pointer">{{ tag }}</button>
+              <button v-for="tag in availableTags" :key="tag" @click="setTagFilter(tag)" class="w-full text-left px-3 py-1.5 text-xs rounded-md font-medium hover:bg-accent text-foreground cursor-pointer">{{ tag }}</button>
             </div>
           </div>
         </div>
@@ -590,28 +590,28 @@ const stats = computed(() => {
           <div class="relative">
             <button 
               @click="showSortDropdown = !showSortDropdown"
-              class="h-9 gap-1.5 rounded-lg text-xs font-medium bg-card border border-border shadow-xs px-3 hover:bg-muted inline-flex items-center cursor-pointer text-foreground"
+              class="h-9 gap-1.5 rounded-lg text-xs font-medium bg-card border border-border shadow-xs px-3 hover:bg-accent inline-flex items-center cursor-pointer text-foreground"
             >
               Newest First <ChevronDown class="size-3.5 text-muted-foreground shrink-0" />
             </button>
             <div v-if="showSortDropdown" class="absolute right-0 mt-1.5 w-40 bg-card border border-border rounded-xl p-1 shadow-xl z-50 space-y-0.5">
-              <button v-for="sort in ['Newest First', 'Oldest First', 'Highest Rating', 'Most Views']" :key="sort" @click="setSortFilter(sort)" class="w-full text-left px-3 py-1.5 text-xs rounded-md font-medium hover:bg-muted text-foreground cursor-pointer">{{ sort }}</button>
+              <button v-for="sort in ['Newest First', 'Oldest First', 'Highest Rating', 'Most Views']" :key="sort" @click="setSortFilter(sort)" class="w-full text-left px-3 py-1.5 text-xs rounded-md font-medium hover:bg-accent text-foreground cursor-pointer">{{ sort }}</button>
             </div>
           </div>
         </div>
       </div>
       
-      <div class="px-6 lg:px-10 py-4 flex items-center justify-between text-xs text-muted-foreground font-medium">
+      <div class="px-6 py-4 flex items-center justify-between text-xs text-muted-foreground font-medium">
         Showing {{ filteredVideos.length }} of {{ stats.total }} videos
         <div class="flex bg-card border border-border rounded-lg p-0.5 shadow-xs">
-          <button @click="viewMode = 'grid'" class="p-1.5 rounded-md transition-colors cursor-pointer" :class="viewMode === 'grid' ? 'bg-muted text-foreground' : 'text-muted-foreground hover:text-foreground hover:bg-muted'"><LayoutGrid class="size-4" /></button>
-          <button @click="viewMode = 'list'" class="p-1.5 rounded-md transition-colors cursor-pointer" :class="viewMode === 'list' ? 'bg-muted text-foreground' : 'text-muted-foreground hover:text-foreground hover:bg-muted'"><List class="size-4" /></button>
-          <button @click="viewMode = 'timeline'" class="p-1.5 rounded-md transition-colors cursor-pointer" :class="viewMode === 'timeline' ? 'bg-muted text-foreground' : 'text-muted-foreground hover:text-foreground hover:bg-muted'"><Clock class="size-4" /></button>
+          <button @click="viewMode = 'grid'" class="p-1.5 rounded-md transition-colors cursor-pointer" :class="viewMode === 'grid' ? 'bg-accent text-foreground' : 'text-muted-foreground hover:text-foreground hover:bg-accent'"><LayoutGrid class="size-4" /></button>
+          <button @click="viewMode = 'list'" class="p-1.5 rounded-md transition-colors cursor-pointer" :class="viewMode === 'list' ? 'bg-accent text-foreground' : 'text-muted-foreground hover:text-foreground hover:bg-accent'"><List class="size-4" /></button>
+          <button @click="viewMode = 'timeline'" class="p-1.5 rounded-md transition-colors cursor-pointer" :class="viewMode === 'timeline' ? 'bg-accent text-foreground' : 'text-muted-foreground hover:text-foreground hover:bg-accent'"><Clock class="size-4" /></button>
         </div>
       </div>
 
       <!-- Video Grid Area -->
-      <div class="px-6 lg:px-10 pb-10">
+      <div class="px-6 pb-10">
         <div 
           class="grid gap-6 transition-all"
           :class="[

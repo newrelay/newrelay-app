@@ -114,7 +114,7 @@ function useInAutomation(template) {
 
 <template>
   <div class="h-full bg-background flex flex-col min-h-0">
-    <div class="min-w-0 flex-1 overflow-y-auto p-6 lg:px-10">
+    <div class="min-w-0 flex-1 overflow-y-auto p-6">
       <div class="h-full min-w-0 w-full">
         <div
           class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8"
@@ -213,7 +213,7 @@ function useInAutomation(template) {
                   <tr
                     v-for="item in filteredTemplates"
                     :key="item.id"
-                    class="hover:bg-muted/30 transition-colors group cursor-pointer"
+                    class="hover:bg-accent transition-colors group cursor-pointer"
                     @click="openPreview(item)"
                   >
                     <td class="px-4 py-4">
@@ -275,7 +275,7 @@ function useInAutomation(template) {
                       >
                         <button
                           type="button"
-                          class="p-1.5 rounded-md hover:bg-muted hover:text-foreground transition-colors"
+                          class="p-1.5 rounded-md hover:bg-accent hover:text-foreground transition-colors"
                           :title="t('AUTORESPONDER.COMMON.COPY')"
                           @click="duplicateTemplate(item)"
                         >
@@ -283,7 +283,7 @@ function useInAutomation(template) {
                         </button>
                         <button
                           type="button"
-                          class="p-1.5 rounded-md hover:bg-muted hover:text-foreground transition-colors"
+                          class="p-1.5 rounded-md hover:bg-accent hover:text-foreground transition-colors"
                           :title="t('AUTORESPONDER.COMMON.EDIT')"
                           @click="openEditWizard(item)"
                         >
@@ -291,7 +291,7 @@ function useInAutomation(template) {
                         </button>
                         <button
                           type="button"
-                          class="p-1.5 rounded-md hover:bg-muted hover:text-destructive transition-colors"
+                          class="p-1.5 rounded-md hover:bg-accent hover:text-destructive transition-colors"
                           :title="t('AUTORESPONDER.COMMON.DELETE')"
                           @click="deleteTemplate(item)"
                         >

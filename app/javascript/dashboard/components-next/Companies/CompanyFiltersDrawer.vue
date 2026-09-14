@@ -205,7 +205,7 @@ const applyFilters = () => {
                 >
                   <RelayButton
                     variant="outline"
-                    class="h-9 w-full justify-between border-border bg-background px-3 text-[13px] font-normal shadow-sm hover:bg-muted/50"
+                    class="h-9 w-full justify-between border-border bg-background px-3 text-[13px] font-normal shadow-sm hover:bg-accent"
                     @click="
                       openPropertyMenu =
                         openPropertyMenu === draft.id ? null : draft.id
@@ -248,7 +248,7 @@ const applyFilters = () => {
               >
                 <RelayButton
                   variant="outline"
-                  class="h-9 w-full justify-between border-border bg-background px-3 text-[13px] font-normal text-primary shadow-sm hover:bg-muted/50"
+                  class="h-9 w-full justify-between border-border bg-background px-3 text-[13px] font-normal text-primary shadow-sm hover:bg-accent"
                   @click="
                     openOperatorMenu =
                       openOperatorMenu === draft.id ? null : draft.id

@@ -170,7 +170,7 @@ defineExpose({ hasItems });
       :id="`slash-item-${index}`"
       :key="item.value"
       type="button"
-      class="inline-flex items-center justify-start w-full h-8 min-w-0 gap-2 px-2 py-1.5 border-0 rounded-lg text-foreground hover:bg-muted dark:hover:bg-accent"
+      class="inline-flex items-center justify-start w-full h-8 min-w-0 gap-2 px-2 py-1.5 border-0 rounded-lg text-foreground hover:bg-accent dark:hover:bg-accent"
       :class="{
         'bg-muted dark:bg-accent': index === selectedIndex,
       }"

@@ -162,7 +162,7 @@ const toggleSidebar = () => {
             </span>
             <button
               type="button"
-              class="rounded-sm p-1 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+              class="rounded-sm p-1 text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
               :aria-label="t('CONVERSATION.HEADER.CLOSE')"
               @click="
                 messageSearchQuery

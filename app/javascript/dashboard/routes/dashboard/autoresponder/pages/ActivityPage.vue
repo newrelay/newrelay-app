@@ -101,7 +101,7 @@ function openPreview(item) {
 
 <template>
   <div
-    class="flex-1 overflow-y-auto bg-background p-6 lg:px-10 hide-scrollbar flex flex-col"
+    class="flex-1 overflow-y-auto bg-background p-6 hide-scrollbar flex flex-col"
   >
     <div class="max-w-[1600px] w-full mx-auto flex-1 flex flex-col min-h-0">
       <div
@@ -243,7 +243,7 @@ function openPreview(item) {
                 <tr
                   v-for="item in filteredActivities"
                   :key="item.id"
-                  class="hover:bg-muted/30 transition-colors group cursor-pointer"
+                  class="hover:bg-accent transition-colors group cursor-pointer"
                   :class="
                     selectedActivity && selectedActivity.id === item.id
                       ? 'bg-primary/5'
@@ -324,7 +324,7 @@ function openPreview(item) {
                   <td class="px-6 py-4 text-center">
                     <button
                       type="button"
-                      class="h-7 text-xs px-3 font-medium rounded-md border border-border hover:bg-muted transition-colors"
+                      class="h-7 text-xs px-3 font-medium rounded-md border border-border hover:bg-accent transition-colors"
                       @click.stop="openPreview(item)"
                     >
                       {{ t('AUTORESPONDER.ACTIVITY.VIEW') }}

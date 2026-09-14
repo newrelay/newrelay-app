@@ -161,7 +161,7 @@ function ratingLabel(rating) {
       class="flex-1 overflow-y-auto flex flex-col transition-all duration-300"
       :class="selected ? 'mr-[380px]' : ''"
     >
-      <div class="px-6 lg:px-10 py-6 bg-card shrink-0">
+      <div class="px-6 py-6 bg-card shrink-0">
         <div class="flex items-center text-sm text-muted-foreground mb-2">
           <span>Reputation</span><span class="mx-2">/</span>
           <span class="text-foreground">Feedback</span>
@@ -179,7 +179,7 @@ function ratingLabel(rating) {
         </p>
       </div>
 
-      <div class="px-6 lg:px-10 py-6 space-y-6">
+      <div class="px-6 py-6 space-y-6">
         <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
           <div class="rounded-xl border border-border bg-card p-4">
             <div class="flex items-center gap-2 text-muted-foreground text-xs font-medium uppercase tracking-wide">
@@ -231,7 +231,7 @@ function ratingLabel(rating) {
               :class="
                 ratingFilter === opt.id
                   ? 'bg-primary text-primary-foreground border-primary'
-                  : 'bg-card text-foreground border-border hover:bg-muted'
+                  : 'bg-card text-foreground border-border hover:bg-accent'
               "
               @click="ratingFilter = opt.id"
             >
@@ -260,7 +260,7 @@ function ratingLabel(rating) {
             v-for="item in filtered"
             :key="item.id"
             type="button"
-            class="w-full text-left px-4 py-4 hover:bg-muted/50 transition-colors flex gap-3"
+            class="w-full text-left px-4 py-4 hover:bg-accent transition-colors flex gap-3"
             :class="selected && selected.id === item.id ? 'bg-muted/60' : ''"
             @click="selected = item"
           >
@@ -298,7 +298,7 @@ function ratingLabel(rating) {
         <h2 class="text-sm font-medium text-foreground">Private intercept</h2>
         <button
           type="button"
-          class="size-8 inline-flex items-center justify-center rounded-md hover:bg-muted text-muted-foreground"
+          class="size-8 inline-flex items-center justify-center rounded-md hover:bg-accent text-muted-foreground"
           @click="selected = null"
         >
           <X class="size-4" />

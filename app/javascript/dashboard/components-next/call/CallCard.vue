@@ -151,7 +151,7 @@ onBeforeUnmount(onDragEnd);
         <button
           v-if="isOngoing && showMute"
           type="button"
-          class="flex size-9 items-center justify-center rounded-lg bg-muted text-foreground transition-colors hover:bg-muted/80"
+          class="flex size-9 items-center justify-center rounded-lg bg-muted text-foreground transition-colors hover:bg-accent"
           :aria-label="
             isMuted
               ? t('CONVERSATION.VOICE_WIDGET.UNMUTE')
@@ -184,7 +184,7 @@ onBeforeUnmount(onDragEnd);
       <div class="mb-3 h-px w-full bg-border/60" />
       <button
         type="button"
-        class="group flex w-full items-center justify-between rounded-lg px-3 py-2 transition-colors hover:bg-muted/50"
+        class="group flex w-full items-center justify-between rounded-lg px-3 py-2 transition-colors hover:bg-accent"
         @click="emit('goToConversation')"
       >
         <span class="flex items-center gap-2 text-primary">

@@ -80,7 +80,7 @@ const learnMore = () => {
 
 <template>
   <div
-    class="flex-1 flex flex-col items-center justify-center p-6 lg:px-10 bg-background text-foreground animate-in fade-in duration-300 overflow-y-auto w-full h-full min-h-0"
+    class="flex-1 flex flex-col items-center justify-center p-6 bg-background text-foreground animate-in fade-in duration-300 overflow-y-auto w-full h-full min-h-0"
   >
     <div v-if="uiFlags.isFetching" class="flex justify-center my-4">
       <Spinner class="text-primary" />

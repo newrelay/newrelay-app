@@ -225,7 +225,7 @@ onMounted(load);
           <tr
             v-for="deal in displayedDeals"
             :key="deal.id"
-            class="group transition-colors hover:bg-muted/30"
+            class="group transition-colors hover:bg-accent"
             :class="showMockDeals ? '' : 'cursor-pointer'"
             @click="onDealClick(deal)"
           >

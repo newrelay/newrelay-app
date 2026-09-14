@@ -124,7 +124,7 @@ export default {
       <RelayButton
         type="button"
         variant="outline"
-        class="h-9 border-border bg-muted px-5 text-[13px] font-medium text-foreground shadow-sm hover:bg-muted/80"
+        class="h-9 border-border bg-muted px-5 text-[13px] font-medium text-foreground shadow-sm hover:bg-accent"
         @click.prevent="onClose"
       >
         {{ $t('CANNED_MGMT.EDIT.CANCEL_BUTTON_TEXT') }}

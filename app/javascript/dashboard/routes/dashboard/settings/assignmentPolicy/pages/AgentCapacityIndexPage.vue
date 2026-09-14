@@ -140,7 +140,7 @@ onMounted(() => {
               <RelayButton
                 variant="outline"
                 size="icon"
-                class="size-8 border-border/60 bg-background p-0 text-muted-foreground shadow-none hover:bg-muted/50 hover:text-foreground"
+                class="size-8 border-border/60 bg-background p-0 text-muted-foreground shadow-none hover:bg-accent hover:text-foreground"
                 @click="onClickEditPolicy(policy.id)"
               >
                 <Icon icon="i-lucide-pencil" class="size-3.5" />

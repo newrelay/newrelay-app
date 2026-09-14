@@ -303,7 +303,7 @@ onMounted(() => {
             <tr
               v-for="company in companies"
               :key="company.id"
-              class="hover:bg-muted transition-colors cursor-pointer"
+              class="hover:bg-accent transition-colors cursor-pointer"
               @click="openEditDrawer(company)"
             >
               <td class="p-3 text-center" @click.stop>

@@ -65,7 +65,7 @@ export default {
       :href="`${profile.link}${socialProfiles[profile.key]}`"
       target="_blank"
       rel="noopener noreferrer nofollow"
-      class="flex items-center justify-center p-1.5 rounded-md hover:bg-muted/50 transition-colors"
+      class="flex items-center justify-center p-1.5 rounded-md hover:bg-accent transition-colors"
       :title="profile.key"
     >
       <span

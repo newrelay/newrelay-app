@@ -252,7 +252,7 @@ const addAttributes = async () => {
                   :class="
                     attributeModel === model.id
                       ? 'bg-primary text-primary-foreground'
-                      : 'text-foreground hover:bg-muted'
+                      : 'text-foreground hover:bg-accent'
                   "
                   @click="selectModel(model.id)"
                 >
@@ -353,7 +353,7 @@ const addAttributes = async () => {
                   :class="
                     attributeType === type.id
                       ? 'bg-primary text-primary-foreground'
-                      : 'text-foreground hover:bg-muted'
+                      : 'text-foreground hover:bg-accent'
                   "
                   @click="selectType(type.id)"
                 >

@@ -487,7 +487,7 @@ watch(selectedLocationId, id => {
 </script>
 
 <template>
-  <div class="p-6 lg:px-10 max-w-7xl mx-auto space-y-8">
+  <div class="p-6 max-w-7xl mx-auto space-y-8">
     <!-- eslint-disable -->
     <!-- Header -->
     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -511,7 +511,7 @@ watch(selectedLocationId, id => {
           class="w-full text-left px-3.5 py-2.5 rounded-lg transition-all duration-200 text-xs font-semibold flex items-center justify-between"
           :class="currentTab === item.id
             ? 'bg-primary text-primary-foreground shadow-sm'
-            : 'hover:bg-muted/50 text-muted-foreground hover:text-foreground'"
+            : 'hover:bg-accent text-muted-foreground hover:text-foreground'"
           @click="handleTabChange(item.id)"
         >
           {{ item.label }}
@@ -642,7 +642,7 @@ watch(selectedLocationId, id => {
                   </button>
                   <button
                     v-else
-                    class="w-full py-2 bg-background hover:bg-muted text-foreground rounded-xl text-xs font-bold border border-border shadow-sm transition-all"
+                    class="w-full py-2 bg-background hover:bg-accent text-foreground rounded-xl text-xs font-bold border border-border shadow-sm transition-all"
                     @click="openConnectModal(platform)"
                   >
                     Connect account
@@ -794,7 +794,7 @@ watch(selectedLocationId, id => {
               <p class="text-xs text-muted-foreground mt-0.5">Customize outbound customer requests templates</p>
             </div>
             <button
-              class="px-3.5 py-1.5 bg-card hover:bg-muted text-white rounded-xl text-xs font-bold transition-all shadow-sm"
+              class="px-3.5 py-1.5 bg-card hover:bg-accent text-white rounded-xl text-xs font-bold transition-all shadow-sm"
               @click="newTemplate"
             >
               + Create Template
@@ -810,7 +810,7 @@ watch(selectedLocationId, id => {
                 class="w-full text-left px-3.5 py-2.5 rounded-xl transition-all flex items-center justify-between text-xs font-bold"
                 :class="activeTemplate?.id === t.id
                   ? 'bg-primary/10 text-primary '
-                  : 'hover:bg-muted text-foreground '"
+                  : 'hover:bg-accent text-foreground '"
                 @click="selectTemplate(t)"
               >
                 <div class="truncate">
@@ -859,13 +859,13 @@ watch(selectedLocationId, id => {
               <div class="flex items-center gap-2 flex-wrap">
                 <span class="text-[10px] text-muted-foreground">Insert tag:</span>
                 <button
-                  class="px-2 py-1 text-[9px] font-bold bg-muted text-muted-foreground rounded hover:bg-muted transition-colors"
+                  class="px-2 py-1 text-[9px] font-bold bg-muted text-muted-foreground rounded hover:bg-accent transition-colors"
                   @click="insertPlaceholder('{{contact.name}}')"
                 >
                   Contact Name
                 </button>
                 <button
-                  class="px-2 py-1 text-[9px] font-bold bg-muted text-muted-foreground rounded hover:bg-muted transition-colors"
+                  class="px-2 py-1 text-[9px] font-bold bg-muted text-muted-foreground rounded hover:bg-accent transition-colors"
                   @click="insertPlaceholder('{{review_link}}')"
                 >
                   Review URL

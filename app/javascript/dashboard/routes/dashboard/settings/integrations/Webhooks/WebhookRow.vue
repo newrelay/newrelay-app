@@ -42,7 +42,7 @@ const displayName = computed(
 
 <template>
   <div
-    class="group grid grid-cols-[2fr_2fr_1fr] items-center gap-4 p-4 transition-colors hover:bg-muted/10"
+    class="group grid grid-cols-[2fr_2fr_1fr] items-center gap-4 p-4 transition-colors hover:bg-accent"
   >
     <div class="flex min-w-0 items-center gap-4">
       <div

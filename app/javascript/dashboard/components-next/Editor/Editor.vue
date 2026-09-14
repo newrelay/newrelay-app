@@ -33,6 +33,7 @@ const emit = defineEmits(['update:modelValue', 'executeCopilotAction', 'blur']);
 const slots = useSlots();
 
 const isFocused = ref(false);
+const isHovered = ref(false);
 
 const characterCount = computed(() => props.modelValue.length);
 
@@ -84,11 +85,13 @@ watch(
       {{ label }}
     </label>
     <div
-      class="flex flex-col w-full gap-2 px-3 py-3 transition-all duration-500 ease-in-out border rounded-lg editor-wrapper bg-muted/40"
+      class="flex flex-col w-full gap-2 px-3 py-3 transition-colors duration-150 border rounded-lg editor-wrapper"
       :class="[
         {
-          'cursor-not-allowed opacity-50 pointer-events-none !bg-muted/40 disabled:border-border dark:disabled:border-border':
+          'cursor-not-allowed opacity-50 pointer-events-none !bg-background disabled:border-border dark:disabled:border-border':
             disabled,
+          'is-hovered !bg-accent': isHovered && !disabled,
+          'bg-background': !isHovered || disabled,
           'border-primary dark:border-primary': isFocused,
           'hover:border-border dark:hover:border-border border-border dark:border-border':
             !isFocused && messageType !== 'error',
@@ -96,6 +99,8 @@ watch(
             messageType === 'error' && !isFocused,
         },
       ]"
+      @mouseenter="isHovered = !disabled"
+      @mouseleave="isHovered = false"
     >
       <WootEditor
         :editor-id="editorKey"
@@ -143,6 +148,23 @@ watch(
 
 <style lang="scss" scoped>
 .editor-wrapper {
+  // ProseMirror sets `background: white` on the menubar/editor; beat that so
+  // rest stays white via the wrapper and hover is --accent (#EDF0FF).
+  :deep(.relative.w-full),
+  :deep(.ProseMirror-menubar-wrapper),
+  :deep(.ProseMirror-menubar),
+  :deep(.ProseMirror) {
+    background: transparent !important;
+  }
+
+  &.is-hovered,
+  &.is-hovered :deep(.relative.w-full),
+  &.is-hovered :deep(.ProseMirror-menubar-wrapper),
+  &.is-hovered :deep(.ProseMirror-menubar),
+  &.is-hovered :deep(.ProseMirror) {
+    background: rgb(var(--accent) / 1) !important;
+  }
+
   :deep(.ProseMirror-menubar-wrapper) {
     .ProseMirror.ProseMirror-relay-style {
       p {

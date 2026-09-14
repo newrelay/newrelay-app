@@ -240,7 +240,7 @@ const confirmDeletion = () => {
                   <tr
                     v-for="role in filteredRecords"
                     :key="role.id"
-                    class="group transition-colors hover:bg-muted/10"
+                    class="group transition-colors hover:bg-accent"
                   >
                     <td
                       class="w-[120px] py-4 pr-4 align-top font-medium text-foreground"

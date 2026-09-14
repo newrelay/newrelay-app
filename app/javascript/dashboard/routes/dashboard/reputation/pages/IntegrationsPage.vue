@@ -374,7 +374,7 @@ const listingOptions = computed(() => listings.value.map(l => ({ value: l.id, la
     :class="
       embedded
         ? 'w-full space-y-6'
-        : 'flex-1 overflow-y-auto w-full bg-background p-6 lg:px-10'
+        : 'flex-1 overflow-y-auto w-full bg-background p-6'
     "
   >
     <div
@@ -466,7 +466,7 @@ const listingOptions = computed(() => listings.value.map(l => ({ value: l.id, la
             <button
               v-if="embedded"
               class="p-1.5 rounded-lg transition-colors"
-              :class="viewMode === 'grid3' ? 'bg-muted text-foreground' : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'"
+              :class="viewMode === 'grid3' ? 'bg-accent text-foreground' : 'text-muted-foreground hover:text-foreground hover:bg-accent'"
               title="3 Columns Grid"
               @click="viewMode = 'grid3'"
             >
@@ -475,7 +475,7 @@ const listingOptions = computed(() => listings.value.map(l => ({ value: l.id, la
             <button
               v-else
               class="p-1.5 rounded-lg transition-colors"
-              :class="viewMode === 'grid4' ? 'bg-muted text-foreground' : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'"
+              :class="viewMode === 'grid4' ? 'bg-accent text-foreground' : 'text-muted-foreground hover:text-foreground hover:bg-accent'"
               title="4 Columns"
               @click="viewMode = 'grid4'"
             >
@@ -483,7 +483,7 @@ const listingOptions = computed(() => listings.value.map(l => ({ value: l.id, la
             </button>
             <button
               class="p-1.5 rounded-lg transition-colors"
-              :class="viewMode === 'grid2' ? 'bg-muted text-foreground' : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'"
+              :class="viewMode === 'grid2' ? 'bg-accent text-foreground' : 'text-muted-foreground hover:text-foreground hover:bg-accent'"
               title="2 Columns Grid"
               @click="viewMode = 'grid2'"
             >
@@ -491,7 +491,7 @@ const listingOptions = computed(() => listings.value.map(l => ({ value: l.id, la
             </button>
             <button
               class="p-1.5 rounded-lg transition-colors"
-              :class="viewMode === 'list' ? 'bg-muted text-foreground' : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'"
+              :class="viewMode === 'list' ? 'bg-accent text-foreground' : 'text-muted-foreground hover:text-foreground hover:bg-accent'"
               title="List View"
               @click="viewMode = 'list'"
             >
@@ -535,7 +535,7 @@ const listingOptions = computed(() => listings.value.map(l => ({ value: l.id, la
             <button v-else class="text-[13px] font-medium text-primary hover:underline cursor-pointer" @click="connect(item)">Connect →</button>
           </div>
         </div>
-        <div v-if="selectedStatus === 'all' || selectedStatus === 'coming_soon'" class="bg-card rounded-2xl border border-dashed border-border p-6 shadow-xs flex flex-col justify-between hover:border-primary/50 hover:bg-muted/10 transition-all">
+        <div v-if="selectedStatus === 'all' || selectedStatus === 'coming_soon'" class="bg-card rounded-2xl border border-dashed border-border p-6 shadow-xs flex flex-col justify-between hover:border-primary/50 hover:bg-accent transition-all">
           <div>
             <div class="flex items-center gap-3 mb-3">
               <div class="size-8 rounded-full bg-primary/10 text-primary flex items-center justify-center shrink-0"><Plus class="size-4" /></div>
@@ -564,8 +564,8 @@ const listingOptions = computed(() => listings.value.map(l => ({ value: l.id, la
             </div>
           </div>
           <div class="flex items-center gap-3 shrink-0 self-end sm:self-center w-full sm:w-auto justify-end">
-            <button v-if="item.connected" class="h-8 px-3 text-[12.5px] rounded-lg border border-border hover:bg-muted text-primary inline-flex items-center cursor-pointer" @click="openConfigure(item)">Configure</button>
-            <button v-else-if="item.isComingSoon" class="h-8 px-3 text-[12.5px] rounded-lg border border-border hover:bg-muted text-primary inline-flex items-center cursor-pointer" @click="openRequestModal(item.name)">Notify Me</button>
+            <button v-if="item.connected" class="h-8 px-3 text-[12.5px] rounded-lg border border-border hover:bg-accent text-primary inline-flex items-center cursor-pointer" @click="openConfigure(item)">Configure</button>
+            <button v-else-if="item.isComingSoon" class="h-8 px-3 text-[12.5px] rounded-lg border border-border hover:bg-accent text-primary inline-flex items-center cursor-pointer" @click="openRequestModal(item.name)">Notify Me</button>
             <button v-else class="h-8 px-3 text-[12.5px] rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 inline-flex items-center cursor-pointer" @click="connect(item)">Connect</button>
           </div>
         </div>
@@ -610,9 +610,9 @@ const listingOptions = computed(() => listings.value.map(l => ({ value: l.id, la
           </div>
         </div>
         <div class="flex items-center justify-between pt-3 border-t border-border">
-          <button class="text-[13px] text-destructive border border-border hover:bg-muted rounded-lg px-3 py-2 font-medium cursor-pointer" @click="disconnectIntegration(selectedIntegration)">Disconnect Account</button>
+          <button class="text-[13px] text-destructive border border-border hover:bg-accent rounded-lg px-3 py-2 font-medium cursor-pointer" @click="disconnectIntegration(selectedIntegration)">Disconnect Account</button>
           <div class="flex items-center gap-2">
-            <button class="rounded-lg border border-border px-4 py-2 text-sm font-medium text-muted-foreground hover:bg-muted/50 cursor-pointer" @click="isConfigModalOpen = false">Cancel</button>
+            <button class="rounded-lg border border-border px-4 py-2 text-sm font-medium text-muted-foreground hover:bg-accent cursor-pointer" @click="isConfigModalOpen = false">Cancel</button>
             <button class="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow-sm hover:bg-primary/90 cursor-pointer" @click="isConfigModalOpen = false">Save Changes</button>
           </div>
         </div>
@@ -644,7 +644,7 @@ const listingOptions = computed(() => listings.value.map(l => ({ value: l.id, la
             <p v-if="requestError" class="text-[13px] text-destructive">{{ requestError }}</p>
           </div>
           <div class="flex items-center justify-end gap-2 pt-3 border-t border-border">
-            <button class="rounded-lg border border-border px-4 py-2 text-sm font-medium text-muted-foreground hover:bg-muted/50 cursor-pointer" @click="isRequestModalOpen = false">Cancel</button>
+            <button class="rounded-lg border border-border px-4 py-2 text-sm font-medium text-muted-foreground hover:bg-accent cursor-pointer" @click="isRequestModalOpen = false">Cancel</button>
             <button class="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow-sm hover:bg-primary/90 inline-flex items-center gap-1.5 cursor-pointer disabled:opacity-50" :disabled="!requestedPlatformName || requestSaving" @click="submitRequest">
               <Send class="size-3.5" /> {{ requestSaving ? 'Submitting…' : 'Submit Request' }}
             </button>
@@ -681,7 +681,7 @@ const listingOptions = computed(() => listings.value.map(l => ({ value: l.id, la
           <p v-if="connectError" class="text-[12.5px] text-destructive">{{ connectError }}</p>
         </div>
         <div class="flex items-center justify-end gap-2 pt-3 border-t border-border">
-          <button class="rounded-lg border border-border px-4 py-2 text-sm font-medium text-muted-foreground hover:bg-muted/50 cursor-pointer" @click="isConnectModalOpen = false">Cancel</button>
+          <button class="rounded-lg border border-border px-4 py-2 text-sm font-medium text-muted-foreground hover:bg-accent cursor-pointer" @click="isConnectModalOpen = false">Cancel</button>
           <button class="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow-sm hover:bg-primary/90 inline-flex items-center gap-1.5 cursor-pointer disabled:opacity-50" :disabled="connectSaving" @click="submitManualConnect">
             <Loader2 v-if="connectSaving" class="size-3.5 animate-spin" /><Check v-else class="size-3.5" /> Connect
           </button>
@@ -705,7 +705,7 @@ const listingOptions = computed(() => listings.value.map(l => ({ value: l.id, la
         </div>
         <template v-else>
           <div v-if="googleLocations.length" class="space-y-2 max-h-72 overflow-y-auto">
-            <button v-for="loc in googleLocations" :key="loc.location_id" type="button" class="w-full text-left p-3 rounded-xl border transition-colors cursor-pointer" :class="selectedLocation && selectedLocation.location_id === loc.location_id ? 'border-primary bg-primary/5' : 'border-border hover:bg-muted/40'" @click="selectedLocation = loc">
+            <button v-for="loc in googleLocations" :key="loc.location_id" type="button" class="w-full text-left p-3 rounded-xl border transition-colors cursor-pointer" :class="selectedLocation && selectedLocation.location_id === loc.location_id ? 'border-primary bg-primary/5' : 'border-border hover:bg-accent'" @click="selectedLocation = loc">
               <div class="text-[13.5px] font-medium text-foreground">{{ loc.location_name }}</div>
               <div class="text-[12px] text-muted-foreground truncate">{{ loc.location_id }}</div>
             </button>
@@ -714,7 +714,7 @@ const listingOptions = computed(() => listings.value.map(l => ({ value: l.id, la
         </template>
         <p v-if="locationError" class="text-[12.5px] text-destructive">{{ locationError }}</p>
         <div class="flex items-center justify-end gap-2 pt-3 border-t border-border">
-          <button class="rounded-lg border border-border px-4 py-2 text-sm font-medium text-muted-foreground hover:bg-muted/50 cursor-pointer" @click="showLocationModal = false">Cancel</button>
+          <button class="rounded-lg border border-border px-4 py-2 text-sm font-medium text-muted-foreground hover:bg-accent cursor-pointer" @click="showLocationModal = false">Cancel</button>
           <button class="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow-sm hover:bg-primary/90 inline-flex items-center gap-1.5 cursor-pointer disabled:opacity-50" :disabled="connectingLocation || !selectedLocation" @click="submitGoogleLocation">
             <Loader2 v-if="connectingLocation" class="size-3.5 animate-spin" /><Check v-else class="size-3.5" /> Connect Location
           </button>

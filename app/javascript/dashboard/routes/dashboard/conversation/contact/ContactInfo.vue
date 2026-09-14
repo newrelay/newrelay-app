@@ -85,7 +85,7 @@ export default {
       );
     },
     actionButtonClass() {
-      return 'flex size-8 items-center justify-center rounded-lg border border-border bg-transparent text-foreground transition-colors hover:border-transparent hover:bg-muted/50';
+      return 'flex size-8 items-center justify-center rounded-lg border border-border bg-transparent text-foreground transition-colors hover:border-transparent hover:bg-accent';
     },
     deleteButtonClass() {
       return 'flex size-8 items-center justify-center rounded-lg border border-border bg-transparent text-destructive transition-colors hover:border-transparent hover:bg-destructive/10';

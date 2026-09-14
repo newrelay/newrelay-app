@@ -159,7 +159,7 @@ const handleAvatarDelete = () => {
       <RelayButton
         variant="ghost"
         size="icon"
-        class="-ml-2 size-9 text-muted-foreground hover:bg-muted/50 hover:text-foreground"
+        class="-ml-2 size-9 text-muted-foreground hover:bg-accent hover:text-foreground"
         :aria-label="t('CONTACTS_LAYOUT.DETAIL.BACK')"
         @click="emit('back')"
       >

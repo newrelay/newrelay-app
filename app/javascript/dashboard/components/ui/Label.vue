@@ -193,7 +193,7 @@ export default {
 }
 
 .label-close--button {
-  @apply text-muted-foreground -mb-0.5 rounded-sm cursor-pointer flex items-center justify-center hover:bg-muted;
+  @apply text-muted-foreground -mb-0.5 rounded-sm cursor-pointer flex items-center justify-center hover:bg-accent;
 
   svg {
     @apply text-muted-foreground;

@@ -130,7 +130,7 @@ const toggleSection = key => {
     >
       <button
         type="button"
-        class="group mb-1 flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-sm font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+        class="group mb-1 flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-sm font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
         @click="toggleSection(section.key)"
       >
         <span class="flex items-center gap-2">
@@ -164,8 +164,8 @@ const toggleSection = key => {
             class="relative flex items-center justify-between rounded-lg px-3 py-2 text-left text-sm font-medium transition-colors"
             :class="
               item.active
-                ? 'bg-muted text-foreground'
-                : 'text-muted-foreground hover:bg-muted/50 hover:text-foreground'
+                ? 'bg-accent text-foreground'
+                : 'text-muted-foreground hover:bg-accent hover:text-foreground'
             "
           >
             <span

@@ -277,7 +277,7 @@ export default {
                         <div
                           v-for="sla in filteredRecords"
                           :key="sla.id"
-                          class="group grid grid-cols-[1.5fr_1fr_0.7fr_0.7fr_0.7fr_100px] items-center px-4 py-4 transition-colors hover:bg-muted/10"
+                          class="group grid grid-cols-[1.5fr_1fr_0.7fr_0.7fr_0.7fr_100px] items-center px-4 py-4 transition-colors hover:bg-accent"
                         >
                           <div class="min-w-0 pr-4">
                             <p

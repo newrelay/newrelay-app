@@ -396,7 +396,7 @@ defineExpose({ open, close });
             <div>
               <RelayButton
                 variant="outline"
-                class="h-9 border-dashed border-border text-[13px] font-medium text-muted-foreground shadow-sm hover:bg-muted/50 hover:text-foreground"
+                class="h-9 border-dashed border-border text-[13px] font-medium text-muted-foreground shadow-sm hover:bg-accent hover:text-foreground"
                 @click="appendNewCondition"
               >
                 <Icon icon="i-lucide-plus" class="size-4" />
@@ -445,7 +445,7 @@ defineExpose({ open, close });
             <div class="pt-2">
               <RelayButton
                 variant="outline"
-                class="h-9 border-dashed border-border text-[13px] font-medium text-muted-foreground shadow-sm hover:bg-muted/50 hover:text-foreground"
+                class="h-9 border-dashed border-border text-[13px] font-medium text-muted-foreground shadow-sm hover:bg-accent hover:text-foreground"
                 @click="appendNewAction"
               >
                 <Icon icon="i-lucide-plus" class="size-4" />

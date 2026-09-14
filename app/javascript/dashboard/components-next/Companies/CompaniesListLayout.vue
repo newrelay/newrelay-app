@@ -39,7 +39,7 @@ const emit = defineEmits([
   >
     <div
       class="flex min-h-0 flex-1 flex-col overflow-y-auto"
-      :class="isEmptyState ? 'px-4' : 'p-6 lg:px-10'"
+      :class="isEmptyState ? 'px-4' : 'p-6'"
     >
       <div
         class="mx-auto flex w-full flex-1 flex-col"

@@ -227,7 +227,7 @@ const confirmPlaceHolderText = computed(() =>
                 :class="[
                   teamsViewType === 'grid'
                     ? 'bg-primary/5 text-primary'
-                    : 'bg-muted/50 text-muted-foreground hover:bg-muted',
+                    : 'bg-muted/50 text-muted-foreground hover:bg-accent',
                 ]"
                 :aria-label="$t('TEAMS_SETTINGS.VIEW.GRID')"
                 @click="teamsViewType = 'grid'"
@@ -240,7 +240,7 @@ const confirmPlaceHolderText = computed(() =>
                 :class="[
                   teamsViewType === 'list'
                     ? 'bg-primary/5 text-primary'
-                    : 'text-muted-foreground hover:bg-muted',
+                    : 'text-muted-foreground hover:bg-accent',
                 ]"
                 :aria-label="$t('TEAMS_SETTINGS.VIEW.LIST')"
                 @click="teamsViewType = 'list'"
@@ -370,7 +370,7 @@ const confirmPlaceHolderText = computed(() =>
                   <RelayButton
                     variant="outline"
                     size="icon"
-                    class="size-9 border-border/80 bg-background p-0 text-muted-foreground shadow-xs hover:bg-muted hover:text-foreground"
+                    class="size-9 border-border/80 bg-background p-0 text-muted-foreground shadow-xs hover:bg-accent hover:text-foreground"
                     :disabled="loading[team.id]"
                     @click="toggleMenu(team.id)"
                   >
@@ -421,7 +421,7 @@ const confirmPlaceHolderText = computed(() =>
                   :class="[
                     page === currentPage
                       ? 'border-primary text-primary hover:bg-primary/5'
-                      : 'text-foreground hover:bg-muted/50',
+                      : 'text-foreground hover:bg-accent',
                   ]"
                   @click="setPage(page)"
                 >
@@ -465,7 +465,7 @@ const confirmPlaceHolderText = computed(() =>
                     v-for="size in PER_PAGE_OPTIONS"
                     :key="size"
                     type="button"
-                    class="flex w-full px-3 py-1.5 text-left text-[12px] font-medium text-foreground hover:bg-muted"
+                    class="flex w-full px-3 py-1.5 text-left text-[12px] font-medium text-foreground hover:bg-accent"
                     :class="{
                       'bg-primary/5 text-primary': size === itemsPerPage,
                     }"

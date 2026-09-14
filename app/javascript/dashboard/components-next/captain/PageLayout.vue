@@ -10,6 +10,7 @@ import PaginationFooter from 'dashboard/components-next/pagination/PaginationFoo
 import Spinner from 'dashboard/components-next/spinner/Spinner.vue';
 import Policy from 'dashboard/components/policy.vue';
 import AssistantSwitcher from 'dashboard/components-next/captain/pageComponents/switcher/AssistantSwitcher.vue';
+import CreateAssistantDialog from 'dashboard/components-next/captain/pageComponents/assistant/CreateAssistantDialog.vue';
 
 const props = defineProps({
   currentPage: {
@@ -76,6 +77,7 @@ const route = useRoute();
 const { shouldShowPaywall } = usePolicy();
 
 const showAssistantSwitcherDropdown = ref(false);
+const createAssistantDialogRef = ref(null);
 
 const store = useStore();
 const assistants = useMapGetter('captainAssistants/getRecords');
@@ -116,12 +118,17 @@ const handlePageChange = event => {
 const toggleAssistantSwitcher = () => {
   showAssistantSwitcherDropdown.value = !showAssistantSwitcherDropdown.value;
 };
+
+const handleCreateAssistant = () => {
+  showAssistantSwitcherDropdown.value = false;
+  createAssistantDialogRef.value.dialogRef.open();
+};
 </script>
 
 <template>
   <section class="flex h-full w-full flex-col overflow-hidden bg-background">
     <div
-      class="mx-auto flex h-full w-full max-w-7xl flex-col overflow-hidden p-6 lg:px-10"
+      class="mx-auto flex h-full w-full max-w-7xl flex-col overflow-hidden p-6"
     >
       <header class="z-10 mb-6 shrink-0">
         <div
@@ -160,6 +167,7 @@ const toggleAssistantSwitcher = () => {
                     v-if="showAssistantSwitcherDropdown"
                     class="absolute ltr:left-0 rtl:right-0 top-9"
                     @close="showAssistantSwitcherDropdown = false"
+                    @create-assistant="handleCreateAssistant"
                   />
                 </OnClickOutside>
               </div>
@@ -236,5 +244,6 @@ const toggleAssistantSwitcher = () => {
         />
       </footer>
     </div>
+    <CreateAssistantDialog ref="createAssistantDialogRef" type="create" />
   </section>
 </template>

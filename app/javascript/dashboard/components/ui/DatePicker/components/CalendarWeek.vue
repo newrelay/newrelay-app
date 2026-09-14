@@ -95,7 +95,7 @@ const dayButtonClass = (day, calendarType) => {
   return [
     'relative z-10 flex size-8 items-center justify-center rounded-full text-[13px] transition-colors',
     !inCurrentMonth && 'pointer-events-none text-muted-foreground/30',
-    inCurrentMonth && !edge && 'text-foreground hover:bg-muted/80',
+    inCurrentMonth && !edge && 'text-foreground hover:bg-accent',
     edge && 'bg-primary font-semibold text-primary-foreground shadow-sm',
     today && 'ring-1 ring-primary/40',
   ];

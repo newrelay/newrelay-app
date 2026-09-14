@@ -236,7 +236,7 @@ const confirmDeletion = () => {
                 <div
                   v-for="cannedItem in filteredRecords"
                   :key="cannedItem.id || cannedItem.short_code"
-                  class="group grid grid-cols-[200px_1fr_120px] items-center px-6 py-4 transition-colors hover:bg-muted/20"
+                  class="group grid grid-cols-[200px_1fr_120px] items-center px-6 py-4 transition-colors hover:bg-accent"
                 >
                   <div class="flex items-center gap-3 pr-4">
                     <div

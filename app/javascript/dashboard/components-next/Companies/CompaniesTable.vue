@@ -104,7 +104,7 @@ const openCompany = id => {
           <tr
             v-for="company in companies"
             :key="company.id"
-            class="group cursor-pointer transition-colors hover:bg-muted/20"
+            class="group cursor-pointer transition-colors hover:bg-accent"
             @click="openCompany(company.id)"
           >
             <td v-if="visibleColumns.company" class="px-4 py-3">

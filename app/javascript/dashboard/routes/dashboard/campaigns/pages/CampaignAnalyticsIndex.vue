@@ -117,7 +117,7 @@ onMounted(load);
   <div
     class="flex h-full min-h-0 flex-col bg-background animate-in fade-in duration-300"
   >
-    <div class="p-6 lg:px-10 flex flex-col gap-6">
+    <div class="p-6 flex flex-col gap-6">
       <!-- Header -->
       <div
         class="flex flex-col sm:flex-row sm:items-center justify-between gap-4"
@@ -155,7 +155,7 @@ onMounted(load);
       </div>
     </div>
 
-    <div class="flex min-h-0 flex-1 flex-col overflow-auto px-6 lg:px-10 pb-6">
+    <div class="flex min-h-0 flex-1 flex-col overflow-auto px-6 pb-6">
       <div v-if="loading" class="flex items-center justify-center py-20">
         <Spinner />
       </div>
@@ -223,7 +223,7 @@ onMounted(load);
             <tr
               v-for="campaign in filteredCampaigns"
               :key="campaign.id"
-              class="border-b border-border/60 last:border-0 hover:bg-muted/40"
+              class="border-b border-border/60 last:border-0 hover:bg-accent"
             >
               <td class="px-4 py-3">
                 <div class="text-[14px] font-medium text-foreground">

@@ -171,7 +171,7 @@ onMounted(() => {
         <RelayButton
           type="button"
           variant="outline"
-          class="h-9 w-full justify-start border-border/80 bg-background text-[13px] font-medium text-muted-foreground shadow-sm hover:bg-muted/50"
+          class="h-9 w-full justify-start border-border/80 bg-background text-[13px] font-medium text-muted-foreground shadow-sm hover:bg-accent"
           @click="showTagDropdown = !showTagDropdown"
         >
           <Icon icon="i-lucide-plus" class="size-3.5" />
@@ -249,21 +249,21 @@ onMounted(() => {
           >
             <button
               type="button"
-              class="w-full px-3 py-1.5 text-left text-[13px] text-foreground transition-colors hover:bg-muted"
+              class="w-full px-3 py-1.5 text-left text-[13px] text-foreground transition-colors hover:bg-accent"
               @click="selectUnit(DURATION_UNITS.MINUTES)"
             >
               {{ t('DURATION_INPUT.MINUTES') }}
             </button>
             <button
               type="button"
-              class="w-full px-3 py-1.5 text-left text-[13px] text-foreground transition-colors hover:bg-muted"
+              class="w-full px-3 py-1.5 text-left text-[13px] text-foreground transition-colors hover:bg-accent"
               @click="selectUnit(DURATION_UNITS.HOURS)"
             >
               {{ t('DURATION_INPUT.HOURS') }}
             </button>
             <button
               type="button"
-              class="w-full px-3 py-1.5 text-left text-[13px] text-foreground transition-colors hover:bg-muted"
+              class="w-full px-3 py-1.5 text-left text-[13px] text-foreground transition-colors hover:bg-accent"
               @click="selectUnit(DURATION_UNITS.DAYS)"
             >
               {{ t('DURATION_INPUT.DAYS') }}

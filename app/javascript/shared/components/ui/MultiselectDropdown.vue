@@ -91,7 +91,7 @@ const displayLabel = computed(() => {
       <RelayDropdownMenuTrigger as-child>
         <button
           type="button"
-          class="box-border flex w-full min-w-0 items-center justify-between rounded-lg border border-border/60 bg-transparent px-2.5 py-1.5 text-left transition-colors hover:bg-muted/40 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary"
+          class="box-border flex w-full min-w-0 items-center justify-between rounded-lg border border-border/60 bg-transparent px-2.5 py-1.5 text-left transition-colors hover:bg-accent focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary"
           :aria-label="multiselectorTitle || undefined"
         >
           <div class="flex min-w-0 flex-1 items-center gap-2">

@@ -271,7 +271,7 @@ async function generateReviewReplies() {
 </script>
 
 <template>
-  <div class="flex-1 overflow-y-auto w-full hide-scrollbar bg-background p-6 lg:px-10">
+  <div class="flex-1 overflow-y-auto w-full hide-scrollbar bg-background p-6">
     <RequestReviewsModal v-model:open="isRequestModalOpen" />
     <ShareReportModal v-if="showDemoSurfaces" v-model:open="isShareModalOpen" />
     <FeedbackBreakdownModal v-model:open="isFeedbackModalOpen" :reviews="allReviews" :show-demo="showDemoSurfaces" />
@@ -482,7 +482,7 @@ async function generateReviewReplies() {
         </div>
 
         <!-- Overall Feedback (Real — positive share of reviews) -->
-        <div class="bg-card rounded-xl border border-border shadow-sm p-5 relative overflow-hidden cursor-pointer hover:bg-muted/20 transition-colors" @click="isFeedbackModalOpen = true">
+        <div class="bg-card rounded-xl border border-border shadow-sm p-5 relative overflow-hidden cursor-pointer hover:bg-accent transition-colors" @click="isFeedbackModalOpen = true">
           <div class="flex justify-between items-start mb-4">
             <div>
               <p class="text-sm font-medium text-muted-foreground mb-1">Overall Feedback</p>
@@ -543,7 +543,7 @@ async function generateReviewReplies() {
             </div>
 
             <div v-if="insightsList.length" class="space-y-4 flex-1">
-              <div v-for="(insight, idx) in insightsList" :key="idx" class="flex gap-3 items-start p-2 rounded-lg hover:bg-muted/40 transition-colors">
+              <div v-for="(insight, idx) in insightsList" :key="idx" class="flex gap-3 items-start p-2 rounded-lg hover:bg-accent transition-colors">
                 <div class="mt-1 size-2 rounded-full shrink-0" :class="insight.color"></div>
                 <div>
                   <p class="text-sm font-medium text-foreground">{{ insight.title }}</p>
@@ -622,7 +622,7 @@ async function generateReviewReplies() {
           <p class="text-sm text-muted-foreground mb-6">Manage your reputation workflow.</p>
           
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <router-link :to="{ name: 'reputation_requests' }" class="flex items-center gap-3 p-4 border border-border rounded-xl hover:bg-muted/50 transition-colors text-left group">
+            <router-link :to="{ name: 'reputation_requests' }" class="flex items-center gap-3 p-4 border border-border rounded-xl hover:bg-accent transition-colors text-left group">
               <div class="p-2 bg-primary/10 text-primary rounded-lg group-hover:scale-110 transition-transform">
                 <Mail class="size-5" />
               </div>
@@ -632,7 +632,7 @@ async function generateReviewReplies() {
               </div>
             </router-link>
 
-            <router-link :to="{ name: 'reputation_reviews' }" class="flex items-center gap-3 p-4 border border-border rounded-xl hover:bg-muted/50 transition-colors text-left group">
+            <router-link :to="{ name: 'reputation_reviews' }" class="flex items-center gap-3 p-4 border border-border rounded-xl hover:bg-accent transition-colors text-left group">
               <div class="p-2 bg-primary/10 text-primary rounded-lg group-hover:scale-110 transition-transform">
                 <MessageSquare class="size-5" />
               </div>
@@ -642,7 +642,7 @@ async function generateReviewReplies() {
               </div>
             </router-link>
 
-            <router-link :to="{ name: 'reputation_automation' }" class="flex items-center gap-3 p-4 border border-border rounded-xl hover:bg-muted/50 transition-colors text-left group">
+            <router-link :to="{ name: 'reputation_automation' }" class="flex items-center gap-3 p-4 border border-border rounded-xl hover:bg-accent transition-colors text-left group">
               <div class="p-2 bg-primary/10 text-primary rounded-lg group-hover:scale-110 transition-transform">
                 <Bot class="size-5" />
               </div>
@@ -652,7 +652,7 @@ async function generateReviewReplies() {
               </div>
             </router-link>
 
-            <router-link :to="{ name: 'reputation_settings' }" class="flex items-center gap-3 p-4 border border-border rounded-xl hover:bg-muted/50 transition-colors text-left group">
+            <router-link :to="{ name: 'reputation_settings' }" class="flex items-center gap-3 p-4 border border-border rounded-xl hover:bg-accent transition-colors text-left group">
               <div class="p-2 bg-primary/10 text-primary rounded-lg group-hover:scale-110 transition-transform">
                 <Link class="size-5" />
               </div>
@@ -679,7 +679,7 @@ async function generateReviewReplies() {
 
         <div v-if="recentReviews.length === 0" class="p-12 text-center text-muted-foreground text-sm">No reviews yet. Connect a platform to get started.</div>
         <div v-else class="divide-y divide-border">
-          <div v-for="review in recentReviews" :key="review.id" class="p-6 hover:bg-muted/30 transition-colors flex flex-col sm:flex-row gap-5">
+          <div v-for="review in recentReviews" :key="review.id" class="p-6 hover:bg-accent transition-colors flex flex-col sm:flex-row gap-5">
             <div class="shrink-0">
               <Avatar :name="review.author" :size="40" />
             </div>
@@ -697,7 +697,7 @@ async function generateReviewReplies() {
                     </span>
                   </div>
                 </div>
-                <router-link :to="{ name: 'reputation_reviews' }" class="h-8 gap-1.5 text-xs font-semibold px-3 bg-card border border-border rounded-lg text-foreground hover:bg-muted inline-flex items-center cursor-pointer">
+                <router-link :to="{ name: 'reputation_reviews' }" class="h-8 gap-1.5 text-xs font-semibold px-3 bg-card border border-border rounded-lg text-foreground hover:bg-accent inline-flex items-center cursor-pointer">
                   <MessageSquare class="size-3.5" />
                   Reply
                 </router-link>

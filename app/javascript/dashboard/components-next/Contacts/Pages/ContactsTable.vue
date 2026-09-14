@@ -347,7 +347,7 @@ const companyDisplayName = contact =>
             <tr
               v-for="contact in contacts"
               :key="contact.id"
-              class="group cursor-pointer transition-colors hover:bg-muted/30"
+              class="group cursor-pointer transition-colors hover:bg-accent"
               :class="{ 'bg-muted/20': isSelected(contact.id) }"
               @click="onClickViewDetails(contact.id)"
             >

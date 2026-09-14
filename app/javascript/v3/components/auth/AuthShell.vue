@@ -40,7 +40,7 @@ onMounted(syncFromDom);
     <div v-if="showThemeToggle" class="absolute top-6 right-6 z-50">
       <button
         type="button"
-        class="size-9 rounded-full border border-border bg-background hover:bg-muted/50 transition-colors shadow-sm flex items-center justify-center text-muted-foreground hover:text-foreground outline-none cursor-pointer"
+        class="size-9 rounded-full border border-border bg-background hover:bg-accent transition-colors shadow-sm flex items-center justify-center text-muted-foreground hover:text-foreground outline-none cursor-pointer"
         :aria-label="isDark ? t('AUTH.THEME.LIGHT') : t('AUTH.THEME.DARK')"
         @click="toggleTheme"
       >

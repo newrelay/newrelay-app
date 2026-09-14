@@ -86,7 +86,7 @@ const audioAttachments = computed(() => {
   <router-link :to="navigateTo">
     <CardLayout
       layout="col"
-      class="[&>div]:justify-start [&>div]:gap-2 [&>div]:px-4 [&>div]:py-3 [&>div]:items-start hover:bg-muted dark:hover:bg-accent"
+      class="[&>div]:justify-start [&>div]:gap-2 [&>div]:px-4 [&>div]:py-3 [&>div]:items-start hover:bg-accent dark:hover:bg-accent"
     >
       <div
         class="flex items-center min-w-0 justify-between gap-2 w-full h-7 mb-1"

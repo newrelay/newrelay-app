@@ -142,7 +142,7 @@ const redirectToPortalHomePage = () => {
         v-for="(portal, index) in portals"
         :key="index"
         type="button"
-        class="flex cursor-pointer items-center rounded-md px-2 py-2 text-left transition-colors hover:bg-muted"
+        class="flex cursor-pointer items-center rounded-md px-2 py-2 text-left transition-colors hover:bg-accent"
         @click="handlePortalChange(portal)"
       >
         <Avatar

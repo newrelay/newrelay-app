@@ -278,7 +278,7 @@ onMounted(() => {
         >
           <RelayButton
             variant="outline"
-            class="h-8 px-3 text-[14px] bg-card hover:bg-muted font-medium border-border/80 shadow-sm max-w-[200px] truncate"
+            class="h-8 px-3 text-[14px] bg-card hover:bg-accent font-medium border-border/80 shadow-sm max-w-[200px] truncate"
             @click="toggleInboxDropdown()"
           >
             <span class="i-lucide-inbox size-3.5 opacity-70 shrink-0" />
@@ -300,7 +300,7 @@ onMounted(() => {
           <RelayButton
             variant="outline"
             size="icon"
-            class="h-8 w-8 bg-card hover:bg-muted border-border/80 shadow-sm"
+            class="h-8 w-8 bg-card hover:bg-accent border-border/80 shadow-sm"
             @click="downloadHeatmapData"
           >
             <span class="i-lucide-download size-3.5 opacity-70" />

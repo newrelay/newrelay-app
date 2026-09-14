@@ -54,7 +54,7 @@ const handleContactAction = ({ action }) => {
     <template #trigger>
       <button
         type="button"
-        class="flex size-9 items-center justify-center rounded-lg border border-border/80 bg-background text-muted-foreground shadow-sm transition-all hover:border-transparent hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-0"
+        class="flex size-9 items-center justify-center rounded-lg border border-border/80 bg-background text-muted-foreground shadow-sm transition-all hover:border-transparent hover:bg-accent hover:text-foreground focus-visible:outline-none focus-visible:ring-0"
       >
         <span class="i-lucide-ellipsis size-4" />
       </button>

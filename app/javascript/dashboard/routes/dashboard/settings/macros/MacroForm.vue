@@ -176,21 +176,21 @@ export default {
       >
         <button
           type="button"
-          class="border-b border-border/40 p-2 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+          class="border-b border-border/40 p-2 text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
           @click="zoomIn"
         >
           <span class="i-lucide-plus size-4 block" />
         </button>
         <button
           type="button"
-          class="border-b border-border/40 p-2 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+          class="border-b border-border/40 p-2 text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
           @click="zoomOut"
         >
           <span class="i-lucide-minus size-4 block" />
         </button>
         <button
           type="button"
-          class="p-2 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+          class="p-2 text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
           @click="resetZoom"
         >
           <span class="i-lucide-maximize size-4 block" />

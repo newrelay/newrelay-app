@@ -283,7 +283,7 @@ const handleCardClick = () => {
             <RelayButton
               variant="ghost"
               size="icon"
-              class="size-8 rounded-md border border-border text-muted-foreground opacity-0 hover:border-transparent hover:bg-muted hover:text-foreground group-hover:opacity-100 focus:opacity-100"
+              class="size-8 rounded-md border border-border text-muted-foreground opacity-0 hover:border-transparent hover:bg-accent hover:text-foreground group-hover:opacity-100 focus:opacity-100"
             >
               <span class="i-lucide-ellipsis-vertical size-4" />
             </RelayButton>

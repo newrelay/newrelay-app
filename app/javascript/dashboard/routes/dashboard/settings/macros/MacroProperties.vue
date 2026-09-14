@@ -104,7 +104,7 @@ export default {
       </div>
       <button
         type="button"
-        class="rounded-lg p-1.5 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+        class="rounded-lg p-1.5 text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
         @click="$emit('close')"
       >
         <span class="i-lucide-x size-4.5 block" />

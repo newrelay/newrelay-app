@@ -99,7 +99,7 @@ const handleSendMessage = (template, hide) => {
           v-for="template in filteredTemplates"
           :key="template.content_sid"
           tabindex="0"
-          class="flex flex-col gap-2 p-2 w-full rounded-lg cursor-pointer hover:bg-muted hover:bg-accent"
+          class="flex flex-col gap-2 p-2 w-full rounded-lg cursor-pointer hover:bg-accent"
           @click="handleTemplateClick(template)"
         >
           <div class="flex justify-between items-center">

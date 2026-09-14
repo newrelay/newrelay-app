@@ -531,7 +531,7 @@ function close() {
                 <button
                   v-for="filter in filters" :key="filter"
                   class="w-full text-left px-3 py-2 rounded-md text-sm cursor-pointer transition-colors"
-                  :class="activeFilter === filter ? 'bg-primary/10 text-primary font-medium' : 'text-muted-foreground hover:bg-muted/50 hover:text-foreground'"
+                  :class="activeFilter === filter ? 'bg-primary/10 text-primary font-medium' : 'text-muted-foreground hover:bg-accent hover:text-foreground'"
                   @click="activeFilter = filter"
                 >
                   {{ filter }}
@@ -743,7 +743,7 @@ function close() {
                 <button
                   v-for="ch in form.channels" :key="ch" type="button"
                   class="px-3 py-1.5 rounded-lg border text-xs font-medium cursor-pointer transition-colors flex items-center gap-1.5"
-                  :class="activeEditingChannel === ch ? 'bg-primary/10 border-primary text-primary font-semibold' : 'bg-card border-border hover:bg-muted text-muted-foreground'"
+                  :class="activeEditingChannel === ch ? 'bg-primary/10 border-primary text-primary font-semibold' : 'bg-card border-border hover:bg-accent text-muted-foreground'"
                   @click="activeEditingChannel = ch; previewChannel = ch"
                 >
                   <component :is="getChannelIcon(ch)" class="size-3.5" />
@@ -770,7 +770,7 @@ function close() {
                   <ChevronDown class="size-3.5 opacity-50 ml-2 shrink-0 transition-transform" :class="showTemplateMenu ? 'rotate-180' : ''" />
                 </button>
                 <div v-if="showTemplateMenu" class="absolute left-0 right-0 top-full mt-1 z-50 max-h-[280px] overflow-y-auto rounded-lg border border-border bg-popover shadow-lg p-1.5">
-                  <button v-for="t in currentChannelTemplates" :key="t.id" type="button" class="w-full flex items-center justify-between gap-2 py-2 px-2.5 rounded-md hover:bg-muted text-left cursor-pointer" @click="selectTemplate(t, activeEditingChannel)">
+                  <button v-for="t in currentChannelTemplates" :key="t.id" type="button" class="w-full flex items-center justify-between gap-2 py-2 px-2.5 rounded-md hover:bg-accent text-left cursor-pointer" @click="selectTemplate(t, activeEditingChannel)">
                     <div class="flex flex-col gap-0.5 min-w-0 pr-2">
                       <span class="text-[13px] font-medium text-foreground truncate">{{ t.name }}</span>
                       <span class="text-[11px] text-muted-foreground truncate">{{ t.autoDelay }}</span>
@@ -854,13 +854,13 @@ function close() {
               <div class="space-y-2.5">
                 <p class="text-[11px] font-medium text-muted-foreground uppercase tracking-wider">Tone</p>
                 <div class="grid grid-cols-2 gap-1.5">
-                  <div v-for="tone in tones" :key="tone" class="px-2.5 py-1.5 rounded-lg border text-xs text-center cursor-pointer transition-colors" :class="form.tone === tone ? 'bg-primary/10 border-primary text-primary font-semibold' : 'bg-card border-border hover:bg-muted text-muted-foreground'" @click="form.tone = tone">{{ tone }}</div>
+                  <div v-for="tone in tones" :key="tone" class="px-2.5 py-1.5 rounded-lg border text-xs text-center cursor-pointer transition-colors" :class="form.tone === tone ? 'bg-primary/10 border-primary text-primary font-semibold' : 'bg-card border-border hover:bg-accent text-muted-foreground'" @click="form.tone = tone">{{ tone }}</div>
                 </div>
               </div>
               <div class="space-y-2.5">
                 <p class="text-[11px] font-medium text-muted-foreground uppercase tracking-wider">Review Destination</p>
                 <div class="flex flex-wrap gap-1.5">
-                  <button v-for="dest in destinations" :key="dest" type="button" class="px-3 py-1.5 rounded-full border text-xs cursor-pointer transition-all flex items-center gap-1.5" :class="form.destination === dest ? 'bg-primary/10 border-primary text-primary font-semibold shadow-xs' : 'bg-card border-border hover:bg-muted text-muted-foreground'" @click="form.destination = dest">
+                  <button v-for="dest in destinations" :key="dest" type="button" class="px-3 py-1.5 rounded-full border text-xs cursor-pointer transition-all flex items-center gap-1.5" :class="form.destination === dest ? 'bg-primary/10 border-primary text-primary font-semibold shadow-xs' : 'bg-card border-border hover:bg-accent text-muted-foreground'" @click="form.destination = dest">
                     <Check v-if="form.destination === dest" class="size-3 shrink-0 text-primary" />
                     <span>{{ dest }}</span>
                   </button>
@@ -1128,7 +1128,7 @@ function close() {
             <button @click="close" class="h-11 px-8 text-sm font-semibold bg-primary hover:bg-primary/90 text-primary-foreground rounded-lg shadow-xs cursor-pointer inline-flex items-center gap-2">
               <BarChart3 class="size-4" /> View Campaign
             </button>
-            <button @click="close" class="h-11 px-8 text-sm font-semibold bg-card border border-border hover:bg-muted text-foreground rounded-lg shadow-xs cursor-pointer">
+            <button @click="close" class="h-11 px-8 text-sm font-semibold bg-card border border-border hover:bg-accent text-foreground rounded-lg shadow-xs cursor-pointer">
               Done
             </button>
           </div>

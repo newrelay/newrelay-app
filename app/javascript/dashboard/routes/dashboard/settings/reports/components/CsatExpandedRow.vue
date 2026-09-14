@@ -86,7 +86,7 @@ const saveReviewNotes = async () => {
         <div class="flex-1 max-w-2xl">
           <div
             v-if="hasExistingReviewNotes && !isEditing"
-            class="group flex items-start gap-2 py-2 px-3 rounded-lg hover:bg-muted dark:hover:bg-accent cursor-pointer transition-colors"
+            class="group flex items-start gap-2 py-2 px-3 rounded-lg hover:bg-accent dark:hover:bg-accent cursor-pointer transition-colors"
             @click.stop="startEditing"
           >
             <p

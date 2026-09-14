@@ -18,6 +18,10 @@ const props = defineProps({
     type: Number,
     required: true,
   },
+  showActionButtons: {
+    type: Boolean,
+    default: true,
+  },
 });
 
 const emit = defineEmits(['submit', 'cancel']);
@@ -59,6 +63,12 @@ const documentTypeOptions = [
 const v$ = useVuelidate(validationRules, state);
 
 const isLoading = computed(() => formState.uiFlags.value.creatingItem);
+
+const isSubmitDisabled = computed(() => {
+  if (isLoading.value) return true;
+  if (state.documentType === 'url') return !state.url;
+  return !state.pdfFile;
+});
 
 const hasPdfFileError = computed(() => v$.value.pdfFile.$error);
 
@@ -127,6 +137,12 @@ const handleSubmit = async () => {
 
   emit('submit', prepareDocumentDetails());
 };
+
+defineExpose({
+  submit: handleSubmit,
+  isSubmitDisabled,
+  isLoading,
+});
 </script>
 
 <template>
@@ -216,16 +232,23 @@ const handleSubmit = async () => {
       />
     </div>
 
-    <div class="flex w-full items-center justify-between gap-3">
+    <div
+      v-if="showActionButtons"
+      class="flex w-full items-center justify-end gap-3 pt-2"
+    >
       <RelayButton
         type="button"
-        variant="secondary"
-        class="w-full"
+        variant="outline"
+        class="h-9 px-4"
         @click="handleCancel"
       >
         {{ t('CAPTAIN.FORM.CANCEL') }}
       </RelayButton>
-      <RelayButton type="submit" class="w-full" :disabled="isLoading">
+      <RelayButton
+        type="submit"
+        class="h-9 px-4 shadow-sm"
+        :disabled="isSubmitDisabled"
+      >
         <span
           v-if="isLoading"
           class="i-lucide-loader-circle size-4 animate-spin"

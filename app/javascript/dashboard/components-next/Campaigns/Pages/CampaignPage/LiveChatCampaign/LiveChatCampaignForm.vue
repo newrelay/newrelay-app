@@ -225,7 +225,7 @@ defineExpose({
       <RelayInput
         v-model="state.title"
         :placeholder="t('CAMPAIGN.LIVE_CHAT.CREATE.FORM.TITLE.PLACEHOLDER')"
-        class-name="h-9 text-[14px] shadow-sm rounded-md border-border/80 bg-muted/30 focus-visible:bg-background focus-visible:ring-1 focus-visible:ring-primary/30 placeholder:text-muted-foreground/60"
+        class-name="h-9 text-[14px] shadow-sm rounded-md border-border/80 bg-background focus-visible:ring-1 focus-visible:ring-primary/30 placeholder:text-muted-foreground/60"
       />
       <p v-if="formErrors.title" class="text-[12px] text-destructive">
         {{ formErrors.title }}
@@ -257,7 +257,7 @@ defineExpose({
         :has-error="!!formErrors.inbox"
         :placeholder="t('CAMPAIGN.LIVE_CHAT.CREATE.FORM.INBOX.PLACEHOLDER')"
         :message="formErrors.inbox"
-        class="[&>div>button]:bg-muted/30 [&>div>button:not(.focused)]:dark:outline-border [&>div>button:not(.focused)]:hover:!outline-border"
+        class="[&>div>button]:bg-background [&>div>button:not(.focused)]:dark:outline-border [&>div>button:not(.focused)]:hover:!outline-border"
       />
     </div>
 
@@ -273,7 +273,7 @@ defineExpose({
         :has-error="!!formErrors.sender"
         :disabled="!state.inboxId"
         :placeholder="t('CAMPAIGN.LIVE_CHAT.CREATE.FORM.SENT_BY.PLACEHOLDER')"
-        class="[&>div>button]:bg-muted/30 [&>div>button:not(.focused)]:dark:outline-border [&>div>button:not(.focused)]:hover:!outline-border"
+        class="[&>div>button]:bg-background [&>div>button:not(.focused)]:dark:outline-border [&>div>button:not(.focused)]:hover:!outline-border"
         :message="formErrors.sender"
       />
     </div>
@@ -287,7 +287,7 @@ defineExpose({
         v-model="state.endPoint"
         type="url"
         :placeholder="t('CAMPAIGN.LIVE_CHAT.CREATE.FORM.END_POINT.PLACEHOLDER')"
-        class-name="h-9 text-[14px] shadow-sm rounded-md border-border/80 bg-muted/30 focus-visible:bg-background focus-visible:ring-1 focus-visible:ring-primary/30 placeholder:text-muted-foreground/60"
+        class-name="h-9 text-[14px] shadow-sm rounded-md border-border/80 bg-background focus-visible:ring-1 focus-visible:ring-primary/30 placeholder:text-muted-foreground/60"
       />
       <p v-if="formErrors.endPoint" class="text-[12px] text-destructive">
         {{ formErrors.endPoint }}
@@ -305,7 +305,7 @@ defineExpose({
         :placeholder="
           t('CAMPAIGN.LIVE_CHAT.CREATE.FORM.TIME_ON_PAGE.PLACEHOLDER')
         "
-        class-name="h-9 text-[14px] shadow-sm rounded-md border-border/80 bg-muted/30 focus-visible:bg-background focus-visible:ring-1 focus-visible:ring-primary/30 placeholder:text-muted-foreground/60"
+        class-name="h-9 text-[14px] shadow-sm rounded-md border-border/80 bg-background focus-visible:ring-1 focus-visible:ring-primary/30 placeholder:text-muted-foreground/60"
       />
       <p v-if="formErrors.timeOnPage" class="text-[12px] text-destructive">
         {{ formErrors.timeOnPage }}

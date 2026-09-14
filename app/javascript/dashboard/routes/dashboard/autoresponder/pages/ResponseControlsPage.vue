@@ -160,7 +160,7 @@ const filteredItems = computed(() => {
 
 <template>
   <div
-    class="flex-1 overflow-y-auto w-full bg-background p-4 sm:p-6 lg:p-8 space-y-6 relative"
+    class="flex-1 overflow-y-auto w-full bg-background p-4 sm:p-6 space-y-6 relative"
   >
     <div
       class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-2 border-b border-border/40"
@@ -506,7 +506,7 @@ const filteredItems = computed(() => {
           <div
             v-for="dm in dmControls"
             :key="dm.id"
-            class="p-4 sm:p-6 flex flex-col md:flex-row md:items-center justify-between gap-4 hover:bg-muted/20 transition-colors"
+            class="p-4 sm:p-6 flex flex-col md:flex-row md:items-center justify-between gap-4 hover:bg-accent transition-colors"
           >
             <div class="space-y-1 max-w-xl">
               <div class="flex items-center gap-2.5">

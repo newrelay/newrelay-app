@@ -37,7 +37,7 @@ const automationActive = computed({
 
 <template>
   <div
-    class="group grid grid-cols-[1.5fr_100px_1fr_120px] items-center px-6 py-4 transition-colors hover:bg-muted/20"
+    class="group grid grid-cols-[1.5fr_100px_1fr_120px] items-center px-6 py-4 transition-colors hover:bg-accent"
   >
     <div class="min-w-0 pr-4">
       <div class="truncate text-[14px] font-medium text-foreground">
@@ -69,7 +69,7 @@ const automationActive = computed({
         <RelayButton
           variant="ghost"
           size="icon"
-          class="size-8 text-muted-foreground hover:bg-muted hover:text-foreground border border-border hover:border-transparent"
+          class="size-8 text-muted-foreground hover:bg-accent hover:text-foreground border border-border hover:border-transparent"
           :disabled="loading"
           @click="$emit('edit', automation)"
         >
@@ -80,7 +80,7 @@ const automationActive = computed({
         <RelayButton
           variant="ghost"
           size="icon"
-          class="size-8 text-muted-foreground hover:bg-muted hover:text-foreground border border-border hover:border-transparent"
+          class="size-8 text-muted-foreground hover:bg-accent hover:text-foreground border border-border hover:border-transparent"
           :disabled="loading"
           @click="$emit('clone', automation)"
         >

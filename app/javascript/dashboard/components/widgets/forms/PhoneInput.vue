@@ -238,7 +238,7 @@ export default {
         v-for="(country, index) in filteredCountriesBySearch"
         ref="dropdownItem"
         :key="index"
-        class="flex items-center px-1 py-0 cursor-pointer h-7 hover:bg-muted dark:hover:bg-accent"
+        class="flex items-center px-1 py-0 cursor-pointer h-7 hover:bg-accent dark:hover:bg-accent"
         :class="{
           'bg-muted dark:bg-accent': country.id === activeCountryCode,
           'bg-muted dark:bg-accent': index === selectedIndex,

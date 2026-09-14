@@ -262,7 +262,7 @@ function deleteCampaign(campaign) {
 </script>
 
 <template>
-  <div class="flex-1 overflow-y-auto w-full bg-background p-6 lg:p-8">
+  <div class="flex-1 overflow-y-auto w-full bg-background p-6">
     <div class="max-w-7xl mx-auto flex flex-col gap-8">
       <div
         class="flex flex-col sm:flex-row sm:items-center justify-between gap-4"
@@ -354,7 +354,7 @@ function deleteCampaign(campaign) {
             <div
               v-for="item in topAutomations"
               :key="item.id"
-              class="flex flex-col sm:flex-row sm:items-center justify-between p-3 rounded-lg border border-border bg-background hover:bg-muted/30 transition-colors gap-4 sm:gap-2"
+              class="flex flex-col sm:flex-row sm:items-center justify-between p-3 rounded-lg border border-border bg-background hover:bg-accent transition-colors gap-4 sm:gap-2"
             >
               <div
                 class="flex items-start sm:items-center gap-4 flex-1 min-w-0"
@@ -416,7 +416,7 @@ function deleteCampaign(campaign) {
                     <RelayDropdownMenuTrigger as-child>
                       <button
                         type="button"
-                        class="p-1.5 text-muted-foreground hover:bg-muted rounded-md transition-colors outline-none focus-visible:ring-1 focus-visible:ring-primary/30"
+                        class="p-1.5 text-muted-foreground hover:bg-accent rounded-md transition-colors outline-none focus-visible:ring-1 focus-visible:ring-primary/30"
                       >
                         <span class="i-lucide-more-horizontal size-4" />
                       </button>

@@ -84,7 +84,7 @@ function deleteCampaign(campaign) {
 </script>
 
 <template>
-  <div class="min-w-0 flex-1 overflow-y-auto w-full bg-background p-6 lg:px-10">
+  <div class="min-w-0 flex-1 overflow-y-auto w-full bg-background p-6">
     <div
       class="mx-auto flex min-h-[calc(100vh-8rem)] min-w-0 max-w-7xl flex-col"
     >
@@ -257,7 +257,7 @@ function deleteCampaign(campaign) {
               <tr
                 v-for="item in filteredAutomations"
                 :key="item.id"
-                class="hover:bg-muted/30 transition-colors group bg-background"
+                class="hover:bg-accent transition-colors group bg-background"
               >
                 <td class="px-4 py-4">
                   <div class="flex items-start gap-3">
@@ -352,7 +352,7 @@ function deleteCampaign(campaign) {
                     <RelayDropdownMenuTrigger as-child>
                       <button
                         type="button"
-                        class="p-1.5 text-muted-foreground hover:bg-muted rounded-md transition-colors outline-none focus-visible:ring-1 focus-visible:ring-primary/30"
+                        class="p-1.5 text-muted-foreground hover:bg-accent rounded-md transition-colors outline-none focus-visible:ring-1 focus-visible:ring-primary/30"
                       >
                         <span class="i-lucide-more-horizontal size-4" />
                       </button>

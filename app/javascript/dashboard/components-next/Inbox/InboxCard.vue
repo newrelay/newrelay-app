@@ -106,8 +106,8 @@ const attachmentPillClass = name => {
         : isActive
           ? 'bg-primary/5 hover:bg-primary/5'
           : isUnread
-            ? 'bg-background hover:bg-muted/20'
-            : 'bg-muted/10 hover:bg-muted/30',
+            ? 'bg-background hover:bg-accent'
+            : 'bg-muted/10 hover:bg-accent',
     ]"
     @click="emit('click')"
     @contextmenu.prevent="emit('contextmenu', $event)"

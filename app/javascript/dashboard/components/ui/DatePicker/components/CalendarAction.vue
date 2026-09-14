@@ -29,7 +29,7 @@ const { YEAR } = CALENDAR_PERIODS;
   <div class="mb-6 flex w-full items-center justify-between px-2">
     <button
       type="button"
-      class="rounded-full p-1 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+      class="rounded-full p-1 text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
       @click.stop="emit('prev', calendarType)"
     >
       <span class="i-lucide-chevron-left size-4 rtl:rotate-180" />
@@ -61,7 +61,7 @@ const { YEAR } = CALENDAR_PERIODS;
     </div>
     <button
       type="button"
-      class="rounded-full p-1 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+      class="rounded-full p-1 text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
       @click.stop="emit('next', calendarType)"
     >
       <span class="i-lucide-chevron-right size-4 rtl:rotate-180" />

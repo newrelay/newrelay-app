@@ -173,7 +173,7 @@ function close() {
                 v-for="type in reportTypes" 
                 :key="type.name"
                 class="relative border rounded-xl p-4 cursor-pointer transition-all flex flex-col gap-3"
-                :class="form.reportType === type.name ? 'border-primary bg-primary/5 shadow-xs' : 'border-border hover:border-primary/50 hover:bg-muted/30'"
+                :class="form.reportType === type.name ? 'border-primary bg-primary/5 shadow-xs' : 'border-border hover:border-primary/50 hover:bg-accent'"
                 @click="form.reportType = type.name"
               >
                 <div class="flex items-center justify-between">
@@ -196,7 +196,7 @@ function close() {
                 v-for="range in dateRanges" 
                 :key="range"
                 class="px-4 py-2 rounded-full text-xs font-semibold transition-colors border cursor-pointer"
-                :class="form.dateRange === range ? 'bg-primary text-primary-foreground border-primary shadow-xs' : 'bg-background border-border text-muted-foreground hover:bg-muted'"
+                :class="form.dateRange === range ? 'bg-primary text-primary-foreground border-primary shadow-xs' : 'bg-background border-border text-muted-foreground hover:bg-accent'"
                 @click="form.dateRange = range"
               >
                 {{ range }}
@@ -211,7 +211,7 @@ function close() {
                 v-for="recipient in recipientOptions" 
                 :key="recipient"
                 class="px-4 py-2 rounded-full text-xs font-semibold transition-colors border cursor-pointer"
-                :class="form.recipients.includes(recipient) ? 'bg-primary text-primary-foreground border-primary shadow-xs' : 'bg-background border-border text-muted-foreground hover:bg-muted'"
+                :class="form.recipients.includes(recipient) ? 'bg-primary text-primary-foreground border-primary shadow-xs' : 'bg-background border-border text-muted-foreground hover:bg-accent'"
                 @click="toggleSelection(form.recipients, recipient)"
               >
                 {{ recipient }}
@@ -249,7 +249,7 @@ function close() {
                 <input type="file" ref="fileInput" class="hidden" accept="image/*" @change="handleFileUpload" />
                 <button 
                   class="w-full h-10 px-4 text-xs font-semibold justify-start shadow-xs rounded-md border inline-flex items-center cursor-pointer transition-colors"
-                  :class="form.logoName ? 'text-foreground border-primary bg-primary/5' : 'text-muted-foreground border-border bg-card hover:bg-muted'" 
+                  :class="form.logoName ? 'text-foreground border-primary bg-primary/5' : 'text-muted-foreground border-border bg-card hover:bg-accent'" 
                   @click="triggerFileInput"
                 >
                   <ImageIcon class="size-4 mr-2" v-if="!form.logoName" />
@@ -286,9 +286,9 @@ function close() {
           <div class="flex items-center justify-between mb-4">
             <h3 class="text-sm font-semibold text-foreground uppercase tracking-wider">Preview Report</h3>
             <div class="flex gap-2">
-              <button class="h-8 text-xs font-semibold px-3 border border-border bg-card hover:bg-muted text-foreground rounded-lg inline-flex items-center gap-1.5 cursor-pointer"><Search class="size-3" /> Zoom</button>
-              <button class="h-8 text-xs font-semibold px-3 border border-border bg-card hover:bg-muted text-foreground rounded-lg inline-flex items-center gap-1.5 cursor-pointer"><PenTool class="size-3" /> Edit</button>
-              <button class="h-8 text-xs font-semibold px-3 border border-border bg-card hover:bg-muted text-foreground rounded-lg inline-flex items-center gap-1.5 cursor-pointer"><Download class="size-3" /> Download</button>
+              <button class="h-8 text-xs font-semibold px-3 border border-border bg-card hover:bg-accent text-foreground rounded-lg inline-flex items-center gap-1.5 cursor-pointer"><Search class="size-3" /> Zoom</button>
+              <button class="h-8 text-xs font-semibold px-3 border border-border bg-card hover:bg-accent text-foreground rounded-lg inline-flex items-center gap-1.5 cursor-pointer"><PenTool class="size-3" /> Edit</button>
+              <button class="h-8 text-xs font-semibold px-3 border border-border bg-card hover:bg-accent text-foreground rounded-lg inline-flex items-center gap-1.5 cursor-pointer"><Download class="size-3" /> Download</button>
             </div>
           </div>
           
@@ -446,12 +446,12 @@ function close() {
             <button :disabled="!shareUrl" class="h-11 px-6 text-sm font-semibold bg-primary hover:bg-primary/90 text-primary-foreground rounded-lg shadow-xs cursor-pointer inline-flex items-center gap-2 disabled:opacity-50" @click="openReport">
               <FileText class="size-4" /> Open Report
             </button>
-            <button @click="copyShareLink" class="h-11 px-6 text-sm font-semibold bg-card border border-border hover:bg-muted text-foreground rounded-lg shadow-xs cursor-pointer inline-flex items-center gap-2">
+            <button @click="copyShareLink" class="h-11 px-6 text-sm font-semibold bg-card border border-border hover:bg-accent text-foreground rounded-lg shadow-xs cursor-pointer inline-flex items-center gap-2">
               <Check v-if="copied" class="size-4 text-emerald-600" />
               <Copy v-else class="size-4" />
               {{ copied ? 'Copied' : 'Copy Link' }}
             </button>
-            <button class="h-11 px-6 text-sm font-semibold bg-card border border-border hover:bg-muted text-foreground rounded-lg shadow-xs cursor-pointer inline-flex items-center gap-2">
+            <button class="h-11 px-6 text-sm font-semibold bg-card border border-border hover:bg-accent text-foreground rounded-lg shadow-xs cursor-pointer inline-flex items-center gap-2">
               <Download class="size-4" /> Download PDF
             </button>
           </div>

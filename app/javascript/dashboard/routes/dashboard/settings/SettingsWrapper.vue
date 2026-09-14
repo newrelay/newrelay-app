@@ -24,11 +24,11 @@ const isProfileShell = computed(() => props.hideSideMenu && props.fullWidth);
 
 const shellInnerClass = computed(() => {
   if (isProfileShell.value) {
-    return 'max-w-7xl px-4 sm:px-6 md:px-8 py-8 md:py-12';
+    return 'max-w-7xl px-4 sm:px-6 py-8 md:py-12';
   }
   return [
     props.fullWidth ? 'max-w-none' : 'max-w-7xl',
-    'gap-8 p-4 pb-12 sm:p-8 lg:flex-row lg:gap-12 lg:px-10 lg:py-8',
+    'gap-8 p-4 pb-12 sm:p-6 lg:flex-row lg:gap-12 lg:px-6 lg:py-6',
   ];
 });
 

@@ -9,7 +9,7 @@ defineEmits(['toggleMark']);
     <button
       type="button"
       :title="$t('CONVERSATION.REPLYBOX.FORMAT_BOLD')"
-      class="flex size-7 items-center justify-center rounded text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+      class="flex size-7 items-center justify-center rounded text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
       @click="$emit('toggleMark', 'strong')"
     >
       <span class="i-lucide-bold size-4" />
@@ -17,7 +17,7 @@ defineEmits(['toggleMark']);
     <button
       type="button"
       :title="$t('CONVERSATION.REPLYBOX.FORMAT_ITALIC')"
-      class="flex size-7 items-center justify-center rounded text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+      class="flex size-7 items-center justify-center rounded text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
       @click="$emit('toggleMark', 'em')"
     >
       <span class="i-lucide-italic size-4" />
@@ -25,7 +25,7 @@ defineEmits(['toggleMark']);
     <button
       type="button"
       :title="$t('CONVERSATION.REPLYBOX.FORMAT_UNDERLINE')"
-      class="flex size-7 items-center justify-center rounded text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+      class="flex size-7 items-center justify-center rounded text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
       @click="$emit('toggleMark', 'underline')"
     >
       <span class="i-lucide-underline size-4" />

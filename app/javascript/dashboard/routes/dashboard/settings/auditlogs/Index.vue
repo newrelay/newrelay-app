@@ -148,7 +148,7 @@ watch(routerPage, (newPage, oldPage) => {
                   <tr
                     v-for="auditLogItem in records"
                     :key="auditLogItem.id"
-                    class="transition-colors hover:bg-muted/10"
+                    class="transition-colors hover:bg-accent"
                   >
                     <td class="px-6 py-4 text-sm text-foreground">
                       {{ generateLogText(auditLogItem) }}

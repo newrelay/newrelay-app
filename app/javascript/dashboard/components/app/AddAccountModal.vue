@@ -99,7 +99,7 @@ const addAccount = async () => {
         <RelayButton
           type="button"
           variant="outline"
-          class="h-9 border-border bg-muted px-5 text-[13px] font-medium text-foreground shadow-sm hover:bg-muted/80"
+          class="h-9 border-border bg-muted px-5 text-[13px] font-medium text-foreground shadow-sm hover:bg-accent"
           @click="close"
         >
           {{ t('CREATE_ACCOUNT.FORM.CANCEL') }}

@@ -729,9 +729,7 @@ onMounted(() => {
                 <div>
                   <h3
                     class="capitalize text-[15px] font-semibold tracking-tight text-foreground"
-                    :class="{
-                      'line-through text-muted-foreground': task.completed,
-                    }"
+                    :class="{ 'line-through': task.completed }"
                   >
                     {{ task.title }}
                   </h3>
@@ -745,7 +743,7 @@ onMounted(() => {
                 <div class="flex items-center gap-2">
                   <RelayBadge
                     variant="outline"
-                    class="bg-muted/30 text-xs font-medium"
+                    class="bg-muted/30 text-xs !font-medium"
                   >
                     {{ statusLabelFor(task) }}
                   </RelayBadge>

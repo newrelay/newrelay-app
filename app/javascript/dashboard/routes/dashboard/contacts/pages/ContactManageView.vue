@@ -15,6 +15,11 @@ import ContactAboutPanel from 'dashboard/components-next/Contacts/ContactDetail/
 import ContactLogActivityModal from 'dashboard/components-next/Contacts/ContactDetail/ContactLogActivityModal.vue';
 import ContactScheduleMeetingModal from 'dashboard/components-next/Contacts/ContactDetail/ContactScheduleMeetingModal.vue';
 import ConfirmContactDeleteDialog from 'dashboard/components-next/Contacts/ContactsForm/ConfirmContactDeleteDialog.vue';
+import {
+  RelayTabs,
+  RelayTabsList,
+  RelayTabsTrigger,
+} from 'dashboard/components-next/relay';
 
 const store = useStore();
 const route = useRoute();
@@ -201,29 +206,18 @@ onMounted(() => {
         class="flex min-w-0 flex-col bg-background lg:min-h-0 lg:flex-1 lg:overflow-hidden"
       >
         <div class="shrink-0 bg-card px-6">
-          <div class="flex gap-6 border-b border-border" role="tablist">
-            <button
-              v-for="tab in DETAIL_TABS"
-              :key="tab.value"
-              type="button"
-              role="tab"
-              :aria-selected="activeTab === tab.value"
-              class="relative -mb-px pb-2.5 pt-4 text-sm font-medium transition-colors"
-              :class="
-                activeTab === tab.value
-                  ? 'text-foreground'
-                  : 'text-muted-foreground hover:text-foreground'
-              "
-              @click="activeTab = tab.value"
-            >
-              {{ t(tab.labelKey) }}
-              <span
-                v-if="activeTab === tab.value"
-                class="absolute inset-x-0 bottom-0 h-px bg-primary"
-                aria-hidden="true"
-              />
-            </button>
-          </div>
+          <RelayTabs v-model="activeTab">
+            <RelayTabsList variant="underline">
+              <RelayTabsTrigger
+                v-for="tab in DETAIL_TABS"
+                :key="tab.value"
+                :value="tab.value"
+                variant="underline"
+              >
+                {{ t(tab.labelKey) }}
+              </RelayTabsTrigger>
+            </RelayTabsList>
+          </RelayTabs>
         </div>
 
         <div class="flex-1 p-6 lg:overflow-y-auto">

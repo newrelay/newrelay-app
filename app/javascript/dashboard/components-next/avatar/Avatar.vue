@@ -46,6 +46,10 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  borderless: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 const emit = defineEmits(['upload', 'delete']);
@@ -233,9 +237,10 @@ watch(
     <!-- Avatar Container -->
     <span
       role="img"
-      class="relative inline-flex items-center justify-center object-cover overflow-hidden font-medium border border-border"
+      class="relative inline-flex items-center justify-center object-cover overflow-hidden font-medium"
       :class="[
         borderRadiusClass,
+        borderless ? '' : 'border border-border',
         {
           'dark:!bg-[var(--dark-bg)] dark:!text-[var(--dark-text)]':
             !showDefaultAvatar && (!src || !isImageValid),

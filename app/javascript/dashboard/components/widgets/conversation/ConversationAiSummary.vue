@@ -52,6 +52,10 @@ const nextBestAction = computed(() => {
   return t('CONVERSATION.AI_SUMMARY.ACTIONS.GENERATE_FIRST');
 });
 
+const hasSummary = computed(() =>
+  Boolean(summaryBullets.value.length || summaryText.value)
+);
+
 const lastUpdatedLabel = computed(() => {
   if (!lastUpdatedAt.value) {
     return t('CONVERSATION.AI_SUMMARY.NOT_GENERATED');
@@ -121,34 +125,31 @@ watch(
     </p>
 
     <div
-      class="flex flex-col gap-1.5 mt-1 border border-primary/20 bg-primary/5 rounded-xl overflow-hidden p-0.5"
+      class="mt-1 flex flex-col gap-1.5 overflow-hidden rounded-xl border border-primary/20 bg-primary/5 p-0.5"
     >
-      <div
-        v-if="summaryBullets.length || summaryText"
-        class="flex items-center gap-3 p-2.5 cursor-pointer hover:bg-primary/5 transition-colors rounded-lg"
-      >
+      <div v-if="hasSummary" class="flex items-center gap-3 rounded-lg p-2.5">
         <div
-          class="size-7 rounded-full bg-primary/10 flex items-center justify-center shrink-0"
+          class="flex size-7 shrink-0 items-center justify-center rounded-full bg-primary/10"
         >
           <span class="i-lucide-lightbulb size-4 text-primary" />
         </div>
-        <div class="flex flex-col flex-1 min-w-0">
+        <div class="flex min-w-0 flex-1 flex-col">
           <span class="text-[13px] font-medium text-primary">
             {{ t('CONVERSATION.AI_SUMMARY.NEXT_BEST_ACTION') }}
           </span>
-          <span class="text-[13px] text-foreground truncate mt-0.5">
+          <span class="mt-0.5 truncate text-[13px] text-foreground">
             {{ nextBestAction }}
           </span>
         </div>
         <span
-          class="i-lucide-chevron-right size-4 text-muted-foreground shrink-0"
+          class="i-lucide-chevron-right size-4 shrink-0 text-muted-foreground"
         />
       </div>
 
-      <div class="px-2 py-2">
+      <div :class="hasSummary ? 'px-2 pb-2' : 'p-2'">
         <button
           type="button"
-          class="w-full flex items-center justify-center gap-2 border border-primary/20 bg-background rounded-lg py-1.5 text-[13px] font-medium text-primary hover:bg-primary/5 transition-colors disabled:opacity-60"
+          class="flex min-h-10 w-full items-center justify-center gap-2 rounded-xl border border-primary/20 bg-background px-4 py-2.5 text-[13px] font-medium text-primary transition-colors hover:bg-primary/5 disabled:pointer-events-none disabled:opacity-60"
           :disabled="isGenerating"
           @click="generateSummary"
         >

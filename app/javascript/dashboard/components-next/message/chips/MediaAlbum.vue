@@ -13,6 +13,10 @@ const props = defineProps({
   },
 });
 
+defineOptions({
+  inheritAttrs: false,
+});
+
 const MAX_VISIBLE = 4;
 const { t } = useI18n();
 const { filteredCurrentChatAttachments } = useMessageContext();
@@ -60,7 +64,7 @@ const galleryList = computed(() => {
 </script>
 
 <template>
-  <div class="flex w-full flex-col gap-1.5 overflow-hidden">
+  <div class="flex w-full flex-col gap-1.5 overflow-hidden" v-bind="$attrs">
     <div class="grid grid-cols-2 gap-1 overflow-hidden rounded-lg">
       <button
         v-for="(attachment, index) in visibleAttachments"

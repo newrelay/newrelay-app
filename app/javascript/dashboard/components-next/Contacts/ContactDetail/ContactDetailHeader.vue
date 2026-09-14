@@ -84,25 +84,41 @@ const hasMetaLine = computed(() =>
 
 const isBlocked = computed(() => Boolean(props.contact?.blocked));
 
+const callPhoneNumbers = computed(() => {
+  const extras =
+    props.contact?.additionalAttributes?.phoneNumbers ||
+    props.contact?.additionalAttributes?.phone_numbers ||
+    [];
+  return [
+    ...new Set(
+      [props.contact?.phoneNumber, ...extras]
+        .map(n => String(n || '').trim())
+        .filter(Boolean)
+    ),
+  ];
+});
+
+const callMenuItems = computed(() =>
+  callPhoneNumbers.value.map(phone => ({
+    label: phone,
+    action: 'call',
+    value: phone,
+    icon: 'i-lucide-phone',
+  }))
+);
+
 const moreMenuItems = computed(() => {
-  const items = [];
-  if (props.contact?.phoneNumber) {
-    items.push({
-      label: t('CONTACTS_LAYOUT.DETAIL.ACTIONS.CALL'),
-      action: 'call',
-      value: 'call',
-      icon: 'i-lucide-phone',
-    });
-  }
-  items.push({
-    label: isBlocked.value
-      ? t('CONTACTS_LAYOUT.HEADER.UNBLOCK_CONTACT')
-      : t('CONTACTS_LAYOUT.HEADER.BLOCK_CONTACT'),
-    action: 'block',
-    value: 'block',
-    icon: isBlocked.value ? 'i-lucide-lock-open' : 'i-lucide-ban',
-    destructive: true,
-  });
+  const items = [
+    {
+      label: isBlocked.value
+        ? t('CONTACTS_LAYOUT.HEADER.UNBLOCK_CONTACT')
+        : t('CONTACTS_LAYOUT.HEADER.BLOCK_CONTACT'),
+      action: 'block',
+      value: 'block',
+      icon: isBlocked.value ? 'i-lucide-lock-open' : 'i-lucide-ban',
+      destructive: true,
+    },
+  ];
   if (checkPermissions(['administrator'])) {
     items.push({
       label: t('CONTACTS_LAYOUT.DETAILS.DELETE_CONTACT'),
@@ -115,11 +131,14 @@ const moreMenuItems = computed(() => {
   return items;
 });
 
+const callContact = phone => {
+  if (!phone) return;
+  window.open(`tel:${phone}`, '_self');
+};
+
+const handleCallAction = ({ value }) => callContact(value);
+
 const handleMoreAction = ({ action }) => {
-  if (action === 'call' && props.contact?.phoneNumber) {
-    window.open(`tel:${props.contact.phoneNumber}`, '_self');
-    return;
-  }
   if (action === 'block') emit('block', isBlocked.value);
   if (action === 'delete') emit('delete');
 };
@@ -230,6 +249,25 @@ const handleAvatarDelete = () => {
           </RelayButton>
         </template>
       </ComposeConversation>
+
+      <RelayActionDropdown
+        :menu-items="callMenuItems"
+        align="end"
+        content-class="min-w-48"
+        @action="handleCallAction"
+      >
+        <template #trigger>
+          <RelayButton
+            variant="outline"
+            class="h-9 rounded-lg px-4 text-sm font-medium shadow-sm"
+            :disabled="!callPhoneNumbers.length"
+          >
+            <span class="i-lucide-phone size-4" />
+            {{ t('CONTACTS_LAYOUT.DETAIL.ACTIONS.CALL') }}
+            <span class="i-lucide-chevron-down size-3.5 opacity-70" />
+          </RelayButton>
+        </template>
+      </RelayActionDropdown>
 
       <RelayActionDropdown
         :menu-items="moreMenuItems"

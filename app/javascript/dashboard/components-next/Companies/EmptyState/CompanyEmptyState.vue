@@ -123,7 +123,7 @@ const { t } = useI18n();
             {{ t('COMPANIES.EMPTY_STATE.ADD_ACCOUNTS') }}
           </h3>
           <RelayButton
-            class="group h-12 w-full rounded-xl text-base shadow-sm"
+            class="group h-12 w-full rounded-xl !text-base shadow-sm"
             @click="emit('create')"
           >
             <span

@@ -88,7 +88,7 @@ class SuperAdmin::PlanManagementController < SuperAdmin::ApplicationController
       end
 
       stripe_gw = gateway_prices['stripe'] || {}
-      price_per_agent = (gw_prices_param['stripe'] && gw_prices_param['stripe'][:amount].present?) ? stripe_gw['amount'].to_f : direct_price
+      price_per_agent = gw_prices_param['stripe'] && gw_prices_param['stripe'][:amount].present? ? stripe_gw['amount'].to_f : direct_price
 
       plan.merge(
         'price_per_agent' => price_per_agent,
@@ -97,7 +97,6 @@ class SuperAdmin::PlanManagementController < SuperAdmin::ApplicationController
         'razorpay_plan_ids' => gateway_prices.dig('razorpay', 'plan_id').present? ? [gateway_prices.dig('razorpay', 'plan_id')] : [],
         'gateway_prices' => gateway_prices
       )
-
     end
 
     config.value = updated_plans
@@ -201,7 +200,7 @@ class SuperAdmin::PlanManagementController < SuperAdmin::ApplicationController
       captain_v1_action_classifier help_center_embedding_search custom_tools
       advanced_search advanced_search_indexing saml captain_integration_v2
       captain_document_auto_sync white_labeling custom_domain reseller_dashboard
-      api_access companies csat_review_notes conversation_required_attributes
+      api_access csat_review_notes conversation_required_attributes
       advanced_assignment channel_voice
     ]
   end

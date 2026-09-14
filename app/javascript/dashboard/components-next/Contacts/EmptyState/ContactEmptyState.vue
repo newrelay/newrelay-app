@@ -7,6 +7,8 @@ import { ExceptionWithMessage } from 'shared/helpers/CustomErrors';
 
 import ContactImportDialog from 'dashboard/components-next/Contacts/ContactsForm/ContactImportDialog.vue';
 import CreateNewContactDialog from 'dashboard/components-next/Contacts/ContactsForm/CreateNewContactDialog.vue';
+import { useAccount } from 'dashboard/composables/useAccount';
+import { FEATURE_FLAGS } from 'dashboard/featureFlags';
 
 defineProps({
   title: {
@@ -27,6 +29,19 @@ const emit = defineEmits(['create']);
 
 const { t } = useI18n();
 const store = useStore();
+const { accountScopedRoute } = useAccount();
+
+const accountId = useMapGetter('getCurrentAccountId');
+const isFeatureEnabledonAccount = useMapGetter(
+  'accounts/isFeatureEnabledonAccount'
+);
+
+const showCompaniesLink = computed(() =>
+  isFeatureEnabledonAccount.value(accountId.value, FEATURE_FLAGS.COMPANIES)
+);
+const companiesRoute = computed(() =>
+  accountScopedRoute('companies_dashboard_index')
+);
 
 const contactImportDialogRef = ref(null);
 const createNewContactDialogRef = ref(null);
@@ -217,6 +232,14 @@ const onImport = async file => {
         </span>
       </button>
     </div>
+
+    <router-link
+      v-if="showCompaniesLink"
+      :to="companiesRoute"
+      class="mb-8 text-sm font-medium text-primary transition-colors hover:underline"
+    >
+      {{ t('CONTACTS_LAYOUT.EMPTY_STATE.GO_TO_COMPANIES') }}
+    </router-link>
 
     <ContactImportDialog ref="contactImportDialogRef" @import="onImport" />
     <CreateNewContactDialog

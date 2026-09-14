@@ -710,6 +710,7 @@
       "BUTTON_LABEL": "Add contact",
       "ADD_MANUALLY": "Add Manually",
       "ADD_MANUALLY_HINT": "Create one by one",
+      "GO_TO_COMPANIES": "Go to Companies",
       "GETTING_STARTED": "Getting Started",
       "STEP_BADGE": "Step {current} of {total}",
       "STEP_WORKSPACE": "Create Workspace",

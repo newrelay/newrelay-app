@@ -37,7 +37,7 @@ class Seeders::PlanFeatureLimitSeeder
     captain_v1_action_classifier help_center_embedding_search custom_tools
     advanced_search advanced_search_indexing saml captain_integration_v2
     captain_document_auto_sync white_labeling custom_domain reseller_dashboard
-    api_access companies csat_review_notes conversation_required_attributes
+    api_access csat_review_notes conversation_required_attributes
     advanced_assignment channel_voice
   ].freeze
 

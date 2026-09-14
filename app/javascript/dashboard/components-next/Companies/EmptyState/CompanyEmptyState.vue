@@ -13,7 +13,7 @@ const { t } = useI18n();
 
 <template>
   <div
-    class="mx-auto flex w-full max-w-5xl flex-col items-center animate-in fade-in zoom-in-95 duration-700"
+    class="mx-auto flex w-full max-w-5xl flex-col items-center py-12 md:py-16 animate-in fade-in zoom-in-95 duration-700"
   >
     <div class="mb-10 flex w-full flex-col items-center text-center">
       <div

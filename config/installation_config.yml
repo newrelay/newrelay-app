@@ -314,6 +314,7 @@
       - campaigns
       - reports
       - crm
+      - companies
       - auto_resolve_conversations
       - custom_reply_email
       - custom_reply_domain

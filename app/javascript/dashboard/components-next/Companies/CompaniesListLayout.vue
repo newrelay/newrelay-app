@@ -42,11 +42,11 @@ const emit = defineEmits([
       :class="isEmptyState ? 'px-4' : 'p-6'"
     >
       <div
-        class="mx-auto flex w-full flex-1 flex-col"
+        class="flex w-full flex-1 flex-col"
         :class="
           isEmptyState
             ? 'm-auto max-w-5xl'
-            : 'max-w-7xl space-y-6 animate-in fade-in duration-500'
+            : 'space-y-6 animate-in fade-in duration-500'
         "
       >
         <CompanyHeader

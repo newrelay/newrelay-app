@@ -109,6 +109,7 @@ const updateSelected = newValue => {
           <DropdownItem
             :label="option.label"
             :icon="option.icon"
+            :active="option.value === selected"
             @click="updateSelected(option.value)"
           />
         </template>

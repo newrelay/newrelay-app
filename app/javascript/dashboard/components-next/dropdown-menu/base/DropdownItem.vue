@@ -17,6 +17,7 @@ const props = defineProps({
   preserveOpen: { type: Boolean, default: false },
   destructive: { type: Boolean, default: false },
   disabled: { type: Boolean, default: false },
+  active: { type: Boolean, default: false },
 });
 
 defineOptions({
@@ -44,6 +45,7 @@ const itemClass = computed(() =>
     getDropdownItemInteractionClass(
       props.destructive ? { destructive: true } : {}
     ),
+    props.active && 'font-medium text-primary',
     props.disabled && 'pointer-events-none opacity-50'
   )
 );

@@ -74,10 +74,12 @@ defineExpose({ dialogRef });
         @click.stop
       >
         <div class="flex flex-col">
-          <h2 class="text-base font-medium tracking-tight text-foreground">
+          <h2 class="text-[18px] font-semibold tracking-tight text-foreground">
             {{ t('CONTACTS_LAYOUT.HEADER.ACTIONS.EXPORT_CONTACT.TITLE') }}
           </h2>
-          <p class="mb-5 mt-1 text-[14px] font-normal text-muted-foreground">
+          <p
+            class="mb-6 mt-1.5 text-[14px] font-normal leading-relaxed text-muted-foreground"
+          >
             {{ t('CONTACTS_LAYOUT.HEADER.ACTIONS.EXPORT_CONTACT.DESCRIPTION') }}
           </p>
         </div>

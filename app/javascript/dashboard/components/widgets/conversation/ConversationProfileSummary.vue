@@ -113,11 +113,14 @@ const scoreValue = computed(() => props.chat.id);
         <a
           v-if="contactProfileLink"
           :href="contactProfileLink"
-          class="cursor-pointer truncate font-semibold text-base text-foreground transition-colors hover:text-primary"
+          class="cursor-pointer truncate font-semibold text-base leading-5 text-foreground transition-colors hover:text-primary"
         >
           {{ currentContact.name }}
         </a>
-        <span v-else class="truncate font-semibold text-base text-foreground">
+        <span
+          v-else
+          class="truncate font-semibold text-base leading-5 text-foreground"
+        >
           {{ currentContact.name }}
         </span>
         <span v-if="statusBadge" :class="[badgeBaseClass, badgeClass]">

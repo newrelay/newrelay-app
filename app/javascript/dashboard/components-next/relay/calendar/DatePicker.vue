@@ -91,7 +91,7 @@ const updateValue = date => {
 </script>
 
 <template>
-  <RelayDropdownMenu>
+  <RelayDropdownMenu modal>
     <RelayDropdownMenuTrigger as-child>
       <slot name="trigger">
         <button
@@ -110,8 +110,11 @@ const updateValue = date => {
       </slot>
     </RelayDropdownMenuTrigger>
     <RelayDropdownMenuContent
+      portal-to="body"
       :align="align"
       :side="side"
+      :side-offset="8"
+      :collision-padding="16"
       :class="CALENDAR_CONTENT_CLASS"
     >
       <RelayCalendar

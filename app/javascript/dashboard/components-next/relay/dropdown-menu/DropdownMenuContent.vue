@@ -18,9 +18,11 @@ defineProps({
   avoidCollisions: { type: Boolean, default: true },
   collisionPadding: { type: Number, default: undefined },
   collisionBoundary: { type: [Object, null], default: undefined },
-  portalTo: { type: [Object, String], default: undefined },
+  portalTo: { type: [Object, String], default: 'body' },
   disablePortal: { type: Boolean, default: false },
 });
+
+defineOptions({ inheritAttrs: false });
 </script>
 
 <template>

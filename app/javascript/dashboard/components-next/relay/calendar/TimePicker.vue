@@ -98,7 +98,7 @@ const columnItemClass = (isSelected, extraClass = '') =>
 </script>
 
 <template>
-  <RelayDropdownMenu>
+  <RelayDropdownMenu modal>
     <RelayDropdownMenuTrigger as-child>
       <slot name="trigger">
         <button
@@ -117,8 +117,11 @@ const columnItemClass = (isSelected, extraClass = '') =>
       </slot>
     </RelayDropdownMenuTrigger>
     <RelayDropdownMenuContent
+      portal-to="body"
       :align="align"
       :side="side"
+      :side-offset="8"
+      :collision-padding="16"
       :class="TIME_PICKER_CONTENT_CLASS"
     >
       <div class="grid grid-cols-3 gap-1">

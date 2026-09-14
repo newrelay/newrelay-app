@@ -1,5 +1,5 @@
 export const CALENDAR_CONTENT_CLASS =
-  'anim-pop bg-popover text-popover-foreground !z-[250] w-auto overflow-hidden rounded-md border border-border p-4 shadow-md';
+  'anim-pop pointer-events-auto bg-popover text-popover-foreground !z-[300] w-auto max-h-[min(24rem,calc(100vh-2rem))] overflow-y-auto rounded-md border border-border p-4 shadow-md';
 
 export const CALENDAR_HEADER_CLASS =
   'mb-4 flex items-center justify-between px-2';
@@ -47,7 +47,7 @@ export const CALENDAR_FOOTER_ACTION_CLASS =
   'text-xs font-medium text-primary hover:text-primary/80';
 
 export const TIME_PICKER_CONTENT_CLASS =
-  'anim-pop bg-popover text-popover-foreground !z-[250] w-[220px] overflow-hidden rounded-md border border-border p-2 shadow-md';
+  'anim-pop pointer-events-auto bg-popover text-popover-foreground !z-[300] w-[220px] max-h-[min(22rem,calc(100vh-2rem))] overflow-y-auto rounded-md border border-border p-2 shadow-md';
 
 export const TIME_PICKER_COLUMN_CLASS =
   'max-h-[220px] overflow-y-auto no-scrollbar';

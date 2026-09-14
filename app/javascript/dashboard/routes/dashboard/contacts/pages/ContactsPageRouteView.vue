@@ -64,14 +64,19 @@ const isActive = tab => {
           :to="tab.to"
           role="tab"
           :aria-selected="isActive(tab)"
-          class="relative -mb-px shrink-0 border-b-2 px-1 pb-3 pt-2 text-sm transition-colors"
+          class="relative -mb-px shrink-0 px-1 pb-3 pt-2 text-sm transition-colors"
           :class="
             isActive(tab)
-              ? 'border-primary font-medium text-foreground'
-              : 'border-transparent text-muted-foreground hover:text-foreground'
+              ? 'font-medium text-foreground'
+              : 'text-muted-foreground hover:text-foreground'
           "
         >
           {{ tab.name }}
+          <span
+            v-if="isActive(tab)"
+            class="absolute inset-x-0 bottom-0 h-px bg-primary"
+            aria-hidden="true"
+          />
         </router-link>
       </nav>
     </header>

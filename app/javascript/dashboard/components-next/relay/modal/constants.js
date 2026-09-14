@@ -24,7 +24,7 @@ export const RELAY_MODAL_TITLE_CLASS =
   'block text-lg font-semibold tracking-tight text-foreground';
 
 export const RELAY_MODAL_DESCRIPTION_CLASS =
-  'mb-0 mt-1.5 block pr-6 text-[14px] font-normal leading-normal text-muted-foreground';
+  'mb-0 mt-1 block pr-6 text-[14px] font-normal leading-normal text-muted-foreground';
 
 export const RELAY_MODAL_BODY_CLASS = 'flex-1 overflow-y-auto px-6 pb-6 pt-4';
 

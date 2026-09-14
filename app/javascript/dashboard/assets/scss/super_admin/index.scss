@@ -1776,7 +1776,7 @@ tr:focus-within .row-actions {
 }
 .action-icon-btn.danger:hover {
   color: var(--destructive);
-  background-color: rgba(225, 29, 72, 0.08);
+  background-color: color-mix(in srgb, var(--destructive) 8%, transparent);
 }
 
 /* ── Tooltips (Design-System-NR Popover Style) ── */

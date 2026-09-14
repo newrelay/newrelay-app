@@ -26,7 +26,7 @@ defineProps({
   },
 });
 
-const emit = defineEmits(['create', 'loadMock']);
+const emit = defineEmits(['create']);
 
 const { t } = useI18n();
 const store = useStore();
@@ -34,7 +34,6 @@ const { checkPermissions } = usePolicy();
 
 const createNewContactDialogRef = ref(null);
 const contactImportDialogRef = ref(null);
-const showOnboardingEmptyState = ref(true);
 
 const canImport = checkPermissions(['administrator', 'contact_manage']);
 
@@ -86,156 +85,135 @@ const onImport = async file => {
       {{ subtitle || t('CONTACTS_LAYOUT.EMPTY_STATE.SUBTITLE') }}
     </p>
 
-    <template v-if="showOnboardingEmptyState">
+    <div
+      class="relative mb-8 w-full overflow-hidden rounded-xl border border-border/50 bg-card/50 p-5 text-left shadow-sm backdrop-blur-sm"
+    >
       <div
-        class="relative mb-8 w-full overflow-hidden rounded-xl border border-border/50 bg-card/50 p-5 text-left shadow-sm backdrop-blur-sm"
+        class="absolute right-0 top-0 h-32 w-32 translate-x-1/4 -translate-y-1/2 rounded-full bg-primary/5 blur-2xl"
+      />
+      <h3
+        class="mb-4 flex items-center justify-between text-sm font-semibold text-foreground"
       >
-        <div
-          class="absolute right-0 top-0 h-32 w-32 translate-x-1/4 -translate-y-1/2 rounded-full bg-primary/5 blur-2xl"
-        />
-        <h3
-          class="mb-4 flex items-center justify-between text-sm font-semibold text-foreground"
+        {{ t('CONTACTS_LAYOUT.EMPTY_STATE.GETTING_STARTED') }}
+        <span
+          class="rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-medium uppercase tracking-wide text-primary"
         >
-          {{ t('CONTACTS_LAYOUT.EMPTY_STATE.GETTING_STARTED') }}
-          <span
-            class="rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-medium uppercase tracking-wide text-primary"
+          {{ t('CONTACTS_LAYOUT.EMPTY_STATE.STEP_BADGE') }}
+        </span>
+      </h3>
+      <div class="relative ml-1 flex flex-col">
+        <div class="absolute bottom-3 left-[11px] top-3 z-0 w-px bg-border" />
+
+        <div class="z-10 flex items-center gap-4 py-2.5">
+          <div
+            class="flex size-[22px] shrink-0 items-center justify-center rounded-full bg-primary ring-4 ring-card"
           >
-            {{ t('CONTACTS_LAYOUT.EMPTY_STATE.STEP_BADGE') }}
+            <span class="i-lucide-check size-3 text-primary-foreground" />
+          </div>
+          <span class="text-sm font-medium text-muted-foreground line-through">
+            {{ t('CONTACTS_LAYOUT.EMPTY_STATE.STEP_WORKSPACE') }}
           </span>
-        </h3>
-        <div class="relative ml-1 flex flex-col">
-          <div class="absolute bottom-3 left-[11px] top-3 z-0 w-px bg-border" />
+        </div>
 
-          <div class="z-10 flex items-center gap-4 py-2.5">
-            <div
-              class="flex size-[22px] shrink-0 items-center justify-center rounded-full bg-primary ring-4 ring-card"
-            >
-              <span class="i-lucide-check size-3 text-primary-foreground" />
-            </div>
-            <span
-              class="text-sm font-medium text-muted-foreground line-through"
-            >
-              {{ t('CONTACTS_LAYOUT.EMPTY_STATE.STEP_WORKSPACE') }}
-            </span>
-          </div>
-
-          <div class="z-10 flex items-center gap-4 py-2.5">
-            <div
-              class="flex size-[22px] shrink-0 items-center justify-center rounded-full border-2 border-primary bg-card shadow-sm shadow-primary/20 ring-4 ring-card"
-            >
-              <div class="size-1.5 animate-pulse rounded-full bg-primary" />
-            </div>
-            <span class="text-sm font-semibold text-foreground">
-              {{ t('CONTACTS_LAYOUT.EMPTY_STATE.STEP_IMPORT') }}
-            </span>
-          </div>
-
+        <div class="z-10 flex items-center gap-4 py-2.5">
           <div
-            class="z-10 flex items-center gap-4 py-2.5 opacity-60 transition-opacity hover:opacity-100"
+            class="flex size-[22px] shrink-0 items-center justify-center rounded-full border-2 border-primary bg-card shadow-sm shadow-primary/20 ring-4 ring-card"
           >
-            <div
-              class="flex size-[22px] shrink-0 items-center justify-center rounded-full border-2 border-muted-foreground/30 bg-card ring-4 ring-card transition-colors"
-            />
-            <span class="text-sm font-medium text-foreground transition-colors">
-              {{ t('CONTACTS_LAYOUT.EMPTY_STATE.STEP_CHANNEL') }}
-            </span>
+            <div class="size-1.5 animate-pulse rounded-full bg-primary" />
           </div>
+          <span class="text-sm font-semibold text-foreground">
+            {{ t('CONTACTS_LAYOUT.EMPTY_STATE.STEP_IMPORT') }}
+          </span>
+        </div>
 
+        <div
+          class="z-10 flex items-center gap-4 py-2.5 opacity-60 transition-opacity hover:opacity-100"
+        >
           <div
-            class="z-10 flex items-center gap-4 py-2.5 opacity-60 transition-opacity hover:opacity-100"
-          >
-            <div
-              class="flex size-[22px] shrink-0 items-center justify-center rounded-full border-2 border-muted-foreground/30 bg-card ring-4 ring-card transition-colors"
-            />
-            <span class="text-sm font-medium text-foreground transition-colors">
-              {{ t('CONTACTS_LAYOUT.EMPTY_STATE.STEP_MESSAGE') }}
-            </span>
-          </div>
+            class="flex size-[22px] shrink-0 items-center justify-center rounded-full border-2 border-muted-foreground/30 bg-card ring-4 ring-card transition-colors"
+          />
+          <span class="text-sm font-medium text-foreground transition-colors">
+            {{ t('CONTACTS_LAYOUT.EMPTY_STATE.STEP_CHANNEL') }}
+          </span>
+        </div>
+
+        <div
+          class="z-10 flex items-center gap-4 py-2.5 opacity-60 transition-opacity hover:opacity-100"
+        >
+          <div
+            class="flex size-[22px] shrink-0 items-center justify-center rounded-full border-2 border-muted-foreground/30 bg-card ring-4 ring-card transition-colors"
+          />
+          <span class="text-sm font-medium text-foreground transition-colors">
+            {{ t('CONTACTS_LAYOUT.EMPTY_STATE.STEP_MESSAGE') }}
+          </span>
         </div>
       </div>
+    </div>
 
-      <div
-        v-if="showButton"
-        class="mb-8 grid w-full grid-cols-1 gap-4 sm:grid-cols-2"
-      >
-        <RelayButton
-          v-if="canImport"
-          variant="outline"
-          class="h-14 justify-start px-4 transition-colors hover:bg-muted/50"
-          @click="openImport"
-        >
-          <span class="i-lucide-upload mr-4 size-5 text-muted-foreground" />
-          <span class="flex flex-col items-start">
-            <span class="text-sm font-medium text-foreground">
-              {{ t('CONTACTS_LAYOUT.EMPTY_STATE.IMPORT_CSV') }}
-            </span>
-            <span class="text-xs text-muted-foreground">
-              {{ t('CONTACTS_LAYOUT.EMPTY_STATE.IMPORT_CSV_HINT') }}
-            </span>
-          </span>
-        </RelayButton>
-        <RelayButton
-          variant="outline"
-          class="h-14 justify-start px-4 transition-colors hover:bg-muted/50"
-          @click="notifyIntegrationPending"
-        >
-          <span class="i-lucide-users mr-4 size-5 text-muted-foreground" />
-          <span class="flex flex-col items-start">
-            <span class="text-sm font-medium text-foreground">
-              {{ t('CONTACTS_LAYOUT.EMPTY_STATE.GOOGLE_CONTACTS') }}
-            </span>
-            <span class="text-xs text-muted-foreground">
-              {{ t('CONTACTS_LAYOUT.EMPTY_STATE.GOOGLE_CONTACTS_HINT') }}
-            </span>
-          </span>
-        </RelayButton>
-        <RelayButton
-          variant="outline"
-          class="h-14 justify-start px-4 transition-colors hover:bg-muted/50"
-          @click="notifyIntegrationPending"
-        >
-          <span class="i-lucide-share-2 mr-4 size-5 text-muted-foreground" />
-          <span class="flex flex-col items-start">
-            <span class="text-sm font-medium text-foreground">
-              {{ t('CONTACTS_LAYOUT.EMPTY_STATE.META_LEADS') }}
-            </span>
-            <span class="text-xs text-muted-foreground">
-              {{ t('CONTACTS_LAYOUT.EMPTY_STATE.META_LEADS_HINT') }}
-            </span>
-          </span>
-        </RelayButton>
-        <RelayButton
-          variant="outline"
-          class="h-14 justify-start px-4 transition-colors hover:bg-muted/50"
-          @click="openCreate"
-        >
-          <span class="i-lucide-user-plus mr-4 size-5 text-muted-foreground" />
-          <span class="flex flex-col items-start">
-            <span class="text-sm font-medium text-foreground">
-              {{ t('CONTACTS_LAYOUT.EMPTY_STATE.ADD_MANUALLY') }}
-            </span>
-            <span class="text-xs text-muted-foreground">
-              {{ t('CONTACTS_LAYOUT.EMPTY_STATE.ADD_MANUALLY_HINT') }}
-            </span>
-          </span>
-        </RelayButton>
-      </div>
-    </template>
-
-    <div class="mt-2 flex items-center justify-center gap-4">
+    <div
+      v-if="showButton"
+      class="mb-8 grid w-full grid-cols-1 gap-4 sm:grid-cols-2"
+    >
       <RelayButton
-        variant="ghost"
-        class="h-6 border border-border/50 px-2 py-0 text-[11px] text-muted-foreground hover:border-transparent hover:text-foreground"
-        @click="emit('loadMock')"
+        v-if="canImport"
+        variant="outline"
+        class="h-14 justify-start px-4 transition-colors hover:bg-muted/50"
+        @click="openImport"
       >
-        {{ t('CONTACTS_LAYOUT.EMPTY_STATE.DEV_LOAD_DUMMY') }}
+        <span class="i-lucide-upload mr-4 size-5 text-muted-foreground" />
+        <span class="flex flex-col items-start">
+          <span class="text-sm font-medium text-foreground">
+            {{ t('CONTACTS_LAYOUT.EMPTY_STATE.IMPORT_CSV') }}
+          </span>
+          <span class="text-xs text-muted-foreground">
+            {{ t('CONTACTS_LAYOUT.EMPTY_STATE.IMPORT_CSV_HINT') }}
+          </span>
+        </span>
       </RelayButton>
       <RelayButton
-        variant="ghost"
-        class="h-6 border border-border/50 px-2 py-0 text-[11px] text-muted-foreground hover:border-transparent hover:text-foreground"
-        @click="showOnboardingEmptyState = !showOnboardingEmptyState"
+        variant="outline"
+        class="h-14 justify-start px-4 transition-colors hover:bg-muted/50"
+        @click="notifyIntegrationPending"
       >
-        {{ t('CONTACTS_LAYOUT.EMPTY_STATE.DEV_TOGGLE_EMPTY') }}
+        <span class="i-lucide-users mr-4 size-5 text-muted-foreground" />
+        <span class="flex flex-col items-start">
+          <span class="text-sm font-medium text-foreground">
+            {{ t('CONTACTS_LAYOUT.EMPTY_STATE.GOOGLE_CONTACTS') }}
+          </span>
+          <span class="text-xs text-muted-foreground">
+            {{ t('CONTACTS_LAYOUT.EMPTY_STATE.GOOGLE_CONTACTS_HINT') }}
+          </span>
+        </span>
+      </RelayButton>
+      <RelayButton
+        variant="outline"
+        class="h-14 justify-start px-4 transition-colors hover:bg-muted/50"
+        @click="notifyIntegrationPending"
+      >
+        <span class="i-lucide-share-2 mr-4 size-5 text-muted-foreground" />
+        <span class="flex flex-col items-start">
+          <span class="text-sm font-medium text-foreground">
+            {{ t('CONTACTS_LAYOUT.EMPTY_STATE.META_LEADS') }}
+          </span>
+          <span class="text-xs text-muted-foreground">
+            {{ t('CONTACTS_LAYOUT.EMPTY_STATE.META_LEADS_HINT') }}
+          </span>
+        </span>
+      </RelayButton>
+      <RelayButton
+        variant="outline"
+        class="h-14 justify-start px-4 transition-colors hover:bg-muted/50"
+        @click="openCreate"
+      >
+        <span class="i-lucide-user-plus mr-4 size-5 text-muted-foreground" />
+        <span class="flex flex-col items-start">
+          <span class="text-sm font-medium text-foreground">
+            {{ t('CONTACTS_LAYOUT.EMPTY_STATE.ADD_MANUALLY') }}
+          </span>
+          <span class="text-xs text-muted-foreground">
+            {{ t('CONTACTS_LAYOUT.EMPTY_STATE.ADD_MANUALLY_HINT') }}
+          </span>
+        </span>
       </RelayButton>
     </div>
 

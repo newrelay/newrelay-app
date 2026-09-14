@@ -43,9 +43,7 @@
           "TITLE": "Automate Tasks",
           "DESC": "Trigger automated actions as deals move through stages."
         }
-      },
-      "DEV_LOAD_DEMO": "Load Demo Deals instead",
-      "DEV_TOGGLE_EMPTY": "Toggle empty states"
+      }
     },
     "SEARCH_PLACEHOLDER": "Search deals...",
     "METRICS": {
@@ -196,9 +194,7 @@
           "TITLE": "Value Tracking",
           "DESC": "Calculate exact pipeline value and weighted value."
         }
-      },
-      "DEV_LOAD_DEMO": "Load Demo Opportunities instead",
-      "DEV_TOGGLE_EMPTY": "Toggle empty states"
+      }
     },
     "NEW": "New Opportunity",
     "ID": "OPP-{id}"

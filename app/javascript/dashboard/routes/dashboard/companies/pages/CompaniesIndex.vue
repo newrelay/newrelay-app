@@ -11,7 +11,6 @@ import { filterCompaniesByConditions } from './companiesFilterHelper';
 import CompaniesListLayout from 'dashboard/components-next/Companies/CompaniesListLayout.vue';
 import CompaniesTable from 'dashboard/components-next/Companies/CompaniesTable.vue';
 import CompanyEmptyState from 'dashboard/components-next/Companies/EmptyState/CompanyEmptyState.vue';
-import mockCompanies from 'dashboard/components-next/Companies/EmptyState/companyEmptyStateContent';
 import CompanyCreateDialog from 'dashboard/components-next/Companies/CompanyCreateDialog.vue';
 import CompanyImportDialog from 'dashboard/components-next/Companies/CompanyImportDialog.vue';
 import CompanyFiltersDrawer from 'dashboard/components-next/Companies/CompanyFiltersDrawer.vue';
@@ -86,11 +85,7 @@ const buildSortAttr = () =>
 
 const sortParam = computed(() => buildSortAttr());
 
-const showMockCompanies = ref(false);
-const hasRealCompanies = computed(() => companies.value.length > 0);
-const hasCompanies = computed(
-  () => showMockCompanies.value || hasRealCompanies.value
-);
+const hasCompanies = computed(() => companies.value.length > 0);
 const isIndexFirstPage = computed(() => pageNumber.value === 1);
 const showEmptyStateLayout = computed(
   () =>
@@ -111,9 +106,7 @@ const displayedCompanies = computed(() =>
   filterCompaniesByConditions(companies.value, activeFilters.value)
 );
 
-const listCompanies = computed(() =>
-  showMockCompanies.value ? mockCompanies : displayedCompanies.value
-);
+const listCompanies = computed(() => displayedCompanies.value);
 
 const updateURLParams = (page, search = '', sort = '') => {
   const query = {
@@ -267,7 +260,6 @@ onMounted(() => {
       v-else-if="showEmptyStateLayout"
       @create="openCreateCompanyDialog"
       @import="openImportDialog"
-      @load-mock="showMockCompanies = true"
     />
 
     <div
@@ -310,12 +302,9 @@ onMounted(() => {
       v-else
       :companies="listCompanies"
       :visible-columns="visibleColumns"
-      :current-page="showMockCompanies ? 1 : pageNumber"
-      :total-items="
-        showMockCompanies ? mockCompanies.length : Number(meta.totalCount || 0)
-      "
+      :current-page="pageNumber"
+      :total-items="Number(meta.totalCount || 0)"
       :items-per-page="25"
-      :is-preview="showMockCompanies"
       @show-company="showCompany"
       @update:current-page="onPageChange"
     />

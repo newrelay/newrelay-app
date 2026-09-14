@@ -726,9 +726,7 @@
       "SEARCH_EMPTY_STATE_SUBTITLE": "We couldn't find any contacts matching \"{query}\". Would you like to add them as a new contact?",
       "CLEAR_SEARCH": "Clear Search",
       "LIST_EMPTY_STATE_TITLE": "No contacts available in this view",
-      "ACTIVE_EMPTY_STATE_TITLE": "No contacts are active at the moment",
-      "DEV_LOAD_DUMMY": "Load dummy contacts",
-      "DEV_TOGGLE_EMPTY": "Toggle empty states"
+      "ACTIVE_EMPTY_STATE_TITLE": "No contacts are active at the moment"
     },
     "LOAD_MORE": "Load more",
     "ADD_CONTACT_DRAWER": {

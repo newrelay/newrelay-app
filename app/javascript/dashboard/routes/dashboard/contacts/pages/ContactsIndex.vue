@@ -16,7 +16,6 @@ import ContactsListLayout from 'dashboard/components-next/Contacts/ContactsListL
 import ContactEmptyState from 'dashboard/components-next/Contacts/EmptyState/ContactEmptyState.vue';
 import Spinner from 'dashboard/components-next/spinner/Spinner.vue';
 import ContactsTable from 'dashboard/components-next/Contacts/Pages/ContactsTable.vue';
-import mockContacts from 'dashboard/components-next/Contacts/EmptyState/contactEmptyStateContent';
 import CreateNewContactDialog from 'dashboard/components-next/Contacts/ContactsForm/CreateNewContactDialog.vue';
 import ContactsBulkActionBar from '../components/ContactsBulkActionBar.vue';
 import Popover from 'dashboard/components-next/popover/Popover.vue';
@@ -123,14 +122,8 @@ const activeSegment = computed(() => {
   return segments.value.find(view => view.id === Number(activeSegmentId.value));
 });
 
-const showMockContacts = ref(false);
-const hasRealContacts = computed(() => contacts.value.length > 0);
-const hasContacts = computed(
-  () => showMockContacts.value || hasRealContacts.value
-);
-const listContacts = computed(() =>
-  showMockContacts.value ? mockContacts : contacts.value
-);
+const hasContacts = computed(() => contacts.value.length > 0);
+const listContacts = computed(() => contacts.value);
 const isContactIndexView = computed(
   () => route.name === 'contacts_dashboard_index' && pageNumber.value === 1
 );
@@ -639,7 +632,6 @@ onMounted(async () => {
           :title="t('CONTACTS_LAYOUT.EMPTY_STATE.TITLE')"
           :subtitle="t('CONTACTS_LAYOUT.EMPTY_STATE.SUBTITLE')"
           @create="createContact"
-          @load-mock="showMockContacts = true"
         />
 
         <div v-else class="flex flex-col">
@@ -649,7 +641,6 @@ onMounted(async () => {
             :visible-columns="visibleColumns"
             :active-sort="sortState.activeSort"
             :active-ordering="sortState.activeOrdering"
-            :is-preview="showMockContacts"
             :empty-mode="tableEmptyMode"
             :empty-title="emptyStateMessage"
             :empty-subtitle="tableEmptySubtitle"

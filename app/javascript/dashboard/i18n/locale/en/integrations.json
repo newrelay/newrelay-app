@@ -1037,7 +1037,7 @@
       "HEADER": "FAQs",
       "SUBTITLE": "All your FAQs in one place",
       "PENDING_FAQS": "Pending FAQs",
-      "ADD_NEW": "Create new FAQ",
+      "ADD_NEW": "Create New FAQ",
       "DOCUMENTABLE": {
         "CONVERSATION": "Conversation #{id}"
       },

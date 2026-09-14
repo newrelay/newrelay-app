@@ -2,7 +2,11 @@
 import { reactive, computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useAlert } from 'dashboard/composables';
-import { RelayButton, RelayDatePicker } from 'dashboard/components-next/relay';
+import {
+  RelayButton,
+  RelayDatePicker,
+  RelayTextarea,
+} from 'dashboard/components-next/relay';
 import {
   RELAY_DIALOG_OVERLAY_CLASS,
   RELAY_MODAL_BODY_CLASS,
@@ -136,10 +140,10 @@ const submit = () => {
           <label class="text-foreground text-[13.5px] font-[500]">{{
             t('CONVERSATION.REPLYBOX.LOG_CALL.NOTES')
           }}</label>
-          <textarea
+          <RelayTextarea
             v-model="composerForm.notes"
             :placeholder="t('CONVERSATION.REPLYBOX.LOG_CALL.NOTES_PLACEHOLDER')"
-            class="min-h-[100px] w-full resize-none border border-input bg-background p-3 text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary/30 text-[14px] shadow-sm rounded-md border-border/80"
+            class-name="min-h-[100px] resize-none"
           />
         </div>
       </div>
@@ -170,18 +174,13 @@ const submit = () => {
     >
       <RelayModalHeader
         :title="t('CONTACTS_LAYOUT.DETAIL.LOG_ACTIVITY.TITLE')"
+        :description="
+          t('CONTACTS_LAYOUT.DETAIL.LOG_ACTIVITY.SUBTITLE', {
+            name: contactName,
+          })
+        "
         @close="emit('close')"
-      >
-        <template #description>
-          <p class="mt-0.5 text-[13px] text-muted-foreground">
-            {{
-              t('CONTACTS_LAYOUT.DETAIL.LOG_ACTIVITY.SUBTITLE', {
-                name: contactName,
-              })
-            }}
-          </p>
-        </template>
-      </RelayModalHeader>
+      />
 
       <div class="space-y-6" :class="[RELAY_MODAL_BODY_CLASS]">
         <div class="flex flex-col gap-1.5">
@@ -213,7 +212,7 @@ const submit = () => {
             value-format="dd-MM-yyyy"
             display-format="MMM d, yyyy"
             :placeholder="t('CONTACTS_LAYOUT.DETAIL.LOG_ACTIVITY.DATE')"
-            trigger-class="h-9 w-full cursor-pointer px-3 text-[14px] rounded-md border border-border/80 bg-background placeholder:text-muted-foreground/60 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary/30"
+            trigger-class="h-9 w-full cursor-pointer px-3 text-[14px] rounded-md border border-border/80 bg-background shadow-sm placeholder:text-muted-foreground/60 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary/30"
           />
         </div>
 
@@ -221,12 +220,12 @@ const submit = () => {
           <label class="text-[13.5px] text-foreground font-[500]">
             {{ t('CONTACTS_LAYOUT.DETAIL.LOG_ACTIVITY.NOTES') }}
           </label>
-          <textarea
+          <RelayTextarea
             v-model="form.notes"
             :placeholder="
               t('CONTACTS_LAYOUT.DETAIL.LOG_ACTIVITY.NOTES_PLACEHOLDER')
             "
-            class="min-h-[100px] w-full resize-none rounded-md border border-border/80 bg-background px-3 py-2.5 text-[14px] placeholder:text-muted-foreground/60 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary/30"
+            class-name="min-h-[100px] resize-none"
           />
         </div>
       </div>

@@ -105,7 +105,7 @@ const updateValue = date => {
           >
             {{ displayLabel || placeholder }}
           </span>
-          <span class="i-lucide-calendar-days size-4 text-muted-foreground" />
+          <span class="i-lucide-calendar size-4 text-muted-foreground" />
         </button>
       </slot>
     </RelayDropdownMenuTrigger>

@@ -1,5 +1,5 @@
 export const CALENDAR_CONTENT_CLASS =
-  'anim-pop bg-popover text-popover-foreground z-50 w-auto overflow-hidden rounded-md border border-border p-4 shadow-md';
+  'anim-pop bg-popover text-popover-foreground !z-[250] w-auto overflow-hidden rounded-md border border-border p-4 shadow-md';
 
 export const CALENDAR_HEADER_CLASS =
   'mb-4 flex items-center justify-between px-2';
@@ -47,7 +47,7 @@ export const CALENDAR_FOOTER_ACTION_CLASS =
   'text-xs font-medium text-primary hover:text-primary/80';
 
 export const TIME_PICKER_CONTENT_CLASS =
-  'anim-pop bg-popover text-popover-foreground z-50 w-[220px] overflow-hidden rounded-md border border-border p-2 shadow-md';
+  'anim-pop bg-popover text-popover-foreground !z-[250] w-[220px] overflow-hidden rounded-md border border-border p-2 shadow-md';
 
 export const TIME_PICKER_COLUMN_CLASS =
   'max-h-[220px] overflow-y-auto no-scrollbar';
@@ -59,4 +59,4 @@ export const TIME_PICKER_ITEM_SELECTED_CLASS =
   'bg-primary font-medium text-primary-foreground hover:bg-primary hover:text-primary-foreground focus:bg-primary focus:text-primary-foreground data-[highlighted]:bg-primary data-[highlighted]:text-primary-foreground';
 
 export const DATE_PICKER_TRIGGER_CLASS =
-  'flex h-9 w-full cursor-pointer items-center justify-between rounded-md border border-border/80 bg-background px-3 text-[14px] text-foreground transition-colors hover:bg-muted/50 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary/30';
+  'flex h-9 w-full cursor-pointer items-center justify-between rounded-md border border-border/80 bg-background px-3 text-[14px] text-foreground shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary/30';

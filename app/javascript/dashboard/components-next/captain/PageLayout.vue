@@ -147,7 +147,7 @@ const handleCreateAssistant = () => {
                 >
                   <RelayButton
                     variant="ghost"
-                    class="h-auto max-w-[14rem] gap-1.5 border-0 px-0 text-xl font-semibold text-foreground hover:bg-transparent hover:opacity-80"
+                    class="h-auto max-w-[14rem] justify-start gap-1.5 border-0 !px-0 text-xl font-semibold text-foreground hover:bg-transparent hover:opacity-80"
                     :disabled="isFetchingAssistants"
                     @click="toggleAssistantSwitcher"
                   >
@@ -235,16 +235,15 @@ const handleCreateAssistant = () => {
         <slot v-else name="body" />
         <slot />
       </main>
+      <footer v-if="showPaginationFooter" class="sticky bottom-0 z-10">
+        <PaginationFooter
+          :current-page="currentPage"
+          :total-items="totalCount"
+          :items-per-page="itemsPerPage"
+          @update:current-page="handlePageChange"
+        />
+      </footer>
     </div>
-    <footer v-if="showPaginationFooter" class="sticky bottom-0 z-10">
-      <PaginationFooter
-        :current-page="currentPage"
-        :total-items="totalCount"
-        :items-per-page="itemsPerPage"
-        class="max-w-[67rem]"
-        @update:current-page="handlePageChange"
-      />
-    </footer>
     <CreateAssistantDialog ref="createAssistantDialogRef" type="create" />
   </section>
 </template>

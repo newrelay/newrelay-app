@@ -119,7 +119,7 @@ $form-input-selector: "input[type]:not([type='file']):not([type='checkbox']):not
     }
   }
 
-  textarea {
+  textarea:not(.reset-base):not([data-slot]) {
     @apply field-base h-16;
 
     &[disabled] {

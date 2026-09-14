@@ -5,6 +5,7 @@ import { useAlert } from 'dashboard/composables';
 import {
   RelayButton,
   RelayInput,
+  RelayTextarea,
   RelayDatePicker,
   RelayTimePicker,
 } from 'dashboard/components-next/relay';
@@ -128,18 +129,13 @@ const submit = () => {
     >
       <RelayModalHeader
         :title="t('CONTACTS_LAYOUT.DETAIL.SCHEDULE_MEETING.TITLE')"
+        :description="
+          t('CONTACTS_LAYOUT.DETAIL.SCHEDULE_MEETING.SUBTITLE', {
+            name: contactName,
+          })
+        "
         @close="emit('close')"
-      >
-        <template #description>
-          <p class="mt-0.5 text-[13px] text-muted-foreground">
-            {{
-              t('CONTACTS_LAYOUT.DETAIL.SCHEDULE_MEETING.SUBTITLE', {
-                name: contactName,
-              })
-            }}
-          </p>
-        </template>
-      </RelayModalHeader>
+      />
 
       <div class="space-y-6" :class="[RELAY_MODAL_BODY_CLASS]">
         <div class="flex flex-col gap-1.5">
@@ -165,7 +161,7 @@ const submit = () => {
               value-format="dd-MM-yyyy"
               display-format="dd-MM-yyyy"
               :placeholder="t('CONTACTS_LAYOUT.DETAIL.SCHEDULE_MEETING.DATE')"
-              trigger-class="h-9 w-full cursor-pointer px-3 text-[14px] rounded-md border border-border/80 bg-background text-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary/30"
+              trigger-class="h-9 w-full cursor-pointer px-3 text-[14px] rounded-md border border-border/80 bg-background text-foreground shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary/30"
             />
           </div>
           <div class="flex flex-col gap-1.5">
@@ -174,7 +170,7 @@ const submit = () => {
             </label>
             <RelayTimePicker
               v-model="form.time"
-              trigger-class="h-9 w-full cursor-pointer px-3 text-[14px] rounded-md border border-border/80 bg-background text-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary/30"
+              trigger-class="h-9 w-full cursor-pointer px-3 text-[14px] rounded-md border border-border/80 bg-background text-foreground shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary/30"
             />
           </div>
         </div>
@@ -183,12 +179,12 @@ const submit = () => {
           <label class="text-[13.5px] font-medium text-foreground">
             {{ t('CONTACTS_LAYOUT.DETAIL.SCHEDULE_MEETING.NOTES') }}
           </label>
-          <textarea
+          <RelayTextarea
             v-model="form.notes"
             :placeholder="
               t('CONTACTS_LAYOUT.DETAIL.SCHEDULE_MEETING.NOTES_PLACEHOLDER')
             "
-            class="min-h-[100px] w-full resize-none rounded-md border border-border/80 bg-background px-3 py-2.5 text-[14px] placeholder:text-muted-foreground/60 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary/30"
+            class-name="min-h-[100px] resize-none"
           />
         </div>
       </div>

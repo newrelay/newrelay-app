@@ -12,6 +12,7 @@
 #  custom_domain         :string
 #  domain                :string(100)
 #  feature_flags         :bigint           default(0), not null
+#  feature_flags_ext_1   :bigint           default(0), not null
 #  internal_attributes   :jsonb            not null
 #  is_reseller           :boolean          default(FALSE), not null
 #  limits                :jsonb

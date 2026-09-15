@@ -5,6 +5,8 @@
 #  id                :bigint           not null, primary key
 #  allow_auto_assign :boolean          default(TRUE)
 #  description       :text
+#  icon              :string           default("")
+#  icon_color        :string           default("")
 #  name              :string           not null
 #  created_at        :datetime         not null
 #  updated_at        :datetime         not null

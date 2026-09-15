@@ -41,8 +41,10 @@
     <h1><%= @page[:heading] %></h1>
     <p class="lede"><%= @page[:lede] %></p>
     <div class="card">
+      <p><strong>Inbox:</strong> <%= @inbox.name %> (id <%= @inbox.id %>)</p>
       <p><strong>Campaign:</strong> <%= @page[:campaign] %></p>
       <p><strong>Wait:</strong> stay on this page for <strong><%= @page[:wait] %> seconds</strong>. Do not open the chat bubble first.</p>
+      <p>If a previous chat already exists on this widget, open a private window. Campaigns do not pop up on an existing conversation.</p>
       <p><strong>URL to match:</strong> <code><%= "#{request.base_url}/widget_tests/#{@page_key}/" %></code></p>
       <p>If nothing appears, clear the widget campaign cache and reload.</p>
       <button type="button" id="reset-campaign-cache">Reset campaign cache</button>

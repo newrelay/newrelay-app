@@ -71,7 +71,11 @@ class WidgetTestsController < ActionController::Base
   end
 
   def inbox_id
-    @inbox_id ||= params[:inbox_id].presence || Channel::WebWidget.first.inbox.id
+    @inbox_id ||= params[:inbox_id].presence || test_campaign_inbox_id || Channel::WebWidget.first.inbox.id
+  end
+
+  def test_campaign_inbox_id
+    Campaign.where(title: '[Test] Pricing help').order(updated_at: :desc).pick(:inbox_id)
   end
 
   def ensure_web_widget

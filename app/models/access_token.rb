@@ -2,12 +2,14 @@
 #
 # Table name: access_tokens
 #
-#  id         :bigint           not null, primary key
-#  owner_type :string
-#  token      :string
-#  created_at :datetime         not null
-#  updated_at :datetime         not null
-#  owner_id   :bigint
+#  id           :bigint           not null, primary key
+#  last_used_at :datetime
+#  owner_type   :string
+#  scopes       :string           default([]), not null, is an Array
+#  token        :string
+#  created_at   :datetime         not null
+#  updated_at   :datetime         not null
+#  owner_id     :bigint
 #
 # Indexes
 #

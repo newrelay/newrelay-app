@@ -651,24 +651,6 @@ const primaryMenuItems = computed(() => {
             'bot_reports',
           ],
         },
-        {
-          name: 'Dashboards',
-          label: t('SIDEBAR.DASHBOARDS'),
-          disabled: true,
-          comingSoon: true,
-        },
-        {
-          name: 'Revenue Analytics',
-          label: t('SIDEBAR.REVENUE_ANALYTICS'),
-          disabled: true,
-          comingSoon: true,
-        },
-        {
-          name: 'Campaign Analytics',
-          label: t('SIDEBAR.CAMPAIGN_ANALYTICS'),
-          to: accountScopedRoute('campaign_analytics_index'),
-          activeOn: ['campaign_analytics_index'],
-        },
       ],
     },
     {

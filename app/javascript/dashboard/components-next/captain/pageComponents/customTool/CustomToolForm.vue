@@ -30,6 +30,10 @@ const props = defineProps({
     type: Object,
     default: () => ({}),
   },
+  showActionButtons: {
+    type: Boolean,
+    default: true,
+  },
 });
 
 const emit = defineEmits(['submit', 'cancel']);
@@ -114,6 +118,8 @@ const isLoading = computed(() =>
     : formState.uiFlags.value.creatingItem
 );
 
+const isSubmitDisabled = computed(() => v$.value.$invalid);
+
 const getErrorMessage = (field, errorKey) => {
   if (!v$.value[field].$error) return '';
 
@@ -158,6 +164,12 @@ const handleSubmit = async () => {
 
   emit('submit', state);
 };
+
+defineExpose({
+  submit: handleSubmit,
+  isSubmitDisabled,
+  isLoading,
+});
 
 const isTesting = ref(false);
 const testResult = ref(null);
@@ -344,16 +356,19 @@ const handleTest = async () => {
       </div>
     </div>
 
-    <div class="flex w-full items-center justify-between gap-3">
+    <div
+      v-if="showActionButtons"
+      class="flex w-full items-center justify-end gap-3"
+    >
       <RelayButton
         type="button"
-        variant="secondary"
-        class="w-full"
+        variant="outline"
+        size="lg"
         @click="handleCancel"
       >
         {{ t('CAPTAIN.FORM.CANCEL') }}
       </RelayButton>
-      <RelayButton type="submit" class="w-full" :disabled="isLoading">
+      <RelayButton type="submit" size="lg" :disabled="isLoading">
         <span
           v-if="isLoading"
           class="i-lucide-loader-circle size-4 animate-spin"

@@ -162,7 +162,7 @@ watch(
   &.is-hovered :deep(.ProseMirror-menubar-wrapper),
   &.is-hovered :deep(.ProseMirror-menubar),
   &.is-hovered :deep(.ProseMirror) {
-    background: rgb(var(--accent) / 1) !important;
+    background: transparent !important;
   }
 
   :deep(.ProseMirror-menubar-wrapper) {

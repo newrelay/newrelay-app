@@ -41,25 +41,31 @@ const handleCancel = () => {
   dialogRef.value.close();
 };
 
+const submitForm = () => connectForm.value?.submit();
+
 defineExpose({ dialogRef });
 </script>
 
 <template>
   <Dialog
     ref="dialogRef"
-    type="create"
     :title="$t(`${i18nKey}.TITLE`)"
     :description="$t('CAPTAIN.INBOXES.FORM_DESCRIPTION')"
-    :show-cancel-button="false"
-    :show-confirm-button="false"
+    :cancel-button-label="t('CAPTAIN.FORM.CANCEL')"
+    :confirm-button-label="t('CAPTAIN.FORM.CREATE')"
+    :disable-confirm-button="
+      connectForm?.isSubmitDisabled !== false || connectForm?.isLoading
+    "
+    :is-loading="connectForm?.isLoading"
+    @confirm="submitForm"
     @close="handleClose"
   >
     <ConnectInboxForm
       ref="connectForm"
       :assistant-id="assistantId"
+      :show-action-buttons="false"
       @submit="handleSubmit"
       @cancel="handleCancel"
     />
-    <template #footer />
   </Dialog>
 </template>

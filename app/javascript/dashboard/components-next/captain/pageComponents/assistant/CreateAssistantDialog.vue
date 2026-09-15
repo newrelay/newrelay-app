@@ -71,6 +71,8 @@ const handleCancel = () => {
   dialogRef.value.close();
 };
 
+const submitForm = () => assistantForm.value?.submit();
+
 defineExpose({ dialogRef });
 </script>
 
@@ -80,18 +82,25 @@ defineExpose({ dialogRef });
     type="edit"
     :title="t(`${i18nKey}.TITLE`)"
     :description="t('CAPTAIN.ASSISTANTS.FORM_DESCRIPTION')"
-    :show-cancel-button="false"
-    :show-confirm-button="false"
+    :cancel-button-label="t('CAPTAIN.FORM.CANCEL')"
+    :confirm-button-label="
+      t(type === 'edit' ? 'CAPTAIN.FORM.EDIT' : 'CAPTAIN.FORM.CREATE')
+    "
+    :disable-confirm-button="
+      assistantForm?.isSubmitDisabled !== false || assistantForm?.isLoading
+    "
+    :is-loading="assistantForm?.isLoading"
     overflow-y-auto
+    @confirm="submitForm"
     @close="handleClose"
   >
     <AssistantForm
       ref="assistantForm"
       :mode="type"
       :assistant="selectedAssistant"
+      :show-action-buttons="false"
       @submit="handleSubmit"
       @cancel="handleCancel"
     />
-    <template #footer />
   </Dialog>
 </template>

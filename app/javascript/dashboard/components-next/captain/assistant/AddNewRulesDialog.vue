@@ -66,7 +66,7 @@ const onClickCancel = () => {
         :placeholder="placeholder"
         @keyup.enter="onClickAdd"
       />
-      <div class="flex justify-between gap-2">
+      <div class="flex justify-end gap-2">
         <RelayButton
           variant="ghost"
           size="sm"

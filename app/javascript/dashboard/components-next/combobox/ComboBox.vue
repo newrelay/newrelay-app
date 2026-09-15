@@ -91,6 +91,7 @@ watch(
     :class="{
       'cursor-not-allowed': disabled,
       'group/combobox': !disabled,
+      'z-[250]': open,
     }"
     @click.prevent
   >

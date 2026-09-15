@@ -32,7 +32,7 @@ export const RELAY_MODAL_BODY_CLASS = 'flex-1 overflow-y-auto px-6 pb-6 pt-4';
 export const RELAY_MODAL_FORM_BODY_CLASS = 'space-y-5 px-6 pb-2';
 
 export const RELAY_MODAL_FORM_FOOTER_CLASS =
-  'flex shrink-0 justify-end gap-3 border-t border-border/40 px-6 py-5';
+  'relative z-0 flex shrink-0 justify-end gap-3 border-t border-border/40 bg-background px-6 py-5';
 
 /** Overrides RelayInput's default `h-9` (cn does not tailwind-merge). */
 export const RELAY_MODAL_INPUT_CLASS = '!h-10 px-4';

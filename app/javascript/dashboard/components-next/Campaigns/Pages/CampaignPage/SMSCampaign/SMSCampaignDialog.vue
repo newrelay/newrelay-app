@@ -56,7 +56,7 @@ const submitForm = () => formRef.value?.submit();
     @close="handleClose"
   >
     <div class="flex min-h-0 flex-1 flex-col">
-      <div class="flex-1 overflow-y-auto px-6 pb-6 pt-4">
+      <div class="flex-1 overflow-visible px-6 pb-6 pt-4">
         <SMSCampaignForm
           ref="formRef"
           :show-action-buttons="false"

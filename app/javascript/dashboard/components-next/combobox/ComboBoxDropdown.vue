@@ -66,7 +66,7 @@ defineExpose({
 <template>
   <div
     v-show="open"
-    class="absolute z-50 mt-1 w-full overflow-hidden rounded-md border border-border bg-popover text-popover-foreground shadow-md"
+    class="absolute z-[250] mt-1 w-full overflow-hidden rounded-md border border-border bg-popover text-popover-foreground shadow-md"
   >
     <div :class="DROPDOWN_MENU_SEARCH_HEADER_CLASS">
       <div :class="DROPDOWN_MENU_SEARCH_WRAPPER_CLASS">

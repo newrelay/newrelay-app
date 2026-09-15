@@ -13,6 +13,10 @@ const props = defineProps({
     type: Number,
     required: true,
   },
+  showActionButtons: {
+    type: Boolean,
+    default: true,
+  },
 });
 
 const emit = defineEmits(['submit', 'cancel']);
@@ -49,6 +53,7 @@ const inboxList = computed(() => {
 const v$ = useVuelidate(validationRules, state);
 
 const isLoading = computed(() => formState.uiFlags.value.creatingItem);
+const isSubmitDisabled = computed(() => v$.value.$invalid);
 
 const getErrorMessage = (field, errorKey) => {
   return v$.value[field].$error
@@ -75,6 +80,12 @@ const handleSubmit = async () => {
 
   emit('submit', prepareInboxPayload());
 };
+
+defineExpose({
+  submit: handleSubmit,
+  isSubmitDisabled,
+  isLoading,
+});
 </script>
 
 <template>
@@ -94,16 +105,19 @@ const handleSubmit = async () => {
       />
     </div>
 
-    <div class="flex w-full items-center justify-between gap-3">
+    <div
+      v-if="showActionButtons"
+      class="flex w-full items-center justify-end gap-3"
+    >
       <RelayButton
         type="button"
-        variant="secondary"
-        class="w-full"
+        variant="outline"
+        size="lg"
         @click="handleCancel"
       >
         {{ t('CAPTAIN.FORM.CANCEL') }}
       </RelayButton>
-      <RelayButton type="submit" class="w-full" :disabled="isLoading">
+      <RelayButton type="submit" size="lg" :disabled="isLoading">
         <span
           v-if="isLoading"
           class="i-lucide-loader-circle size-4 animate-spin"

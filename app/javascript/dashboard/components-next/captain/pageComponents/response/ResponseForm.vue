@@ -26,6 +26,10 @@ const props = defineProps({
     type: Object,
     default: () => ({}),
   },
+  showActionButtons: {
+    type: Boolean,
+    default: true,
+  },
 });
 
 const emit = defineEmits(['submit', 'cancel']);
@@ -99,6 +103,12 @@ watch(
   },
   { immediate: true }
 );
+
+defineExpose({
+  submit: handleSubmit,
+  isSubmitDisabled,
+  isLoading,
+});
 </script>
 
 <template>
@@ -127,18 +137,21 @@ watch(
       :max-length="10000"
       :message-type="formErrors.answer ? 'error' : 'info'"
     />
-    <div class="flex w-full items-center justify-between gap-3">
+    <div
+      v-if="showActionButtons"
+      class="flex w-full items-center justify-end gap-3"
+    >
       <RelayButton
         type="button"
         variant="outline"
-        class="h-9 w-full"
+        size="lg"
         @click="handleCancel"
       >
         {{ t('CAPTAIN.FORM.CANCEL') }}
       </RelayButton>
       <RelayButton
         type="submit"
-        class="h-9 w-full"
+        size="lg"
         :disabled="isLoading || isSubmitDisabled"
       >
         <span

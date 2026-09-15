@@ -68,6 +68,8 @@ const handleCancel = () => {
   dialogRef.value.close();
 };
 
+const submitForm = () => responseForm.value?.submit();
+
 defineExpose({ dialogRef });
 </script>
 
@@ -76,17 +78,25 @@ defineExpose({ dialogRef });
     ref="dialogRef"
     :title="$t(`${i18nKey}.TITLE`)"
     :description="$t('CAPTAIN.RESPONSES.FORM_DESCRIPTION')"
-    :show-cancel-button="false"
-    :show-confirm-button="false"
+    :cancel-button-label="t('CAPTAIN.FORM.CANCEL')"
+    :confirm-button-label="
+      t(type === 'edit' ? 'CAPTAIN.FORM.EDIT' : 'CAPTAIN.FORM.CREATE')
+    "
+    :disable-confirm-button="
+      responseForm?.isSubmitDisabled !== false || responseForm?.isLoading
+    "
+    :is-loading="responseForm?.isLoading"
+    overflow-y-auto
+    @confirm="submitForm"
     @close="handleClose"
   >
     <ResponseForm
       ref="responseForm"
       :mode="type"
       :response="selectedResponse"
+      :show-action-buttons="false"
       @submit="handleSubmit"
       @cancel="handleCancel"
     />
-    <template #footer />
   </Dialog>
 </template>

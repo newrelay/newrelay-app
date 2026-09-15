@@ -132,7 +132,7 @@ defineExpose({ open, close });
         RELAY_NATIVE_DIALOG_BACKDROP_CLASS,
         maxWidthClass,
         positionClass,
-        overflowYAuto ? 'overflow-y-auto' : 'overflow-visible',
+        overflowYAuto ? 'overflow-y-auto' : '!overflow-visible',
       ]"
       @close.prevent="handleDialogClose"
     >
@@ -140,7 +140,7 @@ defineExpose({ open, close });
         <form
           ref="dialogContentRef"
           data-relay
-          class="flex h-auto w-full flex-col overflow-visible rounded-xl border border-border bg-background text-start align-middle shadow-xl transition-all duration-300 ease-in-out transform"
+          class="relative flex h-auto w-full flex-col overflow-visible rounded-xl border border-border bg-background text-start align-middle shadow-xl transition-all duration-300 ease-in-out"
           @submit.prevent="confirm"
           @click.stop
         >
@@ -157,7 +157,7 @@ defineExpose({ open, close });
           <div
             :class="[
               RELAY_MODAL_BODY_CLASS,
-              overflowYAuto ? 'overflow-y-auto' : 'overflow-visible',
+              '!overflow-visible',
               showCancelButton || showConfirmButton ? 'pb-0' : '',
             ]"
           >

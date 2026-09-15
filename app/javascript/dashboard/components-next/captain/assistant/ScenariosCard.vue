@@ -5,13 +5,13 @@ import { useToggle, useElementSize } from '@vueuse/core';
 import { useVuelidate } from '@vuelidate/core';
 import { required, minLength } from '@vuelidate/validators';
 import { useMessageFormatter } from 'shared/composables/useMessageFormatter';
-import TextArea from 'dashboard/components-next/textarea/TextArea.vue';
 import Editor from 'dashboard/components-next/Editor/Editor.vue';
 import Icon from 'dashboard/components-next/icon/Icon.vue';
 import {
   RelayButton,
   RelayInput,
   RelayLabel,
+  RelayTextarea,
 } from 'dashboard/components-next/relay';
 
 const props = defineProps({
@@ -99,6 +99,10 @@ const descriptionError = computed(() =>
   v$.value.description.$error
     ? t('CAPTAIN.ASSISTANTS.SCENARIOS.ADD.NEW.FORM.DESCRIPTION.ERROR')
     : ''
+);
+
+const descriptionCountLabel = computed(
+  () => `${state.description.length} / 200`
 );
 
 const onClickUpdate = () => {
@@ -237,20 +241,36 @@ const renderInstruction = instruction => () =>
           </p>
         </div>
 
-        <TextArea
-          v-model="state.description"
-          :label="
-            t('CAPTAIN.ASSISTANTS.SCENARIOS.ADD.NEW.FORM.DESCRIPTION.LABEL')
-          "
-          :placeholder="
-            t(
-              'CAPTAIN.ASSISTANTS.SCENARIOS.ADD.NEW.FORM.DESCRIPTION.PLACEHOLDER'
-            )
-          "
-          :message="descriptionError"
-          :message-type="descriptionError ? 'error' : 'info'"
-          show-character-count
-        />
+        <div class="flex flex-col gap-1.5">
+          <RelayLabel
+            html-for="scenario-description"
+            class="text-[13.5px] font-medium text-foreground"
+          >
+            {{
+              t('CAPTAIN.ASSISTANTS.SCENARIOS.ADD.NEW.FORM.DESCRIPTION.LABEL')
+            }}
+          </RelayLabel>
+          <RelayTextarea
+            id="scenario-description"
+            v-model="state.description"
+            :placeholder="
+              t(
+                'CAPTAIN.ASSISTANTS.SCENARIOS.ADD.NEW.FORM.DESCRIPTION.PLACEHOLDER'
+              )
+            "
+            :maxlength="200"
+            rows="4"
+            class-name="min-h-[100px] resize-none rounded-md border-border/80 bg-background text-[14px] shadow-sm"
+          />
+          <div class="flex items-center justify-between gap-2">
+            <p v-if="descriptionError" class="text-xs text-destructive">
+              {{ descriptionError }}
+            </p>
+            <span class="ms-auto text-xs tabular-nums text-muted-foreground">
+              {{ descriptionCountLabel }}
+            </span>
+          </div>
+        </div>
         <Editor
           v-model="state.instruction"
           :label="
@@ -266,7 +286,7 @@ const renderInstruction = instruction => () =>
           :show-character-count="false"
           enable-captain-tools
         />
-        <div class="flex items-center gap-2">
+        <div class="flex items-center justify-end gap-2">
           <RelayButton
             variant="outline"
             class="h-9 px-4"

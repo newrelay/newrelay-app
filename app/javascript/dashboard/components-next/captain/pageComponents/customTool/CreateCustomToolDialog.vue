@@ -25,6 +25,7 @@ const { t } = useI18n();
 const store = useStore();
 
 const dialogRef = ref(null);
+const toolForm = ref(null);
 
 const updateTool = toolDetails =>
   store.dispatch('captainCustomTools/update', {
@@ -63,6 +64,8 @@ const handleCancel = () => {
   dialogRef.value.close();
 };
 
+const submitForm = () => toolForm.value?.submit();
+
 defineExpose({ dialogRef });
 </script>
 
@@ -72,16 +75,25 @@ defineExpose({ dialogRef });
     width="2xl"
     :title="$t(`${i18nKey}.TITLE`)"
     :description="$t('CAPTAIN.CUSTOM_TOOLS.FORM_DESCRIPTION')"
-    :show-cancel-button="false"
-    :show-confirm-button="false"
+    :cancel-button-label="t('CAPTAIN.FORM.CANCEL')"
+    :confirm-button-label="
+      t(type === 'edit' ? 'CAPTAIN.FORM.EDIT' : 'CAPTAIN.FORM.CREATE')
+    "
+    :disable-confirm-button="
+      toolForm?.isSubmitDisabled !== false || toolForm?.isLoading
+    "
+    :is-loading="toolForm?.isLoading"
+    overflow-y-auto
+    @confirm="submitForm"
     @close="handleClose"
   >
     <CustomToolForm
+      ref="toolForm"
       :mode="type"
       :tool="selectedTool"
+      :show-action-buttons="false"
       @submit="handleSubmit"
       @cancel="handleCancel"
     />
-    <template #footer />
   </Dialog>
 </template>

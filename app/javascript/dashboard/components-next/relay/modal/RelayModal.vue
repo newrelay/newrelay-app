@@ -80,7 +80,7 @@ const maxWidthClass = computed(() => {
           :class="
             flush
               ? 'flex min-h-0 flex-1 flex-col overflow-y-auto'
-              : RELAY_MODAL_BODY_CLASS
+              : `${RELAY_MODAL_BODY_CLASS} !overflow-visible`
           "
         >
           <slot />

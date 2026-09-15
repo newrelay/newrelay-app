@@ -13,6 +13,8 @@ class Api::V1::ProfilesController < Api::BaseController
     @user.assign_attributes(profile_params)
     @user.custom_attributes.merge!(custom_attributes_params)
     @user.save!
+
+    @user.access_token.update!(scopes: scopes_params) if params[:profile].key?(:scopes)
   end
 
   def avatar
@@ -67,6 +69,10 @@ class Api::V1::ProfilesController < Api::BaseController
       :account_id,
       ui_settings: {}
     )
+  end
+
+  def scopes_params
+    params.require(:profile).permit(scopes: []).fetch(:scopes, [])
   end
 
   def custom_attributes_params

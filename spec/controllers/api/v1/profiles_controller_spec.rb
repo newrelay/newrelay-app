@@ -166,6 +166,30 @@ RSpec.describe 'Profile API', type: :request do
         json_response = response.parsed_body
         expect(json_response['ui_settings']['is_contact_sidebar_open']).to be(false)
       end
+
+      it 'persists the access token scopes' do
+        put '/api/v1/profile',
+            params: { profile: { scopes: %w[list_inboxes add_label] } },
+            headers: agent.create_new_auth_token,
+            as: :json
+
+        expect(response).to have_http_status(:success)
+        json_response = response.parsed_body
+        expect(json_response['access_token_scopes']).to eq(%w[list_inboxes add_label])
+        expect(agent.access_token.reload.scopes).to eq(%w[list_inboxes add_label])
+      end
+
+      it 'does not clear existing scopes when scopes is omitted from the request' do
+        agent.access_token.update!(scopes: ['list_inboxes'])
+
+        put '/api/v1/profile',
+            params: { profile: { name: 'renamed' } },
+            headers: agent.create_new_auth_token,
+            as: :json
+
+        expect(response).to have_http_status(:success)
+        expect(agent.access_token.reload.scopes).to eq(['list_inboxes'])
+      end
     end
 
     context 'when an authenticated user updates email' do

@@ -271,6 +271,77 @@
       }
     }
   },
+  "MCP_SETTINGS": {
+    "TITLE": "MCP Permissions",
+    "SUBTITLE": "Control which MCP tools your personal access token is allowed to call when connected to an external AI agent.",
+    "DISABLED_MESSAGE": "MCP is not enabled for this account. Ask your administrator to enable it to manage tool permissions here.",
+    "ACCESS_TOKEN_LINK": "Manage your access token",
+    "GROUPS": {
+      "READ": "Read",
+      "WRITE": "Write"
+    },
+    "SAVE": "Save",
+    "SAVE_SUCCESS": "MCP permissions updated successfully",
+    "SAVE_ERROR": "Unable to update MCP permissions. Please try again",
+    "TOOLS": {
+      "LIST_ACCOUNTS": {
+        "LABEL": "List accounts",
+        "DESCRIPTION": "List the accounts this token's owner belongs to."
+      },
+      "LIST_CONVERSATIONS": {
+        "LABEL": "List conversations",
+        "DESCRIPTION": "List conversations in an inbox or account."
+      },
+      "GET_CONVERSATION": {
+        "LABEL": "Get conversation",
+        "DESCRIPTION": "Read a single conversation's details and messages."
+      },
+      "LIST_CONTACTS": {
+        "LABEL": "List contacts",
+        "DESCRIPTION": "List contacts in an account."
+      },
+      "GET_CONTACT": {
+        "LABEL": "Get contact",
+        "DESCRIPTION": "Read a single contact's details."
+      },
+      "LIST_INBOXES": {
+        "LABEL": "List inboxes",
+        "DESCRIPTION": "List the inboxes in an account."
+      },
+      "LIST_AGENTS": {
+        "LABEL": "List agents",
+        "DESCRIPTION": "List the agents in an account."
+      },
+      "LIST_TEAMS": {
+        "LABEL": "List teams",
+        "DESCRIPTION": "List the teams in an account."
+      },
+      "LIST_LABELS": {
+        "LABEL": "List labels",
+        "DESCRIPTION": "List the labels available in an account."
+      },
+      "ADD_PRIVATE_NOTE": {
+        "LABEL": "Add private note",
+        "DESCRIPTION": "Add an internal note to a conversation."
+      },
+      "ADD_LABEL": {
+        "LABEL": "Add label",
+        "DESCRIPTION": "Apply a label to a conversation."
+      },
+      "REMOVE_LABEL": {
+        "LABEL": "Remove label",
+        "DESCRIPTION": "Remove a label from a conversation."
+      },
+      "ASSIGN_CONVERSATION": {
+        "LABEL": "Assign conversation",
+        "DESCRIPTION": "Assign a conversation to an agent."
+      },
+      "SET_PRIORITY": {
+        "LABEL": "Set priority",
+        "DESCRIPTION": "Change a conversation's priority."
+      }
+    }
+  },
   "SIDEBAR_ITEMS": {
     "CHANGE_AVAILABILITY_STATUS": "Change",
     "CHANGE_ACCOUNTS": "Switch account",

@@ -4,6 +4,7 @@ import { parseBoolean } from '@chatwoot/utils';
 import SettingsWrapper from '../SettingsWrapper.vue';
 import Index from './Index.vue';
 import MfaSettings from './MfaSettings.vue';
+import McpPermissions from './McpPermissions.vue';
 
 export default {
   routes: [
@@ -49,6 +50,14 @@ export default {
             } else {
               next();
             }
+          },
+        },
+        {
+          path: 'mcp',
+          name: 'profile_settings_mcp',
+          component: McpPermissions,
+          meta: {
+            permissions: ['administrator', 'agent', 'custom_role'],
           },
         },
       ],

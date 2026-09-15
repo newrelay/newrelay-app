@@ -2,13 +2,8 @@
 import { computed, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRoute, useRouter } from 'vue-router';
-import { RelayBadge } from 'dashboard/components-next/relay';
-import {
-  RELAY_DIALOG_OVERLAY_CLASS,
-  RELAY_MODAL_CLOSE_BUTTON_CLASS,
-  RELAY_MODAL_DESCRIPTION_CLASS,
-  RELAY_MODAL_TITLE_CLASS,
-} from 'dashboard/components-next/relay/modal/constants';
+import { RelayBadge, RelayInput } from 'dashboard/components-next/relay';
+import { RELAY_DIALOG_OVERLAY_CLASS } from 'dashboard/components-next/relay/modal/constants';
 
 const props = defineProps({
   show: { type: Boolean, default: false },
@@ -86,11 +81,11 @@ const openContact = contactId => {
         <div
           class="flex shrink-0 items-center justify-between gap-4 border-b border-border/40 p-6"
         >
-          <div class="min-w-0 shrink-0">
-            <h2 :class="RELAY_MODAL_TITLE_CLASS">
+          <div class="shrink-0">
+            <h3 class="text-lg font-semibold tracking-tight text-foreground">
               {{ t('COMPANIES.DETAIL.RECENT_CONTACTS.MODAL.TITLE') }}
-            </h2>
-            <p :class="RELAY_MODAL_DESCRIPTION_CLASS">
+            </h3>
+            <p class="mt-1 text-sm text-muted-foreground">
               {{
                 t('COMPANIES.DETAIL.RECENT_CONTACTS.MODAL.SUBTITLE', {
                   count: contactCount,
@@ -104,18 +99,17 @@ const openContact = contactId => {
               <span
                 class="i-lucide-search pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground"
               />
-              <input
+              <RelayInput
                 v-model="searchQuery"
-                type="text"
                 :placeholder="
                   t('COMPANIES.DETAIL.RECENT_CONTACTS.MODAL.SEARCH_PLACEHOLDER')
                 "
-                class="h-9 w-full rounded-md border border-border/80 bg-background pl-9 text-[13px] text-foreground shadow-sm outline-none placeholder:text-muted-foreground focus-visible:ring-1 focus-visible:ring-primary/30"
+                class-name="h-9 w-full rounded-md border-border/80 bg-background !pl-9 text-[13px] shadow-sm focus-visible:ring-1 focus-visible:ring-primary/30 placeholder:text-muted-foreground"
               />
             </div>
             <button
               type="button"
-              :class="`${RELAY_MODAL_CLOSE_BUTTON_CLASS} rounded-full hover:bg-muted/50`"
+              class="shrink-0 rounded-full p-2 text-muted-foreground transition-colors hover:bg-muted/50 hover:text-foreground"
               @click="emit('close')"
             >
               <span class="i-lucide-x size-5" />

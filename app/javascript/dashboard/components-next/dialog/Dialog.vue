@@ -7,6 +7,7 @@ import TeleportWithDirection from 'dashboard/components-next/TeleportWithDirecti
 import RelayModalHeader from 'dashboard/components-next/relay/modal/RelayModalHeader.vue';
 import RelayButton from 'dashboard/components-next/relay/button/Button.vue';
 import {
+  RELAY_DIALOG_OVERLAY_CLASS,
   RELAY_MODAL_BODY_CLASS,
   RELAY_MODAL_FORM_FOOTER_CLASS,
   RELAY_NATIVE_DIALOG_BACKDROP_CLASS,
@@ -51,6 +52,10 @@ const props = defineProps({
     default: true,
   },
   overflowYAuto: {
+    type: Boolean,
+    default: false,
+  },
+  flush: {
     type: Boolean,
     default: false,
   },
@@ -127,20 +132,29 @@ defineExpose({ open, close });
   <TeleportWithDirection to="body">
     <dialog
       ref="dialogRef"
-      class="w-full rounded-xl border-0 bg-transparent p-0 shadow-xl outline-none transition-all duration-300 ease-in-out"
+      class="m-0 w-full max-w-none border-0 bg-transparent p-4 shadow-none outline-none open:fixed open:inset-0 open:flex open:justify-center"
       :class="[
         RELAY_NATIVE_DIALOG_BACKDROP_CLASS,
-        maxWidthClass,
+        position === 'top' ? 'open:items-start' : 'open:items-center',
+        overflowYAuto ? 'overflow-y-auto' : 'overflow-visible',
         positionClass,
-        overflowYAuto ? 'overflow-y-auto' : '!overflow-visible',
       ]"
       @close.prevent="handleDialogClose"
     >
+      <div
+        v-if="isOpen"
+        data-relay-overlay
+        data-state="open"
+        aria-hidden="true"
+        :class="RELAY_DIALOG_OVERLAY_CLASS"
+        @click="close"
+      />
       <OnClickOutside @trigger="handleClickOutside">
         <form
           ref="dialogContentRef"
           data-relay
-          class="relative flex h-auto w-full flex-col overflow-visible rounded-xl border border-border bg-background text-start align-middle shadow-xl transition-all duration-300 ease-in-out"
+          class="relative z-[201] flex h-auto w-full flex-col overflow-visible rounded-xl border border-border bg-background text-start align-middle shadow-lg duration-200"
+          :class="maxWidthClass"
           @submit.prevent="confirm"
           @click.stop
         >
@@ -155,10 +169,10 @@ defineExpose({ open, close });
             </template>
           </RelayModalHeader>
           <div
+            class="!overflow-visible"
             :class="[
-              RELAY_MODAL_BODY_CLASS,
-              '!overflow-visible',
-              showCancelButton || showConfirmButton ? 'pb-0' : '',
+              flush ? 'p-6' : RELAY_MODAL_BODY_CLASS,
+              !flush && (showCancelButton || showConfirmButton) ? 'pb-0' : '',
             ]"
           >
             <slot v-if="isOpen" />

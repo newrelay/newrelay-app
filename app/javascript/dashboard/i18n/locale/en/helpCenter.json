@@ -520,6 +520,7 @@
     "ARTICLES_PAGE": {
       "ARTICLE_CARD": {
         "CARD": {
+          "SELECT": "Select article",
           "VIEWS": "{count} view | {count} views",
           "DROPDOWN_MENU": {
             "PUBLISH": "Publish",

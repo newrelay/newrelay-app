@@ -346,7 +346,28 @@ onBeforeUnmount(() => {
     </div>
 
     <div v-else class="flex h-full w-full flex-col">
-      <div class="mx-auto w-full max-w-7xl p-6">
+      <div class="border-b border-border bg-card px-8">
+        <nav
+          class="flex h-14 w-full items-center justify-start gap-8"
+          role="tablist"
+        >
+          <button
+            type="button"
+            role="tab"
+            :aria-selected="activeTab === 'overview'"
+            class="relative h-full px-0 text-[14px] font-medium text-foreground"
+            @click="activeTab = 'overview'"
+          >
+            {{ t('COMPANIES.DETAIL.TABS.OVERVIEW') }}
+            <span
+              v-if="activeTab === 'overview'"
+              class="absolute inset-x-0 bottom-0 h-px bg-primary"
+              aria-hidden="true"
+            />
+          </button>
+        </nav>
+      </div>
+      <div class="mx-auto w-full max-w-[1600px] p-8">
         <div v-if="activeTab === 'overview'" class="outline-none">
           <div class="grid grid-cols-1 gap-6 lg:grid-cols-3">
             <div class="flex flex-col gap-6 lg:col-span-2">
@@ -391,7 +412,7 @@ onBeforeUnmount(() => {
                   <RelayButton
                     variant="secondary"
                     size="sm"
-                    class="flex h-8 items-center rounded-md border border-transparent bg-muted/50 px-3 text-[12px] font-medium text-foreground hover:border-transparent hover:bg-accent hover:text-accent-foreground"
+                    class="flex h-8 items-center rounded-md border border-transparent bg-muted/50 px-3 text-[12px] font-medium text-foreground hover:border-transparent hover:bg-muted"
                     :disabled="isUpdating"
                     @click="toggleEditDetails"
                   >
@@ -618,7 +639,7 @@ onBeforeUnmount(() => {
                 class="rounded-xl border border-border bg-muted/30 p-6 shadow-sm"
               >
                 <div class="mb-6 flex items-center gap-2">
-                  <span class="i-lucide-bar-chart-2 size-4 text-primary" />
+                  <span class="i-lucide-bar-chart-2 size-[18px] text-primary" />
                   <h3
                     class="text-base font-medium tracking-tight text-foreground"
                   >
@@ -660,7 +681,7 @@ onBeforeUnmount(() => {
               >
                 <div class="mb-6 flex items-center justify-between">
                   <div class="flex items-center gap-2">
-                    <span class="i-lucide-users size-4 text-primary" />
+                    <span class="i-lucide-users size-[18px] text-primary" />
                     <h3
                       class="text-base font-medium tracking-tight text-foreground"
                     >
@@ -670,7 +691,7 @@ onBeforeUnmount(() => {
                   <RelayButton
                     variant="secondary"
                     size="sm"
-                    class="h-8 rounded-md border border-transparent bg-muted/50 px-3 text-[12px] font-medium text-foreground hover:bg-accent hover:text-accent-foreground"
+                    class="h-8 rounded-md border border-transparent bg-muted/50 px-3 text-[12px] font-medium text-foreground hover:border-transparent hover:bg-muted"
                     @click="showAllContactsModal = true"
                   >
                     {{ t('COMPANIES.DETAIL.RECENT_CONTACTS.VIEW_ALL') }}
@@ -725,7 +746,7 @@ onBeforeUnmount(() => {
               >
                 <div class="mb-6 flex items-center justify-between">
                   <div class="flex items-center gap-2">
-                    <span class="i-lucide-activity size-4 text-primary" />
+                    <span class="i-lucide-activity size-[18px] text-primary" />
                     <h3
                       class="text-base font-medium tracking-tight text-foreground"
                     >
@@ -735,7 +756,7 @@ onBeforeUnmount(() => {
                   <RelayButton
                     variant="secondary"
                     size="sm"
-                    class="h-8 rounded-md border border-transparent bg-muted/50 px-3 text-[12px] font-medium text-foreground hover:bg-accent hover:text-accent-foreground"
+                    class="h-8 rounded-md border border-transparent bg-muted/50 px-3 text-[12px] font-medium text-foreground hover:border-transparent hover:bg-muted"
                     @click="showActivityModal = true"
                   >
                     {{ t('COMPANIES.DETAIL.ACTIVITY.VIEW_ALL') }}

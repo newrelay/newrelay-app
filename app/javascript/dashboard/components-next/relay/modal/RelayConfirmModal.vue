@@ -86,7 +86,9 @@ const descriptionText = computed(() =>
   <TeleportWithDirection to="body">
     <div
       v-if="show"
-      class="flex items-center justify-center bg-background/80 p-4 backdrop-blur-[8px]"
+      data-relay-overlay
+      data-state="open"
+      class="flex items-center justify-center p-4"
       :class="[RELAY_DIALOG_OVERLAY_CLASS]"
       @click.self="emit('close')"
     >

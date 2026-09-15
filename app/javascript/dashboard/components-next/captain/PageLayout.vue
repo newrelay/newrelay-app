@@ -126,11 +126,11 @@ const handleCreateAssistant = () => {
 </script>
 
 <template>
-  <section class="flex h-full w-full flex-col overflow-hidden bg-background">
-    <div
-      class="mx-auto flex h-full w-full max-w-7xl flex-col overflow-hidden p-6"
-    >
-      <header class="z-10 mb-6 shrink-0">
+  <section
+    class="flex h-full min-h-0 w-full flex-col overflow-hidden bg-background"
+  >
+    <header class="z-10 shrink-0">
+      <div class="mx-auto mb-6 w-full max-w-7xl px-6 pt-6 lg:px-10">
         <div
           class="flex w-full flex-col items-start justify-between gap-4 sm:flex-row"
           :class="headerSubtitle ? 'sm:items-start' : 'sm:items-center'"
@@ -214,8 +214,12 @@ const handleCreateAssistant = () => {
           </div>
         </div>
         <slot name="subHeader" />
-      </header>
-      <main class="flex min-h-0 flex-1 flex-col overflow-y-auto">
+      </div>
+    </header>
+    <main class="flex min-h-0 flex-1 flex-col overflow-y-auto">
+      <div
+        class="mx-auto flex min-h-full w-full max-w-7xl flex-1 flex-col px-6 pb-6 lg:px-10"
+      >
         <slot v-if="!showPaywall" name="controls" />
         <div
           v-if="isFetching"
@@ -234,16 +238,18 @@ const handleCreateAssistant = () => {
         </div>
         <slot v-else name="body" />
         <slot />
-      </main>
-      <footer v-if="showPaginationFooter" class="sticky bottom-0 z-10">
+      </div>
+    </main>
+    <footer v-if="showPaginationFooter" class="shrink-0">
+      <div class="mx-auto w-full max-w-7xl px-6 pb-6 lg:px-10">
         <PaginationFooter
           :current-page="currentPage"
           :total-items="totalCount"
           :items-per-page="itemsPerPage"
           @update:current-page="handlePageChange"
         />
-      </footer>
-    </div>
+      </div>
+    </footer>
     <CreateAssistantDialog ref="createAssistantDialogRef" type="create" />
   </section>
 </template>

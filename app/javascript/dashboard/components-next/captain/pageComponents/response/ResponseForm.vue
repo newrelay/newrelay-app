@@ -112,7 +112,7 @@ defineExpose({
 </script>
 
 <template>
-  <form class="flex flex-col gap-4" @submit.prevent="handleSubmit">
+  <form class="grid gap-4 py-2" @submit.prevent="handleSubmit">
     <div :class="RELAY_FORM_FIELD_CLASS">
       <RelayLabel
         html-for="captain-faq-question"

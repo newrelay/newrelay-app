@@ -6,6 +6,11 @@ import { useI18n } from 'vue-i18n';
 import { useRoute } from 'vue-router';
 
 import Dialog from 'dashboard/components-next/dialog/Dialog.vue';
+import RelayButton from 'dashboard/components-next/relay/button/Button.vue';
+import {
+  RELAY_MODAL_CLOSE_BUTTON_CLASS,
+  RELAY_MODAL_TITLE_CLASS,
+} from 'dashboard/components-next/relay/modal/constants';
 import ResponseForm from './ResponseForm.vue';
 
 const props = defineProps({
@@ -70,33 +75,78 @@ const handleCancel = () => {
 
 const submitForm = () => responseForm.value?.submit();
 
+const isConfirmDisabled = computed(
+  () =>
+    responseForm.value?.isSubmitDisabled !== false ||
+    responseForm.value?.isLoading
+);
+
 defineExpose({ dialogRef });
 </script>
 
 <template>
   <Dialog
     ref="dialogRef"
-    :title="$t(`${i18nKey}.TITLE`)"
-    :description="$t('CAPTAIN.RESPONSES.FORM_DESCRIPTION')"
-    :cancel-button-label="t('CAPTAIN.FORM.CANCEL')"
-    :confirm-button-label="
-      t(type === 'edit' ? 'CAPTAIN.FORM.EDIT' : 'CAPTAIN.FORM.CREATE')
-    "
-    :disable-confirm-button="
-      responseForm?.isSubmitDisabled !== false || responseForm?.isLoading
-    "
-    :is-loading="responseForm?.isLoading"
+    flush
+    :show-cancel-button="false"
+    :show-confirm-button="false"
     overflow-y-auto
     @confirm="submitForm"
     @close="handleClose"
   >
-    <ResponseForm
-      ref="responseForm"
-      :mode="type"
-      :response="selectedResponse"
-      :show-action-buttons="false"
-      @submit="handleSubmit"
-      @cancel="handleCancel"
-    />
+    <div class="flex flex-col gap-6">
+      <div class="flex items-start justify-between gap-4">
+        <div class="flex min-w-0 flex-col space-y-1.5 text-left">
+          <h2 class="leading-none" :class="[RELAY_MODAL_TITLE_CLASS]">
+            {{ t(`${i18nKey}.TITLE`) }}
+          </h2>
+          <p
+            class="text-[14px] font-normal leading-normal text-muted-foreground"
+          >
+            {{ t('CAPTAIN.RESPONSES.FORM_DESCRIPTION') }}
+          </p>
+        </div>
+        <button
+          type="button"
+          :class="RELAY_MODAL_CLOSE_BUTTON_CLASS"
+          @click="handleCancel"
+        >
+          <span class="i-lucide-x size-4" />
+        </button>
+      </div>
+
+      <ResponseForm
+        ref="responseForm"
+        :mode="type"
+        :response="selectedResponse"
+        :show-action-buttons="false"
+        @submit="handleSubmit"
+        @cancel="handleCancel"
+      />
+
+      <div class="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
+        <RelayButton
+          type="button"
+          variant="outline"
+          size="lg"
+          class="h-10 px-4"
+          @click="handleCancel"
+        >
+          {{ t('CAPTAIN.FORM.CANCEL') }}
+        </RelayButton>
+        <RelayButton
+          type="submit"
+          size="lg"
+          class="h-10 px-6"
+          :disabled="isConfirmDisabled"
+        >
+          <span
+            v-if="responseForm?.isLoading"
+            class="i-lucide-loader-circle size-4 animate-spin"
+          />
+          {{ t(type === 'edit' ? 'CAPTAIN.FORM.EDIT' : 'CAPTAIN.FORM.CREATE') }}
+        </RelayButton>
+      </div>
+    </div>
   </Dialog>
 </template>

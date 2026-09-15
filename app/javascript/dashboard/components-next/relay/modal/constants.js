@@ -1,16 +1,14 @@
-/** Modal/dialog backdrop — 8px blur (not Tailwind `backdrop-blur-sm`, which is 4px). */
-export const RELAY_MODAL_OVERLAY_BLUR_CLASS = 'backdrop-blur-[8px]';
+/** Modal/dialog backdrop — NewRelay `backdrop-blur-sm` (4px) + `bg-background/80`. */
+export const RELAY_MODAL_OVERLAY_BLUR_CLASS = 'backdrop-blur-sm';
 
 export const RELAY_DIALOG_OVERLAY_CLASS = [
   'fixed inset-0 z-[200] bg-background/80',
   RELAY_MODAL_OVERLAY_BLUR_CLASS,
   'data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0',
-  'data-relay-overlay',
 ].join(' ');
 
 /** Native `<dialog>` `::backdrop` — same fill/blur as `RELAY_DIALOG_OVERLAY_CLASS`. */
-export const RELAY_NATIVE_DIALOG_BACKDROP_CLASS =
-  'backdrop:bg-background/80 backdrop:backdrop-blur-[8px]';
+export const RELAY_NATIVE_DIALOG_BACKDROP_CLASS = 'backdrop:bg-transparent';
 
 /** Modal header — title + description with a light bottom rule. */
 export const RELAY_MODAL_HEADER_CLASS =

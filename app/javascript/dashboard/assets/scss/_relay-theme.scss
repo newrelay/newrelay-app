@@ -176,10 +176,8 @@
   -webkit-font-smoothing: antialiased;
 }
 
-// Overlay backdrops must stay translucent so backdrop-blur shows the page beneath.
-[data-relay-overlay] {
-  background-color: transparent;
-}
+// Overlay backdrops use `bg-background/80` + blur. Do not put `data-relay` on the
+// overlay — that applies an opaque shell background and hides the frost.
 
 // Match Design-System-NR `@layer base { * { border-color: var(--border) } }`.
 // :where() keeps specificity at 0 so utilities like `border-border/60` (color-mix) can override.

@@ -14,7 +14,6 @@ import { FEATURE_FLAGS } from 'dashboard/featureFlags';
 import Icon from 'dashboard/components-next/icon/Icon.vue';
 import {
   RelayButton,
-  RelayCheckbox,
   RelayActionDropdown,
 } from 'dashboard/components-next/relay';
 
@@ -189,14 +188,26 @@ const handleClick = id => {
     @click="handleClick(id)"
   >
     <div class="flex min-w-0 flex-1 items-center gap-3 pr-4">
-      <div v-if="selectable" class="shrink-0" @click.stop>
-        <RelayCheckbox
-          :model-value="isSelected"
-          class="opacity-40 transition-opacity group-hover:opacity-100"
-          :class="{ 'opacity-100': isSelected || showSelectionControl }"
-          @update:model-value="emit('toggleSelect', id)"
+      <button
+        v-if="selectable && showSelectionControl"
+        type="button"
+        role="checkbox"
+        :aria-checked="isSelected"
+        :aria-label="t('HELP_CENTER.ARTICLES_PAGE.ARTICLE_CARD.CARD.SELECT')"
+        class="flex !size-5 !min-h-5 !min-w-5 shrink-0 items-center justify-center !rounded-full border !p-0 shadow-none transition-colors"
+        :class="
+          isSelected
+            ? 'border-primary bg-primary text-primary-foreground shadow-xs hover:bg-primary'
+            : 'border-border/80 bg-background/50 hover:bg-background/50'
+        "
+        @click.stop="emit('toggleSelect', id)"
+      >
+        <span
+          v-if="isSelected"
+          class="i-lucide-check size-3"
+          aria-hidden="true"
         />
-      </div>
+      </button>
 
       <div class="flex min-w-0 flex-1 flex-col gap-1.5">
         <h3

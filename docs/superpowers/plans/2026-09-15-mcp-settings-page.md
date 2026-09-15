@@ -818,7 +818,7 @@ describe('McpPermissionsForm.vue', () => {
       props: { initialScopes: ['list_inboxes'] },
     });
 
-    expect(wrapper.find('button[type="button"]:last-of-type').attributes('disabled')).toBeDefined();
+    expect(wrapper.findAll('button').at(-1).attributes('disabled')).toBeDefined();
 
     await wrapper.find('[data-tool-name="add_label"]').trigger('click');
 

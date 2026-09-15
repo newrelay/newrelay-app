@@ -840,6 +840,9 @@ onMounted(() => {
 });
 
 function insertCannedResponse(content) {
+  if (!editorView) return;
+  const { from, to } = editorView.state.selection;
+  range.value = { from, to };
   insertSpecialContent('cannedResponse', content);
 }
 

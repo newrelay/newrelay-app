@@ -861,5 +861,8 @@ Rails.application.routes.draw do
 
   # ----------------------------------------------------------------------
   # Routes for testing
-  resources :widget_tests, only: [:index] unless Rails.env.production?
+  unless Rails.env.production?
+    get 'widget_tests/:page', to: 'widget_tests#index', as: :widget_test_page, constraints: { page: /home|pricing|about/ }
+    resources :widget_tests, only: [:index]
+  end
 end

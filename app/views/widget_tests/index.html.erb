@@ -1,6 +1,53 @@
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0" />
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0">
+  <title>Acme — <%= @page[:heading] %></title>
+  <style>
+    :root { color-scheme: light; }
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: ui-sans-serif, system-ui, -apple-system, sans-serif; color: #111827; background: #f8fafc; }
+    header { display: flex; align-items: center; justify-content: space-between; padding: 16px 32px; background: #fff; border-bottom: 1px solid #e5e7eb; }
+    .logo { font-weight: 700; font-size: 18px; letter-spacing: -0.02em; text-decoration: none; color: inherit; }
+    nav { display: flex; gap: 8px; }
+    nav a { text-decoration: none; color: #4b5563; padding: 8px 12px; border-radius: 8px; font-size: 14px; }
+    nav a[aria-current="page"] { background: #111827; color: #fff; }
+    main { max-width: 720px; margin: 64px auto; padding: 0 24px; }
+    h1 { font-size: 36px; margin: 0 0 12px; letter-spacing: -0.03em; }
+    .lede { font-size: 18px; color: #4b5563; margin: 0 0 28px; line-height: 1.5; }
+    .card { background: #fff; border: 1px solid #e5e7eb; border-radius: 12px; padding: 20px 24px; }
+    .card p { margin: 0 0 8px; font-size: 14px; color: #374151; line-height: 1.55; }
+    .card p:last-child { margin-bottom: 0; }
+    code { font-size: 12px; background: #f3f4f6; padding: 2px 6px; border-radius: 4px; }
+    button { margin-top: 16px; border: 1px solid #d1d5db; background: #fff; border-radius: 8px; padding: 8px 12px; font-size: 13px; cursor: pointer; }
+    button:hover { background: #f9fafb; }
+  </style>
+</head>
 <body>
-</body>
+  <header>
+    <a class="logo" href="<%= page_href('home') %>">Acme</a>
+    <nav>
+      <% WidgetTestsController::PAGES.each_key do |page| %>
+        <a
+          href="<%= page_href(page) %>"
+          <% if page == @page_key %>aria-current="page"<% end %>
+        ><%= page.capitalize %></a>
+      <% end %>
+    </nav>
+  </header>
+
+  <main>
+    <h1><%= @page[:heading] %></h1>
+    <p class="lede"><%= @page[:lede] %></p>
+    <div class="card">
+      <p><strong>Campaign:</strong> <%= @page[:campaign] %></p>
+      <p><strong>Wait:</strong> stay on this page for <strong><%= @page[:wait] %> seconds</strong>. Do not open the chat bubble first.</p>
+      <p><strong>URL to match:</strong> <code><%= "#{request.base_url}/widget_tests/#{@page_key}/" %></code></p>
+      <p>If nothing appears, clear the widget campaign cache and reload.</p>
+      <button type="button" id="reset-campaign-cache">Reset campaign cache</button>
+    </div>
+  </main>
 
 <%
   user_id = 1
@@ -9,19 +56,14 @@
     @web_widget.hmac_token,
     user_id.to_s
   )
-
 %>
 <script>
-
 window.chatwootSettings = {
   hideMessageBubble: false,
-  // showUnreadMessagesDialog: false,
-  // baseDomain: '.loca.lt',
   position: '<%= @widget_position %>',
   locale: 'en',
   useBrowserLanguage: true,
   type: '<%= @widget_type %>',
-  // showPopoutButton: true,
   widgetStyle: '<%= @widget_style %>',
   darkMode: '<%= @dark_mode %>',
 };
@@ -52,28 +94,10 @@ window.addEventListener('chatwoot:ready', function() {
   }
 })
 
-window.addEventListener('chatwoot:error', function(e) {
-  console.log('chatwoot:error', e.detail)
-})
-
-
-window.addEventListener('chatwoot:on-message', function(e) {
-  console.log('chatwoot:on-message', e.detail)
-})
-
-window.addEventListener('chatwoot:postback', function(e) {
-  console.log('chatwoot:postback', e.detail)
-})
-
-window.addEventListener('chatwoot:opened', function() {
-  console.log('chatwoot:opened')
-})
-
-window.addEventListener('chatwoot:closed', function() {
-  console.log('chatwoot:closed')
-})
-
-window.addEventListener('chatwoot:on-start-conversation', function(e) {
-  console.log('chatwoot:on-start-conversation', e.detail)
-})
+document.getElementById('reset-campaign-cache').addEventListener('click', function() {
+  window.localStorage.removeItem('chatwoot_campaigns_<%= @web_widget.website_token %>');
+  window.location.reload();
+});
 </script>
+</body>
+</html>

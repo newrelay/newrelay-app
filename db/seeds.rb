@@ -51,6 +51,7 @@ unless Rails.env.production?
 
   inbox = Inbox.create!(channel: web_widget, account: account, name: 'Acme Support')
   InboxMember.create!(user: user, inbox: inbox)
+  Seeders::CampaignSeeder.new(account: account).perform!
 
   contact_inbox = ContactInboxWithContactBuilder.new(
     source_id: user.id,

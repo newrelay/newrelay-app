@@ -270,7 +270,6 @@
       "CANNED_RESPONSES_MENU_LABEL": "Quick Replies",
       "CANNED_RESPONSES_EMPTY": "No quick replies yet",
       "TIP_LOG_CALL": "Log call",
-      "TIP_MEETING": "Meeting",
       "TIP_AUDIORECORDER_ICON": "Record audio",
       "TIP_AUDIORECORDER_PERMISSION": "Allow access to audio",
       "TIP_AUDIORECORDER_ERROR": "Could not open the audio",
@@ -323,17 +322,6 @@
           "VOICEMAIL": "Voicemail",
           "BUSY": "Busy"
         }
-      },
-      "SCHEDULE_MEETING": {
-        "TITLE": "Schedule Meeting",
-        "DATE": "Date",
-        "TIME": "Time",
-        "CANCEL": "Cancel",
-        "INSERT_LINK": "Insert Link",
-        "DATE_FALLBACK": "tomorrow",
-        "TIME_FALLBACK": "10:00 AM",
-        "INSERT_TEMPLATE": "Let's meet on {date} at {time}.\nJoin here: {link}",
-        "MEETING_LINK": "https://meet.newrelay.com/j-smith"
       },
       "INTERNAL_NOTE_INPUT": "Write an internal note..."
     },

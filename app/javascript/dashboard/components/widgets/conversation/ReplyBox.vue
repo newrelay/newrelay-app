@@ -17,7 +17,6 @@ import ReplyBottomPanel from 'dashboard/components/widgets/WootWriter/ReplyBotto
 import ArticleSearchPopover from 'dashboard/routes/dashboard/helpcenter/components/ArticleSearch/SearchPopover.vue';
 import CopilotEditorSection from './CopilotEditorSection.vue';
 import ContactLogActivityModal from 'dashboard/components-next/Contacts/ContactDetail/ContactLogActivityModal.vue';
-import ContactScheduleMeetingModal from 'dashboard/components-next/Contacts/ContactDetail/ContactScheduleMeetingModal.vue';
 import MessageSignatureMissingAlert from './MessageSignatureMissingAlert.vue';
 import ReplyBoxBanner from './ReplyBoxBanner.vue';
 import QuotedEmailPreview from './QuotedEmailPreview.vue';
@@ -81,7 +80,6 @@ export default {
     QuotedEmailPreview,
     CopilotEditorSection,
     ContactLogActivityModal,
-    ContactScheduleMeetingModal,
     ConfirmationModal,
   },
   mixins: [inboxMixin, fileUploadMixin, keyboardEventListenerMixins],
@@ -136,7 +134,6 @@ export default {
       showWhatsAppTemplatesModal: false,
       showContentTemplatesModal: false,
       showLogCallModal: false,
-      showMeetingModal: false,
       isEditorExpanded: false,
       updateEditorSelectionWith: '',
       undefinedVariableMessage: '',
@@ -1005,9 +1002,6 @@ export default {
         useAlert(errorMessage);
       }
     },
-    onMeetingInsert(content) {
-      this.addIntoEditor(content);
-    },
     addIntoEditor(content) {
       this.updateEditorSelectionWith = content;
       this.onFocus();
@@ -1597,7 +1591,6 @@ export default {
       @toggle-private-note="togglePrivateNoteFromFooter"
       @select-canned-response="insertCannedResponseFromFooter"
       @open-log-call="showLogCallModal = true"
-      @open-meeting="showMeetingModal = true"
     />
 
     <WhatsappTemplates
@@ -1623,14 +1616,6 @@ export default {
       initial-type="Call"
       @close="showLogCallModal = false"
       @save="onLogCallSave"
-    />
-
-    <ContactScheduleMeetingModal
-      v-if="showMeetingModal"
-      variant="composer"
-      :contact-name="currentContact?.name"
-      @close="showMeetingModal = false"
-      @insert="onMeetingInsert"
     />
 
     <ConfirmationModal

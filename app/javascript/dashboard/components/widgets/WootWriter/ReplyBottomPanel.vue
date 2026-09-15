@@ -157,7 +157,6 @@ export default {
     'togglePrivateNote',
     'selectCannedResponse',
     'openLogCall',
-    'openMeeting',
   ],
   setup(props) {
     const { setSignatureFlagForInbox, fetchSignatureFlagFromUISettings } =
@@ -449,22 +448,6 @@ export default {
           @click="$emit('openLogCall')"
         >
           <span class="i-lucide-phone size-4 shrink-0" />
-        </RelayButton>
-      </RelayTooltip>
-
-      <!-- Meeting -->
-      <RelayTooltip
-        :content="$t('CONVERSATION.REPLYBOX.TIP_MEETING')"
-        side="top"
-        align="end"
-      >
-        <RelayButton
-          v-if="!isEditorDisabled"
-          variant="ghost"
-          :class="toolbarIconButtonClass"
-          @click="$emit('openMeeting')"
-        >
-          <span class="i-lucide-calendar size-4 shrink-0" />
         </RelayButton>
       </RelayTooltip>
 

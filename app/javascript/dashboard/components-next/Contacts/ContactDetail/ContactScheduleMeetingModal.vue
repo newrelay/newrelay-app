@@ -8,7 +8,6 @@ import {
   RelayCalendar,
   RelayInput,
   RelayTextarea,
-  RelayDatePicker,
   RelayTimePicker,
   DATE_PICKER_TRIGGER_CLASS,
 } from 'dashboard/components-next/relay';
@@ -21,14 +20,9 @@ defineProps({
     type: String,
     default: '',
   },
-  variant: {
-    type: String,
-    default: 'default',
-    validator: value => ['default', 'composer'].includes(value),
-  },
 });
 
-const emit = defineEmits(['close', 'insert']);
+const emit = defineEmits(['close']);
 
 const { t } = useI18n();
 
@@ -63,21 +57,6 @@ const selectDate = date => {
   showDateCalendar.value = false;
 };
 
-const submitComposer = () => {
-  const date =
-    form.date || t('CONVERSATION.REPLYBOX.SCHEDULE_MEETING.DATE_FALLBACK');
-  const time =
-    form.time || t('CONVERSATION.REPLYBOX.SCHEDULE_MEETING.TIME_FALLBACK');
-  const link = t('CONVERSATION.REPLYBOX.SCHEDULE_MEETING.MEETING_LINK');
-  const text = t('CONVERSATION.REPLYBOX.SCHEDULE_MEETING.INSERT_TEMPLATE', {
-    date,
-    time,
-    link,
-  });
-  emit('insert', `\n\n${text}`);
-  emit('close');
-};
-
 const submit = () => {
   useAlert(t('CONTACTS_LAYOUT.DETAIL.SCHEDULE_MEETING.GAP_MESSAGE'));
   emit('close');
@@ -85,62 +64,7 @@ const submit = () => {
 </script>
 
 <template>
-  <div
-    v-if="variant === 'composer'"
-    class="flex items-center justify-center p-4 animate-in fade-in duration-200"
-    :class="[RELAY_DIALOG_OVERLAY_CLASS]"
-    @click.self="emit('close')"
-  >
-    <div
-      class="flex w-full max-w-md flex-col overflow-visible rounded-xl border border-border bg-card shadow-lg"
-    >
-      <RelayModalHeader @close="emit('close')">
-        <template #title>
-          <h2
-            class="flex items-center gap-2 text-base font-medium tracking-tight text-foreground"
-          >
-            <span class="i-lucide-calendar size-5 text-primary" />
-            {{ t('CONVERSATION.REPLYBOX.SCHEDULE_MEETING.TITLE') }}
-          </h2>
-        </template>
-      </RelayModalHeader>
-      <div class="flex flex-col gap-5 overflow-visible px-6 pb-6 pt-4">
-        <div class="flex flex-col gap-1.5">
-          <label class="text-[13.5px] font-medium text-foreground">{{
-            t('CONVERSATION.REPLYBOX.SCHEDULE_MEETING.DATE')
-          }}</label>
-          <RelayDatePicker
-            v-model="form.date"
-            side="top"
-            value-format="dd-MM-yyyy"
-            display-format="dd-MM-yyyy"
-            :placeholder="t('CONVERSATION.REPLYBOX.SCHEDULE_MEETING.DATE')"
-          />
-        </div>
-        <div class="flex flex-col gap-1.5">
-          <label class="text-[13.5px] font-medium text-foreground">{{
-            t('CONVERSATION.REPLYBOX.SCHEDULE_MEETING.TIME')
-          }}</label>
-          <RelayTimePicker v-model="form.time" side="top" />
-        </div>
-      </div>
-      <div
-        class="flex justify-end gap-2 border-t border-border bg-muted/10 px-6 py-4"
-      >
-        <RelayButton
-          variant="outline"
-          class="border border-border text-sm font-medium hover:border-transparent"
-          @click="emit('close')"
-        >
-          {{ t('CONVERSATION.REPLYBOX.SCHEDULE_MEETING.CANCEL') }}
-        </RelayButton>
-        <RelayButton class="text-sm font-medium" @click="submitComposer">
-          {{ t('CONVERSATION.REPLYBOX.SCHEDULE_MEETING.INSERT_LINK') }}
-        </RelayButton>
-      </div>
-    </div>
-  </div>
-  <TeleportWithDirection v-else to="body">
+  <TeleportWithDirection to="body">
     <div
       class="flex items-center justify-center p-4"
       :class="[RELAY_DIALOG_OVERLAY_CLASS]"

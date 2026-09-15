@@ -115,4 +115,25 @@ document.addEventListener('DOMContentLoaded', () => {
   window.closeMobileSidebar = closeMobileSidebar;
   window.toggleFilterDropdown = toggleFilterDropdown;
   window.selectFilter = selectFilter;
+
+  const passwordToggle = document.querySelector('[data-password-toggle]');
+  const passwordInput = document.querySelector('#super_admin_password');
+  if (passwordToggle && passwordInput) {
+    passwordToggle.addEventListener('click', () => {
+      const show = passwordInput.type === 'password';
+      passwordInput.type = show ? 'text' : 'password';
+      passwordToggle.setAttribute(
+        'aria-label',
+        show
+          ? passwordToggle.dataset.labelHide
+          : passwordToggle.dataset.labelShow
+      );
+      passwordToggle
+        .querySelector('[data-password-icon="show"]')
+        ?.classList.toggle('hidden', show);
+      passwordToggle
+        .querySelector('[data-password-icon="hide"]')
+        ?.classList.toggle('hidden', !show);
+    });
+  }
 });

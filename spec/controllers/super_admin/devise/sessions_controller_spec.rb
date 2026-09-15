@@ -6,6 +6,9 @@ RSpec.describe 'Super Admin', type: :request do
       with_modified_env LOGRAGE_ENABLED: 'true' do
         get '/super_admin/sign_in'
         expect(response).to have_http_status(:ok)
+        expect(response.body).to include('Super Admin Console')
+        expect(response.body).to include('Remember this device')
+        expect(response.body).to include('Encrypted 256-bit TLS Super Admin Session')
       end
     end
   end

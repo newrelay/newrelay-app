@@ -1,30 +1,50 @@
 <!DOCTYPE html>
 <html lang="<%= I18n.locale %>" class="w-full h-full">
   <head>
-    <title>Super Admin | newrelay</title>
+    <title><%= t('super_admin.sessions.title') %> | newrelay</title>
     <meta charset="utf-8">
     <meta name="viewport" content="initial-scale=1">
+    <script>
+      if (localStorage.getItem('nr-dark') === 'true') {
+        document.documentElement.classList.add('dark');
+      }
+    </script>
     <%= vite_client_tag %>
     <%= vite_javascript_tag 'superadmin' %>
     <%= csrf_meta_tags %>
     <link rel="icon" type="image/svg+xml" href="/brand-assets/logo_thumbnail.svg">
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
   </head>
-  <body class="antialiased w-full h-full bg-background text-foreground" data-relay="true">
+  <body class="antialiased relative w-full h-full bg-background text-foreground" data-relay="true">
+    <button class="theme-toggle-btn absolute top-6 right-6 z-50" aria-label="<%= t('super_admin.sessions.toggle_theme') %>" type="button" onclick="toggleDarkMode()">
+      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+        class="tabler-icon tabler-icon-sun shrink-0">
+        <path d="M8 12a4 4 0 1 0 8 0a4 4 0 1 0 -8 0"></path>
+        <path d="M3 12h1m8 -9v1m8 8h1m-9 8v1m-6.4 -15.4l.7 .7m12.1 -.7l-.7 .7m0 11.4l.7 .7m-12.1 -.7l-.7 .7"></path>
+      </svg>
+      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+        class="tabler-icon tabler-icon-moon shrink-0">
+        <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454l0 .008"></path>
+      </svg>
+      <span class="sr-only"><%= t('super_admin.sessions.toggle_theme') %></span>
+    </button>
+
     <div class="min-h-screen w-full flex items-center justify-center px-4">
-      <div class="w-full max-w-sm">
+      <div class="w-full max-w-[400px]">
         <div class="flex flex-col items-center mb-8 gap-3">
-          <div class="bg-primary text-primary-foreground flex size-10 items-center justify-center overflow-hidden rounded-xl p-1.5">
-            <img src="/white-relay-logo.svg" alt="New Relay" class="size-full object-contain" />
+          <div class="bg-primary text-primary-foreground flex size-10 items-center justify-center rounded-xl text-lg font-bold">
+            N
           </div>
           <div class="text-center">
-            <h1 class="text-xl font-semibold text-foreground">Super Admin Console</h1>
-            <p class="text-sm text-muted-foreground mt-1">Sign in to manage your instance</p>
+            <h1 class="text-[22px] font-semibold tracking-tight text-foreground"><%= t('super_admin.sessions.heading') %></h1>
+            <p class="mt-1 text-[14px] font-normal text-muted-foreground"><%= t('super_admin.sessions.subtitle') %></p>
           </div>
         </div>
 
-        <div class="rounded-xl border border-border bg-card p-6 shadow-sm space-y-4">
-          <%= form_for(resource, as: resource_name, url: '/super_admin/sign_in') do |f| %>
+        <div class="rounded-xl border border-border bg-card p-6 shadow-sm">
+          <%= form_for(resource, as: resource_name, url: '/super_admin/sign_in', html: { class: 'flex flex-col gap-4' }) do |f| %>
             <% if flash[:error].present? %>
               <div class="flex items-start gap-2.5 rounded-lg bg-destructive/10 border border-destructive/20 p-3 text-sm text-destructive">
                 <span class="i-lucide-alert-circle size-4 mt-0.5 shrink-0"></span>
@@ -32,24 +52,76 @@
               </div>
             <% end %>
 
-            <div class="space-y-1.5">
-              <label class="block text-[13.5px] font-medium leading-normal text-foreground">Email address</label>
+            <div class="flex flex-col gap-1.5">
+              <label for="super_admin_email" class="block text-[13.5px] font-medium leading-normal text-foreground">
+                <%= t('super_admin.sessions.email_label') %>
+              </label>
               <%= f.email_field :email, autofocus: true, autocomplete: "email",
-                  placeholder: "admin@example.com",
+                  placeholder: t('super_admin.sessions.email_placeholder'),
                   class: "form-input" %>
             </div>
 
-            <div class="space-y-1.5">
-              <label class="block text-[13.5px] font-medium leading-normal text-foreground">Password</label>
-              <%= f.password_field :password, autocomplete: "current-password",
-                  placeholder: "••••••••",
-                  class: "form-input" %>
+            <div class="flex flex-col gap-1.5">
+              <div class="flex items-center justify-between gap-2">
+                <label for="super_admin_password" class="block text-[13.5px] font-medium leading-normal text-foreground">
+                  <%= t('super_admin.sessions.password_label') %>
+                </label>
+                <span class="text-[13px] font-medium text-primary">
+                  <%= t('super_admin.sessions.forgot_password') %>
+                </span>
+              </div>
+              <div class="relative">
+                <%= f.password_field :password, autocomplete: "current-password",
+                    placeholder: t('super_admin.sessions.password_placeholder'),
+                    class: "form-input pr-10" %>
+                <button
+                  type="button"
+                  class="absolute inset-y-0 right-0 flex items-center px-3 text-muted-foreground hover:text-foreground"
+                  data-password-toggle
+                  data-label-show="<%= t('super_admin.sessions.show_password') %>"
+                  data-label-hide="<%= t('super_admin.sessions.hide_password') %>"
+                  aria-label="<%= t('super_admin.sessions.show_password') %>"
+                >
+                  <span class="i-lucide-eye size-4" data-password-icon="show"></span>
+                  <span class="i-lucide-eye-off size-4 hidden" data-password-icon="hide"></span>
+                </button>
+              </div>
             </div>
 
-            <button type="submit" class="btn btn-primary w-full mt-1 cursor-pointer">
-              Sign in
+            <label class="flex items-center gap-3 cursor-pointer">
+              <span class="custom-checkbox">
+                <%= f.check_box :remember_me, { checked: true } %>
+                <span class="checkmark"></span>
+              </span>
+              <span class="text-[14px] text-foreground"><%= t('super_admin.sessions.remember_me') %></span>
+            </label>
+
+            <button type="submit" class="btn btn-primary w-full !h-10 cursor-pointer">
+              <%= t('super_admin.sessions.submit') %>
             </button>
           <% end %>
+        </div>
+
+        <%
+          instance_ok = begin
+            ActiveRecord::Base.connection.active?
+          rescue StandardError
+            false
+          end
+          edition = ChatwootApp.enterprise? ? t('super_admin.sessions.edition_enterprise') : t('super_admin.sessions.edition_community')
+          status_label = instance_ok ? t('super_admin.sessions.status_operational') : t('super_admin.sessions.status_degraded')
+        %>
+        <div class="mt-8 flex flex-col items-center gap-2 text-[12px] text-muted-foreground">
+          <div class="flex items-center gap-2">
+            <span class="size-1.5 shrink-0 rounded-full <%= instance_ok ? 'bg-[var(--success)]' : 'bg-destructive' %>"></span>
+            <span>
+              <%= t('super_admin.sessions.instance_line', status: status_label, version: Chatwoot.config[:version], edition: edition) %>
+            </span>
+          </div>
+          <div class="flex items-center gap-1.5">
+            <span class="i-lucide-lock size-3.5 shrink-0"></span>
+            <span><%= t('super_admin.sessions.tls_line') %></span>
+          </div>
         </div>
       </div>
     </div>

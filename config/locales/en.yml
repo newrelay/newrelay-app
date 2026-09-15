@@ -584,6 +584,26 @@ en:
     ssl_status:
       custom_domain_not_configured: 'Custom domain is not configured'
   super_admin:
+    sessions:
+      title: 'Super Admin Console'
+      heading: 'Super Admin Console'
+      subtitle: 'Sign in to manage your instance'
+      email_label: 'Email address'
+      email_placeholder: 'admin@example.com'
+      password_label: 'Password'
+      password_placeholder: '••••••••'
+      forgot_password: 'Forgot password?'
+      show_password: 'Show password'
+      hide_password: 'Hide password'
+      remember_me: 'Remember this device'
+      submit: 'Sign in'
+      toggle_theme: 'Toggle theme'
+      status_operational: 'Operational'
+      status_degraded: 'Degraded'
+      edition_enterprise: 'Enterprise'
+      edition_community: 'Community'
+      instance_line: 'Instance: %{status} • v%{version} %{edition}'
+      tls_line: 'Encrypted 256-bit TLS Super Admin Session'
     push_diagnostics:
       user_not_found: 'User not found.'
       no_subscriptions_to_test: 'Select at least one subscription to test.'

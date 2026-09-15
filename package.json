@@ -94,6 +94,7 @@
     "opus-recorder": "^8.0.5",
     "pinia": "^3.0.4",
     "prosemirror-commands": "^1.7.1",
+    "prosemirror-history": "^1.4.1",
     "prosemirror-schema-list": "^1.5.1",
     "prosemirror-state": "^1.4.3",
     "qrcode": "^1.5.4",

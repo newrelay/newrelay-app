@@ -195,7 +195,15 @@
         "TITLE": "Activity Timeline",
         "VIEW_ALL": "View All",
         "EMPTY": "No conversations found for this company's contacts yet.",
-        "CONVERSATION": "Conversation #{id}"
+        "CONVERSATION": "Conversation #{id}",
+        "EMAIL": "Email received",
+        "CALL": "Call completed",
+        "MODAL": {
+          "TITLE": "Activity Timeline",
+          "SUBTITLE": "{count} conversations at {company}",
+          "EMPTY_TITLE": "No activity yet",
+          "EMPTY_SUBTITLE": "A unified history of all interactions will appear here."
+        }
       },
       "HISTORY": {
         "EMPTY": "No conversations found for this company's contacts yet."

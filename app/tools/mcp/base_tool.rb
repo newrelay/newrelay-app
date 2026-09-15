@@ -8,6 +8,7 @@ module Mcp
     def call(**args)
       authenticate!
       Current.mcp = true
+      authorize_scope!
       require_account!(args[:account_id]) if self.class.requires_account?
 
       Mcp::BaseTool.success(perform(**args))
@@ -57,10 +58,18 @@ module Mcp
       raise ToolError, 'Missing or invalid access token' unless access_token
       raise ToolError, 'Missing or invalid access token' unless access_token.owner.is_a?(User)
 
+      @access_token = access_token
       @current_user = access_token.owner
       Current.user = @current_user
       # Deliberate -- a read-only auth check shouldn't run token validations or touch updated_at.
       access_token.update_column(:last_used_at, Time.current) # rubocop:disable Rails/SkipsModelValidations
+    end
+
+    def authorize_scope!
+      return if @access_token.scopes.blank?
+      return if @access_token.scopes.include?(self.class.tool_name)
+
+      raise ToolError, "This access token is not permitted to use #{self.class.tool_name}"
     end
 
     def require_account!(account_id)

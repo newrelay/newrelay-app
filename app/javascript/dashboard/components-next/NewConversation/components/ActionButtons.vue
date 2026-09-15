@@ -30,6 +30,7 @@ const props = defineProps({
   inboxId: { type: Number, default: null },
   voiceEnabled: { type: Boolean, default: false },
   showFormatting: { type: Boolean, default: false },
+  compact: { type: Boolean, default: false },
 });
 
 const emit = defineEmits([
@@ -88,7 +89,9 @@ const isRegularMessageMode = computed(() => {
 
 const shouldShowSignatureButton = computed(() => {
   return (
-    props.hasSelectedInbox && isRegularMessageMode.value && !props.voiceEnabled
+    props.hasSelectedInbox &&
+    props.isEmailOrWebWidgetInbox &&
+    !props.voiceEnabled
   );
 });
 
@@ -189,6 +192,44 @@ useEventListener(document, 'paste', onPaste);
 
 <template>
   <div
+    v-if="compact"
+    class="relative z-0 flex w-full items-center bg-background p-6 pt-2"
+    :class="
+      isWhatsappInbox || showTwilioContentTemplates
+        ? 'justify-between'
+        : 'justify-end'
+    "
+  >
+    <WhatsAppOptions
+      v-if="isWhatsappInbox"
+      :inbox-id="inboxId"
+      @send-message="emit('sendWhatsappMessage', $event)"
+    />
+    <ContentTemplateSelector
+      v-if="showTwilioContentTemplates"
+      :inbox-id="inboxId"
+      @send-message="emit('sendTwilioMessage', $event)"
+    />
+    <div class="flex items-center gap-3">
+      <RelayButton
+        variant="ghost"
+        class="rounded-full bg-muted/50 px-6 text-[13px] font-medium hover:bg-muted"
+        @click="emit('discard')"
+      >
+        {{ t('COMPOSE_NEW_CONVERSATION.FORM.ACTION_BUTTONS.DISCARD') }}
+      </RelayButton>
+      <RelayButton
+        v-if="isRegularMessageMode"
+        class="rounded-full px-6 text-[13px] font-medium shadow-sm"
+        :disabled="isLoading || disableSendButton"
+        @click="emit('sendMessage')"
+      >
+        {{ t('COMPOSE_NEW_CONVERSATION.FORM.ACTION_BUTTONS.SEND') }}
+      </RelayButton>
+    </div>
+  </div>
+  <div
+    v-else
     class="flex w-full items-center justify-between gap-2 border-t border-border bg-background p-3"
   >
     <div class="flex min-w-0 items-center gap-3 sm:gap-4">
@@ -251,6 +292,7 @@ useEventListener(document, 'paste', onPaste);
         class="flex items-center gap-0.5 sm:gap-1"
       >
         <RelayButton
+          v-if="isEmailOrWebWidgetInbox"
           variant="ghost"
           size="icon"
           class="size-8 border border-border hover:border-transparent"
@@ -293,6 +335,7 @@ useEventListener(document, 'paste', onPaste);
         </FileUpload>
 
         <RelayButton
+          v-if="isEmailOrWebWidgetInbox"
           variant="ghost"
           size="icon"
           class="hidden size-8 text-muted-foreground hover:text-foreground sm:inline-flex border border-border hover:border-transparent"

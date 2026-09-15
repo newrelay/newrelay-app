@@ -53,6 +53,7 @@ export default {
     ...mapGetters({
       uiFlags: 'contacts/getUIFlags',
       inboxesList: 'inboxes/getInboxes',
+      currentChat: 'getSelectedChat',
     }),
     contactProfileLink() {
       return `/app/accounts/${this.$route.params.accountId}/contacts/${this.contact.id}`;
@@ -95,6 +96,9 @@ export default {
     },
     showVoiceCallButton() {
       return this.voiceInboxes.length > 0 && !!this.contact.phone_number;
+    },
+    conversationInboxId() {
+      return this.currentChat?.inbox_id ?? this.currentChat?.inboxId ?? null;
     },
   },
   watch: {
@@ -297,7 +301,11 @@ export default {
 
     <!-- Actions -->
     <div class="flex items-center gap-3 px-1 pt-5">
-      <ComposeConversation variant="modal" :contact-id="String(contact.id)">
+      <ComposeConversation
+        variant="modal"
+        :contact-id="String(contact.id)"
+        :preferred-inbox-id="conversationInboxId"
+      >
         <template #trigger>
           <RelayTooltip
             :content="$t('CONTACT_PANEL.NEW_MESSAGE')"

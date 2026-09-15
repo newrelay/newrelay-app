@@ -943,6 +943,7 @@
 
   "COMPOSE_NEW_CONVERSATION": {
     "TITLE": "New Message",
+    "DESCRIPTION": "Send a new message to this contact.",
     "ACTIONS": {
       "MINIMIZE": "Minimize",
       "RESTORE": "Restore",
@@ -959,24 +960,24 @@
       "ERROR_MESSAGE": "An error occurred while creating the conversation. Please try again later.",
       "NO_INBOX_ALERT": "There are no available inboxes to start a conversation with this contact.",
       "CONTACT_SELECTOR": {
-        "LABEL": "To",
+        "LABEL": "To:",
         "TAG_INPUT_PLACEHOLDER": "To",
         "SEARCH_PLACEHOLDER": "Enter at least 2 characters to search by name, email, or phone number",
         "CONTACT_CREATING": "Creating contact..."
       },
       "INBOX_SELECTOR": {
-        "LABEL": "Via",
+        "LABEL": "Via:",
         "BUTTON": "Select inbox",
         "SHOW_INBOXES": "Show inboxes"
       },
       "EMAIL_OPTIONS": {
-        "SUBJECT_LABEL": "Subject",
-        "SUBJECT_PLACEHOLDER": "Subject",
-        "CC_LABEL": "Cc",
-        "CC_PLACEHOLDER": "Enter at least 2 characters to search by email",
+        "SUBJECT_LABEL": "Subject:",
+        "SUBJECT_PLACEHOLDER": "Enter subject...",
+        "CC_LABEL": "Cc:",
+        "CC_PLACEHOLDER": "Add Cc recipients...",
         "CC_BUTTON": "Cc",
-        "BCC_LABEL": "Bcc",
-        "BCC_PLACEHOLDER": "Enter at least 2 characters to search by email",
+        "BCC_LABEL": "Bcc:",
+        "BCC_PLACEHOLDER": "Add Bcc recipients...",
         "BCC_BUTTON": "Bcc"
       },
       "MESSAGE_EDITOR": {
@@ -989,7 +990,10 @@
         "LINK": "Insert link",
         "STRIKETHROUGH": "Strikethrough",
         "BULLET_LIST": "Bullet list",
-        "ORDERED_LIST": "Numbered list"
+        "ORDERED_LIST": "Numbered list",
+        "IMAGE": "Insert image",
+        "UNDO": "Undo",
+        "REDO": "Redo"
       },
       "AI_BAR": {
         "PLACEHOLDER": "Describe your message..."
@@ -1016,6 +1020,7 @@
       },
       "ACTION_BUTTONS": {
         "DISCARD": "Discard",
+        "CANCEL": "Cancel",
         "SEND": "Send",
         "SEND_NOW": "Send now",
         "SEND_OPTIONS": "More send options",

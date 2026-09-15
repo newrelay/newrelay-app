@@ -26,11 +26,13 @@ const props = defineProps({
   sendWithSignature: { type: Boolean, default: false },
   channelType: { type: String, default: '' },
   medium: { type: String, default: '' },
+  enableMenuBar: { type: Boolean, default: true },
 });
 
 const emit = defineEmits(['update:modelValue', 'executeCopilotAction', 'blur']);
 
 const slots = useSlots();
+const wootEditorRef = ref(null);
 
 const isFocused = ref(false);
 const isHovered = ref(false);
@@ -77,6 +79,11 @@ watch(
     }
   }
 );
+
+defineExpose({
+  executeFormat: command => wootEditorRef.value?.executeFormat?.(command),
+  toggleEditorMark: mark => wootEditorRef.value?.toggleEditorMark?.(mark),
+});
 </script>
 
 <template>
@@ -103,6 +110,7 @@ watch(
       @mouseleave="isHovered = false"
     >
       <WootEditor
+        ref="wootEditorRef"
         :editor-id="editorKey"
         :model-value="modelValue"
         :placeholder="placeholder"
@@ -116,6 +124,7 @@ watch(
         :send-with-signature="sendWithSignature"
         :channel-type="channelType"
         :medium="medium"
+        :enable-menu-bar="enableMenuBar"
         @input="handleInput"
         @focus="handleFocus"
         @blur="handleBlur"

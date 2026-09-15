@@ -27,7 +27,10 @@ import {
 } from 'dashboard/components-next/NewConversation/helpers/composeConversationHelper';
 
 import { RelayButton } from 'dashboard/components-next/relay';
-import { RELAY_MODAL_CLOSE_BUTTON_CLASS } from 'dashboard/components-next/relay/modal/constants';
+import {
+  RELAY_DIALOG_OVERLAY_CLASS,
+  RELAY_MODAL_CLOSE_BUTTON_CLASS,
+} from 'dashboard/components-next/relay/modal/constants';
 import ComposeNewConversationForm from 'dashboard/components-next/NewConversation/components/ComposeNewConversationForm.vue';
 
 const props = defineProps({
@@ -39,6 +42,15 @@ const props = defineProps({
   // Prefer over contactId when the contact may not have contactInboxes loaded yet.
   initialContact: {
     type: Object,
+    default: null,
+  },
+  variant: {
+    type: String,
+    default: 'panel',
+    validator: value => ['panel', 'modal'].includes(value),
+  },
+  preferredInboxId: {
+    type: [Number, String],
     default: null,
   },
 });
@@ -106,7 +118,12 @@ const lockedContactId = computed(() => {
   return null;
 });
 
+const isModal = computed(() => props.variant === 'modal');
+
 const panelClass = computed(() => {
+  if (isModal.value) {
+    return 'left-1/2 top-1/2 z-[201] grid w-full max-w-2xl min-h-[450px] max-h-[min(90vh,calc(100vh-2rem))] -translate-x-1/2 -translate-y-1/2 gap-0 rounded-xl border border-border/80 bg-background shadow-xl';
+  }
   if (isMaximized.value) {
     return 'inset-4 sm:inset-10 rounded-xl border border-border shadow-[0_0_50px_-12px_rgba(0,0,0,0.5)] max-w-none';
   }
@@ -116,13 +133,20 @@ const panelClass = computed(() => {
   return 'bottom-0 right-4 sm:right-12 w-full max-w-lg max-h-[min(640px,calc(100vh-1rem))] rounded-t-xl border-t border-l border-r border-border shadow-2xl';
 });
 
-const preferEmailInbox = computed(
-  () => Boolean(props.initialContact?.email) || Boolean(props.contactId)
-);
+const preferEmailInbox = computed(() => Boolean(props.initialContact?.email));
 
 const autoSelectPreferredInbox = contact => {
   const list = buildContactableInboxesList(contact?.contactInboxes);
   if (!list.length) return;
+
+  if (props.preferredInboxId != null) {
+    const preferredId = Number(props.preferredInboxId);
+    const match = list.find(inbox => Number(inbox.id) === preferredId);
+    if (match) {
+      targetInbox.value = match;
+      return;
+    }
+  }
 
   const emailInbox = list.find(
     inbox => inbox.channelType === INBOX_TYPES.EMAIL
@@ -350,13 +374,24 @@ onBeforeUnmount(() => {
 
   <Teleport to="body">
     <div
+      v-if="isOpen && isModal"
+      :class="RELAY_DIALOG_OVERLAY_CLASS"
+      @click="closeCompose"
+    />
+    <div
       v-if="isOpen"
       data-relay
-      class="fixed z-50 flex flex-col overflow-hidden bg-card animate-in slide-in-from-bottom-10 duration-200"
-      :class="panelClass"
+      class="fixed flex flex-col overflow-hidden animate-in duration-200"
+      :class="[
+        panelClass,
+        isModal
+          ? 'bg-background fade-in zoom-in-95'
+          : 'z-50 bg-card slide-in-from-bottom-10',
+      ]"
       @click.stop
     >
       <div
+        v-if="!isModal"
         class="flex items-center justify-between border-b border-border/60 bg-muted/30 px-4 py-2 transition-colors"
         :class="{
           'cursor-pointer hover:bg-accent': isMinimized,
@@ -413,6 +448,7 @@ onBeforeUnmount(() => {
 
       <div v-show="!isMinimized" class="flex min-h-0 flex-1 flex-col">
         <ComposeNewConversationForm
+          :variant="variant"
           :form-state="formState"
           :contacts="contacts"
           :contact-id="lockedContactId"

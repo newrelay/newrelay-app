@@ -44,6 +44,11 @@ const props = defineProps({
   messageSignature: { type: String, default: '' },
   sendWithSignature: { type: Boolean, default: false },
   formState: { type: Object, required: true },
+  variant: {
+    type: String,
+    default: 'panel',
+    validator: value => ['panel', 'modal'].includes(value),
+  },
 });
 
 const emit = defineEmits([
@@ -226,6 +231,9 @@ const handleInboxAction = ({ value, action, channelType, medium, ...rest }) => {
 
   emit('updateTargetInbox', { ...rest, channelType, medium });
   showInboxesDropdown.value = false;
+  showCcInput.value = false;
+  showBccInput.value = false;
+  showFormatting.value = false;
   state.attachedFiles = [];
 };
 
@@ -349,8 +357,13 @@ const handleSendTwilioMessage = async ({ message, templateParams }) => {
   });
 };
 
+const isRichCompose = computed(
+  () => inboxTypes.value.isEmail || inboxTypes.value.isWebWidget
+);
+
 const shouldShowMessageEditor = computed(() => {
   return (
+    !!props.targetInbox &&
     !inboxTypes.value.isWhatsapp &&
     !showNoInboxAlert.value &&
     !inboxTypes.value.isTwilioWhatsapp
@@ -358,6 +371,14 @@ const shouldShowMessageEditor = computed(() => {
 });
 
 const isCopilotActive = computed(() => copilot.isActive?.value ?? false);
+
+const isModalLayout = computed(() => props.variant === 'modal');
+
+const fieldRowClass = computed(() =>
+  isModalLayout.value
+    ? 'border-b border-border/50 px-6 py-4'
+    : 'border-b border-border/40 px-4 py-2'
+);
 
 const onSubmitCopilotReply = () => {
   const acceptedMessage = copilot.accept();
@@ -387,9 +408,10 @@ useKeyboardEvents({
 
 <template>
   <div class="flex min-h-0 flex-1 flex-col bg-background">
-    <div class="flex min-h-0 flex-1 flex-col overflow-y-auto">
+    <div class="flex min-h-0 flex-1 flex-col overflow-visible">
       <div
-        class="flex items-center justify-between gap-2 border-b border-border/40 px-4 py-2"
+        class="flex items-center justify-between gap-4"
+        :class="fieldRowClass"
       >
         <ContactSelector
           class="min-w-0 flex-1"
@@ -408,19 +430,29 @@ useKeyboardEvents({
           @update-dropdown="handleDropdownUpdate"
         />
         <div
-          v-if="inboxTypes.isEmail || !targetInbox"
-          class="flex shrink-0 items-center gap-2"
+          v-if="inboxTypes.isEmail"
+          class="flex shrink-0 select-none items-center gap-2.5 text-[13px] text-muted-foreground"
         >
           <button
             type="button"
-            class="text-xs font-medium text-muted-foreground hover:text-foreground"
+            class="cursor-pointer transition-colors"
+            :class="
+              showCcInput
+                ? 'font-semibold text-primary'
+                : 'hover:text-foreground'
+            "
             @click="showCcInput = !showCcInput"
           >
             {{ t('COMPOSE_NEW_CONVERSATION.FORM.EMAIL_OPTIONS.CC_BUTTON') }}
           </button>
           <button
             type="button"
-            class="text-xs font-medium text-muted-foreground hover:text-foreground"
+            class="cursor-pointer transition-colors"
+            :class="
+              showBccInput
+                ? 'font-semibold text-primary'
+                : 'hover:text-foreground'
+            "
             @click="showBccInput = !showBccInput"
           >
             {{ t('COMPOSE_NEW_CONVERSATION.FORM.EMAIL_OPTIONS.BCC_BUTTON') }}
@@ -430,7 +462,8 @@ useKeyboardEvents({
 
       <InboxEmptyState v-if="showNoInboxAlert" />
       <InboxSelector
-        v-else-if="!targetInbox || contactableInboxesList.length > 1"
+        v-else
+        :variant="variant"
         :target-inbox="targetInbox"
         :selected-contact="selectedContact"
         :show-inboxes-dropdown="showInboxesDropdown"
@@ -443,13 +476,14 @@ useKeyboardEvents({
       />
 
       <EmailOptions
-        v-if="inboxTypes.isEmail || (!targetInbox && !inboxTypes.isWhatsapp)"
+        v-if="inboxTypes.isEmail"
         v-model:cc-emails="state.ccEmails"
         v-model:bcc-emails="state.bccEmails"
         v-model:subject="state.subject"
+        :variant="variant"
         :contacts="contacts"
-        :show-cc-input="showCcInput && inboxTypes.isEmail"
-        :show-bcc-input="showBccInput && inboxTypes.isEmail"
+        :show-cc-input="showCcInput"
+        :show-bcc-input="showBccInput"
         :show-cc-emails-dropdown="showCcEmailsDropdown"
         :show-bcc-emails-dropdown="showBccEmailsDropdown"
         :is-loading="isLoading"
@@ -457,18 +491,23 @@ useKeyboardEvents({
         @search-cc-emails="searchCcEmails"
         @search-bcc-emails="searchBccEmails"
         @update-dropdown="handleDropdownUpdate"
+        @close-cc="showCcInput = false"
+        @close-bcc="showBccInput = false"
       />
 
       <MessageEditor
         v-if="shouldShowMessageEditor"
         v-model="state.message"
+        class="min-h-0 overflow-y-auto"
+        :plain="!isRichCompose"
+        :comfortable="isModalLayout"
         :message-signature="messageSignature"
         :send-with-signature="sendWithSignature"
         :has-errors="validationStates.isMessageInvalid"
         :channel-type="inboxChannelType"
         :medium="targetInbox?.medium || ''"
         :copilot="copilot"
-        :show-formatting="showFormatting"
+        :show-formatting="isRichCompose"
       />
 
       <AttachmentPreviews
@@ -477,7 +516,15 @@ useKeyboardEvents({
         @update:attachments="state.attachedFiles = $event"
       />
 
-      <div v-if="shouldShowMessageEditor && !isCopilotActive" class="px-4 pb-3">
+      <div
+        v-if="
+          shouldShowMessageEditor &&
+          isRichCompose &&
+          !isCopilotActive &&
+          !isModalLayout
+        "
+        class="px-4 pb-3"
+      >
         <div
           class="flex items-center gap-2 rounded-full border border-border/50 bg-muted/40 px-4 py-1.5"
         >
@@ -517,6 +564,7 @@ useKeyboardEvents({
       :is-dropdown-active="isAnyDropdownActive"
       :message-signature="messageSignature"
       :show-formatting="showFormatting"
+      :compact="variant === 'modal'"
       @insert-emoji="onClickInsertEmoji"
       @insert-link="insertLink"
       @toggle-formatting="showFormatting = !showFormatting"

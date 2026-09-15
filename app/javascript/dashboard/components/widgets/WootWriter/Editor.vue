@@ -43,6 +43,7 @@ import {
   imageResizeView,
 } from '@chatwoot/prosemirror-schema';
 import { toggleMark } from 'prosemirror-commands';
+import { wrapInList } from 'prosemirror-schema-list';
 import {
   suggestionsPlugin,
   triggerCharacters,
@@ -850,14 +851,56 @@ function toggleEditorMark(markName) {
   if (!editorView) return;
   const mark = editorView.state.schema.marks[markName];
   if (!mark) return;
-  toggleMark(mark)(editorView.state, editorView.dispatch);
+  const attrs = markName === 'link' ? { href: 'https://' } : undefined;
+  toggleMark(mark, attrs)(editorView.state, editorView.dispatch);
   editorView.focus();
+}
+
+function executeFormat(command) {
+  if (!editorView) return;
+
+  const editorState = editorView.state;
+  const { schema } = editorState;
+  const dispatch = editorView.dispatch.bind(editorView);
+
+  if (command === 'imageUpload') {
+    openFileBrowser();
+    return;
+  }
+  if (command === 'undo' || command === 'redo') {
+    editorView.focus();
+    editorView.dom.dispatchEvent(
+      new KeyboardEvent('keydown', {
+        key: 'z',
+        code: 'KeyZ',
+        bubbles: true,
+        cancelable: true,
+        metaKey: true,
+        ctrlKey: true,
+        shiftKey: command === 'redo',
+      })
+    );
+    return;
+  }
+  if (command === 'bulletList' && schema.nodes.bullet_list) {
+    wrapInList(schema.nodes.bullet_list)(editorState, dispatch);
+    editorView.focus();
+    return;
+  }
+  if (command === 'orderedList' && schema.nodes.ordered_list) {
+    wrapInList(schema.nodes.ordered_list)(editorState, dispatch);
+    editorView.focus();
+    return;
+  }
+
+  toggleEditorMark(command);
 }
 
 defineExpose({
   focusEditorInputField,
   insertCannedResponse,
   toggleEditorMark,
+  executeFormat,
 });
 
 // BUS Event to insert text or markdown into the editor at the

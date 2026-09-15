@@ -3,10 +3,6 @@ import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 import TagInput from 'dashboard/components-next/taginput/TagInput.vue';
-import {
-  RelayInput,
-  RELAY_FORM_INLINE_INPUT_CLASS,
-} from 'dashboard/components-next/relay';
 
 const props = defineProps({
   contacts: { type: Array, required: true },
@@ -16,12 +12,15 @@ const props = defineProps({
   showBccInput: { type: Boolean, default: false },
   isLoading: { type: Boolean, default: false },
   hasErrors: { type: Boolean, default: false },
+  variant: { type: String, default: 'panel' },
 });
 
 const emit = defineEmits([
   'searchCcEmails',
   'searchBccEmails',
   'updateDropdown',
+  'closeCc',
+  'closeBcc',
 ]);
 
 const i18nPrefix = `COMPOSE_NEW_CONVERSATION.FORM.EMAIL_OPTIONS`;
@@ -73,26 +72,21 @@ const handleBccUpdate = value => {
   bccEmails.value = value.join(',');
 };
 
-const subjectClassName = computed(() =>
-  [
-    RELAY_FORM_INLINE_INPUT_CLASS,
-    'px-0 font-medium',
-    props.hasErrors ? 'placeholder:!text-destructive' : '',
-  ].join(' ')
+const isModalLayout = computed(() => props.variant === 'modal');
+
+const fieldRowClass = computed(() =>
+  isModalLayout.value
+    ? 'flex min-h-8 items-center gap-4 border-b border-border/50 px-6 py-4'
+    : 'flex min-h-8 items-center gap-4 border-b border-border/40 px-4 py-2'
 );
 </script>
 
 <template>
   <div class="flex flex-col">
-    <div
-      v-if="showCcInput"
-      class="flex min-h-8 items-center gap-3 border-b border-border/40 px-4 py-2"
-    >
-      <label
-        class="shrink-0 text-muted-foreground text-[13.5px] font-[500] text-foreground"
-      >
+    <div v-if="showCcInput" :class="fieldRowClass">
+      <span class="w-16 shrink-0 text-[14px] font-semibold text-foreground">
         {{ t(`${i18nPrefix}.CC_LABEL`) }}
-      </label>
+      </span>
       <TagInput
         :model-value="ccEmailsArray"
         :placeholder="t(`${i18nPrefix}.CC_PLACEHOLDER`)"
@@ -106,16 +100,19 @@ const subjectClassName = computed(() =>
         @on-click-outside="emit('updateDropdown', 'cc', false)"
         @update:model-value="handleCcUpdate"
       />
-    </div>
-    <div
-      v-if="showBccInput"
-      class="flex min-h-8 items-center gap-3 border-b border-border/40 px-4 py-2"
-    >
-      <label
-        class="shrink-0 text-muted-foreground text-[13.5px] font-[500] text-foreground"
+      <button
+        type="button"
+        class="rounded-sm p-0.5 text-muted-foreground transition-colors hover:text-foreground"
+        :title="t(`${i18nPrefix}.CC_BUTTON`)"
+        @click="emit('closeCc')"
       >
+        <span class="i-lucide-x size-3.5" />
+      </button>
+    </div>
+    <div v-if="showBccInput" :class="fieldRowClass">
+      <span class="w-16 shrink-0 text-[14px] font-semibold text-foreground">
         {{ t(`${i18nPrefix}.BCC_LABEL`) }}
-      </label>
+      </span>
       <TagInput
         :model-value="bccEmailsArray"
         :placeholder="t(`${i18nPrefix}.BCC_PLACEHOLDER`)"
@@ -130,12 +127,25 @@ const subjectClassName = computed(() =>
         @on-click-outside="emit('updateDropdown', 'bcc', false)"
         @update:model-value="handleBccUpdate"
       />
+      <button
+        type="button"
+        class="rounded-sm p-0.5 text-muted-foreground transition-colors hover:text-foreground"
+        :title="t(`${i18nPrefix}.BCC_BUTTON`)"
+        @click="emit('closeBcc')"
+      >
+        <span class="i-lucide-x size-3.5" />
+      </button>
     </div>
-    <div class="flex items-center border-b border-border/40 px-4 py-2">
-      <RelayInput
+    <div :class="fieldRowClass">
+      <span class="w-16 shrink-0 text-[14px] font-semibold text-foreground">
+        {{ t(`${i18nPrefix}.SUBJECT_LABEL`) }}
+      </span>
+      <input
         v-model="subject"
+        type="text"
         :placeholder="t(`${i18nPrefix}.SUBJECT_PLACEHOLDER`)"
-        :class-name="subjectClassName"
+        class="reset-base h-6 min-w-0 flex-1 border-none bg-transparent px-0 text-[14px] text-foreground shadow-none outline-none placeholder:text-muted-foreground focus:ring-0"
+        :class="hasErrors ? 'placeholder:!text-destructive' : ''"
       />
     </div>
   </div>

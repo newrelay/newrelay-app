@@ -96,28 +96,28 @@ const handleInput = value => {
 
 <template>
   <div class="relative min-w-0 flex-1 overflow-y-visible">
-    <div class="flex min-h-8 w-full items-center gap-2">
+    <div class="flex min-h-8 w-full items-center gap-4">
+      <span class="w-16 shrink-0 text-[14px] font-semibold text-foreground">
+        {{ t(`${i18nPrefix}.LABEL`) }}
+      </span>
       <div
         v-if="isCreatingContact"
-        class="flex min-h-7 min-w-0 items-center gap-1.5 rounded-md bg-muted px-3"
+        class="min-w-0 flex-1 truncate text-[14px] text-foreground"
       >
-        <span class="truncate text-sm text-foreground">
-          {{ t(`${i18nPrefix}.CONTACT_CREATING`) }}
-        </span>
+        {{ t(`${i18nPrefix}.CONTACT_CREATING`) }}
       </div>
       <div
         v-else-if="selectedContact"
-        class="flex min-h-7 min-w-0 items-center gap-1.5 rounded-md bg-muted px-3"
-        :class="!contactId ? 'pr-1' : ''"
+        class="flex min-h-7 min-w-0 flex-1 items-center gap-1.5"
       >
-        <span class="truncate text-sm text-foreground">
+        <span class="min-w-0 flex-1 truncate text-[14px] text-foreground">
           {{ selectedContactPill }}
         </span>
         <RelayButton
           v-if="!contactId"
           variant="ghost"
           size="icon"
-          class="size-6 shrink-0 text-muted-foreground hover:text-foreground border border-border hover:border-transparent"
+          class="size-6 shrink-0 border border-border text-muted-foreground hover:border-transparent hover:text-foreground"
           @click="emit('clearSelectedContact')"
         >
           <span class="i-lucide-x size-3.5" />
@@ -125,7 +125,7 @@ const handleInput = value => {
       </div>
       <TagInput
         v-else
-        :placeholder="t(`${i18nPrefix}.TAG_INPUT_PLACEHOLDER`)"
+        :placeholder="t(`${i18nPrefix}.SEARCH_PLACEHOLDER`)"
         mode="single"
         :menu-items="contactsList"
         :show-dropdown="showContactsDropdown"

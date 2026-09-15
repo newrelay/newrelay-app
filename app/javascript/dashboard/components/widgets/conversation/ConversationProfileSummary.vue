@@ -81,7 +81,7 @@ const statusBadge = computed(() => {
 });
 
 const badgeBaseClass =
-  'inline-flex h-5 shrink-0 items-center rounded-sm border px-1.5 py-0 text-[10px] font-medium transition-colors focus:outline-hidden focus:ring-1 focus:ring-ring';
+  'inline-flex h-4 shrink-0 items-center rounded-sm border px-1.5 py-0 text-[10px] font-medium transition-colors focus:outline-hidden focus:ring-1 focus:ring-ring';
 
 const badgeClass = computed(() => {
   const variant = statusBadge.value?.variant;
@@ -113,13 +113,13 @@ const scoreValue = computed(() => props.chat.id);
         <a
           v-if="contactProfileLink"
           :href="contactProfileLink"
-          class="cursor-pointer truncate font-semibold text-base leading-5 text-foreground transition-colors hover:text-primary"
+          class="cursor-pointer truncate text-sm font-semibold leading-none text-foreground transition-colors hover:text-primary"
         >
           {{ currentContact.name }}
         </a>
         <span
           v-else
-          class="truncate font-semibold text-base leading-5 text-foreground"
+          class="truncate text-sm font-semibold leading-none text-foreground"
         >
           {{ currentContact.name }}
         </span>

@@ -173,7 +173,11 @@ const handleSave = () => {
       </div>
     </div>
     <div>
-      <RelayButton type="button" :disabled="!isDirty" @click="handleSave">
+      <RelayButton
+        type="button"
+        :disabled="!isDirty || selectedTools.size === 0"
+        @click="handleSave"
+      >
         {{ t('MCP_SETTINGS.SAVE') }}
       </RelayButton>
     </div>

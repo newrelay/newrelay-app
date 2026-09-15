@@ -69,6 +69,19 @@ describe('McpPermissionsForm.vue', () => {
     ).toBeUndefined();
   });
 
+  it('keeps Save disabled when every tool is unchecked, even though the selection is dirty', async () => {
+    const wrapper = mount(McpPermissionsForm, {
+      props: { initialScopes: ['list_inboxes'] },
+    });
+
+    await wrapper.find('[data-tool-name="list_inboxes"]').trigger('click');
+
+    expect(
+      wrapper.findAll('button').at(-1).attributes('disabled')
+    ).toBeDefined();
+    expect(wrapper.emitted('save')).toBeUndefined();
+  });
+
   it('emits save with the full explicit list of currently checked tool names', async () => {
     const wrapper = mount(McpPermissionsForm, {
       props: { initialScopes: [] },

@@ -202,7 +202,7 @@ watch(
 <template>
   <span
     class="relative inline-flex group/avatar z-0 flex-shrink-0 align-middle"
-    :class="borderRadiusClass"
+    :class="[borderRadiusClass, borderless ? '' : 'border border-border']"
     :style="containerStyles"
   >
     <!-- Status Badge -->
@@ -240,7 +240,6 @@ watch(
       class="relative inline-flex items-center justify-center object-cover overflow-hidden font-medium"
       :class="[
         borderRadiusClass,
-        borderless ? '' : 'border border-border',
         {
           'dark:!bg-[var(--dark-bg)] dark:!text-[var(--dark-text)]':
             !showDefaultAvatar && (!src || !isImageValid),
@@ -291,7 +290,7 @@ watch(
         :handle-image-upload="handleImageUpload"
       >
         <div
-          class="absolute inset-0 z-10 flex items-center justify-center invisible w-full h-full transition-all duration-300 ease-in-out opacity-0 bg-black/5 group-hover/avatar:visible group-hover/avatar:opacity-100"
+          class="absolute inset-0 z-10 flex items-center justify-center invisible w-full h-full transition-all duration-300 ease-in-out opacity-0 border border-border bg-black/5 group-hover/avatar:visible group-hover/avatar:opacity-100"
           :class="borderRadiusClass"
           @click="handleUploadAvatar"
         >

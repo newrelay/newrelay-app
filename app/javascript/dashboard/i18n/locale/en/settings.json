@@ -276,6 +276,7 @@
     "SUBTITLE": "Control which MCP tools your personal access token is allowed to call when connected to an external AI agent.",
     "DISABLED_MESSAGE": "MCP is not enabled for this account. Ask your administrator to enable it to manage tool permissions here.",
     "ACCESS_TOKEN_LINK": "Manage your access token",
+    "MANAGE_BUTTON": "Manage Permissions",
     "GROUPS": {
       "READ": "Read",
       "WRITE": "Write"

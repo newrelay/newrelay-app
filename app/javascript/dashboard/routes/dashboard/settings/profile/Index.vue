@@ -18,6 +18,9 @@ import AudioNotifications from './AudioNotifications.vue';
 import AccessToken from './AccessToken.vue';
 import MfaSettingsCard from './MfaSettingsCard.vue';
 import Policy from 'dashboard/components/policy.vue';
+import Icon from 'dashboard/components-next/icon/Icon.vue';
+import { RelayButton } from 'dashboard/components-next/relay';
+import { RELAY_FORM_LABEL_CLASS } from 'dashboard/components-next/relay/form/constants';
 import {
   ROLES,
   CONVERSATION_PERMISSIONS,
@@ -39,6 +42,8 @@ export default {
     AudioNotifications,
     AccessToken,
     MfaSettingsCard,
+    Icon,
+    RelayButton,
   },
   setup() {
     const { isEditorHotKeyEnabled, updateUISettings } = useUISettings();
@@ -52,6 +57,7 @@ export default {
       updateUISettings,
       replaceInstallationName,
       profileCardClass: PROFILE_CARD_CLASS,
+      relayFormLabelClass: RELAY_FORM_LABEL_CLASS,
     };
   },
   data() {
@@ -427,6 +433,30 @@ export default {
           @on-copy="onCopyToken"
           @on-reset="resetAccessToken"
         />
+        <div
+          class="flex flex-col gap-4 p-4 mt-6 bg-muted/20 border border-border/60 rounded-xl"
+        >
+          <div class="flex flex-col gap-1.5 shrink-0">
+            <label :class="relayFormLabelClass">
+              {{ $t('MCP_SETTINGS.TITLE') }}
+            </label>
+            <p class="text-[13px] text-muted-foreground leading-relaxed">
+              {{ $t('MCP_SETTINGS.SUBTITLE') }}
+            </p>
+          </div>
+          <RelayButton
+            as="router-link"
+            :to="{
+              name: 'profile_settings_mcp',
+              params: { accountId: $route.params.accountId },
+            }"
+            variant="secondary"
+            class="bg-primary/5 hover:bg-primary/10 border border-primary/20 text-primary font-medium whitespace-nowrap px-4 h-9 shadow-none shrink-0 self-start"
+          >
+            <Icon icon="i-lucide-shield-check" class="size-3.5" />
+            {{ $t('MCP_SETTINGS.MANAGE_BUTTON') }}
+          </RelayButton>
+        </div>
       </div>
     </div>
   </div>

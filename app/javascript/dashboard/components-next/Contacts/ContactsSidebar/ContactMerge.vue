@@ -15,10 +15,7 @@ import {
   RELAY_FORM_FIELD_CLASS,
   RELAY_FORM_LABEL_CLASS,
 } from 'dashboard/components-next/relay';
-import {
-  RELAY_DIALOG_OVERLAY_CLASS,
-  RELAY_MODAL_BODY_CLASS,
-} from 'dashboard/components-next/relay/modal/constants';
+import { RELAY_DIALOG_OVERLAY_CLASS } from 'dashboard/components-next/relay/modal/constants';
 import RelayModalHeader from 'dashboard/components-next/relay/modal/RelayModalHeader.vue';
 
 const props = defineProps({
@@ -243,7 +240,7 @@ const initials = name => {
           @close="isPreviewOpen = false"
         />
 
-        <div :class="[RELAY_MODAL_BODY_CLASS]">
+        <div class="flex-1 overflow-y-auto px-6 pb-6 pt-6">
           <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div
               class="flex flex-col gap-4 rounded-lg border border-border bg-card p-4"

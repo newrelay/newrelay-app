@@ -43,6 +43,7 @@ import {
   imageResizeView,
 } from '@chatwoot/prosemirror-schema';
 import { toggleMark } from 'prosemirror-commands';
+import { undo, redo } from 'prosemirror-history';
 import { wrapInList } from 'prosemirror-schema-list';
 import {
   suggestionsPlugin,
@@ -868,18 +869,8 @@ function executeFormat(command) {
     return;
   }
   if (command === 'undo' || command === 'redo') {
+    (command === 'undo' ? undo : redo)(editorState, dispatch);
     editorView.focus();
-    editorView.dom.dispatchEvent(
-      new KeyboardEvent('keydown', {
-        key: 'z',
-        code: 'KeyZ',
-        bubbles: true,
-        cancelable: true,
-        metaKey: true,
-        ctrlKey: true,
-        shiftKey: command === 'redo',
-      })
-    );
     return;
   }
   if (command === 'bulletList' && schema.nodes.bullet_list) {

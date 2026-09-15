@@ -87,7 +87,7 @@ const openCreateAssistantDialog = () => {
 
 <template>
   <div
-    class="absolute z-[110] flex w-[230px] flex-col overflow-hidden rounded-md border border-border bg-popover p-1 text-popover-foreground shadow-md"
+    class="absolute z-[110] my-0.5 flex w-[230px] flex-col overflow-hidden rounded-md border border-border bg-popover p-1 text-popover-foreground shadow-md"
   >
     <div
       class="mb-1 flex items-start justify-between gap-2 border-b border-border/40 px-3 py-2"

@@ -101,13 +101,6 @@ const callPhoneNumbers = computed(() => {
 const moreMenuItems = computed(() => {
   const items = [
     {
-      label: t('CONTACTS_LAYOUT.DETAIL.ACTIONS.CALL'),
-      action: 'call',
-      value: 'call',
-      icon: 'i-lucide-phone',
-      disabled: !callPhoneNumbers.value.length,
-    },
-    {
       label: isBlocked.value
         ? t('CONTACTS_LAYOUT.HEADER.UNBLOCK_CONTACT')
         : t('CONTACTS_LAYOUT.HEADER.BLOCK_CONTACT'),
@@ -129,15 +122,38 @@ const moreMenuItems = computed(() => {
   return items;
 });
 
+const callMenuItems = computed(() => {
+  if (!callPhoneNumbers.value.length) {
+    return [
+      {
+        label: t('CONTACT_PANEL.PHONE_NOT_PROVIDED'),
+        action: 'call',
+        value: '',
+        icon: 'i-lucide-phone',
+        disabled: true,
+      },
+    ];
+  }
+  return callPhoneNumbers.value.map(phone => ({
+    label: phone,
+    action: 'call',
+    value: phone,
+    icon: 'i-lucide-phone',
+  }));
+});
+
 const callContact = phone => {
   if (!phone) return;
   window.open(`tel:${phone}`, '_self');
 };
 
 const handleMoreAction = ({ action }) => {
-  if (action === 'call') callContact(callPhoneNumbers.value[0]);
   if (action === 'block') emit('block', isBlocked.value);
   if (action === 'delete') emit('delete');
+};
+
+const handleCallAction = ({ value }) => {
+  callContact(value);
 };
 
 const handleAvatarUpload = payload => {
@@ -244,6 +260,24 @@ const handleAvatarDelete = () => {
           </RelayButton>
         </template>
       </ComposeConversation>
+
+      <RelayActionDropdown
+        :menu-items="callMenuItems"
+        align="end"
+        content-class="min-w-48"
+        @action="handleCallAction"
+      >
+        <template #trigger>
+          <RelayButton
+            variant="outline"
+            class="h-9 rounded-lg px-4 text-sm font-medium shadow-sm"
+          >
+            <span class="i-lucide-phone size-4" />
+            {{ t('CONTACTS_LAYOUT.DETAIL.ACTIONS.CALL') }}
+            <span class="i-lucide-chevron-down size-4 opacity-50" />
+          </RelayButton>
+        </template>
+      </RelayActionDropdown>
 
       <RelayActionDropdown
         :menu-items="moreMenuItems"

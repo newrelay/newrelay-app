@@ -12,6 +12,9 @@ import CompanyHistorySidebar from 'dashboard/components-next/Companies/CompanyDe
 import CompanyNotesSidebar from 'dashboard/components-next/Companies/CompanyDetail/CompanyNotesSidebar.vue';
 import CompanyContactsSidebar from 'dashboard/components-next/Companies/CompanyDetail/CompanyContactsSidebar.vue';
 import ConfirmCompanyDeleteDialog from 'dashboard/components-next/Companies/CompanyDetail/ConfirmCompanyDeleteDialog.vue';
+import CompanyAllContactsModal from 'dashboard/components-next/Companies/CompanyDetail/CompanyAllContactsModal.vue';
+import CompanyActivityTimelineModal from 'dashboard/components-next/Companies/CompanyDetail/CompanyActivityTimelineModal.vue';
+import { INBOX_TYPES } from 'dashboard/helper/inbox';
 import {
   RelayBadge,
   RelayButton,
@@ -28,6 +31,8 @@ const confirmDeleteDialogRef = ref(null);
 const activeTab = ref('overview');
 const isEditingDetails = ref(false);
 const selectedCompanyContact = ref(null);
+const showAllContactsModal = ref(false);
+const showActivityModal = ref(false);
 
 const detailsForm = reactive({
   phone: '',
@@ -132,8 +137,26 @@ const goToCompaniesList = () => {
   goToCompaniesIndex();
 };
 
-const goToContacts = () => {
-  activeTab.value = 'contacts';
+const activityIcon = conversation => {
+  const channel = conversation.meta?.channel;
+  if (channel === INBOX_TYPES.EMAIL) return 'i-lucide-mail';
+  if (channel === INBOX_TYPES.TWILIO || channel === INBOX_TYPES.SMS) {
+    return 'i-lucide-phone';
+  }
+  return 'i-lucide-message-square';
+};
+
+const activityTitle = conversation => {
+  const channel = conversation.meta?.channel;
+  if (channel === INBOX_TYPES.EMAIL) {
+    return t('COMPANIES.DETAIL.ACTIVITY.EMAIL');
+  }
+  if (channel === INBOX_TYPES.TWILIO || channel === INBOX_TYPES.SMS) {
+    return t('COMPANIES.DETAIL.ACTIVITY.CALL');
+  }
+  return t('COMPANIES.DETAIL.ACTIVITY.CONVERSATION', {
+    id: conversation.id,
+  });
 };
 
 const handleContactSearch = query => {
@@ -648,7 +671,7 @@ onBeforeUnmount(() => {
                     variant="secondary"
                     size="sm"
                     class="h-8 rounded-md border border-transparent bg-muted/50 px-3 text-[12px] font-medium text-foreground hover:bg-accent hover:text-accent-foreground"
-                    @click="goToContacts"
+                    @click="showAllContactsModal = true"
                   >
                     {{ t('COMPANIES.DETAIL.RECENT_CONTACTS.VIEW_ALL') }}
                   </RelayButton>
@@ -713,7 +736,7 @@ onBeforeUnmount(() => {
                     variant="secondary"
                     size="sm"
                     class="h-8 rounded-md border border-transparent bg-muted/50 px-3 text-[12px] font-medium text-foreground hover:bg-accent hover:text-accent-foreground"
-                    @click="activeTab = 'history'"
+                    @click="showActivityModal = true"
                   >
                     {{ t('COMPANIES.DETAIL.ACTIVITY.VIEW_ALL') }}
                   </RelayButton>
@@ -731,16 +754,15 @@ onBeforeUnmount(() => {
                     <div
                       class="relative z-10 flex size-8 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary"
                     >
-                      <span class="i-lucide-message-square size-4" />
+                      <span
+                        class="size-4"
+                        :class="[activityIcon(conversation)]"
+                      />
                     </div>
                     <div class="flex w-full flex-col">
                       <div class="flex items-center justify-between">
                         <span class="text-[14px] font-medium text-foreground">
-                          {{
-                            t('COMPANIES.DETAIL.ACTIVITY.CONVERSATION', {
-                              id: conversation.id,
-                            })
-                          }}
+                          {{ activityTitle(conversation) }}
                         </span>
                         <span class="text-[12px] text-muted-foreground">
                           {{
@@ -817,6 +839,18 @@ onBeforeUnmount(() => {
       :company="company"
       :is-loading="isDeletingCompany"
       @confirm="handleDeleteCompany"
+    />
+    <CompanyAllContactsModal
+      :show="showAllContactsModal"
+      :company="company"
+      :contacts="companyContacts"
+      @close="showAllContactsModal = false"
+    />
+    <CompanyActivityTimelineModal
+      :show="showActivityModal"
+      :company="company"
+      :conversations="companyConversations"
+      @close="showActivityModal = false"
     />
   </CompaniesDetailsLayout>
 </template>

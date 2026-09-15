@@ -7,6 +7,7 @@
 #  error_class      :string
 #  message          :text             not null
 #  metadata         :jsonb            not null
+#  notified_at      :datetime
 #  payment_provider :string
 #  status           :string           default("failed"), not null
 #  created_at       :datetime         not null
@@ -16,11 +17,12 @@
 #
 # Indexes
 #
-#  index_billing_activity_logs_on_account_id  (account_id)
-#  index_billing_activity_logs_on_action      (action)
-#  index_billing_activity_logs_on_created_at  (created_at)
-#  index_billing_activity_logs_on_status      (status)
-#  index_billing_activity_logs_on_user_id     (user_id)
+#  index_billing_activity_logs_on_account_id   (account_id)
+#  index_billing_activity_logs_on_action       (action)
+#  index_billing_activity_logs_on_created_at   (created_at)
+#  index_billing_activity_logs_on_notified_at  (notified_at)
+#  index_billing_activity_logs_on_status       (status)
+#  index_billing_activity_logs_on_user_id      (user_id)
 #
 # Foreign Keys
 #

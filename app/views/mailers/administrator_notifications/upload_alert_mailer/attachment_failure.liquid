@@ -1,0 +1,16 @@
+<p>Hello,</p>
+
+<p>A file/attachment upload failed on your newrelay instance.</p>
+
+<p>
+  <strong>Action:</strong> {{ meta.action }}<br>
+  {% if meta.account_name %}
+    <strong>Account:</strong> {{ meta.account_name }} (#{{ meta.account_id }})<br>
+  {% endif %}
+  <strong>Error:</strong> {{ meta.message }}
+</p>
+
+<p>Check Super Admin &gt; Upload Activity Logs for the full history.</p>
+
+<p>Thank you,<br>
+newrelay System</p>

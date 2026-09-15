@@ -1,0 +1,19 @@
+<p>Hello,</p>
+
+<p>A payment operation failed on your newrelay instance.</p>
+
+<p>
+  <strong>Action:</strong> {{ meta.action }}<br>
+  {% if meta.payment_provider %}
+    <strong>Provider:</strong> {{ meta.payment_provider }}<br>
+  {% endif %}
+  {% if meta.account_name %}
+    <strong>Account:</strong> {{ meta.account_name }} (#{{ meta.account_id }})<br>
+  {% endif %}
+  <strong>Error:</strong> {{ meta.message }}
+</p>
+
+<p>Check Super Admin &gt; Accounts &gt; Billing Activity Logs for the full history.</p>
+
+<p>Thank you,<br>
+newrelay System</p>

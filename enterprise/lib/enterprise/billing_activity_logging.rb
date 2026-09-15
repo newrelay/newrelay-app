@@ -1,6 +1,8 @@
 module Enterprise::BillingActivityLogging
   extend ActiveSupport::Concern
 
+  BILLING_NOTIFICATION_THROTTLE = 15.minutes
+
   private
 
   def log_billing_activity(action:, message:, status:, error_class: nil, payment_provider: nil, metadata: {})
@@ -31,7 +33,7 @@ module Enterprise::BillingActivityLogging
   end
 
   def log_billing_failure(action, message, error_class: nil, payment_provider: nil, metadata: {})
-    log_billing_activity(
+    log = log_billing_activity(
       action: action,
       message: message,
       status: 'failed',
@@ -39,6 +41,24 @@ module Enterprise::BillingActivityLogging
       payment_provider: payment_provider,
       metadata: metadata
     )
+    # Only alert on genuine exceptions (error_class present), not on plain
+    # validation guards (e.g. a blank required field) that also route
+    # through this same method.
+    notify_super_admins_of_billing_failure(log) if log && error_class.present?
+  end
+
+  def notify_super_admins_of_billing_failure(log)
+    return if BillingActivityLog.where.not(notified_at: nil).where(notified_at: BILLING_NOTIFICATION_THROTTLE.ago..).exists?
+
+    log.update!(notified_at: Time.current)
+    AdministratorNotifications::BillingAlertMailer.payment_failure(
+      action: log.action,
+      message: log.message,
+      payment_provider: log.payment_provider,
+      account: log.account
+    ).deliver_later
+  rescue StandardError => e
+    Rails.logger.error("[BillingAlertMailer] failed to queue notification: #{e.class}: #{e.message}")
   end
 
   def billing_activity_metadata

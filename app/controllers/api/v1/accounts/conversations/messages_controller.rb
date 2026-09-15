@@ -14,6 +14,7 @@ class Api::V1::Accounts::Conversations::MessagesController < Api::V1::Accounts::
     mb = Messages::MessageBuilder.new(user, @conversation, params)
     @message = mb.perform
   rescue StandardError => e
+    log_attachment_upload_failure(e) if params[:attachments].present?
     render_could_not_create_error(e.message)
   end
 
@@ -59,6 +60,35 @@ class Api::V1::Accounts::Conversations::MessagesController < Api::V1::Accounts::
   end
 
   private
+
+  UPLOAD_NOTIFICATION_THROTTLE = 15.minutes
+
+  def log_attachment_upload_failure(error)
+    log = UploadActivityLog.create!(
+      account: @conversation.account,
+      user: Current.user,
+      action: 'message_attachment_upload',
+      status: 'failed',
+      error_class: error.class.name,
+      message: error.message.to_s.truncate(2000)
+    )
+    notify_super_admins_of_upload_failure(log)
+  rescue StandardError => e
+    Rails.logger.error("[UploadActivityLog] failed to record failure: #{e.class}: #{e.message}")
+  end
+
+  def notify_super_admins_of_upload_failure(log)
+    return if UploadActivityLog.where.not(notified_at: nil).where(notified_at: UPLOAD_NOTIFICATION_THROTTLE.ago..).exists?
+
+    log.update!(notified_at: Time.current)
+    AdministratorNotifications::UploadAlertMailer.attachment_failure(
+      action: log.action,
+      message: log.message,
+      account: log.account
+    ).deliver_later
+  rescue StandardError => e
+    Rails.logger.error("[UploadAlertMailer] failed to queue notification: #{e.class}: #{e.message}")
+  end
 
   def message
     @message ||= @conversation.messages.find(permitted_params[:id])

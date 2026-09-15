@@ -69,6 +69,12 @@ export default {
     });
   },
 
+  updateAccessTokenScopes({ scopes }) {
+    return axios.put(endPoints('profileUpdate').url, {
+      profile: { scopes },
+    });
+  },
+
   updateAvailability(availabilityData) {
     return axios.post(endPoints('availabilityUpdate').url, {
       profile: { ...availabilityData },

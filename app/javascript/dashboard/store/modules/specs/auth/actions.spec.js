@@ -244,4 +244,34 @@ describe('#actions', () => {
       expect(result).toBe(true);
     });
   });
+
+  describe('#updateAccessTokenScopes', () => {
+    it('sends correct actions if API is success', async () => {
+      const mockResponse = {
+        data: { id: 1, access_token_scopes: ['list_inboxes'] },
+        headers: { expiry: 581842904 },
+      };
+      axios.put.mockResolvedValue(mockResponse);
+      const result = await actions.updateAccessTokenScopes(
+        { commit },
+        { scopes: ['list_inboxes'] }
+      );
+
+      expect(commit.mock.calls).toEqual([
+        [types.SET_CURRENT_USER, mockResponse.data],
+      ]);
+      expect(result).toBe(true);
+    });
+
+    it('sends correct actions if API is a failure', async () => {
+      axios.put.mockRejectedValue({ error: 'Authentication Failure' });
+      const result = await actions.updateAccessTokenScopes(
+        { commit },
+        { scopes: ['list_inboxes'] }
+      );
+
+      expect(commit.mock.calls).toEqual([]);
+      expect(result).toBe(false);
+    });
+  });
 });

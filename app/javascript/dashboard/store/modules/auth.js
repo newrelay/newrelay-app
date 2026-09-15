@@ -233,6 +233,16 @@ export const actions = {
     }
   },
 
+  updateAccessTokenScopes: async ({ commit }, { scopes }) => {
+    try {
+      const response = await authAPI.updateAccessTokenScopes({ scopes });
+      commit(types.SET_CURRENT_USER, response.data);
+      return true;
+    } catch (error) {
+      return false;
+    }
+  },
+
   resendConfirmation: async () => {
     try {
       await authAPI.resendConfirmation();

@@ -813,6 +813,7 @@ Rails.application.routes.draw do
       resources :subscriptions, only: [:index, :show]
       resources :payment_transactions, only: [:index, :show]
       resources :billing_activity_logs, only: [:index, :show]
+      resources :captain_activity_logs, only: [:index, :show]
       resources :billing_coupons
       resources :marketplace_plan_prices, only: [:index, :show]
       resource :plan_management, only: [:show, :update], controller: :plan_management

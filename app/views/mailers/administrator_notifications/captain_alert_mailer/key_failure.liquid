@@ -1,0 +1,16 @@
+<p>Hello,</p>
+
+<p>A Captain AI call failed on your newrelay instance. This usually means the configured OpenAI/OpenRouter key is invalid, revoked, or the account has exhausted its quota.</p>
+
+<p>
+  <strong>Task:</strong> {{ meta.action }}<br>
+  {% if meta.account_name %}
+    <strong>Account:</strong> {{ meta.account_name }} (#{{ meta.account_id }})<br>
+  {% endif %}
+  <strong>Error:</strong> {{ meta.error_message }}
+</p>
+
+<p>Check Super Admin &gt; App Configs &gt; Captain and use the "Test Connection" button to verify the key, or Super Admin &gt; Captain Activity Logs for the full history.</p>
+
+<p>Thank you,<br>
+newrelay System</p>

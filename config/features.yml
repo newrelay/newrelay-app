@@ -260,3 +260,6 @@
 - name: reputation_demo_surfaces
   display_name: Reputation Demo Surfaces
   enabled: true
+- name: mcp_integration
+  display_name: MCP Integration
+  enabled: false

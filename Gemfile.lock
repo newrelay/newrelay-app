@@ -1081,6 +1081,7 @@ DEPENDENCIES
   factory_bot_rails (>= 6.4.3)
   faker
   faraday_middleware-aws-sigv4
+  fast-mcp (~> 1.5.0)
   fcm
   firecrawl-sdk (~> 1.0)
   flag_shih_tzu

@@ -210,6 +210,7 @@ gem 'opentelemetry-exporter-otlp'
 gem 'shopify_api'
 
 gem 'firecrawl-sdk', '~> 1.0', require: 'firecrawl'
+gem 'fast-mcp', '~> 1.5.0', require: 'fast_mcp'
 
 ### Gems required only in specific deployment environments ###
 ##############################################################

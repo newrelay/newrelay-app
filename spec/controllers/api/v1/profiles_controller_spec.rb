@@ -29,6 +29,18 @@ RSpec.describe 'Profile API', type: :request do
         expect(json_response['custom_attributes']['test']).to eq('test')
         expect(json_response['message_signature']).to be_nil
       end
+
+      it 'returns the access token scopes' do
+        agent.access_token.update!(scopes: %w[list_inboxes add_label])
+
+        get '/api/v1/profile',
+            headers: agent.create_new_auth_token,
+            as: :json
+
+        expect(response).to have_http_status(:success)
+        json_response = response.parsed_body
+        expect(json_response['access_token_scopes']).to eq(%w[list_inboxes add_label])
+      end
     end
   end
 

@@ -1524,6 +1524,13 @@
           "access_token": {
             "type": "string"
           },
+          "access_token_scopes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "The list of MCP tool names this access token is scoped to call. An empty array means the token has unrestricted access to every tool."
+          },
           "account_id": {
             "type": "number"
           },

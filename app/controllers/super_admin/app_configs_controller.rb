@@ -16,12 +16,16 @@ class SuperAdmin::AppConfigsController < SuperAdmin::ApplicationController
 
   def create
     errors = []
-    params['app_config'].each do |key, value|
-      next unless @allowed_configs.include?(key)
+    if @config == 'captain' && captain_key_invalid?
+      errors << 'OpenAI API Key could not be verified against the configured endpoint. Please check the key and try again.'
+    else
+      params['app_config'].each do |key, value|
+        next unless @allowed_configs.include?(key)
 
-      i = InstallationConfig.where(name: key).first_or_create(value: value, locked: false)
-      i.value = value
-      errors.concat(i.errors.full_messages) unless i.save
+        i = InstallationConfig.where(name: key).first_or_create(value: value, locked: false)
+        i.value = value
+        errors.concat(i.errors.full_messages) unless i.save
+      end
     end
 
     if errors.any?
@@ -31,7 +35,23 @@ class SuperAdmin::AppConfigsController < SuperAdmin::ApplicationController
     end
   end
 
+  def test_captain_key
+    key = params[:api_key].presence || InstallationConfig.find_by(name: 'CAPTAIN_OPEN_AI_API_KEY')&.value
+    endpoint = params[:api_endpoint].presence || InstallationConfig.find_by(name: 'CAPTAIN_OPEN_AI_ENDPOINT')&.value
+
+    render json: { valid: Integrations::Openai::KeyValidator.valid?(key, endpoint: endpoint) }
+  end
+
   private
+
+  def captain_key_invalid?
+    submitted = params['app_config'] || {}
+    key = submitted['CAPTAIN_OPEN_AI_API_KEY']
+    return false if key.blank?
+
+    endpoint = submitted['CAPTAIN_OPEN_AI_ENDPOINT'].presence || InstallationConfig.find_by(name: 'CAPTAIN_OPEN_AI_ENDPOINT')&.value
+    !Integrations::Openai::KeyValidator.valid?(key, endpoint: endpoint)
+  end
 
   def set_config
     @config = params[:config] || 'general'

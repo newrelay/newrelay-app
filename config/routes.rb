@@ -790,7 +790,9 @@ Rails.application.routes.draw do
     namespace :super_admin do
       root to: 'dashboard#index'
 
-      resource :app_config, only: [:show, :create]
+      resource :app_config, only: [:show, :create] do
+        post :test_captain_key
+      end
       resource :push_diagnostics, only: [:show, :create] do
         post :destroy_subscriptions, on: :collection
       end

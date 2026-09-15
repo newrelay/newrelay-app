@@ -67,12 +67,20 @@
                 class: "form-input cursor-pointer"
               %>
             <% else %>
-              <%= form.text_field "app_config[#{key}]", value: @app_config[key], class: "form-input" %>
+              <%= form.text_field "app_config[#{key}]", id: "app_config_#{key}", value: @app_config[key], class: "form-input" %>
             <% end %>
             <% if @installation_configs[key]&.dig('description').present? %>
               <p class="feature-flags-helper">
                 <%= @installation_configs[key]&.dig('description') %>
               </p>
+            <% end %>
+            <% if key == 'CAPTAIN_OPEN_AI_API_KEY' %>
+              <div class="flex items-center gap-3 mt-2">
+                <button type="button" id="test-captain-key-btn" class="btn btn-outline reset-base cursor-pointer">
+                  Test Connection
+                </button>
+                <span id="test-captain-key-result" class="text-[13px]"></span>
+              </div>
             <% end %>
           </div>
         </div>
@@ -97,6 +105,39 @@
         button.querySelector('.eye-hide').classList.toggle('hidden', type === 'password');
       });
     });
+
+    const testBtn = document.getElementById('test-captain-key-btn');
+    if (testBtn) {
+      testBtn.addEventListener('click', async () => {
+        const resultEl = document.getElementById('test-captain-key-result');
+        const apiKey = document.getElementById('app_config_CAPTAIN_OPEN_AI_API_KEY')?.value;
+        const apiEndpoint = document.getElementById('app_config_CAPTAIN_OPEN_AI_ENDPOINT')?.value;
+        const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
+
+        testBtn.disabled = true;
+        resultEl.textContent = 'Testing…';
+        resultEl.className = 'text-[13px] text-muted-foreground';
+
+        try {
+          const response = await fetch('<%= test_captain_key_super_admin_app_config_path %>', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'X-CSRF-Token': csrfToken,
+            },
+            body: JSON.stringify({ api_key: apiKey, api_endpoint: apiEndpoint }),
+          });
+          const data = await response.json();
+          resultEl.textContent = data.valid ? '✓ Connected' : '✗ Key rejected by the provider';
+          resultEl.className = data.valid ? 'text-[13px] text-success' : 'text-[13px] text-destructive';
+        } catch {
+          resultEl.textContent = '✗ Could not reach the provider';
+          resultEl.className = 'text-[13px] text-destructive';
+        } finally {
+          testBtn.disabled = false;
+        }
+      });
+    }
   });
   </script>
 <% end %>

@@ -183,7 +183,7 @@ defineExpose({
           </RelayLabel>
           <div class="relative size-24">
             <label
-              class="flex size-24 cursor-pointer flex-col items-center justify-center overflow-hidden rounded-2xl border-2 border-dashed border-border/60 bg-muted/20 transition-colors hover:bg-accent"
+              class="group flex size-24 cursor-pointer flex-col items-center justify-center overflow-hidden rounded-2xl border-2 border-dashed border-border/60 bg-muted/20 transition-colors hover:bg-muted/50"
             >
               <img
                 v-if="state.logoUrl"
@@ -193,7 +193,7 @@ defineExpose({
               />
               <span
                 v-else
-                class="flex size-10 items-center justify-center rounded-xl bg-primary/10 text-primary"
+                class="flex size-10 items-center justify-center rounded-xl bg-primary/10 text-primary transition-transform group-hover:scale-110"
               >
                 <span class="i-lucide-layout-grid size-5" aria-hidden="true" />
               </span>

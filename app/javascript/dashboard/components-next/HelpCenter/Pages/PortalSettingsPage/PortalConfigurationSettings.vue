@@ -158,10 +158,7 @@ const openDomainDialog = () => {
           }}
         </p>
 
-        <div
-          v-if="customDomainAddress"
-          class="mt-4 flex flex-wrap items-center gap-2"
-        >
+        <div class="mt-4 flex flex-wrap items-center gap-3">
           <span class="text-[13px] font-medium text-foreground">
             {{
               t(
@@ -170,7 +167,12 @@ const openDomainDialog = () => {
             }}
           </span>
           <span class="text-[14px] font-semibold text-primary">
-            {{ customDomainAddress }}
+            {{
+              customDomainAddress ||
+              t(
+                'HELP_CENTER.PORTAL_SETTINGS.CONFIGURATION_FORM.CUSTOM_DOMAIN.NOT_SET'
+              )
+            }}
           </span>
           <span
             v-if="isLive || (!isOnChatwootCloud && customDomainAddress)"
@@ -186,17 +188,10 @@ const openDomainDialog = () => {
             </span>
           </RelayTooltip>
         </div>
-        <p v-if="customDomainAddress" class="text-[12px] text-muted-foreground">
+        <p class="text-[12px] text-muted-foreground">
           {{
             t(
               'HELP_CENTER.PORTAL_SETTINGS.CONFIGURATION_FORM.CUSTOM_DOMAIN.STATUS_DESCRIPTION'
-            )
-          }}
-        </p>
-        <p v-else class="pt-2 text-[13px] text-muted-foreground">
-          {{
-            t(
-              'HELP_CENTER.PORTAL_SETTINGS.CONFIGURATION_FORM.CUSTOM_DOMAIN.NOT_SET'
             )
           }}
         </p>
@@ -204,7 +199,6 @@ const openDomainDialog = () => {
 
       <div class="flex shrink-0 items-center gap-1">
         <RelayButton
-          v-if="customDomainAddress"
           variant="ghost"
           class="h-8 border border-border px-3 text-[13px] text-muted-foreground hover:border-transparent hover:text-foreground"
           @click="openDomainDialog"
@@ -213,18 +207,6 @@ const openDomainDialog = () => {
           {{
             t(
               'HELP_CENTER.PORTAL_SETTINGS.CONFIGURATION_FORM.CUSTOM_DOMAIN.EDIT_BUTTON'
-            )
-          }}
-        </RelayButton>
-        <RelayButton
-          v-else
-          variant="ghost"
-          class="h-8 border border-border px-3 text-[13px] text-muted-foreground hover:border-transparent hover:text-foreground"
-          @click="openDomainDialog"
-        >
-          {{
-            t(
-              'HELP_CENTER.PORTAL_SETTINGS.CONFIGURATION_FORM.CUSTOM_DOMAIN.ADD_BUTTON'
             )
           }}
         </RelayButton>

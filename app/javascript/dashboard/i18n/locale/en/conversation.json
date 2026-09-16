@@ -42,8 +42,7 @@
       "DESCRIPTION": "Channel compliance restriction",
       "BODY": "To protect customers from unsolicited messages, messaging channels enforce a 24-hour messaging window from the last message sent by the customer.",
       "BODY_TEMPLATES": "Since more than 24 hours have passed since the customer's last reply, only pre-approved Template Messages can be sent to re-initiate this conversation.",
-      "CLOSE": "Close",
-      "SELECT_TEMPLATE": "Select Template"
+      "CLOSE": "Close"
     },
     "NOT_ASSIGNED_TO_YOU": "This conversation is not assigned to you. Would you like to assign this conversation to yourself?",
     "ASSIGN_TO_ME": "Assign to me",

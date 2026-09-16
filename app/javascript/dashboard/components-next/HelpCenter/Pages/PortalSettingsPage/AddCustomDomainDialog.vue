@@ -65,9 +65,15 @@ defineExpose({ dialogRef });
 <template>
   <Dialog
     ref="dialogRef"
+    width="sm"
     :title="
       t(
         `HELP_CENTER.PORTAL_SETTINGS.CONFIGURATION_FORM.CUSTOM_DOMAIN.DIALOG.${props.mode.toUpperCase()}_HEADER`
+      )
+    "
+    :description="
+      t(
+        'HELP_CENTER.PORTAL_SETTINGS.CONFIGURATION_FORM.CUSTOM_DOMAIN.DIALOG.DESCRIPTION'
       )
     "
     :confirm-button-label="

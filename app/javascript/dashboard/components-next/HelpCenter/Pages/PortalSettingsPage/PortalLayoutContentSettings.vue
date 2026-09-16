@@ -181,6 +181,7 @@ defineExpose({
         </RelayLabel>
         <ComboBox
           v-model="state.liveChatWidgetInboxId"
+          class="[&_button]:h-10"
           :options="liveChatWidgets"
           :placeholder="
             t('HELP_CENTER.PORTAL_SETTINGS.FORM.LIVE_CHAT_WIDGET.PLACEHOLDER')
@@ -208,7 +209,12 @@ defineExpose({
             />
             <span
               class="block size-10 rounded-full border-2 border-background shadow-sm ring-1 ring-border/50"
-              :style="{ backgroundColor: state.widgetColor || '#2781F6' }"
+              :class="state.widgetColor ? '' : 'bg-muted'"
+              :style="
+                state.widgetColor
+                  ? { backgroundColor: state.widgetColor }
+                  : undefined
+              "
             />
           </label>
           <div

@@ -19,6 +19,7 @@ const ICON_MAP = {
   'mail-unread': 'i-lucide-mail',
   checkmark: 'i-lucide-check',
   'arrow-redo': 'i-lucide-rotate-ccw',
+  'arrow-reply': 'i-lucide-reply',
   'book-clock': 'i-lucide-hourglass',
   snooze: 'i-lucide-alarm-clock',
   warning: 'i-lucide-triangle-alert',
@@ -28,15 +29,18 @@ const ICON_MAP = {
   delete: 'i-lucide-trash-2',
   open: 'i-lucide-external-link',
   copy: 'i-lucide-copy',
+  clipboard: 'i-lucide-copy',
+  translate: 'i-lucide-languages',
+  link: 'i-lucide-link',
+  'comment-add': 'i-lucide-message-square-plus',
 };
 
 const isDestructive = computed(() => props.option.key === 'delete');
 
 const iconClass = computed(() => {
-  if (props.variant === 'icon' && props.option.icon) {
-    return ICON_MAP[props.option.icon] || 'i-lucide-circle';
-  }
-  return null;
+  if (props.variant !== 'icon' || !props.option.icon) return null;
+  if (props.option.icon.startsWith('i-')) return props.option.icon;
+  return ICON_MAP[props.option.icon] || null;
 });
 
 const itemClass = computed(() => {

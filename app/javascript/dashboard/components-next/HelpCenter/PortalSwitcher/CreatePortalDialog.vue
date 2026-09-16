@@ -121,6 +121,7 @@ defineExpose({ dialogRef });
   <Dialog
     ref="dialogRef"
     type="edit"
+    width="md"
     :title="t('HELP_CENTER.CREATE_PORTAL_DIALOG.TITLE')"
     :confirm-button-label="
       t('HELP_CENTER.CREATE_PORTAL_DIALOG.CONFIRM_BUTTON_LABEL')

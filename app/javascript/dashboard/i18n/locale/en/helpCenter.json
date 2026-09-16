@@ -862,7 +862,7 @@
           "LABEL": "Custom domain:",
           "DESCRIPTION": "You can host your portal on a custom domain. For instance, if your website is yourdomain.com and you want your portal available at docs.yourdomain.com, simply enter that in this field.",
           "STATUS_DESCRIPTION": "Your custom portal will start working as soon as it is verified.",
-          "NOT_SET": "No custom domain configured yet.",
+          "NOT_SET": "Not set",
           "PLACEHOLDER": "Portal custom domain",
           "EDIT_BUTTON": "Edit",
           "ADD_BUTTON": "Add custom domain",
@@ -876,8 +876,9 @@
             "EDIT_HEADER": "Edit custom domain",
             "ADD_CONFIRM_BUTTON_LABEL": "Add domain",
             "EDIT_CONFIRM_BUTTON_LABEL": "Update domain",
+            "DESCRIPTION": "Enter a hostname such as docs.yourdomain.com.",
             "LABEL": "Custom domain",
-            "PLACEHOLDER": "Portal custom domain",
+            "PLACEHOLDER": "e.g. docs.yourdomain.com",
             "ERROR": "Custom domain is required",
             "FORMAT_ERROR": "Please enter a valid domain URL e.g. docs.yourdomain.com"
           },
@@ -885,6 +886,7 @@
             "HEADER": "DNS configuration",
             "DESCRIPTION": "Log in to the account you have with your DNS provider, and add a CNAME record for subdomain pointing to chatwoot.help",
             "COPY": "Successfully copied CNAME",
+            "COPY_BUTTON": "Copy CNAME record",
             "SEND_INSTRUCTIONS": {
               "HEADER": "Send instructions",
               "DESCRIPTION": "If you would prefer to have someone from your development team to handle this step, you can enter email address below, and we will send them the required instructions.",

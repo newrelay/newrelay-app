@@ -14,7 +14,11 @@ import {
 import MenuItem from '../../../components/widgets/conversation/contextMenu/menuItem.vue';
 import { useTrack } from 'dashboard/composables';
 import NextButton from 'dashboard/components-next/button/Button.vue';
-import { RelayModal } from 'dashboard/components-next/relay';
+import {
+  RelayModal,
+  DROPDOWN_MENU_CONTENT_CLASS,
+  DROPDOWN_MENU_SEPARATOR_CLASS,
+} from 'dashboard/components-next/relay';
 
 export default {
   components: {
@@ -52,6 +56,8 @@ export default {
 
     return {
       getPlainText,
+      DROPDOWN_MENU_CONTENT_CLASS,
+      DROPDOWN_MENU_SEPARATOR_CLASS,
     };
   },
   data() {
@@ -198,7 +204,7 @@ export default {
       :y="contextMenuPosition.y"
       @close="handleClose"
     >
-      <div class="menu-container">
+      <div class="min-w-[220px]" :class="[DROPDOWN_MENU_CONTENT_CLASS]">
         <MenuItem
           v-if="enabledOptions['replyTo']"
           :option="{
@@ -226,7 +232,10 @@ export default {
           variant="icon"
           @click.stop="handleTranslate"
         />
-        <hr />
+        <div
+          v-if="enabledOptions['copyLink'] || enabledOptions['cannedResponse']"
+          :class="DROPDOWN_MENU_SEPARATOR_CLASS"
+        />
         <MenuItem
           v-if="enabledOptions['copyLink']"
           :option="{
@@ -245,7 +254,10 @@ export default {
           variant="icon"
           @click.stop="showCannedResponseModal"
         />
-        <hr v-if="enabledOptions['delete']" />
+        <div
+          v-if="enabledOptions['delete']"
+          :class="DROPDOWN_MENU_SEPARATOR_CLASS"
+        />
         <MenuItem
           v-if="enabledOptions['delete']"
           :option="{
@@ -259,17 +271,3 @@ export default {
     </ContextMenu>
   </div>
 </template>
-
-<style lang="scss" scoped>
-.menu-container {
-  @apply p-1 bg-background shadow-xl rounded-md;
-
-  hr:first-child {
-    @apply hidden;
-  }
-
-  hr {
-    @apply m-1 border-b border-solid border-border;
-  }
-}
-</style>

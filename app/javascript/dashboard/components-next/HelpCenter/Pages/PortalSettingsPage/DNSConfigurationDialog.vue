@@ -8,8 +8,11 @@ import { email, required } from '@vuelidate/validators';
 import { useVuelidate } from '@vuelidate/core';
 
 import Dialog from 'dashboard/components-next/dialog/Dialog.vue';
-import { RelayInput, RelayLabel } from 'dashboard/components-next/relay';
-import NextButton from 'dashboard/components-next/button/Button.vue';
+import {
+  RelayInput,
+  RelayLabel,
+  RelayButton,
+} from 'dashboard/components-next/relay';
 import { RELAY_MODAL_CLOSE_BUTTON_CLASS } from 'dashboard/components-next/relay/modal/constants';
 
 const props = defineProps({
@@ -112,18 +115,24 @@ defineExpose({ dialogRef });
         </div>
         <div class="flex items-center gap-3 w-full">
           <span
-            class="min-h-10 px-3 py-2.5 inline-flex items-center w-full text-sm bg-transparent border rounded-lg text-muted-foreground border-border"
+            class="inline-flex min-h-10 w-full items-center rounded-md border border-border/80 bg-background px-3 py-2.5 text-[14px] text-muted-foreground shadow-sm"
           >
             {{ subdomainCNAME }}
           </span>
-          <NextButton
-            faded
-            slate
+          <RelayButton
             type="button"
-            icon="i-lucide-copy"
-            class="flex-shrink-0"
+            variant="ghost"
+            size="icon"
+            class="size-10 shrink-0 border border-border text-muted-foreground hover:border-transparent hover:text-foreground"
+            :aria-label="
+              t(
+                'HELP_CENTER.PORTAL_SETTINGS.CONFIGURATION_FORM.CUSTOM_DOMAIN.DNS_CONFIGURATION_DIALOG.COPY_BUTTON'
+              )
+            "
             @click="handleCopy"
-          />
+          >
+            <span class="i-lucide-copy size-4" aria-hidden="true" />
+          </RelayButton>
         </div>
       </div>
 
@@ -145,10 +154,10 @@ defineExpose({ dialogRef });
           </p>
         </div>
         <form
-          class="flex items-start gap-3 w-full"
+          class="flex w-full items-end gap-3"
           @submit.prevent="handleSend"
         >
-          <div class="flex flex-col gap-1.5 w-full">
+          <div class="flex w-full flex-col gap-1.5">
             <RelayLabel html-for="dns-email">
               {{
                 t(
@@ -174,15 +183,13 @@ defineExpose({ dialogRef });
               }}
             </p>
           </div>
-          <NextButton
-            :label="
+          <RelayButton type="submit" class="h-10 shrink-0">
+            {{
               t(
                 'HELP_CENTER.PORTAL_SETTINGS.CONFIGURATION_FORM.CUSTOM_DOMAIN.DNS_CONFIGURATION_DIALOG.SEND_INSTRUCTIONS.SEND_BUTTON'
               )
-            "
-            type="submit"
-            class="flex-shrink-0 mt-[22px]"
-          />
+            }}
+          </RelayButton>
         </form>
       </div>
     </div>

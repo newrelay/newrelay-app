@@ -467,10 +467,6 @@ export default {
     closeRestrictionInfoModal() {
       this.showRestrictionInfoModal = false;
     },
-    selectTemplateFromPolicy() {
-      this.showRestrictionInfoModal = false;
-      this.$refs.replyComposer?.openWhatsappTemplateModal?.();
-    },
     resetReplyEditorHeight() {
       this.resizableEditorWrapperRef?.resetEditorHeight?.();
     },
@@ -658,12 +654,6 @@ export default {
             @click="closeRestrictionInfoModal"
           >
             {{ $t('CONVERSATION.REPLY_WINDOW_POLICY.CLOSE') }}
-          </RelayButton>
-          <RelayButton
-            class="h-9 px-4 text-[13px] font-medium shadow-sm"
-            @click="selectTemplateFromPolicy"
-          >
-            {{ $t('CONVERSATION.REPLY_WINDOW_POLICY.SELECT_TEMPLATE') }}
           </RelayButton>
         </div>
       </div>

@@ -48,12 +48,22 @@ export default {
   emits: ['primaryAction', 'close'],
   computed: {
     bannerClasses() {
-      const classList = [this.colorScheme];
-
-      if (this.hasActionButton || this.hasCloseButton) {
-        classList.push('has-button');
-      }
-      return classList;
+      const colorSchemes = {
+        primary: 'bg-primary',
+        secondary: 'bg-muted dark:bg-accent text-foreground',
+        alert: 'bg-destructive/10 text-destructive',
+        warning: 'bg-warning/20 text-warning',
+        gray: 'text-muted-foreground',
+      };
+      return colorSchemes[this.colorScheme] || '';
+    },
+    linkClasses() {
+      const colorSchemes = {
+        secondary: 'text-foreground',
+        alert: 'text-destructive',
+        warning: 'text-warning',
+      };
+      return colorSchemes[this.colorScheme] || 'text-warning';
     },
     // TODO - Remove this method when we standardize
     // the button color and variant names
@@ -81,21 +91,23 @@ export default {
 
 <template>
   <div
-    class="flex items-center justify-center h-12 gap-4 px-4 py-3 text-xs text-white banner dark:text-white woot-banner"
+    class="flex items-center justify-center h-12 gap-4 px-4 py-3 text-xs text-white dark:text-white"
     :class="bannerClasses"
   >
-    <span class="banner-message">
+    <span class="flex items-center">
       {{ bannerMessage }}
       <a
         v-if="hrefLink"
         :href="hrefLink"
         rel="noopener noreferrer nofollow"
         target="_blank"
+        class="ml-1 underline text-xs"
+        :class="linkClasses"
       >
         {{ hrefLinkText }}
       </a>
     </span>
-    <div class="actions">
+    <div class="flex gap-1 right-3">
       <NextButton
         v-if="hasActionButton"
         xs
@@ -116,49 +128,3 @@ export default {
     </div>
   </div>
 </template>
-
-<style lang="scss" scoped>
-.banner {
-  &.primary {
-    @apply bg-primary;
-  }
-
-  &.secondary {
-    @apply bg-muted dark:bg-accent text-foreground;
-    a {
-      @apply text-foreground;
-    }
-  }
-
-  &.alert {
-    @apply bg-destructive/10 text-destructive;
-
-    a {
-      @apply text-destructive;
-    }
-  }
-
-  &.warning {
-    @apply bg-warning/20 text-warning;
-    a {
-      @apply text-warning;
-    }
-  }
-
-  &.gray {
-    @apply text-muted-foreground dark:text-muted-foreground;
-  }
-
-  a {
-    @apply ml-1 underline text-warning text-xs;
-  }
-
-  .banner-message {
-    @apply flex items-center;
-  }
-
-  .actions {
-    @apply flex gap-1 right-3;
-  }
-}
-</style>

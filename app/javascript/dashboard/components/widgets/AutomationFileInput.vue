@@ -49,14 +49,14 @@ export default {
 
 <template>
   <label
-    class="input-wrapper text-[13.5px] font-[500] text-foreground"
-    :class="uploadState"
+    class="flex h-8 bg-background py-1 px-2 items-center text-xs cursor-pointer rounded-lg border border-dashed border-border text-[13.5px] font-[500] text-foreground"
+    :class="uploadState === 'processing' ? 'cursor-not-allowed opacity-90' : ''"
   >
     <input
       v-if="uploadState !== 'processing'"
       type="file"
       name="attachment"
-      :class="uploadState === 'processing' ? 'disabled' : ''"
+      class="hidden"
       @change="onChangeFile"
     />
     <Spinner v-if="uploadState === 'processing'" />
@@ -65,36 +65,16 @@ export default {
       v-if="uploadState === 'uploaded'"
       icon="checkmark-circle"
       type="outline"
-      class="success-icon"
+      class="text-success mr-2"
     />
     <fluent-icon
       v-if="uploadState === 'failed'"
       icon="dismiss-circle"
       type="outline"
-      class="error-icon"
+      class="text-destructive mr-2"
     />
-    <p class="file-button">{{ label }}</p>
+    <p class="whitespace-nowrap overflow-hidden text-ellipsis w-full mb-0">
+      {{ label }}
+    </p>
   </label>
 </template>
-
-<style scoped>
-input[type='file'] {
-  @apply hidden;
-}
-.input-wrapper {
-  @apply flex h-8 bg-background py-1 px-2 items-center text-xs cursor-pointer rounded-lg border border-dashed border-border;
-}
-.success-icon {
-  @apply text-success mr-2;
-}
-.error-icon {
-  @apply text-destructive mr-2;
-}
-
-.processing {
-  @apply cursor-not-allowed opacity-90;
-}
-.file-button {
-  @apply whitespace-nowrap overflow-hidden text-ellipsis w-full mb-0;
-}
-</style>

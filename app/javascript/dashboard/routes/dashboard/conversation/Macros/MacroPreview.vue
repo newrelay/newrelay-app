@@ -48,7 +48,7 @@ const resolvedMacro = computed(() => {
 
 <template>
   <div
-    class="macro-preview absolute border border-border max-h-[22.5rem] z-50 w-64 rounded-md bg-accent backdrop-blur-[100px] shadow-lg bottom-8 right-8 overflow-y-auto p-4 text-left rtl:text-right"
+    class="absolute border border-border max-h-[22.5rem] z-50 w-64 rounded-md bg-accent backdrop-blur-[100px] shadow-lg bottom-8 right-8 overflow-y-auto p-4 text-left rtl:text-right"
   >
     <h6 class="mb-4 text-sm text-foreground">
       {{ macro.name }}
@@ -56,7 +56,7 @@ const resolvedMacro = computed(() => {
     <div
       v-for="(action, i) in resolvedMacro"
       :key="i"
-      class="relative pl-4 macro-block"
+      class="relative pl-4 [&:not(:last-child)]:pb-2"
     >
       <div
         v-if="i !== macro.actions.length - 1"
@@ -72,13 +72,3 @@ const resolvedMacro = computed(() => {
     </div>
   </div>
 </template>
-
-<style lang="scss" scoped>
-.macro-preview {
-  .macro-block {
-    &:not(:last-child) {
-      @apply pb-2;
-    }
-  }
-}
-</style>

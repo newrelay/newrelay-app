@@ -94,9 +94,15 @@ export default {
 <template>
   <div>
     <div v-if="toEmails">
-      <div class="input-group small" :class="{ error: v$.toEmailsVal.$error }">
+      <div
+        class="flex items-center gap-2 my-1 border-b border-solid"
+        :class="v$.toEmailsVal.$error ? 'border-destructive' : 'border-border'"
+      >
         <label
-          class="input-group-label text-[13.5px] font-[500] text-foreground"
+          class="border-transparent bg-transparent pl-0 text-xs font-semibold"
+          :class="
+            v$.toEmailsVal.$error ? 'text-destructive' : 'text-foreground'
+          "
         >
           {{ $t('CONVERSATION.REPLYBOX.EMAIL_HEAD.TO') }}
         </label>
@@ -111,10 +117,16 @@ export default {
         </div>
       </div>
     </div>
-    <div class="input-group-wrap">
-      <div class="input-group small" :class="{ error: v$.ccEmailsVal.$error }">
+    <div>
+      <div
+        class="flex items-center gap-2 my-1 border-b border-solid"
+        :class="v$.ccEmailsVal.$error ? 'border-destructive' : 'border-border'"
+      >
         <label
-          class="input-group-label text-[13.5px] font-[500] text-foreground"
+          class="border-transparent bg-transparent pl-0 text-xs font-semibold"
+          :class="
+            v$.ccEmailsVal.$error ? 'text-destructive' : 'text-foreground'
+          "
         >
           {{ $t('CONVERSATION.REPLYBOX.EMAIL_HEAD.CC.LABEL') }}
         </label>
@@ -136,14 +148,20 @@ export default {
           @click="handleAddBcc"
         />
       </div>
-      <span v-if="v$.ccEmailsVal.$error" class="message">
+      <span v-if="v$.ccEmailsVal.$error" class="text-sm text-destructive">
         {{ $t('CONVERSATION.REPLYBOX.EMAIL_HEAD.CC.ERROR') }}
       </span>
     </div>
-    <div v-if="showBcc" class="input-group-wrap">
-      <div class="input-group small" :class="{ error: v$.bccEmailsVal.$error }">
+    <div v-if="showBcc">
+      <div
+        class="flex items-center gap-2 my-1 border-b border-solid"
+        :class="v$.bccEmailsVal.$error ? 'border-destructive' : 'border-border'"
+      >
         <label
-          class="input-group-label text-[13.5px] font-[500] text-foreground"
+          class="border-transparent bg-transparent pl-0 text-xs font-semibold"
+          :class="
+            v$.bccEmailsVal.$error ? 'text-destructive' : 'text-foreground'
+          "
         >
           {{ $t('CONVERSATION.REPLYBOX.EMAIL_HEAD.BCC.LABEL') }}
         </label>
@@ -159,29 +177,9 @@ export default {
           />
         </div>
       </div>
-      <span v-if="v$.bccEmailsVal.$error" class="message">
+      <span v-if="v$.bccEmailsVal.$error" class="text-sm text-destructive">
         {{ $t('CONVERSATION.REPLYBOX.EMAIL_HEAD.BCC.ERROR') }}
       </span>
     </div>
   </div>
 </template>
-
-<style lang="scss" scoped>
-.input-group-wrap .message {
-  @apply text-sm text-destructive;
-}
-.input-group {
-  @apply border-b border-solid border-border my-1 flex items-center gap-2;
-
-  .input-group-label {
-    @apply border-transparent bg-transparent text-xs font-semibold pl-0;
-  }
-}
-
-.input-group.error {
-  @apply border-destructive;
-  .input-group-label {
-    @apply text-destructive;
-  }
-}
-</style>

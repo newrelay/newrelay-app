@@ -64,22 +64,22 @@ export default {
         @click="onMarkAllDoneClick"
       />
     </div>
-    <table class="notifications-table overflow-auto">
+    <table class="overflow-auto">
       <tbody v-show="!isLoading">
         <tr
           v-for="notificationItem in notifications"
           :key="notificationItem.id"
           :class="{
-            'is-unread': notificationItem.read_at === null,
+            'font-semibold': notificationItem.read_at === null,
           }"
-          class="border-b border-border"
+          class="border-b border-border cursor-pointer hover:bg-muted last:border-b-0"
           @click="() => onClickNotification(notificationItem)"
         >
           <td class="p-2.5 text-foreground">
             <div
-              class="overflow-hidden flex-view notification-contant--wrap whitespace-nowrap text-ellipsis"
+              class="overflow-hidden flex-col max-w-[31.25rem] whitespace-nowrap text-ellipsis"
             >
-              <h5 class="notification--title">
+              <h5 class="text-sm m-0 text-foreground">
                 {{
                   `#${
                     notificationItem.primary_actor
@@ -89,14 +89,14 @@ export default {
                 }}
               </h5>
               <span
-                class="overflow-hidden notification--message-title whitespace-nowrap text-ellipsis"
+                class="overflow-hidden text-foreground whitespace-nowrap text-ellipsis"
               >
                 {{ notificationItem.push_message_title }}
               </span>
             </div>
           </td>
           <td class="text-right">
-            <span class="notification--type">
+            <span class="text-xs">
               {{
                 $t(
                   `NOTIFICATIONS_PAGE.TYPE_LABEL.${notificationItem.notification_type}`
@@ -104,7 +104,7 @@ export default {
               }}
             </span>
           </td>
-          <td class="thumbnail--column">
+          <td class="w-[3.25rem]">
             <Avatar
               v-if="notificationItem.primary_actor.meta.assignee"
               :src="notificationItem.primary_actor.meta.assignee.thumbnail"
@@ -114,8 +114,8 @@ export default {
             />
           </td>
           <td>
-            <div class="text-right timestamp--column ltr:mr-2 rtl:ml-2">
-              <span class="notification--created-at">
+            <div class="text-right min-w-[9.125rem] ltr:mr-2 rtl:ml-2">
+              <span class="text-muted-foreground text-xs">
                 {{ dynamicTime(notificationItem.last_activity_at) }}
               </span>
             </div>
@@ -123,7 +123,7 @@ export default {
           <td>
             <div
               v-if="!notificationItem.read_at"
-              class="notification--unread-indicator"
+              class="w-2.5 h-2.5 rounded-full bg-primary"
             />
           </td>
         </tr>
@@ -133,77 +133,12 @@ export default {
       v-if="showEmptyResult"
       :title="$t('NOTIFICATIONS_PAGE.LIST.404')"
     />
-    <div v-if="isLoading" class="notifications--loader">
+    <div
+      v-if="isLoading"
+      class="text-base flex items-center justify-center p-10"
+    >
       <Spinner />
       <span>{{ $t('NOTIFICATIONS_PAGE.LIST.LOADING_MESSAGE') }}</span>
     </div>
   </section>
 </template>
-
-<style lang="scss" scoped>
-.notification--title {
-  @apply text-sm m-0 text-foreground;
-}
-
-.notifications-table {
-  > tbody {
-    > tr {
-      @apply cursor-pointer;
-
-      &:hover {
-        @apply bg-muted;
-      }
-
-      &.is-active {
-        @apply bg-muted dark:bg-border;
-      }
-
-      > td {
-        &.conversation-count-item {
-          @apply pl-6 rtl:pl-0 rtl:pr-6;
-        }
-      }
-
-      &:last-child {
-        @apply border-b-0;
-      }
-    }
-  }
-}
-
-.is-unread {
-  @apply font-semibold;
-}
-
-.notifications--loader {
-  @apply text-base flex items-center justify-center p-10;
-}
-
-.notification--unread-indicator {
-  @apply w-2.5 h-2.5 rounded-full bg-primary;
-}
-
-.notification--created-at {
-  @apply text-muted-foreground text-xs;
-}
-
-.notification--type {
-  @apply text-xs;
-}
-
-.thumbnail--column {
-  @apply w-[3.25rem];
-}
-
-.timestamp--column {
-  @apply min-w-[9.125rem] text-right;
-}
-
-.notification-contant--wrap {
-  @apply flex-col max-w-[31.25rem];
-}
-
-.notification--message-title {
-  @apply text-foreground;
-}
-</style>

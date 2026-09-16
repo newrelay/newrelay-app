@@ -83,43 +83,24 @@ export default {
 
 <!-- eslint-disable-next-line vue/no-root-v-if -->
 <template>
-  <div v-if="hasOpenedAtleastOnce" class="dashboard-app--container">
+  <div v-if="hasOpenedAtleastOnce" class="h-full w-full">
     <div
       v-for="(configItem, index) in config"
       :key="index"
-      class="dashboard-app--list"
+      class="h-full w-full"
     >
       <LoadingState
         v-if="iframeLoading"
         :message="$t('DASHBOARD_APPS.LOADING_MESSAGE')"
-        class="dashboard-app_loading-container"
+        class="flex items-center justify-center h-full w-full"
       />
       <iframe
         v-if="configItem.type === 'frame' && configItem.url"
         :id="getFrameId(index)"
         :src="configItem.url"
+        class="h-full w-full border-0"
         @load="() => onIframeLoad(index)"
       />
     </div>
   </div>
 </template>
-
-<style scoped>
-.dashboard-app--container,
-.dashboard-app--list,
-.dashboard-app--list iframe {
-  height: 100%;
-  width: 100%;
-}
-
-.dashboard-app--list iframe {
-  border: 0;
-}
-.dashboard-app_loading-container {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 100%;
-  width: 100%;
-}
-</style>

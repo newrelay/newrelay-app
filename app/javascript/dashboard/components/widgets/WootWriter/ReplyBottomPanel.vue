@@ -607,9 +607,10 @@ export default {
 </template>
 
 <style lang="scss" scoped>
-:deep(.file-uploads) {
-  label {
-    cursor: pointer;
-  }
+// vue-upload-component renders its own <label class="file-uploads"> wrapper
+// around the slot content; it isn't part of our template so it can't take a
+// Tailwind class directly.
+:deep(.file-uploads) label {
+  @apply cursor-pointer;
 }
 </style>

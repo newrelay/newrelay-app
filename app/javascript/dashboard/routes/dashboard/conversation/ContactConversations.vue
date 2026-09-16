@@ -130,7 +130,10 @@ onMounted(() => {
 
 <template>
   <div v-if="!uiFlags.isFetching" class="">
-    <div v-if="!previousConversations.length" class="no-label-message">
+    <div
+      v-if="!previousConversations.length"
+      class="text-muted-foreground mb-4"
+    >
       <span class="text-[13px] leading-snug">
         {{ $t('CONTACT_PANEL.CONVERSATIONS.NO_RECORDS_FOUND') }}
       </span>
@@ -177,9 +180,3 @@ onMounted(() => {
     <Spinner />
   </div>
 </template>
-
-<style lang="scss" scoped>
-.no-label-message {
-  @apply text-muted-foreground mb-4;
-}
-</style>

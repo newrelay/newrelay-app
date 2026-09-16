@@ -1,57 +1,19 @@
 <template>
-  <div class="animatiocard margin-top-1">
-    <div class="ai-typing--wrap">
-      <fluent-icon icon="wand" size="14" class="ai-typing--icon" />
-      <label>
+  <div class="relative flex mt-1">
+    <div class="flex items-center gap-1">
+      <fluent-icon icon="wand" size="14" class="text-primary" />
+      <label class="text-primary ltr:mr-1 rtl:ml-1 inline-block">
         {{ $t('INTEGRATION_SETTINGS.OPEN_AI.ASSISTANCE_MODAL.AI_WRITING') }}
       </label>
     </div>
-    <span class="loader" />
-    <span class="loader" />
-    <span class="loader" />
+    <span
+      class="bg-primary inline-block size-1.5 ltr:mr-1 rtl:ml-1 mt-3 rounded-full animate-bubble-scale"
+    />
+    <span
+      class="bg-primary inline-block size-1.5 ltr:mr-1 rtl:ml-1 mt-3 rounded-full animate-bubble-scale [animation-delay:0.4s]"
+    />
+    <span
+      class="bg-primary inline-block size-1.5 ltr:mr-1 rtl:ml-1 mt-3 rounded-full animate-bubble-scale [animation-delay:0.8s]"
+    />
   </div>
 </template>
-
-<style lang="scss" scoped>
-.animatiocard {
-  position: relative;
-  display: flex;
-  .ai-typing--wrap {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-
-    .ai-typing--icon {
-      @apply text-primary;
-    }
-  }
-  label {
-    @apply text-primary ltr:mr-1 rtl:ml-1 inline-block;
-  }
-  .loader {
-    animation: bubble-scale 1.2s infinite;
-    @apply bg-primary inline-block size-1.5 ltr:mr-1 rtl:ml-1 mt-3 rounded-full;
-  }
-
-  .loader:nth-child(2) {
-    animation-delay: 0.4s;
-  }
-
-  .loader:nth-child(3) {
-    animation-delay: 0.8s;
-  }
-
-  @keyframes bubble-scale {
-    0%,
-    100% {
-      transform: scale(1);
-    }
-    25% {
-      transform: scale(1.3);
-    }
-    50% {
-      transform: scale(1);
-    }
-  }
-}
-</style>

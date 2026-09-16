@@ -1344,7 +1344,7 @@ export default {
   <ReplyBoxBanner :message="message" :is-on-private-note="isOnPrivateNote" />
   <div
     ref="replyEditor"
-    class="reply-box bg-card border border-border rounded-xl shadow-xs overflow-visible transition-shadow"
+    class="reply-box relative mx-0 mb-0 bg-card border border-border rounded-xl shadow-xs overflow-visible transition-shadow"
     :class="replyBoxClass"
   >
     <InboxReplyTopPanel
@@ -1407,8 +1407,8 @@ export default {
     >
       <div
         :key="copilot.editorTransitionKey.value"
-        class="reply-box__top"
-        :class="{ 'reply-box__top--inbox': isInboxVariant }"
+        class="reply-box__top relative py-0 px-4 -mt-px"
+        :class="{ 'reply-box__top--inbox mt-0 px-0': isInboxVariant }"
       >
         <ReplyToMessage
           v-if="shouldShowReplyToMessage"
@@ -1627,36 +1627,16 @@ export default {
 </template>
 
 <style lang="scss" scoped>
-.send-button {
-  @apply mb-0;
-}
-
-.reply-box {
-  @apply relative mb-0 mx-0;
-}
-
-.reply-box :deep(.ProseMirror-menubar) {
-  @apply hidden !important;
-}
-
+// The ProseMirror contenteditable node is rendered by the child editor
+// component (tiptap), not by this template, so it can't take Tailwind
+// classes directly here. These are minimal :deep() overrides for that
+// third-party-rendered markup only; all other layout lives in the template.
 .reply-box :deep(.ProseMirror) {
   @apply px-4 py-3;
 }
 
-.send-button {
-  @apply mb-0;
-}
-
-.reply-box__top {
-  @apply relative py-0 px-4 -mt-px;
-}
-
-.reply-box__top--inbox {
-  @apply mt-0 px-0;
-
-  :deep(.ProseMirror) {
-    @apply min-h-[100px] bg-transparent px-4 py-3 text-sm;
-  }
+.reply-box__top--inbox :deep(.ProseMirror) {
+  @apply min-h-[100px] bg-transparent px-4 py-3 text-sm;
 }
 
 .inbox-note-editor :deep(.ProseMirror) {
@@ -1664,24 +1644,6 @@ export default {
 
   p.empty-node:first-child::before {
     @apply text-warning;
-  }
-}
-
-.emoji-dialog {
-  @apply top-[unset] -bottom-10 ltr:-left-80 ltr:right-[unset] rtl:left-[unset] rtl:-right-80;
-
-  &::before {
-    filter: drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.08));
-    @apply ltr:-right-4 bottom-2 rtl:-left-4 ltr:rotate-[270deg] rtl:rotate-[90deg];
-  }
-}
-
-.emoji-dialog--expanded {
-  @apply left-[unset] bottom-0 absolute z-[100];
-
-  &::before {
-    transform: rotate(0deg);
-    @apply ltr:left-1 rtl:right-1 -bottom-2;
   }
 }
 </style>

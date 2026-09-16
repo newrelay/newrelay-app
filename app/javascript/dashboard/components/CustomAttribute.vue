@@ -35,6 +35,7 @@ export default {
     regexCue: { type: String, default: null },
     attributeKey: { type: String, required: true },
     contactId: { type: Number, default: null },
+    compact: { type: Boolean, default: false },
   },
   emits: ['update', 'delete', 'copy'],
   setup() {
@@ -206,9 +207,12 @@ export default {
 </script>
 
 <template>
-  <div class="px-4 py-3">
-    <div class="flex items-center mb-1">
-      <h4 class="capitalize flex items-center w-full m-0 text-sm error">
+  <div :class="compact ? 'flex flex-col gap-1.5' : 'px-4 py-3'">
+    <div class="flex items-center" :class="compact ? '' : 'mb-1'">
+      <h4
+        class="flex w-full items-center error m-0"
+        :class="compact ? 'text-[12px] font-semibold' : 'capitalize text-sm'"
+      >
         <div v-if="isAttributeTypeCheckbox" class="flex items-center">
           <input
             v-model="editedValue"
@@ -219,10 +223,11 @@ export default {
         </div>
         <div class="flex items-center justify-between w-full">
           <span
-            class="w-full inline-flex gap-1.5 items-start font-medium whitespace-nowrap text-sm mb-0"
-            :class="
-              v$.editedValue.$error ? 'text-destructive' : 'text-foreground'
-            "
+            class="mb-0 inline-flex w-full items-start gap-1.5 whitespace-nowrap"
+            :class="[
+              compact ? 'text-[12px] font-semibold' : 'text-sm font-medium',
+              v$.editedValue.$error ? 'text-destructive' : 'text-foreground',
+            ]"
           >
             {{ label }}
             <HelperTextPopup
@@ -286,13 +291,23 @@ export default {
           :href="hrefURL"
           target="_blank"
           rel="noopener noreferrer"
-          class="group-hover:bg-accent group-hover:dark:bg-accent inline-block rounded-sm mb-0 break-all py-0.5 px-1"
+          class="mb-0 inline-block break-all rounded-sm"
+          :class="
+            compact
+              ? 'text-[13px] text-primary hover:text-primary/80'
+              : 'group-hover:bg-accent group-hover:dark:bg-accent px-1 py-0.5'
+          "
         >
           {{ urlValue }}
         </a>
         <p
           v-else
-          class="group-hover:bg-accent group-hover:dark:bg-accent inline-block rounded-sm mb-0 break-all py-0.5 px-1"
+          class="mb-0 inline-block break-all rounded-sm"
+          :class="
+            compact
+              ? 'text-[13px] text-foreground'
+              : 'group-hover:bg-accent group-hover:dark:bg-accent px-1 py-0.5'
+          "
         >
           {{ displayValue }}
         </p>
@@ -348,17 +363,3 @@ export default {
     </div>
   </div>
 </template>
-
-<style lang="scss" scoped>
-:deep(.selector-wrap) {
-  @apply m-0 top-1;
-
-  .selector-name {
-    @apply ml-0;
-  }
-}
-
-:deep(.name) {
-  @apply ml-0;
-}
-</style>

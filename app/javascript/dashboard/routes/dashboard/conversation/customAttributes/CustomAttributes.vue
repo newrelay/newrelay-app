@@ -31,6 +31,10 @@ const props = defineProps({
     type: Array,
     default: () => [],
   },
+  plain: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 const store = useStore();
@@ -121,7 +125,11 @@ const combinedElements = computed(() => {
 });
 
 const displayedElements = computed(() => {
-  if (showAllAttributes.value || combinedElements.value.length <= 5) {
+  if (
+    props.plain ||
+    showAllAttributes.value ||
+    combinedElements.value.length <= 5
+  ) {
     return combinedElements.value;
   }
 
@@ -257,27 +265,31 @@ const evenClass = [
 </script>
 
 <template>
-  <div class="conversation--details">
+  <div :class="plain ? 'flex flex-col gap-3' : 'conversation--details'">
     <Draggable
       :list="displayedElements"
-      :disabled="!showAllAttributes"
+      :disabled="plain || !showAllAttributes"
       animation="200"
       ghost-class="ghost"
       handle=".drag-handle"
       item-key="key"
-      class="last:rounded-b-lg"
-      :class="evenClass"
+      :class="plain ? 'flex flex-col gap-3' : ['last:rounded-b-lg', evenClass]"
       @start="dragging = true"
       @end="onDragEnd"
     >
       <template #item="{ element }">
         <div
-          class="drag-handle relative border-b border-border/50 dark:border-border/90"
-          :class="{
-            'cursor-grab': showAllAttributes,
-            'last:border-transparent dark:last:border-transparent':
-              combinedElements.length <= 5,
-          }"
+          class="drag-handle relative [&.ghost]:opacity-50 [&.ghost]:bg-muted dark:[&.ghost]:bg-muted-foreground"
+          :class="
+            plain
+              ? ''
+              : {
+                  'border-b border-border/50 dark:border-border/90': true,
+                  'cursor-grab': showAllAttributes,
+                  'last:border-transparent dark:last:border-transparent':
+                    combinedElements.length <= 5,
+                }
+          "
         >
           <template v-if="element.type === 'static_attribute'">
             <slot name="staticItem" :element="element" />
@@ -293,6 +305,7 @@ const evenClass = [
               :description="element.attribute_description"
               :value="element.value"
               show-actions
+              :compact="plain"
               :attribute-regex="element.regex_pattern"
               :regex-cue="element.regex_cue"
               :contact-id="contactId"
@@ -307,12 +320,14 @@ const evenClass = [
 
     <p
       v-if="!displayedElements.length && emptyStateMessage"
-      class="p-3 text-center"
+      class="p-3 text-center text-[13px] text-muted-foreground"
     >
       {{ emptyStateMessage }}
     </p>
-    <!-- Show more and show less buttons show it if the combinedElements length is greater than 5 -->
-    <div v-if="combinedElements.length > 5" class="flex items-center px-2 py-2">
+    <div
+      v-if="!plain && combinedElements.length > 5"
+      class="flex items-center px-2 py-2"
+    >
       <NextButton
         ghost
         xs
@@ -325,9 +340,3 @@ const evenClass = [
     </div>
   </div>
 </template>
-
-<style lang="scss" scoped>
-.ghost {
-  @apply opacity-50 bg-muted dark:bg-muted-foreground;
-}
-</style>

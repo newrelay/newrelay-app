@@ -26,7 +26,7 @@ const browserName = computed(() => {
   if (!browserInfo.value) return '';
   const { browser_name: name = '', browser_version: version = '' } =
     browserInfo.value;
-  return `${name} ${version}`;
+  return `${name} ${version}`.trim();
 });
 
 const browserLanguage = computed(() =>
@@ -37,58 +37,56 @@ const platformName = computed(() => {
   if (!browserInfo.value) return '';
   const { platform_name: name = '', platform_version: version = '' } =
     browserInfo.value;
-  return `${name} ${version}`;
+  return `${name} ${version}`.trim();
 });
 
 const createdAtIp = computed(() => props.contactAttributes.created_at_ip);
 
-const staticElements = computed(() =>
-  [
-    {
-      content: initiatedAt,
-      title: 'CONTACT_PANEL.INITIATED_AT',
-      key: 'static-initiated-at',
-      type: 'static_attribute',
-    },
-    {
-      content: browserLanguage,
-      title: 'CONTACT_PANEL.BROWSER_LANGUAGE',
-      key: 'static-browser-language',
-      type: 'static_attribute',
-    },
-    {
-      content: referer,
-      title: 'CONTACT_PANEL.INITIATED_FROM',
-      key: 'static-referer',
-      type: 'static_attribute',
-    },
-    {
-      content: browserName,
-      title: 'CONTACT_PANEL.BROWSER',
-      key: 'static-browser',
-      type: 'static_attribute',
-    },
-    {
-      content: platformName,
-      title: 'CONTACT_PANEL.OS',
-      key: 'static-platform',
-      type: 'static_attribute',
-    },
-    {
-      content: createdAtIp,
-      title: 'CONTACT_PANEL.IP_ADDRESS',
-      key: 'static-ip-address',
-      type: 'static_attribute',
-    },
-  ].filter(attribute => !!attribute.content.value)
-);
+const staticElements = computed(() => [
+  {
+    content: initiatedAt,
+    title: 'CONTACT_PANEL.INITIATED_AT',
+    key: 'static-initiated-at',
+    type: 'static_attribute',
+  },
+  {
+    content: browserLanguage,
+    title: 'CONTACT_PANEL.BROWSER_LANGUAGE',
+    key: 'static-browser-language',
+    type: 'static_attribute',
+  },
+  {
+    content: referer,
+    title: 'CONTACT_PANEL.INITIATED_FROM',
+    key: 'static-referer',
+    type: 'static_attribute',
+  },
+  {
+    content: browserName,
+    title: 'CONTACT_PANEL.BROWSER',
+    key: 'static-browser',
+    type: 'static_attribute',
+  },
+  {
+    content: platformName,
+    title: 'CONTACT_PANEL.OS',
+    key: 'static-platform',
+    type: 'static_attribute',
+  },
+  {
+    content: createdAtIp,
+    title: 'CONTACT_PANEL.IP_ADDRESS',
+    key: 'static-ip-address',
+    type: 'static_attribute',
+  },
+]);
 </script>
 
 <template>
-  <div class="conversation--details">
+  <div class="flex w-full flex-col gap-3">
     <CustomAttributes
+      plain
       :static-elements="staticElements"
-      attribute-class="conversation--attribute"
       attribute-from="conversation_panel"
       attribute-type="conversation_attribute"
     >
@@ -98,15 +96,18 @@ const staticElements = computed(() =>
           :title="$t(element.title)"
           :value="element.content.value"
         >
-          <a
-            v-if="element.key === 'static-referer'"
-            :href="element.content.value"
-            rel="noopener noreferrer nofollow"
-            target="_blank"
-            class="text-primary"
+          <template
+            v-if="element.key === 'static-referer' && element.content.value"
           >
-            {{ element.content.value }}
-          </a>
+            <a
+              :href="element.content.value"
+              rel="noopener noreferrer nofollow"
+              target="_blank"
+              class="break-all text-[13px] text-primary transition-colors hover:text-primary/80"
+            >
+              {{ element.content.value }}
+            </a>
+          </template>
         </ContactDetailsItem>
       </template>
     </CustomAttributes>

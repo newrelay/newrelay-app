@@ -3,28 +3,24 @@ export default {
   props: {
     title: { type: String, required: true },
     value: { type: [String, Number], default: '' },
-    compact: { type: Boolean, default: false },
   },
 };
 </script>
 
 <template>
-  <div class="overflow-auto" :class="compact ? 'py-0 px-0' : 'py-3 px-4'">
-    <div
-      class="items-center flex justify-between"
-      :class="compact ? 'mb-0' : 'mb-2'"
-    >
-      <span
-        class="font-semibold text-foreground"
-        :class="compact ? 'text-[12px]' : 'text-sm'"
-      >
+  <div class="flex flex-col gap-1.5">
+    <div class="flex items-center justify-between">
+      <span class="text-[12px] font-semibold leading-normal text-foreground">
         {{ title }}
       </span>
       <slot name="button" />
     </div>
-    <div v-if="value" class="break-words">
+    <div
+      class="break-words text-[13px] leading-normal"
+      :class="value ? 'text-foreground' : 'text-muted-foreground'"
+    >
       <slot>
-        {{ value }}
+        {{ value || '---' }}
       </slot>
     </div>
   </div>

@@ -9,6 +9,7 @@ class Conversations::ResolutionJob < ApplicationJob
       # do this is account.auto_resolve_message is set
       ::MessageTemplates::Template::AutoResolve.new(conversation: conversation).perform if account.auto_resolve_message.present?
       conversation.add_labels(account.auto_resolve_label) if account.auto_resolve_label.present?
+      conversation.skip_resolution_attribute_check = true
       conversation.toggle_status
     end
   end

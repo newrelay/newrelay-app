@@ -87,6 +87,7 @@ class Api::V1::Accounts::ConversationsController < Api::V1::Accounts::BaseContro
       @status = @conversation.save!
     else
       @status = @conversation.toggle_status
+      return render_could_not_create_error(@conversation.errors.full_messages.join(', ')) unless @status
     end
     assign_conversation if should_assign_conversation?
   end

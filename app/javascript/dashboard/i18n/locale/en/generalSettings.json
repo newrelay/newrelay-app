@@ -202,7 +202,7 @@
     }
   },
   "COMMAND_BAR": {
-    "SEARCH_PLACEHOLDER": "Search or jump to",
+    "SEARCH_PLACEHOLDER": "Type a command or search...",
     "SNOOZE_PLACEHOLDER": "Type a time e.g. tomorrow, 2 hours, next friday, jan 15...",
     "SECTIONS": {
       "GENERAL": "General",
@@ -269,7 +269,7 @@
       "SELECT": "Select",
       "CLOSE": "Close"
     },
-    "NO_MATCHING_COMMANDS": "No matching commands found",
+    "NO_MATCHING_COMMANDS": "No results found.",
     "EMPTY_STATE_SUBTITLE": "Try searching for something else or press ESC to dismiss."
   },
   "DASHBOARD_APPS": {

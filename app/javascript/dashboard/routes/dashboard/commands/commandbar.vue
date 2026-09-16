@@ -22,7 +22,6 @@ import {
   CMD_BULK_ACTION_SNOOZE_CONVERSATION,
 } from 'dashboard/helper/commandbar/events';
 import { emitter } from 'shared/helpers/mitt';
-import { RelayInput } from 'dashboard/components-next/relay';
 
 const store = useStore();
 const { t, tm } = useI18n();
@@ -224,9 +223,7 @@ watch(selectedIndex, () => {
 
 const focusSearchInput = () => {
   nextTick(() => {
-    const node = searchInputRef.value;
-    const el = node instanceof HTMLElement ? node : node?.$el;
-    el?.focus?.();
+    searchInputRef.value?.focus?.();
   });
 };
 
@@ -347,170 +344,95 @@ onUnmounted(() => {
     <Teleport to="body">
       <div
         v-if="isOpen"
-        class="fixed inset-0 z-[99999] flex items-start justify-center px-4 pt-16 sm:pt-24"
+        class="fixed inset-0 z-[99999] flex items-start justify-center bg-foreground/50 p-4 pt-[15vh]"
+        @click.self="close"
         @keydown="handleKeyDown"
       >
-        <!-- Backdrop -->
-        <div
-          class="fixed inset-0 bg-background/80 backdrop-blur-[8px] transition-opacity duration-150"
-          @click="close"
-        />
-
-        <!-- Command Palette Card -->
         <div
           data-relay
-          class="relative flex max-h-[80vh] w-full max-w-2xl flex-col overflow-hidden rounded-xl border border-border bg-popover font-geist text-popover-foreground shadow-2xl transition-all"
+          class="bg-popover text-popover-foreground w-full max-w-lg overflow-hidden rounded-xl border border-border shadow-lg"
           @click.stop
         >
-          <!-- Top Search Header -->
-          <div class="flex flex-col gap-2 border-b border-border p-4">
+          <div class="flex items-center gap-2 border-b border-border px-3">
             <button
               v-if="currentCommandRoot"
               type="button"
-              class="inline-flex w-fit items-center gap-1.5 rounded-md border border-border bg-accent px-2 py-0.5 text-xs font-medium text-accent-foreground transition-colors hover:bg-accent/80"
+              class="text-muted-foreground hover:text-foreground shrink-0 rounded-sm p-1 transition-colors"
+              :aria-label="parentTitle"
               @click="clearParent"
             >
-              <span class="i-lucide-arrow-left size-3 shrink-0" />
-              <span>{{ parentTitle }}</span>
+              <span class="i-lucide-arrow-left size-4" />
             </button>
-
-            <div class="flex items-center gap-2">
-              <div class="relative min-w-0 flex-1">
-                <span
-                  class="pointer-events-none absolute inset-y-0 z-[1] flex w-9 items-center justify-center text-muted-foreground ltr:left-0 rtl:right-0"
-                >
-                  <span class="i-lucide-search size-4" />
-                </span>
-                <RelayInput
-                  ref="searchInputRef"
-                  v-model="searchQuery"
-                  class-name="h-9 bg-background px-9"
-                  :placeholder="placeholder"
-                />
-                <button
-                  v-if="searchQuery"
-                  type="button"
-                  class="absolute inset-y-0 z-[1] flex w-9 items-center justify-center text-muted-foreground hover:text-accent-foreground ltr:right-0 rtl:left-0"
-                  @click="searchQuery = ''"
-                >
-                  <span class="i-lucide-x size-4" />
-                </button>
-              </div>
-              <kbd
-                class="pointer-events-none shrink-0 rounded border border-border bg-muted px-1.5 py-0.5 text-[10px] font-medium text-muted-foreground"
-              >
-                {{ t('COMMAND_BAR.KEYS.ESC') }}
-              </kbd>
-            </div>
+            <span
+              v-else
+              class="i-lucide-search size-4 shrink-0 text-muted-foreground"
+            />
+            <input
+              ref="searchInputRef"
+              v-model="searchQuery"
+              type="text"
+              :placeholder="placeholder"
+              class="placeholder:text-muted-foreground h-11 w-full bg-transparent text-sm outline-none"
+            />
+            <button
+              type="button"
+              class="text-muted-foreground hover:text-foreground shrink-0 rounded-sm p-1 transition-colors"
+              :aria-label="t('COMMAND_BAR.KEYS.CLOSE')"
+              @click="close"
+            >
+              <span class="i-lucide-x size-4" />
+            </button>
           </div>
 
-          <!-- Command List Body -->
-          <div class="flex-1 overflow-y-auto p-2 min-h-[120px] max-h-[420px]">
-            <template v-if="flatVisibleActions.length > 0">
-              <div
+          <div class="max-h-80 overflow-y-auto p-1">
+            <p
+              v-if="flatVisibleActions.length === 0"
+              class="text-muted-foreground py-6 text-center text-sm"
+            >
+              {{ t('COMMAND_BAR.NO_MATCHING_COMMANDS') }}
+            </p>
+            <template v-else>
+              <template
                 v-for="group in groupedActions"
                 :key="group.section"
-                class="mb-3 last:mb-0"
               >
                 <div
-                  class="px-3 py-1.5 text-[11px] font-semibold tracking-wider text-muted-foreground uppercase"
+                  class="text-muted-foreground px-2 py-1.5 text-xs font-medium"
                 >
                   {{ group.section }}
                 </div>
-                <div class="space-y-0.5">
-                  <button
-                    v-for="item in group.items"
-                    :key="item.id"
-                    :ref="
-                      el => {
-                        if (el) itemRefs[flatVisibleActions.indexOf(item)] = el;
-                      }
+                <button
+                  v-for="item in group.items"
+                  :key="item.id"
+                  :ref="
+                    el => {
+                      if (el) itemRefs[flatVisibleActions.indexOf(item)] = el;
+                    }
+                  "
+                  type="button"
+                  class="flex w-full items-center gap-2 rounded-md px-2 py-2 text-left text-sm"
+                  :class="
+                    flatVisibleActions.indexOf(item) === selectedIndex
+                      ? 'bg-accent text-accent-foreground'
+                      : 'hover:bg-accent/50'
+                  "
+                  @click="handleSelectAction(item)"
+                  @mousemove="selectedIndex = flatVisibleActions.indexOf(item)"
+                >
+                  <span
+                    class="flex size-4 shrink-0 items-center justify-center text-muted-foreground"
+                    v-html="item.icon"
+                  />
+                  <span class="min-w-0 flex-1 truncate">{{ item.title }}</span>
+                  <span
+                    v-if="
+                      Array.isArray(item.children) && item.children.length
                     "
-                    type="button"
-                    class="group flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left text-sm font-medium transition-colors cursor-pointer"
-                    :class="[
-                      flatVisibleActions.indexOf(item) === selectedIndex
-                        ? 'bg-accent text-accent-foreground'
-                        : 'text-foreground hover:bg-accent/50',
-                    ]"
-                    @click="handleSelectAction(item)"
-                    @mouseenter="
-                      selectedIndex = flatVisibleActions.indexOf(item)
-                    "
-                  >
-                    <!-- Left Icon -->
-                    <span
-                      class="size-4 shrink-0 flex items-center justify-center text-muted-foreground transition-colors group-hover:text-foreground"
-                      :class="{
-                        '!text-accent-foreground':
-                          flatVisibleActions.indexOf(item) === selectedIndex,
-                      }"
-                      v-html="item.icon"
-                    />
-
-                    <!-- Title -->
-                    <span class="flex-1 truncate">{{ item.title }}</span>
-
-                    <!-- Has Children Arrow or Hint -->
-                    <span
-                      v-if="
-                        Array.isArray(item.children) && item.children.length
-                      "
-                      class="i-lucide-chevron-right size-4 text-muted-foreground shrink-0"
-                    />
-                  </button>
-                </div>
-              </div>
+                    class="i-lucide-chevron-right size-4 shrink-0 text-muted-foreground"
+                  />
+                </button>
+              </template>
             </template>
-
-            <!-- Empty Search State -->
-            <div
-              v-else
-              class="flex flex-col items-center justify-center py-10 px-4 text-center text-sm text-muted-foreground"
-            >
-              <span
-                class="i-lucide-search-x size-8 mb-2 text-muted-foreground/60"
-              />
-              <p class="font-medium text-foreground">
-                {{ t('COMMAND_BAR.NO_MATCHING_COMMANDS') }}
-              </p>
-              <p class="text-xs text-muted-foreground mt-1">
-                {{ t('COMMAND_BAR.EMPTY_STATE_SUBTITLE') }}
-              </p>
-            </div>
-          </div>
-
-          <!-- Footer Hints -->
-          <div
-            class="flex items-center justify-between border-t border-border bg-muted/30 px-4 py-2 text-[11px] text-muted-foreground"
-          >
-            <div class="flex items-center gap-3">
-              <span class="inline-flex items-center gap-1">
-                <kbd
-                  class="rounded border border-border bg-muted px-1 py-0.5 font-mono"
-                  >{{ '↑' }}</kbd
-                >
-                <kbd
-                  class="rounded border border-border bg-muted px-1 py-0.5 font-mono"
-                  >{{ '↓' }}</kbd
-                >
-                <span>{{ t('COMMAND_BAR.KEYS.NAVIGATE') }}</span>
-              </span>
-              <span class="inline-flex items-center gap-1">
-                <kbd
-                  class="rounded border border-border bg-muted px-1 py-0.5 font-mono"
-                  >{{ '↵' }}</kbd
-                >
-                <span>{{ t('COMMAND_BAR.KEYS.SELECT') }}</span>
-              </span>
-            </div>
-            <span class="inline-flex items-center gap-1">
-              <kbd
-                class="rounded border border-border bg-muted px-1 py-0.5 font-mono"
-                >{{ 'esc' }}</kbd
-              >
-              <span>{{ t('COMMAND_BAR.KEYS.CLOSE') }}</span>
-            </span>
           </div>
         </div>
       </div>

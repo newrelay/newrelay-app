@@ -49,7 +49,7 @@ export default {
   computed: {
     bannerClasses() {
       const colorSchemes = {
-        primary: 'bg-primary',
+        primary: 'bg-primary text-primary-foreground',
         secondary: 'bg-muted dark:bg-accent text-foreground',
         alert: 'bg-destructive/10 text-destructive',
         warning: 'bg-warning/20 text-warning',
@@ -91,7 +91,7 @@ export default {
 
 <template>
   <div
-    class="flex items-center justify-center h-12 gap-4 px-4 py-3 text-xs text-white dark:text-white"
+    class="flex items-center justify-center h-12 gap-4 px-4 py-3 text-xs"
     :class="bannerClasses"
   >
     <span class="flex items-center">

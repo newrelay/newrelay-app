@@ -67,7 +67,7 @@ class Account < ApplicationRecord
   validate :validate_support_email_format, if: :will_save_change_to_support_email?
   validate :parent_must_be_a_reseller
   validate :no_self_parenting
-  validate :only_two_levels_deep
+  validate :only_three_levels_deep
   validate :t3_subaccount_limit_enforced, if: -> { parent_id.present? }
   validate :reseller_capability_allowed, if: -> { is_reseller? }
   validate :custom_domain_capability_allowed, if: :will_save_change_to_custom_domain?
@@ -365,10 +365,10 @@ class Account < ApplicationRecord
     errors.add(:parent_id, 'cannot be its own parent') if parent_id.present? && parent_id == id
   end
 
-  def only_two_levels_deep
+  def only_three_levels_deep
     return if parent.blank?
 
-    errors.add(:parent_id, 'cannot set a parent that itself has a parent (max 2 tiers)') if parent.parent_id.present?
+    errors.add(:parent_id, 'cannot set a parent whose own parent also has a parent (max 3 tiers)') if parent.parent&.parent_id.present?
   end
 
   def t3_subaccount_limit_enforced

@@ -63,7 +63,11 @@ const handleSeeOriginal = () => {
         :showing-original="renderOriginal"
         @toggle="handleSeeOriginal"
       />
-      <AttachmentChips :attachments="attachments" class="gap-2" />
+      <AttachmentChips
+        v-if="isPrivate"
+        :attachments="attachments"
+        class="gap-2"
+      />
       <template v-if="isTemplate">
         <div
           v-if="contentAttributes.submittedEmail"
@@ -73,6 +77,9 @@ const handleSeeOriginal = () => {
         </div>
       </template>
     </div>
+    <template v-if="!isPrivate && attachments?.length" #after>
+      <AttachmentChips :attachments="attachments" class="gap-2" />
+    </template>
   </BaseBubble>
 </template>
 

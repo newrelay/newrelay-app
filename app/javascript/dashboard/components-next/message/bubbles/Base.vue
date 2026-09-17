@@ -171,6 +171,7 @@ const replyToPreview = computed(() => {
       </div>
       <slot />
     </div>
+    <slot name="after" />
     <MessageMeta
       v-if="shouldShowMeta"
       class="text-muted-foreground"

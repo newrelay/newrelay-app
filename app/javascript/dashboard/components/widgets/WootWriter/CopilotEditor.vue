@@ -203,14 +203,14 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="w-full">
+  <div class="w-full min-w-0">
     <div v-if="hasGeneratedContent" class="overflow-y-auto max-h-56 mb-2 px-1">
       <p
         v-dompurify-html="formatMessage(generatedContent, false)"
         class="text-foreground text-sm prose-sm font-normal"
       />
     </div>
-    <div class="editor-root relative editor--copilot w-full">
+    <div class="editor-root relative editor--copilot w-full min-w-0">
       <div ref="editor" />
     </div>
   </div>
@@ -220,17 +220,17 @@ onMounted(() => {
 @import '@chatwoot/prosemirror-schema/src/styles/base.scss';
 
 .editor--copilot {
-  @apply block w-full bg-primary/5 dark:bg-primary/10 rounded-md;
+  @apply block w-full min-w-0 bg-primary/5 dark:bg-primary/10 rounded-md;
 
   .ProseMirror-menubar-wrapper {
-    @apply block w-full !important;
+    @apply block w-full min-w-0 !important;
   }
 
   .ProseMirror-relay-style {
     min-height: 5rem;
     max-height: 7.5rem !important;
     overflow: auto;
-    @apply w-full box-border px-4 py-3 !important;
+    @apply w-full min-w-0 box-border px-4 py-3 !important;
 
     .empty-node {
       &::before {

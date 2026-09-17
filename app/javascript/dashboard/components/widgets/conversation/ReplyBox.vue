@@ -1407,8 +1407,13 @@ export default {
     >
       <div
         :key="copilot.editorTransitionKey.value"
-        class="reply-box__top relative py-0 px-4 -mt-px"
-        :class="{ 'reply-box__top--inbox mt-0 px-0': isInboxVariant }"
+        class="reply-box__top relative py-0 -mt-px"
+        :class="{
+          'reply-box__top--inbox mt-0 px-0': isInboxVariant,
+          'px-4':
+            !isInboxVariant &&
+            !(copilot.isActive.value && !showAudioRecorderEditor),
+        }"
       >
         <ReplyToMessage
           v-if="shouldShowReplyToMessage"

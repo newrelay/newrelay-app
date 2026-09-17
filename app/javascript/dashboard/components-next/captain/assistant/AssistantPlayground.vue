@@ -105,7 +105,7 @@ const handleEnterKey = event => {
       <RelayButton
         variant="ghost"
         size="icon"
-        class="size-8 shrink-0 rounded-lg border border-border text-muted-foreground hover:border-transparent hover:text-foreground"
+        class="!size-8 shrink-0 rounded-lg border border-border text-muted-foreground hover:border-transparent hover:text-foreground"
         :title="t('CAPTAIN.PLAYGROUND.HEADER')"
         @click="resetConversation"
       >
@@ -121,7 +121,7 @@ const handleEnterKey = event => {
       >
         <RelayInput
           v-model="newMessage"
-          class-name="mb-0 h-10 flex-1 border-none bg-transparent px-3 text-[14px] shadow-none focus-visible:ring-0"
+          class-name="mb-0 h-10 flex-1 !border-0 !bg-transparent px-3 text-[14px] !shadow-none focus-visible:!ring-0"
           :placeholder="t('CAPTAIN.PLAYGROUND.MESSAGE_PLACEHOLDER')"
           @keydown.enter.exact="handleEnterKey"
         />

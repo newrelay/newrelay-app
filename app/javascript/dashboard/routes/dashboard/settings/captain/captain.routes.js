@@ -7,7 +7,7 @@ import Index from './Index.vue';
 export default {
   routes: [
     {
-      path: frontendURL('accounts/:accountId/settings/captain'),
+      path: frontendURL('accounts/:accountId/settings/relay-ai'),
       meta: {
         permissions: ['administrator'],
         featureFlag: FEATURE_FLAGS.CAPTAIN,
@@ -33,6 +33,14 @@ export default {
           },
         },
       ],
+    },
+    {
+      path: frontendURL('accounts/:accountId/settings/captain/:pathMatch(.*)*'),
+      meta: {
+        permissions: ['administrator'],
+        featureFlag: FEATURE_FLAGS.CAPTAIN,
+      },
+      redirect: to => to.fullPath.replace(/\/captain(?=\/|$)/, '/relay-ai'),
     },
   ],
 };

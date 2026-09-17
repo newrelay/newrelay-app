@@ -37,49 +37,49 @@ const metaV2 = {
 
 const assistantRoutes = [
   {
-    path: frontendURL('accounts/:accountId/captain/:assistantId/faqs'),
+    path: frontendURL('accounts/:accountId/relay-ai/:assistantId/faqs'),
     component: ResponsesIndex,
     name: 'captain_assistants_responses_index',
     meta,
   },
   {
-    path: frontendURL('accounts/:accountId/captain/:assistantId/documents'),
+    path: frontendURL('accounts/:accountId/relay-ai/:assistantId/documents'),
     component: DocumentsIndex,
     name: 'captain_assistants_documents_index',
     meta,
   },
   {
-    path: frontendURL('accounts/:accountId/captain/:assistantId/tools'),
+    path: frontendURL('accounts/:accountId/relay-ai/:assistantId/tools'),
     component: CustomToolsIndex,
     name: 'captain_tools_index',
     meta: metaCustomTools,
   },
   {
-    path: frontendURL('accounts/:accountId/captain/:assistantId/scenarios'),
+    path: frontendURL('accounts/:accountId/relay-ai/:assistantId/scenarios'),
     component: AssistantScenariosIndex,
     name: 'captain_assistants_scenarios_index',
     meta: metaV2,
   },
   {
-    path: frontendURL('accounts/:accountId/captain/:assistantId/playground'),
+    path: frontendURL('accounts/:accountId/relay-ai/:assistantId/playground'),
     component: AssistantPlaygroundIndex,
     name: 'captain_assistants_playground_index',
     meta,
   },
   {
-    path: frontendURL('accounts/:accountId/captain/:assistantId/inboxes'),
+    path: frontendURL('accounts/:accountId/relay-ai/:assistantId/inboxes'),
     component: AssistantInboxesIndex,
     name: 'captain_assistants_inboxes_index',
     meta,
   },
   {
-    path: frontendURL('accounts/:accountId/captain/:assistantId/faqs/pending'),
+    path: frontendURL('accounts/:accountId/relay-ai/:assistantId/faqs/pending'),
     component: ResponsesPendingIndex,
     name: 'captain_assistants_responses_pending',
     meta,
   },
   {
-    path: frontendURL('accounts/:accountId/captain/:assistantId/settings'),
+    path: frontendURL('accounts/:accountId/relay-ai/:assistantId/settings'),
     component: AssistantSettingsIndex,
     name: 'captain_assistants_settings_index',
     meta,
@@ -87,7 +87,7 @@ const assistantRoutes = [
   // Settings sub-pages (guardrails and guidelines)
   {
     path: frontendURL(
-      'accounts/:accountId/captain/:assistantId/settings/guardrails'
+      'accounts/:accountId/relay-ai/:assistantId/settings/guardrails'
     ),
     component: AssistantGuardrailsIndex,
     name: 'captain_assistants_guardrails_index',
@@ -95,14 +95,14 @@ const assistantRoutes = [
   },
   {
     path: frontendURL(
-      'accounts/:accountId/captain/:assistantId/settings/guidelines'
+      'accounts/:accountId/relay-ai/:assistantId/settings/guidelines'
     ),
     component: AssistantGuidelinesIndex,
     name: 'captain_assistants_guidelines_index',
     meta: metaV2,
   },
   {
-    path: frontendURL('accounts/:accountId/captain/assistants'),
+    path: frontendURL('accounts/:accountId/relay-ai/assistants'),
     component: AssistantEmptyStateIndex,
     name: 'captain_assistants_create_index',
     meta: {
@@ -114,16 +114,19 @@ const assistantRoutes = [
     },
   },
   {
-    path: frontendURL('accounts/:accountId/captain/:navigationPath'),
+    path: frontendURL('accounts/:accountId/relay-ai/:navigationPath'),
     component: AssistantsIndexPage,
     name: 'captain_assistants_index',
     meta,
   },
 ];
 
+const redirectLegacyCaptainPath = to =>
+  to.fullPath.replace(/\/captain(?=\/|$)/, '/relay-ai');
+
 export const routes = [
   {
-    path: frontendURL('accounts/:accountId/captain'),
+    path: frontendURL('accounts/:accountId/relay-ai'),
     component: CaptainPageRouteView,
     redirect: to => {
       return {
@@ -135,5 +138,10 @@ export const routes = [
       };
     },
     children: [...assistantRoutes],
+  },
+  {
+    path: frontendURL('accounts/:accountId/captain/:pathMatch(.*)*'),
+    meta,
+    redirect: redirectLegacyCaptainPath,
   },
 ];

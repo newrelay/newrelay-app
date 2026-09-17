@@ -37,7 +37,7 @@ export const defaultRedirectPage = (to, permissions) => {
     { permissions: [PORTAL_PERMISSIONS], path: 'portals' },
     { permissions: [REPUTATION_PERMISSIONS], path: 'reputation/overview' },
     { permissions: [MARKETING_PERMISSIONS], path: 'campaigns/live_chat' },
-    { permissions: [CAPTAIN_PERMISSIONS], path: 'captain' },
+    { permissions: [CAPTAIN_PERMISSIONS], path: 'relay-ai' },
   ];
 
   const route = permissionRoutes.find(({ permissions: routePermissions }) =>

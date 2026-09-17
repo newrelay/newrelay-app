@@ -55,7 +55,7 @@ defineOptions({
       <h2 class="mb-2.5 text-[20px] font-[600] text-foreground">
         {{ title }}
       </h2>
-      <div v-if="subtitle" class="relative mx-auto mb-6 max-w-md">
+      <div v-if="subtitle" class="relative mx-auto mb-6 max-w-[375px]">
         <p class="text-[15px] leading-relaxed text-muted-foreground">
           {{ subtitle }}
         </p>

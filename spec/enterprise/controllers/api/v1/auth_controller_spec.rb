@@ -10,7 +10,7 @@ RSpec.describe 'Api::V1::Auth', type: :request do
     account.enable_features('saml')
     account.save!
     allow(ENV).to receive(:fetch).and_call_original
-    allow(ENV).to receive(:fetch).with('FRONTEND_URL', nil).and_return('http://www.example.com')
+    allow(ENV).to receive(:fetch).with('FRONTEND_URL', nil).and_return('https://app.example.com')
   end
 
   describe 'POST /api/v1/auth/saml_login' do
@@ -34,7 +34,7 @@ RSpec.describe 'Api::V1::Auth', type: :request do
       it 'redirects to SSO login page with error' do
         post '/api/v1/auth/saml_login', params: { email: 'nonexistent@example.com' }
 
-        expect(response.location).to eq('http://www.example.com/app/login/sso?error=saml-authentication-failed')
+        expect(response.location).to eq('https://app.example.com/app/login/sso?error=saml-authentication-failed')
       end
 
       it 'redirects to mobile deep link with error when target is mobile' do
@@ -52,7 +52,7 @@ RSpec.describe 'Api::V1::Auth', type: :request do
       it 'redirects to SSO login page with error' do
         post '/api/v1/auth/saml_login', params: { email: user.email }
 
-        expect(response.location).to eq('http://www.example.com/app/login/sso?error=saml-authentication-failed')
+        expect(response.location).to eq('https://app.example.com/app/login/sso?error=saml-authentication-failed')
       end
 
       it 'redirects to mobile deep link with error when target is mobile' do
@@ -75,7 +75,7 @@ RSpec.describe 'Api::V1::Auth', type: :request do
       it 'redirects to SSO login page with error' do
         post '/api/v1/auth/saml_login', params: { email: user.email }
 
-        expect(response.location).to eq('http://www.example.com/app/login/sso?error=saml-authentication-failed')
+        expect(response.location).to eq('https://app.example.com/app/login/sso?error=saml-authentication-failed')
       end
 
       it 'redirects to mobile deep link with error when target is mobile' do

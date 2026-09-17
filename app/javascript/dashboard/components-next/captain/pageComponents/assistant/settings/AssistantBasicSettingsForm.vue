@@ -148,6 +148,7 @@ watch(
         <RelayCheckbox
           id="captain-assistant-feature-faqs"
           v-model="state.features.conversationFaqs"
+          circle
         />
         <label
           for="captain-assistant-feature-faqs"
@@ -160,6 +161,7 @@ watch(
         <RelayCheckbox
           id="captain-assistant-feature-memories"
           v-model="state.features.memories"
+          circle
         />
         <label
           for="captain-assistant-feature-memories"
@@ -172,6 +174,7 @@ watch(
         <RelayCheckbox
           id="captain-assistant-feature-citations"
           v-model="state.features.citations"
+          circle
         />
         <label
           for="captain-assistant-feature-citations"
@@ -184,6 +187,7 @@ watch(
         <RelayCheckbox
           id="captain-assistant-feature-contact-attributes"
           v-model="state.features.contactAttributes"
+          circle
         />
         <label
           for="captain-assistant-feature-contact-attributes"

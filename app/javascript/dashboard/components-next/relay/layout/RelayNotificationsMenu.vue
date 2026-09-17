@@ -108,7 +108,7 @@ const openConversation = notification => {
   <div v-on-click-outside="closeMenu" class="relative">
     <button
       type="button"
-      class="relative inline-flex size-9 items-center justify-center rounded-full border border-input bg-background text-muted-foreground shadow-xs transition-colors hover:border-transparent hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+      class="relative inline-flex size-8 items-center justify-center rounded-full border border-input bg-background text-muted-foreground shadow-xs transition-colors hover:border-transparent hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
       :class="{ 'bg-accent text-accent-foreground': isOpen }"
       :aria-label="t('SIDEBAR.NOTIFICATIONS')"
       :aria-expanded="isOpen"

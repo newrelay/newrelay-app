@@ -52,7 +52,7 @@ const onClickCancel = () => {
     <RelayButton
       variant="outline"
       size="sm"
-      class="flex-shrink-0"
+      class="flex-shrink-0 !text-[13px]"
       @click="togglePopover(!showPopover)"
     >
       {{ buttonLabel }}

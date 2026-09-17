@@ -132,24 +132,24 @@ watch(
     />
 
     <div class="flex flex-col gap-2">
-      <label class="text-[13.5px] text-foreground font-[500]">
-        {{ t('CAPTAIN.ASSISTANTS.FORM.TEMPERATURE.LABEL') }}
-      </label>
-      <div class="flex items-center gap-4">
-        <input
-          v-model="state.temperature"
-          type="range"
-          min="0"
-          max="1"
-          step="0.1"
-          class="h-2 w-full cursor-pointer appearance-none bg-muted accent-primary"
-        />
+      <div class="flex items-center justify-between">
+        <label class="text-[13.5px] font-medium text-foreground">
+          {{ t('CAPTAIN.ASSISTANTS.FORM.TEMPERATURE.LABEL') }}
+        </label>
         <span
           class="rounded bg-muted px-2 py-0.5 font-mono text-xs font-semibold text-foreground"
         >
           {{ state.temperature }}
         </span>
       </div>
+      <input
+        v-model="state.temperature"
+        type="range"
+        min="0"
+        max="1"
+        step="0.1"
+        class="h-2 w-full cursor-pointer appearance-none rounded-lg bg-muted accent-primary"
+      />
       <p class="text-[12.5px] leading-relaxed text-muted-foreground">
         {{ t('CAPTAIN.ASSISTANTS.FORM.TEMPERATURE.DESCRIPTION') }}
       </p>

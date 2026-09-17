@@ -6,6 +6,7 @@ import { useStore, useMapGetter } from 'dashboard/composables/store';
 import { useLiveRefresh } from 'dashboard/composables/useLiveRefresh';
 import DropdownMenu from 'dashboard/components-next/dropdown-menu/DropdownMenu.vue';
 import RelayButton from 'dashboard/components-next/relay/button/Button.vue';
+import { removeEmoji } from 'shared/helpers/emoji';
 import { useI18n } from 'vue-i18n';
 
 const { t } = useI18n();
@@ -19,7 +20,10 @@ const teams = useMapGetter('teams/getTeams');
 
 const teamMenuList = computed(() => [
   { label: t('OVERVIEW_REPORTS.TEAM_CONVERSATIONS.ALL_TEAMS'), value: null },
-  ...teams.value.map(team => ({ label: team.name, value: team.id })),
+  ...teams.value.map(team => ({
+    label: removeEmoji(team.name),
+    value: team.id,
+  })),
 ]);
 
 const conversationCards = computed(() => [

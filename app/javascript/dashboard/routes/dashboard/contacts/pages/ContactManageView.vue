@@ -12,8 +12,6 @@ import ContactMerge from 'dashboard/components-next/Contacts/ContactsSidebar/Con
 import ContactCustomAttributes from 'dashboard/components-next/Contacts/ContactsSidebar/ContactCustomAttributes.vue';
 import ContactDetailHeader from 'dashboard/components-next/Contacts/ContactDetail/ContactDetailHeader.vue';
 import ContactAboutPanel from 'dashboard/components-next/Contacts/ContactDetail/ContactAboutPanel.vue';
-import ContactLogActivityModal from 'dashboard/components-next/Contacts/ContactDetail/ContactLogActivityModal.vue';
-import ContactScheduleMeetingModal from 'dashboard/components-next/Contacts/ContactDetail/ContactScheduleMeetingModal.vue';
 import ConfirmContactDeleteDialog from 'dashboard/components-next/Contacts/ContactsForm/ConfirmContactDeleteDialog.vue';
 import {
   RelayTabs,
@@ -30,8 +28,6 @@ const contact = useMapGetter('contacts/getContactById');
 const uiFlags = useMapGetter('contacts/getUIFlags');
 
 const activeTab = ref('attributes');
-const showLogActivity = ref(false);
-const showScheduleMeeting = ref(false);
 const confirmDeleteContactDialogRef = ref(null);
 
 const DETAIL_TABS = [
@@ -170,8 +166,6 @@ onMounted(() => {
       :contact="selectedContact"
       :contact-id="contactId"
       @back="goToContactsList"
-      @schedule-meeting="showScheduleMeeting = true"
-      @log-activity="showLogActivity = true"
       @block="toggleContactBlock"
       @delete="openDeleteDialog"
       @upload="handleAvatarUpload"
@@ -242,16 +236,6 @@ onMounted(() => {
       />
     </main>
 
-    <ContactLogActivityModal
-      v-if="showLogActivity"
-      :contact-name="selectedContact?.name"
-      @close="showLogActivity = false"
-    />
-    <ContactScheduleMeetingModal
-      v-if="showScheduleMeeting"
-      :contact-name="selectedContact?.name"
-      @close="showScheduleMeeting = false"
-    />
     <ConfirmContactDeleteDialog
       ref="confirmDeleteContactDialogRef"
       :selected-contact="selectedContact"

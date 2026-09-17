@@ -23,15 +23,7 @@ const props = defineProps({
   },
 });
 
-const emit = defineEmits([
-  'back',
-  'scheduleMeeting',
-  'logActivity',
-  'block',
-  'delete',
-  'upload',
-  'avatarDelete',
-]);
+const emit = defineEmits(['back', 'block', 'delete', 'upload', 'avatarDelete']);
 
 const { t } = useI18n();
 const route = useRoute();
@@ -233,23 +225,6 @@ const handleAvatarDelete = () => {
     </div>
 
     <div class="flex flex-wrap items-center gap-2 lg:shrink-0 lg:flex-nowrap">
-      <RelayButton
-        variant="outline"
-        class="h-9 rounded-lg px-4 text-sm font-medium shadow-sm"
-        @click="emit('scheduleMeeting')"
-      >
-        <span class="i-lucide-calendar size-4" />
-        {{ t('CONTACTS_LAYOUT.DETAIL.ACTIONS.SCHEDULE_MEETING') }}
-      </RelayButton>
-      <RelayButton
-        variant="outline"
-        class="h-9 rounded-lg px-4 text-sm font-medium shadow-sm"
-        @click="emit('logActivity')"
-      >
-        <span class="i-lucide-activity size-4" />
-        {{ t('CONTACTS_LAYOUT.DETAIL.ACTIONS.LOG_ACTIVITY') }}
-      </RelayButton>
-
       <ComposeConversation :contact-id="String(contactId || '')">
         <template #trigger>
           <RelayButton

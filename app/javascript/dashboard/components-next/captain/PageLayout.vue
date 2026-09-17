@@ -130,7 +130,7 @@ const handleCreateAssistant = () => {
     class="flex h-full min-h-0 w-full flex-col overflow-hidden bg-background"
   >
     <header class="z-10 shrink-0">
-      <div class="mx-auto mb-6 w-full max-w-7xl px-6 pt-6 lg:px-10">
+      <div class="mx-auto mb-6 w-full max-w-7xl px-6 pt-6">
         <div
           class="flex w-full flex-col items-start justify-between gap-4 sm:flex-row"
           :class="headerSubtitle ? 'sm:items-start' : 'sm:items-center'"
@@ -218,7 +218,7 @@ const handleCreateAssistant = () => {
     </header>
     <main class="flex min-h-0 flex-1 flex-col overflow-y-auto">
       <div
-        class="mx-auto flex min-h-full w-full max-w-7xl flex-1 flex-col px-6 pb-6 lg:px-10"
+        class="mx-auto flex min-h-full w-full max-w-7xl flex-1 flex-col px-6 pb-6"
       >
         <slot v-if="!showPaywall" name="controls" />
         <div
@@ -241,7 +241,7 @@ const handleCreateAssistant = () => {
       </div>
     </main>
     <footer v-if="showPaginationFooter" class="shrink-0">
-      <div class="mx-auto w-full max-w-7xl px-6 pb-6 lg:px-10">
+      <div class="mx-auto w-full max-w-7xl px-6 pb-6">
         <PaginationFooter
           :current-page="currentPage"
           :total-items="totalCount"

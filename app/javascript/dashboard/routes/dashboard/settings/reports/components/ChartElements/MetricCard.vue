@@ -140,7 +140,7 @@ const xAxisLabels = computed(() => {
 
 <template>
   <div
-    class="p-6 rounded-xl border border-border bg-card shadow-xs flex flex-col relative overflow-hidden group h-full"
+    class="p-6 rounded-xl border border-border bg-card shadow-sm flex flex-col relative overflow-hidden group h-full"
   >
     <!-- Highlight bar on top -->
     <div
@@ -198,61 +198,61 @@ const xAxisLabels = computed(() => {
     </div>
 
     <!-- Mini CSS Bar Chart -->
-    <div
-      v-if="formattedChartData.length > 0"
-      class="mt-auto h-28 flex items-end gap-2 border-b border-border/50 pb-2 relative ml-4"
-    >
+    <div v-if="formattedChartData.length > 0" class="mt-auto flex">
       <div
-        class="absolute -left-4 top-0 text-[10px] text-muted-foreground/50 font-medium whitespace-nowrap"
+        class="w-16 shrink-0 flex flex-col justify-between h-28 pb-2 pr-2 text-[10px] text-muted-foreground/50 font-medium"
       >
-        {{ isAverageMetricType(metric.KEY) ? formatTime(maxValue) : maxValue }}
+        <span class="whitespace-nowrap">
+          {{
+            isAverageMetricType(metric.KEY) ? formatTime(maxValue) : maxValue
+          }}
+        </span>
+        <span>{{ 0 }}</span>
       </div>
       <div
-        class="absolute -left-4 bottom-1 text-[10px] text-muted-foreground/50 font-medium"
-      >
-        {{ 0 }}
-      </div>
-
-      <div
-        v-for="(item, i) in formattedChartData"
-        :key="i"
-        class="flex-1 flex flex-col justify-end h-full relative group/bar"
+        class="flex-1 h-28 flex items-end gap-2 border-b border-border/50 pb-2 relative"
       >
         <div
-          class="w-full transition-all duration-300 rounded-t-sm bg-primary/90 group-hover/bar:bg-primary"
-          :style="{
-            height: `${item.heightPercent}%`,
-            minHeight: item.raw > 0 ? '3px' : '1px',
-            opacity: item.raw === 0 ? '0.05' : '1',
-          }"
-        />
-
-        <!-- Tooltip -->
-        <div
-          class="absolute -top-[60px] left-1/2 -translate-x-1/2 bg-popover text-popover-foreground px-3 py-2 rounded-md shadow-xl opacity-0 group-hover/bar:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-10 flex flex-col gap-1 min-w-max border border-border"
+          v-for="(item, i) in formattedChartData"
+          :key="i"
+          class="flex-1 flex flex-col justify-end h-full relative group/bar"
         >
-          <span class="font-bold text-[11px] leading-none">{{
-            item.date
-          }}</span>
-          <div class="flex items-center gap-1.5 mt-0.5">
-            <div class="size-2 bg-primary rounded-sm" />
-            <span class="text-[11px] leading-none text-popover-foreground/90"
-              >{{ metric.NAME }}: {{ item.displayValue }}</span
-            >
-          </div>
           <div
-            v-if="item.count > 0 && isAverageMetricType(metric.KEY)"
-            class="flex items-center gap-1.5 mt-0.5"
-          >
-            <div class="size-2 bg-popover-foreground/20 rounded-sm" />
-            <span class="text-[11px] leading-none text-popover-foreground/60"
-              >{{ $t('REPORT.CONVERSATION_COUNT') }}: {{ item.count }}</span
-            >
-          </div>
-          <!-- Tooltip Arrow -->
-          <div
-            class="absolute -bottom-1 left-1/2 -translate-x-1/2 size-2.5 bg-popover rotate-45 border-r border-b border-border"
+            class="w-full transition-all duration-300 rounded-t-sm bg-primary/90 group-hover/bar:bg-primary"
+            :style="{
+              height: `${item.heightPercent}%`,
+              minHeight: item.raw > 0 ? '3px' : '1px',
+              opacity: item.raw === 0 ? '0.05' : '1',
+            }"
           />
+
+          <!-- Tooltip -->
+          <div
+            class="absolute -top-[60px] left-1/2 -translate-x-1/2 bg-popover text-popover-foreground px-3 py-2 rounded-md shadow-xl opacity-0 group-hover/bar:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-10 flex flex-col gap-1 min-w-max border border-border"
+          >
+            <span class="font-bold text-[11px] leading-none">{{
+              item.date
+            }}</span>
+            <div class="flex items-center gap-1.5 mt-0.5">
+              <div class="size-2 bg-primary rounded-sm" />
+              <span class="text-[11px] leading-none text-popover-foreground/90"
+                >{{ metric.NAME }}: {{ item.displayValue }}</span
+              >
+            </div>
+            <div
+              v-if="item.count > 0 && isAverageMetricType(metric.KEY)"
+              class="flex items-center gap-1.5 mt-0.5"
+            >
+              <div class="size-2 bg-popover-foreground/20 rounded-sm" />
+              <span class="text-[11px] leading-none text-popover-foreground/60"
+                >{{ $t('REPORT.CONVERSATION_COUNT') }}: {{ item.count }}</span
+              >
+            </div>
+            <!-- Tooltip Arrow -->
+            <div
+              class="absolute -bottom-1 left-1/2 -translate-x-1/2 size-2.5 bg-popover rotate-45 border-r border-b border-border"
+            />
+          </div>
         </div>
       </div>
     </div>
@@ -267,7 +267,7 @@ const xAxisLabels = computed(() => {
     </div>
 
     <!-- X Axis -->
-    <div v-if="xAxisLabels.length > 0" class="flex gap-2 mt-2 ml-4">
+    <div v-if="xAxisLabels.length > 0" class="flex gap-2 mt-2 ml-16">
       <div
         v-for="day in xAxisLabels"
         :key="day"

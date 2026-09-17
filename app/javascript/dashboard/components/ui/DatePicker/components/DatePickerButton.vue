@@ -60,17 +60,17 @@ const openDatePicker = () => {
 <template>
   <div class="inline-flex items-center gap-1">
     <button
-      class="inline-flex relative items-center rounded-lg gap-2 py-1.5 px-3 h-9 bg-accent hover:bg-accent active:bg-accent flex-shrink-0"
+      class="inline-flex relative items-center rounded-md gap-2 py-1.5 px-3 h-9 border border-border bg-card shadow-sm hover:border-transparent hover:bg-accent flex-shrink-0"
       @click="openDatePicker"
     >
       <Icon
         icon="i-lucide-calendar-range"
         class="text-muted-foreground size-3.5 flex-shrink-0"
       />
-      <span class="truncate text-[13px] font-normal text-foreground">
+      <span class="truncate text-[14px] font-medium text-foreground">
         {{ navigationLabel || $t(activeDateRange) }}
       </span>
-      <span class="truncate text-[13px] font-normal text-muted-foreground">
+      <span class="truncate text-[14px] font-medium text-muted-foreground">
         {{ formatDateRange }}
       </span>
       <Icon

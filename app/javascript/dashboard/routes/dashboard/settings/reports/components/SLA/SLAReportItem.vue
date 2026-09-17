@@ -41,7 +41,10 @@ const routerParams = computed(() => ({
     <div
       class="flex items-center gap-2 col-span-6 px-0 py-2 text-sm tracking-[0.5] text-foreground rtl:text-right"
     >
-      <router-link :to="routerParams" class="text-foreground hover:underline">
+      <router-link
+        :to="routerParams"
+        class="font-medium text-foreground hover:underline"
+      >
         {{ `#${conversationId}` }}
       </router-link>
       <span class="text-muted-foreground">

@@ -2,11 +2,19 @@
 /* eslint-disable */
 import { ref, computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
-import { RelayButton as Button, RelayBadge as Badge } from 'dashboard/components-next/relay';
+import {
+  RelayButton as Button,
+  RelayBadge as Badge,
+  RelayDropdownMenu,
+  RelayDropdownMenuTrigger,
+  RelayDropdownMenuContent,
+  RelayDropdownMenuItem,
+  RelayTooltip,
+} from 'dashboard/components-next/relay';
 import {
   Star, TrendingUp, TrendingDown, MessageSquare, Bot,
   ArrowRight, MessageCircle, Link, Mail, StarHalf, Share2, Info, Trophy,
-  CheckCircle, Plus, ThumbsUp, ChevronRight, Check, Globe, ShieldCheck, Lightbulb
+  CheckCircle, Plus, ThumbsUp, ChevronRight, ChevronDown, Check, Globe, ShieldCheck, Lightbulb
 } from 'lucide-vue-next';
 
 import RequestReviewsModal from '../components/RequestReviewsModal.vue';
@@ -122,25 +130,76 @@ const platforms = computed(() => {
   }));
 });
 
-const trendBars = computed(() => {
+const TREND_RANGES = [
+  { value: '7m', label: 'Last 7 Months' },
+  { value: 'year', label: 'This Year' },
+  { value: 'all', label: 'All Time' },
+];
+const trendRange = ref('7m');
+const selectedTrendLabel = computed(
+  () =>
+    TREND_RANGES.find(range => range.value === trendRange.value)?.label ||
+    'Last 7 Months'
+);
+
+const trendMonthBuckets = () => {
   const now = new Date();
   const months = [];
-  for (let i = 6; i >= 0; i--) {
-    const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
-    months.push({ month: d.toLocaleString('en', { month: 'short' }), year: d.getFullYear(), m: d.getMonth() });
+  const pushMonth = date => {
+    months.push({
+      month: date.toLocaleString('en', { month: 'short' }),
+      year: date.getFullYear(),
+      m: date.getMonth(),
+    });
+  };
+
+  if (trendRange.value === 'year') {
+    for (let i = 0; i <= now.getMonth(); i += 1) {
+      pushMonth(new Date(now.getFullYear(), i, 1));
+    }
+    return months;
   }
-  const counts = months.map(m => {
-    const count = allReviews.value.filter(r => {
-      if (!r.reviewed_at) return false;
-      const rd = new Date(r.reviewed_at);
-      return rd.getMonth() === m.m && rd.getFullYear() === m.year;
+
+  if (trendRange.value === 'all') {
+    const dates = allReviews.value
+      .map(review => review.reviewed_at)
+      .filter(Boolean)
+      .map(value => new Date(value));
+    const start = dates.length
+      ? new Date(Math.min(...dates.map(date => date.getTime())))
+      : new Date(now.getFullYear(), now.getMonth() - 6, 1);
+    const cursor = new Date(start.getFullYear(), start.getMonth(), 1);
+    const end = new Date(now.getFullYear(), now.getMonth(), 1);
+    while (cursor <= end) {
+      pushMonth(new Date(cursor));
+      cursor.setMonth(cursor.getMonth() + 1);
+    }
+    return months.length > 24 ? months.slice(-24) : months;
+  }
+
+  for (let i = 6; i >= 0; i -= 1) {
+    pushMonth(new Date(now.getFullYear(), now.getMonth() - i, 1));
+  }
+  return months;
+};
+
+const trendBars = computed(() => {
+  const months = trendMonthBuckets();
+  const counts = months.map(month => {
+    const count = allReviews.value.filter(review => {
+      if (!review.reviewed_at) return false;
+      const reviewedAt = new Date(review.reviewed_at);
+      return (
+        reviewedAt.getMonth() === month.m &&
+        reviewedAt.getFullYear() === month.year
+      );
     }).length;
-    return { month: m.month, count };
+    return { month: month.month, count };
   });
-  const maxCount = Math.max(...counts.map(c => c.count), 1);
-  return counts.map(c => ({
-    month: c.month,
-    val1: c.count === 0 ? 0 : Math.round((c.count / maxCount) * 80) + 10,
+  const maxCount = Math.max(...counts.map(item => item.count), 1);
+  return counts.map(item => ({
+    month: item.month,
+    val1: item.count === 0 ? 0 : Math.round((item.count / maxCount) * 80) + 10,
   }));
 });
 
@@ -495,8 +554,8 @@ async function generateReviewReplies() {
               <ThumbsUp class="size-5" />
             </div>
           </div>
-          <div class="flex items-center justify-between text-sm font-medium text-muted-foreground gap-1">
-            <span>{{ positiveCount.toLocaleString() }} of {{ totalReviews.toLocaleString() }} reviews</span>
+          <div class="flex items-center justify-between text-sm text-muted-foreground gap-1">
+            <span class="font-normal">{{ positiveCount.toLocaleString() }} of {{ totalReviews.toLocaleString() }} reviews</span>
             <span class="text-[11.5px] font-medium text-primary hover:underline flex items-center gap-0.5">
               View breakdown <ChevronRight class="size-3" />
             </span>
@@ -516,9 +575,26 @@ async function generateReviewReplies() {
               </div>
               <span v-if="showDemoSurfaces && trendIsMock" class="rounded bg-warning/10 px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wide text-warning" title="Demo — connect a review platform to see real data">Demo</span>
             </div>
-            <div class="inline-flex items-center gap-1.5 rounded-lg border border-border bg-card px-3 py-1.5 text-xs font-medium text-muted-foreground shrink-0">
-              Last 7 Months
-            </div>
+            <RelayDropdownMenu>
+              <RelayDropdownMenuTrigger as-child>
+                <button
+                  type="button"
+                  class="inline-flex shrink-0 items-center gap-1.5 rounded-lg border border-border bg-card px-3 py-1.5 text-[13px] font-normal text-muted-foreground hover:border-transparent hover:bg-accent"
+                >
+                  {{ selectedTrendLabel }}
+                  <ChevronDown class="size-3.5" />
+                </button>
+              </RelayDropdownMenuTrigger>
+              <RelayDropdownMenuContent align="end" class="min-w-[10rem]">
+                <RelayDropdownMenuItem
+                  v-for="range in TREND_RANGES"
+                  :key="range.value"
+                  @click="trendRange = range.value"
+                >
+                  {{ range.label }}
+                </RelayDropdownMenuItem>
+              </RelayDropdownMenuContent>
+            </RelayDropdownMenu>
           </div>
 
           <div class="h-[220px] w-full flex items-end justify-between gap-3 pt-6 px-2">
@@ -555,7 +631,7 @@ async function generateReviewReplies() {
 
             <button
               :disabled="generatingReplies"
-              class="w-full mt-6 h-9 text-xs font-semibold gap-2 bg-primary/10 text-primary hover:bg-primary/20 rounded-lg inline-flex items-center justify-center cursor-pointer transition-colors disabled:opacity-50"
+              class="w-full mt-6 h-9 text-[14px] font-medium gap-2 bg-primary/10 text-primary hover:bg-primary/20 rounded-lg inline-flex items-center justify-center cursor-pointer transition-colors disabled:opacity-50"
               @click="generateReviewReplies"
             >
               <Bot class="size-4" /> {{ generatingReplies ? 'Drafting replies…' : 'Generate Review Replies' }}
@@ -570,7 +646,14 @@ async function generateReviewReplies() {
         <div class="bg-card rounded-xl border border-border shadow-sm p-6">
           <div class="flex items-center gap-2 mb-6">
             <h3 class="text-base font-semibold text-foreground">Platform Breakdown</h3>
-            <Info class="size-4 text-muted-foreground opacity-70" />
+            <RelayTooltip
+              content="Ratings, review counts, and period trends by connected platform."
+              side="top"
+            >
+              <span class="inline-flex">
+                <Info class="size-4 text-muted-foreground opacity-70" />
+              </span>
+            </RelayTooltip>
           </div>
 
           <div v-if="platforms.length" class="w-full">
@@ -585,7 +668,7 @@ async function generateReviewReplies() {
               <div v-for="platform in platforms" :key="platform.name" class="grid grid-cols-12 gap-2 items-center text-sm py-1 border-b border-border/40 last:border-0">
                 <div class="col-span-3 flex items-center gap-2.5">
                   <div v-html="platform.svgIcon" class="shrink-0 flex items-center justify-center"></div>
-                  <span class="font-bold text-foreground text-[13.5px]">{{ platform.name }}</span>
+                  <span class="font-medium text-foreground text-[13.5px]">{{ platform.name }}</span>
                 </div>
 
                 <div class="col-span-3 flex items-center justify-center gap-1.5">
@@ -595,7 +678,7 @@ async function generateReviewReplies() {
                   </div>
                 </div>
 
-                <div class="col-span-3 text-center text-muted-foreground font-medium text-xs">
+                <div class="col-span-3 text-center text-muted-foreground font-medium text-[14px]">
                   {{ platform.total }}
                 </div>
 
@@ -610,7 +693,7 @@ async function generateReviewReplies() {
           </div>
 
           <div class="mt-6 pt-2">
-            <router-link :to="{ name: 'reputation_reviews' }" class="text-xs font-semibold text-primary flex items-center gap-1 hover:underline">
+            <router-link :to="{ name: 'reputation_reviews' }" class="text-[14px] font-medium text-primary flex items-center gap-1 hover:underline">
               View all platforms <ArrowRight class="size-3.5" />
             </router-link>
           </div>
@@ -623,42 +706,42 @@ async function generateReviewReplies() {
           
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <router-link :to="{ name: 'reputation_requests' }" class="flex items-center gap-3 p-4 border border-border rounded-xl hover:bg-accent transition-colors text-left group">
-              <div class="p-2 bg-primary/10 text-primary rounded-lg group-hover:scale-110 transition-transform">
+              <div class="flex size-8 items-center justify-center rounded-lg bg-primary/10 p-1.5 text-primary group-hover:scale-110 transition-transform">
                 <Mail class="size-5" />
               </div>
               <div>
-                <p class="font-bold text-xs text-foreground">Request Reviews</p>
-                <p class="text-[11px] text-muted-foreground mt-0.5">Send email/SMS</p>
+                <p class="text-[14px] font-medium text-foreground">Request Reviews</p>
+                <p class="text-[12px] text-muted-foreground mt-0.5">Send email/SMS</p>
               </div>
             </router-link>
 
             <router-link :to="{ name: 'reputation_reviews' }" class="flex items-center gap-3 p-4 border border-border rounded-xl hover:bg-accent transition-colors text-left group">
-              <div class="p-2 bg-primary/10 text-primary rounded-lg group-hover:scale-110 transition-transform">
+              <div class="flex size-8 items-center justify-center rounded-lg bg-primary/10 p-1.5 text-primary group-hover:scale-110 transition-transform">
                 <MessageSquare class="size-5" />
               </div>
               <div>
-                <p class="font-bold text-xs text-foreground">Respond to Feedback</p>
-                <p class="text-[11px] text-muted-foreground mt-0.5">{{ pendingCount }} pending items</p>
+                <p class="text-[14px] font-medium text-foreground">Respond to Feedback</p>
+                <p class="text-[12px] text-muted-foreground mt-0.5">{{ pendingCount }} pending items</p>
               </div>
             </router-link>
 
             <router-link :to="{ name: 'reputation_automation' }" class="flex items-center gap-3 p-4 border border-border rounded-xl hover:bg-accent transition-colors text-left group">
-              <div class="p-2 bg-primary/10 text-primary rounded-lg group-hover:scale-110 transition-transform">
+              <div class="flex size-8 items-center justify-center rounded-lg bg-primary/10 p-1.5 text-primary group-hover:scale-110 transition-transform">
                 <Bot class="size-5" />
               </div>
               <div>
-                <p class="font-bold text-xs text-foreground">Automate Replies</p>
-                <p class="text-[11px] text-muted-foreground mt-0.5">Configure AI settings</p>
+                <p class="text-[14px] font-medium text-foreground">Automate Replies</p>
+                <p class="text-[12px] text-muted-foreground mt-0.5">Configure AI settings</p>
               </div>
             </router-link>
 
             <router-link :to="{ name: 'reputation_settings' }" class="flex items-center gap-3 p-4 border border-border rounded-xl hover:bg-accent transition-colors text-left group">
-              <div class="p-2 bg-primary/10 text-primary rounded-lg group-hover:scale-110 transition-transform">
+              <div class="flex size-8 items-center justify-center rounded-lg bg-primary/10 p-1.5 text-primary group-hover:scale-110 transition-transform">
                 <Link class="size-5" />
               </div>
               <div>
-                <p class="font-bold text-xs text-foreground">Connect Platform</p>
-                <p class="text-[11px] text-muted-foreground mt-0.5">Add new integration</p>
+                <p class="text-[14px] font-medium text-foreground">Connect Platform</p>
+                <p class="text-[12px] text-muted-foreground mt-0.5">Add new integration</p>
               </div>
             </router-link>
           </div>
@@ -666,34 +749,37 @@ async function generateReviewReplies() {
       </div>
 
       <!-- Section 4: Recent Reviews (Real) -->
-      <div class="bg-card rounded-2xl border border-border shadow-xs overflow-hidden mb-8">
+      <div class="bg-card rounded-2xl border border-border shadow-sm overflow-hidden mb-8">
         <div class="p-6 border-b border-border flex justify-between items-center bg-muted/20">
           <div>
             <h3 class="text-base font-semibold text-foreground">Recent Reviews</h3>
             <p class="text-sm text-muted-foreground mt-0.5">Latest customer feedback across platforms.</p>
           </div>
-          <router-link :to="{ name: 'reputation_reviews' }" class="text-xs font-semibold gap-1 text-primary hover:underline flex items-center">
+          <router-link
+            :to="{ name: 'reputation_reviews' }"
+            class="inline-flex h-[30px] items-center gap-1 rounded-md border border-border px-4 text-[14px] font-medium text-primary hover:border-transparent hover:bg-accent"
+          >
             View All <ArrowRight class="size-3.5" />
           </router-link>
         </div>
 
         <div v-if="recentReviews.length === 0" class="p-12 text-center text-muted-foreground text-sm">No reviews yet. Connect a platform to get started.</div>
         <div v-else class="divide-y divide-border">
-          <div v-for="review in recentReviews" :key="review.id" class="p-6 hover:bg-accent transition-colors flex flex-col sm:flex-row gap-5">
+          <div v-for="review in recentReviews" :key="review.id" class="p-6 flex flex-col sm:flex-row gap-5">
             <div class="shrink-0">
-              <Avatar :name="review.author" :size="40" />
+              <Avatar :name="review.author" :size="40" rounded-full />
             </div>
 
             <div class="flex-1">
               <div class="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-2 mb-2">
                 <div>
-                  <h4 class="font-bold text-[14.5px] text-foreground">{{ review.author }}</h4>
+                  <h4 class="text-[14px] font-normal text-foreground">{{ review.author }}</h4>
                   <div class="flex items-center gap-2 mt-1">
                     <div class="flex gap-0.5 text-warning">
                       <Star v-for="i in 5" :key="i" class="size-3.5" :class="i <= review.rating ? 'fill-warning text-warning' : 'text-muted-foreground/30'" />
                     </div>
                     <span class="text-xs text-muted-foreground flex items-center gap-1">
-                      on <span class="font-bold text-foreground">{{ review.platform }}</span> • {{ review.date }}
+                      on <span class="font-medium text-foreground">{{ review.platform }}</span> • {{ review.date }}
                     </span>
                   </div>
                 </div>

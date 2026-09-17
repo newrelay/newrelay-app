@@ -340,7 +340,12 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <ninja-keys ref="ninjakeys" class="contents">
+  <ninja-keys
+    ref="ninjakeys"
+    class="contents"
+    disable-hotkeys
+    open-hotkey=""
+  >
     <Teleport to="body">
       <div
         v-if="isOpen"
@@ -370,9 +375,10 @@ onUnmounted(() => {
             <input
               ref="searchInputRef"
               v-model="searchQuery"
+              data-slot="input"
               type="text"
               :placeholder="placeholder"
-              class="placeholder:text-muted-foreground h-11 w-full bg-transparent text-sm outline-none"
+              class="reset-base h-11 w-full border-0 bg-transparent px-0 py-0 text-[14px] text-foreground shadow-none outline-none placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-0"
             />
             <button
               type="button"

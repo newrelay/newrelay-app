@@ -9,7 +9,6 @@ import {
   ICON_AGENT_REPORTS,
   ICON_CONTACT_DASHBOARD,
   ICON_CONVERSATION_DASHBOARD,
-  ICON_INBOXES,
   ICON_INBOX_REPORTS,
   ICON_LABEL_REPORTS,
   ICON_NOTIFICATION,
@@ -38,14 +37,6 @@ const GO_TO_COMMANDS = [
     featureFlag: FEATURE_FLAGS.CRM,
     icon: ICON_CONTACT_DASHBOARD,
     path: accountId => `accounts/${accountId}/contacts`,
-    role: ['administrator', 'agent'],
-  },
-  {
-    id: 'goto_search',
-    title: 'COMMAND_BAR.COMMANDS.GO_TO_SEARCH',
-    section: 'COMMAND_BAR.SECTIONS.GENERAL',
-    icon: ICON_INBOXES,
-    path: accountId => `accounts/${accountId}/search`,
     role: ['administrator', 'agent'],
   },
   {

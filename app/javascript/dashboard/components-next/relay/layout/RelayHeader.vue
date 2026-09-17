@@ -84,7 +84,7 @@ const toggleTheme = () => {
       <slot name="actions" />
       <button
         type="button"
-        class="relative inline-flex size-8 scale-100 items-center justify-center rounded-full border border-input bg-background text-muted-foreground shadow-xs transition-colors hover:border-transparent hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+        class="relative inline-flex size-9 scale-100 items-center justify-center rounded-full border border-input bg-background text-muted-foreground shadow-xs transition-colors hover:border-transparent hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
         :aria-label="t('SIDEBAR.TOGGLE_THEME')"
         @click="toggleTheme"
       >

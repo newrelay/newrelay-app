@@ -87,7 +87,7 @@ const saveEdit = () => {
       <RelayButton
         variant="ghost"
         size="icon"
-        class="!size-8 rounded-md border border-border text-muted-foreground hover:border-transparent hover:text-foreground"
+        class="size-8 rounded-md border border-border text-muted-foreground hover:border-transparent hover:text-foreground"
         @click="startEdit"
       >
         <span class="i-lucide-pen size-3.5" />
@@ -95,7 +95,7 @@ const saveEdit = () => {
       <RelayButton
         variant="ghost"
         size="icon"
-        class="!size-8 rounded-md border border-border text-muted-foreground hover:border-transparent hover:bg-destructive/10 hover:text-destructive"
+        class="size-8 rounded-md border border-border text-muted-foreground hover:border-transparent hover:bg-destructive/10 hover:text-destructive"
         @click="emit('delete', id)"
       >
         <span class="i-lucide-trash-2 size-3.5" />

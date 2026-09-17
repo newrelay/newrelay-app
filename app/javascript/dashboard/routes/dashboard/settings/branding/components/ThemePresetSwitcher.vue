@@ -5,6 +5,12 @@ import { vOnClickOutside } from '@vueuse/components';
 import TeleportWithDirection from 'dashboard/components-next/TeleportWithDirection.vue';
 import { useDropdownPosition } from 'dashboard/composables/useDropdownPosition';
 import {
+  DROPDOWN_MENU_SEARCH_HEADER_CLASS,
+  DROPDOWN_MENU_SEARCH_ICON_CLASS,
+  DROPDOWN_MENU_SEARCH_INPUT_CLASS,
+  DROPDOWN_MENU_SEARCH_WRAPPER_CLASS,
+} from 'dashboard/components-next/relay';
+import {
   BRAND_THEME_PRESETS,
   DEFAULT_BRAND_PRESET,
   findMatchingPreset,
@@ -144,14 +150,16 @@ const shuffle = () => {
         :style="fixedPosition.style"
         class="z-50 w-72 overflow-hidden rounded-lg border border-border bg-popover p-0 text-popover-foreground shadow-md"
       >
-        <div class="flex items-center gap-2 border-b border-border px-3">
-          <span class="i-lucide-search size-4 shrink-0 text-muted-foreground" />
-          <input
-            v-model="query"
-            type="search"
-            :placeholder="$t('BRANDING_SETTINGS.THEME_SETTINGS.SEARCH')"
-            class="h-10 w-full bg-transparent outline-none placeholder:text-muted-foreground text-[14px] border-border/80 bg-background focus-visible:ring-1 focus-visible:ring-primary/30 shadow-sm rounded-md"
-          />
+        <div :class="DROPDOWN_MENU_SEARCH_HEADER_CLASS">
+          <div :class="DROPDOWN_MENU_SEARCH_WRAPPER_CLASS">
+            <span :class="DROPDOWN_MENU_SEARCH_ICON_CLASS" />
+            <input
+              v-model="query"
+              type="text"
+              :placeholder="$t('BRANDING_SETTINGS.THEME_SETTINGS.SEARCH')"
+              :class="DROPDOWN_MENU_SEARCH_INPUT_CLASS"
+            />
+          </div>
         </div>
         <div
           class="flex items-center justify-between px-3 py-2 text-xs text-muted-foreground"

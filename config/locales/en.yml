@@ -597,7 +597,6 @@ en:
       hide_password: 'Hide password'
       remember_me: 'Remember this device'
       submit: 'Sign in'
-      toggle_theme: 'Toggle theme'
       status_operational: 'Operational'
       status_degraded: 'Degraded'
       edition_enterprise: 'Enterprise'

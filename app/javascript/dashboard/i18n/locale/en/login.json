@@ -1,10 +1,4 @@
 {
-  "AUTH": {
-    "THEME": {
-      "LIGHT": "Switch to light mode",
-      "DARK": "Switch to dark mode"
-    }
-  },
   "LOGIN": {
     "TITLE": "Login to NewRelay",
     "CONTINUE_TO": "Login to continue to",

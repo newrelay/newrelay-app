@@ -1,0 +1,21 @@
+<% content_for(:title) { t('super_admin.email_templates.preview_title', name: @entry.title) } %>
+
+<div class="space-y-6">
+  <div class="page-header">
+    <div>
+      <h1 class="page-title"><%= t('super_admin.email_templates.preview_title', name: @entry.title) %></h1>
+      <p class="text-[13.5px] text-muted-foreground mt-1"><%= t('super_admin.email_templates.preview_description') %></p>
+    </div>
+    <div class="page-actions">
+      <%= link_to t('super_admin.email_templates.back'), super_admin_email_templates_path, class: 'btn btn-outline' %>
+      <%= link_to t('super_admin.email_templates.view'), super_admin_email_template_path(@entry.key), class: 'btn btn-outline' %>
+      <% if @entry.editable %>
+        <%= link_to t('super_admin.email_templates.edit'), edit_super_admin_email_template_path(@entry.key), class: 'btn btn-primary' %>
+      <% end %>
+    </div>
+  </div>
+
+  <div class="show-sub-card overflow-hidden p-0">
+    <iframe sandbox class="block h-[720px] w-full bg-background" title="<%= t('super_admin.email_templates.preview_title', name: @entry.title) %>" srcdoc="<%= ERB::Util.html_escape(@html) %>"></iframe>
+  </div>
+</div>

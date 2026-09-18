@@ -8,6 +8,7 @@
     </div>
     <div class="page-actions">
       <%= link_to t('super_admin.email_templates.back'), super_admin_email_templates_path, class: 'btn btn-outline' %>
+      <%= link_to t('super_admin.email_templates.preview'), preview_super_admin_email_template_path(@entry.key), class: 'btn btn-outline' %>
       <% if @entry.editable %>
         <%= link_to t('super_admin.email_templates.edit'), edit_super_admin_email_template_path(@entry.key), class: 'btn btn-primary' %>
       <% end %>

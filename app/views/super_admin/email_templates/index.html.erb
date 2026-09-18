@@ -26,7 +26,7 @@
             <th scope="col"><%= t('super_admin.email_templates.columns.category') %></th>
             <th scope="col"><%= t('super_admin.email_templates.columns.format') %></th>
             <th scope="col"><%= t('super_admin.email_templates.columns.status') %></th>
-            <th scope="col" class="w-[90px] text-right"><span class="sr-only"><%= t('super_admin.email_templates.columns.actions') %></span></th>
+            <th scope="col" class="w-[180px] text-right"><span class="sr-only"><%= t('super_admin.email_templates.columns.actions') %></span></th>
           </tr>
         </thead>
         <tbody>
@@ -48,7 +48,10 @@
                 <% end %>
               </td>
               <td class="text-right">
-                <%= link_to t('super_admin.email_templates.view'), super_admin_email_template_path(entry.key), class: 'btn btn-outline btn-sm' %>
+                <div class="flex justify-end gap-2">
+                  <%= link_to t('super_admin.email_templates.preview'), preview_super_admin_email_template_path(entry.key), class: 'btn btn-outline btn-sm' %>
+                  <%= link_to t('super_admin.email_templates.view'), super_admin_email_template_path(entry.key), class: 'btn btn-outline btn-sm' %>
+                </div>
               </td>
             </tr>
           <% end %>

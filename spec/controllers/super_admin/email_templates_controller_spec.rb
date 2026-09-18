@@ -30,6 +30,18 @@ RSpec.describe 'Super Admin Email Templates', type: :request do
     end
   end
 
+  describe 'GET /super_admin/email_templates/:key/preview' do
+    it 'renders a sample preview of a liquid template' do
+      sign_in(super_admin, scope: :super_admin)
+      get '/super_admin/email_templates/mailers--agent_notifications--conversation_notifications_mailer--conversation_creation/preview'
+
+      expect(response).to have_http_status(:success)
+      expect(response.body).to include('Preview Conversation Creation')
+      expect(CGI.unescapeHTML(response.body)).to include('Alex Rivera')
+      expect(CGI.unescapeHTML(response.body)).to include('Jordan Lee')
+    end
+  end
+
   describe 'PATCH /super_admin/email_templates/:key' do
     it 'saves an installation override for a liquid template' do
       sign_in(super_admin, scope: :super_admin)

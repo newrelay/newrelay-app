@@ -10,6 +10,11 @@ class SuperAdmin::EmailTemplatesController < SuperAdmin::ApplicationController
     load_template
   end
 
+  def preview
+    load_template
+    @html = EmailTemplates::PreviewService.new(entry: @entry, body: @body).perform
+  end
+
   def edit
     load_template
     return unless reject_unless_editable

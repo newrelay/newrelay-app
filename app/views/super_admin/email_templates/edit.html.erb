@@ -7,6 +7,7 @@
       <p class="text-[13.5px] text-muted-foreground mt-1"><%= t('super_admin.email_templates.edit_description') %></p>
     </div>
     <div class="page-actions">
+      <%= link_to t('super_admin.email_templates.preview'), preview_super_admin_email_template_path(@entry.key), class: 'btn btn-outline' %>
       <%= link_to t('super_admin.email_templates.cancel'), super_admin_email_template_path(@entry.key), class: 'btn btn-outline' %>
     </div>
   </div>

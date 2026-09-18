@@ -20,7 +20,8 @@ class Api::V2::AccountsController < Api::BaseController
       email: account_params[:email],
       user_password: account_params[:password],
       locale: account_params[:locale],
-      user: current_user
+      user: current_user,
+      parent_id: Account.signup_parent_for_host(request.host)&.id
     ).perform
 
     fetch_account_and_user_info

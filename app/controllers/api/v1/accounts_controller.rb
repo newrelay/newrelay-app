@@ -22,9 +22,8 @@ class Api::V1::AccountsController < Api::BaseController
   end
 
   def create
-    parent_id = account_params[:parent_id]
-    validate_parent_account(parent_id)
     Current.mailer_account = Account.for_custom_domain(request.host)
+    parent_id = resolved_signup_parent_id
 
     @user, @account = AccountBuilder.new(
       account_name: account_params[:account_name],
@@ -86,6 +85,8 @@ class Api::V1::AccountsController < Api::BaseController
   private
 
   def enqueue_branding_enrichment
+    return if @account&.parent_id.present?
+
     email = account_params[:email].presence || @user&.email
     return if email.blank?
 
@@ -159,6 +160,16 @@ class Api::V1::AccountsController < Api::BaseController
 
   def validate_captcha
     raise ActionController::InvalidAuthenticityToken, 'Invalid Captcha' unless ChatwootCaptcha.new(params[:h_captcha_client_response]).valid?
+  end
+
+  def resolved_signup_parent_id
+    explicit_parent_id = account_params[:parent_id]
+    if explicit_parent_id.present?
+      validate_parent_account(explicit_parent_id)
+      return explicit_parent_id
+    end
+
+    Account.signup_parent_for_host(request.host)&.id
   end
 
   def validate_parent_account(parent_id)

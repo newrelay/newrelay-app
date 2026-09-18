@@ -80,14 +80,19 @@ class DeviseOverrides::OmniauthCallbacksController < DeviseTokenAuth::OmniauthCa
   end
 
   def create_account_for_user
+    host_account = Account.for_custom_domain(request.host)
+    Current.mailer_account = host_account
     @resource, @account = AccountBuilder.new(
       account_name: extract_domain_without_tld(auth_hash['info']['email']),
       user_full_name: auth_hash['info']['name'],
       email: auth_hash['info']['email'],
       locale: I18n.locale,
-      confirmed: auth_hash['info']['email_verified']
+      confirmed: auth_hash['info']['email_verified'],
+      parent_id: Account.signup_parent_for_host(request.host)&.id
     ).perform
     Avatar::AvatarFromUrlJob.perform_later(@resource, auth_hash['info']['image'])
+  ensure
+    Current.mailer_account = nil
   end
 
   def oauth_user_needs_password_reset?

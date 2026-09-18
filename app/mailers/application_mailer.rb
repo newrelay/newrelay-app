@@ -92,7 +92,15 @@ class ApplicationMailer < ActionMailer::Base
   end
 
   def mailer_brand_account
-    Current.account.presence || mailer_url_account
+    root_branding_account(Current.account.presence || mailer_url_account)
+  end
+
+  def root_branding_account(account)
+    return account if account.blank?
+
+    root = account
+    root = root.parent while root.parent
+    root
   end
 
   def apply_account_branding_to_mailer_config(config, account)

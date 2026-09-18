@@ -256,8 +256,25 @@ class Account < ApplicationRecord
   def self.for_custom_domain(host)
     normalized = host.to_s.strip.downcase.presence
     return if normalized.blank?
+    return if platform_host?(normalized)
 
     find_by('LOWER(custom_domain) = ?', normalized)
+  end
+
+  # Public signup on a T1 custom domain becomes a T2 sub-workspace of that account.
+  def self.signup_parent_for_host(host)
+    account = for_custom_domain(host)
+    return if account.blank? || account.parent_id.present?
+
+    account.update(is_reseller: true) unless account.is_reseller?
+    account
+  end
+
+  def self.platform_host?(host)
+    platform = URI.parse(ENV.fetch('FRONTEND_URL', '')).host
+    platform.present? && host == platform.downcase
+  rescue URI::InvalidURIError
+    false
   end
 
   def reseller_dashboard_enabled?
@@ -364,8 +381,10 @@ class Account < ApplicationRecord
 
   def parent_must_be_a_reseller
     return if parent.blank?
+    return if parent.is_reseller?
+    return if parent.custom_domain.present? && parent.parent_id.blank?
 
-    errors.add(:parent_id, 'must reference an account with is_reseller = true') unless parent.is_reseller?
+    errors.add(:parent_id, 'must reference an account with is_reseller = true')
   end
 
   def no_self_parenting
@@ -380,6 +399,7 @@ class Account < ApplicationRecord
 
   def t3_subaccount_limit_enforced
     return if parent.blank?
+    return if parent.custom_domain.present? && parent.parent_id.blank?
 
     limit = parent.limits['t3_subaccounts']
     return if limit.nil? # unlimited

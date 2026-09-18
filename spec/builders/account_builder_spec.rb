@@ -59,7 +59,7 @@ RSpec.describe AccountBuilder do
       end
 
       it 'assigns the parent_id if provided' do
-        parent_account = create(:account)
+        parent_account = create(:account, is_reseller: true)
         builder_with_parent = described_class.new(
           account_name: account_name,
           email: 'another@example.com',

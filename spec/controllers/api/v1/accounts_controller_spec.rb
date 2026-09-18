@@ -31,6 +31,27 @@ RSpec.describe 'Accounts API', type: :request do
         end
       end
 
+      it 'nests the new workspace under the custom-domain T1 account' do
+        host_account = create(:account)
+        host_account.enable_features!(:custom_domain)
+        host_account.update!(custom_domain: 'support.acme.test')
+
+        with_modified_env ENABLE_ACCOUNT_SIGNUP: 'true' do
+          allow(account_builder).to receive(:perform).and_return([user, account])
+          host! 'support.acme.test'
+
+          params = { account_name: 'test', email: email, user: nil, locale: nil, user_full_name: user_full_name, password: 'Password1!' }
+
+          post '/api/v1/accounts',
+               params: params,
+               as: :json
+
+          expect(AccountBuilder).to have_received(:new).with(
+            params.except(:password).merge(user_password: params[:password], parent_id: host_account.id)
+          )
+        end
+      end
+
       it 'calls ChatwootCaptcha' do
         with_modified_env ENABLE_ACCOUNT_SIGNUP: 'true' do
           captcha = double

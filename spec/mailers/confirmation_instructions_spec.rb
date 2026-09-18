@@ -87,6 +87,28 @@ RSpec.describe 'Devise::Mailer' do
       end
     end
 
+    context 'when the user belongs to a T2 workspace under a branded T1 parent' do
+      let(:logo_url) { 'https://cdn.acme.test/logo.png' }
+      let(:parent_account) { create(:account, is_reseller: true) }
+      let(:account) { create(:account, parent: parent_account) }
+      let(:mail) { Devise::Mailer.with(account: account).confirmation_instructions(confirmable_user.reload, nil, {}) }
+
+      before do
+        parent_account.enable_features!(:white_labeling, :custom_domain)
+        parent_account.update!(
+          brand_name: 'Acme Support',
+          brand_logo_url: logo_url,
+          custom_domain: 'app.acme.test'
+        )
+      end
+
+      it 'uses the T1 parent brand name, logo, and domain' do
+        expect(mail_body).to include('Welcome to Acme Support.')
+        expect(mail.body.to_s).to include(logo_url)
+        expect(mail.body.to_s).to include("http://app.acme.test/app/auth/confirmation?confirmation_token=#{confirmable_user.confirmation_token}")
+      end
+    end
+
     context 'when there is an inviter' do
       let(:inviter_val) { create(:user, :administrator, skip_confirmation: true, account: account) }
 

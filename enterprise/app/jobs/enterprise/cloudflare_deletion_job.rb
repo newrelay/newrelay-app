@@ -10,5 +10,16 @@ class Enterprise::CloudflareDeletionJob < ApplicationJob
     else
       Rails.logger.info("Successfully deleted custom hostname #{domain} from Cloudflare")
     end
+
+    delete_resend_sending_domain(domain)
+  end
+
+  private
+
+  def delete_resend_sending_domain(domain)
+    result = Resend::DeleteSendingDomainService.new(domain: domain).perform
+    return if result[:skipped] || result[:errors].blank?
+
+    Rails.logger.error("[resend_domain] delete #{domain}: #{Array(result[:errors]).join(', ')}")
   end
 end

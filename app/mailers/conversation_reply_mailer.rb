@@ -6,6 +6,7 @@ class ConversationReplyMailer < ApplicationMailer
   include ConversationReplyMailerHelper
   include ReferencesHeaderBuilder
   include EmailAddressParseable
+  skip_after_action :apply_branded_from_header
   default from: ENV.fetch('MAILER_SENDER_EMAIL', 'Chatwoot <accounts@chatwoot.com>')
   layout :choose_layout
 

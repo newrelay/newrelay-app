@@ -3,7 +3,9 @@
     "GREETING": "Hello {name}!",
     "SUBTITLE": "Please review the following details",
     "YOUR_DETAILS": "Your details",
+    "YOUR_DETAILS_SUBTITLE": "We'll use this information to personalize your experience.",
     "COMPANY_DETAILS": "Company details",
+    "COMPANY_DETAILS_SUBTITLE": "Tell us about your business so we can tailor NewRelay for you.",
     "FIELDS": {
       "EMAIL": "Email",
       "YOUR_ROLE": "Your Role",

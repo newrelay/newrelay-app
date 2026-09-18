@@ -815,6 +815,7 @@ Rails.application.routes.draw do
       resources :billing_activity_logs, only: [:index, :show]
       resources :captain_activity_logs, only: [:index, :show]
       resources :email_logs, only: [:index, :show]
+      resources :email_templates, only: [:index, :show, :edit, :update, :destroy], param: :key
       resources :upload_activity_logs, only: [:index, :show]
       resources :billing_coupons
       resources :marketplace_plan_prices, only: [:index, :show]

@@ -11,9 +11,8 @@ class Internal::CheckNewVersionsJob < ApplicationJob
   private
 
   def update_version_info
-    return if @instance_info['version'].blank?
-
-    ::Redis::Alfred.set(::Redis::Alfred::LATEST_CHATWOOT_VERSION, @instance_info['version'])
+    # NewRelay versions are independent of Chatwoot Hub releases.
+    ::Redis::Alfred.delete(::Redis::Alfred::LATEST_CHATWOOT_VERSION)
   end
 end
 

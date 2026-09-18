@@ -1,48 +1,25 @@
 <script setup>
-import Icon from 'dashboard/components-next/icon/Icon.vue';
-
 defineProps({
   title: { type: String, required: true },
-  icon: { type: String, required: true },
+  subtitle: { type: String, default: '' },
 });
 </script>
 
 <template>
-  <div class="mb-5">
-    <!-- Section header with icon + triangles -->
-    <div class="flex items-center gap-4 mb-3 -ms-12">
-      <div class="flex flex-col items-center z-10 flex-shrink-0">
-        <svg
-          width="6"
-          height="5"
-          viewBox="0 0 6 5"
-          fill="none"
-          class="text-accent"
-        >
-          <path d="M3 0L6 5H0L3 0Z" fill="currentColor" />
-        </svg>
-        <div
-          class="flex items-center justify-center w-8 h-8 rounded-lg bg-card border border-border"
-        >
-          <Icon :icon="icon" class="size-4 text-muted-foreground" />
-        </div>
-        <svg
-          width="6"
-          height="5"
-          viewBox="0 0 6 5"
-          fill="none"
-          class="text-accent"
-        >
-          <path d="M3 5L0 0H6L3 5Z" fill="currentColor" />
-        </svg>
-      </div>
-      <span class="text-heading-3 text-foreground">
+  <div class="mb-7">
+    <div class="mb-2.5">
+      <h2 class="text-[15.5px] font-semibold text-foreground">
         {{ title }}
-      </span>
+      </h2>
+      <p v-if="subtitle" class="text-[12.5px] text-muted-foreground mt-0.5">
+        {{ subtitle }}
+      </p>
     </div>
 
     <!-- Card -->
-    <div class="border border-border rounded-xl overflow-hidden bg-muted">
+    <div
+      class="bg-muted/40 dark:bg-card/40 rounded-2xl border border-border/80 p-4 space-y-3.5 shadow-2xs"
+    >
       <slot />
     </div>
   </div>

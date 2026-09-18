@@ -130,6 +130,22 @@ const cnameRecordType = 'CNAME';
 const txtRecordType = 'TXT';
 const rootRecordName = '@';
 
+const resendStatus = computed(
+  () => activeAccount.value?.ssl_settings?.resend_status || ''
+);
+const resendRecords = computed(
+  () => activeAccount.value?.ssl_settings?.resend_records || []
+);
+const resendFromEmail = computed(
+  () =>
+    activeAccount.value?.ssl_settings?.resend_from_email ||
+    (normalizedDomain.value ? `noreply@${normalizedDomain.value}` : '')
+);
+const resendVerified = computed(() => resendStatus.value === 'verified');
+const showResendRecords = computed(
+  () => hasSavedDomain.value && resendRecords.value.length > 0
+);
+
 const initFromAccount = () => {
   if (!activeAccount.value) return;
   customDomain.value = activeAccount.value.custom_domain || '';
@@ -431,6 +447,73 @@ const handleRemove = async event => {
                     </code>
                   </div>
                 </div>
+              </div>
+            </div>
+
+            <div
+              v-if="showResendRecords"
+              class="flex flex-col gap-3 rounded-xl border border-border bg-muted/40 p-4"
+            >
+              <div class="flex items-center justify-between gap-3">
+                <p class="text-xs font-semibold text-foreground">
+                  {{ $t('BRANDING_SETTINGS.CUSTOM_DOMAIN.SENDING_TITLE') }}
+                </p>
+                <span
+                  v-if="resendVerified"
+                  class="inline-flex shrink-0 items-center gap-1 rounded-md border border-emerald-500/20 bg-emerald-500/10 px-2 py-0.5 text-[12px] font-medium text-emerald-600"
+                >
+                  {{
+                    $t('BRANDING_SETTINGS.CUSTOM_DOMAIN.SENDING_VERIFIED', {
+                      email: resendFromEmail,
+                    })
+                  }}
+                </span>
+                <span v-else class="text-xs font-semibold text-amber-500">{{
+                  $t('BRANDING_SETTINGS.CUSTOM_DOMAIN.SENDING_PENDING')
+                }}</span>
+              </div>
+              <p class="text-xs text-muted-foreground">
+                {{
+                  $t('BRANDING_SETTINGS.CUSTOM_DOMAIN.SENDING_INSTRUCTION', {
+                    email: resendFromEmail,
+                  })
+                }}
+              </p>
+              <div
+                v-for="(record, index) in resendRecords"
+                :key="`${record.type}-${record.name}-${index}`"
+                class="grid grid-cols-[80px_1fr] gap-x-4 gap-y-2 rounded-lg border border-border bg-background p-3 text-xs"
+              >
+                <span class="text-muted-foreground">{{
+                  $t('BRANDING_SETTINGS.CUSTOM_DOMAIN.TYPE')
+                }}</span>
+                <span class="font-mono font-semibold text-foreground">{{
+                  record.type
+                }}</span>
+                <span class="text-muted-foreground">{{
+                  $t('BRANDING_SETTINGS.CUSTOM_DOMAIN.NAME')
+                }}</span>
+                <code
+                  class="select-all bg-transparent p-0 font-mono font-semibold text-foreground"
+                >
+                  {{ record.name }}
+                </code>
+                <span class="text-muted-foreground">{{
+                  $t('BRANDING_SETTINGS.CUSTOM_DOMAIN.VALUE')
+                }}</span>
+                <code
+                  class="select-all break-all bg-transparent p-0 font-mono font-semibold text-foreground"
+                >
+                  {{ record.value }}
+                </code>
+                <template v-if="record.priority">
+                  <span class="text-muted-foreground">{{
+                    $t('BRANDING_SETTINGS.CUSTOM_DOMAIN.PRIORITY')
+                  }}</span>
+                  <span class="font-mono font-semibold text-foreground">{{
+                    record.priority
+                  }}</span>
+                </template>
               </div>
             </div>
 

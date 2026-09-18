@@ -666,6 +666,15 @@
   description: 'Zone ID for the Cloudflare domain'
 ## ------ End of Configs added for Cloudflare ------ ##
 
+## ------ Configs added for Resend ------ ##
+- name: RESEND_API_KEY
+  display_title: 'Resend API Key'
+  value:
+  locked: false
+  description: 'API key used to add custom sending domains in Resend'
+  type: secret
+## ------ End of Configs added for Resend ------ ##
+
 ## ------ Customizations for Customers ------ ##
 - name: WIDGET_TOKEN_EXPIRY
   display_title: 'Widget Token Expiry'

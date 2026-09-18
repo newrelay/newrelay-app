@@ -250,6 +250,15 @@
           <div class="sidebar-flyout sidebar-tooltip">Upload Activity Logs</div>
         </li>
 
+        <!-- Email Templates -->
+        <li class="sidebar-item-wrap" data-slot="sidebar-menu-item">
+          <%= link_to super_admin_email_templates_path, class: "sidebar-menu-btn #{'active' if controller_path == 'super_admin/email_templates'}" do %>
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-file-text" style="width:16px;height:16px;"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M10 9H8"/><path d="M16 13H8"/><path d="M16 17H8"/></svg>
+            <span>Email Templates</span>
+          <% end %>
+          <div class="sidebar-flyout sidebar-tooltip">Email Templates</div>
+        </li>
+
         <!-- Email Logs -->
         <li class="sidebar-item-wrap" data-slot="sidebar-menu-item">
           <%= link_to super_admin_email_logs_path, class: "sidebar-menu-btn #{'active' if current_page?(super_admin_email_logs_path)}" do %>

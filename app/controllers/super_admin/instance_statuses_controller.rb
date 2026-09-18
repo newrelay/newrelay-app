@@ -25,7 +25,7 @@ class SuperAdmin::InstanceStatusesController < SuperAdmin::ApplicationController
   end
 
   def chatwoot_version
-    @metrics['chatwoot version'] = Chatwoot.config[:version]
+    @metrics['newrelay version'] = Chatwoot.config[:version]
   end
 
 

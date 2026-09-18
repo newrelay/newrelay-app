@@ -8,6 +8,7 @@ import { useAlert, useTrack } from 'dashboard/composables';
 import { ONBOARDING_EVENTS } from 'dashboard/helper/AnalyticsHelper/events';
 import { useAccount } from 'dashboard/composables/useAccount';
 import { useConfig } from 'dashboard/composables/useConfig';
+import { useBranding } from 'shared/composables/useBranding';
 import { useMapGetter, useStore } from 'dashboard/composables/store';
 import { frontendURL } from 'dashboard/helper/URLHelper';
 import Avatar from 'dashboard/components-next/avatar/Avatar.vue';
@@ -31,6 +32,7 @@ const router = useRouter();
 const store = useStore();
 const { accountId, currentAccount, finishOnboarding } = useAccount();
 const { enabledLanguages } = useConfig();
+const { replaceInstallationName } = useBranding();
 const currentUser = useMapGetter('getCurrentUser');
 
 const userRole = ref('');
@@ -282,11 +284,11 @@ const handleSubmit = async () => {
     >
       <OnboardingSection
         :title="t('ONBOARDING_NEXT.YOUR_DETAILS')"
-        icon="i-lucide-user"
+        :subtitle="t('ONBOARDING_NEXT.YOUR_DETAILS_SUBTITLE')"
       >
-        <div class="flex items-center gap-2 px-3 py-3">
+        <div class="flex items-center gap-2.5">
           <Avatar :name="userName" :size="16" rounded-full />
-          <span class="text-sm font-medium text-foreground">
+          <span class="text-[14px] font-medium text-foreground">
             {{ userName }}
           </span>
         </div>
@@ -319,7 +321,9 @@ const handleSubmit = async () => {
 
       <OnboardingSection
         :title="t('ONBOARDING_NEXT.COMPANY_DETAILS')"
-        icon="i-lucide-briefcase-business"
+        :subtitle="
+          replaceInstallationName(t('ONBOARDING_NEXT.COMPANY_DETAILS_SUBTITLE'))
+        "
       >
         <div
           v-if="isEnriching"
@@ -331,14 +335,14 @@ const handleSubmit = async () => {
           </span>
         </div>
         <template v-else>
-          <div class="flex items-center gap-2 px-3 py-3">
+          <div class="flex items-center gap-2.5">
             <img
               v-if="companyLogo"
               :src="companyLogo"
               :alt="accountName"
               class="size-4 object-contain"
             />
-            <span class="text-sm font-medium text-foreground">
+            <span class="text-[14px] font-medium text-foreground">
               {{ accountName }}
             </span>
           </div>

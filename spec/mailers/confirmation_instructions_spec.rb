@@ -109,6 +109,81 @@ RSpec.describe 'Devise::Mailer' do
       end
     end
 
+    context 'when the T2 workspace has its own custom domain' do
+      let(:logo_url) { 'https://cdn.acme.test/logo.png' }
+      let(:child_logo_url) { 'https://cdn.child.test/logo.png' }
+      let(:parent_account) { create(:account, is_reseller: true, name: 'Acme') }
+      let(:account) { create(:account, parent: parent_account, name: 'Child Workspace') }
+      let(:mail) { Devise::Mailer.with(account: account).confirmation_instructions(confirmable_user.reload, nil, {}) }
+
+      before do
+        parent_account.enable_features!(:white_labeling, :custom_domain)
+        parent_account.update!(
+          brand_name: 'Acme Support',
+          brand_logo_url: logo_url,
+          custom_domain: 'app.acme.test'
+        )
+        account.enable_features!(:white_labeling, :custom_domain)
+        account.update!(
+          brand_name: 'Child Support',
+          brand_logo_url: child_logo_url,
+          custom_domain: 'app.child.test'
+        )
+      end
+
+      it 'uses the T2 brand name, logo, domain, and From display name' do
+        expect(mail_body).to include('Welcome to Child Support.')
+        expect(mail_body).not_to include('Welcome to Acme Support.')
+        expect(mail.body.to_s).to include(child_logo_url)
+        expect(mail.body.to_s).not_to include(logo_url)
+        expect(mail.body.to_s).to include("http://app.child.test/app/auth/confirmation?confirmation_token=#{confirmable_user.confirmation_token}")
+        expect(mail.from).to eq([account.support_email])
+        expect(mail[:from].display_names).to eq(['Child Support'])
+      end
+    end
+
+    context 'when the T2 workspace has a custom domain but no brand name' do
+      let(:parent_account) { create(:account, is_reseller: true, name: 'Acme') }
+      let(:account) { create(:account, parent: parent_account, name: 'Child Workspace') }
+      let(:mail) { Devise::Mailer.with(account: account).confirmation_instructions(confirmable_user.reload, nil, {}) }
+
+      before do
+        parent_account.enable_features!(:white_labeling, :custom_domain)
+        parent_account.update!(brand_name: 'Acme Support', custom_domain: 'app.acme.test')
+        account.enable_features!(:custom_domain)
+        account.update!(custom_domain: 'app.child.test')
+      end
+
+      it 'uses the T2 workspace name instead of the platform brand' do
+        expect(mail_body).to include('Welcome to Child Workspace.')
+        expect(mail_body).not_to include('Welcome to Acme Support.')
+        expect(mail.body.to_s).to include("http://app.child.test/app/auth/confirmation?confirmation_token=#{confirmable_user.confirmation_token}")
+        expect(mail.from).to eq([account.support_email])
+        expect(mail[:from].display_names).to eq(['Child Workspace'])
+      end
+    end
+
+    context 'when the custom domain is verified for Resend sending' do
+      let(:account) { create(:account, name: 'Child Workspace') }
+      let(:mail) { Devise::Mailer.with(account: account).confirmation_instructions(confirmable_user.reload, nil, {}) }
+
+      before do
+        account.enable_features!(:custom_domain)
+        account.update!(custom_domain: 'app.child.test')
+        account.update!(
+          ssl_settings: (account.ssl_settings || {}).merge(
+            'resend_status' => 'verified',
+            'resend_from_email' => 'noreply@app.child.test'
+          )
+        )
+      end
+
+      it 'sends from the custom domain address' do
+        expect(mail.from).to eq(['noreply@app.child.test'])
+        expect(mail[:from].display_names).to eq(['Child Workspace'])
+      end
+    end
+
     context 'when there is an inviter' do
       let(:inviter_val) { create(:user, :administrator, skip_confirmation: true, account: account) }
 

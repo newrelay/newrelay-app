@@ -1344,6 +1344,11 @@
       "VALUE": "Value",
       "SAVE_SUCCESS": "Custom domain settings saved successfully.",
       "SAVE_ERROR": "Failed to save custom domain settings. Please try again.",
+      "SENDING_TITLE": "Send mail from this domain",
+      "SENDING_INSTRUCTION": "Add these Resend records at your DNS provider so we can send as {email}. Leave CNAME records DNS-only (grey cloud), not proxied.",
+      "SENDING_VERIFIED": "Mail will send from {email}",
+      "SENDING_PENDING": "Waiting for DNS. Click Verify after the records propagate.",
+      "PRIORITY": "Priority",
       "WHITE_LABEL": {
         "TITLE": "White-label",
         "DESCRIPTION": "Remove newrelay branding from customer-facing pages. This is enabled by your plan (disable branding) and cannot be toggled here."

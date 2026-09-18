@@ -463,7 +463,8 @@ class Account < ApplicationRecord
       return
     end
 
-    self.ssl_settings = (ssl_settings || {}).merge(
+    settings = (ssl_settings || {}).except('resend_domain_id', 'resend_status', 'resend_records', 'resend_from_email')
+    self.ssl_settings = settings.merge(
       'cf_status' => 'pending_validation'
     )
   end

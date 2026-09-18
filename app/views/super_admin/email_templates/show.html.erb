@@ -1,0 +1,50 @@
+<% content_for(:title) { @entry.title } %>
+
+<div class="space-y-6">
+  <div class="page-header">
+    <div>
+      <h1 class="page-title"><%= @entry.title %></h1>
+      <p class="text-[13.5px] text-muted-foreground mt-1"><%= @entry.relative_path %></p>
+    </div>
+    <div class="page-actions">
+      <%= link_to t('super_admin.email_templates.back'), super_admin_email_templates_path, class: 'btn btn-outline' %>
+      <% if @entry.editable %>
+        <%= link_to t('super_admin.email_templates.edit'), edit_super_admin_email_template_path(@entry.key), class: 'btn btn-primary' %>
+      <% end %>
+    </div>
+  </div>
+
+  <div class="show-sub-card overflow-hidden p-0">
+    <div class="show-sub-header px-6 pt-5 mx-6">
+      <h2 class="show-sub-title"><%= t('super_admin.email_templates.details') %></h2>
+    </div>
+    <div class="px-6 pb-5 grid gap-3 text-sm">
+      <div class="flex gap-3">
+        <span class="w-32 shrink-0 text-muted-foreground"><%= t('super_admin.email_templates.columns.category') %></span>
+        <span class="text-foreground"><%= @entry.category %></span>
+      </div>
+      <div class="flex gap-3">
+        <span class="w-32 shrink-0 text-muted-foreground"><%= t('super_admin.email_templates.columns.format') %></span>
+        <span class="text-foreground"><%= @entry.format.upcase %></span>
+      </div>
+      <div class="flex gap-3">
+        <span class="w-32 shrink-0 text-muted-foreground"><%= t('super_admin.email_templates.columns.status') %></span>
+        <span class="text-foreground">
+          <%= @override.present? ? t('super_admin.email_templates.status.overridden') : t('super_admin.email_templates.status.default') %>
+        </span>
+      </div>
+      <% unless @entry.editable %>
+        <p class="text-[13.5px] text-muted-foreground mt-2"><%= t('super_admin.email_templates.erb_note') %></p>
+      <% end %>
+    </div>
+  </div>
+
+  <div class="show-sub-card overflow-hidden p-0">
+    <div class="show-sub-header px-6 pt-5 mx-6">
+      <h2 class="show-sub-title"><%= t('super_admin.email_templates.body') %></h2>
+    </div>
+    <div class="px-6 pb-5">
+      <pre class="whitespace-pre-wrap break-words rounded-lg border border-border bg-muted/40 p-4 text-[13px] text-foreground font-mono"><%= @body %></pre>
+    </div>
+  </div>
+</div>

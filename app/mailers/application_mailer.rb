@@ -4,6 +4,7 @@ class ApplicationMailer < ActionMailer::Base
 
   default from: ENV.fetch('MAILER_SENDER_EMAIL', 'Chatwoot <accounts@chatwoot.com>')
   before_action { ensure_current_account(params.try(:[], :account)) }
+  after_action :apply_branded_from_header
   around_action :switch_locale
   layout 'mailer/base'
   # Fetch template from Database if available
@@ -92,30 +93,88 @@ class ApplicationMailer < ActionMailer::Base
   end
 
   def mailer_brand_account
-    root_branding_account(Current.account.presence || mailer_url_account)
+    nearest_branding_account(Current.account.presence || mailer_url_account)
   end
 
-  def root_branding_account(account)
+  def nearest_branding_account(account)
     return account if account.blank?
 
-    root = account
-    root = root.parent while root.parent
-    root
+    current = account
+    loop do
+      return current if own_mailer_branding?(current)
+      break if current.parent.blank?
+
+      current = current.parent
+    end
+
+    account
+  end
+
+  def own_mailer_branding?(account)
+    account.custom_domain.present? || account.effective_brand_name.present? || account.effective_brand_logo_url.present?
+  end
+
+  def mailer_display_name(account)
+    return if account.blank?
+
+    account.effective_brand_name.presence || account.brand_name.presence || (account.custom_domain.present? ? account.name : nil)
   end
 
   def apply_account_branding_to_mailer_config(config, account)
     return config if account.blank?
 
-    brand_name = account.effective_brand_name
+    brand_name = mailer_display_name(account)
     config['BRAND_NAME'] = brand_name if brand_name.present?
-
-    if account_custom_domain(account).present?
-      config['BRAND_URL'] = frontend_origin(account: account)
-    end
+    config['BRAND_URL'] = frontend_origin(account: account) if account_custom_domain(account).present?
 
     logo = absolute_brand_logo_url(account)
     config['LOGO'] = logo if logo.present?
 
     config
+  end
+
+  def apply_branded_from_header
+    return if message.to.blank?
+
+    account = mailer_brand_account
+    name = mailer_display_name(account)
+    return if account.blank? || name.blank?
+
+    address = Mail::Address.new
+    address.display_name = name
+    address.address = mailer_from_email(account)
+    message.from = [address.format]
+  end
+
+  def mailer_from_email(account)
+    domain = account.custom_domain.presence
+    stored_address = parsed_support_email(account)
+
+    if resend_sending_ready?(account, domain)
+      return stored_address if stored_address.present? && stored_address.downcase.end_with?("@#{domain}")
+
+      return account.ssl_settings['resend_from_email'].presence || "noreply@#{domain}"
+    end
+
+    stored_address.presence || platform_sender_email
+  rescue Mail::Field::ParseError, Mail::Field::IncompleteParseError
+    platform_sender_email
+  end
+
+  def parsed_support_email(account)
+    stored = account.read_attribute(:support_email).presence
+    return if stored.blank?
+
+    Mail::Address.new(stored).address
+  end
+
+  def resend_sending_ready?(account, domain)
+    domain.present? && account.ssl_settings&.[]('resend_status') == 'verified'
+  end
+
+  def platform_sender_email
+    Mail::Address.new(ENV.fetch('MAILER_SENDER_EMAIL', 'accounts@chatwoot.com')).address
+  rescue Mail::Field::ParseError, Mail::Field::IncompleteParseError
+    'accounts@chatwoot.com'
   end
 end

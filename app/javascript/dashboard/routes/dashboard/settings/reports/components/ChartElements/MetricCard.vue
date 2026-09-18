@@ -5,7 +5,6 @@ import { STATUS } from 'dashboard/store/constants';
 import fromUnixTime from 'date-fns/fromUnixTime';
 import format from 'date-fns/format';
 import { formatTime } from '@chatwoot/utils';
-import Spinner from 'dashboard/components-next/spinner/Spinner.vue';
 
 const props = defineProps({
   metric: {
@@ -28,6 +27,10 @@ const props = defineProps({
     type: Object,
     default: () => ({}),
   },
+  isChartLoading: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 const { calculateTrend, displayMetric, isAverageMetricType, fetchingStatus } =
@@ -48,6 +51,20 @@ const iconMap = {
 const metricIcon = computed(() => {
   return iconMap[props.metric.KEY] || 'i-lucide-message-circle';
 });
+
+const showChartSkeleton = computed(
+  () => fetchingStatus.value === STATUS.FETCHING || props.isChartLoading
+);
+
+const SKELETON_BAR_HEIGHTS = [
+  'h-[42%]',
+  'h-[68%]',
+  'h-[38%]',
+  'h-[82%]',
+  'h-[55%]',
+  'h-[72%]',
+  'h-[48%]',
+];
 
 // Format Trend Data
 const trendData = computed(() => {
@@ -158,9 +175,10 @@ const xAxisLabels = computed(() => {
           {{ metric.NAME }}
         </h3>
 
-        <div v-if="fetchingStatus === STATUS.FETCHING" class="mt-2">
-          <Spinner size="sm" />
-        </div>
+        <div
+          v-if="fetchingStatus === STATUS.FETCHING"
+          class="mt-2 h-7 w-16 rounded-md bg-muted animate-pulse"
+        />
         <div
           v-else-if="fetchingStatus === STATUS.FAILED"
           class="text-destructive text-[13px] mt-1"
@@ -198,7 +216,23 @@ const xAxisLabels = computed(() => {
     </div>
 
     <!-- Mini CSS Bar Chart -->
-    <div v-if="formattedChartData.length > 0" class="mt-auto flex">
+    <div v-if="showChartSkeleton" class="mt-auto flex">
+      <div class="w-16 shrink-0 flex flex-col justify-between h-28 pb-2 pr-2">
+        <span class="h-2.5 w-8 rounded bg-muted animate-pulse" />
+        <span class="h-2.5 w-4 rounded bg-muted animate-pulse" />
+      </div>
+      <div
+        class="flex-1 h-28 flex items-end gap-2 border-b border-border/50 pb-2"
+      >
+        <div
+          v-for="(heightClass, i) in SKELETON_BAR_HEIGHTS"
+          :key="i"
+          class="flex-1 rounded-t-sm bg-muted animate-pulse"
+          :class="heightClass"
+        />
+      </div>
+    </div>
+    <div v-else-if="formattedChartData.length > 0" class="mt-auto flex">
       <div
         class="w-16 shrink-0 flex flex-col justify-between h-28 pb-2 pr-2 text-[10px] text-muted-foreground/50 font-medium"
       >
@@ -267,7 +301,10 @@ const xAxisLabels = computed(() => {
     </div>
 
     <!-- X Axis -->
-    <div v-if="xAxisLabels.length > 0" class="flex gap-2 mt-2 ml-16">
+    <div
+      v-if="!showChartSkeleton && xAxisLabels.length > 0"
+      class="flex gap-2 mt-2 ml-16"
+    >
       <div
         v-for="day in xAxisLabels"
         :key="day"

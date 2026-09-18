@@ -151,6 +151,7 @@ export default {
       :account-summary-key="accountSummaryKey"
       :summary-fetching-key="summaryFetchingKey"
       :chart-data="accountReport.data[metric.KEY] || []"
+      :is-chart-loading="accountReport.isFetching[metric.KEY]"
       :group-by="groupBy"
     />
   </div>

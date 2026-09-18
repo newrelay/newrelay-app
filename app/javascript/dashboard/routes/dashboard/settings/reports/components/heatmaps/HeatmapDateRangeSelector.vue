@@ -10,8 +10,8 @@ import startOfDay from 'date-fns/startOfDay';
 import startOfMonth from 'date-fns/startOfMonth';
 import subDays from 'date-fns/subDays';
 import { vOnClickOutside } from '@vueuse/components';
-import Button from 'dashboard/components-next/button/Button.vue';
 import DropdownMenu from 'dashboard/components-next/dropdown-menu/DropdownMenu.vue';
+import RelayButton from 'dashboard/components-next/relay/button/Button.vue';
 
 const emit = defineEmits(['rangeTypeChange', 'monthOffsetChange']);
 
@@ -193,15 +193,15 @@ watch(
     v-on-click-outside="() => toggleDropdown(false)"
     class="relative flex items-center group"
   >
-    <Button
-      sm
-      slate
-      faded
-      icon="i-lucide-calendar"
-      :label="selectedLabel"
-      class="rounded-md"
+    <RelayButton
+      variant="outline"
+      class="h-8 px-3 text-[14px] bg-card hover:bg-accent font-medium border-border/80 shadow-sm"
       @click="toggleDropdown()"
-    />
+    >
+      <span class="i-lucide-calendar size-3.5 opacity-70 shrink-0" />
+      <span class="truncate">{{ selectedLabel }}</span>
+      <span class="i-lucide-chevron-down size-3.5 opacity-50 shrink-0" />
+    </RelayButton>
     <DropdownMenu
       v-if="showDropdown"
       :menu-items="menuItems"

@@ -1,50 +1,56 @@
-<script>
+<script setup>
 import { RelayTooltip } from 'dashboard/components-next/relay';
 
-export default {
-  components: {
-    RelayTooltip,
+defineProps({
+  label: {
+    type: String,
+    required: true,
   },
-  props: {
-    label: {
-      type: String,
-      required: true,
-    },
-    value: {
-      type: [String, Number],
-      required: true,
-    },
-    toolTip: {
-      type: String,
-      required: true,
-    },
-    isLoading: {
-      type: Boolean,
-      default: false,
-    },
+  tooltip: {
+    type: String,
+    required: true,
   },
-};
+  value: {
+    type: [String, Number],
+    required: true,
+  },
+  icon: {
+    type: String,
+    default: 'i-lucide-target',
+  },
+  isLoading: {
+    type: Boolean,
+    default: false,
+  },
+});
 </script>
 
 <template>
-  <div class="flex flex-col gap-2 items-start justify-center min-w-[10rem]">
-    <span
-      class="inline-flex items-center gap-1 text-sm font-medium text-muted-foreground"
-    >
-      {{ label }}
-      <RelayTooltip :content="toolTip" side="right">
-        <span
-          class="i-lucide-info size-3.5 text-muted-foreground opacity-60 cursor-default"
-        />
-      </RelayTooltip>
-    </span>
+  <div class="flex-1 flex items-start gap-4">
     <div
-      v-if="isLoading"
-      class="w-12 h-6 mb-0.5 rounded-md bg-muted animate-pulse"
-    />
-
-    <span v-else class="text-2xl font-medium text-foreground">
-      {{ value }}
-    </span>
+      class="size-14 rounded-full bg-primary/10 flex items-center justify-center shrink-0"
+    >
+      <span :class="icon" class="size-6 text-primary" />
+    </div>
+    <div class="flex flex-col gap-1.5">
+      <div
+        class="text-[14px] text-muted-foreground font-medium flex items-center gap-1.5"
+      >
+        {{ label }}
+        <RelayTooltip :content="tooltip" side="right">
+          <span class="i-lucide-info size-3.5 opacity-60" />
+        </RelayTooltip>
+      </div>
+      <div
+        v-if="isLoading"
+        class="w-16 h-8 rounded-md bg-muted animate-pulse mt-1"
+      />
+      <div
+        v-else
+        class="text-[28px] font-semibold tracking-tight leading-none mt-1 text-foreground"
+      >
+        {{ value }}
+      </div>
+    </div>
   </div>
 </template>

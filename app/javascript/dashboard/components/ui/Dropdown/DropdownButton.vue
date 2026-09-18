@@ -15,6 +15,10 @@ defineProps({
     type: String,
     default: '',
   },
+  textClass: {
+    type: String,
+    default: RELAY_FILTER_CLASS,
+  },
 });
 </script>
 
@@ -24,7 +28,7 @@ defineProps({
     slate
     sm
     class="relative"
-    :class="RELAY_FILTER_CLASS"
+    :class="textClass"
     no-animation
     :icon="icon"
     :trailing-icon="trailingIcon"

@@ -62,6 +62,7 @@ const closeDropdown = () => {
   <FilterButton
     :button-text="name"
     icon="i-lucide-filter"
+    text-class="!text-[14px] !font-medium"
     @click="toggleDropdown"
   >
     <!-- Dropdown with search and sub-dropdown -->

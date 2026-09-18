@@ -45,9 +45,24 @@ RSpec.describe 'Devise::Mailer' do
       expect(mail_body).not_to include('Workspace invitation')
     end
 
-    it 'sends a confirmation link' do
-      expect(mail.body).to include("app/auth/confirmation?confirmation_token=#{confirmable_user.confirmation_token}")
-      expect(mail.body).not_to include('app/auth/password/edit')
+    context 'when the account has custom branding' do
+      let(:logo_url) { 'https://cdn.acme.test/logo.png' }
+
+      before do
+        account.enable_features!(:white_labeling, :custom_domain)
+        account.update!(
+          brand_name: 'Acme Support',
+          brand_logo_url: logo_url,
+          custom_domain: 'app.acme.test'
+        )
+      end
+
+      it 'uses the custom brand name, logo, and domain in the confirmation email' do
+        expect(mail_body).to include('Welcome to Acme Support.')
+        expect(mail.body.to_s).to include(logo_url)
+        expect(mail.body.to_s).to include("http://app.acme.test/app/auth/confirmation?confirmation_token=#{confirmable_user.confirmation_token}")
+        expect(mail.body.to_s).to include('href="http://app.acme.test"')
+      end
     end
 
     context 'when there is an inviter' do

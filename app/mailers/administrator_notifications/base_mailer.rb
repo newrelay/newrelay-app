@@ -11,12 +11,12 @@ class AdministratorNotifications::BaseMailer < ApplicationMailer
 
   # Helper method to generate inbox URL
   def inbox_url(inbox)
-    "#{ENV.fetch('FRONTEND_URL', nil)}/app/accounts/#{Current.account.id}/settings/inboxes/#{inbox.id}"
+    account_app_url(Current.account, "settings/inboxes/#{inbox.id}")
   end
 
   # Helper method to generate settings URL
   def settings_url(section)
-    "#{ENV.fetch('FRONTEND_URL', nil)}/app/accounts/#{Current.account.id}/settings/#{section}"
+    account_app_url(Current.account, "settings/#{section}")
   end
 
   private

@@ -25,14 +25,25 @@ RSpec.describe AdministratorNotifications::BaseMailer do
   describe 'helper methods' do
     it 'generates correct inbox URL' do
       url = mailer.inbox_url(inbox)
-      expected_url = "#{ENV.fetch('FRONTEND_URL', nil)}/app/accounts/#{account.id}/settings/inboxes/#{inbox.id}"
-      expect(url).to eq(expected_url)
+      origin = mailer.send(:default_frontend_origin)
+      expect(url).to eq("#{origin}/app/accounts/#{account.id}/settings/inboxes/#{inbox.id}")
     end
 
     it 'generates correct settings URL' do
       url = mailer.settings_url('automation/list')
-      expected_url = "#{ENV.fetch('FRONTEND_URL', nil)}/app/accounts/#{account.id}/settings/automation/list"
-      expect(url).to eq(expected_url)
+      origin = mailer.send(:default_frontend_origin)
+      expect(url).to eq("#{origin}/app/accounts/#{account.id}/settings/automation/list")
+    end
+
+    it 'uses the account custom domain for inbox and settings URLs' do
+      account.enable_features!(:custom_domain)
+      account.update!(custom_domain: 'ops.acme.test')
+
+      expect(mailer.inbox_url(inbox)).to include('ops.acme.test')
+      expect(mailer.inbox_url(inbox)).to include("/app/accounts/#{account.id}/settings/inboxes/#{inbox.id}")
+      expect(mailer.settings_url('automation/list')).to include(
+        "/app/accounts/#{account.id}/settings/automation/list"
+      )
     end
   end
 

@@ -29,7 +29,7 @@ class AdministratorNotifications::AccountNotificationMailer < AdministratorNotif
     action_url = if resource.failed_records.attached?
                    Rails.application.routes.url_helpers.rails_blob_url(resource.failed_records)
                  else
-                   "#{ENV.fetch('FRONTEND_URL', nil)}/app/accounts/#{resource.account.id}/contacts"
+                   account_app_url(resource.account, 'contacts')
                  end
 
     meta = {
@@ -61,7 +61,7 @@ class AdministratorNotifications::AccountNotificationMailer < AdministratorNotif
   def tenant_rescued(account)
     subject = 'Your Workspace Subscription Update'
     emails = account.administrators.pluck(:email)
-    action_url = "#{ENV.fetch('FRONTEND_URL', nil)}/app/accounts/#{account.id}/settings/billing"
+    action_url = account_app_url(account, 'settings/billing')
     meta = {
       'account_name' => account.name,
       'notice' => 'Your reseller relationship has ended. Your account has been promoted to a direct platform subscription.'

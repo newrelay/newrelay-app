@@ -1,5 +1,6 @@
 class ApplicationMailer < ActionMailer::Base
   include ActionView::Helpers::SanitizeHelper
+  include FrontendUrlsHelper
 
   default from: ENV.fetch('MAILER_SENDER_EMAIL', 'Chatwoot <accounts@chatwoot.com>')
   before_action { ensure_current_account(params.try(:[], :account)) }
@@ -10,9 +11,10 @@ class ApplicationMailer < ActionMailer::Base
   prepend_view_path ::EmailTemplate.resolver
   append_view_path Rails.root.join('app/views/mailers')
   helper :frontend_urls
+  helper_method :branded_global_config
   helper do
     def global_config
-      @global_config ||= GlobalConfig.get('BRAND_NAME', 'BRAND_URL')
+      branded_global_config
     end
   end
 
@@ -51,10 +53,17 @@ class ApplicationMailer < ActionMailer::Base
     }
   end
 
+  def branded_global_config
+    @branded_global_config ||= begin
+      config = GlobalConfig.get('BRAND_NAME', 'BRAND_URL')
+      apply_account_branding_to_mailer_config(config, mailer_brand_account)
+    end
+  end
+
   def liquid_locals
     # expose variables you want to be exposed in liquid
     locals = {
-      global_config: GlobalConfig.get('BRAND_NAME', 'BRAND_URL'),
+      global_config: branded_global_config,
       action_url: @action_url
     }
 
@@ -80,5 +89,25 @@ class ApplicationMailer < ActionMailer::Base
     # ensure locale won't bleed into other requests
     # https://guides.rubyonrails.org/i18n.html#managing-the-locale-across-requests
     I18n.with_locale(locale, &)
+  end
+
+  def mailer_brand_account
+    Current.account.presence || mailer_url_account
+  end
+
+  def apply_account_branding_to_mailer_config(config, account)
+    return config if account.blank?
+
+    brand_name = account.effective_brand_name
+    config['BRAND_NAME'] = brand_name if brand_name.present?
+
+    if account_custom_domain(account).present?
+      config['BRAND_URL'] = frontend_origin(account: account)
+    end
+
+    logo = absolute_brand_logo_url(account)
+    config['LOGO'] = logo if logo.present?
+
+    config
   end
 end

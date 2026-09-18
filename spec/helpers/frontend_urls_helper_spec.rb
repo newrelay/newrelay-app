@@ -41,6 +41,20 @@ describe FrontendUrlsHelper do
       end
     end
 
+    context 'with custom domain configured on the Current account' do
+      let(:account) { create(:account, custom_domain: 'live.mydomain.com') }
+
+      before do
+        Current.account = account
+      end
+
+      after { Current.reset }
+
+      it 'uses the custom domain as the host' do
+        expect(helper.frontend_url('dashboard')).to eq 'http://live.mydomain.com/app/dashboard'
+      end
+    end
+
     context 'when CONFIRMATION_URL environment variable is set' do
       it 'uses the full custom confirmation URL override' do
         with_modified_env CONFIRMATION_URL: 'https://externalapp.com/confirm' do

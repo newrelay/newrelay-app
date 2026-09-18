@@ -24,6 +24,7 @@ class Api::V1::AccountsController < Api::BaseController
   def create
     parent_id = account_params[:parent_id]
     validate_parent_account(parent_id)
+    Current.mailer_account = Account.for_custom_domain(request.host)
 
     @user, @account = AccountBuilder.new(
       account_name: account_params[:account_name],
@@ -36,6 +37,8 @@ class Api::V1::AccountsController < Api::BaseController
     ).perform
     enqueue_branding_enrichment
     render_create_response
+  ensure
+    Current.mailer_account = nil
   end
 
   def cache_keys

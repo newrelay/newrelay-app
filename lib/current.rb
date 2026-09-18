@@ -5,6 +5,7 @@ module Current
   thread_mattr_accessor :executed_by
   thread_mattr_accessor :contact
   thread_mattr_accessor :mcp
+  thread_mattr_accessor :mailer_account
 
   def self.reset
     Current.user = nil
@@ -13,5 +14,6 @@ module Current
     Current.executed_by = nil
     Current.contact = nil
     Current.mcp = nil
+    Current.mailer_account = nil
   end
 end

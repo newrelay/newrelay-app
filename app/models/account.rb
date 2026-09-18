@@ -253,6 +253,13 @@ class Account < ApplicationRecord
     capability_enabled?(:custom_domain)
   end
 
+  def self.for_custom_domain(host)
+    normalized = host.to_s.strip.downcase.presence
+    return if normalized.blank?
+
+    find_by('LOWER(custom_domain) = ?', normalized)
+  end
+
   def reseller_dashboard_enabled?
     capability_enabled?(:reseller_dashboard)
   end

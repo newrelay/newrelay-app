@@ -15,10 +15,12 @@ describe FrontendUrlsHelper do
     end
 
     context 'with custom domain configured on the user account' do
-      let(:account) { create(:account, custom_domain: 'support.mydomain.com') }
+      let(:account) { create(:account) }
       let(:user) { create(:user, account: account) }
 
       before do
+        account.enable_features!(:custom_domain)
+        account.update!(custom_domain: 'support.mydomain.com')
         assign(:resource, user)
       end
 
@@ -28,11 +30,13 @@ describe FrontendUrlsHelper do
     end
 
     context 'with custom domain configured on the user parent account' do
-      let(:parent_account) { create(:account, custom_domain: 'parent.mydomain.com') }
+      let(:parent_account) { create(:account, is_reseller: true) }
       let(:sub_account) { create(:account, parent: parent_account) }
       let(:user) { create(:user, account: sub_account) }
 
       before do
+        parent_account.enable_features!(:custom_domain)
+        parent_account.update!(custom_domain: 'parent.mydomain.com')
         assign(:resource, user)
       end
 
@@ -42,9 +46,11 @@ describe FrontendUrlsHelper do
     end
 
     context 'with custom domain configured on the Current account' do
-      let(:account) { create(:account, custom_domain: 'live.mydomain.com') }
+      let(:account) { create(:account) }
 
       before do
+        account.enable_features!(:custom_domain)
+        account.update!(custom_domain: 'live.mydomain.com')
         Current.account = account
       end
 
@@ -52,6 +58,27 @@ describe FrontendUrlsHelper do
 
       it 'uses the custom domain as the host' do
         expect(helper.frontend_url('dashboard')).to eq 'http://live.mydomain.com/app/dashboard'
+      end
+    end
+
+    context 'when the user account has no domain but Current account is branded' do
+      let(:host_account) { create(:account) }
+      let(:signup_account) { create(:account) }
+      let(:user) { create(:user, account: signup_account) }
+
+      before do
+        host_account.enable_features!(:custom_domain)
+        host_account.update!(custom_domain: 'app.acme.test')
+        assign(:resource, user)
+        Current.account = host_account
+      end
+
+      after { Current.reset }
+
+      it 'uses the branded host domain instead of the new account' do
+        expect(helper.frontend_url('auth/confirmation', token: 'xyz')).to eq(
+          'http://app.acme.test/app/auth/confirmation?token=xyz'
+        )
       end
     end
 

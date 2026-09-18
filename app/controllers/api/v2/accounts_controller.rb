@@ -14,6 +14,8 @@ class Api::V2::AccountsController < Api::BaseController
               with: :render_error_response
 
   def create
+    Current.mailer_account = Account.for_custom_domain(request.host)
+
     @user, @account = AccountBuilder.new(
       email: account_params[:email],
       user_password: account_params[:password],
@@ -30,6 +32,8 @@ class Api::V2::AccountsController < Api::BaseController
     else
       render_error_response(CustomExceptions::Account::SignupFailed.new({}))
     end
+  ensure
+    Current.mailer_account = nil
   end
 
   private

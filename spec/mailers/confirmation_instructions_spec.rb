@@ -65,6 +65,28 @@ RSpec.describe 'Devise::Mailer' do
       end
     end
 
+    context 'when signing up on a branded custom domain' do
+      let(:logo_url) { 'https://cdn.acme.test/logo.png' }
+      let(:host_account) { create(:account) }
+      let(:mail) { Devise::Mailer.with(account: host_account).confirmation_instructions(confirmable_user.reload, nil, {}) }
+
+      before do
+        host_account.enable_features!(:white_labeling, :custom_domain)
+        host_account.update!(
+          brand_name: 'Acme Support',
+          brand_logo_url: logo_url,
+          custom_domain: 'app.acme.test'
+        )
+      end
+
+      it 'uses the host account branding even though the new workspace is unbranded' do
+        expect(mail_body).to include('Welcome to Acme Support.')
+        expect(mail.body.to_s).to include(logo_url)
+        expect(mail.body.to_s).to include("http://app.acme.test/app/auth/confirmation?confirmation_token=#{confirmable_user.confirmation_token}")
+        expect(mail.body.to_s).to include('href="http://app.acme.test"')
+      end
+    end
+
     context 'when there is an inviter' do
       let(:inviter_val) { create(:user, :administrator, skip_confirmation: true, account: account) }
 

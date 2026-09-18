@@ -12,7 +12,10 @@ class Auth::ResendConfirmationsController < ActionController::API
     return head(:ok) unless email.is_a?(String)
 
     user = User.from_email(email.strip.downcase)
+    Current.mailer_account = Account.for_custom_domain(request.host)
     user&.send_confirmation_instructions unless user&.confirmed?
     head :ok
+  ensure
+    Current.mailer_account = nil
   end
 end

@@ -55,7 +55,7 @@ module FrontendUrlsHelper
   def resource_account_with_domain
     return unless defined?(@resource) && @resource.respond_to?(:accounts)
 
-    @resource.accounts.detect { |account| account_custom_domain(account).present? } || @resource.accounts.first
+    @resource.accounts.detect { |account| account_custom_domain(account).present? }
   end
 
   def conversation_mailer_account
@@ -75,7 +75,7 @@ module FrontendUrlsHelper
 
     uri = URI.parse(base)
     uri.host = domain
-    uri.port = nil if (uri.scheme == 'https' && uri.port == 443) || (uri.scheme == 'http' && uri.port == 80)
+    uri.port = nil
     uri.to_s.chomp('/')
   rescue StandardError
     base

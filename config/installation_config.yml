@@ -673,6 +673,12 @@
   locked: false
   description: 'API key used to add custom sending domains in Resend'
   type: secret
+- name: RESEND_WEBHOOK_SECRET
+  display_title: 'Resend Webhook Secret'
+  value:
+  locked: false
+  description: 'Svix signing secret (whsec_…) for Resend email.received inbound webhooks'
+  type: secret
 ## ------ End of Configs added for Resend ------ ##
 
 ## ------ Customizations for Customers ------ ##

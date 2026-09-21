@@ -1616,9 +1616,6 @@ export default {
 
     <ContactLogActivityModal
       v-if="showLogCallModal"
-      variant="composer"
-      :contact-name="currentContact?.name"
-      initial-type="Call"
       @close="showLogCallModal = false"
       @save="onLogCallSave"
     />

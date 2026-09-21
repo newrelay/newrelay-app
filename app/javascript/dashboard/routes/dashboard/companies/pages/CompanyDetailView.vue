@@ -412,7 +412,7 @@ onBeforeUnmount(() => {
                   <RelayButton
                     variant="secondary"
                     size="sm"
-                    class="flex h-8 items-center rounded-md border border-transparent bg-muted/50 px-3 text-[12px] font-medium text-foreground hover:border-transparent hover:bg-muted"
+                    class="flex h-8 items-center rounded-md border border-transparent bg-muted/50 px-3 text-[12px] font-medium text-foreground hover:border-transparent hover:!bg-accent"
                     :disabled="isUpdating"
                     @click="toggleEditDetails"
                   >
@@ -691,7 +691,7 @@ onBeforeUnmount(() => {
                   <RelayButton
                     variant="secondary"
                     size="sm"
-                    class="h-8 rounded-md border border-transparent bg-muted/50 px-3 text-[12px] font-medium text-foreground hover:border-transparent hover:bg-muted"
+                    class="h-8 rounded-md border border-transparent bg-muted/50 px-3 text-[12px] font-medium text-foreground hover:border-transparent hover:!bg-accent"
                     @click="showAllContactsModal = true"
                   >
                     {{ t('COMPANIES.DETAIL.RECENT_CONTACTS.VIEW_ALL') }}
@@ -756,7 +756,7 @@ onBeforeUnmount(() => {
                   <RelayButton
                     variant="secondary"
                     size="sm"
-                    class="h-8 rounded-md border border-transparent bg-muted/50 px-3 text-[12px] font-medium text-foreground hover:border-transparent hover:bg-muted"
+                    class="h-8 rounded-md border border-transparent bg-muted/50 px-3 text-[12px] font-medium text-foreground hover:border-transparent hover:!bg-accent"
                     @click="showActivityModal = true"
                   >
                     {{ t('COMPANIES.DETAIL.ACTIVITY.VIEW_ALL') }}

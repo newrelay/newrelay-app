@@ -76,6 +76,7 @@ class MailPresenter < SimpleDelegator
     # ref : https://github.com/gorails-screencasts/action-mailbox-action-text/blob/master/app/mailboxes/posts_mailbox.rb
     mail.attachments.map do |attachment|
       blob = ActiveStorage::Blob.create_and_upload!(
+        key: blob_key,
         io: StringIO.new(attachment.body.to_s),
         filename: attachment.filename.presence || "attachment_#{SecureRandom.hex(4)}",
         content_type: attachment.content_type
@@ -180,6 +181,12 @@ class MailPresenter < SimpleDelegator
   end
 
   private
+
+  def blob_key
+    return unless @account
+
+    "accounts/#{@account.id}/mail_attachments/#{ActiveStorage::Blob.generate_unique_secure_token}"
+  end
 
   def parse_mail_address(email)
     return if email.blank?

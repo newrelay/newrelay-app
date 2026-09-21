@@ -26,7 +26,7 @@ class Api::V1::Accounts::Captain::DocumentsController < Api::V1::Accounts::BaseC
   def create
     return render_could_not_create_error('Missing Assistant') if @assistant.nil?
 
-    @document = @assistant.documents.build(document_params)
+    @document = @assistant.documents.build({ account_id: @assistant.account_id }.merge(document_params))
     @document.save!
   rescue Captain::Document::LimitExceededError => e
     render_could_not_create_error(e.message)

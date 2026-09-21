@@ -38,6 +38,7 @@ class Api::V1::Accounts::UploadController < Api::V1::Accounts::BaseController
 
   def create_and_save_blob(io, filename, content_type)
     ActiveStorage::Blob.create_and_upload!(
+      key: "accounts/#{current_account.id}/uploads/#{ActiveStorage::Blob.generate_unique_secure_token}",
       io: io,
       filename: filename,
       content_type: content_type

@@ -410,7 +410,7 @@ defineExpose({ dialogRef, open, close, onSuccess });
                 t('COMPANIES.CREATE.FIELDS.DESCRIPTION_PLACEHOLDER')
               "
               :disabled="isLoading"
-              class-name="min-h-[80px] resize-y"
+              class-name="min-h-[80px] resize-y !border-input"
             />
           </div>
         </div>

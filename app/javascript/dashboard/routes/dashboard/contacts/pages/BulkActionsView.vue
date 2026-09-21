@@ -280,7 +280,7 @@ onMounted(() => {
 
         <!-- Filters card -->
         <div
-          class="mb-6 space-y-6 rounded-xl border border-border bg-card p-6 shadow-sm"
+          class="mb-4 space-y-6 rounded-xl border border-border bg-card p-6 shadow-sm"
         >
           <div
             v-on-click-outside="closeFilterMenus"

@@ -111,6 +111,15 @@ RSpec.describe Account do
         expect(account.inbound_email_domain).to eq('test.com')
       end
     end
+
+    it 'returns the domain from support email when domain and env are blank' do
+      InstallationConfig.find_or_initialize_by(name: 'MAILER_INBOUND_EMAIL_DOMAIN').update!(value: '')
+      GlobalConfig.clear_cache
+      account.update(domain: nil, support_email: 'no-reply@newrelayhq.com')
+      with_modified_env MAILER_INBOUND_EMAIL_DOMAIN: '' do
+        expect(account.reload.inbound_email_domain).to eq('newrelayhq.com')
+      end
+    end
   end
 
   describe 'support_email' do

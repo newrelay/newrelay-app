@@ -2,7 +2,7 @@ class Email::FromBuilder < Email::BaseBuilder
   pattr_initialize [:inbox!, :message!]
 
   def build
-    return sender_name(account_support_email) unless inbox.email?
+    return sender_name(replyable_sender_email(account_support_email)) unless inbox.email?
 
     from_email = case email_channel_type
                  when :standard_imap_smtp,

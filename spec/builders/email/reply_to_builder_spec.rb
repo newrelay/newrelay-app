@@ -92,15 +92,37 @@ RSpec.describe Email::ReplyToBuilder do
 
       context 'when inbound email domain is missing' do
         before do
+          InstallationConfig.find_or_initialize_by(name: 'MAILER_INBOUND_EMAIL_DOMAIN').update!(value: '')
+          GlobalConfig.clear_cache
           account.enable_features('inbound_emails')
           account.update!(domain: nil)
         end
 
-        it 'returns account support email' do
-          builder = described_class.new(inbox: inbox, message: current_message)
-          result = builder.build
+        it 'uses the support email domain for the conversation reply address' do
+          with_modified_env MAILER_INBOUND_EMAIL_DOMAIN: '' do
+            builder = described_class.new(inbox: inbox, message: current_message)
+            result = builder.build
 
-          expect(result).to include('support@example.com')
+            expect(result).to include("reply+#{conversation.uuid}@example.com")
+          end
+        end
+      end
+
+      context 'when support email is a no-reply address' do
+        before do
+          InstallationConfig.find_or_initialize_by(name: 'MAILER_INBOUND_EMAIL_DOMAIN').update!(value: '')
+          GlobalConfig.clear_cache
+          account.disable_features('inbound_emails')
+          account.update!(domain: nil, support_email: 'no-reply@newrelayhq.com')
+        end
+
+        it 'sets reply-to to the conversation reply address' do
+          with_modified_env MAILER_INBOUND_EMAIL_DOMAIN: '' do
+            builder = described_class.new(inbox: inbox, message: current_message)
+            result = builder.build
+
+            expect(result).to include("reply+#{conversation.uuid}@newrelayhq.com")
+          end
         end
       end
     end

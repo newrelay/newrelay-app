@@ -40,6 +40,18 @@ RSpec.describe Email::FromBuilder do
           expect(result).to include('support@example.com')
         end
       end
+
+      context 'when support email is a no-reply address' do
+        before { account.update!(support_email: 'no-reply@newrelayhq.com') }
+
+        it 'rewrites the from address to mail@ on the same domain' do
+          builder = described_class.new(inbox: inbox, message: current_message)
+          result = builder.build
+
+          expect(result).to include('mail@newrelayhq.com')
+          expect(result).not_to include('no-reply@')
+        end
+      end
     end
 
     context 'when inbox is an email channel' do

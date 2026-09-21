@@ -202,8 +202,12 @@ class Account < ApplicationRecord
   end
 
   def inbound_email_domain
-    domain.presence || GlobalConfig.get('MAILER_INBOUND_EMAIL_DOMAIN')['MAILER_INBOUND_EMAIL_DOMAIN'] || ENV.fetch('MAILER_INBOUND_EMAIL_DOMAIN',
-                                                                                                                   false)
+    domain.presence ||
+      GlobalConfig.get('MAILER_INBOUND_EMAIL_DOMAIN')['MAILER_INBOUND_EMAIL_DOMAIN'].presence ||
+      ENV['MAILER_INBOUND_EMAIL_DOMAIN'].presence ||
+      Mail::Address.new(support_email.to_s).domain.presence
+  rescue Mail::Field::ParseError, Mail::Field::IncompleteParseError
+    nil
   end
 
   def support_email

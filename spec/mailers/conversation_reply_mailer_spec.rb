@@ -678,9 +678,11 @@ RSpec.describe ConversationReplyMailer do
       let!(:message) { create(:message, conversation: conversation, account: account) }
       let(:mail) { described_class.reply_with_summary(message.conversation, message.id).deliver_now }
 
-      it 'set reply to email address as inbox email address' do
-        expect(mail.from).to eq([inbox.email_address])
-        expect(mail.reply_to).to eq([inbox.email_address])
+      before { account.disable_features('reply_mailer_migration', 'inbound_emails') }
+
+      it 'rewrites no-reply from and sets reply-to to the conversation address' do
+        expect(mail.from).to eq(['mail@chatwoot.com'])
+        expect(mail.reply_to).to eq(["reply+#{conversation.uuid}@#{account.inbound_email_domain}"])
       end
     end
 

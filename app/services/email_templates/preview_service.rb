@@ -152,6 +152,6 @@ class EmailTemplates::PreviewService
   end
 
   def brand_logo
-    brand_config['LOGO'].to_s
+    brand_config['LOGO'].presence || '/brand-assets/logo.svg'
   end
 end

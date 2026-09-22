@@ -18,6 +18,7 @@ describe EmailTemplates::PreviewService do
 
       expect(html).to include('sample body content')
       expect(html).to include('email-container')
+      expect(html).to include('/brand-assets/logo.svg')
     end
   end
 end

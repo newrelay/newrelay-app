@@ -38,12 +38,15 @@ module FrontendUrlsHelper
     account_app_url(conversation.account, "conversations/#{conversation.display_id}")
   end
 
-  def absolute_brand_logo_url(account)
-    path = account&.effective_brand_logo_url
+  def absolute_asset_url(path)
     return if path.blank?
     return path if path.start_with?('http://', 'https://')
 
     "#{default_frontend_origin}#{path.start_with?('/') ? path : "/#{path}"}"
+  end
+
+  def absolute_brand_logo_url(account)
+    absolute_asset_url(account&.effective_brand_logo_url)
   end
 
   def mailer_url_account

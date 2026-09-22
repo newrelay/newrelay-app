@@ -45,6 +45,10 @@ RSpec.describe 'Devise::Mailer' do
       expect(mail_body).not_to include('Workspace invitation')
     end
 
+    it 'includes the installation logo' do
+      expect(mail.body.to_s).to include('/brand-assets/logo.svg')
+    end
+
     context 'when the account has custom branding' do
       let(:logo_url) { 'https://cdn.acme.test/logo.png' }
 

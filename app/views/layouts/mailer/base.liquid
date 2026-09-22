@@ -1,23 +1,26 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; box-sizing: border-box; font-size: 14px; margin: 0;">
+<html xmlns="http://www.w3.org/1999/xhtml" style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; box-sizing: border-box; font-size: 14px; margin: 0;">
   <head>
-    <meta name="viewport" content="width=device-width" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <title></title>
     <style type="text/css">
       img {
         max-width: 100%;
         border: none;
+        outline: none;
+        text-decoration: none;
       }
 
       body {
         -webkit-font-smoothing: antialiased;
         -webkit-text-size-adjust: none;
-        line-height: 21px;
+        line-height: 22px;
         width: 100% !important;
         margin: 0;
         padding: 0;
-        background-color: #F4F7FB;
+        background-color: #F8FAFC;
+        color: #0F172A;
       }
 
       table {
@@ -27,56 +30,60 @@
       }
 
       a {
-        color: #2781F6;
+        color: #2563EB;
+        text-decoration: none;
       }
 
       .email-container {
         width: 100%;
-        max-width: 640px;
+        max-width: 620px;
       }
 
       .main-card {
         width: 100%;
-        border: 1px solid #DCE7F5;
+        border: 1px solid #E2E8F0;
         border-radius: 24px;
         background-color: #FFFFFF;
-        box-shadow: 0 12px 32px rgba(15, 23, 42, 0.06);
+        box-shadow: 0 20px 40px -15px rgba(15, 23, 42, 0.07);
         overflow: hidden;
       }
 
       .accent-bar {
-        height: 6px;
-        background-color: #2781F6;
+        height: 8px;
+        border-top-left-radius: 24px;
+        border-top-right-radius: 24px;
+        background-color: #2563EB;
+        background: linear-gradient(90deg, #2563EB 0%, #7C3AED 50%, #EC4899 100%);
         font-size: 0;
         line-height: 0;
       }
 
       .content-wrap {
-        padding: 40px 36px 20px;
+        padding: 40px 36px 28px;
       }
 
       .footer {
-        padding: 20px 8px 0;
+        padding: 24px 12px 0;
         text-align: center;
         color: #64748B;
         font-size: 13px;
-        line-height: 21px;
+        line-height: 20px;
       }
 
       .footer a {
-        color: #2781F6;
+        color: #2563EB;
         font-weight: 600;
         text-decoration: none;
       }
 
       @media only screen and (max-width: 640px) {
         h1 {
-          font-size: 28px !important;
-          line-height: 34px !important;
+          font-size: 26px !important;
+          line-height: 32px !important;
         }
 
         .page-wrap {
-          padding: 24px 12px 32px !important;
+          padding: 20px 12px 32px !important;
         }
 
         .main-card {
@@ -84,7 +91,7 @@
         }
 
         .content-wrap {
-          padding: 32px 24px 18px !important;
+          padding: 28px 20px 20px !important;
         }
       }
     </style>
@@ -96,34 +103,35 @@
   {% endif %}
   {% assign brand_url = global_config['BRAND_URL'] %}
 
-  <body itemscope itemtype="http://schema.org/EmailMessage" style="font-size: 14px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,Helvetica,Arial,sans-serif; box-sizing: border-box; -webkit-font-smoothing: antialiased; -webkit-text-size-adjust: none; width: 100% !important; line-height: 21px; background-color: #F4F7FB; margin: 0; padding: 0;" bgcolor="#F4F7FB">
-    <table class="body-wrap" role="presentation" width="100%" cellpadding="0" cellspacing="0" style="width: 100%; background-color: #F4F7FB; margin: 0;" bgcolor="#F4F7FB">
+  <body itemscope itemtype="http://schema.org/EmailMessage" style="font-size: 14px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; box-sizing: border-box; -webkit-font-smoothing: antialiased; -webkit-text-size-adjust: none; width: 100% !important; line-height: 22px; background-color: #F8FAFC; margin: 0; padding: 0;" bgcolor="#F8FAFC">
+    <table class="body-wrap" role="presentation" width="100%" cellpadding="0" cellspacing="0" style="width: 100%; background-color: #F8FAFC; margin: 0;" bgcolor="#F8FAFC">
       <tr style="margin: 0;">
-        <td align="center" class="page-wrap" style="padding: 32px 16px 40px;" valign="top">
-          <table class="email-container" role="presentation" width="100%" cellpadding="0" cellspacing="0" style="width: 100%; max-width: 640px; margin: 0 auto;">
+        <td align="center" class="page-wrap" style="padding: 40px 16px 48px;" valign="top">
+          <table class="email-container" role="presentation" width="100%" cellpadding="0" cellspacing="0" style="width: 100%; max-width: 620px; margin: 0 auto;">
             <tr style="margin: 0;">
               <td style="margin: 0;">
-                <table class="main-card" role="presentation" width="100%" cellpadding="0" cellspacing="0" itemprop="action" itemscope itemtype="http://schema.org/ConfirmAction" style="width: 100%; border: 1px solid #DCE7F5; border-radius: 24px; background-color: #FFFFFF; box-shadow: 0 12px 32px rgba(15, 23, 42, 0.06); overflow: hidden;" bgcolor="#FFFFFF">
+                <table class="main-card" role="presentation" width="100%" cellpadding="0" cellspacing="0" itemprop="action" itemscope itemtype="http://schema.org/ConfirmAction" style="width: 100%; border: 1px solid #E2E8F0; border-radius: 24px; background-color: #FFFFFF; box-shadow: 0 20px 40px -15px rgba(15, 23, 42, 0.07); overflow: hidden;" bgcolor="#FFFFFF">
                   <tr style="margin: 0;">
-                    <td class="accent-bar" style="height: 6px; background-color: #2781F6; font-size: 0; line-height: 0;">&nbsp;</td>
+                    <td class="accent-bar" style="height: 8px; border-top-left-radius: 24px; border-top-right-radius: 24px; background-color: #2563EB; background: linear-gradient(90deg, #2563EB 0%, #7C3AED 50%, #EC4899 100%); font-size: 0; line-height: 0;">&nbsp;</td>
                   </tr>
                   <tr style="margin: 0;">
-                    <td class="content-wrap" style="vertical-align: top; margin: 0; padding: 40px 36px 20px; font-family: -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;" valign="top">
+                    <td class="content-wrap" style="vertical-align: top; margin: 0; padding: 40px 36px 28px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;" valign="top">
                       <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="width: 100%; margin: 0;">
                         {% assign brand_logo = global_config['LOGO'] %}
-                        {% if brand_logo != nil and brand_logo != '' %}
-                          <tr style="margin: 0;">
-                            <td style="padding: 0 0 24px;">
-                              {% if brand_url != nil and brand_url != '' %}
-                                <a href="{{ brand_url }}" style="text-decoration: none;">
-                                  <img src="{{ brand_logo }}" alt="{{ brand_name }}" height="32" style="height: 32px; max-width: 180px; border: none; display: block;" />
-                                </a>
-                              {% else %}
-                                <img src="{{ brand_logo }}" alt="{{ brand_name }}" height="32" style="height: 32px; max-width: 180px; border: none; display: block;" />
-                              {% endif %}
-                            </td>
-                          </tr>
+                        {% if brand_logo == nil or brand_logo == '' %}
+                          {% assign brand_logo = '/brand-assets/logo.svg' %}
                         {% endif %}
+                        <tr style="margin: 0;">
+                          <td align="center" style="padding: 0 0 28px; text-align: center;">
+                            {% if brand_url != nil and brand_url != '' %}
+                              <a href="{{ brand_url }}" style="text-decoration: none; display: inline-block;">
+                                <img src="{{ brand_logo }}" alt="{{ brand_name }}" height="36" style="height: 36px; max-width: 200px; border: none; display: block; margin: 0 auto;" />
+                              </a>
+                            {% else %}
+                              <img src="{{ brand_logo }}" alt="{{ brand_name }}" height="36" style="height: 36px; max-width: 200px; border: none; display: block; margin: 0 auto;" />
+                            {% endif %}
+                          </td>
+                        </tr>
                         {{ content_for_layout }}
                       </table>
                     </td>
@@ -133,10 +141,10 @@
             </tr>
             {% if brand_name != '' %}
               <tr style="margin: 0;">
-                <td class="footer" style="padding: 20px 8px 0; text-align: center; color: #64748B; font-size: 13px; line-height: 21px;">
+                <td class="footer" style="padding: 24px 12px 0; text-align: center; color: #64748B; font-size: 13px; line-height: 20px;">
                   This email was sent by
                   {% if brand_url != nil and brand_url != '' %}
-                    <a href="{{ brand_url }}" style="color: #2781F6; font-weight: 600; text-decoration: none;">{{ brand_name }}</a>.
+                    <a href="{{ brand_url }}" style="color: #2563EB; font-weight: 600; text-decoration: none;">{{ brand_name }}</a>.
                   {% else %}
                     <span style="color: #0F172A; font-weight: 600;">{{ brand_name }}</span>.
                   {% endif %}

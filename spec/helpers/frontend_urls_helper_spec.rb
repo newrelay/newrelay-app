@@ -110,4 +110,19 @@ describe FrontendUrlsHelper do
       end
     end
   end
+
+  describe '#absolute_asset_url' do
+    it 'returns nil for a blank path' do
+      expect(helper.absolute_asset_url(nil)).to be_nil
+      expect(helper.absolute_asset_url('')).to be_nil
+    end
+
+    it 'keeps already-absolute URLs' do
+      expect(helper.absolute_asset_url('https://cdn.example.com/logo.png')).to eq('https://cdn.example.com/logo.png')
+    end
+
+    it 'prefixes relative paths with the frontend origin' do
+      expect(helper.absolute_asset_url('/brand-assets/logo.svg')).to eq('http://test.host/brand-assets/logo.svg')
+    end
+  end
 end

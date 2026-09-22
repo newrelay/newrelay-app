@@ -18,9 +18,19 @@ class ActionView::Template::Handlers::Liquid
     assigns['content_for_layout'] = @view.content_for(:layout) if @view.content_for?(:layout)
     assigns.merge!(local_assigns)
     assigns.merge!(locals)
+    apply_email_chrome_content_for(assigns)
 
     liquid = Liquid::Template.parse(template)
     liquid.send(render_method, assigns.stringify_keys, filters: filters, registers: registers.stringify_keys)
+  end
+
+  def apply_email_chrome_content_for(assigns)
+    %w[email_heading email_subtitle email_icon].each do |key|
+      value = @view.content_for(key.to_sym)
+      next if value.blank?
+
+      assigns[key] = value.to_s.strip
+    end
   end
 
   def locals

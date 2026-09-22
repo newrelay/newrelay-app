@@ -53,7 +53,9 @@ class EmailTemplates::Catalog
 
   def scan(dir, template_type)
     root = VIEWS_ROOT.join(dir)
-    %w[liquid erb].flat_map { |ext| Dir.glob(root.join("**/*.#{ext}")) }.uniq.map do |file|
+    %w[liquid erb].flat_map { |ext| Dir.glob(root.join("**/*.#{ext}")) }.uniq.filter_map do |file|
+      next if File.basename(file).start_with?('_')
+
       build_entry(Pathname.new(file), template_type)
     end
   end

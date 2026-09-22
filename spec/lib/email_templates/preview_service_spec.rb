@@ -10,6 +10,7 @@ describe EmailTemplates::PreviewService do
       expect(html).to include('Alex Rivera')
       expect(html).to include('Jordan Lee')
       expect(html).to include('#42')
+      expect(html).to include('New conversation')
     end
 
     it 'injects sample inner content when previewing the layout' do
@@ -19,6 +20,7 @@ describe EmailTemplates::PreviewService do
       expect(html).to include('sample body content')
       expect(html).to include('email-container')
       expect(html).to include('/brand-assets/logo.svg')
+      expect(html).to include('/email_icons/base.png')
     end
   end
 end

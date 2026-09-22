@@ -15,6 +15,7 @@ class EmailTemplates::PreviewService
   def perform
     html = @entry.format == 'liquid' ? render_liquid_preview : render_erb
     return html if html.include?('<html')
+    return wrap_snippet(html) if skip_product_layout?
 
     wrap_in_layout(html)
   rescue Liquid::Error, ActionView::Template::Error => e
@@ -34,7 +35,22 @@ class EmailTemplates::PreviewService
   end
 
   def wrap_in_layout(inner_html, layout_html: layout_source)
-    render_liquid(layout_html.gsub('{{ content_for_layout }}', inner_html.to_s))
+    render_liquid(layout_html.gsub('{{ content_for_layout }}', table_wrap(inner_html)))
+  end
+
+  def wrap_snippet(inner_html)
+    "<!DOCTYPE html><html><body style=\"margin:16px;background:#ffffff;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:#0F172A;\">#{table_wrap(inner_html)}</body></html>"
+  end
+
+  def table_wrap(inner_html)
+    html = inner_html.to_s
+    return "<table role=\"presentation\" width=\"100%\">#{html}</table>" if html.include?('<tr') && html.exclude?('<table')
+
+    html
+  end
+
+  def skip_product_layout?
+    @entry.category == 'Conversation replies' && %w[email_reply reply_without_summary].include?(@entry.name)
   end
 
   def layout?
@@ -118,6 +134,7 @@ class EmailTemplates::PreviewService
   end
 
   def sample_assigns
+    chrome = preview_chrome
     {
       'user' => { 'available_name' => 'Alex Rivera', 'name' => 'Alex Rivera', 'email' => 'alex@example.com',
                   'first_name' => 'Alex', 'last_name' => 'Rivera', 'user_id' => 12, 'user_email' => 'alex@example.com' },
@@ -127,9 +144,11 @@ class EmailTemplates::PreviewService
       'message' => { 'sender_display_name' => 'Jordan Lee', 'text_content' => 'Can someone look at this?' },
       'sla_policy' => { 'name' => 'First response in 15 minutes' },
       'action_url' => brand_url,
-      'email_heading' => 'Here is a quick update',
-      'email_subtitle' => 'See the latest activity on your workspace',
-      'email_icon' => 'clipboard',
+      'custom_message' => 'Automation matched this conversation.',
+      'email_heading' => chrome[:heading],
+      'email_subtitle' => chrome[:subtitle],
+      'email_icon' => chrome[:icon],
+      'email_icon_url' => preview_mascot_url,
       'global_config' => { 'BRAND_NAME' => brand_name, 'BRAND_URL' => brand_url, 'LOGO' => brand_logo },
       'meta' => sample_meta,
       'account_name' => 'Acme',
@@ -137,6 +156,32 @@ class EmailTemplates::PreviewService
       'cname_record' => 'help.acme.test CNAME custom.example.com',
       'content_for_layout' => SAMPLE_INNER_HTML
     }
+  end
+
+  def preview_mascot_url
+    return if @entry.category == 'Conversation replies'
+
+    path = MailerChrome.mascot_public_path(layout? ? 'base' : @entry.name)
+    return if path.blank?
+
+    "#{preview_origin}#{path}"
+  end
+
+  def preview_chrome
+    mapped = MailerChrome::CHROME[@entry.name]
+    return mapped if mapped.present?
+    return { icon: 'clipboard', heading: default_heading, subtitle: default_subtitle } if layout?
+    return {} if @entry.category == 'Conversation replies'
+
+    { icon: 'clipboard', heading: default_heading, subtitle: default_subtitle }
+  end
+
+  def default_heading
+    @entry.template_type == 'layout' ? 'Here is a quick update' : @entry.title
+  end
+
+  def default_subtitle
+    @entry.template_type == 'layout' ? 'See the latest activity on your workspace' : @entry.category
   end
 
   def sample_conversation
@@ -160,7 +205,22 @@ class EmailTemplates::PreviewService
       'deletion_reason' => 'Requested by administrator', 'deleted_user_count' => 1,
       'soft_deleted_users' => [{ 'user_id' => 12, 'user_email' => 'alex@example.com' }],
       'imported_contacts' => 48, 'failed_contacts' => 2, 'rule_name' => 'Assign new conversations'
-    }
+    }.merge(sample_meta_overrides)
+  end
+
+  def sample_meta_overrides
+    case @entry.name
+    when 'key_failure'
+      { 'action' => 'assistant_response', 'error_message' => 'Invalid API key' }
+    when 'submitted'
+      { 'message' => 'We want SSO and a dedicated success manager.' }
+    when 'attachment_failure'
+      { 'action' => 'Process upload', 'message' => 'File exceeded the size limit.' }
+    when 'contact_import_complete'
+      { 'failed_contacts' => 0 }
+    else
+      {}
+    end
   end
 
   def brand_config
@@ -176,6 +236,13 @@ class EmailTemplates::PreviewService
   end
 
   def brand_logo
-    brand_config['LOGO'].presence || '/brand-assets/logo.svg'
+    path = brand_config['LOGO'].presence || '/brand-assets/logo.svg'
+    return path if path.start_with?('http://', 'https://')
+
+    "#{preview_origin}#{path.start_with?('/') ? path : "/#{path}"}"
+  end
+
+  def preview_origin
+    ENV.fetch('FRONTEND_URL', 'http://localhost:3000').to_s.chomp('/')
   end
 end

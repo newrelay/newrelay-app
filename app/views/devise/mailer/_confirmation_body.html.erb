@@ -2,6 +2,9 @@
   @email_heading = heading
   @email_subtitle = eyebrow
   @email_icon = local_assigns[:icon].presence || 'mail'
+  content_for :email_heading, heading
+  content_for :email_subtitle, eyebrow
+  content_for :email_icon, @email_icon
 %>
 
 <p style="margin: 0 0 10px; font-size: 13px; line-height: 20px; font-weight: 600; color: #0F172A;">Hi <%= recipient_name %>,</p>
@@ -33,7 +36,7 @@
         ) %>
         <p style="margin: 12px 0 0; font-size: 12px; line-height: 18px; color: #64748B; word-break: break-all;">
           If the button does not work, copy this URL:<br />
-          <%= link_to(action_url, action_url, style: 'color: #4338CA; font-weight: 600; text-decoration: none;') %>
+          <%= link_to(action_url, action_url, style: 'color: #4338CA; font-weight: 600; text-decoration: none; overflow-wrap: anywhere; word-break: break-word;') %>
         </p>
       </td>
     </tr>

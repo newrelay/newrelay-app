@@ -1,7 +1,6 @@
 <p>Hi {{ user.available_name }},</p>
 
 <p>A new conversation (<a href="{{ action_url }}">#{{ conversation.display_id }}</a>) was created in {{ inbox.name }}.</p>
-<p><strong>{{ conversation.contact_name }}</strong> wrote:</p>
 
 {% for chat_message in conversation.recent_messages %}
   <p style="margin: 12px 0 4px; font-size: 12px; font-weight: 700; color: #0F172A;">

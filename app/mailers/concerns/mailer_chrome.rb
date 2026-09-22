@@ -1,8 +1,29 @@
 module MailerChrome
   extend ActiveSupport::Concern
 
+  MASCOT_ALIASES = {
+    'dialogflow_disconnect' => 'dialog_flow_disconnect',
+    'conversation_transcript' => 'conversion_transcript'
+  }.freeze
+
+  def self.mascot_slug(name)
+    key = name.to_s
+    MASCOT_ALIASES[key] || key
+  end
+
+  def self.mascot_public_path(name)
+    slug = mascot_slug(name)
+    relative = "email_icons/#{slug}.png"
+    return "/#{relative}" if Rails.public_path.join(relative).exist?
+
+    fallback = 'email_icons/base.png'
+    return "/#{fallback}" if Rails.public_path.join(fallback).exist?
+
+    nil
+  end
+
   CHROME = {
-    'confirmation_instructions' => { icon: 'mail' },
+    'confirmation_instructions' => { icon: 'mail', heading: 'Confirm your email to get started', subtitle: 'Welcome' },
     'reset_password_instructions' => { icon: 'lock', heading: 'Reset your password', subtitle: 'Password reset' },
     'unlock_instructions' => { icon: 'unlock', heading: 'Unlock your account', subtitle: 'Account locked' },
     'password_change' => { icon: 'shield', heading: 'Your password was changed', subtitle: 'Security' },
@@ -44,7 +65,14 @@ module MailerChrome
   private
 
   def email_chrome_icon
-    @email_icon.presence || chrome_for_action[:icon] || 'clipboard'
+    @email_icon.presence || chrome_for_action[:icon]
+  end
+
+  def email_chrome_icon_url
+    return if is_a?(ConversationReplyMailer)
+
+    path = MailerChrome.mascot_public_path(action_name)
+    absolute_asset_url(path) if path
   end
 
   def email_chrome_heading

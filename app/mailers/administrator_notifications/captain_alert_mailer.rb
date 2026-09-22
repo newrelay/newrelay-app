@@ -1,6 +1,6 @@
 class AdministratorNotifications::CaptainAlertMailer < AdministratorNotifications::BaseMailer
   def key_failure(action:, error_message:, account: nil)
-    subject = 'Captain AI call failed — check your OpenAI/OpenRouter key'
+    subject = 'Relay AI call failed — check your OpenAI/OpenRouter key'
     meta = {
       'action' => action,
       'error_message' => error_message,

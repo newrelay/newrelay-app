@@ -87,6 +87,12 @@ const handleCopyConfig = async () => {
             <Icon icon="i-lucide-copy" class="size-3.5" />
             {{ t('MCP_SETTINGS.CONNECT.COPY_BUTTON') }}
           </RelayButton>
+          <p class="text-[12px] text-muted-foreground mt-3">
+            {{ t('MCP_SETTINGS.CONNECT.SUPPORTED_CLIENTS') }}
+          </p>
+          <p class="text-[12px] text-muted-foreground mt-1.5">
+            {{ t('MCP_SETTINGS.CONNECT.OAUTH_NOTE') }}
+          </p>
         </div>
 
         <McpPermissionsForm :initial-scopes="scopes" @save="handleSave" />

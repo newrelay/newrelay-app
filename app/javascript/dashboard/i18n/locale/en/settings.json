@@ -278,10 +278,12 @@
     "ACCESS_TOKEN_LINK": "Manage your access token",
     "MANAGE_BUTTON": "Manage Permissions",
     "CONNECT": {
-      "TITLE": "Connect with Claude",
-      "SUBTITLE": "Copy this config into your MCP client (Claude Desktop, Claude Code, Cursor) to connect it to this account.",
+      "TITLE": "Connect an MCP client",
+      "SUBTITLE": "Copy this config into your MCP client to connect it to this account.",
       "COPY_BUTTON": "Copy config",
-      "COPY_SUCCESS": "Config copied to clipboard"
+      "COPY_SUCCESS": "Config copied to clipboard",
+      "SUPPORTED_CLIENTS": "Works with Claude Desktop, Claude Code, Cursor, Windsurf, and other MCP clients that read a local config file.",
+      "OAUTH_NOTE": "Web-hosted connectors (like ChatGPT's or Claude.ai web's) need OAuth sign-in, not a pasted token — not supported yet."
     },
     "GROUPS": {
       "READ": "Read",

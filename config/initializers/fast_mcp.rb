@@ -39,7 +39,10 @@ Rails.application.middleware.use(
   mcp_server,
   path_prefix: '/mcp',
   logger: Rails.logger,
-  localhost_only: Rails.env.local?,
+  # Same reasoning as allowed_origins below: this app runs RAILS_ENV=development on real,
+  # remotely-reachable hosts (dev.newrelay.com), so Rails.env.local? can't distinguish
+  # "actual local machine" from "deployed dev server" -- it blocked every real MCP client.
+  localhost_only: false,
   # DNS-rebinding origin checks are a browser/cookie-auth mitigation; this endpoint is
   # Bearer-token authenticated (see Mcp::BaseTool#authenticate!), so a same-host allowlist
   # would 403 every real request (production host is never 'localhost') as well as every spec.

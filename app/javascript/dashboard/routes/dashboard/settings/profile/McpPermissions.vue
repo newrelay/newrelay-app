@@ -22,7 +22,7 @@ const mcpConfig = computed(() =>
   JSON.stringify(
     {
       mcpServers: {
-        chatwoot: {
+        newrelay: {
           type: 'http',
           url: `${window.location.origin}/mcp/messages`,
           headers: {

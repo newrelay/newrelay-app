@@ -7,6 +7,9 @@
 # Ignore bundler config.
 /.bundle
 
+# Local MCP client config (contains real Bearer tokens)
+/.mcp.json
+
 # Ignore the default SQLite database.
 /db/*.sqlite3
 /db/*.sqlite3-journal

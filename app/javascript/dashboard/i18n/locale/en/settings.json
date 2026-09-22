@@ -277,6 +277,12 @@
     "DISABLED_MESSAGE": "MCP is not enabled for this account. Ask your administrator to enable it to manage tool permissions here.",
     "ACCESS_TOKEN_LINK": "Manage your access token",
     "MANAGE_BUTTON": "Manage Permissions",
+    "CONNECT": {
+      "TITLE": "Connect with Claude",
+      "SUBTITLE": "Copy this config into your MCP client (Claude Desktop, Claude Code, Cursor) to connect it to this account.",
+      "COPY_BUTTON": "Copy config",
+      "COPY_SUCCESS": "Config copied to clipboard"
+    },
     "GROUPS": {
       "READ": "Read",
       "WRITE": "Write"

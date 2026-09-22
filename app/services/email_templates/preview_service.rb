@@ -74,18 +74,7 @@ class EmailTemplates::PreviewService
   def erb_assigns
     user = User.new(name: 'Alex Rivera', email: 'alex@example.com')
     inbox = OpenStruct.new(timezone: 'UTC', name: 'Support Inbox', inbox_type: 'Email')
-    conversation = OpenStruct.new(inbox: inbox, csat_survey_link: 'https://example.com')
-    message = OpenStruct.new(
-      content: 'Thanks for reaching out — we are looking into this.',
-      outgoing_content: 'Thanks for reaching out — we are looking into this.',
-      content_attributes: {},
-      message_type: 'outgoing',
-      incoming?: false,
-      sender: user,
-      conversation: conversation,
-      attachments: [],
-      created_at: Time.current
-    )
+    message = sample_erb_message(user, inbox)
     {
       resource: user,
       user: user,
@@ -96,6 +85,21 @@ class EmailTemplates::PreviewService
       inbox: inbox,
       large_attachments: []
     }
+  end
+
+  def sample_erb_message(user, inbox)
+    conversation = OpenStruct.new(inbox: inbox, csat_survey_link: 'https://example.com')
+    OpenStruct.new(
+      content: 'Thanks for reaching out — we are looking into this.',
+      outgoing_content: 'Thanks for reaching out — we are looking into this.',
+      content_attributes: {},
+      message_type: 'outgoing',
+      incoming?: false,
+      sender: user,
+      conversation: conversation,
+      attachments: [],
+      created_at: Time.current
+    )
   end
 
   def erb_locals

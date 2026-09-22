@@ -72,13 +72,30 @@ class EmailTemplates::PreviewService
   end
 
   def erb_assigns
+    user = User.new(name: 'Alex Rivera', email: 'alex@example.com')
+    inbox = OpenStruct.new(timezone: 'UTC', name: 'Support Inbox', inbox_type: 'Email')
+    conversation = OpenStruct.new(inbox: inbox, csat_survey_link: 'https://example.com')
     message = OpenStruct.new(
       content: 'Thanks for reaching out — we are looking into this.',
       outgoing_content: 'Thanks for reaching out — we are looking into this.',
-      content_attributes: {}
+      content_attributes: {},
+      message_type: 'outgoing',
+      incoming?: false,
+      sender: user,
+      conversation: conversation,
+      attachments: [],
+      created_at: Time.current
     )
-    { resource: User.new(name: 'Alex Rivera', email: 'alex@example.com'), token: 'preview-token', message: message,
-      large_attachments: [] }
+    {
+      resource: user,
+      user: user,
+      contact: user,
+      token: 'preview-token',
+      message: message,
+      messages: [message],
+      inbox: inbox,
+      large_attachments: []
+    }
   end
 
   def erb_locals
@@ -106,6 +123,9 @@ class EmailTemplates::PreviewService
       'message' => { 'sender_display_name' => 'Jordan Lee', 'text_content' => 'Can someone look at this?' },
       'sla_policy' => { 'name' => 'First response in 15 minutes' },
       'action_url' => brand_url,
+      'email_heading' => 'Here is a quick update',
+      'email_subtitle' => 'See the latest activity on your workspace',
+      'email_icon' => 'clipboard',
       'global_config' => { 'BRAND_NAME' => brand_name, 'BRAND_URL' => brand_url, 'LOGO' => brand_logo },
       'meta' => sample_meta,
       'account_name' => 'Acme',

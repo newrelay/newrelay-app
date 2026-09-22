@@ -1,6 +1,7 @@
 class ApplicationMailer < ActionMailer::Base
   include ActionView::Helpers::SanitizeHelper
   include FrontendUrlsHelper
+  include MailerChrome
 
   default from: ENV.fetch('MAILER_SENDER_EMAIL', 'Chatwoot <accounts@chatwoot.com>')
   before_action { ensure_current_account(params.try(:[], :account)) }
@@ -67,7 +68,10 @@ class ApplicationMailer < ActionMailer::Base
     # expose variables you want to be exposed in liquid
     locals = {
       global_config: branded_global_config,
-      action_url: @action_url
+      action_url: @action_url,
+      email_heading: email_chrome_heading,
+      email_subtitle: email_chrome_subtitle,
+      email_icon: email_chrome_icon
     }
 
     locals.merge({ attachment_url: @attachment_url }) if @attachment_url

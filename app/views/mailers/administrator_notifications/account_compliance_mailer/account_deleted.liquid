@@ -1,30 +1,29 @@
-<p>Hello,</p>
-
-<p>This is a notification to inform you that an account has been permanently deleted from your newrelay instance.</p>
-
-<p>
-  <strong>newrelay Installation:</strong> {{ meta.instance_url }}<br>
-  <strong>Account ID:</strong> {{ meta.account_id }}<br>
-  <strong>Account Name:</strong> {{ meta.account_name }}<br>
-  <strong>Deletion due at:</strong> {{ meta.marked_for_deletion_at }}<br>
-  <strong>Deleted At:</strong> {{ meta.deleted_at }}<br>
-  <strong>Deletion Reason:</strong> {{ meta.deletion_reason }}
-</p>
-
+<p>Hi,</p>
+<p>An account was permanently deleted from your NewRelay instance.</p>
+<table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" style="margin: 8px 0 16px;">
+  <tr>
+    <td style="padding: 9px 0; font-size: 13px; font-weight: 600; color: #334155;">Installation</td>
+    <td align="right" style="padding: 9px 0; font-size: 13px; font-weight: 700; color: #0F172A;">{{ meta.instance_url }}</td>
+  </tr>
+  <tr>
+    <td style="padding: 9px 0; font-size: 13px; font-weight: 600; color: #334155;">Account</td>
+    <td align="right" style="padding: 9px 0; font-size: 14px; font-weight: 800; color: #0F172A;">{{ meta.account_name }} (#{{ meta.account_id }})</td>
+  </tr>
+  <tr>
+    <td style="padding: 9px 0; font-size: 13px; font-weight: 600; color: #334155;">Deleted at</td>
+    <td align="right" style="padding: 9px 0; font-size: 13px; font-weight: 700; color: #0F172A;">{{ meta.deleted_at }}</td>
+  </tr>
+  <tr>
+    <td style="padding: 9px 0; font-size: 13px; font-weight: 600; color: #334155;">Reason</td>
+    <td align="right" style="padding: 9px 0; font-size: 13px; font-weight: 700; color: #0F172A;">{{ meta.deletion_reason }}</td>
+  </tr>
+</table>
 {% if meta.deleted_user_count > 0 %}
-<p>
-  <strong>Deleted Users ({{ meta.deleted_user_count }}):</strong><br>
+  <p><strong>Deleted users ({{ meta.deleted_user_count }})</strong></p>
   {% for user in meta.soft_deleted_users %}
-    User ID: {{ user.user_id }}, Email: {{ user.user_email }}{% unless forloop.last %}<br>{% endunless %}
+    <p>User ID {{ user.user_id }} — {{ user.user_email }}</p>
   {% endfor %}
-</p>
 {% else %}
-<p>
-  <strong>Deleted Users:</strong> None
-</p>
+  <p>No users were listed with this deletion.</p>
 {% endif %}
-
-<p>This email serves as a record for compliance purposes.</p>
-
-<p>Thank you,<br>
-newrelay System</p>
+<p>Keep this email as a compliance record.</p>

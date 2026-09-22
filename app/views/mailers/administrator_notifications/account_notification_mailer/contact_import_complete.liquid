@@ -1,17 +1,21 @@
-<p>Hello,</p>
-
-<p>Your contact import has been completed. Please check the contacts tab to view the imported contacts.</p>
-
-<p>Number of records imported: {{meta['imported_contacts']}}</p>
-
-<p>Number of records failed: {{meta['failed_contacts']}}</p>
-
-{% if meta['failed_contacts'] == 0 %}
-  <p>
-    Click <a href="{{action_url}}">here</a> to view the imported contacts.
+<p>Hi,</p>
+<p>Your contact import is complete. Open Contacts to review the records.</p>
+<table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" style="margin: 8px 0 16px;">
+  <tr>
+    <td style="padding: 9px 0; font-size: 13px; font-weight: 600; color: #334155;">Imported</td>
+    <td align="right" style="padding: 9px 0; font-size: 14px; font-weight: 800; color: #0F172A;">{{ meta.imported_contacts }}</td>
+  </tr>
+  <tr>
+    <td style="padding: 9px 0; font-size: 13px; font-weight: 600; color: #334155;">Failed</td>
+    <td align="right" style="padding: 9px 0; font-size: 14px; font-weight: 800; color: #0F172A;">{{ meta.failed_contacts }}</td>
+  </tr>
+</table>
+{% if meta.failed_contacts == 0 %}
+  <p style="margin: 16px 0 0; text-align: center;">
+    <a href="{{ action_url }}" style="display: inline-block; background-color: #5551FF; color: #FFFFFF; font-size: 13px; font-weight: 700; text-decoration: none; padding: 10px 22px; border-radius: 7px;">View contacts →</a>
   </p>
 {% else %}
-  <p>
-  Click <a href="{{ action_url }}" target="_blank">here</a> to view failed records.
+  <p style="margin: 16px 0 0; text-align: center;">
+    <a href="{{ action_url }}" style="display: inline-block; background-color: #5551FF; color: #FFFFFF; font-size: 13px; font-weight: 700; text-decoration: none; padding: 10px 22px; border-radius: 7px;">View failed records →</a>
   </p>
 {% endif %}

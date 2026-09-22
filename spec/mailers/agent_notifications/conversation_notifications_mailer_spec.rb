@@ -60,7 +60,7 @@ RSpec.describe AgentNotifications::ConversationNotificationsMailer do
     end
 
     it 'renders the senders name' do
-      expect(mail.body.encoded).to match("You've been mentioned in a conversation. <b>#{another_agent.display_name}</b> wrote:")
+      expect(mail.body.encoded).to match("You were mentioned in a conversation. <strong>#{another_agent.display_name}</strong> wrote:")
     end
 
     it 'renders Customer if contacts name not available in the conversation' do

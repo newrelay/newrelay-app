@@ -1,21 +1,9 @@
-<p>Hello there,</p>
-
-<p>We've noticed that your newrelay account <strong>{{ meta.account_name }}</strong> has been inactive for some time. Because of this, it's scheduled for deletion on <strong>{{ meta.deletion_date }}</strong>.</p>
-
-<p><strong>How do I keep my account?</strong></p>
-
-<p>Log in to your newrelay account before <strong>{{ meta.deletion_date }}</strong>. From your account settings, you can <a href="{{ action_url }}">cancel the deletion</a> and continue using your account.</p>
-
-<p><strong>What happens if I don't cancel?</strong></p>
-
-<p>Unless you cancel the account deletion before <strong>{{ meta.deletion_date }}</strong>, your account and all associated data — including conversations, contacts, reports, and settings — will be permanently deleted.</p>
-
-<p><strong>Why are we doing this?</strong></p>
-
-<p>To keep things secure and efficient, we regularly remove inactive accounts so our systems remain optimized for active teams.</p>
-
-<p>If you have any questions, feel free to reach us at <a href="mailto:hello@newrelay.com">hello@newrelay.com</a>.</p>
-
-<p>— The newrelay Team</p>
-
-
+<p>Hi,</p>
+<p>Your NewRelay account <strong>{{ meta.account_name }}</strong> has been inactive and is scheduled for deletion on <strong>{{ meta.deletion_date }}</strong>.</p>
+<p><strong>Keep this account</strong></p>
+<p>Sign in before <strong>{{ meta.deletion_date }}</strong> and cancel the deletion from account settings.</p>
+<p><strong>If you do nothing</strong></p>
+<p>Conversations, contacts, reports, and settings will be permanently deleted after that date.</p>
+<p style="margin: 16px 0 0; text-align: center;">
+  <a href="{{ action_url }}" style="display: inline-block; background-color: #5551FF; color: #FFFFFF; font-size: 13px; font-weight: 700; text-decoration: none; padding: 10px 22px; border-radius: 7px;">Cancel deletion →</a>
+</p>

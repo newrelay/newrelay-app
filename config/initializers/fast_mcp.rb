@@ -14,6 +14,7 @@ require Rails.root.join('app/tools/mcp/add_label_tool')
 require Rails.root.join('app/tools/mcp/remove_label_tool')
 require Rails.root.join('app/tools/mcp/assign_conversation_tool')
 require Rails.root.join('app/tools/mcp/set_priority_tool')
+require Rails.root.join('app/tools/mcp/send_reply_tool')
 
 mcp_server = FastMcp::Server.new(name: 'chatwoot-mcp', version: '1.0.0', logger: Rails.logger)
 mcp_server.register_tools(
@@ -30,7 +31,8 @@ mcp_server.register_tools(
   Mcp::AddLabelTool,
   Mcp::RemoveLabelTool,
   Mcp::AssignConversationTool,
-  Mcp::SetPriorityTool
+  Mcp::SetPriorityTool,
+  Mcp::SendReplyTool
 )
 FastMcp.server = mcp_server
 

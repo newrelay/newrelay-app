@@ -161,14 +161,14 @@ class EmailTemplates::PreviewService
   def preview_mascot_url
     return if @entry.category == 'Conversation replies'
 
-    path = MailerChrome.mascot_public_path(layout? ? 'base' : @entry.name)
+    path = ::MailerChrome.mascot_public_path(layout? ? 'base' : @entry.name)
     return if path.blank?
 
     "#{preview_origin}#{path}"
   end
 
   def preview_chrome
-    mapped = MailerChrome::CHROME[@entry.name]
+    mapped = ::MailerChrome::CHROME[@entry.name]
     return mapped if mapped.present?
     return { icon: 'clipboard', heading: default_heading, subtitle: default_subtitle } if layout?
     return {} if @entry.category == 'Conversation replies'

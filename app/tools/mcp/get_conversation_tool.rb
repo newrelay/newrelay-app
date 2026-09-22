@@ -7,8 +7,8 @@ module Mcp
     description 'Get full detail for one conversation by its display ID.'
 
     arguments do
-      required(:account_id).filled(:integer).description('The Chatwoot account ID.')
-      required(:conversation_id).filled(:integer).description('The conversation display ID, as shown in the Chatwoot UI/URL.')
+      required(:account_id).filled(:integer).description("The #{Mcp::BaseTool.brand_name} account ID.")
+      required(:conversation_id).filled(:integer).description("The conversation display ID, as shown in the #{Mcp::BaseTool.brand_name} UI/URL.")
     end
 
     # account_id: unused here -- tenancy scoping already happened in BaseTool before perform runs.

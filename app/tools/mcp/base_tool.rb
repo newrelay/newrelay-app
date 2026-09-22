@@ -5,6 +5,15 @@ module Mcp
   class BaseTool < FastMcp::Tool
     class ToolError < StandardError; end
 
+    # Loaded once at boot (tool descriptions are set via the class-level `description`
+    # DSL, evaluated when these files are required) -- rescue keeps a DB hiccup at boot
+    # from taking down the whole app over cosmetic tool-listing text.
+    def self.brand_name
+      InstallationConfig.find_by(name: 'BRAND_NAME')&.value.presence || 'Chatwoot'
+    rescue StandardError
+      'Chatwoot'
+    end
+
     def call(**args)
       authenticate!
       Current.mcp = true

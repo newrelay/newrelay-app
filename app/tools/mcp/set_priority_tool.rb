@@ -9,7 +9,7 @@ module Mcp
     VALID_PRIORITIES = %w[low medium high urgent none].freeze
 
     arguments do
-      required(:account_id).filled(:integer).description('The Chatwoot account ID.')
+      required(:account_id).filled(:integer).description("The #{Mcp::BaseTool.brand_name} account ID.")
       required(:conversation_id).filled(:integer).description('The conversation display ID.')
       required(:priority).filled(:string).description("One of 'low', 'medium', 'high', 'urgent', or 'none' to clear it.")
     end

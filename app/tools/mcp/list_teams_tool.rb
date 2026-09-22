@@ -4,10 +4,10 @@
 module Mcp
   class ListTeamsTool < Mcp::BaseTool
     tool_name 'list_teams'
-    description 'List teams in a Chatwoot account.'
+    description "List teams in a #{Mcp::BaseTool.brand_name} account."
 
     arguments do
-      required(:account_id).filled(:integer).description('The Chatwoot account ID.')
+      required(:account_id).filled(:integer).description("The #{Mcp::BaseTool.brand_name} account ID.")
     end
 
     # account_id: unused here -- tenancy scoping already happened in BaseTool before perform runs.

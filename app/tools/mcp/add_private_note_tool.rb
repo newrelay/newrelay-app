@@ -7,7 +7,7 @@ module Mcp
     description 'Add an internal, agent-only note to a conversation. Never visible to the customer.'
 
     arguments do
-      required(:account_id).filled(:integer).description('The Chatwoot account ID.')
+      required(:account_id).filled(:integer).description("The #{Mcp::BaseTool.brand_name} account ID.")
       required(:conversation_id).filled(:integer).description('The conversation display ID.')
       required(:content).filled(:string).description('The note text.')
     end

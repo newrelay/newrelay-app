@@ -4,12 +4,12 @@
 module Mcp
   class ListContactsTool < Mcp::BaseTool
     tool_name 'list_contacts'
-    description 'Search contacts in a Chatwoot account by name, email, or phone number.'
+    description "Search contacts in a #{Mcp::BaseTool.brand_name} account by name, email, or phone number."
 
     RESULTS_LIMIT = 25
 
     arguments do
-      required(:account_id).filled(:integer).description('The Chatwoot account ID.')
+      required(:account_id).filled(:integer).description("The #{Mcp::BaseTool.brand_name} account ID.")
       optional(:search).filled(:string).description('Search term matched against name, email, and phone number.')
     end
 

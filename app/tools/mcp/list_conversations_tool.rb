@@ -4,10 +4,10 @@
 module Mcp
   class ListConversationsTool < Mcp::BaseTool
     tool_name 'list_conversations'
-    description 'Search and filter conversations in a Chatwoot account.'
+    description "Search and filter conversations in a #{Mcp::BaseTool.brand_name} account."
 
     arguments do
-      required(:account_id).filled(:integer).description('The Chatwoot account ID (see list_accounts).')
+      required(:account_id).filled(:integer).description("The #{Mcp::BaseTool.brand_name} account ID (see list_accounts).")
       optional(:status).filled(:string).description("Conversation status: 'open', 'resolved', 'pending', 'snoozed', or 'all'. Defaults to 'open'.")
       optional(:inbox_id).filled(:integer).description('Limit to conversations in this inbox.')
       optional(:assignee_type).filled(:string).description("'me', 'unassigned', or 'all'. Defaults to all of the agent's conversations.")

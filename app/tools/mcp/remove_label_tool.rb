@@ -7,7 +7,7 @@ module Mcp
     description 'Remove one or more labels from a conversation, keeping any others it has.'
 
     arguments do
-      required(:account_id).filled(:integer).description('The Chatwoot account ID.')
+      required(:account_id).filled(:integer).description("The #{Mcp::BaseTool.brand_name} account ID.")
       required(:conversation_id).filled(:integer).description('The conversation display ID.')
       required(:labels).value(:array).each(:string).description('Label titles to remove.')
     end

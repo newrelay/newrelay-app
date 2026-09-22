@@ -4,7 +4,7 @@
 module Mcp
   class ListAccountsTool < Mcp::BaseTool
     tool_name 'list_accounts'
-    description 'List the Chatwoot accounts the connected access token can use over MCP.'
+    description "List the #{Mcp::BaseTool.brand_name} accounts the connected access token can use over MCP."
 
     def self.requires_account?
       false

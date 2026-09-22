@@ -7,7 +7,7 @@ module Mcp
     description 'Assign a conversation to an agent or a team. Provide exactly one of agent_id or team_id.'
 
     arguments do
-      required(:account_id).filled(:integer).description('The Chatwoot account ID.')
+      required(:account_id).filled(:integer).description("The #{Mcp::BaseTool.brand_name} account ID.")
       required(:conversation_id).filled(:integer).description('The conversation display ID.')
       optional(:agent_id).filled(:integer).description('User ID of the agent to assign. Mutually exclusive with team_id.')
       optional(:team_id).filled(:integer).description('Team ID to assign. Mutually exclusive with agent_id.')

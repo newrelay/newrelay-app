@@ -23,8 +23,11 @@ module MailerChrome
   end
 
   def self.blob_public_path
-    relative = 'email_icons/gradient_blob.png'
-    return "/#{relative}" if Rails.public_path.join(relative).exist?
+    svg = 'email_icons/gradient_blob.svg'
+    return "/#{svg}" if Rails.public_path.join(svg).exist?
+
+    png = 'email_icons/gradient_blob.png'
+    return "/#{png}" if Rails.public_path.join(png).exist?
 
     nil
   end

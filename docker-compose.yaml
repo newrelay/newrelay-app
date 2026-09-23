@@ -41,7 +41,7 @@ services:
       - NODE_ENV=development
       - RAILS_ENV=development
       - POSTGRES_HOST=postgres
-      - REDIS_URL=redis://redis:6379
+      - REDIS_URL=redis://:${REDIS_PASSWORD}@redis:6379
     entrypoint: docker/entrypoints/rails.sh
     command: ["bundle", "exec", "rails", "s", "-p", "3000", "-b", "0.0.0.0"]
 
@@ -62,7 +62,7 @@ services:
       - NODE_ENV=development
       - RAILS_ENV=development
       - POSTGRES_HOST=postgres
-      - REDIS_URL=redis://redis:6379
+      - REDIS_URL=redis://:${REDIS_PASSWORD}@redis:6379
     command: ["bundle", "exec", "sidekiq", "-C", "config/sidekiq.yml"]
 
   vite:
@@ -90,7 +90,7 @@ services:
     image: pgvector/pgvector:pg16
     restart: always
     ports:
-      - '5432:5432'
+      - '127.0.0.1:5432:5432'
     volumes:
       - postgres:/var/lib/postgresql/data
     environment:
@@ -107,7 +107,7 @@ services:
     volumes:
       - redis:/data/redis
     ports:
-      - '6379:6379'
+      - '127.0.0.1:6379:6379'
 
   mailhog:
     image: mailhog/mailhog

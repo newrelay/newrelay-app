@@ -163,7 +163,10 @@ docker compose -f /var/www/NewRelay/docker-compose.yaml ps
 docker compose -f /var/www/NewRelay/docker-compose.yaml logs --tail=40 sidekiq
 ```
 
-`REDIS_PASSWORD is not set` is a compose interpolation warning. Leave it unless Redis auth is actually broken.
+`REDIS_PASSWORD is not set` in the compose logs means Redis is running with **no password**, reachable from the public
+internet on the host's published port. This caused a real cryptominer (XMRig) infection on `srv1777969` on 2026-09-23
+— do not leave it unset. Set `REDIS_PASSWORD` in `.env` and confirm the compose file publishes Postgres/Redis ports
+bound to `127.0.0.1` only, not `0.0.0.0`.
 
 ---
 

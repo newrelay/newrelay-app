@@ -22,6 +22,13 @@ module MailerChrome
     nil
   end
 
+  def self.blob_public_path
+    relative = 'email_icons/gradient_blob.png'
+    return "/#{relative}" if Rails.public_path.join(relative).exist?
+
+    nil
+  end
+
   CHROME = {
     'confirmation_instructions' => { icon: 'mail', heading: 'Confirm your email to get started', subtitle: 'Welcome' },
     'reset_password_instructions' => { icon: 'lock', heading: 'Reset your password', subtitle: 'Password reset' },
@@ -72,6 +79,11 @@ module MailerChrome
     return if is_a?(ConversationReplyMailer)
 
     path = MailerChrome.mascot_public_path(action_name)
+    absolute_asset_url(path) if path
+  end
+
+  def email_chrome_blob_url
+    path = MailerChrome.blob_public_path
     absolute_asset_url(path) if path
   end
 

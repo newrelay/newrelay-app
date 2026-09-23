@@ -149,6 +149,7 @@ class EmailTemplates::PreviewService
       'email_subtitle' => chrome[:subtitle],
       'email_icon' => chrome[:icon],
       'email_icon_url' => preview_mascot_url,
+      'email_blob_url' => preview_blob_url,
       'global_config' => { 'BRAND_NAME' => brand_name, 'BRAND_URL' => brand_url, 'LOGO' => brand_logo },
       'meta' => sample_meta,
       'account_name' => 'Acme',
@@ -162,6 +163,13 @@ class EmailTemplates::PreviewService
     return if @entry.category == 'Conversation replies'
 
     path = ::MailerChrome.mascot_public_path(layout? ? 'base' : @entry.name)
+    return if path.blank?
+
+    "#{preview_origin}#{path}"
+  end
+
+  def preview_blob_url
+    path = ::MailerChrome.blob_public_path
     return if path.blank?
 
     "#{preview_origin}#{path}"

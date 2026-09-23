@@ -9,8 +9,7 @@ class EmailTemplates::PreviewService
 
   CUSTOM_BRAND_SAMPLE = {
     'name' => 'Acme',
-    'url' => 'https://help.acme.test',
-    'logo' => 'https://cdn.example/acme-logo.png'
+    'url' => 'https://help.acme.test'
   }.freeze
 
   def initialize(entry:, body:, custom_brand: false)
@@ -263,8 +262,6 @@ class EmailTemplates::PreviewService
   end
 
   def brand_logo
-    return CUSTOM_BRAND_SAMPLE['logo'] if @custom_brand
-
     path = brand_config['LOGO'].presence || '/brand-assets/logo.svg'
     return path if path.start_with?('http://', 'https://')
 

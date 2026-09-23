@@ -14,6 +14,7 @@ class SuperAdmin::EmailTemplatesController < SuperAdmin::ApplicationController
 
   def preview
     @html = EmailTemplates::PreviewService.new(entry: @entry, body: @body, custom_brand: custom_brand?).perform
+    return render_raw_preview if params[:raw].present?
   end
 
   def edit
@@ -98,6 +99,11 @@ class SuperAdmin::EmailTemplatesController < SuperAdmin::ApplicationController
 
   def notice_key(name)
     custom_brand? ? "super_admin.email_templates.#{name}_brand" : "super_admin.email_templates.#{name}"
+  end
+
+  def render_raw_preview
+    response.headers['X-Frame-Options'] = 'SAMEORIGIN'
+    render html: @html.html_safe, layout: false, content_type: 'text/html'
   end
 
   def reject_unless_editable

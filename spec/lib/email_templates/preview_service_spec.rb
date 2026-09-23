@@ -28,7 +28,7 @@ describe EmailTemplates::PreviewService do
       html = described_class.new(entry: entry, body: entry.file_body, custom_brand: true).perform
 
       expect(html).to include('Acme')
-      expect(html).to include('https://cdn.example/acme-logo.png')
+      expect(html).to include('https://help.acme.test')
       expect(html).not_to include('email_icons/')
       expect(html).not_to include('class="mascot-img"')
     end

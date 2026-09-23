@@ -23,7 +23,7 @@
 
   <%= render 'audience_pills' %>
 
-  <div class="show-sub-card overflow-hidden p-0">
-    <iframe sandbox="allow-same-origin" class="block h-[1100px] w-full bg-[#f1f4f9]" title="<%= t('super_admin.email_templates.preview_title', name: @entry.title) %>" srcdoc="<%= ERB::Util.html_escape(@html) %>"></iframe>
+  <div class="show-sub-card p-0">
+    <iframe sandbox="allow-same-origin" class="email-template-preview-frame" title="<%= t('super_admin.email_templates.preview_title', name: @entry.title) %>" src="<%= preview_super_admin_email_template_path(@entry.key, email_template_scope.merge(raw: 1)) %>"></iframe>
   </div>
 </div>

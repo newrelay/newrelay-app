@@ -39,15 +39,26 @@ RSpec.describe 'Super Admin Email Templates', type: :request do
 
       expect(response).to have_http_status(:success)
       expect(response.body).to include('Preview Conversation Creation')
+      expect(response.body).to include('raw=1')
+    end
+
+    it 'renders raw html for the preview iframe' do
+      sign_in(super_admin, scope: :super_admin)
+      get '/super_admin/email_templates/mailers--agent_notifications--conversation_notifications_mailer--conversation_creation/preview',
+          params: { raw: 1 }
+
+      expect(response).to have_http_status(:success)
+      expect(response.body).to include('email-container')
       expect(CGI.unescapeHTML(response.body)).to include('Alex Rivera')
       expect(CGI.unescapeHTML(response.body)).to include('Jordan Lee')
+      expect(response.body).not_to include('Back to templates')
     end
 
     it 'renders a sample custom-brand preview' do
       sign_in(super_admin, scope: :super_admin)
 
       get '/super_admin/email_templates/mailers--agent_notifications--conversation_notifications_mailer--conversation_creation/preview',
-          params: { audience: 'custom_brand' }
+          params: { audience: 'custom_brand', raw: 1 }
 
       expect(response).to have_http_status(:success)
       expect(CGI.unescapeHTML(response.body)).to include('Acme')

@@ -49,6 +49,16 @@
         top: 50%;
         transform: translateY(-50%);
       }
+      .help-icon-badge {
+        width: 46px;
+        height: 46px;
+        border-radius: 50%;
+        background-color: #ffe0c5;
+      }
+      .help-icon-svg {
+        display: block;
+        margin: 0 auto;
+      }
       body {
         margin: 0;
         padding: 0;
@@ -143,15 +153,19 @@
 
                       <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" bgcolor="#fdf5ef" style="margin: 38px 0 28px 0; background-color: #fdf5ef; border-radius: 16px;">
                         <tr>
-                          <td width="70" valign="middle" align="left" style="width: 70px; padding: 20px 0 20px 24px;">
-                            <div style="width: 46px; height: 46px; border-radius: 50%; background-color: #ffe0c5; text-align: center; line-height: 46px;">
-                              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="vertical-align: middle;">
-                                <rect x="2" y="4" width="20" height="16" rx="3" stroke="#ea580c" stroke-width="2"></rect>
-                                <path d="M22 7L12 14L2 7" stroke="#ea580c" stroke-width="2" fill="none"></path>
-                              </svg>
-                            </div>
+                          <td width="54" valign="middle" align="left" style="width: 54px; padding: 20px 0 20px 24px; vertical-align: middle;">
+                            <table role="presentation" class="help-icon-badge" border="0" cellpadding="0" cellspacing="0" width="46" height="46" style="width: 46px; height: 46px; background-color: #ffe0c5; border-radius: 50%;">
+                              <tr>
+                                <td align="center" valign="middle" width="46" height="46" style="width: 46px; height: 46px; text-align: center; vertical-align: middle; line-height: 0; font-size: 0;">
+                                  <svg class="help-icon-svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#ea580c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: block; margin: 0 auto;">
+                                    <rect x="2" y="4" width="20" height="16" rx="3"></rect>
+                                    <path d="M22 7L12 14L2 7"></path>
+                                  </svg>
+                                </td>
+                              </tr>
+                            </table>
                           </td>
-                          <td valign="middle" align="left" style="padding: 20px 24px 20px 8px;">
+                          <td valign="middle" align="left" style="padding: 20px 24px 20px 16px; vertical-align: middle;">
                             <p style="margin: 0 0 3px 0; font-size: 15px; font-weight: 700; color: #0f172a;">Need anything else?</p>
                             <p style="margin: 0; font-size: 14px; line-height: 20px; color: #64748b;">Log in to {{ brand_name }} to manage your messages, automations and more.</p>
                           </td>

@@ -54,17 +54,42 @@ class ::EmailTemplates::DbResolverService < ActionView::Resolver
   private
 
   def find_db_template
-    find_account_template || find_installation_template
+    find_account_template || find_white_label_template || find_installation_template
   end
 
   def find_account_template
     return unless Current.account
 
-    @@model.find_by(name: @template_name, template_type: @template_type, account: Current.account)
+    @@model.find_by(name: @template_name, template_type: @template_type, account: Current.account, inbox_id: nil)
+  end
+
+  def find_white_label_template
+    return unless custom_brand_mail?
+
+    @@model.find_by(name: @template_name, template_type: @template_type, account_id: nil, inbox_id: nil, white_label: true)
   end
 
   def find_installation_template
-    @@model.find_by(name: @template_name, template_type: @template_type, account: nil)
+    @@model.find_by(name: @template_name, template_type: @template_type, account_id: nil, inbox_id: nil, white_label: false)
+  end
+
+  def custom_brand_mail?
+    account = Current.account
+    return false if account.blank?
+
+    current = account
+    loop do
+      return true if account_has_custom_brand?(current)
+      break if current.parent.blank?
+
+      current = current.parent
+    end
+
+    false
+  end
+
+  def account_has_custom_brand?(account)
+    account.custom_domain.present? || account.effective_brand_name.present? || account.effective_brand_logo_url.present?
   end
 
   # Build path with eventual prefix

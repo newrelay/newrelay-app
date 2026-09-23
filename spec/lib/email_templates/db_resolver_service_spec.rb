@@ -76,5 +76,27 @@ describe EmailTemplates::DbResolverService do
         Current.account = nil
       end
     end
+
+    context 'when a shared white_label template exists' do
+      let!(:installation_template) { create(:email_template, name: 'test', body: 'installation') }
+      let!(:white_label_template) { create(:email_template, name: 'test', body: 'white-label', white_label: true) }
+
+      it 'returns the white_label template for a custom-domain account' do
+        account = create(:account)
+        account.enable_features!(:white_labeling, :custom_domain)
+        account.update!(custom_domain: 'help.acme.test')
+        Current.account = account
+
+        expect(resolver.find_templates('test', '', false, []).first.source.to_s).to eq(white_label_template.body)
+        Current.account = nil
+      end
+
+      it 'returns the installation template for an unbranded account' do
+        Current.account = create(:account)
+
+        expect(resolver.find_templates('test', '', false, []).first.source.to_s).to eq(installation_template.body)
+        Current.account = nil
+      end
+    end
   end
 end

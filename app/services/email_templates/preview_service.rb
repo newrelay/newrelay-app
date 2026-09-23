@@ -7,9 +7,16 @@ class EmailTemplates::PreviewService
     'password_change' => ->(user) { Devise::Mailer.password_change(user) }
   }.freeze
 
-  def initialize(entry:, body:)
+  CUSTOM_BRAND_SAMPLE = {
+    'name' => 'Acme',
+    'url' => 'https://help.acme.test',
+    'logo' => 'https://cdn.example/acme-logo.png'
+  }.freeze
+
+  def initialize(entry:, body:, custom_brand: false)
     @entry = entry
     @body = body
+    @custom_brand = custom_brand
   end
 
   def perform
@@ -59,8 +66,13 @@ class EmailTemplates::PreviewService
 
   def layout_source
     layout_entry = EmailTemplates::Catalog.find('layouts--mailer--base')
-    override = EmailTemplate.find_by(name: 'base', template_type: 'layout', account_id: nil, inbox_id: nil)
-    override&.body.presence || layout_entry.file_body
+    scoped = shared_layout(white_label: @custom_brand)
+    fallback = @custom_brand ? shared_layout(white_label: false) : nil
+    scoped&.body.presence || fallback&.body.presence || layout_entry.file_body
+  end
+
+  def shared_layout(white_label:)
+    EmailTemplate.find_by(name: 'base', template_type: 'layout', account_id: nil, inbox_id: nil, white_label: white_label)
   end
 
   def render_erb
@@ -160,6 +172,7 @@ class EmailTemplates::PreviewService
   end
 
   def preview_mascot_url
+    return if @custom_brand
     return if @entry.category == 'Conversation replies'
 
     path = ::MailerChrome.mascot_public_path(layout? ? 'base' : @entry.name)
@@ -169,6 +182,8 @@ class EmailTemplates::PreviewService
   end
 
   def preview_blob_url
+    return if @custom_brand
+
     path = ::MailerChrome.blob_public_path
     return if path.blank?
 
@@ -236,14 +251,20 @@ class EmailTemplates::PreviewService
   end
 
   def brand_name
+    return CUSTOM_BRAND_SAMPLE['name'] if @custom_brand
+
     brand_config['BRAND_NAME'].presence || 'newrelay'
   end
 
   def brand_url
+    return CUSTOM_BRAND_SAMPLE['url'] if @custom_brand
+
     brand_config['BRAND_URL'].presence || 'https://app.example.com'
   end
 
   def brand_logo
+    return CUSTOM_BRAND_SAMPLE['logo'] if @custom_brand
+
     path = brand_config['LOGO'].presence || '/brand-assets/logo.svg'
     return path if path.start_with?('http://', 'https://')
 

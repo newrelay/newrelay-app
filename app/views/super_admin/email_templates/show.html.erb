@@ -7,13 +7,15 @@
       <p class="text-[13.5px] text-muted-foreground mt-1"><%= @entry.relative_path %></p>
     </div>
     <div class="page-actions">
-      <%= link_to t('super_admin.email_templates.back'), super_admin_email_templates_path, class: 'btn btn-outline' %>
-      <%= link_to t('super_admin.email_templates.preview'), preview_super_admin_email_template_path(@entry.key), class: 'btn btn-outline' %>
+      <%= link_to t('super_admin.email_templates.back'), super_admin_email_templates_path(email_template_scope), class: 'btn btn-outline' %>
+      <%= link_to t('super_admin.email_templates.preview'), preview_super_admin_email_template_path(@entry.key, email_template_scope), class: 'btn btn-outline' %>
       <% if @entry.editable %>
-        <%= link_to t('super_admin.email_templates.edit'), edit_super_admin_email_template_path(@entry.key), class: 'btn btn-primary' %>
+        <%= link_to t('super_admin.email_templates.edit'), edit_super_admin_email_template_path(@entry.key, email_template_scope), class: 'btn btn-primary' %>
       <% end %>
     </div>
   </div>
+
+  <%= render 'audience_pills' %>
 
   <div class="show-sub-card overflow-hidden p-0">
     <div class="show-sub-header px-6 pt-5 mx-6">
@@ -31,7 +33,13 @@
       <div class="flex gap-3">
         <span class="w-32 shrink-0 text-muted-foreground"><%= t('super_admin.email_templates.columns.status') %></span>
         <span class="text-foreground">
-          <%= @override.present? ? t('super_admin.email_templates.status.overridden') : t('super_admin.email_templates.status.default') %>
+          <% if custom_brand? && @override.present? %>
+            <%= t('super_admin.email_templates.status.brand_overridden') %>
+          <% elsif @override.present? %>
+            <%= t('super_admin.email_templates.status.overridden') %>
+          <% else %>
+            <%= t('super_admin.email_templates.status.default') %>
+          <% end %>
         </span>
       </div>
       <% unless @entry.editable %>

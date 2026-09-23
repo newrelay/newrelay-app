@@ -17,6 +17,8 @@ RSpec.describe 'Super Admin Email Templates', type: :request do
       expect(response.body).to include('Email Templates')
       expect(response.body).to include('Conversation Creation')
       expect(response.body).to include('File default')
+      expect(response.body).to include('Our mail')
+      expect(response.body).to include('Custom brand mail')
     end
   end
 
@@ -40,6 +42,17 @@ RSpec.describe 'Super Admin Email Templates', type: :request do
       expect(CGI.unescapeHTML(response.body)).to include('Alex Rivera')
       expect(CGI.unescapeHTML(response.body)).to include('Jordan Lee')
     end
+
+    it 'renders a sample custom-brand preview' do
+      sign_in(super_admin, scope: :super_admin)
+
+      get '/super_admin/email_templates/mailers--agent_notifications--conversation_notifications_mailer--conversation_creation/preview',
+          params: { audience: 'custom_brand' }
+
+      expect(response).to have_http_status(:success)
+      expect(CGI.unescapeHTML(response.body)).to include('Acme')
+      expect(CGI.unescapeHTML(response.body)).to include('https://help.acme.test')
+    end
   end
 
   describe 'PATCH /super_admin/email_templates/:key' do
@@ -49,7 +62,18 @@ RSpec.describe 'Super Admin Email Templates', type: :request do
       patch '/super_admin/email_templates/layouts--mailer--base', params: { email_template: { body: '<p>Override</p>' } }
 
       expect(response).to redirect_to('/super_admin/email_templates/layouts--mailer--base')
-      expect(EmailTemplate.find_by(name: 'base', account_id: nil).body).to eq('<p>Override</p>')
+      expect(EmailTemplate.find_by(name: 'base', account_id: nil, white_label: false).body).to eq('<p>Override</p>')
+    end
+
+    it 'saves a shared custom-brand override' do
+      sign_in(super_admin, scope: :super_admin)
+
+      patch '/super_admin/email_templates/layouts--mailer--base',
+            params: { audience: 'custom_brand', email_template: { body: '<p>Brand</p>' } }
+
+      expect(response).to redirect_to('/super_admin/email_templates/layouts--mailer--base?audience=custom_brand')
+      expect(EmailTemplate.find_by(name: 'base', account_id: nil, white_label: true).body).to eq('<p>Brand</p>')
+      expect(EmailTemplate.find_by(name: 'base', account_id: nil, white_label: false)).to be_nil
     end
 
     it 'does not override erb templates' do

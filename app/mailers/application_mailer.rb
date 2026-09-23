@@ -9,7 +9,7 @@ class ApplicationMailer < ActionMailer::Base
   around_action :switch_locale
   layout 'mailer/base'
   # Fetch template from Database if available
-  # Order: Account Specific > Installation Specific > Fallback to file
+  # Order: Account Specific > Shared custom brand > Installation > Fallback to file
   prepend_view_path ::EmailTemplate.resolver
   append_view_path Rails.root.join('app/views/mailers')
   helper :frontend_urls

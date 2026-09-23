@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2026_09_15_163000) do
+ActiveRecord::Schema[7.1].define(version: 2026_09_23_143000) do
   # These extensions should be enabled to support this database
   enable_extension "pg_stat_statements"
   enable_extension "pg_trgm"
@@ -1299,10 +1299,12 @@ ActiveRecord::Schema[7.1].define(version: 2026_09_15_163000) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "inbox_id"
+    t.boolean "white_label", default: false, null: false
     t.index ["account_id", "name", "template_type", "locale"], name: "index_email_templates_on_account_scope", unique: true, where: "((account_id IS NOT NULL) AND (inbox_id IS NULL))"
     t.index ["inbox_id", "name", "template_type", "locale"], name: "index_email_templates_on_inbox_scope", unique: true, where: "(inbox_id IS NOT NULL)"
     t.index ["inbox_id"], name: "index_email_templates_on_inbox_id"
-    t.index ["name", "template_type", "locale"], name: "index_email_templates_on_installation_scope", unique: true, where: "((account_id IS NULL) AND (inbox_id IS NULL))"
+    t.index ["name", "template_type", "locale"], name: "index_email_templates_on_installation_scope", unique: true, where: "((account_id IS NULL) AND (inbox_id IS NULL) AND (white_label = false))"
+    t.index ["name", "template_type", "locale"], name: "index_email_templates_on_white_label_scope", unique: true, where: "((account_id IS NULL) AND (inbox_id IS NULL) AND (white_label = true))"
   end
 
   create_table "enterprise_contracts", force: :cascade do |t|

@@ -77,14 +77,22 @@ module MailerChrome
 
   def email_chrome_icon_url
     return if is_a?(ConversationReplyMailer)
+    return if custom_brand_mail?
 
     path = MailerChrome.mascot_public_path(action_name)
     absolute_asset_url(path) if path
   end
 
   def email_chrome_blob_url
+    return if custom_brand_mail?
+
     path = MailerChrome.blob_public_path
     absolute_asset_url(path) if path
+  end
+
+  def custom_brand_mail?
+    account = mailer_brand_account
+    account.present? && own_mailer_branding?(account)
   end
 
   def email_chrome_heading

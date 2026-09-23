@@ -22,5 +22,15 @@ describe EmailTemplates::PreviewService do
       expect(html).to include('/brand-assets/logo.svg')
       expect(html).to include('/email_icons/base.png')
     end
+
+    it 'uses sample custom-brand values in the layout' do
+      entry = EmailTemplates::Catalog.find!('layouts--mailer--base')
+      html = described_class.new(entry: entry, body: entry.file_body, custom_brand: true).perform
+
+      expect(html).to include('Acme')
+      expect(html).to include('https://cdn.example/acme-logo.png')
+      expect(html).not_to include('email_icons/')
+      expect(html).not_to include('class="mascot-img"')
+    end
   end
 end

@@ -7,6 +7,7 @@
 #  locale        :integer          default("en"), not null
 #  name          :string           not null
 #  template_type :integer          default("content")
+#  white_label   :boolean          default(FALSE), not null
 #  created_at    :datetime         not null
 #  updated_at    :datetime         not null
 #  account_id    :integer
@@ -17,14 +18,15 @@
 #  index_email_templates_on_account_scope       (account_id,name,template_type,locale) UNIQUE WHERE ((account_id IS NOT NULL) AND (inbox_id IS NULL))
 #  index_email_templates_on_inbox_id            (inbox_id)
 #  index_email_templates_on_inbox_scope         (inbox_id,name,template_type,locale) UNIQUE WHERE (inbox_id IS NOT NULL)
-#  index_email_templates_on_installation_scope  (name,template_type,locale) UNIQUE WHERE ((account_id IS NULL) AND (inbox_id IS NULL))
+#  index_email_templates_on_installation_scope  (name,template_type,locale) UNIQUE WHERE ((account_id IS NULL) AND (inbox_id IS NULL) AND (white_label = false))
+#  index_email_templates_on_white_label_scope   (name,template_type,locale) UNIQUE WHERE ((account_id IS NULL) AND (inbox_id IS NULL) AND (white_label = true))
 #
 class EmailTemplate < ApplicationRecord
   enum :locale, LANGUAGES_CONFIG.map { |key, val| [val[:iso_639_1_code], key] }.to_h, prefix: true
   enum :template_type, { layout: 0, content: 1 }
   belongs_to :account, optional: true
 
-  validates :name, uniqueness: { scope: :account }
+  validates :name, uniqueness: { scope: %i[account_id inbox_id template_type locale white_label] }
 
   def self.resolver(options = {})
     ::EmailTemplates::DbResolverService.using self, options

@@ -4,15 +4,26 @@
   <div class="page-header">
     <div>
       <h1 class="page-title"><%= t('super_admin.email_templates.edit_title', name: @entry.title) %></h1>
-      <p class="text-[13.5px] text-muted-foreground mt-1"><%= t('super_admin.email_templates.edit_description') %></p>
+      <p class="text-[13.5px] text-muted-foreground mt-1">
+        <% if custom_brand? %>
+          <%= t('super_admin.email_templates.edit_description_brand') %>
+        <% else %>
+          <%= t('super_admin.email_templates.edit_description') %>
+        <% end %>
+      </p>
     </div>
     <div class="page-actions">
-      <%= link_to t('super_admin.email_templates.preview'), preview_super_admin_email_template_path(@entry.key), class: 'btn btn-outline' %>
-      <%= link_to t('super_admin.email_templates.cancel'), super_admin_email_template_path(@entry.key), class: 'btn btn-outline' %>
+      <%= link_to t('super_admin.email_templates.preview'), preview_super_admin_email_template_path(@entry.key, email_template_scope), class: 'btn btn-outline' %>
+      <%= link_to t('super_admin.email_templates.cancel'), super_admin_email_template_path(@entry.key, email_template_scope), class: 'btn btn-outline' %>
     </div>
   </div>
 
+  <%= render 'audience_pills' %>
+
   <%= form_with url: super_admin_email_template_path(@entry.key), method: :patch, local: true do %>
+    <% if custom_brand? %>
+      <%= hidden_field_tag :audience, 'custom_brand' %>
+    <% end %>
     <div class="show-sub-card overflow-hidden p-0">
       <div class="show-sub-header px-6 pt-5 mx-6">
         <h2 class="show-sub-title"><%= t('super_admin.email_templates.body') %></h2>
@@ -29,8 +40,8 @@
   <% end %>
 
   <% if @override.present? %>
-    <%= button_to t('super_admin.email_templates.reset_action'), super_admin_email_template_path(@entry.key), method: :delete,
+    <%= button_to t('super_admin.email_templates.reset_action'), super_admin_email_template_path(@entry.key, email_template_scope), method: :delete,
         class: 'btn btn-outline',
-        data: { confirm: t('super_admin.email_templates.reset_confirm') } %>
+        data: { confirm: t(custom_brand? ? 'super_admin.email_templates.reset_confirm_brand' : 'super_admin.email_templates.reset_confirm') } %>
   <% end %>
 </div>

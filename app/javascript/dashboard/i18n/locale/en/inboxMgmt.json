@@ -334,6 +334,16 @@
       "VOICE": {
         "TITLE": "Voice Channel",
         "DESC": "Integrate Twilio Voice and start supporting your customers via phone calls.",
+        "PROVIDERS": {
+          "TWILIO": "Twilio",
+          "TWILIO_DESC": "Connect a phone number using your Twilio account credentials",
+          "DYTE": "Dyte",
+          "DYTE_DESC": "Video and voice calling from any conversation — no phone number needed"
+        },
+        "SELECT_PROVIDER": {
+          "TITLE": "Select your voice provider",
+          "DESCRIPTION": "Choose how you want to set up your voice channel. Connect via Twilio for phone number based calling, or use Dyte for browser-based video and voice calls with no phone number required."
+        },
         "PHONE_NUMBER": {
           "LABEL": "Phone Number",
           "PLACEHOLDER": "Enter your phone number (e.g. +1234567890)",
@@ -360,6 +370,12 @@
             "PLACEHOLDER": "Enter your Twilio API Key Secret",
             "REQUIRED": "API Key Secret is required"
           }
+        },
+        "DYTE": {
+          "DESCRIPTION": "Dyte lets agents start video/voice calls directly from any conversation — no phone number needed. Connect it once and it's available everywhere.",
+          "CONNECTED_DESCRIPTION": "Dyte is connected — agents can already start video calls from any conversation.",
+          "CONNECT_BUTTON": "Connect Dyte",
+          "MANAGE_BUTTON": "Manage Dyte"
         },
         "CONFIGURATION": {
           "TWILIO_VOICE_URL_TITLE": "Twilio Voice URL",

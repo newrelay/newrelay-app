@@ -33,6 +33,10 @@
         max-width: 240px;
         height: auto;
       }
+      .mascot-stage-brand {
+        height: auto;
+        margin: 0 auto -48px auto;
+      }
       .help-icon-badge {
         width: 46px;
         height: 46px;
@@ -62,6 +66,7 @@
         .card-body { padding: 16px 20px 28px 20px !important; }
         .mascot-stage { width: 210px !important; height: 180px !important; overflow: visible !important; }
         .mascot-img { width: 200px !important; max-width: 200px !important; }
+        .mascot-stage-brand { height: auto !important; margin-bottom: -36px !important; }
       }
     </style>
   </head>
@@ -107,7 +112,7 @@
                     <td class="card-body" align="center" style="padding: 20px 32px 36px 32px;">
 
                       {% if show_email_icon %}
-                        <div class="mascot-stage">
+                        <div class="mascot-stage{% if email_custom_brand %} mascot-stage-brand{% endif %}">
                           <img src="{{ email_icon_url }}" alt="" class="mascot-img" />
                         </div>
                       {% endif %}

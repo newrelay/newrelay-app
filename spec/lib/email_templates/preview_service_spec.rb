@@ -21,6 +21,7 @@ describe EmailTemplates::PreviewService do
       expect(html).to include('email-container')
       expect(html).to include('/brand-assets/logo_email.png')
       expect(html).to include('/email_icons/base.svg')
+      expect(html).not_to include('class="mascot-stage mascot-stage-brand"')
     end
 
     it 'uses sample custom-brand values in the layout' do
@@ -33,6 +34,7 @@ describe EmailTemplates::PreviewService do
       expect(html).not_to include('/brand-assets/logo_email.png')
       expect(html).to include('/email_brand_icons/base.svg')
       expect(html).to include('class="mascot-img"')
+      expect(html).to include('class="mascot-stage mascot-stage-brand"')
       expect(html).not_to include('/email_icons/base.svg')
     end
   end

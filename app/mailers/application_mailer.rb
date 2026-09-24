@@ -73,7 +73,8 @@ class ApplicationMailer < ActionMailer::Base
       email_subtitle: email_chrome_subtitle,
       email_icon: email_chrome_icon,
       email_icon_url: email_chrome_icon_url,
-      email_blob_url: email_chrome_blob_url
+      email_blob_url: email_chrome_blob_url,
+      email_custom_brand: custom_brand_mail?
     }
 
     locals.merge({ attachment_url: @attachment_url }) if @attachment_url

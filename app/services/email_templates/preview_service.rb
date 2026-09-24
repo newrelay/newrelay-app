@@ -162,6 +162,7 @@ class EmailTemplates::PreviewService
       'email_icon' => chrome[:icon],
       'email_icon_url' => preview_mascot_url,
       'email_blob_url' => preview_blob_url,
+      'email_custom_brand' => @custom_brand,
       'global_config' => { 'BRAND_NAME' => brand_name, 'BRAND_URL' => brand_url, 'LOGO' => brand_logo },
       'meta' => sample_meta,
       'account_name' => 'Acme',

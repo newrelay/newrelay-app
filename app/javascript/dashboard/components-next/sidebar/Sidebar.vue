@@ -716,6 +716,7 @@ const settingsMenuItem = computed(() => {
     icon: 'i-lucide-settings',
     to: accountScopedRoute(isAdmin ? 'general_settings_index' : 'canned_list'),
     activeOn: ['settings_home', ...SETTINGS_ROUTE_NAMES],
+    tooltip: true,
   };
 });
 
@@ -725,6 +726,7 @@ const logoutMenuItem = computed(() => ({
   icon: 'i-lucide-log-out',
   danger: true,
   click: Auth.logout,
+  tooltip: true,
 }));
 </script>
 

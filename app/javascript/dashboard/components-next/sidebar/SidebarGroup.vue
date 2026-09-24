@@ -1,9 +1,11 @@
 <script setup>
 import { computed, onMounted, onUnmounted, watch, ref } from 'vue';
 import { useSidebarContext, usePopoverState } from './provider';
+import { useMapGetter } from 'dashboard/composables/store.js';
 import { useRoute, useRouter } from 'vue-router';
 import Policy from 'dashboard/components/policy.vue';
 import Icon from 'next/icon/Icon.vue';
+import { RelayTooltip } from 'dashboard/components-next/relay';
 import SidebarGroupHeader from './SidebarGroupHeader.vue';
 import SidebarGroupLeaf from './SidebarGroupLeaf.vue';
 import SidebarSubGroup from './SidebarSubGroup.vue';
@@ -22,6 +24,7 @@ const props = defineProps({
   getterKeys: { type: Object, default: () => ({}) },
   click: { type: Function, default: null },
   danger: { type: Boolean, default: false },
+  tooltip: { type: Boolean, default: false },
 });
 
 const flattenNavLeaves = items =>
@@ -59,6 +62,7 @@ const {
 
 const navigableChildren = computed(() => flattenNavLeaves(props.children));
 
+const isRTL = useMapGetter('accounts/isRTL');
 const route = useRoute();
 const router = useRouter();
 const isExpanded = computed(() => expandedItem.value === props.name);
@@ -273,31 +277,39 @@ watch(
         @mouseenter="handleMouseEnter"
         @mouseleave="handleMouseLeave"
       >
-        <component
-          :is="to && !hasChildren ? 'router-link' : 'button'"
-          ref="triggerRef"
-          :to="to && !hasChildren ? to : undefined"
-          type="button"
-          class="peer/menu-button relative mx-auto flex size-10 items-center justify-center rounded-md p-2 transition-colors"
-          :class="{
-            'bg-sidebar-primary/10 font-medium text-sidebar-primary before:absolute before:inset-y-1.5 before:w-[3px] before:rounded-r-md before:bg-sidebar-primary ltr:before:-left-3 rtl:before:-right-3':
-              shouldHighlight,
-            'text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground':
-              !shouldHighlight,
-          }"
-          :title="label"
-          @click="hasChildren ? handleCollapsedClick() : handleLeafClick()"
+        <RelayTooltip
+          :content="tooltip ? label : ''"
+          :side="isRTL ? 'left' : 'right'"
+          :side-offset="10"
         >
-          <Icon
-            v-if="icon"
-            :icon="icon"
-            class="size-5 shrink-0"
-            :class="
-              shouldHighlight ? 'text-sidebar-primary' : 'text-muted-foreground'
-            "
-          />
-          <span class="sr-only">{{ label }}</span>
-        </component>
+          <component
+            :is="to && !hasChildren ? 'router-link' : 'button'"
+            ref="triggerRef"
+            :to="to && !hasChildren ? to : undefined"
+            type="button"
+            class="peer/menu-button relative mx-auto flex size-10 items-center justify-center rounded-md p-2 transition-colors"
+            :class="{
+              'bg-sidebar-primary/10 font-medium text-sidebar-primary before:absolute before:inset-y-1.5 before:w-[3px] before:rounded-r-md before:bg-sidebar-primary ltr:before:-left-3 rtl:before:-right-3':
+                shouldHighlight,
+              'text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground':
+                !shouldHighlight,
+            }"
+            :title="tooltip ? undefined : label"
+            @click="hasChildren ? handleCollapsedClick() : handleLeafClick()"
+          >
+            <Icon
+              v-if="icon"
+              :icon="icon"
+              class="size-5 shrink-0"
+              :class="
+                shouldHighlight
+                  ? 'text-sidebar-primary'
+                  : 'text-muted-foreground'
+              "
+            />
+            <span class="sr-only">{{ label }}</span>
+          </component>
+        </RelayTooltip>
         <SidebarCollapsedPopover
           v-if="hasChildren && isPopoverOpen"
           :label="label"

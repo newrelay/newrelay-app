@@ -68,7 +68,7 @@ RSpec.describe 'Devise::Mailer' do
         expect(mail.body.to_s).to include('href="http://app.acme.test"')
         expect(mail.body.to_s).to include('email_brand_icons/confirmation_instructions.svg')
         expect(mail.body.to_s).to include('class="mascot-img"')
-        expect(mail.body.to_s).not_to include('/email_icons/confirmation_instructions.png')
+        expect(mail.body.to_s).not_to include('/email_icons/confirmation_instructions.svg')
       end
     end
 

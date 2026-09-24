@@ -12,7 +12,7 @@ module MailerChrome
   end
 
   def self.mascot_public_path(name)
-    png_public_path(name, 'email_icons')
+    svg_public_path(name, 'email_icons')
   end
 
   def self.brand_icon_public_path(name)
@@ -30,17 +30,6 @@ module MailerChrome
     nil
   end
 
-  def self.png_public_path(name, directory)
-    slug = mascot_slug(name)
-    relative = "#{directory}/#{slug}.png"
-    return "/#{relative}" if Rails.public_path.join(relative).exist?
-
-    fallback = "#{directory}/base.png"
-    return "/#{fallback}" if Rails.public_path.join(fallback).exist?
-
-    nil
-  end
-
   INSTALLATION_EMAIL_LOGO = '/brand-assets/logo_email.png'
   STOCK_APP_LOGO = '/brand-assets/logo.svg'
 
@@ -49,16 +38,6 @@ module MailerChrome
     return INSTALLATION_EMAIL_LOGO if path.blank? || path == STOCK_APP_LOGO
 
     path
-  end
-
-  def self.blob_public_path
-    svg = 'email_icons/gradient_blob.svg'
-    return "/#{svg}" if Rails.public_path.join(svg).exist?
-
-    png = 'email_icons/gradient_blob.png'
-    return "/#{png}" if Rails.public_path.join(png).exist?
-
-    nil
   end
 
   CHROME = {
@@ -119,11 +98,7 @@ module MailerChrome
   end
 
   def email_chrome_blob_url
-    return if is_a?(ConversationReplyMailer)
-    return if custom_brand_mail?
-
-    path = MailerChrome.blob_public_path
-    absolute_asset_url(path) if path
+    nil
   end
 
   def custom_brand_mail?

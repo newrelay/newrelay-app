@@ -17,7 +17,7 @@
              when 'false', 'pending' then 'status-failed'
              end %>
         <div class="show-row">
-          <div class="show-label"><%= key.to_s.humanize %></div>
+          <div class="show-label"><%= key %></div>
           <div class="show-value font-mono break-all <%= status_class.presence || 'text-foreground' %>">
             <%= value_text %>
           </div>

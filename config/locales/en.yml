@@ -33,6 +33,14 @@ en:
   administrate:
     actions:
       new_resource: "New %{name}"
+    resources:
+      captain_activity_log: Relay AI Activity Log
+      captain_activity_logs: Relay AI Activity Logs
+  activerecord:
+    models:
+      captain_activity_log:
+        one: Relay AI Activity Log
+        other: Relay AI Activity Logs
   hello: 'Hello world'
   comment_automation:
     mock:

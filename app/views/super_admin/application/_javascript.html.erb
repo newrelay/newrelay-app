@@ -20,6 +20,8 @@ by providing a `content_for(:javascript)` block.
   <% end %>
 <% end %>
 
+<% support_config = ChatwootHub.support_config %>
+<% if support_config[:support_website_token].present? %>
 <script>
 window.chatwootSettings = {
   hideMessageBubble: true,
@@ -32,19 +34,22 @@ window.chatwootSettings = {
   g.async = true;
   s.parentNode.insertBefore(g,s);
   g.onload=function(){
+    var pageTitle = document.title;
     window.chatwootSDK.run({
-      websiteToken: '<%= ChatwootHub.support_config[:support_website_token] %>',
-      baseUrl: '<%= ChatwootHub.support_config[:support_script_url] %>'
-    })
+      websiteToken: '<%= support_config[:support_website_token] %>',
+      baseUrl: '<%= support_config[:support_script_url] %>'
+    });
+    document.title = pageTitle;
   }
 })(document,"script");
 
 window.addEventListener('chatwoot:ready', function() {
   window.$chatwoot.setUser('<%= ChatwootHub.installation_identifier %>', {
-    identifier_hash: '<%= ChatwootHub.support_config[:support_identifier_hash] %>',
+    identifier_hash: '<%= support_config[:support_identifier_hash] %>',
     email: '<%= SuperAdmin.first.email %>',
     name: '<%= SuperAdmin.first.name %>'
   });
 })
 
 </script>
+<% end %>

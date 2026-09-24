@@ -10,7 +10,7 @@ class SuperAdmin::InstanceStatusesController < SuperAdmin::ApplicationController
   end
 
   def chatwoot_edition
-    @metrics['newrelay edition'] =
+    @metrics['NewRelay edition'] =
       if ChatwootApp.enterprise?
         'Enterprise'
       elsif ChatwootApp.custom?
@@ -25,7 +25,7 @@ class SuperAdmin::InstanceStatusesController < SuperAdmin::ApplicationController
   end
 
   def chatwoot_version
-    @metrics['newrelay version'] = Chatwoot.config[:version]
+    @metrics['NewRelay version'] = Chatwoot.config[:version]
   end
 
 

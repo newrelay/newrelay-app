@@ -1,4 +1,4 @@
-# Playground — New Relay HQ
+# Playground — NewRelay HQ
 
 Offline export of the Newrelay Notion **Playground** teamspace.
 
@@ -22,7 +22,7 @@ This file is a snapshot. Notion remains the live source of truth.
 
 ---
 
-## Home — New Relay HQ
+## Home — NewRelay HQ
 
 **The single starting point for product, delivery, engineering, and team operations.**
 
@@ -48,7 +48,7 @@ You should not need to browse the library to understand where something belongs.
 
 Source: https://app.notion.com/p/3db818aa51a4815a9822d5c5720fcf3f
 
-The product source of truth for what New Relay is, what we are building, why it matters, and how meaningful features are defined before engineering starts.
+The product source of truth for what NewRelay is, what we are building, why it matters, and how meaningful features are defined before engineering starts.
 
 **Start here when**
 
@@ -2087,7 +2087,7 @@ Every critical area needs a clear owner, but ownership does not mean only one pe
 
 Source: https://app.notion.com/p/3db818aa51a4813f9c2ee35b7a2e7aae
 
-The shared operating handbook for everyone working on New Relay.
+The shared operating handbook for everyone working on NewRelay.
 
 **Lives here**
 
@@ -2312,7 +2312,7 @@ Secrets belong in the approved secret manager / CI environment / provider vault�
 
 Source: https://app.notion.com/p/3db818aa51a481d1a056fa31f9406132
 
-Reference material for how New Relay makes durable decisions, governs its workspace, and keeps operating rules understandable over time.
+Reference material for how NewRelay makes durable decisions, governs its workspace, and keeps operating rules understandable over time.
 
 - Decision Log
 - Workspace and access rules
@@ -2327,12 +2327,12 @@ Source: https://app.notion.com/p/3db818aa51a481a0b762f9180ca6052b
 ## Where information belongs
 | Area | Use it for | Typical audience |
 | --- | --- | --- |
-| **Newrelay’s HQ teamspace** | Durable company/product/engineering knowledge needed by the core team | Core New Relay team |
+| **Newrelay’s HQ teamspace** | Durable company/product/engineering knowledge needed by the core team | Core NewRelay team |
 | **Shared pages** | Specific collaboration where people do not need the whole HQ | Advisors, contractors, external collaborators, limited internal groups |
 | **Private** | Founder notes, sensitive drafts, admin, finance, people matters, unfinished thinking | Owner / explicitly invited people only |
 
 ## Default rule
-If most of the New Relay team needs the information repeatedly, it belongs in the teamspace. If access should be narrow, use a shared page. If nobody else needs it yet, keep it private.
+If most of the NewRelay team needs the information repeatedly, it belongs in the teamspace. If access should be narrow, use a shared page. If nobody else needs it yet, keep it private.
 ## What belongs in the teamspace
 - Product context, roadmap process and PRDs
 - Delivery/Jira process

@@ -1,4 +1,4 @@
-# App New Relay server runbook
+# App NewRelay server runbook
 
 How we run **https://app.newrelay.com** on `srv1777969` (`/var/www/NewRelay`). Written from the Line/Slack/mail setup so the next person does not rediscover it.
 
@@ -37,7 +37,7 @@ Slack is **not** an inbox. It lives under **Settings → Integrations → Apps**
 1. [api.slack.com/apps](https://api.slack.com/apps) → **Create an App** → **Blank app** (not AI agent, not config tokens).
 2. **Basic Information → App Credentials** → Client ID + Client Secret.
 3. **OAuth & Permissions**
-   - Redirect URL must be the **full path** New Relay sends, per account:
+   - Redirect URL must be the **full path** NewRelay sends, per account:
      ```
      https://app.newrelay.com/app/accounts/{ACCOUNT_ID}/settings/integrations/slack
      ```
@@ -81,7 +81,7 @@ docker compose -f /var/www/NewRelay/docker-compose.yaml exec rails \
 
 - A **customer** message starts the Slack thread. An **agent-only** message does not.
 - Reply **in that Slack thread**, not a new channel message.
-- `note:` / `private:` → private note in New Relay.
+- `note:` / `private:` → private note in NewRelay.
 - Sidekiq must be **Up**.
 
 ```bash
@@ -97,7 +97,7 @@ Want `status=enabled` and `ref=true`.
 
 1. [LINE Developers Console](https://developers.line.biz/console) → Provider → **Messaging API** channel.
 2. Copy Channel ID, Secret, Channel Access Token.
-3. New Relay: **Settings → Inboxes → Add Inbox → Line**.
+3. NewRelay: **Settings → Inboxes → Add Inbox → Line**.
 4. Webhook:
    ```
    https://app.newrelay.com/webhooks/line/{LINE_CHANNEL_ID}

@@ -113,7 +113,7 @@ Legend — **Match** = already close · **Partial** = chrome/tokens yes, details
 
 | # | Surface | Mock | Our file | State |
 |---|---|---|---|---|
-| A1 | Sidebar 240px, brand "N" + New Relay + Super Admin Console | yes | `_navigation.html.erb` | Match |
+| A1 | Sidebar 240px, brand "N" + NewRelay + Super Admin Console | yes | `_navigation.html.erb` | Match |
 | A2 | Nav order + icons (Lucide 16px) | Dashboard, Accounts, Users, Agent Bots, Platform Apps, Platform Banners, Account Hierarchy, Enterprise Inquiries, Sidekiq (external), Instance Health, Push Diagnostics | same file | Partial — Sidekiq is footer; Cloudflare is extra (cloud-only, keep) |
 | A3 | Accounts submenu tree | Enterprise Contracts, Subscriptions, Billing Activity Logs, Billing Coupons, Marketplace Plan Prices | same | Match |
 | A4 | Hierarchy submenu | Plan Management, Payment Gateways | same | Match |

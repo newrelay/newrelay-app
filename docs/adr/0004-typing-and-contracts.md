@@ -20,7 +20,7 @@ and still miss the runtime failures that tests and Sentry catch.
   no silent `rescue StandardError`. That is the type system we enforce.
 - **Do not** add Sorbet or convert the monolith to TypeScript as a
   stability project.
-- **Frontend:** keep JS + PropTypes. New Relay UI stays in the existing
+- **Frontend:** keep JS + PropTypes. NewRelay UI stays in the existing
   Vue SFC style. If a new isolated package is written in TS, `any` is
   forbidden there.
 - **Revisit** only if we extract a greenfield TS service.

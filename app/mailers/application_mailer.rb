@@ -59,7 +59,7 @@ class ApplicationMailer < ActionMailer::Base
     @branded_global_config ||= begin
       config = GlobalConfig.get('BRAND_NAME', 'BRAND_URL', 'LOGO')
       apply_account_branding_to_mailer_config(config, mailer_brand_account)
-      config['LOGO'] = absolute_asset_url(config['LOGO'].presence || '/brand-assets/logo.svg')
+      config['LOGO'] = absolute_asset_url(MailerChrome.installation_logo_path(config['LOGO']))
       config
     end
   end

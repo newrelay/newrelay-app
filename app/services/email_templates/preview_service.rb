@@ -184,6 +184,7 @@ class EmailTemplates::PreviewService
   end
 
   def preview_blob_url
+    return if @custom_brand
     return if @entry.category == 'Conversation replies'
 
     path = ::MailerChrome.blob_public_path
@@ -265,7 +266,7 @@ class EmailTemplates::PreviewService
   end
 
   def brand_logo
-    path = brand_config['LOGO'].presence || '/brand-assets/logo.svg'
+    path = ::MailerChrome.installation_logo_path(brand_config['LOGO'])
     return path if path.start_with?('http://', 'https://')
 
     "#{preview_origin}#{path.start_with?('/') ? path : "/#{path}"}"

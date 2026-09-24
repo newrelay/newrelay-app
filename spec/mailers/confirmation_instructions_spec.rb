@@ -46,7 +46,7 @@ RSpec.describe 'Devise::Mailer' do
     end
 
     it 'includes the installation logo' do
-      expect(mail.body.to_s).to include('/brand-assets/logo.svg')
+      expect(mail.body.to_s).to include('/brand-assets/logo_email.png')
     end
 
     context 'when the account has custom branding' do
@@ -66,7 +66,7 @@ RSpec.describe 'Devise::Mailer' do
         expect(mail.body.to_s).to include(logo_url)
         expect(mail.body.to_s).to include("http://app.acme.test/app/auth/confirmation?confirmation_token=#{confirmable_user.confirmation_token}")
         expect(mail.body.to_s).to include('href="http://app.acme.test"')
-        expect(mail.body.to_s).to include('email_brand_icons/')
+        expect(mail.body.to_s).to include('email_brand_icons/confirmation_instructions.svg')
         expect(mail.body.to_s).to include('class="mascot-img"')
         expect(mail.body.to_s).not_to include('/email_icons/confirmation_instructions.png')
       end

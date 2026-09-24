@@ -49,6 +49,12 @@
         top: 50%;
         transform: translateY(-50%);
       }
+      .mascot-stage .mascot-img:only-child {
+        width: 240px;
+        max-width: 240px;
+        top: 0;
+        transform: none;
+      }
       .help-icon-badge {
         width: 46px;
         height: 46px;
@@ -79,6 +85,7 @@
         .mascot-stage { width: 210px !important; height: 180px !important; overflow: visible !important; }
         .mascot-backdrop-blob { top: -15% !important; left: -21% !important; width: 250px !important; height: 250px !important; max-width: none !important; transform: rotate(3deg) !important; }
         .mascot-img { width: 150px !important; max-width: 150px !important; }
+        .mascot-stage .mascot-img:only-child { width: 200px !important; max-width: 200px !important; }
       }
     </style>
   </head>
@@ -90,7 +97,7 @@
   {% assign brand_url = global_config['BRAND_URL'] %}
   {% assign brand_logo = global_config['LOGO'] %}
   {% if brand_logo == nil or brand_logo == '' %}
-    {% assign brand_logo = '/brand-assets/logo.svg' %}
+    {% assign brand_logo = '/brand-assets/logo_email.png' %}
   {% endif %}
   {% assign show_email_icon = false %}
   {% if email_icon_url != nil and email_icon_url != '' %}
@@ -106,7 +113,7 @@
             <tr>
               <td class="gradient-pad" style="padding: 16px;">
 
-                <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" bgcolor="#ffffff" style="background-color: #ffffff; border-radius: 20px; border: 1px solid #efe8e2; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.07); overflow: hidden;">
+                <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" bgcolor="#ffffff" style="background-color: #ffffff; border-radius: 20px; border: 0px solid #efe8e2; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.07); overflow: hidden;">
 
                   <tr>
                     <td class="card-header" align="left" style="padding: 28px 32px 12px 32px;">

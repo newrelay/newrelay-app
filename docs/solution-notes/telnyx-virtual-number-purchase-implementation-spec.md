@@ -27,6 +27,143 @@ An account admin can search Telnyx's available-number inventory from inside NR a
 
 Mirrors the existing Twilio provisioning shape (`Twilio::WebhookSetupService`, `Channel::TwilioSms`) rather than inventing a new pattern: a small set of single-purpose services under `app/services/telnyx/`, one new controller for the search/order actions, one new public webhook route for async order-status updates, and a `provisioning_status` state machine on the channel record that the frontend polls/observes.
 
+**New decision (2026-09-24, confirmed by the requester): the Telnyx-specific services get a provider-agnostic interface in front of them, so a second number provider can be added without rewriting the controller/job/frontend layer.** This is a direct, targeted response to the two live-tested blockers above — Telnyx's own account-tier cap and its lack of India SMS — not speculative future-proofing for a provider nobody's chosen yet. See §2b for the interface design. Being clear about the actual trade-off: this doesn't fix either blocker (Telnyx still can't do India SMS; the account tier issue is still open), it only means that *if* switching or adding a second provider becomes necessary, the controllers/jobs/frontend built on top of this don't need to change — only a new adapter class does. Worth having, given what testing just found; not worth mistaking for a fix.
+
+## 2b. Provider abstraction — interface + Telnyx adapter
+
+**Scope of the abstraction:** the *service* layer only, not the database schema. `channel_telnyx_sms` stays a Telnyx-named table for now — generalizing the schema itself (e.g. a provider-agnostic `channel_number_provisioning` table with a `provider_type` column) is a bigger, separate decision, not made here (see the open question below). This keeps the change additive and reversible: today, every code path still resolves to Telnyx; a second provider is a new adapter class plus a new `case` branch, not a rewrite.
+
+```ruby
+# app/services/number_provisioning/provider.rb
+module NumberProvisioning
+  # Interface every number-provider adapter implements. Telnyx is the only
+  # implementation today. Exists so controllers/jobs/frontend depend on this
+  # interface, not on Telnyx::* directly — added in direct response to the
+  # account-tier and India-SMS blockers found while testing Telnyx itself,
+  # not as general-purpose future-proofing.
+  module Provider
+    def search(country_code:, **filters); raise NotImplementedError; end
+    def reserve(phone_number); raise NotImplementedError; end
+    def order(phone_number, reservation_id: nil); raise NotImplementedError; end
+    def lookup_requirements(country_code:, phone_number_type:); raise NotImplementedError; end
+    def submit_requirements(order_id, submissions); raise NotImplementedError; end
+    def configure_webhook(channel); raise NotImplementedError; end
+  end
+end
+```
+
+```ruby
+# app/services/number_provisioning/telnyx_provider.rb
+module NumberProvisioning
+  class TelnyxProvider
+    include Provider
+    pattr_initialize [:channel!]
+
+    def search(country_code:, **filters)
+      Telnyx::NumberSearchService.new(channel: channel).perform(country_code: country_code, **filters)
+    end
+
+    def reserve(phone_number)
+      Telnyx::NumberReservationService.new(channel: channel).perform(phone_number)
+    end
+
+    def order(phone_number, reservation_id: nil)
+      Telnyx::NumberOrderService.new(account: channel.account, phone_number: phone_number, inbox_name: channel.name, api_key: channel.api_key).perform
+    end
+
+    def lookup_requirements(country_code:, phone_number_type:)
+      Telnyx::RegulatoryRequirementLookupService.new(channel: channel).perform(country_code: country_code, phone_number_type: phone_number_type)
+    end
+
+    def submit_requirements(order_id, submissions)
+      Telnyx::RequirementSubmissionService.new(channel: channel, field_submissions: submissions).perform
+    end
+
+    def configure_webhook(channel)
+      Telnyx::WebhookSetupService.new(channel: channel).perform
+    end
+  end
+end
+```
+
+```ruby
+# app/services/number_provisioning.rb
+module NumberProvisioning
+  ADAPTERS = { 'telnyx' => TelnyxProvider }.freeze
+
+  def self.for(channel)
+    adapter_class = ADAPTERS.fetch(channel.provider_type) { raise ArgumentError, "unsupported number provider: #{channel.provider_type}" }
+    adapter_class.new(channel: channel)
+  end
+end
+```
+
+Callers (the controller, the poll job) depend on `NumberProvisioning.for(channel)` and the `Provider` interface — never on `Telnyx::*` directly. Adding a second provider later means: write `SomeOtherProvider`, register it in `ADAPTERS`, done — no changes to `Api::V1::Accounts::Channels::TelnyxNumbersController` or `Telnyx::NumberOrderStatusPollJob` (which would need renaming to something provider-neutral at that point, not before).
+
+**What this doesn't solve, restated plainly:** neither blocker from the banner at the top of this document goes away. This makes a *future* provider swap cheaper; it does not make Telnyx's India numbers support SMS, and it does not lift Telnyx's account-tier order cap. Confirming India works, or that a higher Telnyx tier unblocks ordering, is still the actual unblocking work — see FRD Open Questions 14 and 16.
+
+## 2c. Candidate second provider — Exotel (for India specifically)
+
+**Confirmed real and a strong fit — with one caveat corrected from an earlier draft of this section.** Exotel is an India-based CPaaS provider — programmable Voice + SMS, virtual numbers ("ExoPhones"), DLT-compliant SMS built specifically for India's regulatory regime. Its purchase flow is nearly identical in shape to what §2b's interface already expects: search available numbers first, then `POST /v2_beta/Accounts/<sid>/IncomingPhoneNumbers` with the chosen `PhoneNumber`, and the response returns `capabilities: { voice, sms }` and `rental_price`/`currency` directly.
+
+**Correction (2026-09-25):** the previous draft of this section said Exotel's SMS support was "confirmed" based on that `capabilities.sms` flag alone — that only confirms *outbound* SMS. Checked further: Exotel does support genuine **two-way** SMS (dedicated docs, real inbound-webhook payload shape — `From`/`Body`/`SmsSid`), **but inbound SMS is not self-serve** — Exotel's own docs state *"you need to contact your Exotel account manager to enable inbound SMS on your account."* That's real friction, comparable in kind (though not cause) to Telnyx's account-tier gates found earlier — a manual enablement step, not a pure API onboarding flow. See §2d for why this matters relative to the other India-SMS candidate checked (Plivo, which turned out **not** to support inbound SMS in India at all — ruled out, not a fallback option).
+
+**This is still the concrete answer to FRD Open Question 14's missing option**, with the caveat now attached: rather than "drop India" or "narrow India to voice-only," a real fourth path exists — **keep India in Phase 1's SMS scope, route India specifically through an `ExotelProvider` adapter, keep Telnyx for US** — but plan for a manual Exotel account-manager step before inbound SMS actually works, not a fully automated signup-to-live pipeline. The provider-agnostic interface built in §2b isn't hypothetical groundwork for some future need; this is why it was worth building.
+
+```ruby
+# app/services/number_provisioning/exotel_provider.rb — illustrative, NOT yet
+# verified against Exotel's actual API responses the way Telnyx's calls were
+# checked against live source in this document. Confirmed only against
+# Exotel's public developer docs, one page deep — treat this as a starting
+# shape, not a verified implementation.
+module NumberProvisioning
+  class ExotelProvider
+    include Provider
+    pattr_initialize [:channel!]
+
+    def search(country_code:, **filters)
+      # GET available-numbers endpoint — exact path/params not yet confirmed,
+      # only that Exotel's purchase docs reference it as a required prior step.
+      raise NotImplementedError, 'Exotel search not yet implemented — endpoint not confirmed'
+    end
+
+    def order(phone_number, reservation_id: nil)
+      # POST /v2_beta/Accounts/#{channel.account_sid}/IncomingPhoneNumbers
+      # body: { PhoneNumber: phone_number, SMSUrl: webhook_url, VoiceUrl: voice_webhook_url }
+      # response.capabilities.sms — check this is true before treating the
+      # order as SMS-capable; Exotel's own docs don't guarantee every number
+      # supports both voice and SMS, same shape of caveat as Telnyx's `features`.
+      raise NotImplementedError, 'confirmed shape, not yet implemented'
+    end
+
+    def reserve(phone_number)
+      # No reservation concept found in Exotel's docs during this research pass
+      # (unlike Telnyx's number_reservations). Either a no-op, or Exotel doesn't
+      # need one because purchase is a single step — needs confirming, not assumed.
+      raise NotImplementedError, 'reservation concept not confirmed to exist for Exotel'
+    end
+
+    # lookup_requirements, submit_requirements, configure_webhook: not
+    # researched at all yet. India DLT registration (required for A2P SMS,
+    # confirmed to exist per Exotel's docs) is almost certainly Exotel's
+    # equivalent of Telnyx's regulatory-requirements/KYC flow, but the exact
+    # API shape for it hasn't been looked at.
+  end
+end
+```
+
+**What's confirmed vs. not, being precise about it (same discipline as the rest of this document):**
+- **Confirmed:** Exotel exists, is India-focused, supports SMS (unlike Telnyx in India), has a search-then-purchase flow, returns per-number capability flags and pricing.
+- **Not yet confirmed:** exact search endpoint/params, auth mechanism details beyond "API Key + Token + Account SID," whether a reservation concept exists, the DLT registration flow's API shape, regional endpoint choice (Exotel has both a Singapore-default and a Mumbai/India cluster — which one NR should use isn't decided), and — critically — this has **not** been live-tested against a real Exotel account the way Telnyx was. Everything here is one research pass deep, not the same level of verification the rest of this document earned through direct API testing.
+
+**VoiceLink, separately:** also a real India-based company, but a different category of product — it helps Voice AI/voicebot platforms avoid spam-tagging and improve call connectivity, not a number-search-and-buy CPaaS. It doesn't obviously fit this `Provider` interface (search/reserve/order a number). More likely relevant to §6b (AI Voice Agent) than §6a, if relevant at all — needs clarifying what specifically it would be used for before it goes anywhere in this document.
+
+## 2d. Checked and ruled out — Plivo (for India specifically)
+
+**Real candidate, genuinely checked, genuinely rejected — not skipped.** Plivo is a global CPaaS provider with an India presence and a REST API shape very close to what §2b's interface expects: `GET /v1/Account/{auth_id}/PhoneNumber/` for search (with a `services` filter param and explicit `sms_enabled`/`voice_enabled`/`mms_enabled` booleans in the response — actually a cleaner discoverability story than Telnyx's `features` array, which never explains *why* a capability is missing), `POST /v1/Account/{auth_id}/PhoneNumber/{number}/` to rent, with a `compliance_application_id` param — Plivo wants the compliance/KYC application created and referenced *before* the purchase call, a different order of operations than Telnyx's order-then-submit-requirements flow (worth remembering if Plivo is ever revisited: the `Provider#order` interface method in §2b assumes requirements come after ordering, which doesn't fit Plivo's model without adjustment).
+
+**Why it's ruled out anyway:** Plivo's own SMS coverage page for India is explicit — *"Inbound SMS: Not Supported."* Only outbound SMS to India mobile numbers works (useful for one-way notifications/OTPs, billed per-message, domestic-DLT or international-route pricing). NR's §6a requirement is a two-way SMS inbox — a customer texting a business number and the business replying — and Plivo cannot receive SMS on an India number at all. This isn't a friction/enablement problem like Exotel's account-manager gate (§2c) — it's a hard capability gap, the same shape of blocker Telnyx has, just for a different reason. **Not recommended as a fallback if Exotel's account-manager step turns out to be a dealbreaker** — Plivo doesn't solve the same problem, it solves a narrower one (outbound-only).
+
 **Scope correction (per FRD §16 decision, 2026-09-23):** an earlier draft of this spec hard-forced `country_code: 'US'` and explicitly deferred all regulatory-document handling. That's wrong — Phase 1's confirmed country scope is **US and India**, admin-selectable, not a single hardcoded country. Consequence: this spec now **must** include a real KYC/regulatory-document submission flow, because India requires it as the normal path (address + ID verification, restricted to four authorized telecom districts: Mumbai City, Gurugram, Noida, Bangalore — confirmed against Telnyx's own India documentation), not a rare edge case the way it would be for a mostly-US scope. Two genuinely different flows exist side by side: **US** (search → order → active in seconds, no documents) and **India** (search within one of four districts → order → submit KYC documents → wait on Telnyx's review → active). Country allowlist for Phase 1 is `['US', 'IN']` — see §14 for whether that should be hardcoded or config-driven.
 
 ## 2a. SDK / API reference — exact calls used
@@ -494,6 +631,8 @@ Behind the FRD's `channel_provider_telnyx` flag. Rollback is flag-off; the migra
 7. **New, surfaced by finding this lookup exists: should NR call it *before* the admin commits to a purchase, not just discover requirements after ordering?** Right now this spec's flow (§2, §6) only reveals requirements after the order is placed (`order_placed` → `requirements_pending`). Since `RegulatoryRequirements#retrieve` needs no order, NR could show "here's what India requires" as informational copy at the country/district-selection step — before the admin has committed to anything — which is a materially better UX than "surprise, now go find your ID and address documents" after they've already picked a number. **Recommendation:** worth adding to Phase 1 scope given how cheap the API call is, but it's scope growth beyond what §6a originally specified, so flagging rather than silently adding it.
 8. **Document upload's 30-minute expiry (§2a call 4) needs the same "don't stage ahead of time" UX care as the number reservation.** If the admin uploads a document, then gets distracted before hitting final submit, the document ID could be dead by the time `NumberOrders#update` runs. **Recommendation:** upload documents at the point of final submission (one atomic "Submit" action), not as each file is individually attached in the form — matches how the code in §2a is structured (upload happens inside `perform`, not as a separate pre-step).
 9. **Two valid submission paths exist, and this spec picked one without comparing them.** Telnyx's gem has both `NumberOrders#update(number_order_id, regulatory_requirements:)` (order-level, what §2a call 4 uses) and `NumberOrderPhoneNumbers#update_requirements(number_order_phone_number_id, regulatory_requirements:)` (per-phone-number level) — confirmed as two separate real resources, not a guess. Since Phase 1 orders exactly one number per order, they're likely equivalent in practice here, but the per-number path is arguably more correct in general (an order *can* cover multiple numbers with independent requirement states) and this spec didn't investigate whether one is preferred/deprecated. **Recommendation:** worth a quick confirmation against Telnyx's own docs or support before implementation — not worth blocking on, since a wrong pick here is a one-line service change, not a design-level mistake.
+10. **New, with the §2b provider abstraction: does `channel_telnyx_sms` stay Telnyx-named forever, or does the schema itself need to generalize (e.g. a `channel_number_provisioning` table with a `provider_type` column) if a second provider is ever actually added?** Deliberately not decided in §2b — the abstraction there is service-layer only, and renaming/restructuring the DB schema for a provider that doesn't exist yet would be the premature part of this change. **Recommendation:** leave the schema Telnyx-named until a second provider is a real, funded piece of work — the service-layer interface is what makes that later migration tractable, not a reason to do it now.
+11. **New, with §2b: this is now the third structural change stacked on the original spec** (PRD-19's reseller/billing model, the two live-tested blockers, and now a provider abstraction layer) **— does this tip the "no Architecture Design needed" judgment call from §1's header note even further past the line?** The header already recommends an Architecture Design because of PRD-19 alone; a provider-abstraction pattern is independently one of NR's own listed triggers for requiring one ("introduces a new architectural pattern"). Not re-litigated here, just flagged as compounding evidence for the recommendation already on record.
 
 ## 15. Approval
 

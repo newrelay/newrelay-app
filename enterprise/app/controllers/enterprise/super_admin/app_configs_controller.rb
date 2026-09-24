@@ -9,7 +9,7 @@ module Enterprise::SuperAdmin::AppConfigsController
       @allowed_configs = custom_branding_options
     when 'internal'
       @allowed_configs = internal_config_options
-    when 'captain'
+    when 'relay-ai'
       @allowed_configs = captain_config_options
     when 'saml'
       @allowed_configs = saml_config_options

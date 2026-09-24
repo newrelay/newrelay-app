@@ -52,7 +52,7 @@ captain:
   description: 'Enable AI-powered conversations with your customers.'
   enabled: true
   icon: 'icon-captain'
-  config_key: 'captain'
+  config_key: 'relay-ai'
 
 # ------- Communication Channels ------- #
 live_chat:

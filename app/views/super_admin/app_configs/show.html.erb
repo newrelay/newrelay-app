@@ -1,4 +1,4 @@
-<% content_for(:title) { "Configure Settings - #{@config.titleize}" } %>
+<% content_for(:title) { "Configure Settings - #{config_heading}" } %>
 
 <div class="space-y-6">
   <div class="page-header">
@@ -8,7 +8,7 @@
     <% end %>
     <div>
       <h1 class="page-title" id="page-title">
-        Configure Settings - <%= @config.titleize %>
+        Configure Settings - <%= config_heading %>
       </h1>
       <p class="text-[13.5px] text-muted-foreground mt-1">Update installation config for this section. Secrets stay masked until revealed.</p>
     </div>

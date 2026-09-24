@@ -1,6 +1,12 @@
 class SuperAdmin::AppConfigsController < SuperAdmin::ApplicationController
+  LEGACY_CONFIG_KEYS = { 'captain' => 'relay-ai' }.freeze
+  CONFIG_HEADINGS = { 'relay-ai' => 'Relay AI' }.freeze
+
   before_action :set_config
+  before_action :redirect_legacy_config, only: :show
   before_action :allowed_configs
+  helper_method :config_heading
+
   def show
     # ref: https://github.com/rubocop/rubocop/issues/7767
     # rubocop:disable Style/HashTransformValues
@@ -16,7 +22,7 @@ class SuperAdmin::AppConfigsController < SuperAdmin::ApplicationController
 
   def create
     errors = []
-    if @config == 'captain' && captain_key_invalid?
+    if @config == 'relay-ai' && captain_key_invalid?
       errors << 'OpenAI API Key could not be verified against the configured endpoint. Please check the key and try again.'
     else
       params['app_config'].each do |key, value|
@@ -54,7 +60,18 @@ class SuperAdmin::AppConfigsController < SuperAdmin::ApplicationController
   end
 
   def set_config
-    @config = params[:config] || 'general'
+    requested = params[:config].presence || 'general'
+    @config = LEGACY_CONFIG_KEYS[requested] || requested
+  end
+
+  def redirect_legacy_config
+    return unless LEGACY_CONFIG_KEYS.key?(params[:config].to_s)
+
+    redirect_to super_admin_app_config_path(config: @config)
+  end
+
+  def config_heading
+    CONFIG_HEADINGS.fetch(@config, @config.titleize)
   end
 
   def allowed_configs
@@ -70,7 +87,7 @@ class SuperAdmin::AppConfigsController < SuperAdmin::ApplicationController
       'whatsapp_embedded' => %w[WHATSAPP_APP_ID WHATSAPP_APP_SECRET WHATSAPP_CONFIGURATION_ID WHATSAPP_API_VERSION],
       'notion' => %w[NOTION_CLIENT_ID NOTION_CLIENT_SECRET],
       'google' => %w[GOOGLE_OAUTH_CLIENT_ID GOOGLE_OAUTH_CLIENT_SECRET GOOGLE_OAUTH_REDIRECT_URI ENABLE_GOOGLE_OAUTH_LOGIN],
-      'captain' => %w[CAPTAIN_OPEN_AI_API_KEY CAPTAIN_OPEN_AI_MODEL CAPTAIN_OPEN_AI_ENDPOINT]
+      'relay-ai' => %w[CAPTAIN_OPEN_AI_API_KEY CAPTAIN_OPEN_AI_MODEL CAPTAIN_OPEN_AI_ENDPOINT]
     }
 
     @allowed_configs = mapping.fetch(
@@ -80,7 +97,7 @@ class SuperAdmin::AppConfigsController < SuperAdmin::ApplicationController
   end
 
   def success_notice
-    message = "#{@config.titleize} settings updated successfully"
+    message = "#{config_heading} settings updated successfully"
     return message unless restart_required_config_saved?
 
     "#{message.delete_suffix('.')}. Restart newrelay web and worker processes to apply this change everywhere."

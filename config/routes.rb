@@ -792,7 +792,7 @@ Rails.application.routes.draw do
       root to: 'dashboard#index'
 
       resource :app_config, only: [:show, :create] do
-        post :test_captain_key
+        post :test_captain_key, path: 'test_relay_ai_key'
       end
       resource :push_diagnostics, only: [:show, :create] do
         post :destroy_subscriptions, on: :collection
@@ -814,7 +814,9 @@ Rails.application.routes.draw do
       resources :subscriptions, only: [:index, :show]
       resources :payment_transactions, only: [:index, :show]
       resources :billing_activity_logs, only: [:index, :show]
-      resources :captain_activity_logs, only: [:index, :show]
+      resources :captain_activity_logs, only: [:index, :show], path: 'relay-ai-activity-logs'
+      get 'captain_activity_logs', to: redirect('/super_admin/relay-ai-activity-logs')
+      get 'captain_activity_logs/:id', to: redirect('/super_admin/relay-ai-activity-logs/%{id}')
       resources :email_logs, only: [:index, :show]
       resources :email_templates, only: [:index, :show, :edit, :update, :destroy], param: :key do
         get :preview, on: :member

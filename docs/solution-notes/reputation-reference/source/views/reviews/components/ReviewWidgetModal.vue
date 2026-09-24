@@ -195,7 +195,7 @@ const embedFormat = ref<'html' | 'iframe' | 'react'>('html')
 
 const activeSnippet = computed(() => {
   if (embedFormat.value === 'html') {
-    return `<!-- New Relay Review Widget -->\n<div id="nr-reviews-widget" \n  data-widget-id="rw_${widgetConfig.value.layout}_9482" \n  data-theme="${widgetConfig.value.theme}">\n</div>\n<script src="https://cdn.newrelay.com/widgets/v2/reviews.js" async defer><\/script>`
+    return `<!-- NewRelay Review Widget -->\n<div id="nr-reviews-widget" \n  data-widget-id="rw_${widgetConfig.value.layout}_9482" \n  data-theme="${widgetConfig.value.theme}">\n</div>\n<script src="https://cdn.newrelay.com/widgets/v2/reviews.js" async defer><\/script>`
   }
   if (embedFormat.value === 'iframe') {
     return `<iframe \n  src="https://embed.newrelay.com/widget/rw_9482?layout=${widgetConfig.value.layout}&theme=${widgetConfig.value.theme}" \n  width="100%" \n  height="480" \n  frameborder="0" \n  loading="lazy">\n</iframe>`

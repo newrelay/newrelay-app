@@ -139,7 +139,7 @@ const integrations = ref([
     subtitle: 'Pages & Recommendations',
     niches: ['local_search'],
     nicheLabel: 'Social & Local',
-    description: 'Aggregate Facebook recommendations, post replies directly from New Relay, and display verified social proof on your landing pages.',
+    description: 'Aggregate Facebook recommendations, post replies directly from NewRelay, and display verified social proof on your landing pages.',
     connected: true,
     tag: '✓ Popular',
     tagVariant: 'emerald',

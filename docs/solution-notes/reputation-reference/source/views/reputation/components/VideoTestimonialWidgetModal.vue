@@ -377,7 +377,7 @@ function prevSlide() {
 const embedType = ref<'script' | 'iframe' | 'react'>('script')
 
 const generatedScriptCode = computed(() => {
-  return `<!-- New Relay Video Testimonials Widget -->
+  return `<!-- NewRelay Video Testimonials Widget -->
 <div id="nr-video-widget" 
   data-widget-id="vw_${widgetConfig.value.layout}_9482" 
   data-layout="${widgetConfig.value.layout}" 

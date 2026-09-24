@@ -268,7 +268,7 @@ function close() {
               <!-- Report Header -->
               <div class="border-b pb-6">
                 <div class="flex items-center justify-between mb-6">
-                  <div class="text-xl font-bold tracking-tight text-slate-900 dark:text-white">New Relay</div>
+                  <div class="text-xl font-bold tracking-tight text-slate-900 dark:text-white">NewRelay</div>
                   <div class="text-sm font-medium text-slate-500">July 2026</div>
                 </div>
                 <h1 class="text-3xl font-bold text-slate-900 dark:text-white">Reputation Report</h1>

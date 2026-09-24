@@ -221,14 +221,14 @@ watch(() => form.value.channels, () => {
 const formattedEmailSubject = computed(() => {
   return emailSubject.value
     .replaceAll('{{FirstName}}', 'Sarah')
-    .replaceAll('{{BusinessName}}', 'New Relay')
+    .replaceAll('{{BusinessName}}', 'NewRelay')
     .replaceAll('{{EmployeeName}}', 'Alex')
 })
 
 const formattedEmailBody = computed(() => {
   return emailBody.value
     .replaceAll('{{FirstName}}', 'Sarah')
-    .replaceAll('{{BusinessName}}', 'New Relay')
+    .replaceAll('{{BusinessName}}', 'NewRelay')
     .replaceAll('{{ReviewLink}}', 'newrelay.com/r/abc123')
     .replaceAll('{{EmployeeName}}', 'Alex')
 })
@@ -236,7 +236,7 @@ const formattedEmailBody = computed(() => {
 const formattedSmsBody = computed(() => {
   return smsMessage.value
     .replaceAll('{{FirstName}}', 'Sarah')
-    .replaceAll('{{BusinessName}}', 'New Relay')
+    .replaceAll('{{BusinessName}}', 'NewRelay')
     .replaceAll('{{ReviewLink}}', 'newrelay.com/r/abc123')
     .replaceAll('{{EmployeeName}}', 'Alex')
 })
@@ -244,13 +244,13 @@ const formattedSmsBody = computed(() => {
 const formattedWhatsAppHeader = computed(() => {
   return whatsappHeader.value
     .replaceAll('{{FirstName}}', 'Sarah')
-    .replaceAll('{{BusinessName}}', 'New Relay')
+    .replaceAll('{{BusinessName}}', 'NewRelay')
 })
 
 const formattedWhatsAppBody = computed(() => {
   return whatsappBody.value
     .replaceAll('{{FirstName}}', 'Sarah')
-    .replaceAll('{{BusinessName}}', 'New Relay')
+    .replaceAll('{{BusinessName}}', 'NewRelay')
     .replaceAll('{{ReviewLink}}', 'newrelay.com/r/abc123')
     .replaceAll('{{EmployeeName}}', 'Alex')
 })
@@ -846,7 +846,7 @@ function close() {
                           NR
                         </div>
                         <div class="min-w-0">
-                          <div class="text-[11px] font-semibold text-foreground truncate">New Relay</div>
+                          <div class="text-[11px] font-semibold text-foreground truncate">NewRelay</div>
                           <div class="text-[9px] text-muted-foreground truncate">to sarah.j@gmail.com</div>
                         </div>
                       </div>
@@ -877,7 +877,7 @@ function close() {
                     </div>
 
                     <div class="text-[8.5px] text-center text-muted-foreground border-t border-border/40 pt-2">
-                      New Relay Inc. · 123 Innovation Way · Unsubscribe
+                      NewRelay Inc. · 123 Innovation Way · Unsubscribe
                     </div>
                   </div>
                 </div>
@@ -896,7 +896,7 @@ function close() {
                     </div>
                     <div class="min-w-0">
                       <div class="flex items-center gap-1">
-                        <span class="text-xs font-semibold truncate text-white">New Relay</span>
+                        <span class="text-xs font-semibold truncate text-white">NewRelay</span>
                         <CheckCircle2 class="size-3 text-emerald-200 shrink-0" />
                       </div>
                       <span class="text-[9px] text-emerald-100 block truncate">Official Business Account</span>
@@ -984,7 +984,7 @@ function close() {
                     <div class="size-6 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold text-[9px]">
                       NR
                     </div>
-                    <span class="text-[9.5px] font-semibold text-foreground">New Relay</span>
+                    <span class="text-[9.5px] font-semibold text-foreground">NewRelay</span>
                   </div>
                   <Info class="size-3.5 text-primary shrink-0" />
                 </div>

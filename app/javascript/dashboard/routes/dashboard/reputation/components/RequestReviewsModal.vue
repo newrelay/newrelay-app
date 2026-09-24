@@ -911,7 +911,7 @@ function close() {
                       <div class="flex items-center gap-2 min-w-0">
                         <div class="size-6 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold text-[10px] shrink-0">NR</div>
                         <div class="min-w-0">
-                          <div class="text-[11px] font-semibold text-foreground truncate">New Relay</div>
+                          <div class="text-[11px] font-semibold text-foreground truncate">NewRelay</div>
                           <div class="text-[9px] text-muted-foreground truncate">to sarah.j@gmail.com</div>
                         </div>
                       </div>
@@ -931,7 +931,7 @@ function close() {
                         </div>
                       </div>
                     </div>
-                    <div class="text-[8.5px] text-center text-muted-foreground border-t border-border/40 pt-2">New Relay Inc. · 123 Innovation Way · Unsubscribe</div>
+                    <div class="text-[8.5px] text-center text-muted-foreground border-t border-border/40 pt-2">NewRelay Inc. · 123 Innovation Way · Unsubscribe</div>
                   </div>
                 </div>
               </div>
@@ -944,7 +944,7 @@ function close() {
                     <div class="size-7 rounded-full bg-white/20 text-white flex items-center justify-center font-bold text-[10.5px] shrink-0 border border-white/30">NR</div>
                     <div class="min-w-0">
                       <div class="flex items-center gap-1">
-                        <span class="text-xs font-semibold truncate text-white">New Relay</span>
+                        <span class="text-xs font-semibold truncate text-white">NewRelay</span>
                         <CheckCircle2 class="size-3 text-emerald-200 shrink-0" />
                       </div>
                       <span class="text-[9px] text-emerald-100 block truncate">Official Business Account</span>
@@ -987,7 +987,7 @@ function close() {
                   <div class="flex items-center gap-1 text-primary"><ChevronLeft class="size-4 shrink-0" /><span class="text-[11px] font-medium">Messages</span></div>
                   <div class="flex flex-col items-center">
                     <div class="size-6 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold text-[9px]">NR</div>
-                    <span class="text-[9.5px] font-semibold text-foreground">New Relay</span>
+                    <span class="text-[9.5px] font-semibold text-foreground">NewRelay</span>
                   </div>
                   <Info class="size-3.5 text-primary shrink-0" />
                 </div>

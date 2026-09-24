@@ -1,4 +1,4 @@
-// AUTO-GENERATED from the live New Relay template sidebar. Drives AppSidebar + CommandPalette.
+// AUTO-GENERATED from the live NewRelay template sidebar. Drives AppSidebar + CommandPalette.
 export type NavSubLeaf = { title: string; href: string; icon?: string; group?: string; badge?: number | string; children?: NavSubLeaf[] }
 export type NavLeaf = { title: string; href: string; icon?: string; children?: NavSubLeaf[]; badge?: number | string }
 export type NavItem = {

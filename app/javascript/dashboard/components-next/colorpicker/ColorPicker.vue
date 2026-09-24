@@ -1,7 +1,7 @@
 <script setup>
-import { ref } from 'vue';
+import { nextTick, ref } from 'vue';
 import { Chrome } from '@lk77/vue3-color';
-import { OnClickOutside } from '@vueuse/components';
+import { onClickOutside } from '@vueuse/core';
 
 import Button from 'dashboard/components-next/button/Button.vue';
 
@@ -20,68 +20,95 @@ defineProps({
 const emit = defineEmits(['update:modelValue']);
 
 const isPickerOpen = ref(false);
+const triggerRef = ref(null);
+const pickerEl = ref(null);
+const pickerStyle = ref({});
 
-const toggleColorPicker = () => {
+const placePicker = () => {
+  const trigger = triggerRef.value;
+  if (!trigger) return;
+  const rect = trigger.getBoundingClientRect();
+  const width = 225;
+  const height = pickerEl.value?.offsetHeight || 240;
+  const gap = 8;
+  const spaceBelow = window.innerHeight - rect.bottom;
+  const openUp = spaceBelow < height + gap && rect.top > spaceBelow;
+  const top = openUp ? rect.top - height - gap : rect.bottom + gap;
+  const left = Math.min(Math.max(8, rect.left), window.innerWidth - width - 8);
+  pickerStyle.value = {
+    top: `${Math.max(8, top)}px`,
+    left: `${left}px`,
+  };
+};
+
+const toggleColorPicker = async () => {
   isPickerOpen.value = !isPickerOpen.value;
+  if (!isPickerOpen.value) return;
+  await nextTick();
+  placePicker();
 };
 
 const closeTogglePicker = () => {
-  if (isPickerOpen.value) {
-    toggleColorPicker();
-  }
+  isPickerOpen.value = false;
 };
+
+onClickOutside(triggerRef, closeTogglePicker, { ignore: [pickerEl] });
 
 const updateColor = e => {
   emit('update:modelValue', e.hex);
 };
-
-const pickerRef = ref(null);
 </script>
 
 <template>
-  <div ref="pickerRef" class="relative w-fit">
-    <OnClickOutside @trigger="closeTogglePicker">
-      <Button
-        v-if="variant === 'default'"
-        color="slate"
-        icon="i-lucide-pipette"
-        trailing-icon
-        class="!px-3 !py-3 [&>svg]:w-4 [&>svg]:h-4"
-        @click="toggleColorPicker"
-      >
-        <div class="flex items-center flex-grow gap-2">
-          <span
-            class="rounded-md size-4"
-            :style="{ backgroundColor: modelValue }"
-          />
-          <span class="min-w-0 truncate">{{ modelValue }}</span>
-        </div>
-      </Button>
-      <button
-        v-else
-        type="button"
-        class="relative size-9 shrink-0 overflow-hidden rounded-[4px] border border-border/80 bg-background p-0.5 shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary/30"
-        @click="toggleColorPicker"
-      >
-        <div
-          class="size-full rounded-[2px]"
+  <div ref="triggerRef" class="relative w-fit">
+    <Button
+      v-if="variant === 'default'"
+      color="slate"
+      icon="i-lucide-pipette"
+      trailing-icon
+      class="!px-3 !py-3 [&>svg]:w-4 [&>svg]:h-4"
+      @click="toggleColorPicker"
+    >
+      <div class="flex items-center flex-grow gap-2">
+        <span
+          class="rounded-md size-4"
           :style="{ backgroundColor: modelValue }"
         />
-      </button>
+        <span class="min-w-0 truncate">{{ modelValue }}</span>
+      </div>
+    </Button>
+    <button
+      v-else
+      type="button"
+      class="relative size-9 shrink-0 overflow-hidden rounded-[4px] border border-border/80 bg-background p-0.5 shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary/30"
+      @click="toggleColorPicker"
+    >
+      <div
+        class="size-full rounded-[2px]"
+        :style="{ backgroundColor: modelValue }"
+      />
+    </button>
+  </div>
+  <Teleport to="body">
+    <div
+      v-if="isPickerOpen"
+      ref="pickerEl"
+      class="fixed z-[9999]"
+      :style="pickerStyle"
+    >
       <Chrome
-        v-if="isPickerOpen"
         disable-alpha
         :model-value="modelValue"
-        class="colorpicker--chrome"
+        class="colorpicker--chrome !static"
         @update:model-value="updateColor"
       />
-    </OnClickOutside>
-  </div>
+    </div>
+  </Teleport>
 </template>
 
 <style scoped lang="scss">
 .colorpicker--chrome.vc-chrome {
-  @apply shadow-lg absolute bg-background z-[9999] border border-border dark:border-border rounded-[8px];
+  @apply shadow-lg bg-background border border-border dark:border-border rounded-[8px];
 
   :deep() {
     .vc-chrome-saturation-wrap {

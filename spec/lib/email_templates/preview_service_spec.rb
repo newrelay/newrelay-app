@@ -29,8 +29,9 @@ describe EmailTemplates::PreviewService do
 
       expect(html).to include('Acme')
       expect(html).to include('https://help.acme.test')
-      expect(html).not_to include('email_icons/')
-      expect(html).not_to include('class="mascot-img"')
+      expect(html).to include('/email_brand_icons/base.png')
+      expect(html).to include('class="mascot-img"')
+      expect(html).not_to include('/email_icons/base.png')
     end
   end
 end

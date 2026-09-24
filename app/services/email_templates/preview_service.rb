@@ -171,17 +171,20 @@ class EmailTemplates::PreviewService
   end
 
   def preview_mascot_url
-    return if @custom_brand
     return if @entry.category == 'Conversation replies'
 
-    path = ::MailerChrome.mascot_public_path(layout? ? 'base' : @entry.name)
+    path = if @custom_brand
+             ::MailerChrome.brand_icon_public_path(layout? ? 'base' : @entry.name)
+           else
+             ::MailerChrome.mascot_public_path(layout? ? 'base' : @entry.name)
+           end
     return if path.blank?
 
     "#{preview_origin}#{path}"
   end
 
   def preview_blob_url
-    return if @custom_brand
+    return if @entry.category == 'Conversation replies'
 
     path = ::MailerChrome.blob_public_path
     return if path.blank?

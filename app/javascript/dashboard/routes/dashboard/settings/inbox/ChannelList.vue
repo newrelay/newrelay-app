@@ -102,6 +102,13 @@ const channelList = computed(() => {
     icon: 'i-woot-whatsapp',
   });
 
+  channels.push({
+    key: 'phone_number',
+    title: t('INBOX_MGMT.ADD.AUTH.CHANNEL.PHONE_NUMBER.TITLE'),
+    description: t('INBOX_MGMT.ADD.AUTH.CHANNEL.PHONE_NUMBER.DESCRIPTION'),
+    icon: 'i-lucide-phone-call',
+  });
+
   return channels;
 });
 

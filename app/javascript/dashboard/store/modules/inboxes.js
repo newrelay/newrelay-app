@@ -6,6 +6,7 @@ import WebChannel from '../../api/channel/webChannel';
 import FBChannel from '../../api/channel/fbChannel';
 import TwilioChannel from '../../api/channel/twilioChannel';
 import WhatsappChannel from '../../api/channel/whatsappChannel';
+import NumberProvisioningOrdersAPI from '../../api/numberProvisioningOrders';
 import { throwErrorMessage } from '../utils/api';
 import AnalyticsHelper from '../../helper/AnalyticsHelper';
 import camelcaseKeys from 'camelcase-keys';
@@ -22,6 +23,7 @@ export const state = {
     isDeleting: false,
     isUpdatingIMAP: false,
     isUpdatingSMTP: false,
+    isSearchingNumbers: false,
   },
 };
 
@@ -244,6 +246,29 @@ export const actions = {
       commit(types.default.ADD_INBOXES, response.data);
       commit(types.default.SET_INBOXES_UI_FLAG, { isCreating: false });
       sendAnalyticsEvent('twilio');
+      return response.data;
+    } catch (error) {
+      commit(types.default.SET_INBOXES_UI_FLAG, { isCreating: false });
+      throw error;
+    }
+  },
+  searchNumberProvisioningNumbers: async ({ commit }, params) => {
+    try {
+      commit(types.default.SET_INBOXES_UI_FLAG, { isSearchingNumbers: true });
+      const response = await NumberProvisioningOrdersAPI.search(params);
+      commit(types.default.SET_INBOXES_UI_FLAG, { isSearchingNumbers: false });
+      // orders#search renders `json.array! @results` — a bare array, not { data }.
+      return response.data;
+    } catch (error) {
+      commit(types.default.SET_INBOXES_UI_FLAG, { isSearchingNumbers: false });
+      throw error;
+    }
+  },
+  createNumberProvisioningOrder: async ({ commit }, params) => {
+    try {
+      commit(types.default.SET_INBOXES_UI_FLAG, { isCreating: true });
+      const response = await NumberProvisioningOrdersAPI.create(params);
+      commit(types.default.SET_INBOXES_UI_FLAG, { isCreating: false });
       return response.data;
     } catch (error) {
       commit(types.default.SET_INBOXES_UI_FLAG, { isCreating: false });

@@ -388,6 +388,44 @@
           "ERROR_MESSAGE": "We were not able to create the voice channel"
         }
       },
+      "PHONE_NUMBER": {
+        "TITLE": "Phone Number",
+        "DESC": "Search for a phone number and connect it to a new inbox.",
+        "SELECT_COUNTRY": {
+          "TITLE": "Select a country",
+          "DESCRIPTION": "Choose the country you'd like to purchase a phone number in."
+        },
+        "COUNTRIES": {
+          "US": "United States",
+          "US_DESC": "Search for available US phone numbers",
+          "IN": "India",
+          "IN_DESC": "Search for available India phone numbers"
+        },
+        "RESULTS": {
+          "TITLE": "Available numbers",
+          "BACK_BUTTON": "Back",
+          "LOADING": "Searching for available numbers…",
+          "EMPTY": "No numbers available right now. Please go back and try another country.",
+          "PRICE_UNKNOWN": "Price unavailable",
+          "SELECT_BUTTON": "Select"
+        },
+        "CONFIRM": {
+          "TITLE": "Confirm your number",
+          "DESCRIPTION": "Review the details below before placing your order. This number will be connected to a new inbox once provisioning is complete.",
+          "BACK_BUTTON": "Back",
+          "CONFIRM_BUTTON": "Order this number"
+        },
+        "PROVISIONING": {
+          "TITLE": "Setting up your number",
+          "DESCRIPTION": "We're provisioning {phoneNumber}. US numbers are usually ready within seconds; India numbers can take a few days pending verification. Check back here for updates.",
+          "CHECK_STATUS_BUTTON": "Check status",
+          "STILL_PROCESSING": "Still processing. Please check back soon."
+        },
+        "API": {
+          "SEARCH_ERROR": "We were not able to search for phone numbers",
+          "ORDER_ERROR": "We were not able to order this phone number"
+        }
+      },
       "API_CHANNEL": {
         "TITLE": "API Channel",
         "DESC": "Integrate with API channel and start supporting your customers.",
@@ -524,6 +562,10 @@
           "VOICE": {
             "TITLE": "Voice",
             "DESCRIPTION": "Integrate with Twilio Voice"
+          },
+          "PHONE_NUMBER": {
+            "TITLE": "Phone Number",
+            "DESCRIPTION": "Search for and purchase a new phone number"
           }
         }
       },

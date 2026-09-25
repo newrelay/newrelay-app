@@ -2,7 +2,9 @@
 
 > Notion note: same publishing blocker as the other two Telnyx docs — this workspace has used all its free blocks and needs a plan upgrade before new Notion pages can be created. Follows the NewRelay HQ "Technical Implementation Spec" template.
 >
-> **🚨 Blocking (2026-09-24, live-tested against a real Telnyx account, not documentation) — two separate issues, both unresolved:**
+> **✅ The Architecture Design this document kept asking for now exists: [number-provisioning-reseller-architecture-design.md](number-provisioning-reseller-architecture-design.md) (2026-09-25).** It supersedes this spec's data-model decisions specifically — the provisioning/order state moves to a new provider-agnostic `number_provisioning_orders` table instead of living on `channel_telnyx_sms` (§3 below is now the *wrong* schema, not just an early draft of the right one), platform credentials move to `GlobalConfig`, and §2b/§2c/§2d's Telnyx/Exotel/Plivo research is carried forward into that document rather than duplicated here. This spec's §1 (requirement), §2a (verified Telnyx API calls), and §7's search/order edge cases are still accurate at the mechanics level and worth keeping as reference — but a real implementation should be written from the Architecture Design's schema, not this spec's.
+>
+> **🚨 Blocking (2026-09-24, live-tested against a real Telnyx account, not documentation) — two separate issues, both unresolved, and unaffected by the Architecture Design above:**
 >
 > **1. No SMS-capable numbers in India — confirmed as a real product limitation, not an account/tier artifact.** Live test: all five phone number types (`local`/`mobile`/`toll_free`/`national`/`shared_cost`) with `features[]=sms` returned `"No coverage found in the specified country"`. Cross-checked against Telnyx's own [India Mobile Numbers release note](https://telnyx.com/release-notes/india-mobile-numbers) (2026-09-17) — the feature shipped as **voice-only**, no SMS/MMS mentioned. This rules out "maybe it's this account's tier." Every part of this spec's India-specific SMS code — the district picker in `NumberSearchService` (§2a), the `requirements_pending`/KYC states (§3), `RequirementSubmissionService` (§2a) — is written for a capability Telnyx's India numbers don't have and were never scoped to have. This is now a Product decision (FRD Open Question 14: drop India from SMS scope, or re-scope India as Voice-only under §6b instead), not something more testing will resolve. **Don't build the India SMS code paths below until that's decided.**
 >
@@ -15,8 +17,8 @@
 | Field | Value |
 |---|---|
 | Restates | [telnyx-twilio-parity-frd.md](telnyx-twilio-parity-frd.md) §6a, PRD-18 **and PRD-19 (not yet incorporated below)** |
-| Architecture Design | None yet — **now recommended before this spec is finalized**, per PRD-19 |
-| Status | Draft, partially superseded |
+| Architecture Design | [number-provisioning-reseller-architecture-design.md](number-provisioning-reseller-architecture-design.md) — written 2026-09-25, supersedes this spec's §3 data model |
+| Status | Draft, superseded on data model — mechanics (§1, §2a, §7) still reference-accurate |
 | Written by | TBD |
 
 ## 1. Restatement of the requirement

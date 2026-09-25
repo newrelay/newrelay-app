@@ -131,6 +131,11 @@ Rails.application.routes.draw do
             resource :mock_connection, only: [:create]
             resource :mock_comment, only: [:create]
           end
+          namespace :number_provisioning do
+            resources :orders, only: [:create] do
+              collection { get :search }
+            end
+          end
           resources :macros, only: [:index, :create, :show, :update, :destroy] do
             post :execute, on: :member
           end

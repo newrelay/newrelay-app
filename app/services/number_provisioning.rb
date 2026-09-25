@@ -10,4 +10,8 @@ module NumberProvisioning
     adapter_class = ROUTES.fetch(country_code.to_s.upcase, DEFAULT)
     adapter_class.new(account: account)
   end
+
+  def self.table_name_prefix
+    'number_provisioning_'
+  end
 end

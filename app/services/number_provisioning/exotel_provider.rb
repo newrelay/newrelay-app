@@ -28,6 +28,16 @@ class NumberProvisioning::ExotelProvider
     response.parsed_response
   end
 
+  def status(provider_order_id:)
+    response = HTTParty.get(
+      "#{BASE_URL}/Accounts/#{account_sid}/IncomingPhoneNumbers/#{provider_order_id}",
+      basic_auth: basic_auth
+    )
+    raise "Exotel status check failed: #{response.body}" unless response.success?
+
+    response.parsed_response
+  end
+
   private
 
   def basic_auth

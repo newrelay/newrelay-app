@@ -182,6 +182,14 @@
   type: secret
 # End of Microsoft Email Channel Config
 
+# MARK: Number Provisioning Config
+- name: TELNYX_RESELLER_API_KEY
+  display_title: 'Telnyx Reseller API Key'
+  description: 'The platform-owned Telnyx API key used to search for and order numbers on behalf of tenants.'
+  locked: false
+  type: secret
+# End of Number Provisioning Config
+
 # MARK: Captain Config
 - name: CAPTAIN_OPEN_AI_API_KEY
   display_title: 'OpenAI API Key'

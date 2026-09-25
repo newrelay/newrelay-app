@@ -10,4 +10,8 @@ module NumberProvisioning::Provider
   def order(phone_number:)
     raise NotImplementedError
   end
+
+  def status(provider_order_id:)
+    raise NotImplementedError
+  end
 end

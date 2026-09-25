@@ -28,14 +28,22 @@ class NumberProvisioning::TelnyxProvider
     response.parsed_response['data']
   end
 
+  def status(provider_order_id:)
+    response = HTTParty.get("#{BASE_URL}/number_orders/#{provider_order_id}", headers: auth_headers)
+    raise "Telnyx status check failed: #{response.body}" unless response.success?
+
+    response.parsed_response['data']
+  end
+
   private
 
   def auth_headers
     { 'Authorization' => "Bearer #{api_key}" }
   end
 
+  # Platform-owned reseller key, not a tenant-supplied BYO credential -- see
+  # NumberProvisioning::TelnyxProvider's credential model note in the design doc.
   def api_key
-    account.hooks.find_by(app_id: 'telnyx', status: 'enabled')&.settings&.dig('api_key') ||
-      ENV.fetch('TELNYX_API_KEY', nil)
+    GlobalConfig.get_value('TELNYX_RESELLER_API_KEY')
   end
 end

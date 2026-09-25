@@ -135,10 +135,10 @@ const getSentimentClass = (sentiment) => {
 };
 
 const getStatusClass = (status) => {
-  if (status === 'Replied' || status === 'Approved') return 'bg-success/10 text-success border border-success/20';
-  if (status === 'Pending') return 'bg-warning/10 text-warning border border-warning/20';
-  if (status === 'Needs Reply') return 'bg-primary/10 text-primary border border-primary/20';
-  return 'bg-muted text-muted-foreground border border-border';
+  if (status === 'Replied' || status === 'Approved') return 'bg-success/10 text-success';
+  if (status === 'Pending') return 'bg-warning/10 text-warning';
+  if (status === 'Needs Reply') return 'bg-primary/10 text-primary';
+  return 'bg-muted text-muted-foreground';
 };
 
 const filteredReviews = computed(() => {
@@ -353,7 +353,7 @@ async function sendReply() {
     <ReviewWidgetModal v-model:open="isWidgetModalOpen" />
 
     <!-- Main Reviews Feed List -->
-    <div class="flex-1 overflow-y-auto w-full hide-scrollbar flex flex-col transition-all duration-300" :class="selectedReview ? 'mr-[400px]' : ''">
+    <div class="flex-1 overflow-hidden w-full hide-scrollbar flex flex-col transition-all duration-300" :class="selectedReview ? 'mr-[400px]' : ''">
       
       <!-- Page Header -->
       <div class="px-6 py-6 bg-card shrink-0 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -595,22 +595,11 @@ async function sendReply() {
             <button @click="viewMode = 'list'" class="p-1.5 rounded-md transition-colors cursor-pointer" :class="viewMode === 'list' ? 'bg-card text-foreground shadow-xs' : 'text-muted-foreground hover:text-foreground'" title="List view"><List class="size-3.5" /></button>
             <button @click="viewMode = 'timeline'" class="p-1.5 rounded-md transition-colors cursor-pointer" :class="viewMode === 'timeline' ? 'bg-card text-foreground shadow-xs' : 'text-muted-foreground hover:text-foreground'" title="Timeline view"><Clock class="size-3.5" /></button>
           </div>
-
-          <div class="h-5 w-px bg-border/80 mx-1"></div>
-
-          <!-- Pagination info (client loads all reviews; arrows decorative) -->
-          <div class="flex items-center gap-2">
-            <span class="text-xs font-semibold text-foreground whitespace-nowrap">1-{{ filteredReviews.length }} of {{ reviews.length }}</span>
-            <div class="flex items-center gap-1">
-              <button class="inline-flex items-center justify-center size-8 rounded-lg bg-card border border-border/80 hover:bg-accent shadow-xs cursor-pointer text-muted-foreground"><ChevronDown class="size-3.5 rotate-90" /></button>
-              <button class="inline-flex items-center justify-center size-8 rounded-lg bg-card border border-border/80 hover:bg-accent shadow-xs cursor-pointer text-muted-foreground"><ChevronDown class="size-3.5 -rotate-90" /></button>
-            </div>
-          </div>
         </div>
       </div>
 
       <!-- Feed Container -->
-      <div class="flex-1 bg-background overflow-y-auto pb-10">
+      <div class="flex-1 bg-background overflow-y-auto">
         <div 
           class="transition-all duration-300"
           :class="[
@@ -640,7 +629,7 @@ async function sendReply() {
               class="transition-all duration-300 cursor-pointer relative"
               :class="[
                 activeReviewMenuId === review.id ? 'z-30 overflow-visible' : 'overflow-hidden',
-                viewMode === 'list' ? 'px-6 py-5 flex items-center gap-6 hover:bg-accent' : 'bg-card border rounded-xl hover:shadow-md p-6 flex flex-col h-full',
+                viewMode === 'list' ? 'px-6 py-5 flex items-center gap-6' : 'bg-card border rounded-xl hover:shadow-md p-6 flex flex-col h-full',
                 selectedReview?.id === review.id && viewMode === 'list' ? 'bg-primary/10/30 dark:bg-primary/10/10 border-l-[3px] border-l-primary' : viewMode === 'list' ? 'border-l-[3px] border-l-transparent' : '',
                 selectedReview?.id === review.id && viewMode !== 'list' ? 'border-primary ring-1 ring-primary shadow-md scale-[1.02]' : viewMode !== 'list' ? 'border-border shadow-sm scale-100' : ''
               ]"
@@ -760,8 +749,10 @@ async function sendReply() {
                     <div class="flex items-center gap-1.5 text-xs text-muted-foreground mt-0.5">
                       <div v-if="platformIcons[review.platform]" v-html="platformIcons[review.platform]" class="shrink-0 flex items-center justify-center"></div>
                       <span class="font-medium text-foreground/80">{{ review.platform }}</span>
-                      <span class="opacity-50">&bull;</span>
-                      <span class="truncate">{{ review.location }}</span>
+                      <template v-if="review.location">
+                        <span class="opacity-50">&bull;</span>
+                        <span class="truncate">{{ review.location }}</span>
+                      </template>
                     </div>
                   </div>
                 </div>
@@ -833,7 +824,7 @@ async function sendReply() {
                         @click="markResolved([review.id]); activeReviewMenuId = null" 
                         class="w-full text-left px-3 py-1.5 text-xs rounded-md hover:bg-accent font-medium text-foreground flex items-center gap-2 cursor-pointer"
                       >
-                        <CheckSquare class="size-4 text-success" /> Mark Resolved
+                        <CheckSquare class="size-4 text-foreground" /> Mark Resolved
                       </button>
                       <button 
                         @click="markResolved([review.id]); activeReviewMenuId = null" 
@@ -857,6 +848,14 @@ async function sendReply() {
           <button @click="searchQuery = ''; selectedPlatform = 'All Platforms'; activeStatusFilter = ''; activeRatingFilter = 0; activeDateRangeFilter = ''" class="px-4 py-2 rounded-lg border border-border bg-card text-[13.5px] font-medium text-foreground hover:bg-accent transition-colors border-input hover:border-transparent cursor-pointer">
             Reset Filters
           </button>
+        </div>
+      </div>
+
+      <div class="shrink-0 px-6 py-2.5 border-t border-border/80 bg-card flex items-center justify-end gap-2">
+        <span class="text-xs font-semibold text-foreground whitespace-nowrap">1-{{ filteredReviews.length }} of {{ reviews.length }}</span>
+        <div class="flex items-center gap-1">
+          <button type="button" class="inline-flex items-center justify-center size-8 rounded-lg bg-card border border-border/80 hover:bg-accent shadow-xs cursor-pointer text-muted-foreground"><ChevronDown class="size-3.5 rotate-90" /></button>
+          <button type="button" class="inline-flex items-center justify-center size-8 rounded-lg bg-card border border-border/80 hover:bg-accent shadow-xs cursor-pointer text-muted-foreground"><ChevronDown class="size-3.5 -rotate-90" /></button>
         </div>
       </div>
     </div>
@@ -917,7 +916,7 @@ async function sendReply() {
               >
                 <button
                   class="w-full text-left px-3 py-1.5 text-xs rounded-md font-medium flex items-center justify-between cursor-pointer"
-                  :class="!selectedReview.assignee ? 'bg-primary/10 text-primary font-semibold' : 'hover:bg-accent text-foreground'"
+                  :class="!selectedReview.assignee ? 'text-primary font-semibold' : 'hover:bg-accent text-foreground'"
                   @click="assignOne(selectedReview, null)"
                 >
                   <span>Unassigned</span>
@@ -927,7 +926,7 @@ async function sendReply() {
                   v-for="person in assigneeOptions"
                   :key="person"
                   class="w-full text-left px-3 py-1.5 text-xs rounded-md font-medium flex items-center justify-between cursor-pointer"
-                  :class="selectedReview.assignee === person ? 'bg-primary/10 text-primary font-semibold' : 'hover:bg-accent text-foreground'"
+                  :class="selectedReview.assignee === person ? 'text-primary font-semibold' : 'hover:bg-accent text-foreground'"
                   @click="assignOne(selectedReview, person)"
                 >
                   <span>{{ person }}</span>
@@ -957,7 +956,7 @@ async function sendReply() {
                   :key="st"
                   @click="st === 'Replied' ? markResolved([selectedReview.id]) : (selectedReview.status = st); showStatusDropdown = false"
                   class="w-full text-left px-3 py-1.5 text-xs rounded-md font-medium flex items-center justify-between cursor-pointer"
-                  :class="selectedReview.status === st ? 'bg-primary/10 text-primary font-semibold' : 'hover:bg-accent text-foreground'"
+                  :class="selectedReview.status === st ? 'text-primary font-semibold' : 'hover:bg-accent text-foreground'"
                 >
                   <span>{{ st }}</span>
                   <Check v-if="selectedReview.status === st" class="size-3.5" />

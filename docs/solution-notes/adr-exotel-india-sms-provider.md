@@ -9,6 +9,7 @@
 | Owner | TBD |
 | Architecture Design | [number-provisioning-reseller-architecture-design.md](number-provisioning-reseller-architecture-design.md) §12 (flagged this ADR as required) |
 | Source PRD | [telnyx-twilio-parity-frd.md](telnyx-twilio-parity-frd.md) §6a, PRD-19, Open Question 14 |
+| Pricing research | [exotel-pricing-research.md](exotel-pricing-research.md) — ExoPhone rental confirmed (₹499/mo, official docs); SMS and inbound SMS pricing still unconfirmed |
 | Supersedes | None |
 
 ## Decision
@@ -21,7 +22,7 @@ PRD-19 committed NR to a reseller model where NR itself holds provider accounts 
 
 Two real alternatives were evaluated on their own merits, not assumed:
 - **Plivo** — real CPaaS presence in India, a REST API shape that would have fit the existing `Provider` interface cleanly (explicit `sms_enabled`/`voice_enabled` booleans in search results, arguably better-designed than Telnyx's `features` array). Its own India SMS coverage page states **"Inbound SMS: Not Supported"** — outbound-only. This is a hard capability gap, not friction: no amount of API integration effort makes Plivo receive an SMS it structurally cannot receive.
-- **Exotel** — India-based CPaaS, confirmed genuinely two-way SMS-capable (dedicated developer docs for inbound webhooks, real payload fields `From`/`Body`/`SmsSid`). The one real caveat: Exotel's own docs state inbound SMS requires **contacting an Exotel account manager to enable** — not a pure self-serve API flow.
+- **Exotel** — India-based CPaaS, confirmed genuinely two-way SMS-capable (dedicated developer docs for inbound webhooks, real payload fields `From`/`Body`/`SmsSid`). The one real caveat: Exotel's own docs state inbound SMS requires **contacting an Exotel account manager to enable** — not a pure self-serve API flow. Pricing research (2026-09-28, see [exotel-pricing-research.md](exotel-pricing-research.md)) adds a second caveat in the same direction: **inbound SMS has no published price anywhere**, official or otherwise — so this isn't just an enablement gate, it's also a pricing gate. Number rental itself is confirmed and unremarkable: ₹499/month per ExoPhone, straight from Exotel's own API reference.
 
 ## Options considered
 
@@ -45,11 +46,11 @@ Between the two providers actually capable of the job (Plivo failed outright, so
 
 - **Positive:** India can plausibly stay in Phase 1's SMS scope, via a second, real adapter — not a re-scope to voice-only or a dropped commitment.
 - **Cost accepted:** onboarding a new India-serving customer's inbox now has a step that isn't purely self-serve API calls — someone (NR, presumably, since this is the reseller model) has to have or establish an Exotel account-manager relationship before inbound SMS works for real customers. This is an operational dependency, not just an engineering one.
-- **Operational implication:** this adapter is the least-verified piece of the whole reseller platform. Unlike Telnyx (live-tested, gem-source-verified for the mechanics, even though its own blockers remain open), Exotel has had exactly one documentation research pass. Nothing here has been confirmed against a real Exotel account, a real search response, or a real order.
+- **Operational implication:** this adapter is the least-verified piece of the whole reseller platform. Unlike Telnyx (live-tested, gem-source-verified for the mechanics, even though its own blockers remain open), Exotel has had exactly one documentation research pass plus one pricing research pass. Nothing here has been confirmed against a real Exotel account, a real search response, or a real order. Pricing specifically: ExoPhone rental is confirmed (₹499/mo), but SMS pricing and inbound SMS pricing are not — Exotel's own docs defer both to Sales rather than publishing a rate card, so `margin_cents` on any Exotel order stays a stub until that conversation happens, not just until the API integration is built.
 
 ## Reversibility
 
-**Two-way door at the architecture level, closer to one-way at the relationship level.** The provider-agnostic interface (Architecture Design §4) makes the Exotel adapter itself cheap to add, pause, or remove — no other component depends on Exotel existing. What's *not* cheap to reverse is any account-manager relationship or DLT registration effort NR invests in standing this up; unwinding that (if Exotel turns out unworkable after deeper testing) costs real operational time, not just a code revert.
+**Two-way door at the architecture level, closer to one-way at the relationship level.** The provider-agnostic interface (Architecture Design §4) makes the Exotel adapter itself cheap to add, pause, or remove — no other component depends on Exotel existing. **Confirmed by requester (via chat), 2026-09-28**: this is deliberate, not incidental — every caller (controller, job, future billing) talks to the `search`/`order`/`status` feature contract, never to "Exotel" by name, so this ADR's decision is really about *which adapter implements the interface*, not about anything the rest of the codebase has to know or branch on. What's *not* cheap to reverse is any account-manager relationship or DLT registration effort NR invests in standing this up; unwinding that (if Exotel turns out unworkable after deeper testing) costs real operational time, not just a code revert.
 
 ## Follow-up
 
@@ -57,7 +58,7 @@ Between the two providers actually capable of the job (Plivo failed outright, so
 2. If India-via-Exotel is confirmed: live-test Exotel's search and order APIs against a real account, the same rigor Telnyx got (Implementation Spec §2a's treatment is the bar).
 3. Confirm whether Exotel has a reservation concept (unconfirmed — Telnyx's docs explicitly call this out as a step; Exotel's docs did not, during this research pass).
 4. Confirm Exotel's DLT registration API shape — the actual equivalent of Telnyx's regulatory-requirements flow for India-specific KYC/compliance.
-5. Identify who owns starting the Exotel account-manager conversation, and get a real timeline for inbound SMS enablement before committing this to a sprint.
+5. Identify who owns starting the Exotel account-manager conversation, and get a real timeline for inbound SMS enablement **and inbound SMS pricing** before committing this to a sprint — pricing research (2026-09-28) found no published rate for inbound SMS, so this conversation needs to resolve cost, not just access.
 6. Build `ExotelProvider` per [number-provisioning-reseller-architecture-design.md](number-provisioning-reseller-architecture-design.md) §4's interface, once 2–5 are resolved.
 
 ## Approval

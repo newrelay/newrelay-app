@@ -71,6 +71,10 @@ flowchart LR
 | Platform credential store | NR's own per-provider API keys (reseller model) | Customer-supplied BYO credentials (untouched, different code path) | `GlobalConfig`, existing pattern |
 | Billing integration point | Recording the margin/charge against the customer's NR subscription | Not yet decided which system — this is a contract, not an implementation (§7, §15) | Unidentified |
 
+### Why this shape: code by feature, not by provider
+
+**Confirmed by requester (via chat), 2026-09-28.** Every caller in this design — the controller, the poll job, the future channel factory, billing — talks to the *feature* (`NumberProvisioning::Provider`'s `search`/`order`/`status` contract), never to a specific vendor. Nothing outside `app/services/number_provisioning/*_provider.rb` knows Telnyx or Exotel exist. This is why swapping or adding a provider is cheap by construction, not by discipline: implement the interface's methods, add one line to `NumberProvisioning::ROUTES`, and every caller — controller, job, future billing service — keeps working unchanged. The alternative (branching on provider name inside callers, or duplicating the controller/job per provider) is exactly what this interface exists to prevent.
+
 ## 5. Critical flows
 
 **Purchase, provider-agnostic:**

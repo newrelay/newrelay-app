@@ -54,7 +54,7 @@ flowchart LR
   TelnyxAdapter --> TelnyxAPI["Telnyx API\n(NR's platform credential)"]
   ExotelAdapter --> ExotelAPI["Exotel API\n(NR's platform credential)"]
   API --> OrderRecord["NumberProvisioning::Order\n(provider-agnostic table)"]
-  OrderRecord --> Billing["NR's billing system\n(integration point, vendor TBD)"]
+  OrderRecord --> Billing["NR's billing system\n(Stripe + Razorpay, integration into OrderBillingService still stubbed)"]
   OrderRecord -->|on success| ChannelFactory["Channel factory"]
   ChannelFactory --> TelnyxChannel["Channel::TelnyxSms"]
   ChannelFactory --> ExotelChannel["Channel::ExotelSms (future)"]
@@ -69,7 +69,7 @@ flowchart LR
 | `NumberProvisioning::Order` (new table, §6) | The purchase transaction itself — status, cost, margin, billing reference — independent of which provider or which eventual channel type | The channel record itself | `NumberProvisioning::Provider` |
 | Provider-specific `Channel::*Sms` | The actual working inbox channel, once the order is active — same role `Channel::TwilioSms` plays today | Purchase/billing history | `NumberProvisioning::Order` (created from it, not the reverse) |
 | Platform credential store | NR's own per-provider API keys (reseller model) | Customer-supplied BYO credentials (untouched, different code path) | `GlobalConfig`, existing pattern |
-| Billing integration point | Recording the margin/charge against the customer's NR subscription | Not yet decided which system — this is a contract, not an implementation (§7, §15) | Unidentified |
+| Billing integration point | Recording the margin/charge against the customer's NR subscription | The actual charge-creation logic — `Enterprise::NumberProvisioning::OrderBillingService` is still stubbed (`margin_cents` hardcoded to 0, no real charge created) (§7, §15) | Stripe + Razorpay, via `Enterprise::Billing::PaymentGatewayRegistry` (confirmed 2026-09-28, see FRD Open Question 10) |
 
 ### Why this shape: code by feature, not by provider
 
@@ -147,7 +147,7 @@ add_index :number_provisioning_orders, [:provider_type, :provider_order_id], uni
 | `NumberProvisioning::Provider` (internal Ruby interface) | Controllers, jobs | Provider adapters | N/A (in-process) | Adapter-specific | `NotImplementedError` if an adapter is incomplete — fails loud, not silently |
 | Purchase API (`Api::V1::Accounts::NumberProvisioning::OrdersController`) | Admin frontend | `NumberProvisioning::Order` + adapter | Admin-only, same Pundit pattern as existing channel controllers | Client `Idempotency-Key` header, per-order | Provider error → `Order#status = 'failed'`, surfaced with the provider's own message |
 | Provider webhooks (one route family per provider, e.g. `/telnyx/number_order_status`, future `/exotel/number_order_status`) | Provider | `Order` status transitions | Signature-verified per provider's own scheme (Telnyx: Ed25519; Exotel: TBD, not yet researched) | Idempotent by `provider_order_id` | Invalid signature → reject, log distinctly (Voice Architecture Design's established pattern) |
-| **Billing integration point** | `Order` reaching `active` | NR's billing system | **Not yet defined — contract only.** Expected shape: something is told "charge account X, `provider_cost_cents + margin_cents`, reference `billing_reference`" — the actual vendor/API is unidentified (FRD Open Question 10) | Must be idempotent — an order transitioning to `active` should never double-charge on a webhook retry | Undefined until the vendor is known; flagged as a real risk in §9 |
+| **Billing integration point** | `Order` reaching `active` | NR's billing system (Stripe + Razorpay, `Enterprise::Billing::PaymentGatewayRegistry` — confirmed, FRD Open Question 10) | **Vendor known; integration still a contract, not an implementation.** Expected shape: "charge account X, `provider_cost_cents + margin_cents`, reference `billing_reference`" — `Enterprise::NumberProvisioning::OrderBillingService` exists in code but is stubbed (`margin_cents` hardcoded to 0, no real charge created) | Must be idempotent — an order transitioning to `active` should never double-charge on a webhook retry. `Enterprise::Billing::TopupFulfillmentService`'s `account.with_lock` + `already_fulfilled?` pattern is the precedent to reuse | Stubbed until the real charge logic is built; flagged as a real risk in §9 |
 
 ## 8. Authorization, security & tenant isolation
 
@@ -161,7 +161,7 @@ add_index :number_provisioning_orders, [:provider_type, :provider_order_id], uni
 | Failure | User/system impact | Detection | Fallback / recovery |
 |---|---|---|---|
 | Provider API failure mid-purchase (any provider) | Order stuck or `failed`, no channel created | Provider error response, or poll-job timeout | `Order` stays queryable in `failed` state, admin can retry with a new order — no orphaned partial state, since the channel isn't created until `active` |
-| **Billing integration fails or doesn't exist yet** | An order could reach `active` and create a working channel with no corresponding charge recorded | Not yet designed — this is a real gap, not just an edge case, since the vendor itself is unknown | Until a real billing system is wired in, this architecture should **not** be used to actually activate paid production orders — the contract in §7 is a placeholder, not a working safeguard |
+| **Billing integration is stubbed** | An order could reach `active` and create a working channel with no corresponding charge recorded | The vendor is known (Stripe + Razorpay); the gap is that `OrderBillingService` doesn't create a real charge yet (`margin_cents` hardcoded to 0) | Until real charge logic is wired in, this architecture should **not** be used to actually activate paid production orders — the contract in §7 is a placeholder, not a working safeguard |
 | Duplicate webhook delivery (any provider) | Double-processing a status transition | Idempotent lookup by `provider_order_id` | Standard terminal-state-is-sticky guard, same pattern already proven in the Voice work |
 | A provider's adapter is incomplete (e.g. `ExotelProvider#reserve` raises `NotImplementedError` because Exotel's reservation concept was never confirmed to exist) | Purchase flow breaks loudly for that provider | Exception surfaces immediately, not swallowed | Don't route real traffic to a provider whose adapter isn't fully implemented — feature-flag per provider, not just per feature |
 
@@ -176,7 +176,7 @@ Not material — same low-frequency, admin-driven action as the rest of this fea
 | **Telnyx** | Search confirmed live-working. Reservation and order both blocked by account-tier limits on the account tested — not confirmed to complete a purchase end-to-end on any account yet. No SMS capability in India at all (confirmed, not account-specific). | First adapter, most mature, still has open blockers (FRD Open Questions 15, 16) |
 | **Exotel** | Research-only, one docs pass deep. Confirmed two-way SMS capability for India exists, gated behind manual account-manager enablement for inbound. Search/order API shape confirmed at the docs level, not live-tested. Reservation concept, DLT registration API shape, and regional endpoint choice (Singapore vs. Mumbai cluster) all unconfirmed. | Second adapter, not yet built |
 | **Plivo** | Checked and ruled out for the India-SMS use case (inbound not supported) | Not building an adapter for this use case |
-| **NR's billing system** | Unidentified | Blocks turning §7's billing contract into a real integration |
+| **NR's billing system** | Stripe + Razorpay, routed by country via `Enterprise::Billing::PaymentGatewayRegistry` (confirmed 2026-09-28) | Vendor is known; `OrderBillingService` still needs the real charge-creation logic built (currently stubbed) |
 
 ## 12. Architecture decisions & alternatives
 
@@ -203,7 +203,7 @@ Feature-flagged per provider, not just per feature — Telnyx and Exotel (once b
 
 | Risk / question | Owner | Resolution / mitigation | Status |
 |---|---|---|---|
-| NR's billing system is unidentified — the entire billing contract in §7 is a placeholder | TBD | Needs Product/Eng to name the actual system before this architecture can support real paid orders (FRD Open Question 10) | Open, blocking for production use |
+| ~~NR's billing system is unidentified~~ **Resolved 2026-09-28 — Stripe + Razorpay, via `Enterprise::Billing::PaymentGatewayRegistry` (FRD Open Question 10).** What's still open: `Enterprise::NumberProvisioning::OrderBillingService` doesn't create a real charge yet (`margin_cents` stubbed at 0) | Eng | Build the real charge logic, reusing `TopupFulfillmentService`'s idempotent-lock pattern | Open, blocking for production use |
 | Telnyx account-tier blockers (order cap, reservation gate) — root cause and required plan tier unconfirmed | TBD | FRD Open Question 16 | Open |
 | Exotel's reservation concept, DLT API shape, and regional endpoint choice are unconfirmed | TBD | Needs the same live-testing treatment Telnyx got, once an Exotel account is available | Open |
 | Exotel's manual account-manager gate for inbound SMS — is this acceptable for NR's onboarding story, or a dealbreaker? | Product | FRD Open Question 14(c) | Open |

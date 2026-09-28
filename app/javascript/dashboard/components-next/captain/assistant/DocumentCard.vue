@@ -127,7 +127,7 @@ const menuItems = computed(() => {
       label: t('CAPTAIN.DOCUMENTS.OPTIONS.DELETE_DOCUMENT'),
       value: 'delete',
       action: 'delete',
-      icon: 'i-lucide-trash',
+      icon: 'i-lucide-trash-2',
     });
   }
 

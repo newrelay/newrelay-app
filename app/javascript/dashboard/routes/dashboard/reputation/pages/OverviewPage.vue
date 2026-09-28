@@ -9,11 +9,10 @@ import {
   RelayDropdownMenuTrigger,
   RelayDropdownMenuContent,
   RelayDropdownMenuItem,
-  RelayTooltip,
 } from 'dashboard/components-next/relay';
 import {
   Star, TrendingUp, TrendingDown, MessageSquare, Bot,
-  ArrowRight, MessageCircle, Link, Mail, StarHalf, Share2, Info, Trophy,
+  ArrowRight, MessageCircle, Link, Mail, StarHalf, Share2, Trophy,
   CheckCircle, Plus, ThumbsUp, ChevronRight, ChevronDown, Check, Globe, ShieldCheck, Lightbulb
 } from 'lucide-vue-next';
 
@@ -646,14 +645,6 @@ async function generateReviewReplies() {
         <div class="bg-card rounded-xl border border-border shadow-sm p-6">
           <div class="flex items-center gap-2 mb-6">
             <h3 class="text-base font-semibold text-foreground">Platform Breakdown</h3>
-            <RelayTooltip
-              content="Ratings, review counts, and period trends by connected platform."
-              side="top"
-            >
-              <span class="inline-flex">
-                <Info class="size-4 text-muted-foreground opacity-70" />
-              </span>
-            </RelayTooltip>
           </div>
 
           <div v-if="platforms.length" class="w-full">

@@ -274,13 +274,13 @@ onMounted(() => {
         >
           {{ t('CONTACTS_BULK_ACTIONS.AUDIT.TITLE') }}
         </h2>
-        <p class="mb-12 text-[14px] text-muted-foreground">
+        <p class="mb-4 text-[14px] text-muted-foreground">
           {{ t('CONTACTS_BULK_ACTIONS.AUDIT.SUBTITLE') }}
         </p>
 
         <!-- Filters card -->
         <div
-          class="mb-4 space-y-6 rounded-xl border border-border bg-card p-6 shadow-sm"
+          class="mb-2 space-y-6 rounded-xl border border-border bg-card p-6 shadow-sm"
         >
           <div
             v-on-click-outside="closeFilterMenus"
@@ -367,7 +367,7 @@ onMounted(() => {
                 value-format="yyyy-MM-dd"
                 display-format="dd-MM-yyyy"
                 :placeholder="t('CONTACTS_BULK_ACTIONS.AUDIT.FILTER.DATE_FROM')"
-                trigger-class="h-9 w-full cursor-pointer px-3 text-[14px] rounded-md border border-border/80 bg-background text-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary/30"
+                trigger-class="h-11 w-full cursor-pointer px-4 text-[14px] font-normal rounded-md border border-border bg-background text-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary/30"
               />
             </div>
 
@@ -385,7 +385,7 @@ onMounted(() => {
                 value-format="yyyy-MM-dd"
                 display-format="dd-MM-yyyy"
                 :placeholder="t('CONTACTS_BULK_ACTIONS.AUDIT.FILTER.DATE_TO')"
-                trigger-class="h-9 w-full cursor-pointer px-3 text-[14px] rounded-md border border-border/80 bg-background text-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary/30"
+                trigger-class="h-11 w-full cursor-pointer px-4 text-[14px] font-normal rounded-md border border-border bg-background text-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary/30"
               />
             </div>
 
@@ -426,7 +426,7 @@ onMounted(() => {
         <!-- Logs table -->
         <div
           v-else
-          class="mt-4 w-full overflow-hidden rounded-xl border border-border bg-card shadow-sm"
+          class="w-full overflow-hidden rounded-xl border border-border bg-card shadow-sm"
         >
           <div class="w-full overflow-x-auto">
             <table class="w-full border-collapse text-left">

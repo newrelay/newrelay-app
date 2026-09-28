@@ -176,7 +176,7 @@ const renderInstruction = instruction => () =>
               class="size-8 rounded-md border border-border text-muted-foreground hover:border-transparent hover:bg-destructive/10 hover:text-destructive"
               @click="emit('delete', id)"
             >
-              <span class="i-lucide-trash size-3.5" />
+              <span class="i-lucide-trash-2 size-3.5" />
             </RelayButton>
           </div>
         </div>

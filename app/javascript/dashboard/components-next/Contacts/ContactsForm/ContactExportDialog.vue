@@ -78,7 +78,7 @@ defineExpose({ dialogRef });
             {{ t('CONTACTS_LAYOUT.HEADER.ACTIONS.EXPORT_CONTACT.TITLE') }}
           </h2>
           <p
-            class="mb-6 mt-1.5 text-[14px] font-normal leading-relaxed text-muted-foreground"
+            class="mb-6 mt-1.5 h-[70px] text-[14px] font-normal leading-relaxed text-muted-foreground"
           >
             {{ t('CONTACTS_LAYOUT.HEADER.ACTIONS.EXPORT_CONTACT.DESCRIPTION') }}
           </p>

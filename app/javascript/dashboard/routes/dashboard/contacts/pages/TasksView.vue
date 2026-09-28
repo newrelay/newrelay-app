@@ -751,7 +751,7 @@ onMounted(() => {
                     <RelayDropdownMenuTrigger as-child>
                       <RelayButton
                         variant="ghost"
-                        class="size-7 p-0 text-muted-foreground hover:text-foreground border border-border hover:border-transparent"
+                        class="size-8 p-0 text-muted-foreground hover:text-foreground border border-border hover:border-transparent"
                       >
                         <span class="i-lucide-more-horizontal size-4" />
                       </RelayButton>

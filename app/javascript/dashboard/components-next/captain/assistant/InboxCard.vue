@@ -51,7 +51,7 @@ const menuItems = computed(() => [
     label: t('CAPTAIN.INBOXES.OPTIONS.DISCONNECT'),
     value: 'delete',
     action: 'delete',
-    icon: 'i-lucide-trash',
+    icon: 'i-lucide-trash-2',
   },
 ]);
 

@@ -20,6 +20,10 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  actionClass: {
+    type: String,
+    default: 'size-8',
+  },
 });
 
 const emit = defineEmits(['select', 'hover', 'edit', 'delete']);
@@ -87,7 +91,8 @@ const saveEdit = () => {
       <RelayButton
         variant="ghost"
         size="icon"
-        class="size-8 rounded-md border border-border text-muted-foreground hover:border-transparent hover:text-foreground"
+        class="rounded-md border border-border text-muted-foreground hover:border-transparent hover:text-foreground"
+        :class="actionClass"
         @click="startEdit"
       >
         <span class="i-lucide-pen size-3.5" />
@@ -95,7 +100,8 @@ const saveEdit = () => {
       <RelayButton
         variant="ghost"
         size="icon"
-        class="size-8 rounded-md border border-border text-muted-foreground hover:border-transparent hover:bg-destructive/10 hover:text-destructive"
+        class="rounded-md border border-border text-muted-foreground hover:border-transparent hover:bg-destructive/10 hover:text-destructive"
+        :class="actionClass"
         @click="emit('delete', id)"
       >
         <span class="i-lucide-trash-2 size-3.5" />

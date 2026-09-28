@@ -94,7 +94,7 @@ const menuItems = computed(() => [
     label: t('CAPTAIN.RESPONSES.OPTIONS.DELETE_RESPONSE'),
     value: 'delete',
     action: 'delete',
-    icon: 'i-lucide-trash',
+    icon: 'i-lucide-trash-2',
   },
 ]);
 
@@ -253,7 +253,7 @@ const handleCardClick = () => {
                 handleAssistantAction({ action: 'delete', value: 'delete' })
               "
             >
-              <span class="i-lucide-trash size-4" />
+              <span class="i-lucide-trash-2 size-4" />
               {{ $t('CAPTAIN.RESPONSES.OPTIONS.DELETE_RESPONSE') }}
             </RelayButton>
           </div>

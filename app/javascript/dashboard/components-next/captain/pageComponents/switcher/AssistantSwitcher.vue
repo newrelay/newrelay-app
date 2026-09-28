@@ -103,7 +103,7 @@ const openCreateAssistantDialog = () => {
       <RelayButton
         variant="outline"
         size="sm"
-        class="!h-7 shrink-0 !rounded-full border-border px-3 text-[12px] hover:bg-muted hover:border-border"
+        class="!h-8 shrink-0 rounded-md border-border px-3 text-[13px] font-medium hover:border-transparent hover:bg-accent"
         @click="openCreateAssistantDialog"
       >
         <span class="i-lucide-plus mr-1 size-3" />

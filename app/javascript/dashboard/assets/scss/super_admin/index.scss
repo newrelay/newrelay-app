@@ -48,7 +48,7 @@
   --font-sans: 'Geist', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   --font-mono: 'Geist Mono', 'JetBrains Mono', monospace;
 
-  --success: #00884b;
+  --success: #00bc7d;
   --warning: #dca600;
 }
 
@@ -91,7 +91,7 @@
   --sidebar-border: rgba(255, 255, 255, 0.1);
   --sidebar-ring: #6f71fb;
 
-  --success: #2ec18c;
+  --success: #00bc7d;
   --warning: #e9b928;
 }
 
@@ -252,7 +252,7 @@ textarea:focus-visible,
 
 .app-header button.header-icon-button {
   background-color: var(--background) !important;
-  color: var(--muted-foreground) !important;
+  color: var(--foreground) !important;
   border: 1px solid var(--input) !important;
   border-radius: 9999px !important;
   width: 36px !important;
@@ -340,7 +340,7 @@ textarea:focus-visible,
   --font-sans: 'Geist', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   --font-mono: 'Geist Mono', 'JetBrains Mono', monospace;
 
-  --success: #00884b;
+  --success: #00bc7d;
   --warning: #dca600;
 }
 
@@ -383,7 +383,7 @@ textarea:focus-visible,
   --sidebar-border: rgba(255, 255, 255, 0.1);
   --sidebar-ring: #6f71fb;
 
-  --success: #2ec18c;
+  --success: #00bc7d;
   --warning: #e9b928;
 }
 
@@ -1224,13 +1224,16 @@ input, select, textarea { font: inherit; color: inherit; }
 
 .page-title,
 .main-content__page-title,
-h1.page-title,
-.page-header h1 {
+h1.page-title {
   font-size: 20px !important;
   font-weight: 500 !important;
   letter-spacing: -0.01em;
   color: var(--foreground);
   margin-bottom: 24px;
+}
+.page-header h1,
+.page-header .page-title {
+  margin-bottom: 0 !important;
 }
 
 /* 4 STAT CARDS */
@@ -1661,8 +1664,12 @@ thead th {
   text-transform: none;
   border-bottom: none;
 }
-thead th:first-child {
-  padding-left: 24px;
+thead th:first-child,
+tbody td:first-child {
+  padding-left: 32px;
+}
+thead th {
+  background-color: var(--table-header-bg, #edecfc8f);
 }
 thead th:last-child {
   padding-right: 24px;
@@ -1764,11 +1771,15 @@ tr:focus-within .row-actions {
   width: 28px;
   height: 28px;
   border-radius: 6px;
-  color: var(--muted-foreground);
+  color: var(--foreground);
   cursor: pointer;
   border: none;
   background: transparent;
   transition: color 0.15s ease, background-color 0.15s ease;
+}
+.action-icon-btn.danger {
+  color: var(--destructive);
+  background-color: color-mix(in srgb, var(--destructive) 8%, transparent);
 }
 .action-icon-btn:hover {
   color: var(--foreground);
@@ -1975,7 +1986,7 @@ tr:focus-within .row-actions {
 .field-unit {
   display: grid;
   grid-template-columns: 200px minmax(0, 1fr);
-  column-gap: 16px;
+  column-gap: 6px;
   row-gap: 6px;
   align-items: center;
   margin-bottom: 20px;
@@ -2591,6 +2602,11 @@ select.form-input {
   gap: 10px;
   width: 100%;
 }
+.feature-section .feature-flags-grid {
+  flex: 1;
+  min-width: 0;
+  margin-bottom: 0;
+}
 @media (max-width: 1100px) {
   .feature-flags-grid {
     grid-template-columns: repeat(2, 1fr);
@@ -2743,24 +2759,34 @@ select.form-input {
   border: none;
   border-top: 1px solid var(--border);
 }
-.feature-section-header {
+.feature-section {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
+  align-items: flex-start;
+  gap: 16px;
   margin: 24px 0 14px;
-  padding: 16px 0 12px;
+  padding: 16px 0 0;
   border-top: 1px solid var(--border);
 }
-.feature-section-header:first-child {
+.feature-section:first-child {
   margin-top: 8px;
+}
+.feature-section-header {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+  width: 180px;
+  flex-shrink: 0;
+  margin: 0;
+  padding: 0;
+  border-top: none;
 }
 .feature-section-title {
   display: inline-flex;
   align-items: center;
   gap: 6px;
   font-size: 14px;
-  font-weight: 600;
+  font-weight: 500;
   color: var(--foreground);
   letter-spacing: 0;
 }
@@ -2993,7 +3019,7 @@ fieldset.attribute--nested {
 .show-label {
   font-size: 13.5px;
   font-weight: 500;
-  color: var(--muted-foreground);
+  color: var(--foreground);
   text-align: left;
 }
 .show-value {

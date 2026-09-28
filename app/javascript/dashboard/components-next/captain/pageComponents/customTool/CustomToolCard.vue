@@ -60,7 +60,7 @@ const menuItems = computed(() => [
     label: t('CAPTAIN.CUSTOM_TOOLS.OPTIONS.DELETE_TOOL'),
     value: 'delete',
     action: 'delete',
-    icon: 'i-lucide-trash',
+    icon: 'i-lucide-trash-2',
   },
 ]);
 

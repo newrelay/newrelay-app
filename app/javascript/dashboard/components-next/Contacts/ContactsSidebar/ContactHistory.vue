@@ -8,7 +8,6 @@ import { frontendURL, conversationUrl } from 'dashboard/helper/URLHelper.js';
 import { useMessageFormatter } from 'shared/composables/useMessageFormatter';
 
 import Spinner from 'dashboard/components-next/spinner/Spinner.vue';
-import { RelayButton } from 'dashboard/components-next/relay';
 
 const { t } = useI18n();
 const route = useRoute();
@@ -152,14 +151,6 @@ const openConversation = conversation => {
               }}
             </span>
           </div>
-          <RelayButton
-            variant="ghost"
-            size="sm"
-            class="-mr-2 h-6 px-2 text-xs"
-            @click.stop="openConversation(conversation)"
-          >
-            {{ t('CONTACTS_LAYOUT.SIDEBAR.HISTORY.OPEN') }}
-          </RelayButton>
         </div>
         <h4 class="mb-1 line-clamp-2 text-sm font-semibold text-foreground">
           {{ subjectOrPreview(conversation) }}

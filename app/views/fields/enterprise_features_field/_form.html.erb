@@ -11,8 +11,9 @@
   <%= hidden_field_tag "#{f.object_name}[#{field.attribute}][]", "" %>
 
   <% if regular_keys.any? %>
+    <div class="feature-section">
     <div class="feature-section-header">
-      <span class="feature-section-title text-sm font-semibold text-foreground">Basic Features</span>
+      <span class="feature-section-title text-sm font-medium text-foreground">Basic Features</span>
       <button type="button" class="btn-toggle-all" onclick="const cbs = document.querySelectorAll('input[data-basic-feature=true]'); const allChecked = Array.from(cbs).every(cb => cb.checked); cbs.forEach(cb => cb.checked = !allChecked); this.innerText = allChecked ? 'Select All' : 'Deselect All';">
         Select All
       </button>
@@ -31,11 +32,13 @@
         </label>
       <% end %>
     </div>
+    </div>
   <% end %>
 
   <% if premium_keys.any? %>
+    <div class="feature-section">
     <div class="feature-section-header">
-      <span class="feature-section-title premium text-sm font-semibold text-foreground flex items-center gap-1">
+      <span class="feature-section-title premium text-sm font-medium text-foreground flex items-center gap-1">
         <span class="premium-star text-destructive font-bold text-lg">*</span> Premium Features
       </span>
       <button type="button" class="btn-toggle-all" onclick="const cbs = document.querySelectorAll('input[data-premium-feature=true]'); const allChecked = Array.from(cbs).every(cb => cb.checked); cbs.forEach(cb => cb.checked = !allChecked); this.innerText = allChecked ? 'Select All' : 'Deselect All';">
@@ -55,6 +58,7 @@
           <%= check_box_tag "#{f.object_name}[#{field.attribute}][]", feature_key, is_checked, class: "feature-flag-checkbox size-4 rounded border-input text-primary focus:ring-ring cursor-pointer shrink-0 ml-auto", id: "feature_#{feature_key}", data: { premium_feature: true } %>
         </label>
       <% end %>
+    </div>
     </div>
   <% end %>
 </div>

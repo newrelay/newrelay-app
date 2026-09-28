@@ -56,7 +56,7 @@ const menuItems = computed(() => {
         label: t('CAPTAIN.ASSISTANTS.OPTIONS.DELETE_ASSISTANT'),
         value: 'delete',
         action: 'delete',
-        icon: 'i-lucide-trash',
+        icon: 'i-lucide-trash-2',
       }
     );
   }

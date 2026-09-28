@@ -103,7 +103,7 @@ defineExpose({ validate });
         class="size-9 shrink-0 text-muted-foreground hover:text-destructive border border-border hover:border-transparent"
         @click.stop="emit('remove')"
       >
-        <span class="i-lucide-trash size-3.5" />
+        <span class="i-lucide-trash-2 size-3.5" />
       </RelayButton>
     </div>
     <span

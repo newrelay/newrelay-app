@@ -18,7 +18,7 @@ defineProps({
 </script>
 
 <template>
-  <section class="flex flex-col gap-1 pb-5">
+  <section class="flex flex-col gap-1 pt-[15px] pb-5">
     <div v-if="hasBackButton">
       <BackButton compact />
     </div>

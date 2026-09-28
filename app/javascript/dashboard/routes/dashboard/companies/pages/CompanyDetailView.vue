@@ -346,27 +346,6 @@ onBeforeUnmount(() => {
     </div>
 
     <div v-else class="flex h-full w-full flex-col">
-      <div class="border-b border-border bg-card px-8">
-        <nav
-          class="flex h-14 w-full items-center justify-start gap-8"
-          role="tablist"
-        >
-          <button
-            type="button"
-            role="tab"
-            :aria-selected="activeTab === 'overview'"
-            class="relative h-full px-0 text-[14px] font-medium text-foreground"
-            @click="activeTab = 'overview'"
-          >
-            {{ t('COMPANIES.DETAIL.TABS.OVERVIEW') }}
-            <span
-              v-if="activeTab === 'overview'"
-              class="absolute inset-x-0 bottom-0 h-px bg-primary"
-              aria-hidden="true"
-            />
-          </button>
-        </nav>
-      </div>
       <div class="mx-auto w-full max-w-[1600px] p-8">
         <div v-if="activeTab === 'overview'" class="outline-none">
           <div class="grid grid-cols-1 gap-6 lg:grid-cols-3">

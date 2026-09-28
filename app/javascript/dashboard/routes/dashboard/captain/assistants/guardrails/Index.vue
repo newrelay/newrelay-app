@@ -281,6 +281,7 @@ const addAllExample = () => {
             :id="guardrail.id"
             :key="guardrail.id"
             :content="guardrail.content"
+            action-class="!size-[34px]"
             :is-selected="bulkSelectedIds.has(guardrail.id)"
             :selectable="
               hoveredCard === guardrail.id || bulkSelectedIds.size > 0

@@ -18,6 +18,10 @@ class Enterprise::NumberProvisioning::OrderBillingService
       order.update!(margin_cents: compute_margin_cents, billing_reference: generate_billing_reference)
       # TODO: create the real charge/billing record here once record_payment_transaction_service's
       # expected inputs for a non-Stripe-invoice charge are known.
+      Rails.logger.info(
+        "[NumberProvisioning] order billed account_id=#{order.account_id} provider_type=#{order.provider_type} " \
+        "order_id=#{order.id} billing_reference=#{order.billing_reference} margin_cents=#{order.margin_cents}"
+      )
     end
   end
 

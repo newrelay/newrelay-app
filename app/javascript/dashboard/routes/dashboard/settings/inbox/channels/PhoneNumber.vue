@@ -29,7 +29,15 @@ const state = reactive({
   numbers: [],
   selectedNumber: null,
   order: null,
+  orderIdempotencyKey: null,
+  statusCheckAttempts: 0,
 });
+
+// After this many "still processing" checks, stop repeating the same message —
+// an order can reach 'active' with zero errors and this button will never find
+// a matching inbox today, since channel/inbox creation isn't built yet (CEO
+// review finding 11A). Silently looping forever would hide that from the admin.
+const MAX_STATUS_CHECK_ATTEMPTS = 5;
 
 // Provider is derived from country on the backend (NumberProvisioning.for) —
 // this UI only ever exposes a country choice, never a provider choice.
@@ -104,6 +112,10 @@ function backToCountry() {
 function selectNumber(result) {
   state.selectedNumber = result;
   state.step = STEPS.CONFIRM;
+  // Generated once per selection, not per click, so a retry after a failed
+  // confirm (e.g. network blip) replays the same attempt instead of risking
+  // a duplicate order if the first request actually landed server-side.
+  state.orderIdempotencyKey = crypto.randomUUID();
 }
 
 function backToResults() {
@@ -118,6 +130,7 @@ async function confirmOrder() {
     state.order = await store.dispatch(
       'inboxes/createNumberProvisioningOrder',
       {
+        idempotencyKey: state.orderIdempotencyKey,
         order: {
           country_code: state.countryCode,
           phone_number: getPhoneNumber(state.selectedNumber),
@@ -146,9 +159,19 @@ async function checkStatus() {
       name: 'settings_inboxes_add_agents',
       params: { page: 'new', inbox_id: inbox.id },
     });
-  } else {
-    useAlert(t('INBOX_MGMT.ADD.PHONE_NUMBER.PROVISIONING.STILL_PROCESSING'));
+    return;
   }
+
+  state.statusCheckAttempts += 1;
+  const stillWithinBudget =
+    state.statusCheckAttempts < MAX_STATUS_CHECK_ATTEMPTS;
+  useAlert(
+    t(
+      stillWithinBudget
+        ? 'INBOX_MGMT.ADD.PHONE_NUMBER.PROVISIONING.STILL_PROCESSING'
+        : 'INBOX_MGMT.ADD.PHONE_NUMBER.PROVISIONING.TAKING_LONGER'
+    )
+  );
 }
 </script>
 

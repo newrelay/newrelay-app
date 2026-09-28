@@ -264,10 +264,16 @@ export const actions = {
       throw error;
     }
   },
-  createNumberProvisioningOrder: async ({ commit }, params) => {
+  createNumberProvisioningOrder: async (
+    { commit },
+    { idempotencyKey, ...params }
+  ) => {
     try {
       commit(types.default.SET_INBOXES_UI_FLAG, { isCreating: true });
-      const response = await NumberProvisioningOrdersAPI.create(params);
+      const response = await NumberProvisioningOrdersAPI.create(
+        params,
+        idempotencyKey
+      );
       commit(types.default.SET_INBOXES_UI_FLAG, { isCreating: false });
       return response.data;
     } catch (error) {

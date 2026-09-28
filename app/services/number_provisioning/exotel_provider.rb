@@ -6,13 +6,14 @@ class NumberProvisioning::ExotelProvider
   pattr_initialize [:account!]
 
   BASE_URL = 'https://api.exotel.com/v2_beta'.freeze
+  PROVIDER_TYPE = 'exotel'.freeze
 
   def search(country_code:, type: 'Mobile')
     response = HTTParty.get(
       "#{BASE_URL}/Accounts/#{account_sid}/AvailablePhoneNumbers/#{country_code}/#{type}",
       basic_auth: basic_auth
     )
-    raise "Exotel search failed: #{response.body}" unless response.success?
+    assert_success!(response, 'Exotel search')
 
     response.parsed_response
   end
@@ -23,7 +24,7 @@ class NumberProvisioning::ExotelProvider
       basic_auth: basic_auth,
       body: { PhoneNumber: phone_number }
     )
-    raise "Exotel order failed: #{response.body}" unless response.success?
+    assert_success!(response, 'Exotel order')
 
     response.parsed_response
   end
@@ -33,7 +34,7 @@ class NumberProvisioning::ExotelProvider
       "#{BASE_URL}/Accounts/#{account_sid}/IncomingPhoneNumbers/#{provider_order_id}",
       basic_auth: basic_auth
     )
-    raise "Exotel status check failed: #{response.body}" unless response.success?
+    assert_success!(response, 'Exotel status check')
 
     response.parsed_response
   end

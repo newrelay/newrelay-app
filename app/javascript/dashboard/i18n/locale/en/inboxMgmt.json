@@ -419,7 +419,8 @@
           "TITLE": "Setting up your number",
           "DESCRIPTION": "We're provisioning {phoneNumber}. US numbers are usually ready within seconds; India numbers can take a few days pending verification. Check back here for updates.",
           "CHECK_STATUS_BUTTON": "Check status",
-          "STILL_PROCESSING": "Still processing. Please check back soon."
+          "STILL_PROCESSING": "Still processing. Please check back soon.",
+          "TAKING_LONGER": "This is taking longer than expected. Please contact support."
         },
         "API": {
           "SEARCH_ERROR": "We were not able to search for phone numbers",

@@ -188,6 +188,18 @@
   description: 'The platform-owned Telnyx API key used to search for and order numbers on behalf of tenants.'
   locked: false
   type: secret
+- name: NUMBER_PROVISIONING_TELNYX_ENABLED
+  display_title: 'Number provisioning: Telnyx enabled'
+  description: 'Allow tenants to search for and order Telnyx numbers via the reseller flow.'
+  type: boolean
+  value: true
+  locked: false
+- name: NUMBER_PROVISIONING_EXOTEL_ENABLED
+  display_title: 'Number provisioning: Exotel enabled'
+  description: "Allow tenants to search for and order Exotel (India) numbers via the reseller flow. Off by default: Exotel's credential model is still an open decision, see docs/solution-notes/adr-exotel-india-sms-provider.md."
+  type: boolean
+  value: false
+  locked: false
 # End of Number Provisioning Config
 
 # MARK: Captain Config

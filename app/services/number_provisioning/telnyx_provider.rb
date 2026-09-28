@@ -5,6 +5,7 @@ class NumberProvisioning::TelnyxProvider
   pattr_initialize [:account!]
 
   BASE_URL = 'https://api.telnyx.com/v2'.freeze
+  PROVIDER_TYPE = 'telnyx'.freeze
 
   def search(country_code:, type: nil)
     response = HTTParty.get(
@@ -12,7 +13,7 @@ class NumberProvisioning::TelnyxProvider
       headers: auth_headers,
       query: { 'filter[country_code]' => country_code, 'filter[phone_number_type]' => type, 'filter[limit]' => 20 }.compact
     )
-    raise "Telnyx search failed: #{response.body}" unless response.success?
+    assert_success!(response, 'Telnyx search')
 
     response.parsed_response['data']
   end
@@ -23,14 +24,14 @@ class NumberProvisioning::TelnyxProvider
       headers: auth_headers.merge('Content-Type' => 'application/json'),
       body: { phone_numbers: [{ phone_number: phone_number }] }.to_json
     )
-    raise "Telnyx order failed: #{response.body}" unless response.success?
+    assert_success!(response, 'Telnyx order')
 
     response.parsed_response['data']
   end
 
   def status(provider_order_id:)
     response = HTTParty.get("#{BASE_URL}/number_orders/#{provider_order_id}", headers: auth_headers)
-    raise "Telnyx status check failed: #{response.body}" unless response.success?
+    assert_success!(response, 'Telnyx status check')
 
     response.parsed_response['data']
   end

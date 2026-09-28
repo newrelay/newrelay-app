@@ -831,6 +831,7 @@ Rails.application.routes.draw do
       resources :marketplace_plan_prices, only: [:index, :show]
       resource :plan_management, only: [:show, :update], controller: :plan_management
       resource :payment_gateways, only: [:show, :update], controller: :payment_gateways
+      resource :number_provisioning, only: [:show, :update], controller: :number_provisioning
       resources :users, only: [:index, :new, :create, :show, :edit, :update, :destroy] do
         delete :avatar, on: :member, action: :destroy_avatar
       end

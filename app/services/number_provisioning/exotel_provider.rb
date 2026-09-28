@@ -42,14 +42,13 @@ class NumberProvisioning::ExotelProvider
   private
 
   def basic_auth
-    { username: credentials['api_key'], password: credentials['api_token'] }
+    { username: GlobalConfig.get_value('EXOTEL_RESELLER_API_KEY'), password: GlobalConfig.get_value('EXOTEL_RESELLER_API_TOKEN') }
   end
 
+  # Platform-owned reseller credential, not a tenant-supplied BYO hook -- matches
+  # TelnyxProvider's credential model (see agent decision log, 2026-09-28: resolves
+  # the credential model the ADR previously left unresolved).
   def account_sid
-    credentials['account_sid']
-  end
-
-  def credentials
-    account.hooks.find_by(app_id: 'exotel', status: 'enabled')&.settings || {}
+    GlobalConfig.get_value('EXOTEL_RESELLER_ACCOUNT_SID')
   end
 end

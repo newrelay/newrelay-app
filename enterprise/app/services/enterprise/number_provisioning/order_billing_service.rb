@@ -31,9 +31,13 @@ class Enterprise::NumberProvisioning::OrderBillingService
     order.billing_reference.present?
   end
 
-  # TODO: margin/markup rate is unresolved (see design doc §1a consequence 3 -- meaning
-  # of margin_cents pending confirmation against Enterprise::Billing::CloudPlans' pricing
-  # config, not traced in this pass). Stubbed at zero rather than guessed.
+  # Margin % is now configurable per provider (Super Admin > Number Provisioning, backed by
+  # NumberProvisioning::ProviderConfig -- see agent decision log, 2026-09-28), e.g.
+  # GlobalConfig.get_value("NUMBER_PROVISIONING_#{order.provider_type.upcase}_MARGIN_PERCENT").
+  # Still stubbed at zero: order.provider_cost_cents is never populated anywhere in this
+  # codebase yet (the wholesale cost isn't captured from the provider's search/order response --
+  # same "price normalization" gap flagged elsewhere), so multiplying against it would produce
+  # a fake-looking number from a nil, not a real margin. Wire this up once cost capture exists.
   def compute_margin_cents
     0
   end

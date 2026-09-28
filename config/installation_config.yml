@@ -188,6 +188,21 @@
   description: 'The platform-owned Telnyx API key used to search for and order numbers on behalf of tenants.'
   locked: false
   type: secret
+- name: EXOTEL_RESELLER_ACCOUNT_SID
+  display_title: 'Exotel Reseller Account SID'
+  description: 'The platform-owned Exotel account SID used to search for and order numbers on behalf of tenants.'
+  locked: false
+  type: secret
+- name: EXOTEL_RESELLER_API_KEY
+  display_title: 'Exotel Reseller API Key'
+  description: 'The platform-owned Exotel API key (basic auth username) used to search for and order numbers on behalf of tenants.'
+  locked: false
+  type: secret
+- name: EXOTEL_RESELLER_API_TOKEN
+  display_title: 'Exotel Reseller API Token'
+  description: 'The platform-owned Exotel API token (basic auth password) used to search for and order numbers on behalf of tenants.'
+  locked: false
+  type: secret
 - name: NUMBER_PROVISIONING_TELNYX_ENABLED
   display_title: 'Number provisioning: Telnyx enabled'
   description: 'Allow tenants to search for and order Telnyx numbers via the reseller flow.'
@@ -196,9 +211,33 @@
   locked: false
 - name: NUMBER_PROVISIONING_EXOTEL_ENABLED
   display_title: 'Number provisioning: Exotel enabled'
-  description: "Allow tenants to search for and order Exotel (India) numbers via the reseller flow. Off by default: Exotel's credential model is still an open decision, see docs/solution-notes/adr-exotel-india-sms-provider.md."
+  description: "Allow tenants to search for and order Exotel (India) numbers via the reseller flow. Off by default: credential model is now resolved (platform key, EXOTEL_RESELLER_*), but search/order/status response shapes, the reservation concept, and DLT registration are still unconfirmed -- see docs/solution-notes/adr-exotel-india-sms-provider.md."
   type: boolean
   value: false
+  locked: false
+- name: NUMBER_PROVISIONING_TELNYX_CURRENCY
+  display_title: 'Number provisioning: Telnyx currency'
+  description: 'Currency Telnyx wholesale costs and margin are denominated in for this provider.'
+  type: text
+  value: 'USD'
+  locked: false
+- name: NUMBER_PROVISIONING_TELNYX_MARGIN_PERCENT
+  display_title: 'Number provisioning: Telnyx margin %'
+  description: 'Percentage markup NR adds on top of Telnyx wholesale cost. 0-100.'
+  type: text
+  value: '0'
+  locked: false
+- name: NUMBER_PROVISIONING_EXOTEL_CURRENCY
+  display_title: 'Number provisioning: Exotel currency'
+  description: 'Currency Exotel wholesale costs and margin are denominated in for this provider.'
+  type: text
+  value: 'INR'
+  locked: false
+- name: NUMBER_PROVISIONING_EXOTEL_MARGIN_PERCENT
+  display_title: 'Number provisioning: Exotel margin %'
+  description: 'Percentage markup NR adds on top of Exotel wholesale cost. 0-100.'
+  type: text
+  value: '0'
   locked: false
 # End of Number Provisioning Config
 

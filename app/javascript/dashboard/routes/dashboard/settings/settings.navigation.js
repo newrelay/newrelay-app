@@ -104,6 +104,7 @@ export const SETTINGS_NAV_SECTIONS = [
         key: 'phone_numbers',
         labelKey: 'SIDEBAR.PHONE_NUMBERS',
         routeName: 'phone_numbers_list',
+        requiresNumberProvisioning: true,
       },
       {
         key: 'notifications',

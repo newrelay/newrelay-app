@@ -25,6 +25,7 @@ const {
   DISABLE_USER_PROFILE_UPDATE: disableUserProfileUpdate,
   DEPLOYMENT_ENV: deploymentEnv,
   ACTIVE_PLATFORM_BANNERS: activePlatformBanners,
+  NUMBER_PROVISIONING_ENABLED: numberProvisioningEnabled,
 } = window.globalConfig || {};
 
 const state = {
@@ -51,6 +52,7 @@ const state = {
   widgetBrandURL,
   isEnterprise: parseBoolean(isEnterprise),
   activePlatformBanners: activePlatformBanners || [],
+  numberProvisioningEnabled: parseBoolean(numberProvisioningEnabled),
 };
 
 export const getters = {

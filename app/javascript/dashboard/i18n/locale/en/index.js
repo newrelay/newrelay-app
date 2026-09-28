@@ -27,6 +27,7 @@ import inboxMgmt from './inboxMgmt.json';
 import integrationApps from './integrationApps.json';
 import integrations from './integrations.json';
 import labelsMgmt from './labelsMgmt.json';
+import phoneNumbersMgmt from './phoneNumbersMgmt.json';
 import login from './login.json';
 import macros from './macros.json';
 import report from './report.json';
@@ -74,6 +75,7 @@ export default {
   ...integrationApps,
   ...integrations,
   ...labelsMgmt,
+  ...phoneNumbersMgmt,
   ...login,
   ...macros,
   ...report,

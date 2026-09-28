@@ -7,6 +7,10 @@ class Api::V1::Accounts::NumberProvisioning::OrdersController < Api::V1::Account
   IDEMPOTENCY_TTL = 10.minutes.to_i
   IDEMPOTENCY_IN_PROGRESS = 'in_progress'.freeze
 
+  def index
+    @orders = Current.account.number_provisioning_orders.order(created_at: :desc)
+  end
+
   def search
     provider = NumberProvisioning.for(account: Current.account, country_code: params[:country_code])
     @results = provider.search(country_code: params[:country_code], type: params[:type])

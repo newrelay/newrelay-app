@@ -1,0 +1,59 @@
+{
+  "PHONE_NUMBERS_MGMT": {
+    "HEADER": "Phone Numbers",
+    "HEADER_BTN_TXT": "Buy Number",
+    "LOADING": "Fetching phone numbers",
+    "DESCRIPTION": "Numbers you've purchased for SMS and voice, and their provisioning status.",
+    "COUNT": "{n} number | {n} numbers",
+    "LIST": {
+      "404": "You haven't purchased any phone numbers yet.",
+      "TABLE_HEADER": {
+        "PHONE_NUMBER": "Phone Number",
+        "COUNTRY": "Country",
+        "PROVIDER": "Provider",
+        "STATUS": "Status",
+        "PURCHASED": "Purchased"
+      },
+      "STATUS": {
+        "SEARCH_PENDING": "Search pending",
+        "ORDER_PLACED": "Order placed",
+        "REQUIREMENTS_PENDING": "Requirements pending",
+        "REQUIREMENTS_UNDER_REVIEW": "Under review",
+        "REQUIREMENTS_REJECTED": "Requirements rejected",
+        "ACTIVE": "Active",
+        "FAILED": "Failed",
+        "CANCELLED": "Cancelled"
+      }
+    },
+    "BUY_MODAL": {
+      "TITLE": "Buy a phone number",
+      "DESCRIPTION": "Search for a number by country, then confirm your purchase.",
+      "SELECT_COUNTRY": {
+        "TITLE": "Select a country",
+        "DESCRIPTION": "The provider is chosen automatically based on the country.",
+        "US": "United States",
+        "US_DESC": "SMS and voice, via Telnyx",
+        "IN": "India",
+        "IN_DESC": "SMS and voice, via Exotel"
+      },
+      "RESULTS": {
+        "TITLE": "Available numbers",
+        "BACK_BUTTON": "Back",
+        "LOADING": "Searching for available numbers...",
+        "EMPTY": "No numbers found for this country. Try again shortly.",
+        "PRICE_UNKNOWN": "Price unavailable"
+      },
+      "CONFIRM": {
+        "TITLE": "Confirm your purchase",
+        "DESCRIPTION": "This number will be provisioned to your account. You can track its status from the Phone Numbers list.",
+        "CONFIRM_BUTTON": "Buy this number",
+        "BACK_BUTTON": "Back"
+      },
+      "API": {
+        "SEARCH_ERROR": "Something went wrong while searching for numbers. Please try again.",
+        "ORDER_ERROR": "Something went wrong while placing your order. Please try again.",
+        "ORDER_SUCCESS": "Number ordered. Track its status from the Phone Numbers list."
+      }
+    }
+  }
+}

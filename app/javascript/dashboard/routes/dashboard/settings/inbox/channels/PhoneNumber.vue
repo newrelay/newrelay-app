@@ -97,6 +97,7 @@ async function selectCountry(countryCode) {
   } catch (error) {
     useAlert(
       error.response?.data?.message ||
+        error.response?.data?.error ||
         t('INBOX_MGMT.ADD.PHONE_NUMBER.API.SEARCH_ERROR')
     );
     state.step = STEPS.COUNTRY;
@@ -141,6 +142,7 @@ async function confirmOrder() {
   } catch (error) {
     useAlert(
       error.response?.data?.message ||
+        error.response?.data?.error ||
         t('INBOX_MGMT.ADD.PHONE_NUMBER.API.ORDER_ERROR')
     );
   }

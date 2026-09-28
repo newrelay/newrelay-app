@@ -132,7 +132,7 @@ Rails.application.routes.draw do
             resource :mock_comment, only: [:create]
           end
           namespace :number_provisioning do
-            resources :orders, only: [:create] do
+            resources :orders, only: [:index, :create] do
               collection { get :search }
             end
           end

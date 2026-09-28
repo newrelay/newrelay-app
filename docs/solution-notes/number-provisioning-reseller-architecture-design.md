@@ -33,7 +33,7 @@ Those three facts together — reseller billing, a provider with a real capabili
 - BYO Telnyx (SMS/WhatsApp/Voice elsewhere in the FRD) is unaffected — this reseller platform is additive, a second, parallel path, not a replacement for BYO.
 
 **Explicit non-goals:**
-- Deciding NR's actual billing/subscription system (Stripe or otherwise) — unidentified as of this document; the billing integration point is defined as a contract (§7), not implemented against a specific vendor.
+- Building the real billing charge-creation logic — the vendor is known (Stripe + Razorpay, confirmed 2026-09-28, FRD Open Question 10) and the integration point is defined as a contract (§7), but implementing the actual charge call in `Enterprise::NumberProvisioning::OrderBillingService` is separate follow-up work, not this document's scope.
 - Building the Exotel or Plivo adapters to completion — Plivo is ruled out (§11); Exotel is scoped as the second adapter but not fully spec'd here (its exact compliance-application flow, DLT registration API shape, and account-manager onboarding process are open, §15).
 - A general "any CPaaS in the world" plugin system. This is built for the providers actually evaluated (Telnyx, Exotel) plus a documented extension point — not a marketplace.
 
@@ -86,7 +86,7 @@ sequenceDiagram
   participant Reg as NumberProvisioning.for
   participant Adapter as Provider Adapter
   participant Order as NumberProvisioning::Order
-  participant Billing as Billing system (TBD)
+  participant Billing as Billing (Stripe/Razorpay, charge logic stubbed)
   participant Channel as Channel::*Sms
 
   Admin->>API: search(country, provider_type)

@@ -19,9 +19,19 @@ class Api::V1::Accounts::NumberProvisioning::OrdersController < Api::V1::Account
     render json: { enabled: enabled }
   end
 
+  SEARCH_CACHE_TTL = 5.minutes.to_i
+
   def search
+    cache_key = "number_provisioning:search:#{params[:country_code]}:#{params[:type]}"
+    cached = Redis::Alfred.get(cache_key)
+    if cached
+      render json: cached, content_type: 'application/json'
+      return
+    end
+
     provider = NumberProvisioning.for(account: Current.account, country_code: params[:country_code])
     @results = provider.search(country_code: params[:country_code], type: params[:type])
+    Redis::Alfred.setex(cache_key, SEARCH_CACHE_TTL, @results.to_json)
   end
 
   def create

@@ -12,12 +12,6 @@
 %>
 
 <div class="space-y-6">
-  <% if notice.present? %>
-    <div class="rounded-lg border border-success/20 bg-success/10 px-4 py-3 text-sm text-success">
-      <%= notice %>
-    </div>
-  <% end %>
-
   <%= form_tag super_admin_plan_management_path, method: :patch do %>
     <div class="page-header">
       <div>

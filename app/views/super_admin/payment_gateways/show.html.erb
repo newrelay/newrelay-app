@@ -10,17 +10,6 @@
     </div>
   </div>
 
-  <% if notice.present? %>
-    <div class="mb-4 rounded-lg border border-success/20 bg-success/10 px-4 py-3 text-sm text-success">
-      <%= notice %>
-    </div>
-  <% end %>
-  <% if alert.present? %>
-    <div class="mb-4 rounded-lg border border-destructive/20 bg-destructive/10 px-4 py-3 text-sm text-destructive">
-      <%= alert %>
-    </div>
-  <% end %>
-
   <p class="mb-6 text-[13.5px] text-muted-foreground max-w-3xl">
     Search and select country codes to route checkout
     (for example, India → <code>IN</code>). Each country can only be assigned to one enabled gateway.

@@ -5,6 +5,7 @@ class SuperAdmin::NumberProvisioningController < SuperAdmin::ApplicationControll
 
   def update
     NumberProvisioning::ProviderConfig.save!(params[:providers])
+    GlobalConfig.clear_cache
     redirect_to super_admin_number_provisioning_path, notice: 'Number provisioning settings updated.'
   rescue NumberProvisioning::ProviderConfig::ValidationError => e
     redirect_to super_admin_number_provisioning_path, alert: e.message

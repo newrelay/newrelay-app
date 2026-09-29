@@ -31,7 +31,7 @@ class Api::V1::Accounts::NumberProvisioning::OrdersController < Api::V1::Account
 
     provider = NumberProvisioning.for(account: Current.account, country_code: params[:country_code])
     @results = provider.search(country_code: params[:country_code], type: params[:type])
-    Redis::Alfred.setex(cache_key, SEARCH_CACHE_TTL, @results.to_json)
+    Redis::Alfred.setex(cache_key, @results.to_json, SEARCH_CACHE_TTL)
   end
 
   def create

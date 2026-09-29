@@ -7,8 +7,15 @@ class NumberProvisioning::PollOrderStatusJob < ApplicationJob
   MAX_ATTEMPTS = 30
   RESCHEDULE_WAIT = 1.minute
   TERMINAL_STATUSES = %w[active failed cancelled].freeze
+  # Slightly under RESCHEDULE_WAIT so the lock auto-expires before the next
+  # scheduled run even if ensure never fires (hard job crash, OOM kill, etc.).
+  POLL_LOCK_TTL = 55
 
   def perform(order_id, attempt = 0)
+    lock_key = "number_provisioning:poll_lock:#{order_id}"
+    lock_acquired = Redis::Alfred.set(lock_key, '1', nx: true, ex: POLL_LOCK_TTL)
+    return unless lock_acquired
+
     order = NumberProvisioning::Order.find_by(id: order_id)
     return if order.blank? || order.status.in?(TERMINAL_STATUSES)
 
@@ -31,6 +38,8 @@ class NumberProvisioning::PollOrderStatusJob < ApplicationJob
       "[NumberProvisioning] order failed account_id=#{order.account_id} provider_type=#{order.provider_type} " \
       "order_id=#{order.id} error=#{e.message}"
     )
+  ensure
+    Redis::Alfred.delete(lock_key) if lock_acquired
   end
 
   private

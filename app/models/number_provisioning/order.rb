@@ -39,4 +39,6 @@ class NumberProvisioning::Order < ApplicationRecord
 
   validates :provider_type, :country_code, :status, presence: true
   validates :status, inclusion: { in: STATUSES }
+  validates :phone_number, presence: true,
+                           format: { with: /\A\+[1-9]\d{6,14}\z/ }
 end

@@ -21,6 +21,8 @@ module NumberProvisioning::Provider
   # NUMBER_PROVISIONING_*_ENABLED flag is off.
   class ProviderDisabledError < StandardError; end
 
+  class CountryNotAllowedError < StandardError; end
+
   def search(country_code:, type: nil)
     raise NotImplementedError
   end
@@ -33,11 +35,29 @@ module NumberProvisioning::Provider
     raise NotImplementedError
   end
 
+  # True only when the provider accepted the release. Missing or failed calls
+  # return false so the order stays billing_failed.
+  def release(phone_number:, provider_order_id:)
+    false
+  end
+
   private
 
   def assert_success!(response, action)
     return if response.success?
 
     raise RequestError.new(action, status: response.code, body: response.body)
+  end
+
+  # Providers quote a monthly price as a decimal string in a major unit
+  # (Telnyx "1.00" USD, Exotel "999.000000" INR). Normalize to integer minor
+  # units so billing never does float math on money. Unparseable/blank -> nil,
+  # which downstream treats as "cost unknown" (no charge) rather than a fake 0.
+  def price_to_cents(value)
+    return nil if value.blank?
+
+    (BigDecimal(value.to_s) * 100).round.to_i
+  rescue ArgumentError
+    nil
   end
 end

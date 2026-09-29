@@ -23,7 +23,7 @@ class NumberProvisioning::ExotelProvider
     )
     assert_success!(response, 'Exotel search')
 
-    response.parsed_response
+    Array(response.parsed_response).map { |number| normalize_search_result(number) }
   end
 
   def order(phone_number:)
@@ -54,10 +54,42 @@ class NumberProvisioning::ExotelProvider
     )
     assert_success!(response, 'Exotel status check')
 
-    response.parsed_response
+    body = response.parsed_response
+    keys = body.is_a?(Hash) ? body.keys : body.class.name
+    # No captured success body yet, so this stays in progress and is not charged.
+    Rails.logger.info("[NumberProvisioning] exotel status keys=#{keys} order_id=#{provider_order_id}")
+    { 'status' => 'order_placed' }
+  end
+
+  def release(phone_number:, provider_order_id:)
+    return false if provider_order_id.blank?
+
+    response = HTTParty.delete(
+      "#{BASE_URL}/Accounts/#{account_sid}/IncomingPhoneNumbers/#{provider_order_id}",
+      basic_auth: basic_auth,
+      timeout: REQUEST_TIMEOUT
+    )
+    response.success?
+  rescue StandardError => e
+    Rails.logger.info("[NumberProvisioning] exotel release failed phone=#{phone_number} error=#{e.class}")
+    false
   end
 
   private
+
+  # Common shape every adapter returns from search() (see TelnyxProvider). Exotel:
+  # price under rental_price, capabilities as a { sms:, voice: } boolean object ->
+  # a list of the enabled capability names.
+  def normalize_search_result(number)
+    capabilities = number['capabilities']
+    enabled = capabilities.is_a?(Hash) ? capabilities.select { |_name, on| on }.keys : Array(capabilities)
+    {
+      phone_number: number['phone_number'] || number['PhoneNumber'],
+      monthly_price_cents: price_to_cents(number['rental_price']),
+      currency: number['currency'] || NumberProvisioning::ProviderConfig.currency_for(PROVIDER_TYPE),
+      capabilities: enabled.map(&:to_s)
+    }
+  end
 
   def basic_auth
     { username: GlobalConfig.get_value('EXOTEL_RESELLER_API_KEY'), password: GlobalConfig.get_value('EXOTEL_RESELLER_API_TOKEN') }

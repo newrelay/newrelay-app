@@ -9,6 +9,8 @@ const channelTypeIconMap = {
   'Channel::Sms': 'i-woot-sms',
   'Channel::Telegram': 'i-woot-telegram',
   'Channel::TwilioSms': 'i-woot-sms',
+  'Channel::TelnyxSms': 'i-woot-sms',
+  'Channel::ExotelSms': 'i-woot-sms',
   'Channel::TwitterProfile': 'i-woot-x',
   'Channel::WebWidget': 'i-woot-website',
   'Channel::Whatsapp': 'i-woot-whatsapp',

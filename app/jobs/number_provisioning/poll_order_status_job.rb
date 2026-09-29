@@ -1,14 +1,12 @@
 class NumberProvisioning::PollOrderStatusJob < ApplicationJob
   queue_as :default
+  sidekiq_options retry: 0 if respond_to?(:sidekiq_options)
 
   NETWORK_ERRORS = [Net::ReadTimeout, Net::OpenTimeout, HTTParty::Error, SocketError,
                     Errno::ECONNREFUSED, OpenSSL::SSL::SSLError, Timeout::Error].freeze
 
   MAX_ATTEMPTS = 30
   RESCHEDULE_WAIT = 1.minute
-  TERMINAL_STATUSES = %w[active failed cancelled].freeze
-  # Slightly under RESCHEDULE_WAIT so the lock auto-expires before the next
-  # scheduled run even if ensure never fires (hard job crash, OOM kill, etc.).
   POLL_LOCK_TTL = 55
 
   def perform(order_id, attempt = 0)
@@ -17,84 +15,83 @@ class NumberProvisioning::PollOrderStatusJob < ApplicationJob
     return unless lock_acquired
 
     order = NumberProvisioning::Order.find_by(id: order_id)
-    return if order.blank? || order.status.in?(TERMINAL_STATUSES)
+    return if order.blank? || order.finished?
+
+    if order.status == 'inbox_pending'
+      attach_inbox!(order)
+      return
+    end
 
     provider = NumberProvisioning.for(account: order.account, country_code: order.country_code)
     raw_status = provider.status(provider_order_id: order.provider_order_id)
     handle_status(order, raw_status, attempt)
   rescue *NETWORK_ERRORS, ::NumberProvisioning::Provider::RequestError => e
-    # RequestError added here: a 4xx/5xx from the provider's status endpoint is
-    # retriable the same way a network blip is -- route through requeue_or_fail
-    # so the order lands as 'failed' after MAX_ATTEMPTS rather than being left
-    # stuck in 'order_placed' forever via Sidekiq's own unmanaged retry schedule.
-    requeue_or_fail(order, attempt, e.message)
+    requeue_or_fail(order, attempt, e.message) if order
   rescue ::NumberProvisioning::Provider::ProviderDisabledError => e
-    # Outside-voice review finding: without this, a flag flipping off mid-flight (or
-    # the unseeded-config bug this same review caught) escapes perform() unrescued --
-    # not in NETWORK_ERRORS, so Sidekiq treats it as a hard job failure and the order
-    # is left stuck with no clean 'failed' state instead of a real, visible outcome.
-    order.update!(status: 'failed', provisioning_error: e.message)
-    Rails.logger.info(
-      "[NumberProvisioning] order failed account_id=#{order.account_id} provider_type=#{order.provider_type} " \
-      "order_id=#{order.id} error=#{e.message}"
-    )
+    mark_failed(order, 'provider_disabled', e.message) if order
+  rescue StandardError => e
+    Rails.logger.error("[NumberProvisioning] poll failed order_id=#{order_id} error=#{e.class}: #{e.message}")
+    mark_failed(order, 'unknown', e.message) if order
   ensure
     Redis::Alfred.delete(lock_key) if lock_acquired
   end
 
   private
 
-  # TODO: the real per-provider status field/values are unconfirmed -- same "no captured
-  # response" gap the design doc flags for price normalization (see §3a) applies here.
-  # Verify against a real Telnyx/Exotel response before relying on this in production.
   def handle_status(order, raw_status, attempt)
     status_value = raw_status.is_a?(Hash) ? raw_status['status'] : nil
     case status_value
     when 'active'
-      mark_active(order)
+      handle_provider_ready(order, attempt)
     when 'failed'
-      order.update!(status: 'failed', provisioning_error: raw_status.to_s)
-    when nil
-      # Malformed/unexpected response shape -- keep the requeue/max-attempts posture,
-      # this is "actually broken", not a provider telling us something.
-      requeue_or_fail(order, attempt, nil)
+      mark_failed(order, 'unknown')
+    when *NumberProvisioning::Order::REQUIREMENT_STATUSES
+      order.update!(status: status_value)
     else
-      # CEO review finding 1A: a recognized-but-not-active/failed status used to fall
-      # through to requeue_or_fail, which silently retried 30x over 30 minutes and then
-      # mislabeled a real "needs regulatory requirements" response as 'failed'. The
-      # submission flow itself still isn't built (see design doc), but at minimum this
-      # stops mislabeling it -- the order lands in requirements_pending, not a lie.
-      Rails.logger.info(
-        "[NumberProvisioning] order requires attention account_id=#{order.account_id} " \
-        "provider_type=#{order.provider_type} order_id=#{order.id} raw_status=#{status_value}"
-      )
-      order.update!(status: 'requirements_pending')
+      requeue_or_fail(order, attempt, nil)
     end
   end
 
-  def mark_active(order)
-    # TODO: create Channel::TelnyxSms/Channel::ExotelSms + Inbox here once those channel
-    # models exist, then set order.inbox_id (see design doc §2 model note). Building the
-    # channel models is explicitly out of this task's critical path.
-    order.update!(status: 'active')
-    Rails.logger.info(
-      "[NumberProvisioning] order active account_id=#{order.account_id} provider_type=#{order.provider_type} " \
-      "order_id=#{order.id} provider_order_id=#{order.provider_order_id}"
-    )
+  def handle_provider_ready(order, attempt)
     bill_order(order)
+    order.reload
+    return if order.finished?
+    return requeue_or_fail(order, attempt, nil) if order.billing_reference.blank?
+
+    attach_inbox!(order)
   end
 
-  # No-op in OSS -- Enterprise overrides this to compute margin/billing_reference via
-  # Enterprise::NumberProvisioning::OrderBillingService (see design doc §1a consequence 2).
+  def attach_inbox!(order)
+    result = NumberProvisioning::CreateInboxService.new(order: order).perform!
+    return if result == :active || result == :conflict
+
+    self.class.set(wait: RESCHEDULE_WAIT).perform_later(order.id, 0)
+  end
+
   def bill_order(order); end
+
+  def release_unpaid_number(order)
+    return if order.billing_reference.present?
+
+    provider = NumberProvisioning.for(account: order.account, country_code: order.country_code)
+    return unless provider.release(phone_number: order.phone_number, provider_order_id: order.provider_order_id)
+
+    order.update!(status: 'failed')
+  rescue StandardError => e
+    Rails.logger.info("[NumberProvisioning] release skipped order_id=#{order.id} error=#{e.class}")
+  end
+
+  def mark_failed(order, code, detail = nil)
+    order.update!(status: 'failed', failure_code: code)
+    Rails.logger.info(
+      "[NumberProvisioning] order failed account_id=#{order.account_id} order_id=#{order.id} " \
+      "code=#{code} detail=#{detail}"
+    )
+  end
 
   def requeue_or_fail(order, attempt, error)
     if attempt >= MAX_ATTEMPTS
-      order.update!(status: 'failed', provisioning_error: error || 'polling attempts exhausted')
-      Rails.logger.info(
-        "[NumberProvisioning] order failed account_id=#{order.account_id} provider_type=#{order.provider_type} " \
-        "order_id=#{order.id} error=#{order.provisioning_error}"
-      )
+      mark_failed(order, 'unknown', error || 'polling attempts exhausted')
     else
       self.class.set(wait: RESCHEDULE_WAIT).perform_later(order.id, attempt + 1)
     end

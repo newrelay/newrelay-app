@@ -1,13 +1,13 @@
 module NumberProvisioning
-  # India routes to Exotel, everything else routes to Telnyx -- confirmed on
-  # a call with Exotel: SIP trunk works for India numbers, not for US.
-  # Combined with the earlier finding that Telnyx has no SMS on India
-  # numbers, neither provider covers both regions, so routing is per country.
-  ROUTES = { 'IN' => ExotelProvider }.freeze
-  DEFAULT = TelnyxProvider
+  # India routes to Exotel, the United States routes to Telnyx. Any other
+  # country is rejected before a provider is constructed.
+  ROUTES = { 'IN' => ExotelProvider, 'US' => TelnyxProvider }.freeze
+  ALLOWED_COUNTRIES = ROUTES.keys.freeze
 
   def self.for(account:, country_code:)
-    adapter_class = ROUTES.fetch(country_code.to_s.upcase, DEFAULT)
+    code = country_code.to_s.upcase
+    adapter_class = ROUTES[code]
+    raise Provider::CountryNotAllowedError, code if adapter_class.nil?
     raise Provider::ProviderDisabledError, "#{adapter_class.name} is disabled" unless enabled?(adapter_class)
 
     adapter_class.new(account: account)

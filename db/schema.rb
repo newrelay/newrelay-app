@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2026_09_25_120000) do
+ActiveRecord::Schema[7.1].define(version: 2026_09_29_193100) do
   # These extensions should be enabled to support this database
   enable_extension "pg_stat_statements"
   enable_extension "pg_trgm"
@@ -703,6 +703,15 @@ ActiveRecord::Schema[7.1].define(version: 2026_09_25_120000) do
     t.index ["forward_to_email"], name: "index_channel_email_on_forward_to_email", unique: true
   end
 
+  create_table "channel_exotel_sms", id: :serial, force: :cascade do |t|
+    t.integer "account_id", null: false
+    t.string "phone_number", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["account_id"], name: "index_channel_exotel_sms_on_account_id"
+    t.index ["phone_number"], name: "index_channel_exotel_sms_on_phone_number", unique: true
+  end
+
   create_table "channel_facebook_pages", id: :serial, force: :cascade do |t|
     t.string "page_id", null: false
     t.string "user_access_token", null: false
@@ -752,6 +761,15 @@ ActiveRecord::Schema[7.1].define(version: 2026_09_25_120000) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["bot_token"], name: "index_channel_telegram_on_bot_token", unique: true
+  end
+
+  create_table "channel_telnyx_sms", id: :serial, force: :cascade do |t|
+    t.integer "account_id", null: false
+    t.string "phone_number", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["account_id"], name: "index_channel_telnyx_sms_on_account_id"
+    t.index ["phone_number"], name: "index_channel_telnyx_sms_on_phone_number", unique: true
   end
 
   create_table "channel_tiktok", force: :cascade do |t|
@@ -1598,6 +1616,9 @@ ActiveRecord::Schema[7.1].define(version: 2026_09_25_120000) do
     t.string "provisioning_error"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "failure_code"
+    t.string "currency"
+    t.index ["account_id", "phone_number"], name: "index_np_orders_live_account_phone", unique: true, where: "(((status)::text = ANY ((ARRAY['order_placed'::character varying, 'requirements_pending'::character varying, 'requirements_under_review'::character varying, 'requirements_rejected'::character varying, 'billing_failed'::character varying, 'inbox_pending'::character varying, 'active'::character varying])::text[])) AND (phone_number IS NOT NULL))"
     t.index ["account_id"], name: "index_number_provisioning_orders_on_account_id"
     t.index ["inbox_id"], name: "index_number_provisioning_orders_on_inbox_id"
     t.index ["provider_type", "provider_order_id"], name: "idx_on_provider_type_provider_order_id_988b2da93d", unique: true, where: "(provider_order_id IS NOT NULL)"

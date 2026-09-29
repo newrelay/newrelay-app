@@ -1,6 +1,9 @@
 class SuperAdmin::NumberProvisioningController < SuperAdmin::ApplicationController
   def show
     @providers = NumberProvisioning::ProviderConfig.admin_view
+    recent = NumberProvisioning::Order.where(created_at: 7.days.ago..)
+    @status_counts = recent.group(:status).count
+    @failure_code_counts = recent.where.not(failure_code: nil).group(:failure_code).count
   end
 
   def update

@@ -4,6 +4,10 @@ import NumberProvisioningOrdersAPI from '../../api/numberProvisioningOrders';
 
 export const state = {
   records: [],
+  providers: {
+    telnyx: false,
+    exotel: false,
+  },
   uiFlags: {
     isFetching: false,
     isCreating: false,
@@ -18,16 +22,23 @@ export const getters = {
   getUIFlags(_state) {
     return _state.uiFlags;
   },
+  getProviders(_state) {
+    return _state.providers;
+  },
 };
 
 export const actions = {
-  get: async function getPhoneNumberOrders({ commit }) {
-    commit(types.SET_PHONE_NUMBER_ORDER_UI_FLAG, { isFetching: true });
+  get: async function getPhoneNumberOrders({ commit }, { silent } = {}) {
+    if (!silent) {
+      commit(types.SET_PHONE_NUMBER_ORDER_UI_FLAG, { isFetching: true });
+    }
     try {
       const response = await NumberProvisioningOrdersAPI.get();
       commit(types.SET_PHONE_NUMBER_ORDERS, response.data);
     } finally {
-      commit(types.SET_PHONE_NUMBER_ORDER_UI_FLAG, { isFetching: false });
+      if (!silent) {
+        commit(types.SET_PHONE_NUMBER_ORDER_UI_FLAG, { isFetching: false });
+      }
     }
   },
 
@@ -55,6 +66,7 @@ export const actions = {
         response.data.enabled,
         { root: true }
       );
+      commit(types.SET_PHONE_NUMBER_PROVIDERS, response.data.providers || {});
     } catch {
       // silently ignore -- the window.globalConfig value at page load remains authoritative
     }
@@ -88,6 +100,13 @@ export const mutations = {
 
   [types.SET_PHONE_NUMBER_ORDERS]: MutationHelpers.set,
   [types.ADD_PHONE_NUMBER_ORDER]: MutationHelpers.create,
+  [types.SET_PHONE_NUMBER_PROVIDERS](_state, providers) {
+    _state.providers = {
+      telnyx: false,
+      exotel: false,
+      ...providers,
+    };
+  },
 };
 
 export default {

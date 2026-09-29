@@ -22,6 +22,34 @@
     <code>docs/solution-notes/adr-exotel-india-sms-provider.md</code> for why Exotel stays off by default.
   </p>
 
+  <div class="table-card mb-6">
+    <div class="px-4 py-3 border-b border-border">
+      <h2 class="text-[14px] font-semibold text-foreground">Recent orders</h2>
+      <p class="text-[13px] text-muted-foreground">Counts from the last 7 days, by status and by failure code</p>
+    </div>
+    <table>
+      <tbody>
+        <% if @status_counts.blank? && @failure_code_counts.blank? %>
+          <tr>
+            <td class="text-muted-foreground">No orders in the last 7 days</td>
+          </tr>
+        <% end %>
+        <% @status_counts.sort.each do |status, count| %>
+          <tr>
+            <td class="font-medium text-foreground w-64">Status: <%= status %></td>
+            <td><%= count %></td>
+          </tr>
+        <% end %>
+        <% @failure_code_counts.sort.each do |code, count| %>
+          <tr>
+            <td class="font-medium text-foreground w-64">Code: <%= code %></td>
+            <td><%= count %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+
   <%= form_tag super_admin_number_provisioning_path, method: :patch do %>
     <% @providers.each do |provider| %>
       <div class="table-card mb-6">

@@ -1,28 +1,31 @@
 <script setup>
-import { computed, onBeforeMount, ref } from 'vue';
+import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useStoreGetters, useStore } from 'dashboard/composables/store';
 
 import BuyPhoneNumberModal from './component/BuyPhoneNumberModal.vue';
-import BaseSettingsHeader from '../components/BaseSettingsHeader.vue';
 import SettingsLayout from '../SettingsLayout.vue';
+import SettingsListCard from '../components/SettingsListCard.vue';
+import SettingsListRow from '../components/SettingsListRow.vue';
 import { RelayButton, RelayBadge } from 'dashboard/components-next/relay';
+import Icon from 'dashboard/components-next/icon/Icon.vue';
 
 const getters = useStoreGetters();
 const store = useStore();
 const { t } = useI18n();
 
+const REFRESH_MS = 15000;
 const showBuyModal = ref(false);
+let refreshTimer = null;
 
 const records = computed(() => getters['phoneNumberOrders/getOrders'].value);
 const uiFlags = computed(() => getters['phoneNumberOrders/getUIFlags'].value);
 
-// Statuses that never actually get set by the backend today (search_pending,
-// requirements_* mid-flow, cancelled) still render if they somehow appear --
-// this just controls the badge color, not which statuses are reachable.
+// Badge color only. Whether a row is finished comes from the API `unfinished` flag.
 const STATUS_BADGE_VARIANT = {
   active: 'default',
   failed: 'destructive',
+  billing_failed: 'destructive',
   requirements_rejected: 'destructive',
 };
 
@@ -48,8 +51,43 @@ function closeBuyModal() {
   showBuyModal.value = false;
 }
 
-onBeforeMount(() => {
-  store.dispatch('phoneNumberOrders/get');
+function hasUnfinished() {
+  return records.value.some(order => order.unfinished);
+}
+
+function clearRefresh() {
+  clearTimeout(refreshTimer);
+  refreshTimer = null;
+}
+
+function scheduleRefresh() {
+  clearRefresh();
+  if (document.hidden || !hasUnfinished()) return;
+  refreshTimer = setTimeout(async () => {
+    await store.dispatch('phoneNumberOrders/get', { silent: true });
+    scheduleRefresh();
+  }, REFRESH_MS);
+}
+
+function onVisibilityChange() {
+  if (document.hidden) clearRefresh();
+  else scheduleRefresh();
+}
+
+onMounted(async () => {
+  await store.dispatch('phoneNumberOrders/get');
+  scheduleRefresh();
+  document.addEventListener('visibilitychange', onVisibilityChange);
+});
+
+onBeforeUnmount(() => {
+  clearRefresh();
+  document.removeEventListener('visibilitychange', onVisibilityChange);
+});
+
+watch(records, () => {
+  if (!hasUnfinished()) clearRefresh();
+  else if (!refreshTimer) scheduleRefresh();
 });
 </script>
 
@@ -57,91 +95,100 @@ onBeforeMount(() => {
   <SettingsLayout
     :is-loading="uiFlags.isFetching"
     :loading-message="$t('PHONE_NUMBERS_MGMT.LOADING')"
-    :no-records-found="!records.length"
-    :no-records-message="$t('PHONE_NUMBERS_MGMT.LIST.404')"
+    :no-records-found="false"
   >
-    <template #header>
-      <BaseSettingsHeader
-        :title="$t('PHONE_NUMBERS_MGMT.HEADER')"
-        :description="$t('PHONE_NUMBERS_MGMT.DESCRIPTION')"
+    <template #body>
+      <SettingsListCard
+        :details-label="$t('PHONE_NUMBERS_MGMT.LIST.DETAILS')"
+        :show-column-headers="!!records.length"
       >
-        <template v-if="records?.length" #count>
-          <span class="text-sm text-muted-foreground">
-            {{ $t('PHONE_NUMBERS_MGMT.COUNT', { n: records.length }) }}
-          </span>
-        </template>
-        <template #actions>
-          <RelayButton size="sm" @click="openBuyModal">
+        <template #toolbar>
+          <div>
+            <h3 class="text-base font-medium text-foreground">
+              {{ $t('PHONE_NUMBERS_MGMT.HEADER') }}
+              <span
+                v-if="records.length"
+                class="ml-1.5 text-sm font-normal text-muted-foreground"
+              >
+                {{ $t('PHONE_NUMBERS_MGMT.COUNT', { n: records.length }) }}
+              </span>
+            </h3>
+            <p class="mt-1 text-sm text-muted-foreground">
+              {{ $t('PHONE_NUMBERS_MGMT.DESCRIPTION') }}
+            </p>
+          </div>
+          <RelayButton
+            class="h-9 w-full whitespace-nowrap shadow-sm sm:w-auto"
+            @click="openBuyModal"
+          >
             {{ $t('PHONE_NUMBERS_MGMT.HEADER_BTN_TXT') }}
           </RelayButton>
         </template>
-      </BaseSettingsHeader>
-    </template>
-    <template #body>
-      <div
-        class="overflow-hidden rounded-xl border border-border/60 bg-card shadow-xs"
-      >
-        <div class="overflow-x-auto">
-          <table class="w-full border-collapse text-left">
-            <thead>
-              <tr class="border-b border-border/50 bg-muted/20">
-                <th
-                  class="px-6 py-3.5 text-[14px] font-semibold text-muted-foreground"
-                >
-                  {{ $t('PHONE_NUMBERS_MGMT.LIST.TABLE_HEADER.PHONE_NUMBER') }}
-                </th>
-                <th
-                  class="w-32 px-6 py-3.5 text-[14px] font-semibold text-muted-foreground"
-                >
-                  {{ $t('PHONE_NUMBERS_MGMT.LIST.TABLE_HEADER.COUNTRY') }}
-                </th>
-                <th
-                  class="w-32 px-6 py-3.5 text-[14px] font-semibold text-muted-foreground"
-                >
-                  {{ $t('PHONE_NUMBERS_MGMT.LIST.TABLE_HEADER.PROVIDER') }}
-                </th>
-                <th
-                  class="w-48 px-6 py-3.5 text-[14px] font-semibold text-muted-foreground"
-                >
-                  {{ $t('PHONE_NUMBERS_MGMT.LIST.TABLE_HEADER.STATUS') }}
-                </th>
-                <th
-                  class="w-40 px-6 py-3.5 text-[14px] font-semibold text-muted-foreground"
-                >
-                  {{ $t('PHONE_NUMBERS_MGMT.LIST.TABLE_HEADER.PURCHASED') }}
-                </th>
-              </tr>
-            </thead>
-            <tbody class="divide-y divide-border/40">
-              <tr
-                v-for="order in records"
-                :key="order.id"
-                class="bg-card transition-colors hover:bg-accent"
-              >
-                <td class="px-6 py-4 text-[14px] font-medium text-foreground">
-                  {{ order.phone_number || '—' }}
-                </td>
-                <td class="px-6 py-4 text-[13px] text-muted-foreground">
-                  {{ order.country_code }}
-                </td>
-                <td
-                  class="px-6 py-4 text-[13px] capitalize text-muted-foreground"
-                >
-                  {{ order.provider_type }}
-                </td>
-                <td class="px-6 py-4">
-                  <RelayBadge :variant="statusVariant(order.status)">
-                    {{ statusLabel(order.status) }}
-                  </RelayBadge>
-                </td>
-                <td class="px-6 py-4 text-[13px] text-muted-foreground">
-                  {{ formatDate(order.created_at) }}
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
+        <template v-if="!records.length" #empty>
+          <div
+            class="flex flex-col items-center justify-center bg-muted/10 px-6 py-4"
+          >
+            <div
+              class="mb-5 flex size-16 items-center justify-center rounded-full border border-border bg-muted/50"
+            >
+              <Icon
+                icon="i-lucide-phone"
+                class="size-6 text-muted-foreground/70"
+              />
+            </div>
+            <h3 class="mb-1.5 text-[20px] font-[600] text-foreground">
+              {{ $t('PHONE_NUMBERS_MGMT.LIST.EMPTY_TITLE') }}
+            </h3>
+            <p
+              class="mb-6 max-w-sm text-center text-[13.5px] leading-relaxed text-muted-foreground"
+            >
+              {{ $t('PHONE_NUMBERS_MGMT.LIST.EMPTY_DESC') }}
+            </p>
+            <RelayButton class="h-9 shadow-sm" @click="openBuyModal">
+              <Icon icon="i-lucide-plus" class="size-4" />
+              {{ $t('PHONE_NUMBERS_MGMT.HEADER_BTN_TXT') }}
+            </RelayButton>
+          </div>
+        </template>
+        <SettingsListRow v-for="order in records" :key="order.id">
+          <template #leading>
+            <div
+              class="flex size-10 shrink-0 items-center justify-center rounded-lg bg-primary/10"
+            >
+              <Icon icon="i-lucide-phone" class="size-4 text-primary" />
+            </div>
+          </template>
+          <div class="flex items-center gap-2">
+            <span class="text-sm font-medium text-foreground">
+              {{ order.phone_number || '—' }}
+            </span>
+            <RelayBadge :variant="statusVariant(order.status)">
+              {{ statusLabel(order.status) }}
+            </RelayBadge>
+          </div>
+          <div
+            class="mt-1 flex flex-wrap items-center gap-3.5 text-[13px] text-muted-foreground"
+          >
+            <span>{{ order.country_code }}</span>
+            <div class="size-1 rounded-full bg-muted-foreground/40" />
+            <span class="capitalize">{{ order.provider_type }}</span>
+            <div class="size-1 rounded-full bg-muted-foreground/40" />
+            <span>
+              {{
+                $t('PHONE_NUMBERS_MGMT.LIST.PURCHASED_ON', {
+                  date: formatDate(order.created_at),
+                })
+              }}
+            </span>
+          </div>
+          <p
+            v-if="order.failure_message"
+            class="mt-1 text-[13px] text-muted-foreground"
+          >
+            {{ order.failure_message }}
+          </p>
+        </SettingsListRow>
+      </SettingsListCard>
     </template>
 
     <BuyPhoneNumberModal :show="showBuyModal" @close="closeBuyModal" />

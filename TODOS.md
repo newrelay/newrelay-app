@@ -76,6 +76,32 @@
 **Priority:** P3
 **Depends on:** Isolation PR + ADR 0005
 
+## Phone numbers
+
+### Release purchased numbers after a long suspension
+
+**What:** After an account has been suspended for a set time, release its purchased numbers back to Telnyx or Exotel and mark the order released.
+
+**Why:** This plan holds the number through suspension, so the carrier keeps billing the platform. The customer who resubscribes may not get the same number back, which is why it is not in the buy flow.
+
+**Context:** CEO review 2026-09-29, D15 and D27, on `feature/phone-reseller`. `Enterprise::Billing::GracePeriodEnforcerJob` suspends the account after 7 days and does not delete inboxes. Unpaid `billing_failed` numbers (no billing reference) are released in the buy plan. Paid numbers, including `inbox_pending` and numbers on a suspended account, are not. Start from `NumberProvisioning::Order` in `active` plus the account `suspended`. Verify the provider release API before coding. Do not invent it. The deadline is not chosen yet. 30 days was offered and rejected for this plan.
+
+**Effort:** M (human) → S (CC)
+**Priority:** P3
+**Depends on:** A paid number existing, and a verified provider release call
+
+### Convert number price into the subscription currency
+
+**What:** When the provider currency and the account subscription currency differ, convert wholesale-plus-margin into the subscription currency instead of failing the charge.
+
+**Why:** Telnyx defaults to USD and Exotel to INR. A mismatch is `billing_failed` with no inbox, so a workspace on the other currency cannot buy the number.
+
+**Context:** CEO review 2026-09-29, D20 and D29, on `feature/phone-reseller`. Provider currency is `NumberProvisioning::ProviderConfig` (Super Admin). There is no FX table in billing. Do not invent a rate. This TODO starts only after a rate source is chosen. Until then the failed charge and the Super Admin count are the behavior.
+
+**Effort:** L (human) → M (CC)
+**Priority:** P4
+**Depends on:** A chosen FX source, and a paid number existing
+
 ## Completed
 
 ### Unique index on video testimonials per review request

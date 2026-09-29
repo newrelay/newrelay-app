@@ -6,14 +6,10 @@
     "DESCRIPTION": "Numbers you've purchased for SMS and voice, and their provisioning status.",
     "COUNT": "{n} number | {n} numbers",
     "LIST": {
-      "404": "You haven't purchased any phone numbers yet.",
-      "TABLE_HEADER": {
-        "PHONE_NUMBER": "Phone Number",
-        "COUNTRY": "Country",
-        "PROVIDER": "Provider",
-        "STATUS": "Status",
-        "PURCHASED": "Purchased"
-      },
+      "DETAILS": "Phone number",
+      "EMPTY_TITLE": "No phone numbers yet",
+      "EMPTY_DESC": "Buy a number to receive SMS and calls in your inbox. You can track its provisioning status here.",
+      "PURCHASED_ON": "Purchased {date}",
       "STATUS": {
         "SEARCH_PENDING": "Search pending",
         "ORDER_PLACED": "Order placed",
@@ -22,7 +18,9 @@
         "REQUIREMENTS_REJECTED": "Requirements rejected",
         "ACTIVE": "Active",
         "FAILED": "Failed",
-        "CANCELLED": "Cancelled"
+        "CANCELLED": "Cancelled",
+        "BILLING_FAILED": "Billing failed",
+        "INBOX_PENDING": "Inbox not ready"
       }
     },
     "BUY_MODAL": {
@@ -32,9 +30,10 @@
         "TITLE": "Select a country",
         "DESCRIPTION": "The provider is chosen automatically based on the country.",
         "US": "United States",
-        "US_DESC": "SMS and voice, via Telnyx",
+        "US_DESC": "Numbers from Telnyx. Each result shows what that number can do.",
         "IN": "India",
-        "IN_DESC": "SMS and voice, via Exotel"
+        "IN_DESC": "Numbers from Exotel. Each result shows what that number can do.",
+        "NONE": "No country is available right now."
       },
       "RESULTS": {
         "TITLE": "Available numbers",
@@ -43,6 +42,7 @@
         "EMPTY": "No numbers found for this country. Try again shortly.",
         "NO_MATCH": "No numbers match your search.",
         "SEARCH_PLACEHOLDER": "Search numbers",
+        "PRICE_PER_MONTH": "{price}/mo",
         "PRICE_UNKNOWN": "Price unavailable"
       },
       "CONFIRM": {

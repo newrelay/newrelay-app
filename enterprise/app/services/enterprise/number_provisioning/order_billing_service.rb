@@ -1,48 +1,100 @@
-# Computes margin_cents and writes billing_reference on a NumberProvisioning::Order once
-# it reaches 'active'. Idempotency pattern copied from
-# Enterprise::Billing::TopupFulfillmentService (account.with_lock + an
-# already-billed guard), per design doc §1a consequence 2.
-#
-# TODO: the actual charge/billing-record creation is deliberately not implemented here.
-# Enterprise::Billing::RecordPaymentTransactionService (account:, invoice:, status:) expects
-# a Stripe `invoice` object, which doesn't fit a number-provisioning order -- the real call
-# needs to be designed against whatever billing record type this feature settles on (see
-# design doc §1a consequence 3 and §2's margin_cents/billing_reference notes), not guessed.
 class Enterprise::NumberProvisioning::OrderBillingService
   pattr_initialize [:order!]
 
-  def bill!
-    order.account.with_lock do
-      next if already_billed?
+  class Error < StandardError
+    attr_reader :code
 
-      order.update!(margin_cents: compute_margin_cents, billing_reference: generate_billing_reference)
-      # TODO: create the real charge/billing record here once record_payment_transaction_service's
-      # expected inputs for a non-Stripe-invoice charge are known.
-      Rails.logger.info(
-        "[NumberProvisioning] order billed account_id=#{order.account_id} provider_type=#{order.provider_type} " \
-        "order_id=#{order.id} billing_reference=#{order.billing_reference} margin_cents=#{order.margin_cents}"
-      )
+    def initialize(code)
+      @code = code
+      super(code)
     end
+  end
+
+  STRIPE_BILLABLE = %w[active trialing past_due unpaid].freeze
+  RAZORPAY_BILLABLE = %w[active authenticated].freeze
+
+  # No account lock around the HTTP call. The subscription item id is saved
+  # only after Stripe returns, and the idempotency key is the order id.
+  def bill!
+    order.reload
+    return if order.billing_reference.present?
+
+    raise Error, 'cost_unknown' unless order.provider_cost_cents.to_i.positive?
+
+    subscription = order.account.subscription
+    raise Error, 'not_billable' if subscription.blank? || subscription_id_for(subscription).blank?
+
+    remote = fetch_remote(subscription)
+    raise Error, 'not_billable' unless billable?(subscription.payment_provider, remote[:status])
+    raise Error, 'currency_mismatch' unless currencies_match?(remote[:currency])
+    # Razorpay's subscription addon bills once on the next cycle. That is not
+    # a monthly line, so Razorpay stays unpaid until a recurring call exists.
+    raise Error, 'charge_unavailable' unless subscription.payment_provider == 'stripe'
+
+    item_id = create_stripe_item(subscription_id_for(subscription))
+    order.update!(billing_reference: item_id, margin_cents: margin_cents)
   end
 
   private
 
-  def already_billed?
-    order.billing_reference.present?
+  def fetch_remote(subscription)
+    case subscription.payment_provider
+    when 'stripe'
+      remote = Stripe::Subscription.retrieve(subscription.stripe_subscription_id)
+      { currency: remote.currency, status: remote.status }
+    when 'razorpay'
+      client = Enterprise::Billing::RazorpayClient.new
+      remote = client.fetch_subscription(subscription.razorpay_subscription_id)
+      plan = client.fetch_plan(remote['plan_id']) if remote['plan_id'].present?
+      { currency: plan&.dig('item', 'currency') || remote['currency'], status: remote['status'] }
+    else
+      raise Error, 'not_billable'
+    end
+  rescue Enterprise::Billing::RazorpayClient::Error, Stripe::StripeError => e
+    Rails.logger.info("[NumberProvisioning] subscription fetch failed order_id=#{order.id} error=#{e.class}")
+    raise Error, 'not_billable'
   end
 
-  # Margin % is now configurable per provider (Super Admin > Number Provisioning, backed by
-  # NumberProvisioning::ProviderConfig -- see agent decision log, 2026-09-28), e.g.
-  # GlobalConfig.get_value("NUMBER_PROVISIONING_#{order.provider_type.upcase}_MARGIN_PERCENT").
-  # Still stubbed at zero: order.provider_cost_cents is never populated anywhere in this
-  # codebase yet (the wholesale cost isn't captured from the provider's search/order response --
-  # same "price normalization" gap flagged elsewhere), so multiplying against it would produce
-  # a fake-looking number from a nil, not a real margin. Wire this up once cost capture exists.
-  def compute_margin_cents
-    0
+  def create_stripe_item(subscription_id)
+    key = "numprov-order-#{order.id}"
+    product = Stripe::Product.create(
+      { name: "Phone number #{order.phone_number}" },
+      { idempotency_key: "#{key}-product" }
+    )
+    price = Stripe::Price.create(
+      {
+        product: product.id,
+        currency: order.currency.to_s.downcase,
+        unit_amount: order.provider_cost_cents + margin_cents,
+        recurring: { interval: 'month' }
+      },
+      { idempotency_key: "#{key}-price" }
+    )
+    item = Stripe::SubscriptionItem.create(
+      { subscription: subscription_id, price: price.id, quantity: 1, proration_behavior: 'none' },
+      { idempotency_key: key }
+    )
+    item.id
+  rescue Stripe::StripeError => e
+    Rails.logger.info("[NumberProvisioning] stripe item failed order_id=#{order.id} error=#{e.class}")
+    raise Error, 'unknown'
   end
 
-  def generate_billing_reference
-    "numprov_#{order.id}_#{SecureRandom.hex(6)}"
+  def margin_cents
+    percent = BigDecimal(NumberProvisioning::ProviderConfig.margin_percent_for(order.provider_type).to_s)
+    (BigDecimal(order.provider_cost_cents.to_i) * percent / 100).round.to_i
+  end
+
+  def currencies_match?(remote_currency)
+    order.currency.present? && remote_currency.to_s.casecmp?(order.currency.to_s)
+  end
+
+  def billable?(provider, status)
+    list = provider == 'razorpay' ? RAZORPAY_BILLABLE : STRIPE_BILLABLE
+    list.include?(status.to_s)
+  end
+
+  def subscription_id_for(subscription)
+    subscription.payment_provider == 'razorpay' ? subscription.razorpay_subscription_id : subscription.stripe_subscription_id
   end
 end

@@ -51,6 +51,18 @@ class NumberProvisioning::ProviderConfig
       enabled?(DEFINITIONS.fetch(id))
     end
 
+    # Configured currency for a provider, falling back to its default when unseeded --
+    # used by the adapters to normalize search prices and (later) by billing.
+    def currency_for(id)
+      definition = DEFINITIONS.fetch(id)
+      GlobalConfig.get_value(definition[:currency_key]) || definition[:default_currency]
+    end
+
+    def margin_percent_for(id)
+      definition = DEFINITIONS.fetch(id)
+      GlobalConfig.get_value(definition[:margin_key]) || '0'
+    end
+
     def all_config_keys
       DEFINITIONS.flat_map do |_id, definition|
         [

@@ -1,10 +1,12 @@
 # Number Provisioning: Search → Pick → Order — Verified Design
 
-> **Status:** Draft, corrected after independent verification · **Owner:** TBD · **Scope:** the "admin searches a number → picks one → orders it" flow, India→Exotel / US→Telnyx (fixed) · **Branch:** `feature/phone-reseller` · **Pipeline:** produced by a 3-stage research → design → verify pass; this document is the *corrected* output, not the raw draft — see §7 for what was wrong in the draft and why.
+> **Status:** Partially implemented (2026-09-29) · **Owner:** TBD · **Scope:** the "admin searches a number → picks one → orders it" flow, India→Exotel / US→Telnyx (fixed) · **Branch:** `feature/phone-reseller` · **Pipeline:** produced by a 3-stage research → design → verify pass; this document is the *corrected* output, not the raw draft — see §7 for what was wrong in the draft and why.
 >
 > **Related docs:** [telnyx-twilio-parity-frd.md](telnyx-twilio-parity-frd.md) · [telnyx-virtual-number-purchase-implementation-spec.md](telnyx-virtual-number-purchase-implementation-spec.md) · [adr-exotel-india-sms-provider.md](adr-exotel-india-sms-provider.md) · [number-provisioning-reseller-architecture-design.md](number-provisioning-reseller-architecture-design.md) · [number-provisioning-vendor-findings-and-open-questions.md](number-provisioning-vendor-findings-and-open-questions.md)
+>
+> **What shipped (as of 2026-09-29):** migration + model, policy, controller + routes (with Redis search cache, idempotency, timeout rescue, `provisioning_config` nav-gate), PollOrderStatusJob, service layer (provider interface + Telnyx + Exotel adapters), Enterprise billing service (stubbed — margin=0, no real charges), frontend (Phone Numbers settings page + BuyPhoneNumberModal + phoneNumberOrders store), Super Admin config page, JS API client. **Not yet built:** Channel::TelnyxSms / Channel::ExotelSms models, inbox creation on `active`, real billing charges, price normalization on `search()`, Telnyx credential switch to GlobalConfig, `status()` on provider interface, RSpec tests.
 
-## Readiness verdict: §1a is now decided (below). Three things remain before implementation starts (§1b-1d).
+## Readiness verdict: all pre-implementation blockers cleared. Backend + frontend shipped. Three gaps remain before this flow is production-complete (see §6).
 
 ---
 
@@ -151,15 +153,15 @@ Confirmed non-colliding — no existing `number_provisioning` route; only the un
 ## 6. Implementation order
 
 1. ~~Decide §1a~~ **Done** — kept separate; OSS gets `app/services/number_provisioning/*`, EE gets the markup/billing service.
-2. Migration (§2, with §1c's `inbox_id` fix) → model.
-3. Service layer: add `status()` to the interface and both adapters; fix Telnyx credentials (§3b); leave Exotel credentials untouched pending decision; register `TELNYX_RESELLER_API_KEY`.
-4. Policy: `NumberProvisioning::OrderPolicy` (§1b) — do this before the controller, not after, or the controller ships broken.
-5. Polling job, modeled on `dm_dispatch_job.rb` (§3d).
-6. Controller + routes (§4).
-7. `enterprise/app/services/enterprise/number_provisioning/order_billing_service.rb` (§1a consequence 2) — computes `margin_cents`, writes `billing_reference`, called via `prepend_mod_with` from the OSS job/controller once an order reaches `active`.
-8. Frontend: API client, store actions, `Voice.vue`-modeled form component + results list + provisioning-status interstitial (§5).
-9. Tests: no existing spec covers `twilio_channels_controller.rb` to mirror directly — write fresh RSpec request specs for the new controller/policy/job, and `spec/enterprise/` specs for the billing service.
-10. Do not enable real charges until step 7 (the EE billing service) is built and tested — the OSS pieces (1-6, 8) can ship/merge independently since they don't touch money.
+2. ~~Migration (§2, with §1c's `inbox_id` fix) → model.~~ **Done** — `db/migrate/20260925120000_create_number_provisioning_orders.rb` + `app/models/number_provisioning/order.rb`; uses `inbox_id` FK (not polymorphic pair), bigint-safe.
+3. Service layer — **partial.** Provider interface + Telnyx + Exotel adapters shipped (`app/services/number_provisioning/provider.rb`, `telnyx_provider.rb`, `exotel_provider.rb`, `number_provisioning.rb` resolver, `provider_config.rb`). Still open: `status()` method needed by the polling job to detect when an order goes `active`; Telnyx credential switch to GlobalConfig (§3b — `TELNYX_RESELLER_API_KEY`); Exotel credential decision still unresolved.
+4. ~~Policy: `NumberProvisioning::OrderPolicy` (§1b).~~ **Done** — `app/policies/number_provisioning/order_policy.rb` with `index?`, `search?`, `create?`, `provisioning_config?`.
+5. ~~Polling job, modeled on `dm_dispatch_job.rb` (§3d).~~ **Done** — `app/jobs/number_provisioning/poll_order_status_job.rb`; per-order Redis lock added in `8d550a6e48`.
+6. ~~Controller + routes (§4).~~ **Done** — `app/controllers/api/v1/accounts/number_provisioning/orders_controller.rb` with `provisioning_config`, `search` (Redis cache, 5 min TTL), `create` (idempotency + atomic retry), `index`; routes in `config/routes.rb`; fixed `config` → `provisioning_config` rename (`3ae3708d8f`) to avoid Rails `ActionController::Base#config` recursion.
+7. ~~`enterprise/app/services/enterprise/number_provisioning/order_billing_service.rb`~~ **Shipped, stubbed.** `bill!` runs with idempotency guard; `compute_margin_cents` returns 0; `billing_reference` written. No real charge created — blocked on price normalization (step 3) and billing record type decision (§1a consequence 3). Do not enable real charges here until `provider_cost_cents` is populated from a normalized search response.
+8. ~~Frontend~~ **Done.** `app/javascript/dashboard/routes/dashboard/settings/phoneNumbers/Index.vue` (orders list + buy button), `BuyPhoneNumberModal.vue` (search → pick → confirm flow), `phoneNumberOrders.js` store, `numberProvisioningOrders.js` API client, `phoneNumbers.routes.js`. Super Admin config page shipped separately. Nav gate (Settings sidebar hides Phone Numbers link when no provider enabled) wired to `provisioning_config` endpoint.
+9. Tests — **not yet built.** Write RSpec request specs for controller/policy/job and `spec/enterprise/` specs for the billing service.
+10. Real charges — **not enabled.** Wire once `provider_cost_cents` is populated (requires step 3's price normalization) and billing record type is resolved (§1a consequence 3). OSS pieces (1-6, 8) are independently mergeable.
 
 ---
 

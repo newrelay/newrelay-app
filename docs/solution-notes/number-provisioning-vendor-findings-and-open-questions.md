@@ -1,6 +1,6 @@
 # Number Provisioning — Vendor Findings, Issues, and Open Questions
 
-> **Status:** Draft · **Owner:** TBD (Product/Eng) · **Initiative:** India + US virtual number reseller launch · **Related docs:** [telnyx-twilio-parity-frd.md](telnyx-twilio-parity-frd.md) (source FRD, §6a/§6b/PRD-18/19) · [telnyx-virtual-number-purchase-implementation-spec.md](telnyx-virtual-number-purchase-implementation-spec.md) (§2b provider interface, §2c/§2d Exotel/Plivo research) · [adr-exotel-india-sms-provider.md](adr-exotel-india-sms-provider.md) (Exotel-as-SMS-adapter decision) · [number-provisioning-reseller-architecture-design.md](number-provisioning-reseller-architecture-design.md) (architecture) · [telnyx-voice-architecture-design.md](telnyx-voice-architecture-design.md) (PRD-10 Voice, out of scope here) · **Branch:** `feature/phone-reseller`
+> **Status:** Draft · **Updated 2026-09-29** (§8 code status updated to reflect full feature state; open questions in §9 unchanged) · **Owner:** TBD (Product/Eng) · **Initiative:** India + US virtual number reseller launch · **Related docs:** [telnyx-twilio-parity-frd.md](telnyx-twilio-parity-frd.md) (source FRD, §6a/§6b/PRD-18/19) · [telnyx-virtual-number-purchase-implementation-spec.md](telnyx-virtual-number-purchase-implementation-spec.md) (§2b provider interface, §2c/§2d Exotel/Plivo research) · [adr-exotel-india-sms-provider.md](adr-exotel-india-sms-provider.md) (Exotel-as-SMS-adapter decision) · [number-provisioning-reseller-architecture-design.md](number-provisioning-reseller-architecture-design.md) (architecture) · [telnyx-voice-architecture-design.md](telnyx-voice-architecture-design.md) (PRD-10 Voice, out of scope here) · **Branch:** `feature/phone-reseller`
 >
 > **Why this doc exists separately:** the four docs above already cover the Telnyx-parity FRD, the purchase implementation spec, the Exotel ADR, and the architecture design. This doc captures a distinct research pass — live vendor outreach (a real Exotel sales call), independent review/complaint research across four vendors, live Exotel API testing beyond what the ADR covered, and the first working `NumberProvisioning` code — that isn't folded into those documents yet. Treat this as input to update them, not a replacement for any of them.
 
@@ -79,19 +79,51 @@ Directly relevant to PRD-19's reseller model. Compared how each provider actuall
 
 **Implication:** if the reseller/white-label experience needs to be genuinely self-serve (customer picks a number inside NR with zero manual steps on NR's side), **Telnyx's Managed Accounts is the only checked option that ships this out of the box.** Exotel — the confirmed India SMS/SIP provider — has no equivalent; India reseller provisioning through Exotel would need NR to build its own sub-account/margin layer on top, mirroring the Twilio-ISV pattern rather than getting it for free.
 
-## 8. `NumberProvisioning` wrapper — code status (this session)
+## 8. `NumberProvisioning` code status (updated 2026-09-29)
 
-Built on `feature/phone-reseller`, ahead of the Architecture Design's own illustrative Exotel code (which is explicitly marked "NOT yet verified" in that doc):
+Full feature shipped on `feature/phone-reseller`. Status per layer:
 
-- `app/services/number_provisioning/provider.rb` — the interface (`search`, `order`), matching the shape already agreed in [number-provisioning-reseller-architecture-design.md](number-provisioning-reseller-architecture-design.md).
-- `app/services/number_provisioning/telnyx_provider.rb` — calls Telnyx's documented `available_phone_numbers` / `number_orders` REST endpoints.
-- `app/services/number_provisioning/exotel_provider.rb` — calls the **exact Exotel endpoints verified live** in §6 above (`AvailablePhoneNumbers/{country}/{type}`, `IncomingPhoneNumbers`), not just documentation-derived like the Architecture Design's draft.
-- `app/services/number_provisioning.rb` — resolver: `NumberProvisioning.for(account:, country_code:)` routes `IN` → `ExotelProvider`, everything else → `TelnyxProvider`.
-- Credentials follow the existing `account.hooks.find_by(app_id: ..., status: 'enabled').settings` pattern already live in `app/controllers/api/v1/accounts/integrations/exotel_controller.rb` (the existing, working Exotel voice-agent controller — OpenAI + ElevenLabs today), not a new credential-storage mechanism.
+**Service layer (OSS):**
+- `app/services/number_provisioning/provider.rb` — interface (`search`, `order`)
+- `app/services/number_provisioning/telnyx_provider.rb` — Telnyx `available_phone_numbers` / `number_orders`
+- `app/services/number_provisioning/exotel_provider.rb` — live-verified Exotel endpoints (§6)
+- `app/services/number_provisioning.rb` — resolver: `IN` → ExotelProvider, else → TelnyxProvider
+- `app/services/number_provisioning/provider_config.rb` — per-provider enabled/disabled flags via GlobalConfig (Super Admin-editable)
 
-**Deliberately not implemented yet** (scope-matched to what's actually verified, not the Architecture Design's fuller interface): `reserve`, `lookup_requirements`, `submit_requirements`, `configure_webhook`. Adding these now would mean guessing at unverified API shapes — same discipline the ADR applies to its own "not yet confirmed" list.
+**Not yet on provider interface:** `status(provider_order_id:)` (needed by the polling job to detect when an order goes active), `reserve`, `lookup_requirements`, `submit_requirements`, `configure_webhook` — all deliberately deferred, same discipline as the ADR.
 
-**Known gap, not yet fixed:** `search()` currently returns each provider's **raw, unnormalized** response — Exotel returns `rental_price`, Telnyx returns `cost_information.monthly_cost`. A caller has to know which provider answered to read the price, which undercuts the point of a provider-agnostic interface. This is exactly where reseller markup logic needs to hook in, so it should be normalized (e.g. a common `{ phone_number:, monthly_price:, currency:, capabilities: }` shape) before any billing/markup work is built on top.
+**Data layer:**
+- `db/migrate/20260925120000_create_number_provisioning_orders.rb` — schema with `inbox_id` FK, `regulatory_requirements` jsonb, `margin_cents`, `billing_reference`
+- `app/models/number_provisioning/order.rb` — full STATUSES list, validations, associations
+
+**Controller / routes:**
+- `app/controllers/api/v1/accounts/number_provisioning/orders_controller.rb` — `provisioning_config` (nav gate), `search` (5-min Redis cache), `create` (atomic idempotency + failed-order retry), `index`
+- `app/policies/number_provisioning/order_policy.rb` — `index?`, `search?`, `create?`, `provisioning_config?`
+- Routes: `namespace :number_provisioning { resources :orders }` with collection `search` + `provisioning_config`
+- Key fix (`3ae3708d8f`): action was named `config`, which shadows `ActionController::Base#config` (from `ActiveSupport::Configurable`) and caused `SystemStackError` on every hit — renamed to `provisioning_config` across route, controller, policy, and JS client
+
+**Async layer:**
+- `app/jobs/number_provisioning/poll_order_status_job.rb` — polls provider for order status; per-order Redis lock (`8d550a6e48`)
+
+**Enterprise billing service:**
+- `enterprise/app/services/enterprise/number_provisioning/order_billing_service.rb` — `bill!` runs with `account.with_lock` idempotency guard; sets `billing_reference` (non-nil = already billed). **Stubbed:** `compute_margin_cents` returns 0. No real charge created — blocked on price normalization below and billing record type decision (design doc §1a consequence 3).
+
+**Frontend:**
+- `app/javascript/dashboard/routes/dashboard/settings/phoneNumbers/Index.vue` — orders list, status badges
+- `app/javascript/dashboard/routes/dashboard/settings/phoneNumbers/component/BuyPhoneNumberModal.vue` — search → pick → confirm flow
+- `app/javascript/dashboard/store/modules/phoneNumberOrders.js` — store actions
+- `app/javascript/dashboard/api/numberProvisioningOrders.js` — `search`, `getConfig`, `create`
+- Super Admin config page (provider enable/disable, per provider)
+- Settings sidebar nav gate (hides Phone Numbers when no provider enabled)
+
+**Not yet built:**
+- `Channel::TelnyxSms` / `Channel::ExotelSms` models
+- Inbox/channel creation when an order reaches `active` (polling job currently stops at status update)
+- Provisioning-status interstitial in frontend (order-placed → active gap, especially for India KYC)
+- India KYC document upload UI
+- RSpec tests (controller, policy, job, enterprise billing service)
+
+**Known gap (unchanged):** `search()` returns each provider's **raw, unnormalized** response — Exotel returns `rental_price`, Telnyx returns `cost_information.monthly_cost`. Price normalization to a common shape (`{ phone_number:, monthly_price_cents:, currency:, capabilities: }`) must happen before billing markup is wired up, because `provider_cost_cents` is never populated today. This is the direct blocker for real billing charges (§9 open question 4).
 
 ## 9. New open questions (additions to the FRD/ADR's existing lists, not replacements)
 

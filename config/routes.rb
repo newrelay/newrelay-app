@@ -133,7 +133,10 @@ Rails.application.routes.draw do
           end
           namespace :number_provisioning do
             resources :orders, only: [:index, :create] do
-              collection { get :search }
+              collection do
+                get :search
+                get :config
+              end
             end
           end
           resources :macros, only: [:index, :create, :show, :update, :destroy] do

@@ -47,6 +47,19 @@ export const actions = {
     }
   },
 
+  fetchConfig: async function fetchNumberProvisioningConfig({ commit }) {
+    try {
+      const response = await NumberProvisioningOrdersAPI.getConfig();
+      commit(
+        'globalConfig/SET_NUMBER_PROVISIONING_ENABLED',
+        response.data.enabled,
+        { root: true }
+      );
+    } catch {
+      // silently ignore -- the window.globalConfig value at page load remains authoritative
+    }
+  },
+
   create: async function createPhoneNumberOrder(
     { commit },
     { idempotencyKey, ...params }

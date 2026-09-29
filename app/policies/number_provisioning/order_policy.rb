@@ -10,4 +10,8 @@ class NumberProvisioning::OrderPolicy < ApplicationPolicy
   def create?
     @account_user.administrator?
   end
+
+  def config?
+    @account_user.administrator?
+  end
 end

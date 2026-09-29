@@ -11,6 +11,13 @@ class Api::V1::Accounts::NumberProvisioning::OrdersController < Api::V1::Account
     @orders = Current.account.number_provisioning_orders.order(created_at: :desc)
   end
 
+  def config
+    enabled = NumberProvisioning::ProviderConfig::DEFINITIONS.keys.any? do |id|
+      NumberProvisioning::ProviderConfig.enabled_for?(id)
+    end
+    render json: { enabled: enabled }
+  end
+
   def search
     provider = NumberProvisioning.for(account: Current.account, country_code: params[:country_code])
     @results = provider.search(country_code: params[:country_code], type: params[:type])

@@ -64,7 +64,11 @@ export const getters = {
 
 export const actions = {};
 
-export const mutations = {};
+export const mutations = {
+  SET_NUMBER_PROVISIONING_ENABLED($state, enabled) {
+    $state.numberProvisioningEnabled = enabled;
+  },
+};
 
 export default {
   namespaced: true,

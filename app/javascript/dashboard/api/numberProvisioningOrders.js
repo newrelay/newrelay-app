@@ -12,6 +12,10 @@ class NumberProvisioningOrdersAPI extends ApiClient {
     });
   }
 
+  getConfig() {
+    return axios.get(`${this.url}/config`);
+  }
+
   // Overrides ApiClient#create to attach an Idempotency-Key header so a
   // double-click, replay, or slow-request retry doesn't create two orders
   // for the same number (CEO review finding 4A).

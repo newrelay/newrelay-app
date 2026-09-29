@@ -7,6 +7,7 @@ import { useStore, useMapGetter } from 'dashboard/composables/store';
 import {
   RelayButton,
   RelayBadge,
+  RelayInput,
   RelayModal,
 } from 'dashboard/components-next/relay';
 import ChannelSelector from 'dashboard/components/ChannelSelector.vue';
@@ -35,6 +36,7 @@ const state = reactive({
   step: STEPS.COUNTRY,
   countryCode: '',
   numbers: [],
+  searchQuery: '',
   selectedNumber: null,
   orderIdempotencyKey: null,
 });
@@ -74,11 +76,16 @@ function getPhoneNumber(result) {
 function getCapabilities(result) {
   const capabilities =
     result?.capabilities || result?.features || result?.Capabilities || [];
-  return capabilities
-    .map(capability =>
-      typeof capability === 'string' ? capability : capability?.name
-    )
-    .filter(Boolean);
+  // Telnyx returns an array (['sms'] or [{ name: 'sms' }]); Exotel returns an
+  // object of booleans ({ sms: true, voice: false }). Calling .map on the
+  // object shape throws and blanks the whole results list -- normalize both to
+  // a list of enabled capability names.
+  const list = Array.isArray(capabilities)
+    ? capabilities.map(capability =>
+        typeof capability === 'string' ? capability : capability?.name
+      )
+    : Object.keys(capabilities).filter(key => capabilities[key]);
+  return list.filter(Boolean);
 }
 
 // TODO: confirm exact price field once the backend normalizes search results
@@ -92,10 +99,21 @@ function getPrice(result) {
   );
 }
 
+// Client-side filter over the already-fetched results, matched on digits so a
+// query with or without spaces/+ still hits (e.g. "9198" matches "+91 98...").
+const filteredNumbers = computed(() => {
+  const query = state.searchQuery.replace(/\D/g, '');
+  if (!query) return state.numbers;
+  return state.numbers.filter(result =>
+    getPhoneNumber(result).replace(/\D/g, '').includes(query)
+  );
+});
+
 function resetState() {
   state.step = STEPS.COUNTRY;
   state.countryCode = '';
   state.numbers = [];
+  state.searchQuery = '';
   state.selectedNumber = null;
   state.orderIdempotencyKey = null;
 }
@@ -125,6 +143,7 @@ async function selectCountry(countryCode) {
 function backToCountry() {
   state.step = STEPS.COUNTRY;
   state.numbers = [];
+  state.searchQuery = '';
   state.countryCode = '';
 }
 
@@ -193,11 +212,30 @@ watch(
       />
     </div>
 
-    <div v-else-if="state.step === STEPS.RESULTS" class="p-5">
-      <div class="mb-4 flex items-center justify-between">
-        <RelayButton variant="ghost" size="sm" @click="backToCountry">
+    <div v-else-if="state.step === STEPS.RESULTS" class="flex flex-col p-5">
+      <div class="mb-4 flex flex-col gap-3">
+        <RelayButton
+          variant="ghost"
+          size="sm"
+          class="w-fit gap-1.5 px-2"
+          @click="backToCountry"
+        >
+          <span class="i-lucide-arrow-left size-4" />
           {{ t('PHONE_NUMBERS_MGMT.BUY_MODAL.RESULTS.BACK_BUTTON') }}
         </RelayButton>
+
+        <div v-if="state.numbers.length" class="relative">
+          <span
+            class="i-lucide-search absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground"
+          />
+          <RelayInput
+            v-model="state.searchQuery"
+            :placeholder="
+              t('PHONE_NUMBERS_MGMT.BUY_MODAL.RESULTS.SEARCH_PLACEHOLDER')
+            "
+            class-name="pl-9"
+          />
+        </div>
       </div>
 
       <p
@@ -214,9 +252,16 @@ watch(
         {{ t('PHONE_NUMBERS_MGMT.BUY_MODAL.RESULTS.EMPTY') }}
       </p>
 
-      <div v-else class="flex flex-col gap-3">
+      <p
+        v-else-if="!filteredNumbers.length"
+        class="text-[13.5px] text-muted-foreground"
+      >
+        {{ t('PHONE_NUMBERS_MGMT.BUY_MODAL.RESULTS.NO_MATCH') }}
+      </p>
+
+      <div v-else class="flex max-h-80 flex-col gap-3 overflow-y-auto">
         <RelayButton
-          v-for="result in state.numbers"
+          v-for="result in filteredNumbers"
           :key="getPhoneNumber(result)"
           variant="outline"
           class="h-auto w-full justify-between gap-4 px-4 py-3"

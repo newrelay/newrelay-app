@@ -41,6 +41,8 @@
         "BACK_BUTTON": "Back",
         "LOADING": "Searching for available numbers...",
         "EMPTY": "No numbers found for this country. Try again shortly.",
+        "NO_MATCH": "No numbers match your search.",
+        "SEARCH_PLACEHOLDER": "Search numbers",
         "PRICE_UNKNOWN": "Price unavailable"
       },
       "CONFIRM": {

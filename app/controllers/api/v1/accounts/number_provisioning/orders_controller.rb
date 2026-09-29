@@ -114,7 +114,7 @@ class Api::V1::Accounts::NumberProvisioning::OrdersController < Api::V1::Account
 
   def render_provider_request_error(exception)
     log_handled_error(exception)
-    render_could_not_create_error(exception.message)
+    render_could_not_create_error('The phone number provider returned an error. Please try again or contact support.')
   end
 
   # Telnyx: order() returns response['data'], which has 'id' at the top level.

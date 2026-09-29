@@ -32,8 +32,10 @@ const hasAdvancedAssignment = computed(() =>
 // Platform-wide (not per-account), set via Super Admin > Number Provisioning --
 // a different store than hasAdvancedAssignment's per-account feature flag, so it
 // gets its own gate rather than being folded into the featureFlag/permissions check.
-const hasNumberProvisioning =
-  useMapGetter('globalConfig/get').value?.numberProvisioningEnabled;
+const globalConfig = useMapGetter('globalConfig/get');
+const hasNumberProvisioning = computed(
+  () => globalConfig.value?.numberProvisioningEnabled
+);
 
 const findRouteMeta = routeName => {
   const match = router.getRoutes().find(r => r.name === routeName);
@@ -44,7 +46,7 @@ const isItemAllowed = item => {
   if (item.requiresAdvancedAssignment && !hasAdvancedAssignment.value) {
     return false;
   }
-  if (item.requiresNumberProvisioning && !hasNumberProvisioning) {
+  if (item.requiresNumberProvisioning && !hasNumberProvisioning.value) {
     return false;
   }
   const meta = findRouteMeta(item.routeName);

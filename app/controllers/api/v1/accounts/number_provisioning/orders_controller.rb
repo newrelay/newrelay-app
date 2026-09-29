@@ -3,6 +3,7 @@ class Api::V1::Accounts::NumberProvisioning::OrdersController < Api::V1::Account
 
   rescue_from ::NumberProvisioning::Provider::ProviderDisabledError, with: :render_provider_disabled
   rescue_from ::NumberProvisioning::Provider::RequestError, with: :render_provider_request_error
+  rescue_from Net::OpenTimeout, Net::ReadTimeout, with: :render_provider_timeout
 
   IDEMPOTENCY_TTL = 10.minutes.to_i
   IDEMPOTENCY_IN_PROGRESS = 'in_progress'.freeze
@@ -122,6 +123,11 @@ class Api::V1::Accounts::NumberProvisioning::OrdersController < Api::V1::Account
   def render_provider_request_error(exception)
     log_handled_error(exception)
     render_could_not_create_error('The phone number provider returned an error. Please try again or contact support.')
+  end
+
+  def render_provider_timeout(exception)
+    log_handled_error(exception)
+    render_could_not_create_error('The phone number provider did not respond in time. Please try again.')
   end
 
   # Telnyx: order() returns response['data'], which has 'id' at the top level.

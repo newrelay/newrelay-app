@@ -7,6 +7,7 @@ class NumberProvisioning::ExotelProvider
 
   BASE_URL = 'https://api.exotel.com/v2_beta'.freeze
   PROVIDER_TYPE = 'exotel'.freeze
+  REQUEST_TIMEOUT = 15
 
   COUNTRY_CODE_FORMAT = /\A[A-Z]{2}\z/
   VALID_NUMBER_TYPES   = %w[Mobile Local TollFree].freeze
@@ -17,7 +18,8 @@ class NumberProvisioning::ExotelProvider
 
     response = HTTParty.get(
       "#{BASE_URL}/Accounts/#{account_sid}/AvailablePhoneNumbers/#{country_code}/#{type}",
-      basic_auth: basic_auth
+      basic_auth: basic_auth,
+      timeout: REQUEST_TIMEOUT
     )
     assert_success!(response, 'Exotel search')
 
@@ -28,7 +30,8 @@ class NumberProvisioning::ExotelProvider
     response = HTTParty.post(
       "#{BASE_URL}/Accounts/#{account_sid}/IncomingPhoneNumbers",
       basic_auth: basic_auth,
-      body: { PhoneNumber: phone_number }
+      body: { PhoneNumber: phone_number },
+      timeout: REQUEST_TIMEOUT
     )
     assert_success!(response, 'Exotel order')
 
@@ -43,7 +46,8 @@ class NumberProvisioning::ExotelProvider
   def status(provider_order_id:)
     response = HTTParty.get(
       "#{BASE_URL}/Accounts/#{account_sid}/IncomingPhoneNumbers/#{provider_order_id}",
-      basic_auth: basic_auth
+      basic_auth: basic_auth,
+      timeout: REQUEST_TIMEOUT
     )
     assert_success!(response, 'Exotel status check')
 

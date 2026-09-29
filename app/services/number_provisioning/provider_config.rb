@@ -51,6 +51,21 @@ class NumberProvisioning::ProviderConfig
       enabled?(DEFINITIONS.fetch(id))
     end
 
+    def all_config_keys
+      DEFINITIONS.flat_map do |_id, definition|
+        [
+          definition[:enabled_key],
+          definition[:currency_key],
+          definition[:margin_key],
+          *definition[:key_fields].map { |f| f[:name] }
+        ]
+      end
+    end
+
+    def clear_cache
+      all_config_keys.each { |key| GlobalConfig.clear_key(key) }
+    end
+
     # providers_param is an ActionController::Parameters, which already resolves string
     # and symbol keys interchangeably (like PaymentGatewayRegistry.save! relies on) --
     # no .with_indifferent_access, that method doesn't exist on this class.

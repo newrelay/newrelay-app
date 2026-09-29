@@ -15,7 +15,11 @@ class NumberProvisioning::PollOrderStatusJob < ApplicationJob
     provider = NumberProvisioning.for(account: order.account, country_code: order.country_code)
     raw_status = provider.status(provider_order_id: order.provider_order_id)
     handle_status(order, raw_status, attempt)
-  rescue *NETWORK_ERRORS => e
+  rescue *NETWORK_ERRORS, ::NumberProvisioning::Provider::RequestError => e
+    # RequestError added here: a 4xx/5xx from the provider's status endpoint is
+    # retriable the same way a network blip is -- route through requeue_or_fail
+    # so the order lands as 'failed' after MAX_ATTEMPTS rather than being left
+    # stuck in 'order_placed' forever via Sidekiq's own unmanaged retry schedule.
     requeue_or_fail(order, attempt, e.message)
   rescue ::NumberProvisioning::Provider::ProviderDisabledError => e
     # Outside-voice review finding: without this, a flag flipping off mid-flight (or

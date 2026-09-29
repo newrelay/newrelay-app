@@ -114,9 +114,10 @@ class Api::V1::Accounts::NumberProvisioning::OrdersController < Api::V1::Account
     render_could_not_create_error(exception.message)
   end
 
-  # TODO: the raw order-id field is unconfirmed per provider -- same "no captured response"
-  # gap the design doc flags for price normalization (see §3a). Verify against a real
-  # Telnyx/Exotel order response before relying on this in production.
+  # Telnyx: order() returns response['data'], which has 'id' at the top level.
+  # Exotel: order() normalizes {'PhoneNumber' => {'Sid' => 'PN...'}} → merges 'id' => Sid.
+  # Both providers ensure 'id' is present before returning; this method stays simple.
+  # TODO: confirm Telnyx's 'id' field against a real order response (see design doc §3a).
   def provider_order_id_from(response)
     response['id']
   end

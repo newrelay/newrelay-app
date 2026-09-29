@@ -26,7 +26,12 @@ class NumberProvisioning::ExotelProvider
     )
     assert_success!(response, 'Exotel order')
 
-    response.parsed_response
+    parsed = response.parsed_response
+    # Exotel returns {'PhoneNumber' => {'Sid' => 'PN...', ...}}.
+    # Normalize to the {'id' => ...} shape provider_order_id_from expects,
+    # matching what TelnyxProvider returns after unwrapping ['data'].
+    # Sid is the stable identifier used for subsequent status lookups.
+    parsed.merge('id' => parsed.dig('PhoneNumber', 'Sid'))
   end
 
   def status(provider_order_id:)

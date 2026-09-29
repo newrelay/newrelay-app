@@ -277,11 +277,10 @@ function mapContact(c) {
   return {
     id: String(c.id),
     name: c.name || c.email || c.phone_number || 'Unknown',
-    contextLabel: 'Contact:',
     contextValue: c.email || c.phone_number || '',
     email: c.email || '',
     phone: c.phone_number || '',
-    company: c.additional_attributes?.company_name || ''
+    company: c.company?.name || c.additional_attributes?.company_name || ''
   };
 }
 
@@ -368,7 +367,7 @@ watch(() => form.value.channels, () => {
 
 // Channels need email or a phone number; used for the picker and to validate recipients.
 const CHANNEL_META = [
-  { name: 'WhatsApp', key: 'whatsapp', field: 'phone', icon: MessageCircle, color: 'text-emerald-500', bg: 'bg-emerald-50' },
+  { name: 'WhatsApp', key: 'whatsapp', field: 'phone', icon: MessageCircle, color: 'text-primary', bg: 'bg-primary/10' },
   { name: 'Email', key: 'email', field: 'email', icon: Mail, color: 'text-primary', bg: 'bg-primary/10' },
   { name: 'SMS', key: 'sms', field: 'phone', icon: Smartphone, color: 'text-primary', bg: 'bg-primary/10' }
 ];
@@ -503,14 +502,14 @@ function close() {
       <div v-if="currentStep < 5" class="px-6 py-4 border-b border-border flex items-center justify-between bg-muted/30">
         <div>
           <h2 class="text-base font-semibold text-foreground">Request Customer Reviews</h2>
-          <div class="flex items-center gap-2 mt-1.5 text-sm">
-            <span :class="currentStep >= 1 ? 'text-primary font-medium' : 'text-muted-foreground'">1. Channel</span>
+          <div class="mt-1.5 flex items-center gap-2 text-[13px] font-medium">
+            <span :class="currentStep >= 1 ? 'text-primary' : 'text-muted-foreground'">1. Channel</span>
             <ChevronRight class="size-3.5 text-muted-foreground/50" />
-            <span :class="currentStep >= 2 ? 'text-primary font-medium' : 'text-muted-foreground'">2. Recipients</span>
+            <span :class="currentStep >= 2 ? 'text-primary' : 'text-muted-foreground'">2. Recipients</span>
             <ChevronRight class="size-3.5 text-muted-foreground/50" />
-            <span :class="currentStep >= 3 ? 'text-primary font-medium' : 'text-muted-foreground'">3. Message</span>
+            <span :class="currentStep >= 3 ? 'text-primary' : 'text-muted-foreground'">3. Message</span>
             <ChevronRight class="size-3.5 text-muted-foreground/50" />
-            <span :class="currentStep >= 4 ? 'text-primary font-medium' : 'text-muted-foreground'">4. Review</span>
+            <span :class="currentStep >= 4 ? 'text-primary' : 'text-muted-foreground'">4. Review</span>
           </div>
         </div>
         <button type="button" :class="RELAY_MODAL_CLOSE_BUTTON_CLASS" @click="close">
@@ -536,25 +535,17 @@ function close() {
                 >
                   {{ filter }}
                 </button>
-              </div>
-            </div>
-            <div class="pt-4 border-t border-border flex flex-col gap-1.5">
-              <label class="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Company</label>
-              <DropdownMenu v-model:open="showCompanyMenu">
-                <DropdownMenuTrigger as-child>
-                  <button
-                    type="button"
-                    class="reset-base relative flex h-9 w-full items-center rounded-md border border-border/80 bg-background pl-8 pr-8 text-left text-[14px] leading-none shadow-sm cursor-pointer focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary/30"
-                    :class="selectedCompanyFilter ? 'text-foreground' : 'text-muted-foreground'"
-                  >
-                    <span class="i-lucide-search pointer-events-none absolute left-2.5 top-1/2 size-3.5 -translate-y-1/2 text-muted-foreground" />
-                    <span class="min-w-0 truncate">{{ selectedCompanyFilter || 'Search companies...' }}</span>
-                    <span
-                      class="pointer-events-none absolute right-2.5 top-1/2 size-3.5 -translate-y-1/2 text-muted-foreground"
-                      :class="showCompanyMenu ? 'i-lucide-chevron-up' : 'i-lucide-chevron-down'"
-                    />
-                  </button>
-                </DropdownMenuTrigger>
+                <DropdownMenu v-model:open="showCompanyMenu">
+                  <DropdownMenuTrigger as-child>
+                    <button
+                      type="button"
+                      class="flex w-full cursor-pointer items-center justify-between rounded-md px-3 py-2 text-left text-sm transition-colors"
+                      :class="selectedCompanyFilter ? 'bg-primary/10 font-medium text-primary' : 'text-muted-foreground hover:bg-accent hover:text-foreground'"
+                    >
+                      <span class="min-w-0 truncate">{{ selectedCompanyFilter || 'Company' }}</span>
+                      <ChevronDown class="size-3.5 shrink-0 opacity-60" />
+                    </button>
+                  </DropdownMenuTrigger>
                 <DropdownMenuContent
                   align="start"
                   :side-offset="4"
@@ -596,15 +587,16 @@ function close() {
                   </div>
                 </DropdownMenuContent>
               </DropdownMenu>
+              </div>
             </div>
           </div>
 
           <!-- Main Content -->
           <div class="flex-1 p-6 flex flex-col">
             <!-- Channel-eligibility notice -->
-            <div v-if="excludedCount > 0" class="mb-4 flex items-center gap-2 px-4 py-2.5 rounded-lg bg-destructive/10 border border-destructive/20 text-destructive text-xs">
+            <div v-if="excludedCount > 0" class="mb-4 flex items-center gap-2 rounded-lg border border-destructive/20 bg-destructive/10 px-4 py-2.5 text-[13px] text-destructive">
               <AlertCircle class="size-4 shrink-0" />
-              <span><strong>{{ excludedCount }} contact{{ excludedCount === 1 ? '' : 's' }}</strong> without {{ channelRequirementText }} {{ excludedCount === 1 ? 'has' : 'have' }} been removed for the selected channel.</span>
+              <span><strong class="font-semibold">{{ excludedCount }} contact{{ excludedCount === 1 ? '' : 's' }}</strong> without {{ channelRequirementText }} {{ excludedCount === 1 ? 'has' : 'have' }} been removed for the selected channel.</span>
             </div>
             <div class="flex items-center justify-between mb-4">
               <div class="relative w-full max-w-md">
@@ -613,9 +605,15 @@ function close() {
               </div>
               <div class="flex items-center gap-4">
                 <span class="text-sm font-medium text-primary bg-primary/10 px-3 py-1 rounded-full">{{ form.selectedCustomers.length }} selected</span>
-                <button @click="selectAllCustomers" class="text-xs font-semibold text-muted-foreground hover:text-foreground cursor-pointer inline-flex items-center gap-1.5">
-                  <CheckCircle2 class="size-4" :class="form.selectedCustomers.length === filteredCustomers.length && filteredCustomers.length > 0 ? 'text-primary' : ''" /> Select All
-                </button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  class="h-8 border border-border text-xs font-semibold text-muted-foreground hover:border-transparent"
+                  @click="selectAllCustomers"
+                >
+                  <CheckCircle2 class="size-4" :class="form.selectedCustomers.length === filteredCustomers.length && filteredCustomers.length > 0 ? 'text-primary' : ''" />
+                  Select All
+                </Button>
               </div>
             </div>
 
@@ -634,11 +632,15 @@ function close() {
                 <div class="flex-1 min-w-0">
                   <div class="flex items-start justify-between gap-2">
                     <div class="font-medium text-foreground text-sm truncate">{{ customer.name }}</div>
-                    <span v-if="customer.company" class="shrink-0 max-w-[45%] truncate text-[10px] px-1.5 py-0.5 rounded-md bg-muted text-muted-foreground font-medium">{{ customer.company }}</span>
+                    <span v-if="customer.company" class="flex max-w-[45%] shrink-0 items-center gap-1 truncate rounded-md bg-muted px-1.5 py-0.5 text-[10px] font-medium text-muted-foreground">
+                      <Building2 class="size-2.5 shrink-0 opacity-70" />
+                      {{ customer.company }}
+                    </span>
                   </div>
-                  <div class="flex items-center text-xs mt-1 text-muted-foreground gap-1.5">
-                    <span>{{ customer.contextLabel }}</span>
-                    <span class="font-medium text-foreground truncate">{{ customer.contextValue }}</span>
+                  <div class="mt-1 flex items-center gap-1.5 text-xs font-normal text-muted-foreground">
+                    <Mail v-if="customer.email" class="size-3.5 shrink-0" />
+                    <Phone v-else-if="customer.phone" class="size-3.5 shrink-0" />
+                    <span class="truncate">{{ customer.contextValue }}</span>
                   </div>
                 </div>
               </div>
@@ -668,8 +670,8 @@ function close() {
                     <component :is="channel.icon" class="size-6" :class="channel.color" />
                   </div>
                   <div>
-                    <h4 class="font-semibold text-lg text-foreground mb-1">{{ channel.name }}</h4>
-                    <div class="flex items-center gap-1.5 text-sm">
+                    <h4 class="mb-1 text-[15px] font-semibold text-foreground">{{ channel.name }}</h4>
+                    <div class="flex items-center gap-1.5 text-xs">
                       <Star class="size-3.5 fill-amber-400 text-amber-400" v-if="channel.name === 'WhatsApp'" />
                       <span class="font-medium text-foreground">{{ channel.rate }}</span>
                       <span class="text-muted-foreground">{{ channel.rate === '—' ? 'No sends yet' : 'Open Rate' }}</span>

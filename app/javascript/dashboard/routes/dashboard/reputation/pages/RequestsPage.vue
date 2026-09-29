@@ -42,7 +42,6 @@ const baseUrl = () => `/api/v1/accounts/${accountId}/reputation`;
 
 const rawRequests = ref([]);
 const loading = ref(true);
-const isDemoLoaded = ref(true);
 const isRequestModalOpen = ref(false);
 const searchQuery = ref('');
 const selectedChannel = ref('All Channels');
@@ -156,6 +155,7 @@ function mapRequest(r) {
     trigger: r.reputation_template?.name || 'Manual Send',
     destinations: destList,
     destination: destList[0] || '',
+    rating: r.reputation_feedback_submission?.rating || null,
     messageBody: r.message || '',
     token: r.token,
     contactId: r.contact?.id,
@@ -235,9 +235,7 @@ const stats = computed(() => {
   };
 });
 
-const showPopulated = computed(
-  () => isDemoLoaded.value && (requests.value.length > 0 || loading.value)
-);
+const showPopulated = computed(() => requests.value.length > 0);
 
 function statusBadgeClass(status) {
   return {
@@ -250,11 +248,6 @@ function statusBadgeClass(status) {
     'Follow-up Sent': 'bg-warning/15 text-warning border-transparent',
     Failed: 'bg-destructive/10 text-destructive border-transparent',
   }[status] || 'bg-muted text-muted-foreground border-transparent';
-}
-
-function toggleDemo() {
-  isDemoLoaded.value = !isDemoLoaded.value;
-  if (!isDemoLoaded.value) selectedRequest.value = null;
 }
 
 async function copyReviewLink(req) {
@@ -410,7 +403,7 @@ async function resendRequest(req) {
                   <DropdownMenuTrigger as-child>
                     <Button
                       variant="outline"
-                      class="h-9 gap-1.5 border border-border hover:border-transparent text-[13px] font-normal bg-card px-3 rounded-lg shadow-xs"
+                      class="h-9 gap-1.5 border border-border hover:border-transparent text-[13px] font-medium bg-card px-3 rounded-lg shadow-xs"
                     >
                       <span>{{ selectedChannel }}</span>
                       <ChevronDown class="size-3.5 opacity-60 ml-0.5" />
@@ -428,7 +421,7 @@ async function resendRequest(req) {
                   <DropdownMenuTrigger as-child>
                     <Button
                       variant="outline"
-                      class="h-9 gap-1.5 border border-border hover:border-transparent text-[13px] font-normal bg-card px-3 rounded-lg shadow-xs"
+                      class="h-9 gap-1.5 border border-border hover:border-transparent text-[13px] font-medium bg-card px-3 rounded-lg shadow-xs"
                     >
                       <span>{{ selectedStatus }}</span>
                       <ChevronDown class="size-3.5 opacity-60 ml-0.5" />
@@ -448,7 +441,7 @@ async function resendRequest(req) {
                   <DropdownMenuTrigger as-child>
                     <Button
                       variant="outline"
-                      class="h-9 gap-1.5 border border-border hover:border-transparent text-[13px] font-normal bg-card px-3 rounded-lg shadow-xs"
+                      class="h-9 gap-1.5 border border-border hover:border-transparent text-[13px] font-medium bg-card px-3 rounded-lg shadow-xs"
                     >
                       <Calendar class="size-3.5 text-muted-foreground" />
                       <span>{{ selectedTimeframe }}</span>
@@ -501,7 +494,14 @@ async function resendRequest(req) {
                             <span class="text-[14px] font-medium text-foreground truncate group-hover:text-primary transition-colors">{{ req.customerName }}</span>
                             <span class="text-[11px] text-muted-foreground font-mono">{{ req.displayId }}</span>
                           </div>
-                          <div class="text-[12.5px] text-muted-foreground truncate">{{ req.customerPhone || req.customerEmail }}</div>
+                          <div v-if="req.customerPhone" class="mt-0.5 flex items-center gap-1 text-[12.5px] text-muted-foreground">
+                            <Smartphone class="size-3 shrink-0" />
+                            <span class="truncate">{{ req.customerPhone }}</span>
+                          </div>
+                          <div v-if="req.customerEmail" class="mt-0.5 flex items-center gap-1 text-[12.5px] text-muted-foreground">
+                            <Mail class="size-3 shrink-0" />
+                            <span class="truncate">{{ req.customerEmail }}</span>
+                          </div>
                         </div>
                       </div>
                     </td>
@@ -542,8 +542,15 @@ async function resendRequest(req) {
                             {{ req.status }}
                           </span>
                         </div>
-                        <div v-if="req.status === 'Completed' && req.destination" class="text-[11px] font-medium text-muted-foreground mt-1">
-                          on {{ req.destination }}
+                        <div v-if="req.status === 'Completed' && (req.destination || req.rating)" class="mt-1 flex items-center gap-1.5 text-[11px] font-medium text-muted-foreground">
+                          <span v-if="req.rating" class="inline-flex items-center gap-0.5">
+                            <Star
+                              v-for="i in req.rating"
+                              :key="i"
+                              class="size-3 fill-warning text-warning"
+                            />
+                          </span>
+                          <span v-if="req.destination">on {{ req.destination }}</span>
                         </div>
                       </div>
                     </td>
@@ -561,32 +568,31 @@ async function resendRequest(req) {
       <template v-else>
         <div class="flex-1 flex flex-col justify-center items-center py-16 px-8">
           <div class="flex flex-col items-center text-center max-w-md">
-            <div class="size-16 rounded-full bg-primary/10 text-primary flex items-center justify-center mb-4">
-              <Send class="size-6" />
+            <div class="mb-4 flex size-16 items-center justify-center rounded-full bg-primary/10 text-primary ring-8 ring-primary/5">
+              <Send class="size-7" />
             </div>
             <h2 class="text-[20px] font-[600] text-foreground">No Review Requests Yet</h2>
             <p class="text-[13.5px] text-muted-foreground mt-2 leading-relaxed">
               Start requesting customer reviews or send tailored invites via SMS, Email, and WhatsApp in seconds.
             </p>
-            <Button class="mt-6 gap-2 shadow-xs text-[13.5px] h-9 px-4" @click="isRequestModalOpen = true">
-              <Send class="size-4" />
-              Send Your First Request
-            </Button>
+            <div class="mt-6 flex items-center gap-3">
+              <Button class="h-9 gap-2 px-4 text-[13.5px] shadow-xs" @click="isRequestModalOpen = true">
+                <Send class="size-4" />
+                Send Your First Request
+              </Button>
+              <Button
+                as="router-link"
+                :to="{ name: 'reputation_settings' }"
+                variant="outline"
+                class="h-9 border border-border px-4 text-[13.5px]"
+              >
+                Manage Templates
+              </Button>
+            </div>
           </div>
         </div>
       </template>
 
-      <div class="mt-auto border-t border-border/80 bg-muted/20 px-8 py-3 flex items-center justify-between">
-        <span class="text-[12px] text-muted-foreground">Preview State Mode (Developer Control)</span>
-        <Button
-          variant="outline"
-          size="sm"
-          class="h-7 text-[12px] font-medium border border-border hover:border-transparent bg-card"
-          @click="toggleDemo"
-        >
-          Toggle to {{ isDemoLoaded ? 'Empty State' : 'Populated Data' }}
-        </Button>
-      </div>
     </div>
 
     <div

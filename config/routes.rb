@@ -135,7 +135,7 @@ Rails.application.routes.draw do
             resources :orders, only: [:index, :create] do
               collection do
                 get :search
-                get :config
+                get :provisioning_config
               end
             end
           end

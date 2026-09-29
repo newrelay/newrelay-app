@@ -11,7 +11,7 @@ class NumberProvisioning::OrderPolicy < ApplicationPolicy
     @account_user.administrator?
   end
 
-  def config?
+  def provisioning_config?
     @account_user.administrator?
   end
 end

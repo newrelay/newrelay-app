@@ -8,7 +8,13 @@ class NumberProvisioning::ExotelProvider
   BASE_URL = 'https://api.exotel.com/v2_beta'.freeze
   PROVIDER_TYPE = 'exotel'.freeze
 
+  COUNTRY_CODE_FORMAT = /\A[A-Z]{2}\z/
+  VALID_NUMBER_TYPES   = %w[Mobile Local TollFree].freeze
+
   def search(country_code:, type: 'Mobile')
+    raise ArgumentError, "Invalid country_code: #{country_code.inspect}" unless country_code.to_s.match?(COUNTRY_CODE_FORMAT)
+    raise ArgumentError, "Invalid type: #{type.inspect}" unless VALID_NUMBER_TYPES.include?(type.to_s)
+
     response = HTTParty.get(
       "#{BASE_URL}/Accounts/#{account_sid}/AvailablePhoneNumbers/#{country_code}/#{type}",
       basic_auth: basic_auth

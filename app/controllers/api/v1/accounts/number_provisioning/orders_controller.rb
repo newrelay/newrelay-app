@@ -44,7 +44,10 @@ class Api::V1::Accounts::NumberProvisioning::OrdersController < Api::V1::Account
     order = Current.account.number_provisioning_orders.find_by(id: existing)
     return order if order && order.status != 'failed'
 
-    Redis::Alfred.set(idempotency_cache_key, IDEMPOTENCY_IN_PROGRESS, ex: IDEMPOTENCY_TTL)
+    # NX here too: without it two concurrent retries of the same failed order both
+    # read status='failed', both overwrite the slot, and both place new orders.
+    return render_order_in_progress unless Redis::Alfred.set(idempotency_cache_key, IDEMPOTENCY_IN_PROGRESS, nx: true, ex: IDEMPOTENCY_TTL)
+
     place_order(provider)
   end
 

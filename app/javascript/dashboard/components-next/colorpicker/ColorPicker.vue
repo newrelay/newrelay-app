@@ -3,8 +3,6 @@ import { nextTick, ref } from 'vue';
 import { Chrome } from '@lk77/vue3-color';
 import { onClickOutside } from '@vueuse/core';
 
-import Button from 'dashboard/components-next/button/Button.vue';
-
 defineProps({
   modelValue: {
     type: String,
@@ -61,22 +59,19 @@ const updateColor = e => {
 
 <template>
   <div ref="triggerRef" class="relative w-fit">
-    <Button
+    <button
       v-if="variant === 'default'"
-      color="slate"
-      icon="i-lucide-pipette"
-      trailing-icon
-      class="!px-3 !py-3 [&>svg]:w-4 [&>svg]:h-4"
+      type="button"
+      class="inline-flex items-center gap-2 bg-transparent p-0 text-sm font-medium text-foreground shadow-none focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary/30"
       @click="toggleColorPicker"
     >
-      <div class="flex items-center flex-grow gap-2">
-        <span
-          class="rounded-md size-4"
-          :style="{ backgroundColor: modelValue }"
-        />
-        <span class="min-w-0 truncate">{{ modelValue }}</span>
-      </div>
-    </Button>
+      <span
+        class="size-4 shrink-0 rounded-full border border-border"
+        :style="{ backgroundColor: modelValue }"
+      />
+      <span class="min-w-0 truncate">{{ modelValue }}</span>
+      <span class="i-lucide-pipette size-3.5 text-muted-foreground" />
+    </button>
     <button
       v-else
       type="button"

@@ -442,7 +442,7 @@ const handleMagicPaletteApplied = palette => {
                   @click="faviconInput?.click()"
                 >
                   <div
-                    class="my-5 flex size-12 items-center justify-center overflow-hidden rounded-xl border border-dashed border-border/80 bg-muted/40 transition-all duration-300 group-hover:scale-105 group-hover:border-primary/40 group-hover:bg-primary/5"
+                    class="my-3 flex size-16 items-center justify-center overflow-hidden rounded-2xl border border-dashed border-border/80 bg-muted/40 transition-all duration-300 group-hover:scale-105 group-hover:border-primary/40 group-hover:bg-primary/5"
                   >
                     <img
                       v-if="faviconPreview"
@@ -452,7 +452,7 @@ const handleMagicPaletteApplied = palette => {
                     />
                     <span
                       v-else
-                      class="i-lucide-globe size-5 text-muted-foreground/60 transition-colors group-hover:text-primary/80"
+                      class="i-lucide-globe size-6 text-muted-foreground/60 transition-colors group-hover:text-primary/80"
                     />
                   </div>
                   <h4 class="text-sm font-medium text-foreground">

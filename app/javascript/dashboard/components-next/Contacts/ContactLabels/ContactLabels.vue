@@ -103,6 +103,9 @@ watch(
   }
 );
 onMounted(() => {
+  if (!allLabels.value?.length) {
+    store.dispatch('labels/get');
+  }
   if (route.params.contactId) {
     fetchLabels(route.params.contactId);
   }

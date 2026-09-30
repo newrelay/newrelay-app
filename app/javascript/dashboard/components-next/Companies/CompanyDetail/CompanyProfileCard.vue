@@ -4,7 +4,11 @@ import { useI18n } from 'vue-i18n';
 import { useAlert } from 'dashboard/composables';
 import Avatar from 'dashboard/components-next/avatar/Avatar.vue';
 import Policy from 'dashboard/components/policy.vue';
-import { RelayBadge, RelayButton } from 'dashboard/components-next/relay';
+import {
+  RelayBadge,
+  RelayButton,
+  RelayInput,
+} from 'dashboard/components-next/relay';
 import { useCompaniesStore } from 'dashboard/stores/companies';
 
 const props = defineProps({
@@ -145,11 +149,12 @@ const commitNameEdit = async () => {
                 class="i-lucide-pencil size-4 text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100"
               />
             </h2>
-            <input
+            <RelayInput
               v-else
               v-model="nameDraft"
-              type="text"
-              class="rounded-md border border-border bg-background px-2 py-0.5 text-xl font-bold text-foreground shadow-sm focus:outline-none focus:ring-1 focus:ring-primary/50"
+              autofocus
+              :placeholder="t('COMPANIES.CREATE.FIELDS.NAME_PLACEHOLDER')"
+              class-name="h-9 w-64 max-w-full"
               @blur="commitNameEdit"
               @keyup.enter="commitNameEdit"
             />

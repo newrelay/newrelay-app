@@ -136,7 +136,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="flex w-full min-w-[240px] flex-col gap-4 p-4 pb-12">
+  <div class="flex w-full min-w-[240px] shrink-0 flex-col gap-4 p-4 pb-12">
     <ContactInfo
       :contact="contact"
       :conversation-id="conversationId"
@@ -158,7 +158,7 @@ onMounted(() => {
         ghost-class="ghost"
         handle=".drag-handle"
         item-key="name"
-        class="flex flex-col gap-4"
+        class="flex flex-col gap-4 [&>*:last-child]:mb-6"
         @start="dragging = true"
         @end="onDragEnd"
       >

@@ -48,6 +48,10 @@ defineProps({
     type: String,
     default: 'DROPDOWN_MENU.EMPTY_STATE',
   },
+  inFlow: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 defineEmits(['action', 'search', 'empty']);
@@ -56,7 +60,15 @@ defineOptions({ inheritAttrs: false });
 </script>
 
 <template>
-  <div :class="cn('absolute', DROPDOWN_MENU_CONTENT_CLASS, $attrs.class)">
+  <div
+    :class="
+      cn(
+        inFlow ? 'relative' : 'absolute',
+        DROPDOWN_MENU_CONTENT_CLASS,
+        $attrs.class
+      )
+    "
+  >
     <DropdownMenuList
       :menu-items="menuItems"
       :menu-sections="menuSections"

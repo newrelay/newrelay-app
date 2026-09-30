@@ -28,8 +28,8 @@ const isActive = computed(() => activeValue?.value === props.value);
       cn(
         props.variant === 'underline'
           ? [
-              'relative rounded-none border-b-2 border-transparent px-1 pb-3 pt-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground',
-              isActive ? 'border-primary text-foreground' : '',
+              'relative -mb-px inline-flex shrink-0 items-center rounded-none bg-transparent px-1 pb-3 pt-2 text-left text-sm font-normal text-muted-foreground shadow-none transition-colors hover:text-foreground',
+              isActive ? 'font-medium text-foreground' : '',
             ]
           : [
               'inline-flex items-center justify-center gap-1.5 whitespace-nowrap rounded-md px-3 py-1 text-sm font-medium transition-all',
@@ -44,5 +44,10 @@ const isActive = computed(() => activeValue?.value === props.value);
     @click="setValue?.(value)"
   >
     <slot />
+    <span
+      v-if="variant === 'underline' && isActive"
+      class="absolute inset-x-0 bottom-0 h-px bg-primary"
+      aria-hidden="true"
+    />
   </button>
 </template>

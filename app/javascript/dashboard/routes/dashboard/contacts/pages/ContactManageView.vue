@@ -199,7 +199,7 @@ onMounted(() => {
       <div
         class="flex min-w-0 flex-col bg-background lg:min-h-0 lg:flex-1 lg:overflow-hidden"
       >
-        <div class="shrink-0 bg-card px-6">
+        <div class="shrink-0 bg-background px-6">
           <RelayTabs v-model="activeTab">
             <RelayTabsList variant="underline">
               <RelayTabsTrigger

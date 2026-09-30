@@ -1,5 +1,6 @@
 class Api::V1::Accounts::NumberProvisioning::OrdersController < Api::V1::Accounts::BaseController
-  before_action :set_order, only: [:requirements]
+  before_action :set_order, only: [:requirements, :voice_agent]
+  rescue_from ::NumberProvisioning::VoiceAgentAttachService::Error, with: :render_voice_agent_error
   before_action :check_authorization
 
   rescue_from ::NumberProvisioning::Provider::ProviderDisabledError, with: :render_provider_disabled
@@ -12,7 +13,7 @@ class Api::V1::Accounts::NumberProvisioning::OrdersController < Api::V1::Account
   SEARCH_CACHE_TTL = 5.minutes.to_i
 
   def index
-    @orders = Current.account.number_provisioning_orders.order(created_at: :desc)
+    @orders = Current.account.number_provisioning_orders.includes(:voice_agent).order(created_at: :desc)
   end
 
   def provisioning_config
@@ -58,6 +59,11 @@ class Api::V1::Accounts::NumberProvisioning::OrdersController < Api::V1::Account
     @order.requirement_document.attach(document)
     NumberProvisioning::DummyExotel.mark_documents_submitted(@order.provider_order_id)
     ::NumberProvisioning::PollOrderStatusJob.perform_now(@order.id)
+    @order.reload
+  end
+
+  def voice_agent
+    ::NumberProvisioning::VoiceAgentAttachService.new(order: @order).perform
     @order.reload
   end
 
@@ -230,6 +236,10 @@ class Api::V1::Accounts::NumberProvisioning::OrdersController < Api::V1::Account
     authorize(@order || ::NumberProvisioning::Order)
   end
 
+  def render_voice_agent_error(exception)
+    render_could_not_create_error(exception.message)
+  end
+
   def render_provider_disabled(exception)
     log_handled_error(exception)
     render_could_not_create_error(::NumberProvisioning::Order.failure_message_for('provider_disabled'))
@@ -257,4 +267,5 @@ class Api::V1::Accounts::NumberProvisioning::OrdersController < Api::V1::Account
   def order_params
     params.require(:order).permit(:country_code, :phone_number)
   end
+
 end

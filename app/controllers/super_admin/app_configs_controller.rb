@@ -88,7 +88,7 @@ class SuperAdmin::AppConfigsController < SuperAdmin::ApplicationController
       'notion' => %w[NOTION_CLIENT_ID NOTION_CLIENT_SECRET],
       'google' => %w[GOOGLE_OAUTH_CLIENT_ID GOOGLE_OAUTH_CLIENT_SECRET GOOGLE_OAUTH_REDIRECT_URI ENABLE_GOOGLE_OAUTH_LOGIN],
       'relay-ai' => %w[CAPTAIN_OPEN_AI_API_KEY CAPTAIN_OPEN_AI_MODEL CAPTAIN_OPEN_AI_ENDPOINT],
-      'number_provisioning' => %w[TELNYX_RESELLER_API_KEY]
+      'number_provisioning' => %w[TELNYX_RESELLER_API_KEY ELEVENLABS_VOICE_AGENT_API_KEY VOICE_AGENT_INDIA_TRUNK_VERIFIED]
     }
 
     @allowed_configs = mapping.fetch(

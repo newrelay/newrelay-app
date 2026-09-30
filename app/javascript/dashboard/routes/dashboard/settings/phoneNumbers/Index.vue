@@ -17,6 +17,7 @@ const { t } = useI18n();
 const REFRESH_MS = 15000;
 const showBuyModal = ref(false);
 const resumeOrder = ref(null);
+const connectingId = ref(null);
 let refreshTimer = null;
 
 const records = computed(() => getters['phoneNumberOrders/getOrders'].value);
@@ -57,6 +58,31 @@ function openDocuments(order) {
 function closeBuyModal() {
   showBuyModal.value = false;
   resumeOrder.value = null;
+}
+
+function voiceAgent(order) {
+  return order.voice_agent;
+}
+
+function showConnect(order) {
+  return order.status === 'active' && voiceAgent(order)?.status !== 'saved';
+}
+
+function voiceError(order) {
+  const code = voiceAgent(order)?.failure_code;
+  if (!code) return '';
+  return t(`PHONE_NUMBERS_MGMT.LIST.ERRORS.${code}`);
+}
+
+async function connectVoiceAgent(order) {
+  connectingId.value = order.id;
+  try {
+    await store.dispatch('phoneNumberOrders/connectVoiceAgent', order.id);
+  } catch {
+    await store.dispatch('phoneNumberOrders/get', { silent: true });
+  } finally {
+    connectingId.value = null;
+  }
 }
 
 function hasUnfinished() {
@@ -181,7 +207,32 @@ watch(records, () => {
             >
               {{ $t('PHONE_NUMBERS_MGMT.LIST.UPLOAD_DOCUMENTS') }}
             </RelayButton>
+            <RelayButton
+              v-if="showConnect(order)"
+              variant="outline"
+              class="h-8 border border-border px-3 text-[13px] font-normal"
+              :disabled="connectingId === order.id"
+              @click="connectVoiceAgent(order)"
+            >
+              {{ $t('PHONE_NUMBERS_MGMT.LIST.CONNECT') }}
+            </RelayButton>
           </div>
+          <p
+            v-if="voiceAgent(order)?.status === 'saved'"
+            class="mt-1 text-[13px] text-muted-foreground"
+          >
+            {{
+              voiceAgent(order).twilio_connected
+                ? $t('PHONE_NUMBERS_MGMT.LIST.TWILIO_CONNECTED')
+                : $t('PHONE_NUMBERS_MGMT.LIST.SAVED')
+            }}
+          </p>
+          <p
+            v-else-if="voiceError(order)"
+            class="mt-1 text-[13px] text-destructive"
+          >
+            {{ voiceError(order) }}
+          </p>
           <div
             class="mt-1 flex flex-wrap items-center gap-3.5 text-[13px] text-muted-foreground"
           >

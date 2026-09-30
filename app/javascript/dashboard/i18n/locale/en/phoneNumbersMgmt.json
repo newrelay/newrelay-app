@@ -22,7 +22,17 @@
         "BILLING_FAILED": "Billing failed",
         "INBOX_PENDING": "Inbox not ready"
       },
-      "UPLOAD_DOCUMENTS": "Upload documents"
+      "UPLOAD_DOCUMENTS": "Upload documents",
+      "CONNECT": "Connect",
+      "SAVED": "Connected to ElevenLabs Voice AI. Calls are not answered by Relay AI yet.",
+      "TWILIO_CONNECTED": "Twilio is connected to ElevenLabs for this number.",
+      "ERRORS": {
+        "voice_agent_credentials_missing": "Connect ElevenLabs Voice AI in Integrations first.",
+        "voice_agent_brain_missing": "Link Relay AI to this inbox before connecting.",
+        "voice_agent_india_unverified": "India calls are not verified yet.",
+        "voice_agent_not_active": "This number is not active yet.",
+        "voice_agent_twilio_rejected": "ElevenLabs could not connect this Twilio number."
+      }
     },
     "BUY_MODAL": {
       "TITLE": "Buy a phone number",

@@ -139,6 +139,7 @@ Rails.application.routes.draw do
               end
               member do
                 post :requirements
+                post :voice_agent
               end
             end
           end

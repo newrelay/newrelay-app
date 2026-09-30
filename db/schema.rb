@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2026_09_29_193100) do
+ActiveRecord::Schema[7.1].define(version: 2026_09_30_180000) do
   # These extensions should be enabled to support this database
   enable_extension "pg_stat_statements"
   enable_extension "pg_trgm"
@@ -1625,6 +1625,21 @@ ActiveRecord::Schema[7.1].define(version: 2026_09_29_193100) do
     t.index ["status"], name: "index_number_provisioning_orders_on_status"
   end
 
+  create_table "number_provisioning_voice_agents", force: :cascade do |t|
+    t.bigint "account_id", null: false
+    t.bigint "order_id", null: false
+    t.string "public_id", null: false
+    t.string "status", default: "saved", null: false
+    t.string "failure_code"
+    t.string "previous_sip_target"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "elevenlabs_phone_number_id"
+    t.index ["account_id"], name: "index_number_provisioning_voice_agents_on_account_id"
+    t.index ["order_id"], name: "index_number_provisioning_voice_agents_on_order_id", unique: true
+    t.index ["public_id"], name: "index_number_provisioning_voice_agents_on_public_id", unique: true
+  end
+
   create_table "payment_transactions", force: :cascade do |t|
     t.bigint "account_id", null: false
     t.string "stripe_customer_id"
@@ -2271,6 +2286,8 @@ ActiveRecord::Schema[7.1].define(version: 2026_09_29_193100) do
   add_foreign_key "inboxes", "portals"
   add_foreign_key "marketplace_plan_prices", "accounts"
   add_foreign_key "number_provisioning_orders", "accounts"
+  add_foreign_key "number_provisioning_voice_agents", "accounts"
+  add_foreign_key "number_provisioning_voice_agents", "number_provisioning_orders", column: "order_id"
   add_foreign_key "payment_transactions", "accounts"
   add_foreign_key "pipeline_stages", "accounts"
   add_foreign_key "pipeline_stages", "pipelines"

@@ -105,6 +105,13 @@ export const actions = {
       commit(types.SET_PHONE_NUMBER_ORDER_UI_FLAG, { isCreating: false });
     }
   },
+
+  connectVoiceAgent: async function connectVoiceAgent({ commit }, orderId) {
+    const response =
+      await NumberProvisioningOrdersAPI.connectVoiceAgent(orderId);
+    commit(types.UPDATE_PHONE_NUMBER_ORDER, response.data);
+    return response.data;
+  },
 };
 
 export const mutations = {

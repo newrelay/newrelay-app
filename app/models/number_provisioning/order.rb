@@ -56,6 +56,7 @@ class NumberProvisioning::Order < ApplicationRecord
 
   belongs_to :account
   belongs_to :inbox, optional: true
+  has_one :voice_agent, class_name: 'NumberProvisioning::VoiceAgent', dependent: :destroy
 
   validates :provider_type, :country_code, :status, presence: true
   validates :status, inclusion: { in: STATUSES }

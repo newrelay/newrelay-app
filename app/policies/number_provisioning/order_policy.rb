@@ -15,6 +15,10 @@ class NumberProvisioning::OrderPolicy < ApplicationPolicy
     @account_user.administrator?
   end
 
+  def voice_agent?
+    @account_user.administrator?
+  end
+
   def provisioning_config?
     @account_user.administrator?
   end

@@ -30,6 +30,10 @@ class NumberProvisioningOrdersAPI extends ApiClient {
     body.append('document', file);
     return axios.post(`${this.url}/${orderId}/requirements`, body);
   }
+
+  connectVoiceAgent(orderId) {
+    return axios.post(`${this.url}/${orderId}/voice_agent`);
+  }
 }
 
 export default new NumberProvisioningOrdersAPI();

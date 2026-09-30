@@ -203,6 +203,17 @@
   description: 'The platform-owned Exotel API token (basic auth password) used to search for and order numbers on behalf of tenants.'
   locked: false
   type: secret
+- name: ELEVENLABS_VOICE_AGENT_API_KEY
+  display_title: 'ElevenLabs Voice Agent API Key'
+  description: 'Platform key for the voice agent. Read at request time. Not copied onto a customer number.'
+  locked: false
+  type: secret
+- name: VOICE_AGENT_INDIA_TRUNK_VERIFIED
+  display_title: 'Voice agent India trunk verified'
+  description: 'Set only after one logged live India call reaches the ElevenLabs agent. There is no per-account override.'
+  type: boolean
+  value: false
+  locked: false
 - name: NUMBER_PROVISIONING_TELNYX_ENABLED
   display_title: 'Number provisioning: Telnyx enabled'
   description: 'Allow tenants to search for and order Telnyx numbers via the reseller flow.'

@@ -34,6 +34,8 @@
 #  fk_rails_...  (account_id => accounts.id)
 #
 class NumberProvisioning::Order < ApplicationRecord
+  has_one_attached :requirement_document
+
   STATUSES = %w[search_pending order_placed requirements_pending requirements_under_review
                 requirements_rejected active failed cancelled billing_failed inbox_pending].freeze
   # billing_failed stops the poll. inbox_pending does not: the inbox is retried.

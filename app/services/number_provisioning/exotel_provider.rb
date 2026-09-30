@@ -16,17 +16,25 @@ class NumberProvisioning::ExotelProvider
     raise ArgumentError, "Invalid country_code: #{country_code.inspect}" unless country_code.to_s.match?(COUNTRY_CODE_FORMAT)
     raise ArgumentError, "Invalid type: #{type.inspect}" unless VALID_NUMBER_TYPES.include?(type.to_s)
 
-    response = HTTParty.get(
-      "#{BASE_URL}/Accounts/#{account_sid}/AvailablePhoneNumbers/#{country_code}/#{type}",
-      basic_auth: basic_auth,
-      timeout: REQUEST_TIMEOUT
-    )
-    assert_success!(response, 'Exotel search')
+    numbers = if NumberProvisioning::DummyExotel.enabled?
+                Rails.logger.info('[NumberProvisioning] exotel dummy search')
+                NumberProvisioning::DummyExotel.search
+              else
+                response = HTTParty.get(
+                  "#{BASE_URL}/Accounts/#{account_sid}/AvailablePhoneNumbers/#{country_code}/#{type}",
+                  basic_auth: basic_auth,
+                  timeout: REQUEST_TIMEOUT
+                )
+                assert_success!(response, 'Exotel search')
+                Array(response.parsed_response)
+              end
 
-    Array(response.parsed_response).map { |number| normalize_search_result(number) }
+    numbers.map { |number| normalize_search_result(number) }
   end
 
   def order(phone_number:)
+    return NumberProvisioning::DummyExotel.order(phone_number) if NumberProvisioning::DummyExotel.enabled?
+
     response = HTTParty.post(
       "#{BASE_URL}/Accounts/#{account_sid}/IncomingPhoneNumbers",
       basic_auth: basic_auth,
@@ -47,6 +55,8 @@ class NumberProvisioning::ExotelProvider
   end
 
   def status(provider_order_id:)
+    return NumberProvisioning::DummyExotel.status(provider_order_id) if NumberProvisioning::DummyExotel.enabled?
+
     response = HTTParty.get(
       "#{BASE_URL}/Accounts/#{account_sid}/IncomingPhoneNumbers/#{provider_order_id}",
       basic_auth: basic_auth,
@@ -62,6 +72,7 @@ class NumberProvisioning::ExotelProvider
   end
 
   def release(phone_number:, provider_order_id:)
+    return NumberProvisioning::DummyExotel.release(provider_order_id) if NumberProvisioning::DummyExotel.enabled?
     return false if provider_order_id.blank?
 
     response = HTTParty.delete(

@@ -11,6 +11,10 @@ class NumberProvisioning::OrderPolicy < ApplicationPolicy
     @account_user.administrator?
   end
 
+  def requirements?
+    @account_user.administrator?
+  end
+
   def provisioning_config?
     @account_user.administrator?
   end

@@ -24,6 +24,12 @@ class NumberProvisioningOrdersAPI extends ApiClient {
       headers: { 'Idempotency-Key': idempotencyKey },
     });
   }
+
+  submitRequirements(orderId, file) {
+    const body = new FormData();
+    body.append('document', file);
+    return axios.post(`${this.url}/${orderId}/requirements`, body);
+  }
 }
 
 export default new NumberProvisioningOrdersAPI();

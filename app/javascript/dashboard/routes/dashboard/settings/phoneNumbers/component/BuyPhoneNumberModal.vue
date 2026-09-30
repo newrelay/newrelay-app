@@ -1,5 +1,5 @@
 <script setup>
-import { computed, reactive, watch } from 'vue';
+import { computed, reactive, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useAlert } from 'dashboard/composables';
 import { useStore, useMapGetter } from 'dashboard/composables/store';
@@ -20,6 +20,10 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  resumeOrder: {
+    type: Object,
+    default: null,
+  },
 });
 
 const emit = defineEmits(['close']);
@@ -28,6 +32,7 @@ const STEPS = {
   COUNTRY: 'country',
   RESULTS: 'results',
   CONFIRM: 'confirm',
+  DOCUMENTS: 'documents',
 };
 
 const { t } = useI18n();
@@ -36,6 +41,7 @@ const store = useStore();
 const uiFlags = useMapGetter('phoneNumberOrders/getUIFlags');
 const providers = useMapGetter('phoneNumberOrders/getProviders');
 
+const fileInput = ref(null);
 const state = reactive({
   step: STEPS.COUNTRY,
   countryCode: '',
@@ -43,6 +49,9 @@ const state = reactive({
   searchQuery: '',
   selectedNumber: null,
   orderIdempotencyKey: null,
+  order: null,
+  documentFile: null,
+  documentName: '',
 });
 
 // Provider is derived from country on the backend (NumberProvisioning.for) --
@@ -71,7 +80,17 @@ const stepTitle = computed(() => {
   if (state.step === STEPS.CONFIRM) {
     return t('PHONE_NUMBERS_MGMT.BUY_MODAL.CONFIRM.TITLE');
   }
+  if (state.step === STEPS.DOCUMENTS) {
+    return t('PHONE_NUMBERS_MGMT.BUY_MODAL.DOCUMENTS.TITLE');
+  }
   return t('PHONE_NUMBERS_MGMT.BUY_MODAL.TITLE');
+});
+
+const stepDescription = computed(() => {
+  if (state.step === STEPS.DOCUMENTS) {
+    return t('PHONE_NUMBERS_MGMT.BUY_MODAL.DOCUMENTS.DESCRIPTION');
+  }
+  return t('PHONE_NUMBERS_MGMT.BUY_MODAL.DESCRIPTION');
 });
 
 // Both adapters return the normalized shape
@@ -118,6 +137,16 @@ function resetState() {
   state.searchQuery = '';
   state.selectedNumber = null;
   state.orderIdempotencyKey = null;
+  state.order = null;
+  state.documentFile = null;
+  state.documentName = '';
+}
+
+function showDocuments(order) {
+  state.order = order;
+  state.documentFile = null;
+  state.documentName = '';
+  state.step = STEPS.DOCUMENTS;
 }
 
 async function selectCountry(countryCode) {
@@ -167,13 +196,17 @@ async function confirmOrder() {
   try {
     // Api::V1::Accounts::NumberProvisioning::OrdersController#order_params
     // permits `order: { country_code, phone_number }` only -- no `type`.
-    await store.dispatch('phoneNumberOrders/create', {
+    const order = await store.dispatch('phoneNumberOrders/create', {
       idempotencyKey: state.orderIdempotencyKey,
       order: {
         country_code: state.countryCode,
         phone_number: getPhoneNumber(state.selectedNumber),
       },
     });
+    if (order?.status === 'requirements_pending') {
+      showDocuments(order);
+      return;
+    }
     useAlert(t('PHONE_NUMBERS_MGMT.BUY_MODAL.API.ORDER_SUCCESS'));
     emit('close');
   } catch (error) {
@@ -186,12 +219,48 @@ async function confirmOrder() {
   }
 }
 
+function onDocumentChosen(event) {
+  const file = event.target.files?.[0];
+  state.documentFile = file || null;
+  state.documentName = file?.name || '';
+}
+
+async function submitDocuments() {
+  if (!state.documentFile || !state.order?.id) return;
+  try {
+    const order = await store.dispatch('phoneNumberOrders/submitRequirements', {
+      orderId: state.order.id,
+      file: state.documentFile,
+    });
+    state.order = order;
+    if (order?.status === 'active') {
+      useAlert(t('PHONE_NUMBERS_MGMT.BUY_MODAL.DOCUMENTS.SUCCESS'));
+      emit('close');
+      return;
+    }
+    useAlert(
+      order?.failure_message ||
+        t('PHONE_NUMBERS_MGMT.BUY_MODAL.DOCUMENTS.ERROR')
+    );
+  } catch (error) {
+    useAlert(
+      error.response?.data?.message ||
+        error.response?.data?.error ||
+        t('PHONE_NUMBERS_MGMT.BUY_MODAL.DOCUMENTS.ERROR')
+    );
+  }
+}
+
 // Reset to the first step each time the modal is reopened, rather than on
 // close, so the closing animation (if any) doesn't show the state resetting.
 watch(
   () => props.show,
   show => {
     if (!show) return;
+    if (props.resumeOrder?.status === 'requirements_pending') {
+      showDocuments(props.resumeOrder);
+      return;
+    }
     resetState();
     store.dispatch('phoneNumberOrders/fetchConfig');
   }
@@ -202,7 +271,7 @@ watch(
   <RelayModal
     :show="show"
     :title="stepTitle"
-    :description="t('PHONE_NUMBERS_MGMT.BUY_MODAL.DESCRIPTION')"
+    :description="stepDescription"
     size="lg"
     flush
     @close="emit('close')"
@@ -330,6 +399,46 @@ watch(
           @click="confirmOrder"
         >
           {{ t('PHONE_NUMBERS_MGMT.BUY_MODAL.CONFIRM.CONFIRM_BUTTON') }}
+        </RelayButton>
+      </div>
+    </template>
+
+    <template v-else-if="state.step === STEPS.DOCUMENTS">
+      <div class="flex flex-col gap-4" :class="RELAY_MODAL_BODY_CLASS">
+        <p class="text-[16px] font-semibold text-foreground">
+          {{ state.order?.phone_number }}
+        </p>
+        <input
+          ref="fileInput"
+          type="file"
+          class="sr-only"
+          accept=".pdf,.png,.jpg,.jpeg"
+          @change="onDocumentChosen"
+        />
+        <div class="flex flex-col gap-1.5">
+          <RelayButton
+            type="button"
+            variant="outline"
+            class="h-9 w-fit border border-border"
+            @click="fileInput?.click()"
+          >
+            {{ t('PHONE_NUMBERS_MGMT.BUY_MODAL.DOCUMENTS.CHOOSE') }}
+          </RelayButton>
+          <p
+            v-if="state.documentName"
+            class="text-[13px] text-muted-foreground"
+          >
+            {{ state.documentName }}
+          </p>
+        </div>
+      </div>
+      <div :class="RELAY_MODAL_FORM_FOOTER_CLASS">
+        <RelayButton
+          size="lg"
+          :disabled="!state.documentFile || uiFlags.isCreating"
+          @click="submitDocuments"
+        >
+          {{ t('PHONE_NUMBERS_MGMT.BUY_MODAL.DOCUMENTS.SUBMIT') }}
         </RelayButton>
       </div>
     </template>

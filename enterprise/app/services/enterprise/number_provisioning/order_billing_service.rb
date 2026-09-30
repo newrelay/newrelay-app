@@ -18,6 +18,7 @@ class Enterprise::NumberProvisioning::OrderBillingService
   def bill!
     order.reload
     return if order.billing_reference.present?
+    return record_dummy_charge if dummy_order?
 
     raise Error, 'cost_unknown' unless order.provider_cost_cents.to_i.positive?
 
@@ -36,6 +37,18 @@ class Enterprise::NumberProvisioning::OrderBillingService
   end
 
   private
+
+  # Dummy Exotel sids never reach Stripe or Razorpay. The fake item id only
+  # exists so the poll can continue into inbox creation during local testing.
+  def dummy_order?
+    NumberProvisioning::DummyExotel.enabled? &&
+      order.provider_order_id.to_s.start_with?(NumberProvisioning::DummyExotel::PREFIX)
+  end
+
+  def record_dummy_charge
+    Rails.logger.info("[NumberProvisioning] dummy charge order_id=#{order.id}")
+    order.update!(billing_reference: "dummy-item-#{order.id}", margin_cents: margin_cents)
+  end
 
   def fetch_remote(subscription)
     case subscription.payment_provider

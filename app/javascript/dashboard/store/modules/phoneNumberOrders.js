@@ -88,6 +88,23 @@ export const actions = {
       commit(types.SET_PHONE_NUMBER_ORDER_UI_FLAG, { isCreating: false });
     }
   },
+
+  submitRequirements: async function submitPhoneNumberRequirements(
+    { commit },
+    { orderId, file }
+  ) {
+    commit(types.SET_PHONE_NUMBER_ORDER_UI_FLAG, { isCreating: true });
+    try {
+      const response = await NumberProvisioningOrdersAPI.submitRequirements(
+        orderId,
+        file
+      );
+      commit(types.UPDATE_PHONE_NUMBER_ORDER, response.data);
+      return response.data;
+    } finally {
+      commit(types.SET_PHONE_NUMBER_ORDER_UI_FLAG, { isCreating: false });
+    }
+  },
 };
 
 export const mutations = {
@@ -100,6 +117,7 @@ export const mutations = {
 
   [types.SET_PHONE_NUMBER_ORDERS]: MutationHelpers.set,
   [types.ADD_PHONE_NUMBER_ORDER]: MutationHelpers.create,
+  [types.UPDATE_PHONE_NUMBER_ORDER]: MutationHelpers.update,
   [types.SET_PHONE_NUMBER_PROVIDERS](_state, providers) {
     _state.providers = {
       telnyx: false,

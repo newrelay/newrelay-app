@@ -1,4 +1,5 @@
 class Api::V1::Accounts::NumberProvisioning::OrdersController < Api::V1::Accounts::BaseController
+  before_action :set_order, only: [:requirements]
   before_action :check_authorization
 
   rescue_from ::NumberProvisioning::Provider::ProviderDisabledError, with: :render_provider_disabled
@@ -25,6 +26,7 @@ class Api::V1::Accounts::NumberProvisioning::OrdersController < Api::V1::Account
     country_code = params[:country_code].to_s.upcase
     provider = NumberProvisioning.for(account: Current.account, country_code: country_code)
     cache_key = "number_provisioning:search:v2:#{country_code}:#{params[:type]}"
+    cache_key = "#{cache_key}:dummy" if country_code == 'IN' && NumberProvisioning::DummyExotel.enabled?
     cached = Redis::Alfred.get(cache_key)
     wholesale = if cached
                   JSON.parse(cached)
@@ -42,6 +44,21 @@ class Api::V1::Accounts::NumberProvisioning::OrdersController < Api::V1::Account
     @order = resolve_idempotent_order(provider)
   rescue ActiveRecord::RecordNotUnique
     render_could_not_create_error('An order for this number is already in progress.')
+  end
+
+  # Demo only. A dummy India order stays in this modal step until a document
+  # is uploaded, then the poll continues and the number can become active.
+  def requirements
+    document = params[:document]
+    unless @order.status == 'requirements_pending' && NumberProvisioning::DummyExotel.enabled?
+      return render_could_not_create_error('Documents are not required for this number.')
+    end
+    return render_could_not_create_error('Choose a document to upload.') if document.blank?
+
+    @order.requirement_document.attach(document)
+    NumberProvisioning::DummyExotel.mark_documents_submitted(@order.provider_order_id)
+    ::NumberProvisioning::PollOrderStatusJob.perform_now(@order.id)
+    @order.reload
   end
 
   private
@@ -80,6 +97,7 @@ class Api::V1::Accounts::NumberProvisioning::OrdersController < Api::V1::Account
     )
     store_idempotency_key(@order)
     submit_to_provider(provider, @order)
+    mark_dummy_requirements_pending(@order)
     enqueue_poll(@order)
     @order
   rescue Net::OpenTimeout, Net::ReadTimeout
@@ -111,6 +129,17 @@ class Api::V1::Accounts::NumberProvisioning::OrdersController < Api::V1::Account
 
   def enqueue_poll(order)
     ::NumberProvisioning::PollOrderStatusJob.perform_later(order.id)
+  end
+
+  def mark_dummy_requirements_pending(order)
+    return unless NumberProvisioning::DummyExotel.enabled?
+    return unless order.provider_order_id.to_s.start_with?(NumberProvisioning::DummyExotel::PREFIX)
+
+    order.update!(status: 'requirements_pending')
+  end
+
+  def set_order
+    @order = Current.account.number_provisioning_orders.find(params[:id])
   end
 
   def render_order_in_progress

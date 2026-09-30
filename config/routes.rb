@@ -137,6 +137,9 @@ Rails.application.routes.draw do
                 get :search
                 get :provisioning_config
               end
+              member do
+                post :requirements
+              end
             end
           end
           resources :macros, only: [:index, :create, :show, :update, :destroy] do

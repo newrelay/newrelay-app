@@ -21,7 +21,8 @@
         "CANCELLED": "Cancelled",
         "BILLING_FAILED": "Billing failed",
         "INBOX_PENDING": "Inbox not ready"
-      }
+      },
+      "UPLOAD_DOCUMENTS": "Upload documents"
     },
     "BUY_MODAL": {
       "TITLE": "Buy a phone number",
@@ -50,6 +51,14 @@
         "DESCRIPTION": "This number will be provisioned to your account. You can track its status from the Phone Numbers list.",
         "CONFIRM_BUTTON": "Buy this number",
         "BACK_BUTTON": "Back"
+      },
+      "DOCUMENTS": {
+        "TITLE": "Upload documents",
+        "DESCRIPTION": "This number needs an identity document before it can go live.",
+        "CHOOSE": "Choose document",
+        "SUBMIT": "Submit document",
+        "SUCCESS": "Document received. This number is now active.",
+        "ERROR": "The document could not be submitted. Please try again."
       },
       "API": {
         "SEARCH_ERROR": "Something went wrong while searching for numbers. Please try again.",

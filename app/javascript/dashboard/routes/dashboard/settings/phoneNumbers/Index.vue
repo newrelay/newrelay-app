@@ -16,6 +16,7 @@ const { t } = useI18n();
 
 const REFRESH_MS = 15000;
 const showBuyModal = ref(false);
+const resumeOrder = ref(null);
 let refreshTimer = null;
 
 const records = computed(() => getters['phoneNumberOrders/getOrders'].value);
@@ -44,11 +45,18 @@ function formatDate(timestampSeconds) {
 }
 
 function openBuyModal() {
+  resumeOrder.value = null;
+  showBuyModal.value = true;
+}
+
+function openDocuments(order) {
+  resumeOrder.value = order;
   showBuyModal.value = true;
 }
 
 function closeBuyModal() {
   showBuyModal.value = false;
+  resumeOrder.value = null;
 }
 
 function hasUnfinished() {
@@ -165,6 +173,14 @@ watch(records, () => {
             <RelayBadge :variant="statusVariant(order.status)">
               {{ statusLabel(order.status) }}
             </RelayBadge>
+            <RelayButton
+              v-if="order.status === 'requirements_pending'"
+              variant="outline"
+              class="h-8 border border-border px-3 text-[13px] font-normal"
+              @click="openDocuments(order)"
+            >
+              {{ $t('PHONE_NUMBERS_MGMT.LIST.UPLOAD_DOCUMENTS') }}
+            </RelayButton>
           </div>
           <div
             class="mt-1 flex flex-wrap items-center gap-3.5 text-[13px] text-muted-foreground"
@@ -191,6 +207,10 @@ watch(records, () => {
       </SettingsListCard>
     </template>
 
-    <BuyPhoneNumberModal :show="showBuyModal" @close="closeBuyModal" />
+    <BuyPhoneNumberModal
+      :show="showBuyModal"
+      :resume-order="resumeOrder"
+      @close="closeBuyModal"
+    />
   </SettingsLayout>
 </template>

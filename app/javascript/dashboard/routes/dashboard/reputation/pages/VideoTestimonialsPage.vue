@@ -790,18 +790,18 @@ const stats = computed(() => {
         </div>
         
           <!-- Tabs Nav -->
-          <div class="px-6 border-b border-border flex gap-4 text-[13px] font-semibold shrink-0 pt-2 bg-card overflow-x-auto hide-scrollbar" role="tablist">
+          <div class="flex shrink-0 gap-4 border-b border-border bg-card px-6 pt-2 text-[13px] font-semibold" role="tablist">
             <button
               v-for="tab in DETAIL_TABS" :key="tab"
               type="button"
               role="tab"
               :aria-selected="activeTab === tab"
-              class="relative -mb-px py-3 px-0.5 whitespace-nowrap shrink-0 cursor-pointer bg-transparent border-0"
+              class="relative -mb-px shrink-0 cursor-pointer whitespace-nowrap border-0 bg-transparent px-0.5 py-3"
               :class="activeTab === tab ? 'text-primary' : 'text-muted-foreground hover:text-foreground'"
               @click.stop="selectTab(tab)"
             >
               {{ tab }}
-              <span v-if="activeTab === tab" class="absolute inset-x-0 bottom-0 h-0.5 bg-primary" aria-hidden="true" />
+              <span v-if="activeTab === tab" class="absolute inset-x-0 bottom-0 z-10 h-px bg-primary" aria-hidden="true" />
             </button>
           </div>
         

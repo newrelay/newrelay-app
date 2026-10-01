@@ -71,10 +71,7 @@ const isActive = tab => {
         </div>
         <ContactsListingHeaderActions />
       </div>
-      <nav
-        class="mt-6 flex items-center gap-6 overflow-x-auto no-scrollbar"
-        role="tablist"
-      >
+      <nav class="mt-6 flex items-center gap-6" role="tablist">
         <router-link
           v-for="tab in tabs"
           :key="tab.routeName"
@@ -91,7 +88,7 @@ const isActive = tab => {
           {{ tab.name }}
           <span
             v-if="isActive(tab)"
-            class="absolute inset-x-0 bottom-0 h-px bg-primary"
+            class="absolute inset-x-0 bottom-0 z-10 h-px bg-primary"
             aria-hidden="true"
           />
         </router-link>

@@ -570,25 +570,27 @@ defineExpose({ open, close, onSuccess, dialogRef: { open, close } });
             class="hide-scrollbar flex min-h-0 flex-1 flex-col overflow-y-auto bg-muted/10 dark:bg-background/30"
           >
             <div class="shrink-0 border-b border-border/60 bg-card px-6">
-              <div
-                class="flex w-full justify-start gap-6 overflow-x-auto"
-                role="tablist"
-              >
+              <div class="flex w-full justify-start gap-6" role="tablist">
                 <button
                   v-for="tab in DRAWER_TABS"
                   :key="tab.value"
                   type="button"
                   role="tab"
                   :aria-selected="activeTab === tab.value"
-                  class="reset-base h-12 shrink-0 border-b-2 px-0 text-sm font-medium"
+                  class="reset-base relative -mb-px h-12 shrink-0 border-0 bg-transparent px-0 text-sm font-medium"
                   :class="
                     activeTab === tab.value
-                      ? 'border-primary text-primary'
-                      : 'border-transparent text-muted-foreground hover:text-foreground'
+                      ? 'text-foreground'
+                      : 'text-muted-foreground hover:text-foreground'
                   "
                   @click="activeTab = tab.value"
                 >
                   {{ tab.label }}
+                  <span
+                    v-if="activeTab === tab.value"
+                    class="absolute inset-x-0 bottom-0 z-10 h-px bg-primary"
+                    aria-hidden="true"
+                  />
                 </button>
               </div>
             </div>

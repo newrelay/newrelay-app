@@ -266,12 +266,12 @@ const filteredItems = computed(() => {
     <div
       class="relative border-b border-border w-full flex items-center justify-between"
     >
-      <div class="flex items-center gap-8 overflow-x-auto hide-scrollbar">
+      <div class="flex items-center gap-8">
         <button
           v-for="tItem in filterTabs"
           :key="tItem.id"
           type="button"
-          class="relative pb-3 text-[13.5px] font-medium transition-colors whitespace-nowrap"
+          class="relative -mb-px whitespace-nowrap pb-3 text-[13.5px] font-medium transition-colors"
           :class="
             activeFilter === tItem.id
               ? 'text-primary'
@@ -282,7 +282,7 @@ const filteredItems = computed(() => {
           {{ tItem.label }}
           <div
             v-if="activeFilter === tItem.id"
-            class="absolute bottom-0 left-0 right-0 h-0.5 bg-primary rounded-full"
+            class="absolute inset-x-0 bottom-0 z-10 h-px bg-primary"
           />
         </button>
       </div>

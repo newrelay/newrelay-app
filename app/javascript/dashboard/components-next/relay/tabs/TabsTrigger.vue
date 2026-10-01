@@ -46,7 +46,7 @@ const isActive = computed(() => activeValue?.value === props.value);
     <slot />
     <span
       v-if="variant === 'underline' && isActive"
-      class="absolute inset-x-0 bottom-0 h-px bg-primary"
+      class="absolute inset-x-0 bottom-0 z-10 h-px bg-primary"
       aria-hidden="true"
     />
   </button>

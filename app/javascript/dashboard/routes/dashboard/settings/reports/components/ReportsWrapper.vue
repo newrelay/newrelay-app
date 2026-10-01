@@ -53,20 +53,25 @@ const isTabActive = tab =>
         {{ $t('REPORT.REPORTS_SUBTITLE') }}
       </p>
       <div
-        class="flex items-center gap-6 text-[14px] border-b border-border/60 overflow-x-auto"
+        class="flex items-center gap-6 border-b border-border/60 text-[14px]"
       >
         <router-link
           v-for="tab in tabs"
           :key="tab.routeName"
           :to="{ name: tab.routeName }"
-          class="pb-3 font-medium whitespace-nowrap border-b-2 -mb-px transition-colors"
+          class="relative -mb-px whitespace-nowrap pb-3 font-medium transition-colors"
           :class="
             isTabActive(tab)
-              ? 'border-primary text-primary'
-              : 'border-transparent text-muted-foreground hover:text-foreground'
+              ? 'text-foreground'
+              : 'text-muted-foreground hover:text-foreground'
           "
         >
           {{ $t(tab.labelKey) }}
+          <span
+            v-if="isTabActive(tab)"
+            class="absolute inset-x-0 bottom-0 z-10 h-px bg-primary"
+            aria-hidden="true"
+          />
         </router-link>
       </div>
     </div>

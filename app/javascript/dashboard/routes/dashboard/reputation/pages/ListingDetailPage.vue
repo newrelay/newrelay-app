@@ -716,20 +716,20 @@ watch(() => route.params.listingId, async () => {
           </div>
         </div>
 
-        <div class="flex gap-8 text-[14px] font-medium mt-4 border-b border-border overflow-x-auto" role="tablist">
+        <div class="mt-4 flex gap-8 border-b border-border text-[14px] font-medium" role="tablist">
           <button
             v-for="tab in tabs"
             :key="tab.id"
             type="button"
             role="tab"
             :aria-selected="activeTab === tab.id"
-            class="relative -mb-px py-3 transition-colors whitespace-nowrap flex items-center gap-2 bg-transparent"
+            class="relative -mb-px flex items-center gap-2 whitespace-nowrap bg-transparent py-3 transition-colors"
             :class="activeTab === tab.id ? 'text-primary' : 'text-muted-foreground hover:text-foreground'"
             @click="activeTab = tab.id"
           >
             <component :is="tab.icon" class="size-4" />
             {{ tab.id }}
-            <span v-if="activeTab === tab.id" class="absolute inset-x-0 bottom-0 h-0.5 bg-primary" aria-hidden="true" />
+            <span v-if="activeTab === tab.id" class="absolute inset-x-0 bottom-0 z-10 h-px bg-primary" aria-hidden="true" />
           </button>
         </div>
       </div>

@@ -149,12 +149,12 @@ function useInAutomation(template) {
         </div>
 
         <div class="relative border-b border-border w-full mb-6">
-          <div class="flex items-center gap-6 overflow-x-auto hide-scrollbar">
+          <div class="flex items-center gap-6">
             <button
               v-for="tab in tabs"
               :key="tab.id"
               type="button"
-              class="relative flex items-center gap-2 pb-3.5 text-[13.5px] font-medium transition-colors whitespace-nowrap"
+              class="relative -mb-px flex items-center gap-2 whitespace-nowrap pb-3.5 text-[13.5px] font-medium transition-colors"
               :class="
                 activeTab === tab.id
                   ? 'text-primary'
@@ -166,7 +166,7 @@ function useInAutomation(template) {
               {{ tab.label }}
               <div
                 v-if="activeTab === tab.id"
-                class="absolute -bottom-[1px] left-0 right-0 h-[2px] bg-primary rounded-full z-10"
+                class="absolute inset-x-0 bottom-0 z-10 h-px bg-primary"
               />
             </button>
           </div>

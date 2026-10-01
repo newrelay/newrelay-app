@@ -16,7 +16,7 @@ defineProps({
     :class="
       cn(
         variant === 'underline'
-          ? 'flex h-auto items-center gap-6 overflow-x-auto border-b border-border/40 bg-transparent p-0 no-scrollbar'
+          ? 'flex h-auto items-center gap-6 border-b border-border/40 bg-transparent p-0'
           : 'inline-flex h-9 items-center justify-center rounded-lg bg-muted p-1 text-muted-foreground'
       )
     "

@@ -46,6 +46,13 @@ class DashboardController < ActionController::Base
   def set_global_config
     @global_config = GlobalConfig.get(*GLOBAL_CONFIG_KEYS).merge(app_config)
 
+    # Plain GlobalConfig.get would return nil for an unseeded install instead of the
+    # fail-open/fail-closed default NumberProvisioning.for actually uses -- read through
+    # ProviderConfig so the frontend's "any provider enabled" check matches backend reality.
+    @global_config['NUMBER_PROVISIONING_ENABLED'] = NumberProvisioning::ProviderConfig::DEFINITIONS.keys.any? do |id|
+      NumberProvisioning::ProviderConfig.enabled_for?(id)
+    end
+
     # White-labeling overrides: Inject Account branding into global config
     account_id = request.path.match(%r{/app/accounts/(\d+)})&.captures&.first
     account = Account.find_by(id: account_id) if account_id

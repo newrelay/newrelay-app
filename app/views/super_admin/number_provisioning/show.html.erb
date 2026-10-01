@@ -1,0 +1,143 @@
+<% content_for(:title) do %>
+  Number Provisioning
+<% end %>
+
+<div class="space-y-6">
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">Number Provisioning</h1>
+      <p class="text-[13.5px] text-muted-foreground mt-1">Platform reseller credentials, currency, and margin per provider</p>
+    </div>
+  </div>
+
+  <%# notice/alert already render once via the layout's shared _flashes partial --
+      an explicit block here duplicated the message, per the same latent bug already
+      in the payment_gateways page this was modeled on. %>
+
+  <p class="mb-6 text-[13.5px] text-muted-foreground max-w-3xl">
+    Margin is a percentage markup NR adds on top of each provider's wholesale cost.
+    Currency is what that provider's cost and margin are denominated in.
+    A provider only actually routes real traffic once "Enabled" is checked here
+    <em>and</em> its credentials are set — see
+    <code>docs/solution-notes/adr-exotel-india-sms-provider.md</code> for why Exotel stays off by default.
+  </p>
+
+  <div class="table-card mb-6">
+    <div class="px-4 py-3 border-b border-border">
+      <h2 class="text-[14px] font-semibold text-foreground">Recent orders</h2>
+      <p class="text-[13px] text-muted-foreground">Counts from the last 7 days, by status and by failure code</p>
+    </div>
+    <table>
+      <tbody>
+        <% if @status_counts.blank? && @failure_code_counts.blank? %>
+          <tr>
+            <td class="text-muted-foreground">No orders in the last 7 days</td>
+          </tr>
+        <% end %>
+        <% @status_counts.sort.each do |status, count| %>
+          <tr>
+            <td class="font-medium text-foreground w-64">Status: <%= status %></td>
+            <td><%= count %></td>
+          </tr>
+        <% end %>
+        <% @failure_code_counts.sort.each do |code, count| %>
+          <tr>
+            <td class="font-medium text-foreground w-64">Code: <%= code %></td>
+            <td><%= count %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+
+  <%= form_tag super_admin_number_provisioning_path, method: :patch do %>
+    <% @providers.each do |provider| %>
+      <div class="table-card mb-6">
+        <div class="flex items-center justify-between px-4 py-3 border-b border-border">
+          <h2 class="text-[14px] font-semibold text-foreground"><%= provider['label'] %></h2>
+          <label class="flex items-center gap-2 text-[13px] text-muted-foreground">
+            <%= hidden_field_tag "providers[#{provider['id']}][enabled]", '0' %>
+            <%= check_box_tag "providers[#{provider['id']}][enabled]", '1', provider['enabled'],
+              class: 'rounded border-input text-primary focus:ring-ring' %>
+            Enabled
+          </label>
+        </div>
+
+        <table>
+          <tbody>
+            <% provider['key_fields'].each do |field| %>
+              <tr>
+                <td class="font-medium text-foreground w-48"><%= field['label'] %></td>
+                <td>
+                  <div class="relative max-w-md">
+                    <%= password_field_tag "providers[#{provider['id']}][keys][#{field['name']}]", field['value'],
+                        id: "provider_#{provider['id']}_#{field['name']}",
+                        class: "form-input pr-10" %>
+                    <button
+                      type="button"
+                      class="reset-base absolute right-2 top-1/2 -translate-y-1/2 inline-flex items-center justify-center size-7 rounded-sm text-muted-foreground hover:text-foreground hover:bg-muted transition-colors toggle-password"
+                      data-target="provider_<%= provider['id'] %>_<%= field['name'] %>"
+                      aria-label="Toggle visibility"
+                    >
+                      <svg class="eye-show size-4" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 5C5.63636 5 2 12 2 12C2 12 5.63636 19 12 19C18.3636 19 22 12 22 12C22 12 18.3636 5 12 5Z"/>
+                        <path d="M12 15C13.6569 15 15 13.6569 15 12C15 10.3431 13.6569 9 12 9C10.3431 9 9 10.3431 9 12C9 13.6569 10.3431 15 12 15Z"/>
+                      </svg>
+                      <svg class="eye-hide hidden size-4" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/>
+                        <path d="M1 1l22 22"/>
+                      </svg>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            <% end %>
+            <tr>
+              <td class="font-medium text-foreground">Currency</td>
+              <td>
+                <%= text_field_tag "providers[#{provider['id']}][currency]", provider['currency'],
+                    class: "form-input max-w-[8rem] uppercase font-mono", maxlength: 3 %>
+              </td>
+            </tr>
+            <tr>
+              <td class="font-medium text-foreground">Margin %</td>
+              <td>
+                <%= number_field_tag "providers[#{provider['id']}][margin_percent]", provider['margin_percent'],
+                    class: "form-input max-w-[8rem]", min: 0, max: 100, step: 0.1 %>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    <% end %>
+
+    <div class="show-sub-card text-[13px] text-muted-foreground max-w-3xl">
+      <p class="font-semibold text-foreground mb-1">Adding a new provider later</p>
+      <p>
+        Register it in <code>NumberProvisioning::ProviderConfig::DEFINITIONS</code> with its label,
+        config keys, and credential fields. It will appear on this page automatically.
+      </p>
+    </div>
+
+    <div class="form-actions-bar">
+      <%= submit_tag 'Save provider settings', class: 'btn btn-primary reset-base cursor-pointer' %>
+    </div>
+  <% end %>
+</div>
+
+<% content_for :javascript do %>
+  <script>
+  document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('.toggle-password').forEach(button => {
+      button.addEventListener('click', () => {
+        const targetId = button.dataset.target;
+        const input = document.getElementById(targetId);
+        const type = input.type === 'password' ? 'text' : 'password';
+        input.type = type;
+        button.querySelector('.eye-show').classList.toggle('hidden', type === 'text');
+        button.querySelector('.eye-hide').classList.toggle('hidden', type === 'password');
+      });
+    });
+  });
+  </script>
+<% end %>

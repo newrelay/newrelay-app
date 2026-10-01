@@ -1,10 +1,11 @@
 <script setup>
-import { computed, ref, watch } from 'vue';
+import { computed, onMounted, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useI18n } from 'vue-i18n';
 import { useAccount } from 'dashboard/composables/useAccount';
 import { useMapGetter } from 'dashboard/composables/store';
 import { usePolicy } from 'dashboard/composables/usePolicy';
+import { useStore } from 'dashboard/composables/store';
 import { FEATURE_FLAGS } from 'dashboard/featureFlags';
 import Icon from 'dashboard/components-next/icon/Icon.vue';
 import Policy from 'dashboard/components/policy.vue';
@@ -29,6 +30,14 @@ const hasAdvancedAssignment = computed(() =>
   )
 );
 
+// Platform-wide (not per-account), set via Super Admin > Number Provisioning --
+// a different store than hasAdvancedAssignment's per-account feature flag, so it
+// gets its own gate rather than being folded into the featureFlag/permissions check.
+const globalConfig = useMapGetter('globalConfig/get');
+const hasNumberProvisioning = computed(
+  () => globalConfig.value?.numberProvisioningEnabled
+);
+
 const findRouteMeta = routeName => {
   const match = router.getRoutes().find(r => r.name === routeName);
   return match?.meta || {};
@@ -36,6 +45,9 @@ const findRouteMeta = routeName => {
 
 const isItemAllowed = item => {
   if (item.requiresAdvancedAssignment && !hasAdvancedAssignment.value) {
+    return false;
+  }
+  if (item.requiresNumberProvisioning && !hasNumberProvisioning.value) {
     return false;
   }
   const meta = findRouteMeta(item.routeName);
@@ -99,6 +111,9 @@ watch(
 const toggleSection = key => {
   openSectionKey.value = openSectionKey.value === key ? null : key;
 };
+
+const store = useStore();
+onMounted(() => store.dispatch('phoneNumberOrders/fetchConfig'));
 </script>
 
 <template>

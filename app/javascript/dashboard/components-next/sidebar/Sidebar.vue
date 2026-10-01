@@ -56,8 +56,19 @@ const { width: windowWidth } = useWindowSize();
 const isMobile = computed(() => windowWidth.value < 768);
 
 const accountId = useMapGetter('getCurrentAccountId');
+const globalConfig = useMapGetter('globalConfig/get');
 const isFeatureEnabledonAccount = useMapGetter(
   'accounts/isFeatureEnabledonAccount'
+);
+const showPhoneNumbers = computed(
+  () =>
+    currentRole.value === 'administrator' &&
+    currentCustomRoleId.value == null &&
+    globalConfig.value?.numberProvisioningEnabled &&
+    isFeatureEnabledonAccount.value(
+      accountId.value,
+      FEATURE_FLAGS.PHONE_NUMBERS
+    )
 );
 
 const hasConversationUnreadCounts = computed(() => {
@@ -282,6 +293,16 @@ const primaryMenuItems = computed(() => {
           activeOn: ['inbox_view', 'inbox_view_conversation'],
           badgeCount: inboxNotificationCount.value,
         },
+        ...(showPhoneNumbers.value
+          ? [
+              {
+                name: 'Phone Numbers',
+                label: t('SIDEBAR.PHONE_NUMBERS'),
+                to: accountScopedRoute('phone_numbers_list'),
+                activeOn: ['phone_numbers_list', 'phone_numbers_wrapper'],
+              },
+            ]
+          : []),
         {
           name: 'Conversations',
           label: t('SIDEBAR.CONVERSATIONS'),

@@ -28,7 +28,7 @@ This partial renders flash messages on every page.
       %>
       <div class="flex items-start gap-2.5 rounded-lg border p-3 text-sm <%= color_class %>">
         <span class="<%= icon_class %> size-4 mt-0.5 shrink-0" aria-hidden="true"></span>
-        <%= value.to_s.html_safe %>
+        <%= value %>
       </div>
     <% end -%>
   </div>

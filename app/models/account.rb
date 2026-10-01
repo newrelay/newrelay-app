@@ -106,6 +106,7 @@ class Account < ApplicationRecord
   has_many :comment_automation_message_logs, dependent: :destroy_async, class_name: 'CommentAutomation::MessageLog'
   has_many :comment_automation_templates, dependent: :destroy_async, class_name: 'CommentAutomation::Template'
   has_many :macros, dependent: :destroy_async
+  has_many :number_provisioning_orders, dependent: :destroy_async, class_name: 'NumberProvisioning::Order'
   has_many :campaigns, dependent: :destroy_async
   has_many :canned_responses, dependent: :destroy_async
   has_many :categories, dependent: :destroy_async, class_name: '::Category'

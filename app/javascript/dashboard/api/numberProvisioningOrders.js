@@ -1,0 +1,39 @@
+/* global axios */
+import ApiClient from './ApiClient';
+
+class NumberProvisioningOrdersAPI extends ApiClient {
+  constructor() {
+    super('number_provisioning/orders', { accountScoped: true });
+  }
+
+  search({ countryCode, type }) {
+    return axios.get(`${this.url}/search`, {
+      params: { country_code: countryCode, type },
+    });
+  }
+
+  getConfig() {
+    return axios.get(`${this.url}/provisioning_config`);
+  }
+
+  // Overrides ApiClient#create to attach an Idempotency-Key header so a
+  // double-click, replay, or slow-request retry doesn't create two orders
+  // for the same number (CEO review finding 4A).
+  create(data, idempotencyKey) {
+    return axios.post(this.url, data, {
+      headers: { 'Idempotency-Key': idempotencyKey },
+    });
+  }
+
+  submitRequirements(orderId, file) {
+    const body = new FormData();
+    body.append('document', file);
+    return axios.post(`${this.url}/${orderId}/requirements`, body);
+  }
+
+  connectVoiceAgent(orderId) {
+    return axios.post(`${this.url}/${orderId}/voice_agent`);
+  }
+}
+
+export default new NumberProvisioningOrdersAPI();

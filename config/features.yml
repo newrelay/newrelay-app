@@ -263,3 +263,6 @@
 - name: mcp_integration
   display_name: MCP Integration
   enabled: false
+- name: phone_numbers
+  display_name: Phone Numbers
+  enabled: false

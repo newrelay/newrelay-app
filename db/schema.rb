@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2026_09_23_143000) do
+ActiveRecord::Schema[7.1].define(version: 2026_09_30_180000) do
   # These extensions should be enabled to support this database
   enable_extension "pg_stat_statements"
   enable_extension "pg_trgm"
@@ -703,6 +703,15 @@ ActiveRecord::Schema[7.1].define(version: 2026_09_23_143000) do
     t.index ["forward_to_email"], name: "index_channel_email_on_forward_to_email", unique: true
   end
 
+  create_table "channel_exotel_sms", id: :serial, force: :cascade do |t|
+    t.integer "account_id", null: false
+    t.string "phone_number", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["account_id"], name: "index_channel_exotel_sms_on_account_id"
+    t.index ["phone_number"], name: "index_channel_exotel_sms_on_phone_number", unique: true
+  end
+
   create_table "channel_facebook_pages", id: :serial, force: :cascade do |t|
     t.string "page_id", null: false
     t.string "user_access_token", null: false
@@ -752,6 +761,15 @@ ActiveRecord::Schema[7.1].define(version: 2026_09_23_143000) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["bot_token"], name: "index_channel_telegram_on_bot_token", unique: true
+  end
+
+  create_table "channel_telnyx_sms", id: :serial, force: :cascade do |t|
+    t.integer "account_id", null: false
+    t.string "phone_number", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["account_id"], name: "index_channel_telnyx_sms_on_account_id"
+    t.index ["phone_number"], name: "index_channel_telnyx_sms_on_phone_number", unique: true
   end
 
   create_table "channel_tiktok", force: :cascade do |t|
@@ -1582,6 +1600,46 @@ ActiveRecord::Schema[7.1].define(version: 2026_09_23_143000) do
     t.index ["user_id"], name: "index_notifications_on_user_id"
   end
 
+  create_table "number_provisioning_orders", force: :cascade do |t|
+    t.bigint "account_id", null: false
+    t.bigint "inbox_id"
+    t.string "provider_type", null: false
+    t.string "provider_order_id"
+    t.string "phone_number"
+    t.string "country_code", null: false
+    t.string "status", default: "search_pending", null: false
+    t.jsonb "regulatory_requirements", default: {}, null: false
+    t.datetime "requirements_deadline_at"
+    t.integer "provider_cost_cents"
+    t.integer "margin_cents"
+    t.string "billing_reference"
+    t.string "provisioning_error"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "failure_code"
+    t.string "currency"
+    t.index ["account_id", "phone_number"], name: "index_np_orders_live_account_phone", unique: true, where: "(((status)::text = ANY ((ARRAY['order_placed'::character varying, 'requirements_pending'::character varying, 'requirements_under_review'::character varying, 'requirements_rejected'::character varying, 'billing_failed'::character varying, 'inbox_pending'::character varying, 'active'::character varying])::text[])) AND (phone_number IS NOT NULL))"
+    t.index ["account_id"], name: "index_number_provisioning_orders_on_account_id"
+    t.index ["inbox_id"], name: "index_number_provisioning_orders_on_inbox_id"
+    t.index ["provider_type", "provider_order_id"], name: "idx_on_provider_type_provider_order_id_988b2da93d", unique: true, where: "(provider_order_id IS NOT NULL)"
+    t.index ["status"], name: "index_number_provisioning_orders_on_status"
+  end
+
+  create_table "number_provisioning_voice_agents", force: :cascade do |t|
+    t.bigint "account_id", null: false
+    t.bigint "order_id", null: false
+    t.string "public_id", null: false
+    t.string "status", default: "saved", null: false
+    t.string "failure_code"
+    t.string "previous_sip_target"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "elevenlabs_phone_number_id"
+    t.index ["account_id"], name: "index_number_provisioning_voice_agents_on_account_id"
+    t.index ["order_id"], name: "index_number_provisioning_voice_agents_on_order_id", unique: true
+    t.index ["public_id"], name: "index_number_provisioning_voice_agents_on_public_id", unique: true
+  end
+
   create_table "payment_transactions", force: :cascade do |t|
     t.bigint "account_id", null: false
     t.string "stripe_customer_id"
@@ -2227,6 +2285,9 @@ ActiveRecord::Schema[7.1].define(version: 2026_09_23_143000) do
   add_foreign_key "enterprise_contracts", "users", column: "negotiated_by_user_id"
   add_foreign_key "inboxes", "portals"
   add_foreign_key "marketplace_plan_prices", "accounts"
+  add_foreign_key "number_provisioning_orders", "accounts"
+  add_foreign_key "number_provisioning_voice_agents", "accounts"
+  add_foreign_key "number_provisioning_voice_agents", "number_provisioning_orders", column: "order_id"
   add_foreign_key "payment_transactions", "accounts"
   add_foreign_key "pipeline_stages", "accounts"
   add_foreign_key "pipeline_stages", "pipelines"

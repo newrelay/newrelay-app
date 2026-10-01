@@ -131,6 +131,18 @@ Rails.application.routes.draw do
             resource :mock_connection, only: [:create]
             resource :mock_comment, only: [:create]
           end
+          namespace :number_provisioning do
+            resources :orders, only: [:index, :create] do
+              collection do
+                get :search
+                get :provisioning_config
+              end
+              member do
+                post :requirements
+                post :voice_agent
+              end
+            end
+          end
           resources :macros, only: [:index, :create, :show, :update, :destroy] do
             post :execute, on: :member
           end
@@ -826,6 +838,7 @@ Rails.application.routes.draw do
       resources :marketplace_plan_prices, only: [:index, :show]
       resource :plan_management, only: [:show, :update], controller: :plan_management
       resource :payment_gateways, only: [:show, :update], controller: :payment_gateways
+      resource :number_provisioning, only: [:show, :update], controller: :number_provisioning
       resources :users, only: [:index, :new, :create, :show, :edit, :update, :destroy] do
         delete :avatar, on: :member, action: :destroy_avatar
       end

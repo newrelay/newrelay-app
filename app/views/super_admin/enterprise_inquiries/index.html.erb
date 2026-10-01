@@ -10,17 +10,6 @@
     </div>
   </div>
 
-  <% if notice.present? %>
-    <div class="mb-4 rounded-lg border border-success/20 bg-success/10 px-4 py-3 text-sm text-success">
-      <%= notice %>
-    </div>
-  <% end %>
-  <% if alert.present? %>
-    <div class="mb-4 rounded-lg border border-destructive/20 bg-destructive/10 px-4 py-3 text-sm text-destructive">
-      <%= alert %>
-    </div>
-  <% end %>
-
   <% if @accounts.empty? %>
     <p class="text-muted-foreground">No Enterprise plan inquiries have been submitted yet.</p>
   <% else %>

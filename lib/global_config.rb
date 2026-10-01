@@ -27,6 +27,10 @@ class GlobalConfig
       end
     end
 
+    def clear_key(config_key)
+      $alfred.with { |conn| conn.expire("#{VERSION}:#{KEY_PREFIX}:#{config_key}", 0) }
+    end
+
     private
 
     def typecast_config(config)

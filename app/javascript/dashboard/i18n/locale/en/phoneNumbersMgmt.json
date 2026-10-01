@@ -1,0 +1,90 @@
+{
+  "PHONE_NUMBERS_MGMT": {
+    "HEADER": "Phone Numbers",
+    "ACCOUNT_OFF": "Phone numbers are turned off for this account.",
+    "HEADER_BTN_TXT": "Buy Number",
+    "LOADING": "Fetching phone numbers",
+    "DESCRIPTION": "Numbers you've purchased for SMS and voice, and their provisioning status.",
+    "COUNT": "{n} number | {n} numbers",
+    "LIST": {
+      "DETAILS": "Phone number",
+      "EMPTY_TITLE": "No phone numbers yet",
+      "EMPTY_DESC": "Buy a number to receive SMS and calls in your inbox. You can track its provisioning status here.",
+      "PURCHASED_ON": "Purchased {date}",
+      "STATUS": {
+        "SEARCH_PENDING": "Search pending",
+        "ORDER_PLACED": "Order placed",
+        "REQUIREMENTS_PENDING": "Requirements pending",
+        "REQUIREMENTS_UNDER_REVIEW": "Under review",
+        "REQUIREMENTS_REJECTED": "Requirements rejected",
+        "ACTIVE": "Active",
+        "FAILED": "Failed",
+        "CANCELLED": "Cancelled",
+        "BILLING_FAILED": "Billing failed",
+        "INBOX_PENDING": "Inbox not ready"
+      },
+      "UPLOAD_DOCUMENTS": "Upload documents",
+      "CONNECTED_INBOXES": "Connected",
+      "POSSIBLE_INBOXES": "Can connect",
+      "NO_CONNECTED_INBOX": "None",
+      "NO_POSSIBLE_INBOX": "None",
+      "KINDS": {
+        "sms": "SMS",
+        "voice": "Voice",
+        "whatsapp": "WhatsApp"
+      },
+      "CONNECT": "Connect",
+      "SAVED": "Connected to ElevenLabs Voice AI. Calls are not answered by Relay AI yet.",
+      "TWILIO_CONNECTED": "Twilio is connected to ElevenLabs for this number.",
+      "ERRORS": {
+        "voice_agent_credentials_missing": "Connect ElevenLabs Voice AI in Integrations first.",
+        "voice_agent_brain_missing": "Link Relay AI to this inbox before connecting.",
+        "voice_agent_india_unverified": "India calls are not verified yet.",
+        "voice_agent_not_active": "This number is not active yet.",
+        "voice_agent_twilio_rejected": "ElevenLabs could not connect this Twilio number."
+      }
+    },
+    "BUY_MODAL": {
+      "TITLE": "Buy a phone number",
+      "DESCRIPTION": "Search for a number by country, then confirm your purchase.",
+      "SELECT_COUNTRY": {
+        "TITLE": "Select a country",
+        "DESCRIPTION": "The provider is chosen automatically based on the country.",
+        "US": "United States",
+        "US_DESC": "Numbers from Telnyx. Each result shows what that number can do.",
+        "IN": "India",
+        "IN_DESC": "Numbers from Exotel. Each result shows what that number can do.",
+        "NONE": "No country is available right now."
+      },
+      "RESULTS": {
+        "TITLE": "Available numbers",
+        "BACK_BUTTON": "Back",
+        "LOADING": "Searching for available numbers...",
+        "EMPTY": "No numbers found for this country. Try again shortly.",
+        "NO_MATCH": "No numbers match your search.",
+        "SEARCH_PLACEHOLDER": "Search numbers",
+        "PRICE_PER_MONTH": "{price}/mo",
+        "PRICE_UNKNOWN": "Price unavailable"
+      },
+      "CONFIRM": {
+        "TITLE": "Confirm your purchase",
+        "DESCRIPTION": "This number will be provisioned to your account. You can track its status from the Phone Numbers list.",
+        "CONFIRM_BUTTON": "Buy this number",
+        "BACK_BUTTON": "Back"
+      },
+      "DOCUMENTS": {
+        "TITLE": "Upload documents",
+        "DESCRIPTION": "This number needs an identity document before it can go live.",
+        "CHOOSE": "Choose document",
+        "SUBMIT": "Submit document",
+        "SUCCESS": "Document received. This number is now active.",
+        "ERROR": "The document could not be submitted. Please try again."
+      },
+      "API": {
+        "SEARCH_ERROR": "Something went wrong while searching for numbers. Please try again.",
+        "ORDER_ERROR": "Something went wrong while placing your order. Please try again.",
+        "ORDER_SUCCESS": "Number ordered. Track its status from the Phone Numbers list."
+      }
+    }
+  }
+}

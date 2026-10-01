@@ -18,6 +18,7 @@ import integrations from './integrations/integrations.routes';
 import labels from './labels/labels.routes';
 import macros from './macros/macros.routes';
 import notifications from './notifications/notifications.routes';
+import phoneNumbers from './phoneNumbers/phoneNumbers.routes';
 import reports from './reports/reports.routes';
 import sla from './sla/sla.routes';
 import teams from './teams/teams.routes';
@@ -54,6 +55,7 @@ export default {
     ...labels.routes,
     ...macros.routes,
     ...notifications.routes,
+    ...phoneNumbers.routes,
     ...reports.routes,
     ...sla.routes,
     ...teams.routes,

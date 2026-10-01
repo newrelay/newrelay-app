@@ -1,5 +1,20 @@
 # newrelay Development Guidelines
 
+## Working Process
+
+RESEARCH → UNDERSTAND → PLAN → IMPLEMENT → VERIFY. Never skip research and verification just to produce code faster. Do not guess — research first.
+
+- **Understand**: carefully understand the request; identify unclear or missing requirements; do not silently invent requirements.
+- **Research the existing project**: inspect project structure before changing anything; find the relevant pages/components/composables/stores/services/routes/APIs/styles/utilities/config; search for existing implementations before creating new ones; check `package.json`/`Gemfile` for installed versions; follow existing architecture and patterns; reuse existing components/utilities/composables/services/styles.
+- **Research documentation**: for any framework/library/API/package, verify current official docs before implementing — never invent API names, methods, options, props, or behavior.
+- **Analyze before coding**: determine what already exists, what can be reused, what needs to change vs. be created, and side effects/dependencies/constraints. For non-trivial tasks, give a concise research summary and implementation plan before making changes.
+- **Implement minimally**: smallest change that satisfies the requirement; no unrelated rewrites/refactors; no new dependencies unless necessary; no architecture changes without clear reason; preserve existing functionality. (See General Guidelines below for this project's specific MVP/one-fix-at-a-time rules.)
+- **UI work**: inspect the existing UI implementation first, analyze the target design (layout, spacing, typography, colors, components, responsive behavior, interactions), reuse existing project components, and verify the result against the requested design rather than approximating details that can be determined.
+- **Verify everything**: run relevant tests, type checking, linting, and build; review changed files and the git diff; look for regressions; fix what verification finds. Never claim something works without having verified it.
+- **When uncertain**: do not guess — search the codebase, inspect relevant files, check official docs, check existing usage. If still undetermined, say what's unknown and ask.
+- **Communicate**: for complex tasks, report what you researched, what you found, which files are relevant, what you plan to change, what you changed, and how you verified it — concise but technically precise.
+- **Source of truth, in priority order**: (1) explicit requirements, (2) existing project code/architecture, (3) official documentation, (4) existing project config/dependencies, (5) tests/verified behavior, (6) assumptions — only when absolutely necessary, and never treated as fact.
+
 ## Build / Test / Lint
 
 - **Setup**: `bundle install && pnpm install`

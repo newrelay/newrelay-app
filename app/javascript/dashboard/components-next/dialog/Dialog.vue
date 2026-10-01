@@ -132,7 +132,7 @@ defineExpose({ open, close });
   <TeleportWithDirection to="body">
     <dialog
       ref="dialogRef"
-      class="m-0 w-full max-w-none border-0 bg-transparent p-4 shadow-none outline-none open:fixed open:inset-0 open:flex open:justify-center"
+      class="m-0 h-full max-h-none w-full max-w-none border-0 bg-transparent p-4 shadow-none outline-none open:fixed open:inset-0 open:flex open:justify-center"
       :class="[
         RELAY_NATIVE_DIALOG_BACKDROP_CLASS,
         position === 'top' ? 'open:items-start' : 'open:items-center',

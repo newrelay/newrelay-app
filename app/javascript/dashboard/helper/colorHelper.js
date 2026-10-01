@@ -239,7 +239,7 @@ export const applyBrandColorVariables = (
   if (!colors) return;
 
   const preset = resolvePreset(colors);
-  if (preset && (preset.light || preset.id === 'default')) {
+  if (preset && (preset.light || preset.id === 'sass-minimal')) {
     applyPresetTokenMap(preset, { dark });
     return;
   }
@@ -334,5 +334,5 @@ export const hasFullThemePreset = colors => {
   if (!colors) return false;
   if (colors.sidebar || colors['sidebar-foreground']) return true;
   const preset = resolvePreset(colors);
-  return Boolean(preset && (preset.light || preset.id === 'default'));
+  return Boolean(preset && (preset.light || preset.id === 'sass-minimal'));
 };

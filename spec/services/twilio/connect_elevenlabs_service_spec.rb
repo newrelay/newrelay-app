@@ -21,15 +21,36 @@ RSpec.describe Twilio::ConnectElevenlabsService do
     )
   end
 
-  it 'sends the account auth token when the channel uses a Twilio API key' do
-    channel.update!(api_key_sid: 'SK123', api_key_secret: 'key-secret', auth_token: 'account-auth')
+  it 'sends the Twilio account auth token when the inbox also has an API key' do
+    channel.update!(account_sid: 'AC123', api_key_sid: 'SK123', api_key_secret: 'key-secret', auth_token: 'account-auth')
     response = instance_double(HTTParty::Response, success?: true, parsed_response: { 'phone_number_id' => 'phn_key' })
     expect(HTTParty).to receive(:post).with(
       described_class::ELEVENLABS_PHONE_NUMBERS_URL,
-      hash_including(body: include('SK123').and(include('account_auth_token')).and(include('"enable_sms":false')).and(include('agent_1')))
+      hash_including(body: include('AC123').and(include('account-auth')).and(include('"enable_sms":false')).and(include('agent_1')))
     ).and_return(response)
 
     expect(connect.elevenlabs_phone_number_id).to eq('phn_key')
+  end
+
+  it 'keeps a number ElevenLabs already has and assigns the agent' do
+    failed = instance_double(
+      HTTParty::Response,
+      success?: false,
+      code: 422,
+      parsed_response: { 'detail' => [{ 'msg' => 'Phone number already exists' }] }
+    )
+    expect(HTTParty).to receive(:post).with(described_class::ELEVENLABS_PHONE_NUMBERS_URL, anything).and_return(failed)
+    allow(HTTParty).to receive(:get).and_return(
+      instance_double(
+        HTTParty::Response,
+        success?: true,
+        parsed_response: [{ 'phone_number' => channel.phone_number, 'phone_number_id' => 'phn_existing' }]
+      )
+    )
+
+    connect
+
+    expect(channel.reload.elevenlabs_phone_number_id).to eq('phn_existing')
   end
 
   it 'imports the Twilio number and does not require a purchased phone number' do

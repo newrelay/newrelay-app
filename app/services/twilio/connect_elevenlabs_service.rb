@@ -8,23 +8,15 @@ class Twilio::ConnectElevenlabsService
 
   def perform
     channel = inbox.channel
-    unless channel.is_a?(Channel::TwilioSms) && channel.phone_number.present?
-      raise Error, 'voice_agent_not_twilio'
-    end
+    raise Error, 'voice_agent_not_twilio' unless channel.is_a?(Channel::TwilioSms) && channel.phone_number.present?
 
     hook = elevenlabs_hook
     raise Error, 'voice_agent_credentials_missing' if hook.blank?
 
     agent_id = ensure_agent(channel, hook)
-    if channel.elevenlabs_phone_number_id.present?
-      assign_agent(channel, hook, agent_id)
-      return channel
-    end
-
-    channel.update!(
-      elevenlabs_agent_id: agent_id,
-      elevenlabs_phone_number_id: import_number(channel, hook, agent_id)
-    )
+    phone_number_id = channel.elevenlabs_phone_number_id.presence || import_number(channel, hook, agent_id)
+    channel.update!(elevenlabs_agent_id: agent_id, elevenlabs_phone_number_id: phone_number_id)
+    assign_agent(channel, hook, agent_id)
     channel
   end
 
@@ -44,8 +36,24 @@ class Twilio::ConnectElevenlabsService
   end
 
   def create_agent(hook)
-    voice_id = hook.settings['voice_id'].presence
-    response = HTTParty.post(
+    response = post_agent(hook, hook.settings['voice_id'].presence)
+    agent_id = agent_id_from(response)
+    if agent_id.blank? && hook.settings['voice_id'].present?
+      response = post_agent(hook, nil)
+      agent_id = agent_id_from(response)
+    end
+    return agent_id if agent_id.present?
+
+    raise Error, rejection_message(response)
+  rescue Error
+    raise
+  rescue StandardError
+    Rails.logger.info("[voice_agent] elevenlabs_agent_failed inbox_id=#{inbox.id} status=exception")
+    raise Error, 'voice_agent_twilio_rejected'
+  end
+
+  def post_agent(hook, voice_id)
+    HTTParty.post(
       "#{ELEVENLABS_AGENTS_URL}/create",
       headers: json_headers(hook),
       body: {
@@ -62,16 +70,6 @@ class Twilio::ConnectElevenlabsService
       }.to_json,
       timeout: 20
     )
-    agent_id = response.parsed_response['agent_id'] if response.success? && response.parsed_response.is_a?(Hash)
-    return agent_id if agent_id.present?
-
-    Rails.logger.info("[voice_agent] elevenlabs_agent_failed inbox_id=#{inbox.id} status=#{response.code}")
-    raise Error, 'voice_agent_twilio_rejected'
-  rescue Error
-    raise
-  rescue StandardError
-    Rails.logger.info("[voice_agent] elevenlabs_agent_failed inbox_id=#{inbox.id} status=exception")
-    raise Error, 'voice_agent_twilio_rejected'
   end
 
   def import_number(channel, hook, agent_id)
@@ -84,15 +82,32 @@ class Twilio::ConnectElevenlabsService
     phone_number_id = parsed_phone_number_id(response)
     return phone_number_id if response.success? && phone_number_id.present?
 
-    Rails.logger.info(
-      "[voice_agent] elevenlabs_import_failed inbox_id=#{inbox.id} status=#{response.code} detail=#{safe_detail(response)}"
-    )
-    raise Error, 'voice_agent_twilio_rejected'
+    existing = existing_phone_number_id(channel, hook)
+    return existing if existing.present?
+
+    raise Error, rejection_message(response)
   rescue Error
     raise
   rescue StandardError
     Rails.logger.info("[voice_agent] elevenlabs_import_failed inbox_id=#{inbox.id} status=exception")
     raise Error, 'voice_agent_twilio_rejected'
+  end
+
+  def existing_phone_number_id(channel, hook)
+    response = HTTParty.get(
+      ELEVENLABS_PHONE_NUMBERS_URL,
+      headers: { 'xi-api-key' => hook.settings['api_key'] },
+      timeout: 20
+    )
+    return unless response.success?
+
+    wanted = channel.phone_number.to_s.gsub(/\D/, '')
+    rows = response.parsed_response
+    rows = rows['phone_numbers'] if rows.is_a?(Hash)
+    match = Array(rows).find { |row| row.is_a?(Hash) && row['phone_number'].to_s.gsub(/\D/, '') == wanted }
+    match && match['phone_number_id']
+  rescue StandardError
+    nil
   end
 
   def assign_agent(channel, hook, agent_id)
@@ -104,8 +119,7 @@ class Twilio::ConnectElevenlabsService
     )
     return if response.success?
 
-    Rails.logger.info("[voice_agent] elevenlabs_assign_failed inbox_id=#{inbox.id} status=#{response.code}")
-    raise Error, 'voice_agent_twilio_rejected'
+    raise Error, rejection_message(response)
   rescue Error
     raise
   rescue StandardError
@@ -128,10 +142,50 @@ class Twilio::ConnectElevenlabsService
     nil
   end
 
+  def agent_id_from(response)
+    body = parsed_body(response)
+    body['agent_id'] if response.success? && body.is_a?(Hash)
+  end
+
+  def rejection_message(response)
+    detail = safe_detail(response)
+    Rails.logger.info("[voice_agent] elevenlabs_rejected inbox_id=#{inbox.id} status=#{response.code} detail=#{detail}")
+    "ElevenLabs: #{detail}".truncate(180)
+  end
+
   def safe_detail(response)
-    body = response.parsed_response
+    body = parsed_body(response)
     return 'unparsed' unless body.is_a?(Hash)
 
-    Array(body['detail']).filter_map { |item| item['msg'] if item.is_a?(Hash) }.join('; ').presence || 'none'
+    text = detail_text(body['detail']).presence || body['message'] || body['error']
+    sanitize(text.presence || 'none')
+  end
+
+  def detail_text(detail)
+    return detail if detail.is_a?(String)
+    return detail['message'] || detail['status'] || detail['msg'] if detail.is_a?(Hash)
+
+    array_detail(detail)
+  end
+
+  def array_detail(detail)
+    return unless detail.is_a?(Array)
+
+    detail.filter_map { |item| item.is_a?(Hash) ? item['msg'] : item.to_s }.join('; ')
+  end
+
+  def parsed_body(response)
+    body = response.parsed_response
+    body = JSON.parse(body) if body.is_a?(String)
+    body
+  rescue JSON::ParserError
+    nil
+  end
+
+  def sanitize(text)
+    hidden = [inbox.channel.auth_token, inbox.channel.api_key_secret, inbox.channel.api_key_sid, inbox.channel.account_sid]
+    hidden << inbox.account.hooks.find_by(app_id: 'elevenlabs')&.settings&.dig('api_key')
+    hidden.compact.each { |secret| text = text.gsub(secret, '[hidden]') if secret.length > 6 }
+    text
   end
 end

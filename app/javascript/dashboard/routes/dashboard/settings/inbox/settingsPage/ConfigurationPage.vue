@@ -182,11 +182,13 @@ export default {
         useAlert(this.$t('INBOX_MGMT.ELEVENLABS.CONNECTED'));
       } catch (error) {
         const code = error?.response?.data?.error;
-        useAlert(
-          code === 'voice_agent_credentials_missing'
-            ? this.$t('INBOX_MGMT.ELEVENLABS.MISSING_KEY')
-            : this.$t('INBOX_MGMT.ELEVENLABS.FAILED')
-        );
+        if (code === 'voice_agent_credentials_missing') {
+          useAlert(this.$t('INBOX_MGMT.ELEVENLABS.MISSING_KEY'));
+        } else if (typeof code === 'string' && code.startsWith('ElevenLabs:')) {
+          useAlert(code);
+        } else {
+          useAlert(this.$t('INBOX_MGMT.ELEVENLABS.FAILED'));
+        }
       } finally {
         this.isConnectingElevenlabs = false;
       }

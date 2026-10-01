@@ -208,6 +208,9 @@ export default {
       if (String(routeName).includes('campaign')) {
         return this.t('SIDEBAR.MARKETING');
       }
+      if (String(routeName).includes('phone_numbers')) {
+        return this.t('SIDEBAR.PHONE_NUMBERS');
+      }
       if (
         String(routeName).includes('report') ||
         String(routeName).includes('csat')

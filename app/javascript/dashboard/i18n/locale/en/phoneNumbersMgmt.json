@@ -1,6 +1,7 @@
 {
   "PHONE_NUMBERS_MGMT": {
     "HEADER": "Phone Numbers",
+    "ACCOUNT_OFF": "Phone numbers are turned off for this account.",
     "HEADER_BTN_TXT": "Buy Number",
     "LOADING": "Fetching phone numbers",
     "DESCRIPTION": "Numbers you've purchased for SMS and voice, and their provisioning status.",
@@ -23,6 +24,15 @@
         "INBOX_PENDING": "Inbox not ready"
       },
       "UPLOAD_DOCUMENTS": "Upload documents",
+      "CONNECTED_INBOXES": "Connected",
+      "POSSIBLE_INBOXES": "Can connect",
+      "NO_CONNECTED_INBOX": "None",
+      "NO_POSSIBLE_INBOX": "None",
+      "KINDS": {
+        "sms": "SMS",
+        "voice": "Voice",
+        "whatsapp": "WhatsApp"
+      },
       "CONNECT": "Connect",
       "SAVED": "Connected to ElevenLabs Voice AI. Calls are not answered by Relay AI yet.",
       "TWILIO_CONNECTED": "Twilio is connected to ElevenLabs for this number.",

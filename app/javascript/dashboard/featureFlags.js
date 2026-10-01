@@ -52,6 +52,7 @@ export const FEATURE_FLAGS = {
   RESELLER_DASHBOARD: 'reseller_dashboard',
   API_ACCESS: 'api_access',
   REPUTATION_DEMO_SURFACES: 'reputation_demo_surfaces',
+  PHONE_NUMBERS: 'phone_numbers',
 };
 
 export const PREMIUM_FEATURES = [

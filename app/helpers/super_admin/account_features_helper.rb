@@ -128,7 +128,8 @@ module SuperAdmin::AccountFeaturesHelper
     'csat_review_notes' => 'star',
     'captain_tasks' => 'sparkles',
     'conversation_required_attributes' => 'tag',
-    'advanced_assignment' => 'users'
+    'advanced_assignment' => 'users',
+    'phone_numbers' => 'phone'
   }.freeze
 
   ICON_FALLBACK_ORDER = ICON_PATHS.keys.freeze

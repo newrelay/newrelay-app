@@ -8,6 +8,15 @@ json.phone_number order.phone_number
 json.country_code order.country_code
 json.created_at order.created_at.to_i
 json.updated_at order.updated_at.to_i
+if order.inbox
+  json.inbox do
+    json.id order.inbox.id
+    json.name order.inbox.name
+    json.channel_type order.inbox.channel_type
+  end
+else
+  json.inbox nil
+end
 if order.voice_agent
   json.voice_agent do
     json.status order.voice_agent.status

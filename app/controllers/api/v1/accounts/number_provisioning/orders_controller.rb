@@ -13,7 +13,7 @@ class Api::V1::Accounts::NumberProvisioning::OrdersController < Api::V1::Account
   SEARCH_CACHE_TTL = 5.minutes.to_i
 
   def index
-    @orders = Current.account.number_provisioning_orders.includes(:voice_agent).order(created_at: :desc)
+    @orders = Current.account.number_provisioning_orders.includes(:voice_agent, :inbox).order(created_at: :desc)
   end
 
   def provisioning_config

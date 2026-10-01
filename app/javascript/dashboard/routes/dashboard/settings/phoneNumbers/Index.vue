@@ -20,8 +20,16 @@ const resumeOrder = ref(null);
 const connectingId = ref(null);
 let refreshTimer = null;
 
+const accountId = computed(() => getters.getCurrentAccountId.value);
+const phoneNumbersEnabled = computed(() =>
+  getters['accounts/isFeatureEnabledonAccount'].value(
+    accountId.value,
+    'phone_numbers'
+  )
+);
 const records = computed(() => getters['phoneNumberOrders/getOrders'].value);
 const uiFlags = computed(() => getters['phoneNumberOrders/getUIFlags'].value);
+const inboxes = computed(() => getters['inboxes/getInboxes'].value || []);
 
 // Badge color only. Whether a row is finished comes from the API `unfinished` flag.
 const STATUS_BADGE_VARIANT = {
@@ -68,6 +76,59 @@ function showConnect(order) {
   return order.status === 'active' && voiceAgent(order)?.status !== 'saved';
 }
 
+const CONNECTABLE_KINDS = ['sms', 'voice', 'whatsapp'];
+const SMS_CHANNEL_TYPES = new Set([
+  'Channel::Sms',
+  'Channel::ExotelSms',
+  'Channel::TelnyxSms',
+  'Channel::TwilioSms',
+]);
+
+function inboxesForOrder(order) {
+  const byId = new Map();
+  if (order.inbox) byId.set(order.inbox.id, order.inbox);
+  inboxes.value.forEach(inbox => {
+    const sameId = order.inbox && inbox.id === order.inbox.id;
+    const sameNumber =
+      inbox.phone_number && inbox.phone_number === order.phone_number;
+    if (sameId || sameNumber) {
+      byId.set(inbox.id, { ...byId.get(inbox.id), ...inbox });
+    }
+  });
+  return [...byId.values()];
+}
+
+function kindsForInbox(inbox) {
+  const type = inbox.channel_type || inbox.channelType;
+  const kinds = new Set();
+  if (type === 'Channel::Whatsapp' || inbox.medium === 'whatsapp') {
+    kinds.add('whatsapp');
+  } else if (SMS_CHANNEL_TYPES.has(type)) {
+    kinds.add('sms');
+  }
+  if (inbox.voice_enabled || inbox.voiceEnabled) kinds.add('voice');
+  return kinds;
+}
+
+function connectedKinds(order) {
+  const kinds = new Set();
+  inboxesForOrder(order).forEach(inbox => {
+    kindsForInbox(inbox).forEach(kind => kinds.add(kind));
+  });
+  return CONNECTABLE_KINDS.filter(kind => kinds.has(kind));
+}
+
+function possibleKinds(order) {
+  const connected = new Set(connectedKinds(order));
+  return CONNECTABLE_KINDS.filter(kind => !connected.has(kind));
+}
+
+function kindLabels(kinds) {
+  return kinds
+    .map(kind => t(`PHONE_NUMBERS_MGMT.LIST.KINDS.${kind}`))
+    .join(', ');
+}
+
 function voiceError(order) {
   const code = voiceAgent(order)?.failure_code;
   if (!code) return '';
@@ -108,10 +169,22 @@ function onVisibilityChange() {
   else scheduleRefresh();
 }
 
-onMounted(async () => {
-  await store.dispatch('phoneNumberOrders/get');
+async function loadOrders() {
+  if (!phoneNumbersEnabled.value) return;
+  await Promise.all([
+    store.dispatch('phoneNumberOrders/get'),
+    store.dispatch('inboxes/get'),
+  ]);
   scheduleRefresh();
+}
+
+onMounted(() => {
+  loadOrders();
   document.addEventListener('visibilitychange', onVisibilityChange);
+});
+
+watch(phoneNumbersEnabled, enabled => {
+  if (enabled) loadOrders();
 });
 
 onBeforeUnmount(() => {
@@ -127,12 +200,17 @@ watch(records, () => {
 
 <template>
   <SettingsLayout
+    class="min-h-0 overflow-y-auto p-4 sm:p-6"
     :is-loading="uiFlags.isFetching"
     :loading-message="$t('PHONE_NUMBERS_MGMT.LOADING')"
     :no-records-found="false"
   >
     <template #body>
+      <p v-if="!phoneNumbersEnabled" class="text-sm text-muted-foreground">
+        {{ $t('PHONE_NUMBERS_MGMT.ACCOUNT_OFF') }}
+      </p>
       <SettingsListCard
+        v-else
         :details-label="$t('PHONE_NUMBERS_MGMT.LIST.DETAILS')"
         :show-column-headers="!!records.length"
       >
@@ -232,6 +310,24 @@ watch(records, () => {
             class="mt-1 text-[13px] text-destructive"
           >
             {{ voiceError(order) }}
+          </p>
+          <p class="mt-1 text-[13px] text-muted-foreground">
+            <span class="font-medium text-foreground">
+              {{ $t('PHONE_NUMBERS_MGMT.LIST.CONNECTED_INBOXES') }}:
+            </span>
+            {{
+              kindLabels(connectedKinds(order)) ||
+              $t('PHONE_NUMBERS_MGMT.LIST.NO_CONNECTED_INBOX')
+            }}
+          </p>
+          <p class="mt-1 text-[13px] text-muted-foreground">
+            <span class="font-medium text-foreground">
+              {{ $t('PHONE_NUMBERS_MGMT.LIST.POSSIBLE_INBOXES') }}:
+            </span>
+            {{
+              kindLabels(possibleKinds(order)) ||
+              $t('PHONE_NUMBERS_MGMT.LIST.NO_POSSIBLE_INBOX')
+            }}
           </p>
           <div
             class="mt-1 flex flex-wrap items-center gap-3.5 text-[13px] text-muted-foreground"

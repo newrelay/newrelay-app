@@ -101,12 +101,6 @@ export const SETTINGS_NAV_SECTIONS = [
         routeName: 'labels_list',
       },
       {
-        key: 'phone_numbers',
-        labelKey: 'SIDEBAR.PHONE_NUMBERS',
-        routeName: 'phone_numbers_list',
-        requiresNumberProvisioning: true,
-      },
-      {
         key: 'notifications',
         labelKey: 'SIDEBAR.NOTIFICATIONS',
         routeName: 'settings_notifications_index',

@@ -1,25 +1,31 @@
 class NumberProvisioning::OrderPolicy < ApplicationPolicy
   def index?
-    @account_user.administrator?
+    allowed?
   end
 
   def search?
-    @account_user.administrator?
+    allowed?
   end
 
   def create?
-    @account_user.administrator?
+    allowed?
   end
 
   def requirements?
-    @account_user.administrator?
+    allowed?
   end
 
   def voice_agent?
-    @account_user.administrator?
+    allowed?
   end
 
   def provisioning_config?
-    @account_user.administrator?
+    allowed?
+  end
+
+  private
+
+  def allowed?
+    @account_user.administrator? && @account.feature_enabled?('phone_numbers')
   end
 end

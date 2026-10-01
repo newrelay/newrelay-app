@@ -711,6 +711,14 @@
       "VOICE": "Voice",
       "CALLS": "Calls"
     },
+    "ELEVENLABS": {
+      "TITLE": "ElevenLabs",
+      "DESCRIPTION": "Connect this Twilio number to ElevenLabs. Buying a number is not required.",
+      "CONNECT": "Connect ElevenLabs",
+      "CONNECTED": "Twilio is connected to ElevenLabs for this number.",
+      "FAILED": "ElevenLabs could not connect this Twilio number.",
+      "MISSING_KEY": "Connect ElevenLabs Voice AI in Integrations first."
+    },
     "VOICE_CONFIGURATION": {
       "ENABLE_VOICE": {
         "LABEL": "Enable Voice Calling",

@@ -62,6 +62,10 @@ class InboxPolicy < ApplicationPolicy
     @account_user.administrator?
   end
 
+  def connect_elevenlabs?
+    @account_user.administrator?
+  end
+
   def health?
     @account_user.administrator?
   end

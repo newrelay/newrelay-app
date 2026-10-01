@@ -375,6 +375,11 @@ export const actions = {
       throw new Error(error);
     }
   },
+  connectElevenlabs: async ({ commit }, inboxId) => {
+    const response = await InboxesAPI.connectElevenlabs(inboxId);
+    commit(types.default.EDIT_INBOXES, response.data);
+    return response.data;
+  },
   syncTemplates: async (_, inboxId) => {
     try {
       await InboxesAPI.syncTemplates(inboxId);

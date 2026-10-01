@@ -9,6 +9,7 @@
 #  auth_token                     :string           not null
 #  content_templates              :jsonb
 #  content_templates_last_updated :datetime
+#  elevenlabs_phone_number_id     :string
 #  medium                         :integer          default("sms")
 #  messaging_service_sid          :string
 #  phone_number                   :string

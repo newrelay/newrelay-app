@@ -68,6 +68,13 @@ class Api::V1::Accounts::InboxesController < Api::V1::Accounts::BaseController
     head :ok
   end
 
+  def connect_elevenlabs
+    Twilio::ConnectElevenlabsService.new(inbox: @inbox).perform
+    render :show
+  rescue Twilio::ConnectElevenlabsService::Error => e
+    render_could_not_create_error(e.message)
+  end
+
   def reset_secret
     return head :not_found unless @inbox.api?
 

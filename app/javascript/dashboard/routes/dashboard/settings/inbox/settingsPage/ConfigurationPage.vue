@@ -44,6 +44,7 @@ export default {
       whatsAppInboxAPIKey: '',
       isRequestingReauthorization: false,
       isSyncingTemplates: false,
+      isConnectingElevenlabs: false,
       allowedDomains: '',
       isUpdatingAllowedDomains: false,
       isSettingDefaults: false,
@@ -174,6 +175,22 @@ export default {
         await this.$refs.whatsappReauth.requestAuthorization();
       }
     },
+    async connectElevenlabs() {
+      this.isConnectingElevenlabs = true;
+      try {
+        await this.$store.dispatch('inboxes/connectElevenlabs', this.inbox.id);
+        useAlert(this.$t('INBOX_MGMT.ELEVENLABS.CONNECTED'));
+      } catch (error) {
+        const code = error?.response?.data?.error;
+        useAlert(
+          code === 'voice_agent_credentials_missing'
+            ? this.$t('INBOX_MGMT.ELEVENLABS.MISSING_KEY')
+            : this.$t('INBOX_MGMT.ELEVENLABS.FAILED')
+        );
+      } finally {
+        this.isConnectingElevenlabs = false;
+      }
+    },
     async syncTemplates() {
       this.isSyncingTemplates = true;
       try {
@@ -198,6 +215,25 @@ export default {
       :help-text="$t('INBOX_MGMT.ADD.TWILIO.API_CALLBACK.SUBTITLE')"
     >
       <woot-code :script="inbox.callback_webhook_url" lang="html" />
+    </SettingsFieldSection>
+    <SettingsFieldSection
+      v-if="isATwilioSMSChannel && inbox.phone_number"
+      :label="$t('INBOX_MGMT.ELEVENLABS.TITLE')"
+      :help-text="$t('INBOX_MGMT.ELEVENLABS.DESCRIPTION')"
+    >
+      <p
+        v-if="inbox.elevenlabs_connected"
+        class="text-[13px] text-muted-foreground"
+      >
+        {{ $t('INBOX_MGMT.ELEVENLABS.CONNECTED') }}
+      </p>
+      <NextButton
+        v-else
+        :disabled="isConnectingElevenlabs"
+        :is-loading="isConnectingElevenlabs"
+        :label="$t('INBOX_MGMT.ELEVENLABS.CONNECT')"
+        @click="connectElevenlabs"
+      />
     </SettingsFieldSection>
     <SettingsFieldSection
       v-if="isATwilioWhatsAppChannel"

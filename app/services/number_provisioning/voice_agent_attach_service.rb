@@ -51,23 +51,17 @@ class NumberProvisioning::VoiceAgentAttachService
     channel = twilio_channel
     return if channel.blank?
 
-    sid, token = twilio_sid_and_token(channel)
     response = HTTParty.post(
       ELEVENLABS_PHONE_NUMBERS_URL,
       headers: {
         'xi-api-key' => elevenlabs_hook.settings['api_key'],
         'Content-Type' => 'application/json'
       },
-      body: {
-        provider: 'twilio',
-        phone_number: order.phone_number,
-        label: order.phone_number,
-        sid: sid,
-        token: token
-      }.to_json,
+      body: channel.elevenlabs_import_params(order.phone_number).to_json,
       timeout: 20
     )
-    return response.parsed_response['phone_number_id'] if response.success?
+    phone_number_id = response.parsed_response['phone_number_id'] if response.parsed_response.is_a?(Hash)
+    return phone_number_id if response.success? && phone_number_id.present?
 
     Rails.logger.info("[voice_agent] elevenlabs_import_failed order_id=#{order.id} status=#{response.code}")
     row = persist_failure(existing, 'voice_agent_twilio_rejected')
@@ -84,14 +78,6 @@ class NumberProvisioning::VoiceAgentAttachService
 
   def twilio_channel
     Channel::TwilioSms.find_by(account_id: order.account_id, phone_number: order.phone_number)
-  end
-
-  def twilio_sid_and_token(channel)
-    if channel.api_key_sid.present? && channel.api_key_secret.present?
-      [channel.api_key_sid, channel.api_key_secret]
-    else
-      [channel.account_sid, channel.auth_token]
-    end
   end
 
   def save_row(existing, elevenlabs_phone_number_id)

@@ -27,25 +27,21 @@ class Twilio::ConnectElevenlabsService
   end
 
   def import_number(channel, hook)
-    sid, token = twilio_sid_and_token(channel)
     response = HTTParty.post(
       ELEVENLABS_PHONE_NUMBERS_URL,
       headers: {
         'xi-api-key' => hook.settings['api_key'],
         'Content-Type' => 'application/json'
       },
-      body: {
-        provider: 'twilio',
-        phone_number: channel.phone_number,
-        label: channel.phone_number,
-        sid: sid,
-        token: token
-      }.to_json,
+      body: channel.elevenlabs_import_params(channel.phone_number).to_json,
       timeout: 20
     )
-    return response.parsed_response['phone_number_id'] if response.success?
+    phone_number_id = parsed_phone_number_id(response)
+    return phone_number_id if response.success? && phone_number_id.present?
 
-    Rails.logger.info("[voice_agent] elevenlabs_import_failed inbox_id=#{inbox.id} status=#{response.code}")
+    Rails.logger.info(
+      "[voice_agent] elevenlabs_import_failed inbox_id=#{inbox.id} status=#{response.code} detail=#{safe_detail(response)}"
+    )
     raise Error, 'voice_agent_twilio_rejected'
   rescue Error
     raise
@@ -54,11 +50,18 @@ class Twilio::ConnectElevenlabsService
     raise Error, 'voice_agent_twilio_rejected'
   end
 
-  def twilio_sid_and_token(channel)
-    if channel.api_key_sid.present? && channel.api_key_secret.present?
-      [channel.api_key_sid, channel.api_key_secret]
-    else
-      [channel.account_sid, channel.auth_token]
-    end
+  def parsed_phone_number_id(response)
+    body = response.parsed_response
+    body = JSON.parse(body) if body.is_a?(String)
+    body['phone_number_id'] if body.is_a?(Hash)
+  rescue JSON::ParserError
+    nil
+  end
+
+  def safe_detail(response)
+    body = response.parsed_response
+    return 'unparsed' unless body.is_a?(Hash)
+
+    Array(body['detail']).filter_map { |item| item['msg'] if item.is_a?(Hash) }.join('; ').presence || 'none'
   end
 end

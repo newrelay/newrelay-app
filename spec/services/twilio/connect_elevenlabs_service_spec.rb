@@ -15,6 +15,17 @@ RSpec.describe Twilio::ConnectElevenlabsService do
     )
   end
 
+  it 'sends the account auth token when the channel uses a Twilio API key' do
+    channel.update!(api_key_sid: 'SK123', api_key_secret: 'key-secret', auth_token: 'account-auth')
+    response = instance_double(HTTParty::Response, success?: true, parsed_response: { 'phone_number_id' => 'phn_key' })
+    expect(HTTParty).to receive(:post).with(
+      described_class::ELEVENLABS_PHONE_NUMBERS_URL,
+      hash_including(body: include('SK123').and(include('account_auth_token')).and(include('"enable_sms":false')))
+    ).and_return(response)
+
+    expect(connect.elevenlabs_phone_number_id).to eq('phn_key')
+  end
+
   it 'imports the Twilio number and does not require a purchased phone number' do
     response = instance_double(HTTParty::Response, success?: true, parsed_response: { 'phone_number_id' => 'phn_1' })
     expect(HTTParty).to receive(:post).with(

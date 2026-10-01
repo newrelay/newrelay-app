@@ -56,6 +56,28 @@ class Channel::TwilioSms < ApplicationRecord
     medium == 'sms' ? 'Twilio SMS' : 'Whatsapp'
   end
 
+  # ElevenLabs accepts an Account SID (AC) with the auth token, or an API Key SID (SK)
+  # with its secret plus the account auth token. enable_sms stays off so a voice-only
+  # number is not rejected for missing SMS.
+  def elevenlabs_import_params(phone_number)
+    {
+      provider: 'twilio',
+      phone_number: phone_number,
+      label: phone_number,
+      enable_sms: false
+    }.merge(elevenlabs_credentials)
+  end
+
+  def elevenlabs_credentials
+    if api_key_sid.present? && api_key_secret.present?
+      { sid: api_key_sid, token: api_key_secret, account_auth_token: auth_token }
+    elsif api_key_sid.present?
+      { sid: api_key_sid, token: auth_token }
+    else
+      { sid: account_sid, token: auth_token }
+    end
+  end
+
   def send_message(to:, body:, media_url: nil)
     params = send_message_from.merge(to: to, body: body)
     params[:media_url] = media_url if media_url.present?

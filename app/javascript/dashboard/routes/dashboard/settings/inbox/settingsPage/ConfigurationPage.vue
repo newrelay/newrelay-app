@@ -225,12 +225,11 @@ export default {
     >
       <p
         v-if="inbox.elevenlabs_connected"
-        class="text-[13px] text-muted-foreground"
+        class="mb-3 text-[13px] text-muted-foreground"
       >
         {{ $t('INBOX_MGMT.ELEVENLABS.CONNECTED') }}
       </p>
       <NextButton
-        v-else
         :disabled="isConnectingElevenlabs"
         :is-loading="isConnectingElevenlabs"
         :label="$t('INBOX_MGMT.ELEVENLABS.CONNECT')"

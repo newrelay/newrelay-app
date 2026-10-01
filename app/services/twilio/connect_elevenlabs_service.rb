@@ -3,6 +3,7 @@ class Twilio::ConnectElevenlabsService
 
   ELEVENLABS_PHONE_NUMBERS_URL = 'https://api.elevenlabs.io/v1/convai/phone-numbers'.freeze
   ELEVENLABS_AGENTS_URL = 'https://api.elevenlabs.io/v1/convai/agents'.freeze
+  ELEVENLABS_WEBHOOKS_URL = 'https://api.elevenlabs.io/v1/workspace/webhooks'.freeze
 
   pattr_initialize [:inbox!]
 
@@ -17,6 +18,7 @@ class Twilio::ConnectElevenlabsService
     phone_number_id = channel.elevenlabs_phone_number_id.presence || import_number(channel, hook, agent_id)
     channel.update!(elevenlabs_agent_id: agent_id, elevenlabs_phone_number_id: phone_number_id)
     assign_agent(channel, hook, agent_id)
+    attach_call_log(channel, hook, agent_id)
     channel
   end
 
@@ -125,6 +127,12 @@ class Twilio::ConnectElevenlabsService
   rescue StandardError
     Rails.logger.info("[voice_agent] elevenlabs_assign_failed inbox_id=#{inbox.id} status=exception")
     raise Error, 'voice_agent_twilio_rejected'
+  end
+
+  def attach_call_log(channel, hook, agent_id)
+    Twilio::RegisterElevenlabsWebhookService.new(
+      inbox: inbox, channel: channel, hook: hook, agent_id: agent_id
+    ).perform
   end
 
   def json_headers(hook)

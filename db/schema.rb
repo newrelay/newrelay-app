@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2026_10_01_153000) do
+ActiveRecord::Schema[7.1].define(version: 2026_10_01_170000) do
   # These extensions should be enabled to support this database
   enable_extension "pg_stat_statements"
   enable_extension "pg_trgm"
@@ -802,6 +802,8 @@ ActiveRecord::Schema[7.1].define(version: 2026_10_01_153000) do
     t.jsonb "provider_config", default: {}
     t.string "elevenlabs_phone_number_id"
     t.string "elevenlabs_agent_id"
+    t.string "elevenlabs_webhook_id"
+    t.string "elevenlabs_webhook_secret"
     t.index ["account_sid", "phone_number"], name: "index_channel_twilio_sms_on_account_sid_and_phone_number", unique: true
     t.index ["messaging_service_sid"], name: "index_channel_twilio_sms_on_messaging_service_sid", unique: true
     t.index ["phone_number"], name: "index_channel_twilio_sms_on_phone_number", unique: true

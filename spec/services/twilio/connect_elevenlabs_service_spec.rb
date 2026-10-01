@@ -13,9 +13,14 @@ RSpec.describe Twilio::ConnectElevenlabsService do
       account: account,
       settings: { 'api_key' => 'account-key', 'voice_id' => 'voice-1' }
     )
-    allow(HTTParty).to receive(:post).and_return(
-      instance_double(HTTParty::Response, success?: true, code: 200, parsed_response: { 'agent_id' => 'agent_1' })
-    )
+    allow(HTTParty).to receive(:post) do |url, *_args|
+      body = if url == described_class::ELEVENLABS_WEBHOOKS_URL
+               { 'webhook_id' => 'wh_1', 'webhook_secret' => 'sec' }
+             else
+               { 'agent_id' => 'agent_1' }
+             end
+      instance_double(HTTParty::Response, success?: true, code: 200, parsed_response: body)
+    end
     allow(HTTParty).to receive(:patch).and_return(
       instance_double(HTTParty::Response, success?: true, parsed_response: {})
     )

@@ -11,7 +11,13 @@ RSpec.describe Twilio::ConnectElevenlabsService do
       :integrations_hook,
       app_id: 'elevenlabs',
       account: account,
-      settings: { 'api_key' => 'account-key' }
+      settings: { 'api_key' => 'account-key', 'voice_id' => 'voice-1' }
+    )
+    allow(HTTParty).to receive(:post).and_return(
+      instance_double(HTTParty::Response, success?: true, code: 200, parsed_response: { 'agent_id' => 'agent_1' })
+    )
+    allow(HTTParty).to receive(:patch).and_return(
+      instance_double(HTTParty::Response, success?: true, parsed_response: {})
     )
   end
 
@@ -20,7 +26,7 @@ RSpec.describe Twilio::ConnectElevenlabsService do
     response = instance_double(HTTParty::Response, success?: true, parsed_response: { 'phone_number_id' => 'phn_key' })
     expect(HTTParty).to receive(:post).with(
       described_class::ELEVENLABS_PHONE_NUMBERS_URL,
-      hash_including(body: include('SK123').and(include('account_auth_token')).and(include('"enable_sms":false')))
+      hash_including(body: include('SK123').and(include('account_auth_token')).and(include('"enable_sms":false')).and(include('agent_1')))
     ).and_return(response)
 
     expect(connect.elevenlabs_phone_number_id).to eq('phn_key')

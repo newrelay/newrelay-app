@@ -9,6 +9,7 @@
 #  auth_token                     :string           not null
 #  content_templates              :jsonb
 #  content_templates_last_updated :datetime
+#  elevenlabs_agent_id            :string
 #  elevenlabs_phone_number_id     :string
 #  medium                         :integer          default("sms")
 #  messaging_service_sid          :string
@@ -59,13 +60,14 @@ class Channel::TwilioSms < ApplicationRecord
   # ElevenLabs accepts an Account SID (AC) with the auth token, or an API Key SID (SK)
   # with its secret plus the account auth token. enable_sms stays off so a voice-only
   # number is not rejected for missing SMS.
-  def elevenlabs_import_params(phone_number)
+  def elevenlabs_import_params(phone_number, agent_id: nil)
     {
       provider: 'twilio',
       phone_number: phone_number,
       label: phone_number,
-      enable_sms: false
-    }.merge(elevenlabs_credentials)
+      enable_sms: false,
+      agent_id: agent_id
+    }.compact.merge(elevenlabs_credentials)
   end
 
   def elevenlabs_credentials

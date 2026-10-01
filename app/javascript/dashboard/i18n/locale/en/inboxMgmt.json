@@ -713,9 +713,9 @@
     },
     "ELEVENLABS": {
       "TITLE": "ElevenLabs",
-      "DESCRIPTION": "Connect this Twilio number to ElevenLabs. Buying a number is not required.",
+      "DESCRIPTION": "Incoming calls on this Twilio number are answered by ElevenLabs. The AI picks up and replies. Buying a number is not required.",
       "CONNECT": "Connect ElevenLabs",
-      "CONNECTED": "Twilio is connected to ElevenLabs for this number.",
+      "CONNECTED": "ElevenLabs answers incoming calls on this number.",
       "FAILED": "ElevenLabs could not connect this Twilio number.",
       "MISSING_KEY": "Connect ElevenLabs Voice AI in Integrations first."
     },

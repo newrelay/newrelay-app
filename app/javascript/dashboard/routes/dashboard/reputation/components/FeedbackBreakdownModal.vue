@@ -83,8 +83,8 @@ function close() {
         <template v-else>
           <!-- Sentiment Summary -->
           <div class="grid grid-cols-3 gap-3">
-            <div class="p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-center">
-              <div class="flex items-center justify-center gap-1 text-emerald-600 dark:text-emerald-400 mb-1">
+            <div class="p-4 rounded-xl bg-success/10 border border-success/20 text-center">
+              <div class="flex items-center justify-center gap-1 text-success mb-1">
                 <Smile class="size-4" />
                 <span class="text-xs font-semibold uppercase tracking-wider">Positive</span>
               </div>
@@ -137,7 +137,7 @@ function close() {
                   </div>
                 </div>
                 <div class="text-right">
-                  <div class="text-sm font-semibold text-emerald-600 dark:text-emerald-400">{{ platform.positivePercent }}% Positive</div>
+                  <div class="text-sm font-semibold text-success">{{ platform.positivePercent }}% Positive</div>
                   <div class="text-[11px] text-muted-foreground">Positive Sentiment</div>
                 </div>
               </div>
@@ -153,12 +153,12 @@ function close() {
             <div class="space-y-2">
               <div class="text-xs font-medium text-muted-foreground uppercase tracking-wider">High-Performing Themes</div>
               <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                <div v-for="item in positiveDrivers" :key="item.topic" class="p-2.5 rounded-lg bg-emerald-500/5 border border-emerald-500/15 flex items-center justify-between text-xs">
+                <div v-for="item in positiveDrivers" :key="item.topic" class="p-2.5 rounded-lg bg-success/5 border border-success/15 flex items-center justify-between text-xs">
                   <div class="flex items-center gap-2">
-                    <CheckCircle2 class="size-3.5 text-emerald-500 shrink-0" />
+                    <CheckCircle2 class="size-3.5 text-success shrink-0" />
                     <span class="font-medium text-foreground truncate">{{ item.topic }}</span>
                   </div>
-                  <span class="text-emerald-600 dark:text-emerald-400 font-semibold shrink-0">{{ item.score }}%</span>
+                  <span class="text-success font-semibold shrink-0">{{ item.score }}%</span>
                 </div>
               </div>
             </div>

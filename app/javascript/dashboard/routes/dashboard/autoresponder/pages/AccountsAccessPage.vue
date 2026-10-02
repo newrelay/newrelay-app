@@ -197,9 +197,9 @@ async function handleConnect(platform) {
                   {{ acc.handle }}
                 </div>
                 <div
-                  class="text-[12px] text-emerald-600 dark:text-emerald-400 font-medium flex items-center gap-1 mt-0.5"
+                  class="text-[12px] text-success font-medium flex items-center gap-1 mt-0.5"
                 >
-                  <span class="size-1.5 rounded-full bg-emerald-500" />
+                  <span class="size-1.5 rounded-full bg-success" />
                   {{ t('AUTORESPONDER.ACCOUNTS_ACCESS.CONNECTED_ACTIVE') }}
                 </div>
               </div>
@@ -312,9 +312,9 @@ async function handleConnect(platform) {
                   {{ acc.handle }}
                 </div>
                 <div
-                  class="text-[12px] text-emerald-600 dark:text-emerald-400 font-medium flex items-center gap-1 mt-0.5"
+                  class="text-[12px] text-success font-medium flex items-center gap-1 mt-0.5"
                 >
-                  <span class="size-1.5 rounded-full bg-emerald-500" />
+                  <span class="size-1.5 rounded-full bg-success" />
                   {{ t('AUTORESPONDER.ACCOUNTS_ACCESS.CONNECTED_ACTIVE') }}
                 </div>
               </div>
@@ -411,9 +411,9 @@ async function handleConnect(platform) {
                 {{ selectedAccount.handle }}
               </h2>
               <div
-                class="text-[12px] text-emerald-600 dark:text-emerald-400 font-medium flex items-center gap-1 mt-0.5"
+                class="text-[12px] text-success font-medium flex items-center gap-1 mt-0.5"
               >
-                <span class="size-1.5 rounded-full bg-emerald-500" />
+                <span class="size-1.5 rounded-full bg-success" />
                 {{ t('AUTORESPONDER.ACCOUNTS_ACCESS.CONNECTED') }}
               </div>
             </div>

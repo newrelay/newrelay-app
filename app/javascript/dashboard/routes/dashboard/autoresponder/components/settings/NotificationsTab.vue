@@ -179,7 +179,7 @@ const notificationChannels = computed(() => [
               class="text-[11px] font-medium px-2 py-0.5 rounded-full"
               :class="
                 ch.connected
-                  ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400'
+                  ? 'bg-success/10 text-success'
                   : 'bg-muted text-muted-foreground'
               "
             >

@@ -239,8 +239,8 @@ function auditTone(audit) {
     const beforeMap = new Map((before || []).map(p => [p.name, p.ok]));
     const nowDisconnected = (after || []).some(p => beforeMap.get(p.name) === true && p.ok === false);
     return nowDisconnected
-      ? 'bg-rose-100 text-rose-600 dark:bg-rose-950 dark:text-rose-400'
-      : 'bg-emerald-100 text-emerald-600 dark:bg-emerald-950 dark:text-emerald-400';
+      ? 'bg-destructive/10 text-destructive'
+      : 'bg-success/10 text-success';
   }
   return 'bg-amber-100 text-amber-600 dark:bg-amber-950 dark:text-amber-400';
 }
@@ -274,7 +274,7 @@ const activityEvents = computed(() => {
     events.push({ key: 'updated', icon: Pencil, tone: 'bg-amber-100 text-amber-600 dark:bg-amber-950 dark:text-amber-400', label: 'Listing details updated', time: listing.value.updatedAt });
   }
   if (listing.value.syncedAt) {
-    events.push({ key: 'synced', icon: RotateCw, tone: 'bg-emerald-100 text-emerald-600 dark:bg-emerald-950 dark:text-emerald-400', label: 'Platforms synced', time: listing.value.syncedAt });
+    events.push({ key: 'synced', icon: RotateCw, tone: 'bg-success/10 text-success', label: 'Platforms synced', time: listing.value.syncedAt });
   }
   return events.sort((a, b) => new Date(b.time) - new Date(a.time));
 });
@@ -682,7 +682,7 @@ watch(() => route.params.listingId, async () => {
                 <DropdownMenuContent align="end" class="w-48">
                   <DropdownMenuItem @click="renameListing">Rename</DropdownMenuItem>
                   <DropdownMenuItem @click="duplicateListing">Duplicate</DropdownMenuItem>
-                  <DropdownMenuItem class="text-rose-600 focus:text-rose-600" @click="deleteListing">Delete</DropdownMenuItem>
+                  <DropdownMenuItem class="text-destructive focus:text-destructive" @click="deleteListing">Delete</DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
             </div>
@@ -708,7 +708,7 @@ watch(() => route.params.listingId, async () => {
                   <span class="text-[11px] font-medium text-muted-foreground">Last Sync</span>
                   <span class="text-[13px] font-bold text-foreground leading-tight">{{ listing.lastSync }}</span>
                 </div>
-                <div class="size-5 rounded-full bg-emerald-50 text-emerald-500 border border-emerald-200 dark:bg-emerald-950 dark:border-emerald-800 flex items-center justify-center shrink-0 ml-2">
+                <div class="size-5 rounded-full bg-success/10 text-success border border-success/30 flex items-center justify-center shrink-0 ml-2">
                   <Check class="size-3.5 stroke-[3]" />
                 </div>
               </div>
@@ -808,13 +808,13 @@ watch(() => route.params.listingId, async () => {
                 v-for="platform in connectedPlatforms"
                 :key="platform.id"
                 class="flex flex-col justify-between p-5 border rounded-xl min-w-[260px] bg-card shadow-xs"
-                :class="platform.status === 'Connected' ? 'border-border' : 'border-rose-200/60 dark:border-rose-900/40'"
+                :class="platform.status === 'Connected' ? 'border-border' : 'border-destructive/30'"
               >
                 <div class="flex items-center gap-3">
                   <div class="size-10 border border-border rounded-lg bg-card flex items-center justify-center shrink-0" v-html="getPlatformIcon(platform.name)"></div>
                   <div class="flex flex-col gap-0.5">
                     <span class="text-[14px] font-medium text-foreground">{{ platform.name }}</span>
-                    <span class="text-[12px] font-medium" :class="platform.status === 'Connected' ? 'text-muted-foreground' : 'text-rose-500'">
+                    <span class="text-[12px] font-medium" :class="platform.status === 'Connected' ? 'text-muted-foreground' : 'text-destructive'">
                       {{ platform.status === 'Connected' ? `Last Sync: ${listing.lastSync}` : 'Action required' }}
                     </span>
                   </div>
@@ -822,7 +822,7 @@ watch(() => route.params.listingId, async () => {
                 <div class="flex items-center justify-between mt-5 pt-4 border-t border-border/50">
                   <span
                     class="px-2.5 py-0.5 rounded-full font-semibold text-[11px] inline-flex items-center gap-1"
-                    :class="platform.status === 'Connected' ? 'bg-emerald-50 text-emerald-600 dark:bg-emerald-950 dark:text-emerald-400' : 'bg-rose-100 text-rose-600 dark:bg-rose-950 dark:text-rose-400'"
+                    :class="platform.status === 'Connected' ? 'bg-success/10 text-success' : 'bg-destructive/10 text-destructive'"
                   >
                     <CheckCircle2 v-if="platform.status === 'Connected'" class="size-3" />
                     <AlertTriangle v-else class="size-3" />
@@ -868,7 +868,7 @@ watch(() => route.params.listingId, async () => {
                 </div>
                 <span
                   class="px-3 py-0.5 rounded-full font-semibold text-[11px] shrink-0"
-                  :class="reviewHasReply(review) ? 'bg-emerald-50 text-emerald-600 dark:bg-emerald-950 dark:text-emerald-400' : 'bg-muted text-muted-foreground'"
+                  :class="reviewHasReply(review) ? 'bg-success/10 text-success' : 'bg-muted text-muted-foreground'"
                 >
                   {{ reviewHasReply(review) ? 'Replied' : 'Pending' }}
                 </span>
@@ -917,8 +917,8 @@ watch(() => route.params.listingId, async () => {
               <div class="flex flex-col items-center gap-4">
                 <div class="relative size-28 flex items-center justify-center">
                   <svg class="size-full -rotate-90" viewBox="0 0 100 100">
-                    <circle cx="50" cy="50" r="42" fill="none" class="stroke-emerald-50 dark:stroke-emerald-950" stroke-width="8" />
-                    <circle cx="50" cy="50" r="42" fill="none" class="stroke-emerald-500" stroke-width="8" stroke-linecap="round"
+                    <circle cx="50" cy="50" r="42" fill="none" class="stroke-success/20" stroke-width="8" />
+                    <circle cx="50" cy="50" r="42" fill="none" class="stroke-success" stroke-width="8" stroke-linecap="round"
                       :stroke-dasharray="263.89" :stroke-dashoffset="263.89 - (263.89 * listing.optimizationScore) / 100" />
                   </svg>
                   <div class="absolute inset-0 flex flex-col items-center justify-center">
@@ -929,11 +929,11 @@ watch(() => route.params.listingId, async () => {
               </div>
               <div class="flex flex-col gap-2.5">
                 <div v-if="connectedCount" class="flex items-center gap-3">
-                  <CheckCircle2 class="size-4 text-emerald-500 shrink-0" />
+                  <CheckCircle2 class="size-4 text-success shrink-0" />
                   <span class="text-[12.5px] font-medium text-muted-foreground">Connected to {{ connectedCount }} platform{{ connectedCount === 1 ? '' : 's' }}</span>
                 </div>
                 <div v-if="listing.address" class="flex items-center gap-3">
-                  <CheckCircle2 class="size-4 text-emerald-500 shrink-0" />
+                  <CheckCircle2 class="size-4 text-success shrink-0" />
                   <span class="text-[12.5px] font-medium text-muted-foreground">Business info is filled in</span>
                 </div>
                 <div v-for="platform in disconnectedPlatforms" :key="platform.id" class="flex items-center gap-3">
@@ -946,12 +946,12 @@ watch(() => route.params.listingId, async () => {
             <div v-if="disconnectedPlatforms.length" class="bg-card border border-border rounded-xl p-6 shadow-xs flex flex-col gap-6">
               <div class="flex items-center justify-between">
                 <h3 class="text-base font-medium text-foreground">Needs Attention</h3>
-                <span class="bg-rose-50 text-rose-600 dark:bg-rose-950 dark:text-rose-400 px-2 rounded-full font-semibold text-[12px]">{{ disconnectedPlatforms.length }}</span>
+                <span class="bg-destructive/10 text-destructive px-2 rounded-full font-semibold text-[12px]">{{ disconnectedPlatforms.length }}</span>
               </div>
               <div class="flex flex-col gap-4">
                 <div v-for="platform in disconnectedPlatforms" :key="platform.id" class="flex items-start gap-3">
-                  <div class="size-8 rounded-full bg-rose-50 dark:bg-rose-950 flex items-center justify-center shrink-0 mt-1">
-                    <AlertTriangle class="size-4 text-rose-600" />
+                  <div class="size-8 rounded-full bg-destructive/10 flex items-center justify-center shrink-0 mt-1">
+                    <AlertTriangle class="size-4 text-destructive" />
                   </div>
                   <div class="flex flex-col gap-0.5 flex-1">
                     <span class="text-[13px] font-medium text-foreground">{{ platform.name }} needs reconnecting</span>
@@ -1134,7 +1134,7 @@ watch(() => route.params.listingId, async () => {
           </div>
           <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div class="bg-card border border-border rounded-xl shadow-xs p-4 flex items-center gap-4">
-              <div class="size-10 bg-emerald-50 text-emerald-600 dark:bg-emerald-950 dark:text-emerald-400 rounded-full flex items-center justify-center shrink-0">
+              <div class="size-10 bg-success/10 text-success rounded-full flex items-center justify-center shrink-0">
                 <Layers class="size-5" />
               </div>
               <div class="flex flex-col gap-0.5">
@@ -1172,32 +1172,32 @@ watch(() => route.params.listingId, async () => {
               v-for="platform in connectedPlatforms"
               :key="platform.id"
               class="rounded-xl shadow-xs p-5 flex flex-col gap-4"
-              :class="platform.status === 'Connected' ? 'bg-card border border-border' : 'bg-rose-50/60 border border-rose-200 dark:bg-rose-950/30 dark:border-rose-900/50'"
+              :class="platform.status === 'Connected' ? 'bg-card border border-border' : 'bg-destructive/5 border border-destructive/30'"
             >
               <div class="flex items-center justify-between gap-3">
                 <div class="flex items-center gap-3 min-w-0">
                   <div class="size-10 border border-border rounded-lg bg-card flex items-center justify-center shrink-0" v-html="getPlatformIcon(platform.name)"></div>
                   <div class="flex flex-col gap-0.5 min-w-0">
                     <span class="text-[15px] font-medium text-foreground truncate">{{ platform.name }}</span>
-                    <span class="text-[12px]" :class="platform.status === 'Connected' ? 'text-muted-foreground' : 'text-rose-600 font-medium'">
+                    <span class="text-[12px]" :class="platform.status === 'Connected' ? 'text-muted-foreground' : 'text-destructive font-medium'">
                       {{ platform.status === 'Connected' ? `Last Sync: ${listing.lastSync}` : 'Authentication expired' }}
                     </span>
                   </div>
                 </div>
                 <span
                   class="px-2.5 py-0.5 rounded-full font-semibold text-[11px] inline-flex items-center gap-1 shrink-0"
-                  :class="platform.status === 'Connected' ? 'bg-emerald-50 text-emerald-600 dark:bg-emerald-950 dark:text-emerald-400' : 'bg-rose-100 text-rose-600 dark:bg-rose-950 dark:text-rose-400'"
+                  :class="platform.status === 'Connected' ? 'bg-success/10 text-success' : 'bg-destructive/10 text-destructive'"
                 >
                   <CheckCircle2 v-if="platform.status === 'Connected'" class="size-3" />
                   <AlertTriangle v-else class="size-3" />
                   {{ platform.status === 'Connected' ? 'Connected' : 'Action Required' }}
                 </span>
               </div>
-              <RelayButton v-if="platform.status !== 'Connected'" class="bg-rose-600 hover:bg-rose-700 text-white" @click="goToConnectPlatform">
+              <RelayButton v-if="platform.status !== 'Connected'" @click="goToConnectPlatform">
                 Reconnect {{ platform.name }}
               </RelayButton>
               <div v-else class="flex items-center justify-end">
-                <button type="button" class="text-[13px] font-semibold text-rose-600 hover:text-rose-700" @click="disconnectIntegration(platform.id)">Disconnect</button>
+                <button type="button" class="text-[13px] font-semibold text-destructive hover:text-destructive" @click="disconnectIntegration(platform.id)">Disconnect</button>
               </div>
             </div>
           </div>
@@ -1229,7 +1229,7 @@ watch(() => route.params.listingId, async () => {
               <h3 class="text-base font-medium text-foreground flex items-center gap-2"><Sparkles class="size-4 text-primary" /> AI Review Summary</h3>
               <div class="flex flex-col gap-4">
                 <div v-for="(insight, i) in aiInsights.insights" :key="i" class="flex items-start gap-3">
-                  <CheckCircle2 class="size-4 text-emerald-500 shrink-0 mt-0.5" />
+                  <CheckCircle2 class="size-4 text-success shrink-0 mt-0.5" />
                   <div class="flex flex-col gap-0.5">
                     <span class="text-[13.5px] font-semibold text-foreground">{{ insight.title }}</span>
                     <span class="text-[13px] text-muted-foreground leading-relaxed">{{ insight.text }}</span>
@@ -1242,15 +1242,15 @@ watch(() => route.params.listingId, async () => {
               <h3 class="text-base font-medium text-foreground self-start">Overall Sentiment</h3>
               <div class="relative size-28 flex items-center justify-center mt-2">
                 <svg class="size-full -rotate-90" viewBox="0 0 100 100">
-                  <circle cx="50" cy="50" r="42" fill="none" class="stroke-emerald-50 dark:stroke-emerald-950" stroke-width="8" />
-                  <circle cx="50" cy="50" r="42" fill="none" class="stroke-emerald-500" stroke-width="8" stroke-linecap="round"
+                  <circle cx="50" cy="50" r="42" fill="none" class="stroke-success/20" stroke-width="8" />
+                  <circle cx="50" cy="50" r="42" fill="none" class="stroke-success" stroke-width="8" stroke-linecap="round"
                     :stroke-dasharray="263.89" :stroke-dashoffset="263.89 - (263.89 * aiInsights.sentiment) / 100" />
                 </svg>
                 <div class="absolute inset-0 flex flex-col items-center justify-center">
                   <span class="text-[24px] font-extrabold text-foreground tracking-tight leading-none">{{ aiInsights.sentiment }}%</span>
                 </div>
               </div>
-              <span class="text-[13px] font-semibold text-emerald-600">{{ sentimentLabel }}</span>
+              <span class="text-[13px] font-semibold text-success">{{ sentimentLabel }}</span>
               <span v-if="reviewStats.total" class="text-[11.5px] text-muted-foreground">Based on {{ reviewStats.total }} recent reviews</span>
             </div>
 
@@ -1355,8 +1355,8 @@ watch(() => route.params.listingId, async () => {
             <h4 class="text-[13px] font-semibold text-foreground mb-3">Current platform status</h4>
             <div class="flex flex-col gap-2.5">
               <div v-for="platform in connectedPlatforms" :key="platform.id" class="flex items-center gap-3">
-                <CheckCircle2 v-if="platform.status === 'Connected'" class="size-4 text-emerald-500 shrink-0" />
-                <AlertTriangle v-else class="size-4 text-rose-500 shrink-0" />
+                <CheckCircle2 v-if="platform.status === 'Connected'" class="size-4 text-success shrink-0" />
+                <AlertTriangle v-else class="size-4 text-destructive shrink-0" />
                 <span class="text-[12.5px] font-medium text-muted-foreground">{{ platform.name }} — {{ platform.status }}</span>
               </div>
             </div>

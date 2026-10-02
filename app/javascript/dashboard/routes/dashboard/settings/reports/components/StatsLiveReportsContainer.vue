@@ -111,11 +111,9 @@ onMounted(() => {
             {{ $t(`${accounti18nKey}.HEADER`) }}
           </h3>
           <div
-            class="flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-emerald-500/10 text-emerald-600 text-[12px] font-medium border border-emerald-500/20"
+            class="flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-success/10 text-success text-[12px] font-medium border border-success/20"
           >
-            <span
-              class="size-1.5 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]"
-            />
+            <span class="size-1.5 rounded-full bg-success" />
             {{ $t('OVERVIEW_REPORTS.LIVE') }}
           </div>
         </div>
@@ -187,11 +185,9 @@ onMounted(() => {
           {{ $t('OVERVIEW_REPORTS.AGENT_STATUS.HEADER') }}
         </h3>
         <div
-          class="flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-emerald-500/10 text-emerald-600 text-[12px] font-medium border border-emerald-500/20"
+          class="flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-success/10 text-success text-[12px] font-medium border border-success/20"
         >
-          <span
-            class="size-1.5 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]"
-          />
+          <span class="size-1.5 rounded-full bg-success" />
           {{ $t('OVERVIEW_REPORTS.LIVE') }}
         </div>
       </div>

@@ -322,7 +322,7 @@ const filteredItems = computed(() => {
                   class="text-[11.5px] font-medium px-2 py-0.5 rounded-full flex items-center gap-1 shrink-0"
                   :class="
                     item.comments.enabled || item.dms.enabled
-                      ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400'
+                      ? 'bg-success/10 text-success'
                       : 'bg-muted text-muted-foreground'
                   "
                 >
@@ -330,7 +330,7 @@ const filteredItems = computed(() => {
                     class="size-1.5 rounded-full"
                     :class="
                       item.comments.enabled || item.dms.enabled
-                        ? 'bg-emerald-500'
+                        ? 'bg-success'
                         : 'bg-muted-foreground'
                     "
                   />
@@ -517,7 +517,7 @@ const filteredItems = computed(() => {
                   class="text-[11px] font-medium px-2 py-0.5 rounded-full"
                   :class="
                     dm.enabled
-                      ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400'
+                      ? 'bg-success/10 text-success'
                       : 'bg-muted text-muted-foreground'
                   "
                 >
@@ -619,7 +619,7 @@ const filteredItems = computed(() => {
                 class="text-[11.5px] font-medium px-2 py-0.5 rounded-full"
                 :class="
                   drawerForm.commentsEnabled || drawerForm.dmsEnabled
-                    ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400'
+                    ? 'bg-success/10 text-success'
                     : 'bg-muted text-muted-foreground'
                 "
               >

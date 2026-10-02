@@ -3,7 +3,8 @@
 /* eslint-disable */
 import { ref, onMounted, computed } from 'vue';
 import ComboBox from 'dashboard/components-next/combobox/ComboBox.vue';
-import { RelayInput } from 'dashboard/components-next/relay';
+import { RelayButton, RelayInput, RelaySwitch } from 'dashboard/components-next/relay';
+import { useAlert } from 'dashboard/composables';
 const axios = window.axios;
 
 const accountId =
@@ -93,7 +94,7 @@ async function createWidget() {
     activeWidget.value = { ...data };
     isEditing.value = true;
   } catch (err) {
-    alert('Failed to create widget');
+    useAlert('Failed to create widget');
   }
 }
 
@@ -118,7 +119,7 @@ async function saveWidget() {
       widgets.value[index] = data;
     }
   } catch (err) {
-    alert('Failed to save widget configs');
+    useAlert('Failed to save widget configs');
   } finally {
     saving.value = false;
   }
@@ -132,7 +133,7 @@ async function deleteWidget(id) {
     activeWidget.value = null;
     isEditing.value = false;
   } catch (err) {
-    alert('Failed to delete widget');
+    useAlert('Failed to delete widget');
   }
 }
 
@@ -363,49 +364,13 @@ const previewReviewsList = computed(() => {
             </div>
 
             <div class="flex items-center justify-between py-2">
-              <span class="text-xs font-bold text-muted-foreground">Widget Active State</span>
-              <button
-                type="button"
-                class="relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full p-0.5 transition-colors duration-200 ease-in-out focus:outline-none"
-                :class="
-                  activeWidget.active
-                    ? 'bg-primary'
-                    : 'bg-muted '
-                "
-                @click="activeWidget.active = !activeWidget.active"
-              >
-                <span
-                  class="pointer-events-none inline-block size-5 transform rounded-full bg-card shadow transition-transform duration-200 ease-in-out"
-                  :class="
-                    activeWidget.active ? 'translate-x-5' : 'translate-x-0'
-                  "
-                />
-              </button>
+              <span class="text-[13.5px] font-medium text-foreground">Widget Active State</span>
+              <RelaySwitch v-model="activeWidget.active" />
             </div>
 
             <div class="flex items-center justify-between py-2">
-              <span class="text-xs font-bold text-muted-foreground">Hide NewRelay watermark</span>
-              <button
-                type="button"
-                class="relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full p-0.5 transition-colors duration-200 ease-in-out focus:outline-none"
-                :class="
-                  activeWidget.hide_watermark
-                    ? 'bg-primary'
-                    : 'bg-muted '
-                "
-                @click="
-                  activeWidget.hide_watermark = !activeWidget.hide_watermark
-                "
-              >
-                <span
-                  class="pointer-events-none inline-block size-5 transform rounded-full bg-card shadow transition-transform duration-200 ease-in-out"
-                  :class="
-                    activeWidget.hide_watermark
-                      ? 'translate-x-5'
-                      : 'translate-x-0'
-                  "
-                />
-              </button>
+              <span class="text-[13.5px] font-medium text-foreground">Hide NewRelay watermark</span>
+              <RelaySwitch v-model="activeWidget.hide_watermark" />
             </div>
           </div>
 
@@ -419,13 +384,9 @@ const previewReviewsList = computed(() => {
               Delete Widget
             </button>
 
-            <button
-              class="px-4 py-2 bg-card hover:bg-accent text-white rounded-xl text-xs font-bold transition-all"
-              :disabled="saving"
-              @click="saveWidget"
-            >
+            <RelayButton type="button" size="lg" :disabled="saving" @click="saveWidget">
               {{ saving ? 'Saving...' : 'Save Settings' }}
-            </button>
+            </RelayButton>
           </div>
         </div>
       </div>

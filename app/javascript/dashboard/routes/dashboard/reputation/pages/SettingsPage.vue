@@ -4,6 +4,7 @@ import { ref, onMounted, computed, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import html2canvas from 'html2canvas';
 import { RelayButton, RelayInput, RelaySwitch, RelayTextarea } from 'dashboard/components-next/relay';
+import { useAlert } from 'dashboard/composables';
 import ComboBox from 'dashboard/components-next/combobox/ComboBox.vue';
 const axios = window.axios;
 
@@ -120,7 +121,7 @@ async function oauthState() {
 const connectFacebook = async () => {
   const appId = window.newrelayConfig?.reputationFacebookAppId;
   if (!appId) {
-    alert('Facebook App ID is not configured in the environment.');
+    useAlert('Facebook App ID is not configured in the environment.');
     return;
   }
   const redirect = `${window.location.origin}/reputation/oauth/callback?provider=facebook`;
@@ -140,14 +141,14 @@ const connectGoogle = async () => {
       });
       await loadData();
     } catch (err) {
-      alert(err.response?.data?.errors?.[0] || 'Failed to connect Google');
+      useAlert(err.response?.data?.errors?.[0] || 'Failed to connect Google');
     }
     return;
   }
 
   const clientId = window.newrelayConfig?.reputationGoogleClientId;
   if (!clientId) {
-    alert('Google Client ID is not configured in the environment. Please add REPUTATION_GOOGLE_CLIENT_ID to your .env file and restart the server.');
+    useAlert('Google Client ID is not configured in the environment. Please add REPUTATION_GOOGLE_CLIENT_ID to your .env file and restart the server.');
     return;
   }
   const redirect = `${window.location.origin}/reputation/oauth/callback?provider=google`;
@@ -177,7 +178,7 @@ async function checkGoogleOauthCallback() {
 
   if (oauthStatus === 'error') {
     const errorMsg = params.get('message') || 'Unknown OAuth error occurred';
-    alert(`Google Authentication Failed: ${errorMsg}`);
+    useAlert(`Google Authentication Failed: ${errorMsg}`);
     
     const cleanUrl = window.location.pathname;
     window.history.replaceState({}, document.title, cleanUrl);
@@ -235,7 +236,7 @@ async function submitGoogleLocationConnection() {
 
 async function submitConnection() {
   if (!listingUrl.value || !listingName.value) {
-    alert('Please enter listing URL and name');
+    useAlert('Please enter listing URL and name');
     return;
   }
   saving.value = true;
@@ -250,7 +251,7 @@ async function submitConnection() {
     integrations.value.unshift(data);
     showConnectModal.value = false;
   } catch (err) {
-    alert('Failed to connect integration. Listing might already be connected.');
+    useAlert('Failed to connect integration. Listing might already be connected.');
   } finally {
     saving.value = false;
   }
@@ -258,7 +259,7 @@ async function submitConnection() {
 
 async function submitCustomConnection() {
   if (!customPlatformName.value || !customPlatformUrl.value) {
-    alert('Please enter platform name and URL');
+    useAlert('Please enter platform name and URL');
     return;
   }
   saving.value = true;
@@ -273,7 +274,7 @@ async function submitCustomConnection() {
     integrations.value.unshift(data);
     showCustomModal.value = false;
   } catch (err) {
-    alert('Failed to add custom link');
+    useAlert('Failed to add custom link');
   } finally {
     saving.value = false;
   }
@@ -287,13 +288,37 @@ async function disconnect(id) {
     await axios.delete(`${baseApi()}/integrations/${id}`);
     integrations.value = integrations.value.filter(i => i.id !== id);
   } catch (err) {
-    alert('Failed to disconnect integration');
+    useAlert('Failed to disconnect integration');
   } finally {
     disconnectLoading.value = null;
   }
 }
 
 const downloadingCard = ref(false);
+async function printPoster() {
+  const card = document.getElementById('qr-print-card');
+  if (!card) return;
+  try {
+    const canvas = await html2canvas(card, {
+      scale: 3,
+      useCORS: true,
+      backgroundColor: '#ffffff',
+    });
+    const preview = window.open('', '_blank');
+    if (!preview) {
+      useAlert('Allow pop-ups to print the poster.');
+      return;
+    }
+    const image = canvas.toDataURL('image/png');
+    preview.document.write(
+      `<!doctype html><title>Review poster</title><body style="margin:0;display:flex;justify-content:center"><img alt="Review poster" src="${image}" style="max-width:100%" onload="window.print()"></body>`
+    );
+    preview.document.close();
+  } catch (err) {
+    useAlert('Could not prepare the poster for printing.');
+  }
+}
+
 async function downloadFullCard() {
   const card = document.getElementById('qr-print-card');
   if (!card) return;
@@ -311,7 +336,7 @@ async function downloadFullCard() {
     link.click();
   } catch (err) {
     console.error('Failed to generate image', err);
-    alert('Could not download image. Please use the Print Poster option instead.');
+    useAlert('Could not download image. Please use the Print Poster option instead.');
   } finally {
     downloadingCard.value = false;
   }
@@ -326,18 +351,18 @@ function saveAiSettings() {
   localStorage.setItem('rep_ai_enabled', aiEnabled.value.toString());
   localStorage.setItem('rep_ai_min_rating', aiMinRating.value);
   localStorage.setItem('rep_ai_instructions', aiInstructions.value);
-  alert('AI Settings saved successfully!');
+  useAlert('AI Settings saved successfully!');
 }
 
 function saveLinkSettings() {
   localStorage.setItem('rep_custom_slug', customSlug.value);
-  alert('Review link settings saved successfully!');
+  useAlert('Review link settings saved successfully!');
 }
 
 function saveSpamSettings() {
   localStorage.setItem('rep_spam_min_rating', spamMinRating.value);
   localStorage.setItem('rep_spam_keywords', spamKeywords.value);
-  alert('Spam filter settings saved successfully!');
+  useAlert('Spam filter settings saved successfully!');
 }
 
 // Templates CRUD
@@ -401,9 +426,9 @@ async function saveTemplate() {
         templates.value[idx] = data;
       }
     }
-    alert('Template saved successfully!');
+    useAlert('Template saved successfully!');
   } catch (err) {
-    alert('Failed to save template');
+    useAlert('Failed to save template');
   } finally {
     saving.value = false;
   }
@@ -420,7 +445,7 @@ async function deleteTemplate(id) {
       activeTemplate.value = null;
     }
   } catch (err) {
-    alert('Failed to delete template');
+    useAlert('Failed to delete template');
   }
 }
 
@@ -771,12 +796,9 @@ watch(selectedLocationId, id => {
               </h3>
               <p class="text-xs text-muted-foreground mt-0.5">Customize outbound customer requests templates</p>
             </div>
-            <button
-              class="px-3.5 py-1.5 bg-card hover:bg-accent text-white rounded-xl text-xs font-bold transition-all shadow-sm"
-              @click="newTemplate"
-            >
+            <RelayButton type="button" @click="newTemplate">
               + Create Template
-            </button>
+            </RelayButton>
           </div>
 
           <div class="grid grid-cols-1 md:grid-cols-12 gap-6">
@@ -943,20 +965,19 @@ watch(selectedLocationId, id => {
             </div>
 
             <div class="flex gap-2">
-              <button
-                class="px-4 py-2 border border-border hover:bg-background text-xs font-bold text-muted-foreground rounded-xl shadow-sm transition-all"
-                onclick="window.print()"
-              >
+              <RelayButton type="button" variant="outline" size="lg" @click="printPoster">
                 Print Poster (Save as PDF)
-              </button>
-              <button
-                class="px-4 py-2 bg-primary hover:bg-primary/90 text-white rounded-xl text-xs font-bold shadow-sm transition-all text-center flex items-center justify-center min-w-[140px]"
+              </RelayButton>
+              <RelayButton
+                type="button"
+                size="lg"
+                class="min-w-[140px]"
                 :disabled="downloadingCard"
                 @click="downloadFullCard"
               >
-                <svg v-if="downloadingCard" class="size-3.5 animate-spin mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 1121.21 7.89M9 11l3-3 3 3m0 0l-3 3-3-3" /></svg>
+                <svg v-if="downloadingCard" class="size-3.5 animate-spin" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 1121.21 7.89M9 11l3-3 3 3m0 0l-3 3-3-3" /></svg>
                 {{ downloadingCard ? 'Downloading...' : 'Download Full PNG' }}
-              </button>
+              </RelayButton>
             </div>
           </div>
         </div>
@@ -1047,15 +1068,16 @@ watch(selectedLocationId, id => {
           >
             Cancel
           </button>
-          <button
+          <RelayButton
             v-if="googleLocations.length > 0 && !locationError"
-            class="px-5 py-2 bg-destructive hover:bg-destructive text-white rounded-xl text-xs font-bold shadow-sm transition-all flex items-center gap-2 disabled:opacity-60"
+            type="button"
+            size="lg"
             :disabled="connectingLocation || loadingLocations"
             @click="submitGoogleLocationConnection"
           >
             <svg v-if="connectingLocation" class="size-3.5 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>
             {{ connectingLocation ? 'Connecting...' : 'Connect Location' }}
-          </button>
+          </RelayButton>
         </div>
       </div>
     </div>
@@ -1106,13 +1128,14 @@ watch(selectedLocationId, id => {
           >
             Cancel
           </button>
-          <button
-            class="px-4 py-2 bg-primary hover:bg-primary/90 text-white rounded-xl text-xs font-bold shadow-sm transition-all"
+          <RelayButton
+            type="button"
+            size="lg"
             :disabled="saving"
             @click="submitConnection"
           >
             {{ saving ? 'Connecting...' : 'Connect page' }}
-          </button>
+          </RelayButton>
         </div>
       </div>
     </div>
@@ -1167,13 +1190,14 @@ watch(selectedLocationId, id => {
           >
             Cancel
           </button>
-          <button
-            class="px-4 py-2 bg-primary hover:bg-primary/90 text-white rounded-xl text-xs font-bold shadow-sm transition-all"
+          <RelayButton
+            type="button"
+            size="lg"
             :disabled="saving"
             @click="submitCustomConnection"
           >
             {{ saving ? 'Adding...' : 'Add Link' }}
-          </button>
+          </RelayButton>
         </div>
       </div>
     </div>

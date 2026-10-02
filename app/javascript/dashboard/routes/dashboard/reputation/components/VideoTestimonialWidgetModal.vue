@@ -320,9 +320,9 @@ const isDark = computed(() => widgetConfig.value.theme === 'dark' || previewBg.v
                 <p class="text-[12px] text-muted-foreground mb-3">Paste this iframe anywhere on your website.</p>
                 <a v-if="widgetUrl" :href="widgetUrl" target="_blank" rel="noopener" class="text-[12px] text-primary hover:underline inline-flex items-center gap-1">View live widget <Globe class="size-3" /></a>
               </div>
-              <div class="relative rounded-xl border border-slate-800 bg-slate-950 text-slate-100 p-4 font-mono text-xs overflow-x-auto shadow-inner">
+              <div class="relative rounded-xl border border-border bg-muted text-foreground p-4 font-mono text-xs overflow-x-auto">
                 <pre class="whitespace-pre-wrap break-all leading-relaxed">{{ currentEmbedSnippet }}</pre>
-                <button class="absolute top-3 right-3 inline-flex items-center h-8 px-2.5 gap-1.5 text-xs rounded-md bg-primary text-primary-foreground shadow-md hover:bg-primary/90 cursor-pointer" @click="copyEmbedCode"><Check v-if="isCopied" class="size-3.5 text-emerald-400" /><Copy v-else class="size-3.5" />{{ isCopied ? 'Copied!' : 'Copy Code' }}</button>
+                <button class="absolute top-3 right-3 inline-flex items-center h-8 px-2.5 gap-1.5 text-xs rounded-md border border-border bg-card text-foreground hover:bg-accent hover:border-transparent cursor-pointer" @click="copyEmbedCode"><Check v-if="isCopied" class="size-3.5 text-success" /><Copy v-else class="size-3.5" />{{ isCopied ? 'Copied!' : 'Copy Code' }}</button>
               </div>
               <div class="p-4 rounded-xl bg-muted/20 border border-border space-y-2">
                 <div class="text-[13px] font-semibold text-foreground flex items-center gap-2"><Globe class="size-4 text-primary" /><span>Works with all website builders</span></div>

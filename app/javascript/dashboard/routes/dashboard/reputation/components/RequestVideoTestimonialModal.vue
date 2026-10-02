@@ -1007,7 +1007,7 @@ function close() {
         
         <!-- STEP 5: Success Screen -->
         <div v-if="currentStep === 5" class="py-16 flex flex-col items-center text-center animate-in zoom-in-95 duration-500 flex-1">
-          <div class="size-20 bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 rounded-full flex items-center justify-center mb-6">
+          <div class="size-20 bg-success/10 text-success rounded-full flex items-center justify-center mb-6">
             <CheckCircle2 class="size-10" />
           </div>
           <h2 class="text-base font-medium text-foreground mb-2">Video Requests Sent!</h2>

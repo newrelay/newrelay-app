@@ -1,6 +1,7 @@
 <script setup>
 /* eslint-disable */
 import { ref, computed, watch } from 'vue';
+import { useRouter } from 'vue-router';
 import {
   X, ChevronRight, Search, FileText, CheckCircle2,
   ArrowLeft, Send, Sparkles, MessageSquare,
@@ -99,6 +100,7 @@ const defaultFormState = {
   destination: 'Google'
 };
 
+const router = useRouter();
 const axios = window.axios;
 const accountId = window.__STORE__?.getters['auth/getCurrentAccount']?.id ||
   window.location.pathname.match(/accounts\/(\d+)/)?.[1];
@@ -472,6 +474,11 @@ async function generateReport() {
   } finally {
     currentStep.value = 5;
   }
+}
+
+function viewRequests() {
+  close();
+  router.push({ name: 'reputation_requests', params: { accountId } });
 }
 
 function close() {
@@ -1108,7 +1115,7 @@ function close() {
         
         <!-- STEP 5: Success Screen -->
         <div v-if="currentStep === 5" class="py-16 flex flex-col items-center text-center animate-in zoom-in-95 duration-500 flex-1">
-          <div class="size-20 bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 rounded-full flex items-center justify-center mb-6">
+          <div class="size-20 bg-success/10 text-success rounded-full flex items-center justify-center mb-6">
             <CheckCircle2 class="size-10" />
           </div>
           <h2 class="text-base font-medium text-foreground mb-2">Review Requests Sent!</h2>
@@ -1127,7 +1134,7 @@ function close() {
           </div>
           
           <div class="flex flex-wrap justify-center gap-3">
-            <button @click="close" class="h-11 px-8 text-sm font-semibold bg-primary hover:bg-primary/90 text-primary-foreground rounded-lg shadow-xs cursor-pointer inline-flex items-center gap-2">
+            <button @click="viewRequests" class="h-11 px-8 text-sm font-semibold bg-primary hover:bg-primary/90 text-primary-foreground rounded-lg shadow-xs cursor-pointer inline-flex items-center gap-2">
               <BarChart3 class="size-4" /> View Campaign
             </button>
             <button @click="close" class="h-11 px-8 text-sm font-semibold bg-card border border-border hover:bg-accent text-foreground rounded-lg shadow-xs cursor-pointer">

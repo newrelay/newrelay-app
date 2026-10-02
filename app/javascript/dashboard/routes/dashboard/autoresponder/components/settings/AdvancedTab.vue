@@ -143,9 +143,7 @@ const retentionOptions = ['3 months', '6 months', '12 months', 'Forever'];
             class="flex items-center justify-between text-xs"
           >
             <span class="text-muted-foreground">{{ item.label }}</span>
-            <span class="font-medium text-emerald-600 dark:text-emerald-400">{{
-              item.status
-            }}</span>
+            <span class="font-medium text-success">{{ item.status }}</span>
           </div>
         </div>
       </SettingsSidebarCard>

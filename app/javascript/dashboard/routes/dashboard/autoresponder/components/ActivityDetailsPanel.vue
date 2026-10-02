@@ -22,7 +22,7 @@ const STATUS_BADGE_CLASS = {
   public_replied: 'bg-blue-500/10 text-blue-600 dark:text-blue-400',
   dm_sent: 'bg-primary/10 text-primary',
   dm_failed: 'bg-destructive/10 text-destructive',
-  engaged: 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400',
+  engaged: 'bg-success/10 text-success',
 };
 
 const STATUS_RANK = {

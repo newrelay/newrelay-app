@@ -153,7 +153,7 @@ async function submitMockConnect() {
                 :class="
                   ch.needsReconnect
                     ? 'bg-amber-500/10 text-amber-600 dark:text-amber-400'
-                    : 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400'
+                    : 'bg-success/10 text-success'
                 "
               >
                 {{

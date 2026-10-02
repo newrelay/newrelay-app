@@ -292,7 +292,7 @@ const handleRemove = async event => {
                       customDomain
                     }}</span>
                     <span
-                      class="ml-2 inline-flex shrink-0 items-center gap-1 rounded-md border border-emerald-500/20 bg-emerald-500/10 px-2 py-0.5 text-[12px] font-medium text-emerald-600"
+                      class="ml-2 inline-flex shrink-0 items-center gap-1 rounded-md border border-success/20 bg-success/10 px-2 py-0.5 text-[12px] font-medium text-success"
                     >
                       {{ $t('BRANDING_SETTINGS.CUSTOM_DOMAIN.VERIFIED') }}
                       <span class="i-lucide-check-circle-2 size-3" />
@@ -460,7 +460,7 @@ const handleRemove = async event => {
                 </p>
                 <span
                   v-if="resendVerified"
-                  class="inline-flex shrink-0 items-center gap-1 rounded-md border border-emerald-500/20 bg-emerald-500/10 px-2 py-0.5 text-[12px] font-medium text-emerald-600"
+                  class="inline-flex shrink-0 items-center gap-1 rounded-md border border-success/20 bg-success/10 px-2 py-0.5 text-[12px] font-medium text-success"
                 >
                   {{
                     $t('BRANDING_SETTINGS.CUSTOM_DOMAIN.SENDING_VERIFIED', {

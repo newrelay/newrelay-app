@@ -3,9 +3,9 @@
 import { computed, ref } from 'vue';
 import { 
   X, ChevronRight, FileText, BarChart2, MessageSquare, Monitor, Sparkles,
-  PenTool, Calendar, Link as LinkIcon, Download, Mail, CheckCircle2, 
+  PenTool, Calendar, Link as LinkIcon, Mail, CheckCircle2, 
   Copy, ArrowLeft, Image as ImageIcon, FileSpreadsheet, Send, File as FileIcon, Star, StarHalf, Users, Check,
-  Search, FilePlus2
+  FilePlus2
 } from 'lucide-vue-next';
 import { 
   RelayButton as Button, RelayInput as Input, RelayBadge as Badge,
@@ -289,13 +289,8 @@ function close() {
 
         <!-- STEP 3: Preview -->
         <div v-if="currentStep === 3" class="animate-in slide-in-from-right-4 duration-300">
-          <div class="flex items-center justify-between mb-4">
+          <div class="mb-4">
             <h3 class="text-sm font-semibold text-foreground uppercase tracking-wider">Preview Report</h3>
-            <div class="flex gap-2">
-              <button class="h-8 text-xs font-semibold px-3 border border-border bg-card hover:bg-accent text-foreground rounded-lg inline-flex items-center gap-1.5 cursor-pointer"><Search class="size-3" /> Zoom</button>
-              <button class="h-8 text-xs font-semibold px-3 border border-border bg-card hover:bg-accent text-foreground rounded-lg inline-flex items-center gap-1.5 cursor-pointer"><PenTool class="size-3" /> Edit</button>
-              <button class="h-8 text-xs font-semibold px-3 border border-border bg-card hover:bg-accent text-foreground rounded-lg inline-flex items-center gap-1.5 cursor-pointer"><Download class="size-3" /> Download</button>
-            </div>
           </div>
           
           <!-- Mock Report Preview UI -->

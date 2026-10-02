@@ -15,6 +15,7 @@ class Twilio::ConnectElevenlabsService
     raise Error, 'voice_agent_credentials_missing' if hook.blank?
 
     agent_id = ensure_agent(channel, hook)
+    Twilio::ElevenlabsKnowledgeService.new(inbox: inbox, hook: hook, agent_id: agent_id).perform
     phone_number_id = channel.elevenlabs_phone_number_id.presence || import_number(channel, hook, agent_id)
     channel.update!(elevenlabs_agent_id: agent_id, elevenlabs_phone_number_id: phone_number_id)
     assign_agent(channel, hook, agent_id)

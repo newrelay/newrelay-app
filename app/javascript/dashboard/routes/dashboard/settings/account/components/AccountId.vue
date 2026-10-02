@@ -4,7 +4,7 @@ import { useAccount } from 'dashboard/composables/useAccount';
 import { useI18n } from 'vue-i18n';
 import { useAlert } from 'dashboard/composables';
 import { copyTextToClipboard } from 'shared/helpers/clipboard';
-import { RelayButton } from 'dashboard/components-next/relay';
+import { RelayButton, RelayInput } from 'dashboard/components-next/relay';
 import SectionLayout from './SectionLayout.vue';
 
 const { t } = useI18n();
@@ -29,28 +29,29 @@ const copyAccountId = async () => {
     :description="t('GENERAL_SETTINGS.FORM.DEVELOPER_SECTION.NOTE')"
     as-card
   >
-    <div class="flex flex-col gap-2">
-      <label class="text-sm font-medium text-foreground">
+    <div class="flex flex-col gap-1.5">
+      <label for="account-id" class="text-[13.5px] font-medium text-foreground">
         {{ t('GENERAL_SETTINGS.FORM.ACCOUNT_ID.TITLE') }}
       </label>
-      <div class="mt-1 flex w-full">
-        <div
-          class="flex h-10 min-w-0 flex-1 items-center rounded-l-md border border-border bg-background px-3 text-sm text-foreground shadow-xs"
-        >
-          {{ getAccountId }}
-        </div>
+      <div class="flex items-center gap-3">
+        <RelayInput
+          id="account-id"
+          :model-value="getAccountId"
+          readonly
+          class-name="h-10 min-w-0 flex-1 shadow-xs"
+        />
         <RelayButton
           type="button"
-          :variant="isCopied ? 'secondary' : 'outline'"
-          class="h-10 shrink-0 rounded-l-none border-l-0 text-sm font-medium shadow-xs"
-          :class="
-            isCopied
-              ? 'bg-accent text-foreground'
-              : 'bg-background hover:bg-accent'
-          "
+          variant="outline"
+          size="lg"
+          class="shrink-0"
           @click="copyAccountId"
         >
-          <span class="i-lucide-copy size-3.5" />
+          <span
+            :class="
+              isCopied ? 'i-lucide-check size-3.5' : 'i-lucide-copy size-3.5'
+            "
+          />
           {{
             isCopied
               ? t('GENERAL_SETTINGS.FORM.ACCOUNT_ID.COPIED')
@@ -58,7 +59,7 @@ const copyAccountId = async () => {
           }}
         </RelayButton>
       </div>
-      <p class="mt-1 text-[13px] leading-relaxed text-muted-foreground">
+      <p class="text-[13px] leading-relaxed text-muted-foreground">
         {{ t('GENERAL_SETTINGS.FORM.ACCOUNT_ID.NOTE') }}
       </p>
     </div>

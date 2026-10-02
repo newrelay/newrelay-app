@@ -383,18 +383,16 @@ watch(() => props.selectedBot, initializeForm, { deep: true });
             {{ t('AGENT_BOTS.ACCESS_TOKEN.TITLE') }}
           </RelayLabel>
           <div class="flex items-center gap-2">
-            <div class="relative flex-1">
-              <input
+            <div class="relative min-w-0 flex-1">
+              <RelayInput
                 :type="showTokenValue ? 'text' : 'password'"
-                :value="
-                  showTokenValue ? accessToken : '••••••••••••••••••••••••'
-                "
+                :model-value="accessToken"
                 readonly
-                class="h-10 w-full rounded-lg border border-border/80 bg-background pl-3 pr-9 font-mono text-[14px] text-foreground shadow-sm focus:outline-none focus-visible:ring-1 focus-visible:ring-primary/30"
+                class-name="h-10 font-mono ltr:pr-10 rtl:pl-10"
               />
               <button
                 type="button"
-                class="absolute top-1/2 p-1 text-muted-foreground transition-colors -translate-y-1/2 hover:text-foreground ltr:right-2 rtl:left-2"
+                class="absolute top-1/2 p-1 text-muted-foreground transition-colors -translate-y-1/2 hover:text-foreground ltr:right-2.5 rtl:left-2.5"
                 @click="showTokenValue = !showTokenValue"
               >
                 <Icon
@@ -456,12 +454,12 @@ watch(() => props.selectedBot, initializeForm, { deep: true });
   >
     <div class="space-y-5 px-6 pb-2">
       <div class="flex items-center gap-2">
-        <div class="relative flex-1">
-          <input
+        <div class="relative min-w-0 flex-1">
+          <RelayInput
             :type="showTokenValue ? 'text' : 'password'"
-            :value="showTokenValue ? accessToken : '••••••••••••••••••••••••'"
+            :model-value="accessToken"
             readonly
-            class="h-10 w-full border border-border/80 bg-background pl-3 pr-10 font-mono text-[14px] text-foreground focus:outline-none focus-visible:ring-1 focus-visible:ring-primary/30 shadow-sm rounded-md"
+            class-name="h-10 font-mono ltr:pr-10 rtl:pl-10"
           />
           <button
             type="button"
@@ -493,12 +491,12 @@ watch(() => props.selectedBot, initializeForm, { deep: true });
           {{ t('AGENT_BOTS.SECRET.LABEL') }}
         </p>
         <div class="flex items-center gap-2">
-          <div class="relative flex-1">
-            <input
+          <div class="relative min-w-0 flex-1">
+            <RelayInput
               :type="showSecretValue ? 'text' : 'password'"
-              :value="showSecretValue ? botSecret : '••••••••••••••••••••••••'"
+              :model-value="botSecret"
               readonly
-              class="h-10 w-full border border-border/80 bg-background pl-3 pr-10 font-mono text-[14px] text-foreground focus:outline-none focus-visible:ring-1 focus-visible:ring-primary/30 shadow-sm rounded-md"
+              class-name="h-10 font-mono ltr:pr-10 rtl:pl-10"
             />
             <button
               type="button"

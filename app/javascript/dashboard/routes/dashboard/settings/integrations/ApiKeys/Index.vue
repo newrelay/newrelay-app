@@ -8,7 +8,7 @@ import { copyTextToClipboard } from 'shared/helpers/clipboard';
 
 import SettingsLayout from '../../SettingsLayout.vue';
 import Icon from 'dashboard/components-next/icon/Icon.vue';
-import { RelayButton } from 'dashboard/components-next/relay';
+import { RelayButton, RelayInput } from 'dashboard/components-next/relay';
 
 const { t } = useI18n();
 const store = useStore();
@@ -90,35 +90,42 @@ const resetAccessToken = async () => {
               </p>
             </div>
           </header>
-          <div class="flex flex-col gap-2 p-4 sm:p-6">
-            <label class="block text-foreground text-[13.5px] font-[500]">
+          <div class="flex flex-col gap-1.5 p-4 sm:p-6">
+            <label
+              for="api-account-id"
+              class="text-[13.5px] font-medium text-foreground"
+            >
               {{ t('INTEGRATION_SETTINGS.API_KEYS.ACCOUNT_ID.TITLE') }}
             </label>
-            <div class="mt-1 flex w-full">
-              <div
-                class="flex h-10 min-w-0 flex-1 items-center rounded-l-md border border-border bg-background px-3 text-sm text-foreground shadow-xs"
-              >
-                {{ accountId }}
-              </div>
-              <button
+            <div class="flex items-center gap-3">
+              <RelayInput
+                id="api-account-id"
+                :model-value="accountId"
+                readonly
+                class-name="h-10 min-w-0 flex-1 shadow-xs"
+              />
+              <RelayButton
                 type="button"
-                class="inline-flex h-10 shrink-0 items-center justify-center gap-1.5 rounded-r-md border border-l-0 border-border px-4 text-sm font-medium shadow-xs transition-all"
-                :class="
-                  isAccountIdCopied
-                    ? 'bg-accent text-foreground'
-                    : 'bg-background text-foreground hover:bg-accent'
-                "
+                variant="outline"
+                size="lg"
+                class="shrink-0"
                 @click="copyAccountId"
               >
-                <Icon icon="i-lucide-copy" class="size-3.5 shrink-0" />
+                <span
+                  :class="
+                    isAccountIdCopied
+                      ? 'i-lucide-check size-3.5'
+                      : 'i-lucide-copy size-3.5'
+                  "
+                />
                 {{
                   isAccountIdCopied
                     ? t('INTEGRATION_SETTINGS.API_KEYS.ACCOUNT_ID.COPIED')
                     : t('INTEGRATION_SETTINGS.API_KEYS.ACCOUNT_ID.COPY')
                 }}
-              </button>
+              </RelayButton>
             </div>
-            <p class="mt-1 text-[13px] leading-relaxed text-muted-foreground">
+            <p class="text-[13px] leading-relaxed text-muted-foreground">
               {{ t('INTEGRATION_SETTINGS.API_KEYS.ACCOUNT_ID.DESCRIPTION') }}
             </p>
           </div>
@@ -147,13 +154,11 @@ const resetAccessToken = async () => {
           <div class="flex flex-col gap-3 p-4 sm:p-6">
             <div class="flex flex-col gap-3 sm:flex-row sm:items-center">
               <div class="relative min-w-0 flex-1">
-                <input
+                <RelayInput
                   :type="showToken ? 'text' : 'password'"
-                  :value="
-                    showToken ? accessToken : '••••••••••••••••••••••••••••••••'
-                  "
+                  :model-value="accessToken"
                   readonly
-                  class="h-10 w-full border border-border/80 bg-background pl-3 pr-10 font-mono text-[14px] text-foreground focus:outline-none focus-visible:ring-1 focus-visible:ring-primary/30 shadow-sm rounded-md"
+                  class-name="h-10 font-mono ltr:pr-10 rtl:pl-10"
                 />
                 <button
                   type="button"

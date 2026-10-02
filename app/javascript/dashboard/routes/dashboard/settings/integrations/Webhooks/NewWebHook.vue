@@ -9,6 +9,7 @@ import WebhookForm from './WebhookForm.vue';
 import Icon from 'dashboard/components-next/icon/Icon.vue';
 import {
   RelayButton,
+  RelayInput,
   RelayModal,
   RELAY_MODAL_FORM_FOOTER_CLASS,
 } from 'dashboard/components-next/relay';
@@ -90,16 +91,12 @@ const handleCopySecret = async () => {
             {{ t('INTEGRATION_SETTINGS.WEBHOOK.SECRET.LABEL') }}
           </p>
           <div class="flex items-center gap-2">
-            <div class="relative flex-1">
-              <input
+            <div class="relative min-w-0 flex-1">
+              <RelayInput
                 :type="showSecret ? 'text' : 'password'"
-                :value="
-                  showSecret
-                    ? createdWebhook.secret
-                    : '••••••••••••••••••••••••••••••••'
-                "
+                :model-value="createdWebhook.secret"
                 readonly
-                class="h-10 w-full rounded-md border border-border/80 bg-background pl-3 pr-10 font-mono text-[14px] text-foreground shadow-sm focus:outline-none focus-visible:ring-1 focus-visible:ring-primary/30"
+                class-name="h-10 font-mono ltr:pr-10 rtl:pl-10"
               />
               <button
                 type="button"

@@ -140,15 +140,11 @@ const copySecret = async () => {
         </label>
         <div class="flex items-center gap-2">
           <div class="relative min-w-0 flex-1">
-            <input
-              :value="
-                secretVisible
-                  ? value.secret
-                  : '••••••••••••••••••••••••••••••••'
-              "
-              type="text"
+            <RelayInput
+              :type="secretVisible ? 'text' : 'password'"
+              :model-value="value.secret"
               readonly
-              class="h-10 w-full rounded-md border border-border/80 bg-background pl-3 pr-10 font-mono text-[14px] text-foreground shadow-sm focus:outline-none focus-visible:ring-1 focus-visible:ring-primary/30"
+              class-name="h-10 font-mono ltr:pr-10 rtl:pl-10"
             />
             <button
               type="button"

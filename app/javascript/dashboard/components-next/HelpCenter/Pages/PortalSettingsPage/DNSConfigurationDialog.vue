@@ -114,16 +114,16 @@ defineExpose({ dialogRef });
           </p>
         </div>
         <div class="flex items-center gap-3 w-full">
-          <span
-            class="inline-flex min-h-10 w-full items-center rounded-md border border-border/80 bg-background px-3 py-2.5 text-[14px] text-muted-foreground shadow-sm"
-          >
-            {{ subdomainCNAME }}
-          </span>
+          <RelayInput
+            :model-value="subdomainCNAME"
+            readonly
+            class-name="h-10 min-w-0 flex-1"
+          />
           <RelayButton
             type="button"
-            variant="ghost"
-            size="icon"
-            class="size-10 shrink-0 border border-border text-muted-foreground hover:border-transparent hover:text-foreground"
+            variant="outline"
+            size="lg"
+            class="size-10 shrink-0 px-0"
             :aria-label="
               t(
                 'HELP_CENTER.PORTAL_SETTINGS.CONFIGURATION_FORM.CUSTOM_DOMAIN.DNS_CONFIGURATION_DIALOG.COPY_BUTTON'
@@ -153,10 +153,7 @@ defineExpose({ dialogRef });
             }}
           </p>
         </div>
-        <form
-          class="flex w-full items-end gap-3"
-          @submit.prevent="handleSend"
-        >
+        <form class="flex w-full items-end gap-3" @submit.prevent="handleSend">
           <div class="flex w-full flex-col gap-1.5">
             <RelayLabel html-for="dns-email">
               {{

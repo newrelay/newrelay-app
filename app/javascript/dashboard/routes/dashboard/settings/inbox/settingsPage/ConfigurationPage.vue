@@ -1,5 +1,6 @@
 <script>
 import { useAlert } from 'dashboard/composables';
+import ElevenlabsVoicesAPI from 'dashboard/api/elevenlabsVoices';
 import inboxMixin from 'shared/mixins/inboxMixin';
 import SettingsFieldSection from 'dashboard/components-next/Settings/SettingsFieldSection.vue';
 import SettingsToggleSection from 'dashboard/components-next/Settings/SettingsToggleSection.vue';
@@ -45,6 +46,8 @@ export default {
       isRequestingReauthorization: false,
       isSyncingTemplates: false,
       isConnectingElevenlabs: false,
+      phoneVoices: [],
+      isAssigningVoice: false,
       allowedDomains: '',
       isUpdatingAllowedDomains: false,
       isSettingDefaults: false,
@@ -78,6 +81,7 @@ export default {
   },
   mounted() {
     this.setDefaults();
+    if (this.isATwilioSMSChannel) this.loadPhoneVoices();
   },
   methods: {
     setDefaults() {
@@ -175,6 +179,38 @@ export default {
         await this.$refs.whatsappReauth.requestAuthorization();
       }
     },
+    async loadPhoneVoices() {
+      try {
+        const { data } = await ElevenlabsVoicesAPI.get();
+        this.phoneVoices = (data.voices || []).filter(
+          voice => voice.selectable
+        );
+      } catch (error) {
+        this.phoneVoices = [];
+      }
+    },
+    playPhoneVoice(url) {
+      if (!url) return;
+      const audio = new Audio(url);
+      audio.play();
+    },
+    async assignPhoneVoice(voiceId) {
+      this.isAssigningVoice = true;
+      try {
+        await this.$store.dispatch('inboxes/assignElevenlabsVoice', {
+          inboxId: this.inbox.id,
+          voiceId,
+        });
+        useAlert(this.$t('INBOX_MGMT.EDIT.API.SUCCESS_MESSAGE'));
+      } catch (error) {
+        useAlert(
+          error?.response?.data?.error ||
+            this.$t('INBOX_MGMT.EDIT.API.ERROR_MESSAGE')
+        );
+      } finally {
+        this.isAssigningVoice = false;
+      }
+    },
     async connectElevenlabs() {
       this.isConnectingElevenlabs = true;
       try {
@@ -229,6 +265,41 @@ export default {
       >
         {{ $t('INBOX_MGMT.ELEVENLABS.CONNECTED') }}
       </p>
+      <ul v-if="phoneVoices.length" class="mb-3 flex flex-col gap-2">
+        <li
+          v-for="voice in phoneVoices"
+          :key="voice.voice_id"
+          class="flex items-center justify-between gap-3"
+        >
+          <span class="text-[14px] text-foreground">{{ voice.name }}</span>
+          <span class="flex items-center gap-2">
+            <NextButton
+              v-if="voice.preview_url"
+              faded
+              slate
+              sm
+              type="button"
+              :label="$t('INBOX_MGMT.VOICES.PLAY')"
+              @click="playPhoneVoice(voice.preview_url)"
+            />
+            <NextButton
+              faded
+              slate
+              sm
+              type="button"
+              :disabled="
+                isAssigningVoice || inbox.elevenlabs_voice_id === voice.voice_id
+              "
+              :label="
+                inbox.elevenlabs_voice_id === voice.voice_id
+                  ? $t('INBOX_MGMT.ELEVENLABS.VOICE')
+                  : $t('INBOX_MGMT.ELEVENLABS.USE_VOICE')
+              "
+              @click="assignPhoneVoice(voice.voice_id)"
+            />
+          </span>
+        </li>
+      </ul>
       <NextButton
         :disabled="isConnectingElevenlabs"
         :is-loading="isConnectingElevenlabs"

@@ -75,6 +75,13 @@ class Api::V1::Accounts::InboxesController < Api::V1::Accounts::BaseController
     render_could_not_create_error(e.message)
   end
 
+  def assign_elevenlabs_voice
+    Twilio::AssignElevenlabsVoiceService.new(inbox: @inbox, voice_id: params[:voice_id]).perform
+    render :show
+  rescue Twilio::ConnectElevenlabsService::Error => e
+    render_could_not_create_error(e.message)
+  end
+
   def reset_secret
     return head :not_found unless @inbox.api?
 

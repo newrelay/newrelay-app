@@ -37,6 +37,12 @@ class Inboxes extends CacheEnabledApiClient {
     return axios.post(`${this.url}/${inboxId}/connect_elevenlabs`);
   }
 
+  assignElevenlabsVoice(inboxId, voiceId) {
+    return axios.post(`${this.url}/${inboxId}/assign_elevenlabs_voice`, {
+      voice_id: voiceId,
+    });
+  }
+
   createCSATTemplate(inboxId, template) {
     return axios.post(`${this.url}/${inboxId}/csat_template`, {
       template,

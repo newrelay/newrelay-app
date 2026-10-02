@@ -717,7 +717,22 @@
       "CONNECT": "Connect ElevenLabs",
       "CONNECTED": "ElevenLabs answers incoming calls on this number using the Relay AI website pages on this inbox. Click Connect again after you add pages. Finished calls appear in the inbox.",
       "FAILED": "ElevenLabs could not connect this Twilio number.",
-      "MISSING_KEY": "Connect ElevenLabs Voice AI in Integrations first."
+      "MISSING_KEY": "Connect ElevenLabs Voice AI in Integrations first.",
+      "VOICE": "Phone voice",
+      "USE_VOICE": "Use this voice"
+    },
+    "VOICES": {
+      "TITLE": "Voices",
+      "DESCRIPTION": "These voices can speak on a Twilio phone number. Create a clone from one recording, or use a voice already in ElevenLabs.",
+      "NAME": "Name",
+      "CLIP": "Recording",
+      "CONSENT": "I have the right to clone this voice.",
+      "CREATE": "Create voice",
+      "CREATING": "The voice is being created. It will appear in this list when it is ready.",
+      "FAILED": "ElevenLabs could not create this voice.",
+      "PLAY": "Play",
+      "PENDING": "Creating",
+      "UNVERIFIED": "ElevenLabs has not accepted this voice yet."
     },
     "VOICE_CONFIGURATION": {
       "ENABLE_VOICE": {

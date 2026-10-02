@@ -39,9 +39,11 @@ class Twilio::ConnectElevenlabsService
   end
 
   def create_agent(hook)
-    response = post_agent(hook, hook.settings['voice_id'].presence)
+    selected = inbox.channel.elevenlabs_voice_id.presence
+    voice_id = selected || hook.settings['voice_id'].presence
+    response = post_agent(hook, voice_id)
     agent_id = agent_id_from(response)
-    if agent_id.blank? && hook.settings['voice_id'].present?
+    if agent_id.blank? && selected.blank? && hook.settings['voice_id'].present?
       response = post_agent(hook, nil)
       agent_id = agent_id_from(response)
     end

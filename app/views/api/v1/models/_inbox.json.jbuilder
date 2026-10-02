@@ -139,6 +139,7 @@ if resource.twilio? && resource.channel.respond_to?(:voice_enabled?)
   json.voice_configured resource.channel.try(:twiml_app_sid).present?
   json.has_api_key_secret resource.channel.try(:api_key_secret).present?
   json.elevenlabs_connected resource.channel.try(:elevenlabs_phone_number_id).present?
+  json.elevenlabs_voice_id resource.channel.try(:elevenlabs_voice_id)
   if resource.channel.try(:twiml_app_sid).present?
     json.voice_call_webhook_url resource.channel.try(:voice_call_webhook_url)
     json.voice_status_webhook_url resource.channel.try(:voice_status_webhook_url)

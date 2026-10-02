@@ -130,7 +130,7 @@
 
 ### Voice picker
 
-**What:** Let the admin choose which ElevenLabs voice speaks for a number. The brain stays that inbox's Relay AI.
+**What:** Done for the live Twilio agent. Settings → Voices lists ElevenLabs voices and creates a clone. The Twilio inbox picks one. Do not add a second picker. The brain stays that inbox's Relay AI.
 
 **Why:** The first version uses one default voice. A workspace will want a different one without a second prompt.
 

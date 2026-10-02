@@ -380,6 +380,11 @@ export const actions = {
     commit(types.default.EDIT_INBOXES, response.data);
     return response.data;
   },
+  assignElevenlabsVoice: async ({ commit }, { inboxId, voiceId }) => {
+    const response = await InboxesAPI.assignElevenlabsVoice(inboxId, voiceId);
+    commit(types.default.EDIT_INBOXES, response.data);
+    return response.data;
+  },
   syncTemplates: async (_, inboxId) => {
     try {
       await InboxesAPI.syncTemplates(inboxId);

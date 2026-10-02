@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2026_10_02_150000) do
+ActiveRecord::Schema[7.1].define(version: 2026_10_02_180000) do
   # These extensions should be enabled to support this database
   enable_extension "pg_stat_statements"
   enable_extension "pg_trgm"
@@ -804,6 +804,7 @@ ActiveRecord::Schema[7.1].define(version: 2026_10_02_150000) do
     t.string "elevenlabs_agent_id"
     t.string "elevenlabs_webhook_id"
     t.string "elevenlabs_webhook_secret"
+    t.string "elevenlabs_voice_id"
     t.index ["account_sid", "phone_number"], name: "index_channel_twilio_sms_on_account_sid_and_phone_number", unique: true
     t.index ["messaging_service_sid"], name: "index_channel_twilio_sms_on_messaging_service_sid", unique: true
     t.index ["phone_number"], name: "index_channel_twilio_sms_on_phone_number", unique: true
@@ -1300,6 +1301,22 @@ ActiveRecord::Schema[7.1].define(version: 2026_10_02_150000) do
     t.index ["owner_id"], name: "index_deals_on_owner_id"
     t.index ["pipeline_id"], name: "index_deals_on_pipeline_id"
     t.index ["pipeline_stage_id"], name: "index_deals_on_pipeline_stage_id"
+  end
+
+  create_table "elevenlabs_voices", force: :cascade do |t|
+    t.bigint "account_id", null: false
+    t.string "name", null: false
+    t.string "voice_id"
+    t.string "preview_url"
+    t.string "error_message"
+    t.string "consent_statement", null: false
+    t.datetime "consent_accepted_at", null: false
+    t.boolean "requires_verification", default: false, null: false
+    t.integer "status", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["account_id", "voice_id"], name: "index_elevenlabs_voices_on_account_and_voice_id", unique: true, where: "(voice_id IS NOT NULL)"
+    t.index ["account_id"], name: "index_elevenlabs_voices_on_account_id"
   end
 
   create_table "email_logs", force: :cascade do |t|
@@ -2285,6 +2302,7 @@ ActiveRecord::Schema[7.1].define(version: 2026_10_02_150000) do
   add_foreign_key "deals", "pipeline_stages"
   add_foreign_key "deals", "pipelines"
   add_foreign_key "deals", "users", column: "owner_id"
+  add_foreign_key "elevenlabs_voices", "accounts"
   add_foreign_key "enterprise_contracts", "accounts"
   add_foreign_key "enterprise_contracts", "users", column: "negotiated_by_user_id"
   add_foreign_key "inboxes", "portals"

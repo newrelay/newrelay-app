@@ -496,6 +496,7 @@
     "INTEGRATION_APPS": "Apps",
     "INTEGRATION_API_KEYS": "API Keys",
     "INTEGRATION_WEBHOOKS": "Webhooks",
+    "VOICES": "Voices",
     "PROFILE_SETTINGS": "Profile Settings",
     "ACCOUNT_SETTINGS": "Account Setting",
     "BRANDING": "Branding",

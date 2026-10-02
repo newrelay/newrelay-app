@@ -329,6 +329,7 @@ Rails.application.routes.draw do
             end
           end
 
+          resources :elevenlabs_voices, only: [:index, :create]
           resources :custom_attribute_definitions, only: [:index, :show, :create, :update, :destroy]
           resources :custom_filters, only: [:index, :show, :create, :update, :destroy]
           resources :inboxes, only: [:index, :show, :create, :update, :destroy] do
@@ -339,6 +340,7 @@ Rails.application.routes.draw do
             delete :avatar, on: :member
             post :sync_templates, on: :member
             post :connect_elevenlabs, on: :member
+            post :assign_elevenlabs_voice, on: :member
             get :health, on: :member
             post :register_webhook, on: :member
             post :reset_secret, on: :member

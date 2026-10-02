@@ -11,6 +11,7 @@
 #  content_templates_last_updated :datetime
 #  elevenlabs_agent_id            :string
 #  elevenlabs_phone_number_id     :string
+#  elevenlabs_voice_id            :string
 #  elevenlabs_webhook_id          :string
 #  elevenlabs_webhook_secret      :string
 #  medium                         :integer          default("sms")

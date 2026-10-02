@@ -182,6 +182,11 @@ export const SETTINGS_NAV_SECTIONS = [
         routeName: 'settings_integrations_api_keys',
       },
       {
+        key: 'voices',
+        labelKey: 'SIDEBAR.VOICES',
+        routeName: 'settings_integrations_voices',
+      },
+      {
         key: 'webhooks',
         labelKey: 'SIDEBAR.INTEGRATION_WEBHOOKS',
         routeName: 'settings_integrations_webhook',

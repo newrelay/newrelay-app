@@ -10,6 +10,7 @@ import Slack from './Slack.vue';
 import Linear from './Linear.vue';
 import Notion from './Notion.vue';
 import Shopify from './Shopify.vue';
+import Voices from './Voices.vue';
 
 export default {
   routes: [
@@ -56,6 +57,15 @@ export default {
           path: 'api_keys',
           component: ApiKeys,
           name: 'settings_integrations_api_keys',
+          meta: {
+            featureFlag: FEATURE_FLAGS.INTEGRATIONS,
+            permissions: ['administrator'],
+          },
+        },
+        {
+          path: 'voices',
+          component: Voices,
+          name: 'settings_integrations_voices',
           meta: {
             featureFlag: FEATURE_FLAGS.INTEGRATIONS,
             permissions: ['administrator'],

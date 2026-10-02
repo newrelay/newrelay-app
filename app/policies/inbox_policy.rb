@@ -66,6 +66,10 @@ class InboxPolicy < ApplicationPolicy
     @account_user.administrator?
   end
 
+  def assign_elevenlabs_voice?
+    @account_user.administrator?
+  end
+
   def health?
     @account_user.administrator?
   end

@@ -62,6 +62,10 @@ const allAttributeOptions = computed(() =>
   }))
 );
 
+const hasConversationAttributes = computed(
+  () => allAttributeOptions.value.length > 0
+);
+
 const attributeOptions = computed(() => {
   const selectedKeysSet = new Set(selectedAttributeKeys.value);
   return allAttributeOptions.value.filter(
@@ -78,8 +82,19 @@ const conversationRequiredAttributes = computed(() => {
     .filter(Boolean);
 });
 
+const goToCustomAttributes = () => {
+  router.push({
+    name: 'attributes_list',
+    params: { accountId: accountId.value },
+  });
+};
+
 const handleAddAttributesClick = event => {
   event.stopPropagation();
+  if (!hasConversationAttributes.value) {
+    goToCustomAttributes();
+    return;
+  }
   toggleDropdown();
 };
 
@@ -142,11 +157,18 @@ const handleDelete = attribute => {
           <RelayButton
             variant="outline"
             class="border-primary/20 text-primary hover:border-primary/40 hover:bg-primary/5 hover:text-primary h-9 shrink-0 font-medium transition-all"
-            :disabled="isSaving || attributeOptions.length === 0"
+            :disabled="
+              isSaving ||
+              (hasConversationAttributes && attributeOptions.length === 0)
+            "
             @click="handleAddAttributesClick"
           >
             <Icon icon="i-lucide-plus" class="size-4" />
-            {{ $t('CONVERSATION_WORKFLOW.REQUIRED_ATTRIBUTES.ADD.TITLE') }}
+            {{
+              hasConversationAttributes
+                ? $t('CONVERSATION_WORKFLOW.REQUIRED_ATTRIBUTES.ADD.TITLE')
+                : $t('CONVERSATION_WORKFLOW.REQUIRED_ATTRIBUTES.ADD.CREATE')
+            }}
           </RelayButton>
           <DropdownMenu
             v-if="showDropdown"
@@ -169,7 +191,13 @@ const handleDelete = attribute => {
           class="border-border/80 bg-muted/10 flex items-center justify-center rounded-lg border border-dashed p-6 sm:p-8"
         >
           <p class="text-muted-foreground text-[14px] font-medium">
-            {{ $t('CONVERSATION_WORKFLOW.REQUIRED_ATTRIBUTES.NO_ATTRIBUTES') }}
+            {{
+              hasConversationAttributes
+                ? $t('CONVERSATION_WORKFLOW.REQUIRED_ATTRIBUTES.NO_ATTRIBUTES')
+                : $t(
+                    'CONVERSATION_WORKFLOW.REQUIRED_ATTRIBUTES.NO_CONVERSATION_ATTRIBUTES'
+                  )
+            }}
           </p>
         </div>
 

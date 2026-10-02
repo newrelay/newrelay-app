@@ -13,7 +13,16 @@ export default {
       children: [
         {
           path: '',
-          redirect: 'list',
+          name: 'custom_roles_wrapper',
+          meta: {
+            featureFlag: FEATURE_FLAGS.CUSTOM_ROLES,
+            installationTypes: [
+              INSTALLATION_TYPES.CLOUD,
+              INSTALLATION_TYPES.ENTERPRISE,
+            ],
+            permissions: ['administrator'],
+          },
+          redirect: to => ({ name: 'custom_roles_list', params: to.params }),
         },
         {
           path: 'list',

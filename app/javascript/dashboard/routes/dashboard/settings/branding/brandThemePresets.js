@@ -3330,6 +3330,9 @@ export const BRAND_THEME_PRESETS = [
 
 export const DEFAULT_BRAND_PRESET = BRAND_THEME_PRESETS[0];
 
+/** Previous product default (`id: 'default'`, indigo). Saved brand_colors still use this id. */
+export const RETIRED_DEFAULT_THEME_PRESET_ID = 'default';
+
 export const THEME_TOKEN_KEYS = Array.from(
   new Set(
     BRAND_THEME_PRESETS.flatMap(p => [
@@ -3351,6 +3354,9 @@ export const findPresetById = id =>
 
 export const findMatchingPreset = colors => {
   if (!colors) return null;
+  if (colors.theme_preset === RETIRED_DEFAULT_THEME_PRESET_ID) {
+    return DEFAULT_BRAND_PRESET;
+  }
   if (colors.theme_preset) {
     const byId = findPresetById(colors.theme_preset);
     if (byId) return byId;
@@ -3387,4 +3393,18 @@ export const brandColorsFromPreset = (preset, extras = {}) => {
     foreground: light.foreground || preset.text,
     ...extras,
   };
+};
+
+/**
+ * Drop a cached copy of the retired default theme and return the current default.
+ * Keeps account-specific name and layout.
+ */
+export const normalizeStoredBrandColors = colors => {
+  if (!colors || colors.theme_preset !== RETIRED_DEFAULT_THEME_PRESET_ID) {
+    return colors;
+  }
+  const extras = {};
+  if (colors.layout) extras.layout = colors.layout;
+  if (colors.brand_name) extras.brand_name = colors.brand_name;
+  return brandColorsFromPreset(DEFAULT_BRAND_PRESET, extras);
 };

@@ -1,9 +1,12 @@
 import { lighten, darken, getLuminance, toRgba, transparentize } from 'color2k';
 import {
+  DEFAULT_BRAND_PRESET,
+  RETIRED_DEFAULT_THEME_PRESET_ID,
   THEME_TOKEN_KEYS,
   findMatchingPreset,
   findPresetById,
 } from 'dashboard/routes/dashboard/settings/branding/brandThemePresets';
+import { applyThemeFavicon } from './themeFavicon';
 
 export const hexToRgbSpace = color => {
   if (!color) return null;
@@ -216,11 +219,25 @@ const applyPresetTokenMap = (preset, { dark = false } = {}) => {
 
 const resolvePreset = colors => {
   if (!colors) return null;
-  if (colors.theme_preset) {
-    const byId = findPresetById(colors.theme_preset);
+  // Retired id still sits on saved accounts; do not match those indigo swatches to Sass Minimal.
+  const presetId =
+    colors.theme_preset === RETIRED_DEFAULT_THEME_PRESET_ID
+      ? DEFAULT_BRAND_PRESET.id
+      : colors.theme_preset;
+  if (presetId) {
+    const byId = findPresetById(presetId);
     if (byId) return byId;
   }
   return findMatchingPreset(colors);
+};
+
+export const resolveThemePrimary = (colors, { dark = false } = {}) => {
+  const preset = resolvePreset(colors);
+  if (preset?.light) {
+    const vars = dark && preset.dark ? preset.dark : preset.light;
+    return vars.primary || preset.primary;
+  }
+  return preset?.primary || colors?.primary || DEFAULT_BRAND_PRESET.primary;
 };
 
 /**
@@ -237,6 +254,8 @@ export const applyBrandColorVariables = (
   { structural = true, dark = false } = {}
 ) => {
   if (!colors) return;
+
+  applyThemeFavicon(resolveThemePrimary(colors, { dark }));
 
   const preset = resolvePreset(colors);
   if (preset && (preset.light || preset.id === 'sass-minimal')) {

@@ -40,6 +40,18 @@
 class Account < ApplicationRecord
   CAPABILITY_KEYS = %w[white_labeling custom_domain reseller_dashboard api_access].freeze
 
+  # Previous product default preset id. Saved brand_colors still carry this cache.
+  RETIRED_DEFAULT_THEME_PRESET = 'default'
+  NEWRELAY_THEME_COLORS = {
+    'theme_preset' => 'newrelay',
+    'primary' => '#ff4f16',
+    'secondary' => '#f2f2f4',
+    'accent' => '#fff3ee',
+    'background' => '#fafaf9',
+    'text' => '#111318',
+    'foreground' => '#111318'
+  }.freeze
+
   # used for single column multi flags
   include FlagShihTzu
   include Reportable
@@ -302,11 +314,14 @@ class Account < ApplicationRecord
     return {} unless white_labeling_enabled?
 
     # brand_colors is the source of truth; the columns only fill gaps for API-only writes
-    {
+    colors = {
       'brand_name' => brand_name.presence,
       'primary' => brand_primary_color.presence,
       'background' => brand_secondary_color.presence
     }.merge(custom_attributes.fetch('brand_colors', {})).compact
+    return colors unless colors['theme_preset'] == RETIRED_DEFAULT_THEME_PRESET
+
+    NEWRELAY_THEME_COLORS.merge(colors.slice('brand_name', 'layout').compact)
   end
 
   def connected_account_ready_for_marketplace?

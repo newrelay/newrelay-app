@@ -5,7 +5,9 @@ import {
   clearCustomThemeVariables,
   hasFullThemePreset,
   isDarkBackground,
+  resolveThemePrimary,
 } from './colorHelper';
+import { applyThemeFavicon } from './themeFavicon';
 
 // layout / empty brand_name alone must not count as color branding
 const brandPalette = colors =>
@@ -89,4 +91,10 @@ export const setColorTheme = (isOSOnDarkMode, brandColors) => {
       dark: isDark,
     });
   }
+
+  applyThemeFavicon(
+    activeBrandColors
+      ? resolveThemePrimary(activeBrandColors, { dark: isDark })
+      : undefined
+  );
 };

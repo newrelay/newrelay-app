@@ -22,6 +22,7 @@ import {
   DEFAULT_BRAND_PRESET,
   brandColorsFromPreset,
   findPresetById,
+  normalizeStoredBrandColors,
 } from './brandThemePresets';
 
 const DEFAULT_PRIMARY = DEFAULT_BRAND_PRESET.primary;
@@ -128,7 +129,9 @@ const initFromAccount = () => {
   isWatcherEnabled = false;
 
   companyName.value = activeAccount.value.name || '';
-  const colors = activeAccount.value.custom_attributes?.brand_colors || {};
+  const colors = normalizeStoredBrandColors(
+    activeAccount.value.custom_attributes?.brand_colors || {}
+  );
   primaryColor.value = colors.primary || DEFAULT_PRIMARY;
   secondaryColor.value = colors.secondary || DEFAULT_SECONDARY;
   accentColor.value = colors.accent || DEFAULT_ACCENT;

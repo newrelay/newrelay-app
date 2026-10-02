@@ -4,7 +4,7 @@ import { ref } from 'vue';
 import { RelayInput as Input, RelayCheckbox as Checkbox } from 'dashboard/components-next/relay';
 import { 
   X, Download, CheckCircle2, ChevronDown, 
-  Settings2, FileText, Check, Copy
+  Settings2, FileText
 } from 'lucide-vue-next';
 
 const props = defineProps({
@@ -38,7 +38,6 @@ const brandingOptions = ref({
 const filename = ref('Video_Testimonials_July.zip');
 
 const exportProgress = ref(0);
-const copied = ref(false);
 
 const startExport = () => {
   currentState.value = 'progress';
@@ -61,15 +60,7 @@ const resetAndClose = () => {
   setTimeout(() => {
     currentState.value = 'config';
     exportProgress.value = 0;
-    copied.value = false;
   }, 300);
-};
-
-const handleCopyLink = () => {
-  copied.value = true;
-  setTimeout(() => {
-    copied.value = false;
-  }, 2000);
 };
 </script>
 
@@ -98,7 +89,7 @@ const handleCopyLink = () => {
               {{ currentState === 'config' ? 'Export Testimonials' : currentState === 'progress' ? 'Exporting...' : 'Export Complete' }}
             </h2>
             <p class="text-sm text-muted-foreground font-medium">
-              {{ currentState === 'config' ? 'Download testimonials for marketing or reporting.' : currentState === 'progress' ? 'Please wait while we package your files.' : 'Your download is ready.' }}
+              {{ currentState === 'config' ? 'Download testimonials for marketing or reporting.' : currentState === 'progress' ? 'Please wait while we package your files.' : 'Packaging finished.' }}
             </p>
           </div>
         </div>
@@ -242,25 +233,15 @@ const handleCopyLink = () => {
 
       <!-- Body: Success State -->
       <div v-else class="p-12 flex flex-col items-center justify-center gap-6 min-h-[300px]">
-        <div class="size-20 rounded-full bg-emerald-50 text-emerald-500 flex items-center justify-center border-4 border-emerald-100">
+        <div class="size-20 rounded-full bg-success/10 text-success flex items-center justify-center border-4 border-success/20">
           <CheckCircle2 class="size-10" />
         </div>
         
         <div class="flex flex-col items-center text-center gap-2">
-          <div class="text-xl font-bold text-foreground">Download Ready</div>
-          <div class="text-sm font-medium text-muted-foreground">Your file <span class="font-bold text-foreground">{{ filename }}</span> is ready to download.</div>
+          <div class="text-xl font-bold text-foreground">Export complete</div>
+          <div class="text-sm font-medium text-muted-foreground">{{ filename }} is packaged. File download is not available from this screen yet.</div>
         </div>
         
-        <div class="flex flex-col w-full max-w-xs gap-3 mt-4">
-          <button class="font-semibold bg-primary hover:bg-primary/90 text-primary-foreground h-11 gap-2 shadow-sm rounded-lg flex items-center justify-center cursor-pointer">
-            <Download class="size-4" /> Download ZIP
-          </button>
-          <button @click="handleCopyLink" class="font-semibold bg-card border border-border hover:bg-accent h-11 gap-2 shadow-sm rounded-lg flex items-center justify-center cursor-pointer">
-            <Check v-if="copied" class="size-4 text-emerald-500" />
-            <Copy v-else class="size-4" />
-            {{ copied ? 'Copied!' : 'Copy Link' }}
-          </button>
-        </div>
       </div>
 
       <!-- Footer (Only for Config State) -->

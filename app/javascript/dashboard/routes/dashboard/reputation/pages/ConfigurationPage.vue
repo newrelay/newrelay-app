@@ -4,12 +4,13 @@
 import { ref, computed, watch, onMounted } from 'vue';
 import QRCode from 'qrcode';
 import {
-  MessageSquare, Mail, MessageCircle, Video, Plus, Sparkles, Copy, Check,
+  MessageSquare, Mail, MessageCircle, Video, Plus, Sparkles, Check,
   QrCode, Download, Printer, Bot, ShieldCheck, ChevronDown, Star, ExternalLink,
   Signal, Wifi, MoreVertical, Paperclip, Smile, Mic, Trash2, Archive, Phone, Info,
   ChevronLeft, CheckCircle2, Clock, X,
 } from 'lucide-vue-next';
 import {
+  RelayButton,
   RelaySwitch,
   RelayInput,
   RelayTextarea,
@@ -618,8 +619,19 @@ const autoFlagLabel = computed(() => autoFlagOptions.find(o => o.value === spamS
 
       <!-- Tabs -->
       <div class="border-b border-border flex items-center gap-6 text-[13px] font-semibold">
-        <button v-for="tab in tabs" :key="tab.id" type="button" class="py-3 border-b-2 rounded-none transition-colors -mb-[1px] whitespace-nowrap cursor-pointer" :class="activeTab === tab.id ? 'border-primary text-primary' : 'border-transparent text-muted-foreground hover:text-foreground'" @click="activeTab = tab.id">
+        <button
+          v-for="tab in tabs"
+          :key="tab.id"
+          type="button"
+          class="relative -mb-px py-3 transition-colors whitespace-nowrap cursor-pointer"
+          :class="activeTab === tab.id ? 'text-primary' : 'text-muted-foreground hover:text-foreground'"
+          @click="activeTab = tab.id"
+        >
           {{ tab.label }}
+          <span
+            v-if="activeTab === tab.id"
+            class="absolute inset-x-0 bottom-0 z-10 h-px bg-primary"
+          />
         </button>
       </div>
 
@@ -819,12 +831,26 @@ const autoFlagLabel = computed(() => autoFlagOptions.find(o => o.value === spamS
           </div>
           <div class="grid grid-cols-1 md:grid-cols-12 gap-5 items-end">
             <div class="md:col-span-7 flex flex-col gap-1.5">
-              <label class="text-[13.5px] font-medium text-foreground">Permanent Review Link</label>
-              <div class="flex items-center">
-                <span class="h-10 flex-1 min-w-0 flex items-center px-3 text-[13px] font-mono border border-r-0 border-border rounded-l-md bg-background text-foreground truncate">{{ reviewLinkShort }}</span>
-                <button class="h-10 px-3.5 rounded-r-md border border-border bg-background hover:bg-accent text-[13px] inline-flex items-center gap-1.5 shrink-0 cursor-pointer" @click="copyReviewLink">
-                  <Check v-if="isLinkCopied" class="size-3.5 text-success" /><Copy v-else class="size-3.5 text-muted-foreground" /> {{ isLinkCopied ? 'Copied' : 'Copy' }}
-                </button>
+              <label for="review-link" class="text-[13.5px] font-medium text-foreground">Permanent Review Link</label>
+              <div class="flex items-center gap-3">
+                <RelayInput
+                  id="review-link"
+                  :model-value="reviewLinkShort"
+                  readonly
+                  class-name="h-10 min-w-0 flex-1 font-mono shadow-xs"
+                />
+                <RelayButton
+                  type="button"
+                  variant="outline"
+                  size="lg"
+                  class="shrink-0"
+                  @click="copyReviewLink"
+                >
+                  <span
+                    :class="isLinkCopied ? 'i-lucide-check size-3.5' : 'i-lucide-copy size-3.5'"
+                  />
+                  {{ isLinkCopied ? 'Copied' : 'Copy' }}
+                </RelayButton>
               </div>
             </div>
             <div class="md:col-span-5 flex flex-col gap-1.5">

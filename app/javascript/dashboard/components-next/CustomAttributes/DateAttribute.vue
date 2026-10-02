@@ -120,20 +120,16 @@ const handleInputUpdate = async () => {
     <div
       v-if="isEditingValue"
       v-on-clickaway="() => toggleEditValue(false)"
-      class="flex items-center w-full"
+      class="flex items-center gap-2 w-full"
     >
       <div class="min-w-0 flex-1">
-        <RelayDatePicker
-          v-model="defaultDateValue"
-          value-format="yyyy-MM-dd"
-          trigger-class="ltr:rounded-r-none rtl:rounded-l-none"
-        />
+        <RelayDatePicker v-model="defaultDateValue" value-format="yyyy-MM-dd" />
       </div>
       <Button
         icon="i-lucide-check"
         :color="hasError ? 'ruby' : 'blue'"
         size="sm"
-        class="flex-shrink-0 ltr:rounded-l-none rtl:rounded-r-none"
+        class="flex-shrink-0"
         @click="handleInputUpdate"
       />
     </div>

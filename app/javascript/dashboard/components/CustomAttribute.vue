@@ -254,25 +254,23 @@ export default {
     </div>
     <div v-if="notAttributeTypeCheckboxAndList">
       <div v-if="isEditing" v-on-clickaway="onClickAway">
-        <div class="flex items-center w-full mb-2">
+        <div class="flex items-center gap-2 w-full mb-2">
           <input
             ref="inputfield"
             v-model="editedValue"
             :type="inputType"
-            class="!h-8 ltr:!rounded-r-none rtl:!rounded-l-none !mb-0 ! text-[14px] shadow-sm rounded-md border-border/80 bg-background focus-visible:ring-1 focus-visible:ring-primary/30"
+            class="!h-8 min-w-0 flex-1 !mb-0 text-[14px] shadow-sm rounded-md border border-border/80 bg-background focus-visible:ring-1 focus-visible:ring-primary/30"
             autofocus="true"
             :class="{ error: v$.editedValue.$error }"
             @blur="v$.editedValue.$touch"
             @keyup.enter="onUpdate"
           />
-          <div>
-            <NextButton
-              sm
-              icon="i-lucide-check"
-              class="ltr:rounded-l-none rtl:rounded-r-none h-[34px]"
-              @click="onUpdate"
-            />
-          </div>
+          <NextButton
+            sm
+            icon="i-lucide-check"
+            class="h-[34px] shrink-0"
+            @click="onUpdate"
+          />
         </div>
         <span
           v-if="shouldShowErrorMessage"

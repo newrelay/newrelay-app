@@ -387,24 +387,23 @@ const isDark = computed(() => widgetConfig.value.theme === 'dark' || previewBg.v
                 <a v-if="widgetUrl" :href="widgetUrl" target="_blank" rel="noopener" class="text-[12px] text-primary hover:underline inline-flex items-center gap-1">View live widget <Globe class="size-3" /></a>
               </div>
 
-              <!-- Code terminal (intentional theme-independent surface) -->
-              <div class="rounded-xl border border-slate-800 bg-slate-950 overflow-hidden shadow-lg flex flex-col">
-                <div class="px-4 py-2.5 bg-slate-900 border-b border-slate-800 flex items-center justify-between">
+              <div class="rounded-xl border border-border bg-muted overflow-hidden flex flex-col">
+                <div class="px-4 py-2.5 bg-card border-b border-border flex items-center justify-between">
                   <div class="flex items-center gap-2">
                     <div class="flex items-center gap-1.5">
-                      <div class="size-2 rounded-full bg-slate-600"></div>
-                      <div class="size-2 rounded-full bg-slate-600"></div>
-                      <div class="size-2 rounded-full bg-slate-600"></div>
+                      <div class="size-2 rounded-full bg-muted-foreground/40"></div>
+                      <div class="size-2 rounded-full bg-muted-foreground/40"></div>
+                      <div class="size-2 rounded-full bg-muted-foreground/40"></div>
                     </div>
-                    <span class="text-[11px] font-mono text-slate-400 ml-1 font-medium">iframe-embed.html</span>
+                    <span class="text-[11px] font-mono text-muted-foreground ml-1 font-medium">iframe-embed.html</span>
                   </div>
-                  <button class="inline-flex items-center h-7 px-2.5 text-[11px] gap-1.5 rounded-md text-slate-300 hover:text-white hover:bg-slate-800 border border-slate-700/80 hover:border-transparent transition-all cursor-pointer" @click="copyEmbedCode">
-                    <Check v-if="isCopied" class="size-3.5 text-emerald-400" />
+                  <button class="inline-flex items-center h-7 px-2.5 text-[11px] gap-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-accent border border-border hover:border-transparent transition-all cursor-pointer" @click="copyEmbedCode">
+                    <Check v-if="isCopied" class="size-3.5 text-success" />
                     <Copy v-else class="size-3.5" />
                     <span>{{ isCopied ? 'Copied to Clipboard' : 'Copy Code' }}</span>
                   </button>
                 </div>
-                <div class="p-4 font-mono text-xs text-slate-200 overflow-x-auto hide-scrollbar leading-relaxed">
+                <div class="p-4 font-mono text-xs text-foreground overflow-x-auto hide-scrollbar leading-relaxed">
                   <pre class="whitespace-pre-wrap break-all font-mono text-[11.5px] leading-relaxed select-all"><code>{{ activeSnippet }}</code></pre>
                 </div>
               </div>

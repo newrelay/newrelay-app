@@ -3,7 +3,7 @@
 import { ref, onMounted, computed, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import html2canvas from 'html2canvas';
-import { RelayInput, RelayTextarea } from 'dashboard/components-next/relay';
+import { RelayButton, RelayInput, RelaySwitch, RelayTextarea } from 'dashboard/components-next/relay';
 import ComboBox from 'dashboard/components-next/combobox/ComboBox.vue';
 const axios = window.axios;
 
@@ -706,32 +706,16 @@ watch(selectedLocationId, id => {
                 <h4 class="text-sm font-semibold text-foreground">Enable Auto-Reply with AI</h4>
                 <p class="text-xs text-muted-foreground mt-0.5">Instantly draft and publish responses based on customer reviews</p>
               </div>
-              <button
-                type="button"
-                class="relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full p-0.5 transition-colors duration-200 ease-in-out focus:outline-none"
-                :class="
-                  aiEnabled
-                    ? 'bg-primary'
-                    : 'bg-muted '
-                "
-                @click="aiEnabled = !aiEnabled"
-              >
-                <span
-                  class="pointer-events-none inline-block size-5 transform rounded-full bg-card shadow transition-transform duration-200 ease-in-out"
-                  :class="
-                    aiEnabled ? 'translate-x-5' : 'translate-x-0'
-                  "
-                />
-              </button>
+              <RelaySwitch v-model="aiEnabled" />
             </div>
 
             <div class="space-y-1">
-              <label class="text-[10px] text-muted-foreground uppercase tracking-wider text-[13.5px] font-[500] text-foreground">Minimum Rating to Auto-Reply</label>
+              <label class="text-[13.5px] font-medium text-foreground">Minimum Rating to Auto-Reply</label>
               <ComboBox v-model="aiMinRating" :options="aiMinRatingOptions" placeholder="Select rating" />
             </div>
 
             <div class="space-y-1">
-              <label class="text-[10px] text-muted-foreground uppercase tracking-wider text-[13.5px] font-[500] text-foreground">Custom AI Instructions</label>
+              <label class="text-[13.5px] font-medium text-foreground">Custom AI Instructions</label>
               <RelayTextarea
                 v-model="aiInstructions"
                 :rows="4"
@@ -740,12 +724,9 @@ watch(selectedLocationId, id => {
             </div>
 
             <div class="pt-4 border-t border-border flex justify-end">
-              <button
-                class="px-5 py-2 bg-primary hover:bg-primary/90 text-white rounded-xl text-xs font-bold transition-all shadow-sm"
-                @click="saveAiSettings"
-              >
+              <RelayButton type="button" size="lg" @click="saveAiSettings">
                 Save AI Config
-              </button>
+              </RelayButton>
             </div>
           </div>
         </div>
@@ -759,7 +740,7 @@ watch(selectedLocationId, id => {
 
           <div class="space-y-4">
             <div class="space-y-1">
-              <label class="text-[10px] text-muted-foreground uppercase tracking-wider text-[13.5px] font-[500] text-foreground">Review Invite URL</label>
+              <label class="text-[13.5px] font-medium text-foreground">Review Invite URL</label>
               <RelayInput
                 v-model="customSlug"
                 type="text"
@@ -771,12 +752,9 @@ watch(selectedLocationId, id => {
             </div>
 
             <div class="pt-4 border-t border-border flex justify-end">
-              <button
-                class="px-5 py-2 bg-primary hover:bg-primary/90 text-white rounded-xl text-xs font-bold transition-all shadow-sm"
-                @click="saveLinkSettings"
-              >
+              <RelayButton type="button" size="lg" @click="saveLinkSettings">
                 Save Link Slug
-              </button>
+              </RelayButton>
             </div>
           </div>
         </div>
@@ -828,30 +806,30 @@ watch(selectedLocationId, id => {
             <div v-if="activeTemplate" class="md:col-span-8 space-y-4">
               <div class="grid grid-cols-2 gap-3">
                 <div class="space-y-1">
-                  <label class="text-[10px] text-muted-foreground uppercase tracking-wider text-[13.5px] font-[500] text-foreground">Template Name</label>
+                  <label class="text-[13.5px] font-medium text-foreground">Template Name</label>
                   <RelayInput v-model="activeTemplate.name" type="text" />
                 </div>
                 <div class="space-y-1">
-                  <label class="text-[10px] text-muted-foreground uppercase tracking-wider text-[13.5px] font-[500] text-foreground">Channel</label>
+                  <label class="text-[13.5px] font-medium text-foreground">Channel</label>
                   <RelayInput :model-value="activeTemplate.channel" disabled class-name="text-muted-foreground capitalize cursor-not-allowed" />
                 </div>
               </div>
 
               <!-- Template Category -->
               <div class="space-y-1">
-                <label class="text-[10px] text-muted-foreground uppercase tracking-wider text-[13.5px] font-[500] text-foreground">Template Category</label>
+                <label class="text-[13.5px] font-medium text-foreground">Template Category</label>
                 <ComboBox v-model="activeTemplate.template_type" :options="templateCategoryOptions" placeholder="Select category" />
               </div>
 
               <!-- Subject (Only if email) -->
               <div v-if="activeTemplate.channel === 'email'" class="space-y-1">
-                <label class="text-[10px] text-muted-foreground uppercase tracking-wider text-[13.5px] font-[500] text-foreground">Email Subject</label>
+                <label class="text-[13.5px] font-medium text-foreground">Email Subject</label>
                 <RelayInput v-model="activeTemplate.subject" type="text" />
               </div>
 
               <!-- Body -->
               <div class="space-y-1">
-                <label class="text-[10px] text-muted-foreground uppercase tracking-wider text-[13.5px] font-[500] text-foreground">Message Content</label>
+                <label class="text-[13.5px] font-medium text-foreground">Message Content</label>
                 <RelayTextarea v-model="activeTemplate.body" :rows="4" />
               </div>
 
@@ -892,13 +870,14 @@ watch(selectedLocationId, id => {
                   >
                     Delete
                   </button>
-                  <button
-                    class="px-4 py-1.5 bg-primary hover:bg-primary/90 text-white rounded-xl text-xs font-bold transition-all shadow-sm"
+                  <RelayButton
+                    type="button"
+                    size="lg"
                     :disabled="saving"
                     @click="saveTemplate"
                   >
                     {{ saving ? 'Saving...' : 'Save Template' }}
-                  </button>
+                  </RelayButton>
                 </div>
               </div>
             </div>
@@ -913,7 +892,7 @@ watch(selectedLocationId, id => {
           </div>
 
           <div>
-            <label class="text-[10px] text-muted-foreground uppercase tracking-wider text-[13.5px] font-[500] text-foreground">Custom Title for QR Code</label>
+            <label class="text-[13.5px] font-medium text-foreground">Custom Title for QR Code</label>
             <RelayInput
               v-model="qrTitle"
               type="text"
@@ -991,24 +970,21 @@ watch(selectedLocationId, id => {
 
           <div class="space-y-4">
             <div class="space-y-1">
-              <label class="text-[10px] text-muted-foreground uppercase tracking-wider text-[13.5px] font-[500] text-foreground">Auto-flag ratings under</label>
+              <label class="text-[13.5px] font-medium text-foreground">Auto-flag ratings under</label>
               <ComboBox v-model="spamMinRating" :options="spamMinRatingOptions" placeholder="Select rating" />
               <p class="text-[10px] text-muted-foreground">Flagged reviews will be marked as isolated and pending manual validation before public publishing.</p>
             </div>
 
             <div class="space-y-1">
-              <label class="text-[10px] text-muted-foreground uppercase tracking-wider text-[13.5px] font-[500] text-foreground">Blocklist Keywords</label>
+              <label class="text-[13.5px] font-medium text-foreground">Blocklist Keywords</label>
               <RelayInput v-model="spamKeywords" type="text" />
               <p class="text-[10px] text-muted-foreground">Comma-separated list of terms. Reviews containing these keywords are auto-marked as spam.</p>
             </div>
 
             <div class="pt-4 border-t border-border flex justify-end">
-              <button
-                class="px-5 py-2 bg-primary hover:bg-primary/90 text-white rounded-xl text-xs font-bold transition-all shadow-sm"
-                @click="saveSpamSettings"
-              >
+              <RelayButton type="button" size="lg" @click="saveSpamSettings">
                 Save Spam Config
-              </button>
+              </RelayButton>
             </div>
           </div>
         </div>
@@ -1053,7 +1029,7 @@ watch(selectedLocationId, id => {
             </p>
 
             <div class="space-y-2">
-              <label class="text-[10px] text-muted-foreground uppercase tracking-wider text-[13.5px] font-[500] text-foreground">Select Location</label>
+              <label class="text-[13.5px] font-medium text-foreground">Select Location</label>
               <ComboBox
                 v-model="selectedLocationId"
                 :options="googleLocationOptions"
@@ -1104,7 +1080,7 @@ watch(selectedLocationId, id => {
 
         <div class="space-y-4">
           <div class="space-y-1">
-            <label class="text-[10px] text-muted-foreground uppercase tracking-wider text-[13.5px] font-[500] text-foreground">Listing URL</label>
+            <label class="text-[13.5px] font-medium text-foreground">Listing URL</label>
             <RelayInput
               v-model="listingUrl"
               type="url"
@@ -1114,7 +1090,7 @@ watch(selectedLocationId, id => {
           </div>
 
           <div class="space-y-1">
-            <label class="text-[10px] text-muted-foreground uppercase tracking-wider text-[13.5px] font-[500] text-foreground">Listing / Location Label</label>
+            <label class="text-[13.5px] font-medium text-foreground">Listing / Location Label</label>
             <RelayInput
               v-model="listingName"
               type="text"
@@ -1161,7 +1137,7 @@ watch(selectedLocationId, id => {
 
         <div class="space-y-4">
           <div class="space-y-1">
-            <label class="text-[10px] text-muted-foreground uppercase tracking-wider text-[13.5px] font-[500] text-foreground">Channel Platform Name</label>
+            <label class="text-[13.5px] font-medium text-foreground">Channel Platform Name</label>
             <RelayInput
               v-model="customPlatformName"
               type="text"
@@ -1170,7 +1146,7 @@ watch(selectedLocationId, id => {
           </div>
 
           <div class="space-y-1">
-            <label class="text-[10px] text-muted-foreground uppercase tracking-wider text-[13.5px] font-[500] text-foreground">Listing Page Link</label>
+            <label class="text-[13.5px] font-medium text-foreground">Listing Page Link</label>
             <RelayInput
               v-model="customPlatformUrl"
               type="url"
@@ -1179,7 +1155,7 @@ watch(selectedLocationId, id => {
           </div>
 
           <div class="space-y-1">
-            <label class="text-[10px] text-muted-foreground uppercase tracking-wider text-[13.5px] font-[500] text-foreground">Logo/Icon theme</label>
+            <label class="text-[13.5px] font-medium text-foreground">Logo/Icon theme</label>
             <ComboBox v-model="customPlatformLogo" :options="customLogoOptions" placeholder="Select logo style" />
           </div>
         </div>

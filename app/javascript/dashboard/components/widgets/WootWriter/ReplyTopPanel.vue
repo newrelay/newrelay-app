@@ -194,7 +194,7 @@ export default {
         {{ $t('CONVERSATION.REPLYBOX.REPLY') }}
         <span
           v-if="isReplyActive"
-          class="absolute inset-x-0 bottom-0 h-0.5 bg-primary"
+          class="absolute inset-x-0 bottom-0 z-10 h-px bg-primary"
           aria-hidden="true"
         />
       </button>
@@ -218,7 +218,7 @@ export default {
         {{ $t('CONVERSATION.REPLYBOX.AI_REPLY') }}
         <span
           v-if="isAiActive"
-          class="absolute inset-x-0 bottom-0 h-0.5 bg-primary"
+          class="absolute inset-x-0 bottom-0 z-10 h-px bg-primary"
           aria-hidden="true"
         />
       </button>

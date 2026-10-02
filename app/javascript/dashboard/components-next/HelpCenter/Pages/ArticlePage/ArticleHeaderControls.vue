@@ -231,7 +231,7 @@ const isTabActive = value => activeTabValue.value === value;
           <span v-if="tab.count != null">({{ tab.count }})</span>
           <span
             v-if="isTabActive(tab.value)"
-            class="absolute inset-x-0 bottom-0 h-0.5 bg-primary"
+            class="absolute inset-x-0 bottom-0 z-10 h-px bg-primary"
             aria-hidden="true"
           />
         </button>

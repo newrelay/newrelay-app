@@ -1,6 +1,6 @@
 <script setup>
 /* eslint-disable */
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 import { 
   X, ChevronRight, FileText, BarChart2, MessageSquare, Monitor, Sparkles,
   PenTool, Calendar, Link as LinkIcon, Download, Mail, CheckCircle2, 
@@ -58,6 +58,12 @@ const fileInput = ref(null);
 const copied = ref(false);
 const generating = ref(false);
 const shareUrl = ref('');
+
+const sharedWithLabel = computed(() => {
+  const emails = form.value.emails.trim();
+  if (emails) return emails;
+  return form.value.recipients.join(', ');
+});
 
 const axios = window.axios;
 const accountId =
@@ -421,7 +427,7 @@ function close() {
         
         <!-- STEP 5: Success Screen -->
         <div v-if="currentStep === 5" class="py-12 flex flex-col items-center text-center animate-in zoom-in-95 duration-500">
-          <div class="size-20 bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 rounded-full flex items-center justify-center mb-6">
+          <div class="size-20 bg-success/10 text-success rounded-full flex items-center justify-center mb-6">
             <CheckCircle2 class="size-10" />
           </div>
           <h2 class="text-base font-semibold text-foreground mb-2">Report Generated Successfully</h2>
@@ -430,15 +436,15 @@ function close() {
           <div class="bg-muted/30 border border-border rounded-xl p-6 text-sm text-left grid grid-cols-3 gap-6 w-full max-w-md mb-8">
             <div>
               <p class="text-muted-foreground text-xs mb-1">Shared with</p>
-              <p class="font-semibold text-foreground truncate">john@company.com</p>
+              <p class="font-semibold text-foreground truncate">{{ sharedWithLabel }}</p>
             </div>
             <div>
-              <p class="text-muted-foreground text-xs mb-1">Downloaded</p>
-              <p class="font-semibold text-foreground">2 times</p>
+              <p class="text-muted-foreground text-xs mb-1">Date range</p>
+              <p class="font-semibold text-foreground">{{ form.dateRange }}</p>
             </div>
             <div>
-              <p class="text-muted-foreground text-xs mb-1">Expires</p>
-              <p class="font-semibold text-foreground">30 days</p>
+              <p class="text-muted-foreground text-xs mb-1">Format</p>
+              <p class="font-semibold text-foreground">{{ form.exportFormat }}</p>
             </div>
           </div>
           
@@ -447,12 +453,9 @@ function close() {
               <FileText class="size-4" /> Open Report
             </button>
             <button @click="copyShareLink" class="h-11 px-6 text-sm font-semibold bg-card border border-border hover:bg-accent text-foreground rounded-lg shadow-xs cursor-pointer inline-flex items-center gap-2">
-              <Check v-if="copied" class="size-4 text-emerald-600" />
+              <Check v-if="copied" class="size-4 text-success" />
               <Copy v-else class="size-4" />
               {{ copied ? 'Copied' : 'Copy Link' }}
-            </button>
-            <button class="h-11 px-6 text-sm font-semibold bg-card border border-border hover:bg-accent text-foreground rounded-lg shadow-xs cursor-pointer inline-flex items-center gap-2">
-              <Download class="size-4" /> Download PDF
             </button>
           </div>
 

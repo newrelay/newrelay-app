@@ -182,19 +182,19 @@ const handleInputUpdate = async () => {
       v-on-clickaway="() => toggleEditValue(false)"
       class="flex flex-col w-full gap-1"
     >
-      <div class="flex items-center w-full">
+      <div class="flex items-center gap-2 w-full">
         <RelayInput
           v-model="editedValue"
           :placeholder="t('CONTACTS_LAYOUT.SIDEBAR.ATTRIBUTES.TRIGGER.INPUT')"
           :type="getInputType"
-          class-name="ltr:rounded-r-none rtl:rounded-l-none"
+          class-name="min-w-0 flex-1"
           @keydown.enter="handleInputUpdate"
         />
         <Button
           icon="i-lucide-check"
           :color="hasError ? 'ruby' : 'blue'"
           size="sm"
-          class="flex-shrink-0 ltr:rounded-l-none rtl:rounded-r-none"
+          class="flex-shrink-0"
           @click="handleInputUpdate"
         />
       </div>

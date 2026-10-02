@@ -198,9 +198,7 @@ onMounted(() => {
           class="text-sm font-medium transition-colors hover:text-foreground px-1 py-1.5 relative cursor-pointer text-foreground font-semibold"
         >
           {{ t('CONTACTS_LAYOUT.COMPANIES_VIEW.TAB_ALL') }}
-          <span
-            class="absolute bottom-0 left-0 right-0 h-0.5 bg-primary rounded-full"
-          />
+          <span class="absolute inset-x-0 bottom-0 z-10 h-px bg-primary" />
         </button>
         <button
           class="text-sm font-medium text-primary hover:underline flex items-center gap-1 cursor-pointer"

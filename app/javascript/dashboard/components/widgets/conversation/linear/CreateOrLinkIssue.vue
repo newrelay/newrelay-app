@@ -68,7 +68,7 @@ const onClickTabChange = index => {
         {{ tab.name }}
         <span
           v-if="selectedTabIndex === index"
-          class="absolute inset-x-0 bottom-0 h-0.5 bg-primary"
+          class="absolute inset-x-0 bottom-0 z-10 h-px bg-primary"
           aria-hidden="true"
         />
       </button>

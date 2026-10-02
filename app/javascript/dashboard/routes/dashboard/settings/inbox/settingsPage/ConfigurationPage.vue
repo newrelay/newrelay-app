@@ -1,6 +1,7 @@
 <script>
 import { useAlert } from 'dashboard/composables';
 import ElevenlabsVoicesAPI from 'dashboard/api/elevenlabsVoices';
+import VoiceSample from 'dashboard/components-next/voice/VoiceSample.vue';
 import inboxMixin from 'shared/mixins/inboxMixin';
 import SettingsFieldSection from 'dashboard/components-next/Settings/SettingsFieldSection.vue';
 import SettingsToggleSection from 'dashboard/components-next/Settings/SettingsToggleSection.vue';
@@ -23,6 +24,7 @@ export default {
     ImapSettings,
     SmtpSettings,
     NextButton,
+    VoiceSample,
     RelayInput,
     RelayCheckbox,
     TextArea,
@@ -189,11 +191,6 @@ export default {
         this.phoneVoices = [];
       }
     },
-    playPhoneVoice(url) {
-      if (!url) return;
-      const audio = new Audio(url);
-      audio.play();
-    },
     async assignPhoneVoice(voiceId) {
       this.isAssigningVoice = true;
       try {
@@ -271,17 +268,21 @@ export default {
           :key="voice.voice_id"
           class="flex items-center justify-between gap-3"
         >
-          <span class="text-[14px] text-foreground">{{ voice.name }}</span>
+          <span class="flex min-w-0 flex-col">
+            <span class="text-[14px] text-foreground">{{ voice.name }}</span>
+            <span
+              v-if="voice.tone || voice.persona || voice.traits"
+              class="text-[13px] text-muted-foreground"
+            >
+              {{
+                [voice.tone, voice.persona, voice.traits]
+                  .filter(Boolean)
+                  .join(' · ')
+              }}
+            </span>
+          </span>
           <span class="flex items-center gap-2">
-            <NextButton
-              v-if="voice.preview_url"
-              faded
-              slate
-              sm
-              type="button"
-              :label="$t('INBOX_MGMT.VOICES.PLAY')"
-              @click="playPhoneVoice(voice.preview_url)"
-            />
+            <VoiceSample v-if="voice.preview_url" :src="voice.preview_url" />
             <NextButton
               faded
               slate

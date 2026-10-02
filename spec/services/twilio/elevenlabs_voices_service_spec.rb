@@ -34,6 +34,38 @@ RSpec.describe Twilio::ElevenlabsVoicesService do
     expect(service.list[:voices].first[:selectable]).to be(false)
   end
 
+  it 'keeps tone and persona on the voice' do
+    voice = voice_row
+    voice.update!(tone: 'warm', persona: 'front desk')
+    allow(HTTParty).to receive(:get).and_return(
+      instance_double(
+        HTTParty::Response,
+        success?: true,
+        parsed_response: {
+          'voices' => [
+            {
+              'voice_id' => 'v1',
+              'name' => 'Rachel',
+              'description' => 'narrator',
+              'labels' => { 'description' => 'calm', 'accent' => 'american' }
+            }
+          ],
+          'has_more' => false
+        }
+      )
+    )
+
+    rows = service.list[:voices]
+    mine = rows.find { |item| item[:name] == 'Mine' }
+    rachel = rows.find { |item| item[:name] == 'Rachel' }
+
+    expect(mine[:tone]).to eq('warm')
+    expect(mine[:persona]).to eq('front desk')
+    expect(rachel[:tone]).to eq('calm')
+    expect(rachel[:persona]).to eq('narrator')
+    expect(rachel[:traits]).to eq('american')
+  end
+
   it 'refuses a clip that is too large' do
     clip = instance_double(
       ActionDispatch::Http::UploadedFile,

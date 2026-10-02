@@ -7,9 +7,11 @@
 #  consent_statement     :string           not null
 #  error_message         :string
 #  name                  :string           not null
+#  persona               :text
 #  preview_url           :string
 #  requires_verification :boolean          default(FALSE), not null
 #  status                :integer          default("pending"), not null
+#  tone                  :string
 #  created_at            :datetime         not null
 #  updated_at            :datetime         not null
 #  account_id            :bigint           not null
@@ -35,4 +37,6 @@ class ElevenlabsVoice < ApplicationRecord
   validates :name, presence: true
   validates :consent_statement, presence: true
   validates :consent_accepted_at, presence: true
+  validates :tone, length: { maximum: 80 }, allow_blank: true
+  validates :persona, length: { maximum: 500 }, allow_blank: true
 end

@@ -16,13 +16,15 @@ class Twilio::ElevenlabsVoicesService
     { connected: true, voices: merge_voices(live) }
   end
 
-  def enqueue(name:, clip:, consent:)
+  def enqueue(name:, clip:, consent:, tone: nil, persona: nil)
     raise Twilio::ConnectElevenlabsService::Error, 'voice_consent_required' unless consent
     raise Twilio::ConnectElevenlabsService::Error, 'voice_agent_credentials_missing' if hook.blank?
     raise Twilio::ConnectElevenlabsService::Error, 'voice_clip_invalid' unless clip_ok?(clip)
 
     voice = account.elevenlabs_voices.create!(
       name: name.to_s.strip,
+      tone: tone.to_s.strip.presence,
+      persona: persona.to_s.strip.presence,
       status: :pending,
       consent_statement: ElevenlabsVoice::CONSENT_SENTENCE,
       consent_accepted_at: Time.current
@@ -86,34 +88,9 @@ class Twilio::ElevenlabsVoicesService
   def merge_voices(live)
     locals = account.elevenlabs_voices.order(created_at: :desc).to_a
     seen = live.pluck('voice_id')
-    merged = live.map { |row| live_row(row, locals.find { |item| item.voice_id == row['voice_id'] }) }
-    locals.each { |item| merged.unshift(local_row(item)) unless seen.include?(item.voice_id) }
+    merged = live.map { |row| Twilio::ElevenlabsVoiceRow.live(row, locals.find { |item| item.voice_id == row['voice_id'] }) }
+    locals.each { |item| merged.unshift(Twilio::ElevenlabsVoiceRow.local(item)) unless seen.include?(item.voice_id) }
     merged
-  end
-
-  def live_row(row, local)
-    blocked = row['requires_verification'] == true || local&.requires_verification?
-    {
-      voice_id: row['voice_id'],
-      name: row['name'].presence || local&.name,
-      preview_url: row['preview_url'].presence || local&.preview_url,
-      requires_verification: blocked,
-      selectable: row['voice_id'].present? && !blocked,
-      status: local&.status || 'ready',
-      error_message: local&.error_message
-    }
-  end
-
-  def local_row(item)
-    {
-      voice_id: item.voice_id,
-      name: item.name,
-      preview_url: item.preview_url,
-      requires_verification: item.requires_verification,
-      selectable: item.ready? && item.voice_id.present? && !item.requires_verification,
-      status: item.status,
-      error_message: item.error_message
-    }
   end
 
   def clip_ok?(clip)
@@ -129,10 +106,17 @@ class Twilio::ElevenlabsVoicesService
         ADD_URL,
         headers: api_headers,
         multipart: true,
-        body: { name: voice.name, files: file },
+        body: upload_fields(voice, file),
         timeout: 120
       )
     end
+  end
+
+  def upload_fields(voice, file)
+    fields = { name: voice.name, files: file }
+    fields[:description] = voice.persona if voice.persona.present?
+    fields[:labels] = { description: voice.tone }.to_json if voice.tone.present?
+    fields
   end
 
   def fetch_voice(voice_id)

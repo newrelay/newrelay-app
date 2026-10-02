@@ -3,22 +3,35 @@ import { onBeforeUnmount, onMounted, ref, computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useAlert } from 'dashboard/composables';
 import ElevenlabsVoicesAPI from 'dashboard/api/elevenlabsVoices';
+import VoiceSample from 'dashboard/components-next/voice/VoiceSample.vue';
 import {
   RelayButton,
   RelayCheckbox,
   RelayInput,
   RelayLabel,
+  RelayTextarea,
 } from 'dashboard/components-next/relay';
 
+const MAX_RECORD_SECONDS = 60;
 const { t } = useI18n();
 const connected = ref(true);
 const voices = ref([]);
 const name = ref('');
+const tone = ref('');
+const persona = ref('');
 const consent = ref(false);
 const clip = ref(null);
 const fileInput = ref(null);
 const isCreating = ref(false);
+const recording = ref(false);
+const recordSeconds = ref(0);
 let pollTimer = null;
+let recordTimer = null;
+let audioContext = null;
+let processor = null;
+let micStream = null;
+let recordChunks = [];
+let stoppingRecording = false;
 
 const canCreate = computed(
   () =>
@@ -26,7 +39,8 @@ const canCreate = computed(
     name.value.trim() &&
     consent.value &&
     clip.value &&
-    !isCreating.value
+    !isCreating.value &&
+    !recording.value
 );
 
 const loadVoices = async () => {
@@ -50,10 +64,116 @@ const onFile = event => {
   clip.value = event.target.files?.[0] || null;
 };
 
-const play = url => {
-  if (!url) return;
-  const audio = new Audio(url);
-  audio.play();
+const mergeSamples = chunks => {
+  const length = chunks.reduce((sum, chunk) => sum + chunk.length, 0);
+  const samples = new Float32Array(length);
+  let offset = 0;
+  chunks.forEach(chunk => {
+    samples.set(chunk, offset);
+    offset += chunk.length;
+  });
+  return samples;
+};
+
+const encodeWav = (samples, sampleRate) => {
+  const buffer = new ArrayBuffer(44 + samples.length * 2);
+  const view = new DataView(buffer);
+  const write = (offset, value) => {
+    for (let index = 0; index < value.length; index += 1) {
+      view.setUint8(offset + index, value.charCodeAt(index));
+    }
+  };
+  write(0, 'RIFF');
+  view.setUint32(4, 36 + samples.length * 2, true);
+  write(8, 'WAVE');
+  write(12, 'fmt ');
+  view.setUint32(16, 16, true);
+  view.setUint16(20, 1, true);
+  view.setUint16(22, 1, true);
+  view.setUint32(24, sampleRate, true);
+  view.setUint32(28, sampleRate * 2, true);
+  view.setUint16(32, 2, true);
+  view.setUint16(36, 16, true);
+  write(40, 'data');
+  view.setUint32(44, samples.length * 2, true);
+  let offset = 44;
+  samples.forEach(sample => {
+    const clamped = Math.max(-1, Math.min(1, sample));
+    view.setInt16(
+      offset,
+      clamped < 0 ? clamped * 0x8000 : clamped * 0x7fff,
+      true
+    );
+    offset += 2;
+  });
+  return new Blob([buffer], { type: 'audio/wav' });
+};
+
+const releaseMic = async () => {
+  processor?.disconnect();
+  micStream?.getTracks().forEach(track => track.stop());
+  const rate = audioContext?.sampleRate || 44100;
+  const samples = mergeSamples(recordChunks);
+  if (audioContext) await audioContext.close();
+  processor = null;
+  micStream = null;
+  audioContext = null;
+  recordChunks = [];
+  return { samples, rate };
+};
+
+const finishRecording = async () => {
+  if (stoppingRecording || !micStream) return;
+  stoppingRecording = true;
+  clearInterval(recordTimer);
+  recordTimer = null;
+  recording.value = false;
+  try {
+    const { samples, rate } = await releaseMic();
+    recordSeconds.value = 0;
+    if (!samples.length) return;
+    clip.value = new File([encodeWav(samples, rate)], 'recording.wav', {
+      type: 'audio/wav',
+    });
+    if (fileInput.value) fileInput.value.value = '';
+  } finally {
+    stoppingRecording = false;
+  }
+};
+
+const startRecording = async () => {
+  micStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+  // ponytail: ScriptProcessor is deprecated; upgrade path is an AudioWorklet that emits the same Float32 chunks.
+  audioContext = new AudioContext();
+  const source = audioContext.createMediaStreamSource(micStream);
+  const silent = audioContext.createGain();
+  silent.gain.value = 0;
+  processor = audioContext.createScriptProcessor(4096, 1, 1);
+  recordChunks = [];
+  processor.onaudioprocess = event => {
+    recordChunks.push(new Float32Array(event.inputBuffer.getChannelData(0)));
+  };
+  source.connect(processor);
+  processor.connect(silent);
+  silent.connect(audioContext.destination);
+  recording.value = true;
+  recordSeconds.value = 0;
+  recordTimer = setInterval(() => {
+    recordSeconds.value += 1;
+    if (recordSeconds.value >= MAX_RECORD_SECONDS) finishRecording();
+  }, 1000);
+};
+
+const toggleRecording = async () => {
+  if (recording.value) {
+    await finishRecording();
+    return;
+  }
+  try {
+    await startRecording();
+  } catch {
+    useAlert(t('INBOX_MGMT.VOICES.MIC_DENIED'));
+  }
 };
 
 const createVoice = async () => {
@@ -61,11 +181,15 @@ const createVoice = async () => {
   isCreating.value = true;
   const form = new FormData();
   form.append('name', name.value.trim());
+  form.append('tone', tone.value.trim());
+  form.append('persona', persona.value.trim());
   form.append('consent', 'true');
   form.append('clip', clip.value);
   try {
     await ElevenlabsVoicesAPI.createVoice(form);
     name.value = '';
+    tone.value = '';
+    persona.value = '';
     consent.value = false;
     clip.value = null;
     if (fileInput.value) fileInput.value.value = '';
@@ -81,6 +205,8 @@ const createVoice = async () => {
 onMounted(loadVoices);
 onBeforeUnmount(() => {
   if (pollTimer) clearInterval(pollTimer);
+  if (recording.value) releaseMic();
+  clearInterval(recordTimer);
 });
 </script>
 
@@ -111,6 +237,23 @@ onBeforeUnmount(() => {
         <RelayInput id="voice-name" v-model="name" />
       </div>
       <div class="flex flex-col gap-1.5">
+        <RelayLabel html-for="voice-tone">
+          {{ $t('INBOX_MGMT.VOICES.TONE') }}
+        </RelayLabel>
+        <RelayInput id="voice-tone" v-model="tone" maxlength="80" />
+      </div>
+      <div class="flex flex-col gap-1.5">
+        <RelayLabel html-for="voice-persona">
+          {{ $t('INBOX_MGMT.VOICES.PERSONA') }}
+        </RelayLabel>
+        <RelayTextarea
+          id="voice-persona"
+          v-model="persona"
+          rows="3"
+          maxlength="500"
+        />
+      </div>
+      <div class="flex flex-col gap-1.5">
         <RelayLabel html-for="voice-clip">
           {{ $t('INBOX_MGMT.VOICES.CLIP') }}
         </RelayLabel>
@@ -122,6 +265,26 @@ onBeforeUnmount(() => {
           class="text-[14px] text-foreground"
           @change="onFile"
         />
+        <RelayButton
+          type="button"
+          variant="ghost"
+          class="w-fit border border-border hover:border-transparent"
+          @click="toggleRecording"
+        >
+          {{
+            recording
+              ? $t('INBOX_MGMT.VOICES.STOP_RECORDING')
+              : $t('INBOX_MGMT.VOICES.RECORD')
+          }}
+          <span v-if="recording">
+            {{
+              $t('INBOX_MGMT.VOICES.RECORDING_TIME', { seconds: recordSeconds })
+            }}
+          </span>
+        </RelayButton>
+        <p v-if="clip" class="text-[13px] text-muted-foreground">
+          {{ clip.name }}
+        </p>
       </div>
       <div
         class="flex items-center gap-3 text-[13.5px] font-medium text-foreground"
@@ -143,6 +306,16 @@ onBeforeUnmount(() => {
       >
         <div class="flex flex-col">
           <span class="text-[14px] text-foreground">{{ voice.name }}</span>
+          <span
+            v-if="voice.tone || voice.persona || voice.traits"
+            class="text-[13px] text-muted-foreground"
+          >
+            {{
+              [voice.tone, voice.persona, voice.traits]
+                .filter(Boolean)
+                .join(' · ')
+            }}
+          </span>
           <span class="text-[13px] text-muted-foreground">
             {{
               voice.status === 'pending' ? $t('INBOX_MGMT.VOICES.PENDING') : ''
@@ -155,15 +328,7 @@ onBeforeUnmount(() => {
             {{ voice.error_message || '' }}
           </span>
         </div>
-        <RelayButton
-          v-if="voice.preview_url"
-          variant="ghost"
-          class="border border-border hover:border-transparent"
-          type="button"
-          @click="play(voice.preview_url)"
-        >
-          {{ $t('INBOX_MGMT.VOICES.PLAY') }}
-        </RelayButton>
+        <VoiceSample v-if="voice.preview_url" :src="voice.preview_url" />
       </li>
     </ul>
   </div>

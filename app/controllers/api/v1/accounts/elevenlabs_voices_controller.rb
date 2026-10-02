@@ -9,7 +9,9 @@ class Api::V1::Accounts::ElevenlabsVoicesController < Api::V1::Accounts::BaseCon
     voice = Twilio::ElevenlabsVoicesService.new(account: Current.account).enqueue(
       name: params[:name],
       clip: params[:clip],
-      consent: ActiveModel::Type::Boolean.new.cast(params[:consent])
+      consent: ActiveModel::Type::Boolean.new.cast(params[:consent]),
+      tone: params[:tone],
+      persona: params[:persona]
     )
     render json: { id: voice.id, name: voice.name, status: voice.status }, status: :accepted
   rescue Twilio::ConnectElevenlabsService::Error => e

@@ -12,7 +12,7 @@ import { useI18n } from 'vue-i18n';
 import MessageFormatter from 'shared/helpers/MessageFormatter.js';
 import { messageTimestamp } from 'shared/helpers/timeHelper';
 import { BUS_EVENTS } from 'shared/constants/busEvents';
-import { MESSAGE_VARIANTS, ORIENTATION } from '../constants';
+import { MESSAGE_TYPES, MESSAGE_VARIANTS, ORIENTATION } from '../constants';
 
 const props = defineProps({
   hideMeta: { type: Boolean, default: false },
@@ -29,6 +29,8 @@ const {
   isInboxView,
   sender,
   createdAt,
+  sourceId,
+  messageType,
 } = useMessageContext();
 const { t } = useI18n();
 
@@ -86,6 +88,12 @@ const messageClass = computed(() => {
 });
 
 const senderName = computed(() => sender.value?.name || '');
+
+const isVoiceAgentTurn = computed(
+  () =>
+    messageType.value === MESSAGE_TYPES.OUTGOING &&
+    String(sourceId.value || '').startsWith('elevenlabs:')
+);
 
 const noteTime = computed(() => {
   if (isInboxView?.value) {
@@ -158,6 +166,12 @@ const replyToPreview = computed(() => {
     class="flex min-w-0 w-full flex-col bg-transparent text-sm"
     :class="[wrapperAlignClass, isInboxView?.value ? 'gap-1' : 'gap-1.5']"
   >
+    <p
+      v-if="isVoiceAgentTurn"
+      class="text-[13px] font-medium text-muted-foreground"
+    >
+      {{ t('CONVERSATION.VOICE_AGENT') }}
+    </p>
     <div v-bind="attrs" :class="messageClass">
       <div
         v-if="inReplyTo"

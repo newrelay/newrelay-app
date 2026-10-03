@@ -371,6 +371,7 @@
       "LABEL": "Internal Note",
       "ADDED_BY": "Added by {name}"
     },
+    "VOICE_AGENT": "AI voice agent",
     "SIDEBAR": {
       "CONTACT": "Contact",
       "COPILOT": "Relay AI",

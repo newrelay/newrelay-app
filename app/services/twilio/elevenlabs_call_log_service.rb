@@ -65,6 +65,7 @@ class Twilio::ElevenlabsCallLogService
     return if content.blank?
 
     incoming = turn['role'] == 'user'
+    # source_id is set so the channel does not text this transcript back to the caller
     conversation.messages.create!(
       account_id: conversation.account_id,
       inbox_id: conversation.inbox_id,
@@ -72,7 +73,7 @@ class Twilio::ElevenlabsCallLogService
       message_type: incoming ? :incoming : :outgoing,
       sender: incoming ? contact_inbox.contact : nil,
       source_id: source_id(conversation_id, index),
-      private: !incoming
+      private: false
     )
   end
 

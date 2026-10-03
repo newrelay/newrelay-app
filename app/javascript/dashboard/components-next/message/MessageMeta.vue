@@ -52,7 +52,14 @@ const showWhatsAppIcon = computed(
     isAWhatsAppChannel.value
 );
 
+const isVoiceAgentTurn = computed(
+  () =>
+    messageType.value === MESSAGE_TYPES.OUTGOING &&
+    String(sourceId.value || '').startsWith('elevenlabs:')
+);
+
 const showStatusIndicator = computed(() => {
+  if (isVoiceAgentTurn.value) return false;
   if (isPrivate.value) return false;
   // Don't show status for failed messages, we already show error message
   if (status.value === MESSAGE_STATUS.FAILED) return false;

@@ -134,7 +134,7 @@ const props = defineProps({
   sender: { type: Object, default: null },
   senderId: { type: Number, default: null },
   senderType: { type: String, default: null },
-  sourceId: { type: String, default: '' }, // eslint-disable-line vue/no-unused-properties
+  sourceId: { type: String, default: '' },
 });
 
 const emit = defineEmits(['retry']);
@@ -195,7 +195,14 @@ const isStandaloneCardMessage = computed(() => {
  * Computes the message variant based on props
  * @type {import('vue').ComputedRef<'user'|'agent'|'activity'|'private'|'bot'|'template'>}
  */
+const isVoiceAgentTurn = computed(
+  () =>
+    props.messageType === MESSAGE_TYPES.OUTGOING &&
+    String(props.sourceId || '').startsWith('elevenlabs:')
+);
+
 const variant = computed(() => {
+  if (isVoiceAgentTurn.value) return MESSAGE_VARIANTS.BOT;
   if (props.private) return MESSAGE_VARIANTS.PRIVATE;
 
   if (props.isEmailInbox) {
@@ -513,7 +520,7 @@ onMounted(setupHighlightTimer);
 
 provideMessageContext({
   ...toRefs(props),
-  isPrivate: computed(() => props.private),
+  isPrivate: computed(() => props.private && !isVoiceAgentTurn.value),
   isInboxView: computed(() => props.isInboxView),
   variant,
   orientation,

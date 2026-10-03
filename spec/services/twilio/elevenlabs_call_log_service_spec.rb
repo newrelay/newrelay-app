@@ -25,7 +25,13 @@ RSpec.describe Twilio::ElevenlabsCallLogService do
 
     conversation = channel.inbox.conversations.last
     expect(conversation.contact.phone_number).to eq('+14155552671')
-    expect(conversation.messages.pluck(:content)).to include('I need a callback.', 'Hello, how can I help you?')
+    agent = conversation.messages.find_by!(content: 'Hello, how can I help you?')
+    caller = conversation.messages.find_by!(content: 'I need a callback.')
+    expect(agent).to be_outgoing
+    expect(agent.private).to be(false)
+    expect(caller).to be_incoming
+    expect(caller.private).to be(false)
+    expect(caller.sender).to eq(conversation.contact)
   end
 
   it 'does not save the same call twice' do

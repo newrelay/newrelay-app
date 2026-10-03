@@ -1,12 +1,11 @@
 <script setup>
-import { nextTick, onBeforeUnmount, ref } from 'vue';
+import { onBeforeUnmount, ref } from 'vue';
 import { RelayButton } from 'dashboard/components-next/relay';
 
 defineProps({
   src: { type: String, required: true },
 });
 
-const started = ref(false);
 const playing = ref(false);
 const audioRef = ref(null);
 
@@ -17,16 +16,18 @@ const stopOthers = audio => {
 };
 
 const toggle = async () => {
-  if (playing.value) {
-    audioRef.value?.pause();
-    return;
-  }
-  started.value = true;
-  await nextTick();
   const audio = audioRef.value;
   if (!audio) return;
+  if (playing.value) {
+    audio.pause();
+    return;
+  }
   stopOthers(audio);
-  audio.play();
+  try {
+    await audio.play();
+  } catch {
+    playing.value = false;
+  }
 };
 
 const onPlay = () => {
@@ -43,7 +44,7 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <div class="flex min-w-[220px] flex-col items-stretch gap-2">
+  <div>
     <RelayButton
       variant="ghost"
       size="sm"
@@ -56,12 +57,10 @@ onBeforeUnmount(() => {
       }}
     </RelayButton>
     <audio
-      v-if="started"
       ref="audioRef"
       data-voice-sample
       :src="src"
-      controls
-      class="h-8 w-full"
+      class="hidden"
       @play="onPlay"
       @pause="onPause"
       @ended="onPause"

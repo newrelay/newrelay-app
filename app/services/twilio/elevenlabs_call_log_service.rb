@@ -61,10 +61,10 @@ class Twilio::ElevenlabsCallLogService
   end
 
   def write_turn(conversation, contact_inbox, conversation_id, turn, index)
-    content = turn['message'].to_s.strip
+    incoming = turn['role'] == 'user'
+    content = spoken_content(turn['message'], incoming)
     return if content.blank?
 
-    incoming = turn['role'] == 'user'
     # source_id is set so the channel does not text this transcript back to the caller
     conversation.messages.create!(
       account_id: conversation.account_id,
@@ -75,6 +75,13 @@ class Twilio::ElevenlabsCallLogService
       source_id: source_id(conversation_id, index),
       private: false
     )
+  end
+
+  def spoken_content(message, incoming)
+    text = message.to_s.strip
+    return text if incoming
+
+    text.sub(/\A(?:\[[a-z]{2,20}\]\s*)+/i, '')
   end
 
   def open_conversation(inbox, contact_inbox)

@@ -7,25 +7,34 @@ import TranslationToggle from 'dashboard/components-next/message/TranslationTogg
 import { MESSAGE_TYPES } from '../../constants';
 import { useMessageContext } from '../../provider.js';
 import { useTranslations } from 'dashboard/composables/useTranslations';
+import { spokenTranscript } from 'dashboard/helper/voiceTranscript';
 
-const { content, attachments, contentAttributes, messageType, isPrivate } =
-  useMessageContext();
+const {
+  content,
+  attachments,
+  contentAttributes,
+  messageType,
+  isPrivate,
+  sourceId,
+} = useMessageContext();
 
 const { hasTranslations, translationContent } =
   useTranslations(contentAttributes);
 
 const renderOriginal = ref(false);
 
+const isVoiceAgentTurn = computed(
+  () =>
+    messageType.value === MESSAGE_TYPES.OUTGOING &&
+    String(sourceId.value || '').startsWith('elevenlabs:')
+);
+
 const renderContent = computed(() => {
-  if (renderOriginal.value) {
-    return content.value;
+  let text = content.value;
+  if (!renderOriginal.value && hasTranslations.value) {
+    text = translationContent.value;
   }
-
-  if (hasTranslations.value) {
-    return translationContent.value;
-  }
-
-  return content.value;
+  return isVoiceAgentTurn.value ? spokenTranscript(text) : text;
 });
 
 const isTemplate = computed(() => {

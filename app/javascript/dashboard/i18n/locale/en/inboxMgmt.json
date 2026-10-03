@@ -719,6 +719,7 @@
       "FAILED": "ElevenLabs could not connect this Twilio number.",
       "MISSING_KEY": "Connect ElevenLabs Voice AI in Integrations first.",
       "VOICE": "Phone voice",
+      "SELECTED": "Selected",
       "USE_VOICE": "Use this voice"
     },
     "VOICES": {
@@ -732,6 +733,10 @@
       "MIC_DENIED": "The microphone could not be used.",
       "TONE": "Tone",
       "PERSONA": "Persona",
+      "TONE_NOTE": "Tone and persona are saved with this voice. The phone still answers from the inbox website pages.",
+      "CHOOSE_FILE": "Choose file",
+      "SEARCH": "Search voices",
+      "NO_MATCH": "No voices match.",
       "CONSENT": "I have the right to clone this voice.",
       "CREATE": "Create voice",
       "CREATING": "The voice is being created. It will appear in this list when it is ready.",

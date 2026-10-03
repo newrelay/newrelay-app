@@ -4,6 +4,7 @@ import { useI18n } from 'vue-i18n';
 import { useAlert } from 'dashboard/composables';
 import ElevenlabsVoicesAPI from 'dashboard/api/elevenlabsVoices';
 import VoiceSample from 'dashboard/components-next/voice/VoiceSample.vue';
+import { filterVoices, voiceSummary } from 'dashboard/helper/voiceLibrary';
 import {
   RelayButton,
   RelayCheckbox,
@@ -23,6 +24,7 @@ const consent = ref(false);
 const clip = ref(null);
 const fileInput = ref(null);
 const isCreating = ref(false);
+const voiceQuery = ref('');
 const recording = ref(false);
 const recordSeconds = ref(0);
 let pollTimer = null;
@@ -32,6 +34,10 @@ let processor = null;
 let micStream = null;
 let recordChunks = [];
 let stoppingRecording = false;
+
+const visibleVoices = computed(() =>
+  filterVoices(voices.value, voiceQuery.value)
+);
 
 const canCreate = computed(
   () =>
@@ -252,6 +258,9 @@ onBeforeUnmount(() => {
           rows="3"
           maxlength="500"
         />
+        <p class="text-[13px] font-normal text-muted-foreground">
+          {{ $t('INBOX_MGMT.VOICES.TONE_NOTE') }}
+        </p>
       </div>
       <div class="flex flex-col gap-1.5">
         <RelayLabel html-for="voice-clip">
@@ -262,26 +271,38 @@ onBeforeUnmount(() => {
           ref="fileInput"
           type="file"
           accept="audio/mpeg,audio/wav,.mp3,.wav"
-          class="text-[14px] text-foreground"
+          class="sr-only"
           @change="onFile"
         />
-        <RelayButton
-          type="button"
-          variant="ghost"
-          class="w-fit border border-border hover:border-transparent"
-          @click="toggleRecording"
-        >
-          {{
-            recording
-              ? $t('INBOX_MGMT.VOICES.STOP_RECORDING')
-              : $t('INBOX_MGMT.VOICES.RECORD')
-          }}
-          <span v-if="recording">
+        <div class="flex flex-wrap items-center gap-2">
+          <RelayButton
+            type="button"
+            variant="ghost"
+            class="w-fit border border-border hover:border-transparent"
+            @click="fileInput?.click()"
+          >
+            {{ $t('INBOX_MGMT.VOICES.CHOOSE_FILE') }}
+          </RelayButton>
+          <RelayButton
+            type="button"
+            variant="ghost"
+            class="w-fit border border-border hover:border-transparent"
+            @click="toggleRecording"
+          >
             {{
-              $t('INBOX_MGMT.VOICES.RECORDING_TIME', { seconds: recordSeconds })
+              recording
+                ? $t('INBOX_MGMT.VOICES.STOP_RECORDING')
+                : $t('INBOX_MGMT.VOICES.RECORD')
             }}
-          </span>
-        </RelayButton>
+            <span v-if="recording">
+              {{
+                $t('INBOX_MGMT.VOICES.RECORDING_TIME', {
+                  seconds: recordSeconds,
+                })
+              }}
+            </span>
+          </RelayButton>
+        </div>
         <p v-if="clip" class="text-[13px] text-muted-foreground">
           {{ clip.name }}
         </p>
@@ -298,25 +319,44 @@ onBeforeUnmount(() => {
       </RelayButton>
     </form>
 
+    <RelayInput
+      v-if="connected && voices.length"
+      v-model="voiceQuery"
+      class-name="max-w-xl"
+      :placeholder="$t('INBOX_MGMT.VOICES.SEARCH')"
+    />
+
+    <p
+      v-if="connected && voiceQuery && !visibleVoices.length"
+      class="text-[14px] text-muted-foreground"
+    >
+      {{ $t('INBOX_MGMT.VOICES.NO_MATCH') }}
+    </p>
+
     <ul v-if="connected" class="flex flex-col gap-2">
       <li
-        v-for="voice in voices"
+        v-for="voice in visibleVoices"
         :key="voice.voice_id || voice.name"
         class="flex items-center justify-between gap-3 rounded-md border border-border px-3 py-2"
       >
-        <div class="flex flex-col">
-          <span class="text-[14px] text-foreground">{{ voice.name }}</span>
+        <div class="flex min-w-0 flex-col">
+          <span class="truncate text-[14px] text-foreground">
+            {{ voice.name }}
+          </span>
           <span
-            v-if="voice.tone || voice.persona || voice.traits"
+            v-if="voiceSummary(voice)"
+            class="line-clamp-1 text-[13px] text-muted-foreground"
+          >
+            {{ voiceSummary(voice) }}
+          </span>
+          <span
+            v-if="
+              voice.status === 'pending' ||
+              voice.requires_verification ||
+              voice.error_message
+            "
             class="text-[13px] text-muted-foreground"
           >
-            {{
-              [voice.tone, voice.persona, voice.traits]
-                .filter(Boolean)
-                .join(' · ')
-            }}
-          </span>
-          <span class="text-[13px] text-muted-foreground">
             {{
               voice.status === 'pending' ? $t('INBOX_MGMT.VOICES.PENDING') : ''
             }}

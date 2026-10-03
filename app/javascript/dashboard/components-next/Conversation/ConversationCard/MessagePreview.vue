@@ -2,6 +2,7 @@
 import { computed } from 'vue';
 import { MESSAGE_TYPE } from 'widget/helpers/constants';
 import { useMessageFormatter } from 'shared/composables/useMessageFormatter';
+import { spokenTranscript } from 'dashboard/helper/voiceTranscript';
 import Icon from 'dashboard/components-next/icon/Icon.vue';
 
 const props = defineProps({
@@ -52,7 +53,12 @@ const isMessagePrivate = computed(() => {
 const parsedLastMessage = computed(() => {
   const { content_attributes: contentAttributes } = props.message;
   const { email: { subject } = {} } = contentAttributes || {};
-  return getPlainText(subject || props.message.content);
+  const text = getPlainText(subject || props.message.content);
+  const source = props.message.source_id || props.message.sourceId || '';
+  if (messageByAgent.value && String(source).startsWith('elevenlabs:')) {
+    return spokenTranscript(text);
+  }
+  return text;
 });
 
 const lastMessageFileType = computed(() => {

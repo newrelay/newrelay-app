@@ -15,6 +15,7 @@ import { RelayInput, RelayCheckbox } from 'dashboard/components-next/relay';
 import TextArea from 'next/textarea/TextArea.vue';
 import WhatsappReauthorize from '../channels/whatsapp/Reauthorize.vue';
 import { sanitizeAllowedDomains } from 'dashboard/helper/URLHelper';
+import { filterVoices, voiceSummary } from 'dashboard/helper/voiceLibrary';
 
 export default {
   components: {
@@ -49,6 +50,7 @@ export default {
       isSyncingTemplates: false,
       isConnectingElevenlabs: false,
       phoneVoices: [],
+      voiceQuery: '',
       isAssigningVoice: false,
       allowedDomains: '',
       isUpdatingAllowedDomains: false,
@@ -67,6 +69,9 @@ export default {
     },
     isForwardingEnabled() {
       return !!this.inbox.forwarding_enabled;
+    },
+    filteredPhoneVoices() {
+      return filterVoices(this.phoneVoices, this.voiceQuery);
     },
   },
   watch: {
@@ -226,6 +231,7 @@ export default {
         this.isConnectingElevenlabs = false;
       }
     },
+    voiceSummary,
     async syncTemplates() {
       this.isSyncingTemplates = true;
       try {
@@ -262,26 +268,41 @@ export default {
       >
         {{ $t('INBOX_MGMT.ELEVENLABS.CONNECTED') }}
       </p>
-      <ul v-if="phoneVoices.length" class="mb-3 flex flex-col gap-2">
+      <RelayInput
+        v-if="phoneVoices.length"
+        v-model="voiceQuery"
+        class-name="mb-3 max-w-xl"
+        :placeholder="$t('INBOX_MGMT.VOICES.SEARCH')"
+      />
+      <p
+        v-if="phoneVoices.length && voiceQuery && !filteredPhoneVoices.length"
+        class="mb-3 text-[14px] text-muted-foreground"
+      >
+        {{ $t('INBOX_MGMT.VOICES.NO_MATCH') }}
+      </p>
+      <ul v-if="filteredPhoneVoices.length" class="mb-3 flex flex-col gap-2">
         <li
-          v-for="voice in phoneVoices"
+          v-for="voice in filteredPhoneVoices"
           :key="voice.voice_id"
-          class="flex items-center justify-between gap-3"
+          class="flex items-center justify-between gap-3 rounded-md px-3 py-2"
+          :class="
+            inbox.elevenlabs_voice_id === voice.voice_id
+              ? 'border border-primary/40'
+              : 'border border-border'
+          "
         >
           <span class="flex min-w-0 flex-col">
-            <span class="text-[14px] text-foreground">{{ voice.name }}</span>
+            <span class="truncate text-[14px] text-foreground">
+              {{ voice.name }}
+            </span>
             <span
-              v-if="voice.tone || voice.persona || voice.traits"
-              class="text-[13px] text-muted-foreground"
+              v-if="voiceSummary(voice)"
+              class="line-clamp-1 text-[13px] text-muted-foreground"
             >
-              {{
-                [voice.tone, voice.persona, voice.traits]
-                  .filter(Boolean)
-                  .join(' · ')
-              }}
+              {{ voiceSummary(voice) }}
             </span>
           </span>
-          <span class="flex items-center gap-2">
+          <span class="flex shrink-0 items-center gap-2">
             <VoiceSample v-if="voice.preview_url" :src="voice.preview_url" />
             <NextButton
               faded
@@ -293,7 +314,7 @@ export default {
               "
               :label="
                 inbox.elevenlabs_voice_id === voice.voice_id
-                  ? $t('INBOX_MGMT.ELEVENLABS.VOICE')
+                  ? $t('INBOX_MGMT.ELEVENLABS.SELECTED')
                   : $t('INBOX_MGMT.ELEVENLABS.USE_VOICE')
               "
               @click="assignPhoneVoice(voice.voice_id)"
